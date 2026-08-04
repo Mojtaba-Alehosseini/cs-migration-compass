@@ -1,0 +1,522 @@
+{
+  "schema": "cs-migration-compass/provenance@1",
+  "entries": [
+    {
+      "source_id": "bis_property_prices",
+      "name": "BIS — Selected residential property prices (quarterly)",
+      "urls": [
+        "https://stats.bis.org/api/v2/data/dataflow/BIS/WS_SPP/1.0/Q.AU+US+CA+GB+IE+DE+NL+IT+ES+SE+DK+NO+FI?format=csv"
+      ],
+      "fetched_at": "2026-08-04T19:23:39+00:00",
+      "license": "BIS statistics are free to use with attribution for non-commercial purposes. Cite: Bank for International Settlements, Selected residential property prices.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "One SDMX-CSV request for all 13 covered countries (key Q.<A>+<B>+...).",
+        "Split into four series per country by VALUE (real/nominal) x UNIT_MEASURE (index / YoY %).",
+        "Kept TIME_PERIOD verbatim as 'YYYY-Qn'; sorted ascending.",
+        "Dropped non-numeric observations. No rebasing — BIS bases differ by country.",
+        "AE and QA are not published in this dataflow and are recorded as uncovered."
+      ],
+      "output": "data/processed/bis_property_prices.json",
+      "status": "ok",
+      "rows": 11952,
+      "coverage": "13/15 countries (BIS excludes AE, QA), quarterly from 1927-Q1",
+      "notes": "Index bases differ by country — comparable in shape, not in level."
+    },
+    {
+      "source_id": "bls_oews",
+      "name": "BLS Occupational Employment and Wage Statistics (OEWS) — software developers",
+      "urls": [
+        "POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)",
+        "POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)",
+        "POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)",
+        "POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (21 series)"
+      ],
+      "fetched_at": "2026-08-04T19:40:17+00:00",
+      "license": "US federal government work — public domain. Cite: U.S. Bureau of Labor Statistics, OEWS.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Constructed OEWS series IDs for 30 metros (+ San Jose, + national) x 3 datatypes.",
+        "Requested them from the v2 API in batches of 25 (the keyless per-request limit).",
+        "Kept employment counts, hourly mean and annual median wages where the API returned data.",
+        "Series returning 'No Data Available' are counted and omitted — never back-filled or estimated."
+      ],
+      "output": "data/processed/bls_oews.json",
+      "status": "ok",
+      "rows": 96,
+      "coverage": "30/30 US cities, current reference year only",
+      "notes": "Snapshot only — the API exposes no OEWS history. Stated on the page, not hidden."
+    },
+    {
+      "source_id": "ef_epi",
+      "name": "EF English Proficiency Index 2025",
+      "urls": [
+        "https://www.ef.com/assetscdn/WIBIwq6RdJvcD9bc8RMd/cefcom-epi-site/reports/2025/ef-epi-2025-english.pdf"
+      ],
+      "fetched_at": "2026-08-04T19:46:08+00:00",
+      "license": "EF publishes the EPI report freely; cite EF Education First, EF English Proficiency Index 2025.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Downloaded the published PDF with a browser User-Agent (both hosts 403 otherwise).",
+        "Extracted text from the first 60 pages with pdfplumber.",
+        "For each country, took the first line containing its name and a number in (300.0, 750.0).",
+        "Recorded the originating line with every value for auditability.",
+        "Countries not confidently matched are omitted rather than guessed."
+      ],
+      "output": "data/processed/ef_epi.json",
+      "status": "ok",
+      "rows": 10,
+      "coverage": "10/15 countries",
+      "notes": "PDF scraping is fragile by nature; every value carries its source line."
+    },
+    {
+      "source_id": "eurostat_ict_specialists",
+      "name": "Eurostat — Employed ICT specialists (isoc_sks_itspt)",
+      "urls": [
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/isoc_sks_itspt?format=JSON&lang=en"
+      ],
+      "fetched_at": "2026-08-04T19:12:06+00:00",
+      "license": "Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, isoc_sks_itspt.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Fetched full JSON-stat 2.0 cube (freq x unit x geo x time).",
+        "Decoded the sparse row-major value map to explicit (unit, geo, year) rows.",
+        "Kept the 15 covered countries plus the EU27_2020 aggregate as a benchmark line.",
+        "Mapped Eurostat geo 'UK' to our ISO2 'GB'; dropped all other geographies.",
+        "Split the two units into separate series: absolute count and share of employment."
+      ],
+      "output": "data/processed/eurostat_ict_specialists.json",
+      "status": "ok",
+      "rows": 400,
+      "coverage": "10/15 countries (EU/EFTA only), 2004-2025 annual",
+      "notes": "Non-EU countries genuinely have no series here; recorded as missing, not imputed."
+    },
+    {
+      "source_id": "eurostat_total_employment",
+      "name": "Eurostat — Population and employment, national accounts (nama_10_pe)",
+      "urls": [
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nama_10_pe?format=JSON&lang=en"
+      ],
+      "fetched_at": "2026-08-04T19:12:11+00:00",
+      "license": "Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, nama_10_pe.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Fetched full JSON-stat 2.0 cube (freq x unit x na_item x geo x time).",
+        "Kept unit THS_PER only; dropped the percentage-change unit.",
+        "Kept 4 na_items: total employment, employees, self-employed, population (national concept).",
+        "Mapped Eurostat geo 'UK' to ISO2 'GB'; dropped aggregates (EU27, EA*) and other geographies."
+      ],
+      "output": "data/processed/eurostat_total_employment.json",
+      "status": "ok",
+      "rows": 1280,
+      "coverage": "9/15 countries (EU/EFTA only), 1975-2025 annual",
+      "notes": "Pairs with eurostat_ict_specialists to give IT jobs as a share of a real total."
+    },
+    {
+      "source_id": "fhfa_hpi_metro",
+      "name": "FHFA House Price Index — All-Transactions, Metropolitan Areas (quarterly)",
+      "urls": [
+        "https://www.fhfa.gov/hpi/download/quarterly_datasets/hpi_at_metro.csv"
+      ],
+      "fetched_at": "2026-08-04T19:16:07+00:00",
+      "license": "US federal government work — public domain. Cite: FHFA House Price Index.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Downloaded the headerless all-transactions metro CSV (410 metros, 84k rows).",
+        "Selected the 30 metros matching our US cities, plus San Jose as the Bay Area's second series.",
+        "Dropped rows where the index is '-' (period before a metro's series begins).",
+        "Sorted each series by (year, quarter); recorded the published area name and an is_metro_division flag rather than silently treating a division as the whole metro.",
+        "No rebasing, no smoothing, no interpolation."
+      ],
+      "output": "data/processed/fhfa_hpi_metro.json",
+      "status": "ok",
+      "rows": 6154,
+      "coverage": "30/30 US cities, 1975Q1-latest quarterly",
+      "notes": "Real city-level history — not a country trend applied to a city."
+    },
+    {
+      "source_id": "imf_weo",
+      "name": "IMF World Economic Outlook — country projections",
+      "urls": [
+        "https://www.imf.org/-/media/Files/Publications/WEO/WEO-Database/2026/April/WEOApr2026all.ashx",
+        "https://www.imf.org/-/media/Files/Publications/WEO/WEO-Database/2026/october/WEOOct2026all.ashx",
+        "https://www.imf.org/external/pubs/ft/weo/2026/01/weodata/WEOApr2026all.xls"
+      ],
+      "fetched_at": "2026-08-04T20:49:37+00:00",
+      "license": "IMF WEO database is free to download and use with attribution.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Attempted the WEO bulk download; every endpoint was edge-blocked. Nothing estimated."
+      ],
+      "output": "data/processed/imf_weo.json",
+      "status": "blocked",
+      "rows": 0,
+      "coverage": "0/15 countries",
+      "notes": "imf.org is unreachable from this environment (HTTP 403 at the Akamai edge). The parser is complete and runs wherever IMF is reachable; a manual drop-in path is documented."
+    },
+    {
+      "source_id": "indeed_hiring_lab_job_postings",
+      "name": "Indeed Hiring Lab — Job Postings Index (US metros)",
+      "urls": [
+        "https://raw.githubusercontent.com/hiring-lab/job_postings_tracker/master/US/metro_job_postings_us.csv"
+      ],
+      "fetched_at": "2026-08-04T19:19:18+00:00",
+      "license": "Indeed Hiring Lab publishes this tracker publicly on GitHub for free use with attribution. Cite: Indeed Hiring Lab Job Postings Index.",
+      "redistribution": "monthly aggregate committed; the 61 MB daily raw file is cached locally but not committed",
+      "transforms": [
+        "Downloaded the ~61 MB daily US-metro postings CSV.",
+        "Kept only rows whose cbsa_code matches our 30 US metros (plus San Jose for the Bay Area).",
+        "Aggregated daily values to monthly arithmetic means, retaining the observation count per month.",
+        "No smoothing beyond that mean; no gap filling."
+      ],
+      "output": "data/processed/indeed_hiring_lab_job_postings.json",
+      "status": "ok",
+      "rows": 73563,
+      "coverage": "30/30 US cities, monthly 2020-02 → latest",
+      "notes": "All-postings index, not software-specific — labelled as such in the UI."
+    },
+    {
+      "source_id": "mipex",
+      "name": "MIPEX — Migrant Integration Policy Index (EU policy indicators 2020-2024)",
+      "urls": [
+        "https://mipex.eu/sites/default/files/downloads/pdf/EU%20Policy%20Indicators%20Scores%20(2020-2024).xlsx"
+      ],
+      "fetched_at": "2026-08-04T19:40:08+00:00",
+      "license": "MIPEX is published under CC BY-NC-SA. Cite: Solano & Huddleston, Migrant Integration Policy Index.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Downloaded the 2020-2024 EU policy-indicator workbook (one sheet per country).",
+        "For each of our countries present as a sheet, parsed the 'Overall Scores' block (year -> score) and the 'Policy strand' block (year -> per-strand scores).",
+        "Rounded to 2 decimals; sorted by year. Countries without a sheet are recorded as missing."
+      ],
+      "output": "data/processed/mipex.json",
+      "status": "ok",
+      "rows": 41,
+      "coverage": "9/15 countries, 2020-2024",
+      "notes": "Measures policy, not experience — stated explicitly in the UI."
+    },
+    {
+      "source_id": "numbeo_history",
+      "name": "Numbeo — yearly country indices and per-city cost-of-living history",
+      "urls": [
+        "https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2015",
+        "https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2016",
+        "https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2017",
+        "https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2018",
+        "https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2019",
+        "https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2020"
+      ],
+      "fetched_at": "2026-08-04T19:54:24+00:00",
+      "license": "Numbeo data is crowd-sourced and its terms restrict bulk redistribution. We commit the derived per-year/per-city aggregates and the fetch script, and cite Numbeo on every figure.",
+      "redistribution": "derived aggregates committed (Numbeo terms restrict bulk redistribution)",
+      "transforms": [
+        "Requested country ranking pages for 2015-2026 via the ?title=YYYY parameter.",
+        "Parsed the rankings table, resolving country labels to our ISO2 set.",
+        "Probed ONE city-history page rather than crawling all 73: the served HTML contains only navigation chrome because Numbeo renders the price series client-side (verified for itemIds 1/26/27/105). The finding is recorded; no data was invented from it.",
+        "Rate-limited to one request per 1.5s."
+      ],
+      "output": "data/processed/numbeo_history.json",
+      "status": "ok",
+      "rows": 180,
+      "coverage": "12 country-years, 0/73 city histories",
+      "notes": "Crowd-sourced; thin for small cities and labelled as such everywhere it appears."
+    },
+    {
+      "source_id": "oecd_economic_outlook",
+      "name": "OECD Economic Outlook 119 — projections",
+      "urls": [
+        "https://sdmx.oecd.org/public/rest/data/OECD.ECO.MAD,DSD_EO@DF_EO,1.5/AUS+USA+CAN+GBR+IRL+DEU+NLD+ITA+ESP+SWE+DNK+NOR+FIN..A?format=csv&startPeriod=2000"
+      ],
+      "fetched_at": "2026-08-04T19:29:21+00:00",
+      "license": "OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Economic Outlook 119.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Requested annual EO series for 13 OECD countries from OECD.ECO.MAD,DSD_EO@DF_EO,1.5.",
+        "Kept 5 measures: real and nominal GDP growth, unemployment, population, net lending.",
+        "Derived is_projection per point by comparing the EO year against the last World Bank actual year for the same country — the EO cube has no projection flag.",
+        "Sorted ascending by year. No blending with any other forecast or with our extrapolation."
+      ],
+      "output": "data/processed/oecd_economic_outlook.json",
+      "status": "ok",
+      "rows": 1820,
+      "coverage": "13/15 countries (AE, QA are not OECD members), projections to 2027",
+      "notes": "Institutional forecast — rendered solid and attributed, kept separate from naive extrapolation."
+    },
+    {
+      "source_id": "oecd_indicators",
+      "name": "OECD Data Explorer (SDMX) — house prices, wages, hours, tax wedge",
+      "urls": [
+        "https://sdmx.oecd.org/public/rest/data/OECD.ECO.MPD,DSD_AN_HOUSE_PRICES@DF_HOUSE_PRICES,1.0/AUS+USA+CAN+GBR+IRL+DEU+NLD+ITA+ESP+SWE+DNK+NOR+FIN.Q..?format=csv&startPeriod=1970",
+        "https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@AV_AN_WAGE,1.0/all?format=csv&startPeriod=1990",
+        "https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_HW@DF_AVG_ANN_HRS_WKD,1.0/all?format=csv&startPeriod=1990",
+        "https://sdmx.oecd.org/public/rest/data/OECD.CTP.TPS,DSD_TAX_WAGES_COMP@DF_TW_COMP,2.1/all?format=csv&startPeriod=2000"
+      ],
+      "fetched_at": "2026-08-04T19:23:54+00:00",
+      "license": "OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Data Explorer, dataflow IDs listed per block.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Resolved all four dataflow IDs from the live OECD SDMX registry (several plausible IDs do not exist).",
+        "Requested SDMX-CSV per dataflow; used the 'all' key where the flow requires more key positions than we filter on.",
+        "Mapped REF_AREA ISO3 to our ISO2 set; every other country dropped.",
+        "avg_wages: kept USD_PPP and national-currency series, both sexes combined (SEX=_Z).",
+        "hours_worked: kept total worker status (_T).",
+        "tax_wedge: filtered to single person without children at 100% of the average wage; kept average tax wedge, average income tax rate, gross earnings and net income.",
+        "Grouped into MEASURE_UNITMEASURE series and sorted by period. No rebasing or smoothing."
+      ],
+      "output": "data/processed/oecd_indicators.json",
+      "status": "ok",
+      "rows": 22703,
+      "coverage": "13/15 countries (AE, QA are not OECD members)",
+      "notes": "Index bases differ by country and block — compare shape, not level."
+    },
+    {
+      "source_id": "rsf_press_freedom",
+      "name": "Reporters Without Borders — World Press Freedom Index",
+      "urls": [
+        "https://rsf.org/sites/default/files/import_classement/2026.csv",
+        "https://rsf.org/sites/default/files/import_classement/2025.csv",
+        "https://rsf.org/sites/default/files/import_classement/2024.csv",
+        "https://rsf.org/sites/default/files/import_classement/2023.csv",
+        "https://rsf.org/sites/default/files/import_classement/2022.csv"
+      ],
+      "fetched_at": "2026-08-04T19:20:41+00:00",
+      "license": "RSF publishes the index openly; cite Reporters Without Borders (RSF), World Press Freedom Index.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Fetched the per-year CSV for 2022, 2023, 2024, 2025, 2026 (semicolon-delimited).",
+        "Converted comma decimal separators to points.",
+        "Resolved ISO3 codes to our 15 ISO2 countries; all other rows dropped.",
+        "Captured overall score, rank and the five sub-indicators, plus the worldwide ranked count per year so a rank can be shown with its denominator.",
+        "Restricted to 2022+ because RSF's methodology changed that year."
+      ],
+      "output": "data/processed/rsf_press_freedom.json",
+      "status": "ok",
+      "rows": 75,
+      "coverage": "15/15 countries, 2022-2026",
+      "notes": "Years that failed to download are omitted, never interpolated."
+    },
+    {
+      "source_id": "stackoverflow_survey",
+      "name": "Stack Overflow Annual Developer Survey — salaries by country",
+      "urls": [
+        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2024/results.csv"
+      ],
+      "fetched_at": "2026-08-04T19:44:23+00:00",
+      "license": "Stack Overflow releases survey results under the Open Database License (ODbL). Cite: Stack Overflow Annual Developer Survey.",
+      "redistribution": "aggregates committed; raw survey CSVs not committed (size)",
+      "transforms": [
+        "Streamed the annual results CSV for waves: 2024 (~150 MB each).",
+        "Resolved the free-text Country column to our 15 ISO2 codes; all other responses dropped.",
+        "Dropped compensation outside $5,000-$1,000,000.",
+        "Bucketed by experience (<3 / 3-6 / 6+ professional years) and separately by DevType role.",
+        "Computed median plus p25/p75 per bucket, always retaining n and a thin_sample flag.",
+        "Raw CSVs are cached locally but excluded from the repo for size (see .gitignore)."
+      ],
+      "output": "data/processed/stackoverflow_survey.json",
+      "status": "ok",
+      "rows": 65437,
+      "coverage": "15/15 countries across 1 wave(s)",
+      "notes": "Self-selected sample — comparative signal, not an authoritative wage level."
+    },
+    {
+      "source_id": "teranet_national_bank_hpi",
+      "name": "Teranet–National Bank House Price Index (Canada)",
+      "urls": [
+        "https://housepriceindex.ca/_data/indx_data.json"
+      ],
+      "fetched_at": "2026-08-04T19:16:10+00:00",
+      "license": "Teranet & National Bank of Canada. Free public access for non-commercial use with attribution; index values are proprietary. We commit the derived per-city series.",
+      "redistribution": "derived per-city series committed; raw payload also committed (public endpoint)",
+      "transforms": [
+        "Fetched the JSON payload backing housepriceindex.ca (35 profiles, 7 data blocks).",
+        "Rebuilt the monthly date axis from data.meta.start_date and the series length.",
+        "Selected the 6 series matching our Canadian cities; dropped leading nulls (a city's index simply starts later) rather than back-filling.",
+        "Kept the Composite 11 series separately as a labelled national benchmark.",
+        "No rebasing, no smoothing."
+      ],
+      "output": "data/processed/teranet_national_bank_hpi.json",
+      "status": "ok",
+      "rows": 2303,
+      "coverage": "6/6 Canadian cities, monthly 1990-06-01→2026-06-01",
+      "notes": "Real city-level history for Canada."
+    },
+    {
+      "source_id": "uk_hpi",
+      "name": "UK House Price Index — full file (HM Land Registry)",
+      "urls": [
+        "https://publicdata.landregistry.gov.uk/market-trend-data/house-price-index-data/UK-HPI-full-file-2026-05.csv"
+      ],
+      "fetched_at": "2026-08-04T19:19:04+00:00",
+      "license": "Contains HM Land Registry data © Crown copyright and database right. Open Government Licence v3.0.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Discovered the latest monthly full-file release by HEAD-probing back from the current month.",
+        "Streamed the ~35 MB CSV and kept only rows whose RegionName matches our 3 UK cities.",
+        "Parsed dd/mm/yyyy dates to YYYY-MM; dropped rows with neither an average price nor an index.",
+        "Kept average price, index, detached and flat prices; sorted ascending by month.",
+        "Left values in GBP — no FX conversion of a multi-decade series."
+      ],
+      "output": "data/processed/uk_hpi.json",
+      "status": "ok",
+      "rows": 1344,
+      "coverage": "3/3 UK cities, monthly (values sparse before the mid-1990s)",
+      "notes": "Real city-level history including an actual price level, not just an index."
+    },
+    {
+      "source_id": "un_migrant_stock",
+      "name": "UN DESA — International Migrant Stock 2024 (by destination and origin)",
+      "urls": [
+        "https://www.un.org/development/desa/pd/sites/www.un.org.development.desa.pd/files/undesa_pd_2024_ims_stock_by_sex_destination_and_origin.xlsx"
+      ],
+      "fetched_at": "2026-08-04T19:27:27+00:00",
+      "license": "UN public data, free to use with attribution. Cite: United Nations Department of Economic and Social Affairs, Population Division (2024). International Migrant Stock 2024.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Downloaded the 6 MB origin-by-destination workbook with a browser User-Agent (un.org 403s otherwise).",
+        "Read 'Table 1', locating the header at row 11 and detecting year columns by 4-digit headers.",
+        "Kept rows whose destination M49 code is one of our 15 countries.",
+        "Split into: total foreign-born (origin = World/900), per-origin breakdown for the latest reference year (country origins only, codes < 900), and the Iranian-born series (M49 364).",
+        "Sorted origin breakdowns by descending stock. No estimation of missing corridors."
+      ],
+      "output": "data/processed/un_migrant_stock.json",
+      "status": "ok",
+      "rows": 2094,
+      "coverage": "15/15 destinations, reference years 1990-2024",
+      "notes": "Absolute counts; shares are computed in-site against World Bank population and shown as a formula."
+    },
+    {
+      "source_id": "un_wpp",
+      "name": "UN World Population Prospects 2024 — bulk CSV",
+      "urls": [
+        "https://population.un.org/wpp/assets/Excel%20Files/1_Indicator%20(Standard)/CSV_FILES/WPP2024_TotalPopulationBySex.csv.gz"
+      ],
+      "fetched_at": "2026-08-04T19:38:46+00:00",
+      "license": "CC BY 3.0 IGO. Cite: United Nations, Department of Economic and Social Affairs, Population Division (2024). World Population Prospects 2024.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Downloaded and gunzipped the 17 MB total-population bulk CSV (~720k rows).",
+        "Kept only the 'Estimates' and medium 'Medium' variants; all other projection variants dropped.",
+        "Filtered to our 15 countries by ISO2/ISO3 code and to years 1990-2100.",
+        "Converted WPP's thousands to persons.",
+        "Marked years after 2023 as projections; de-duplicated by year."
+      ],
+      "output": "data/processed/un_wpp.json",
+      "status": "ok",
+      "rows": 1665,
+      "coverage": "15/15 countries, 1990-2100 (projections from 2024)",
+      "notes": "Medium variant only — high/low variants deliberately not shown, to avoid implying a range we did not model."
+    },
+    {
+      "source_id": "wikipedia_english_speakers",
+      "name": "Wikipedia — List of countries by English-speaking population",
+      "urls": [
+        "https://en.wikipedia.org/wiki/List_of_countries_by_English-speaking_population"
+      ],
+      "fetched_at": "2026-08-04T19:34:07+00:00",
+      "license": "Wikipedia text is CC BY-SA 4.0. Underlying figures belong to the cited national sources.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Fetched the article HTML and parsed every wikitable whose header mentions English.",
+        "Resolved the first cell of each row to one of our 15 countries; all other rows dropped.",
+        "Extracted the first percentage and the first large integer found in the row.",
+        "Countries absent from the table are recorded as missing, never estimated."
+      ],
+      "output": "data/processed/wikipedia_english_speakers.json",
+      "status": "ok",
+      "rows": 13,
+      "coverage": "13/15 countries, single snapshot",
+      "notes": "Mixed vintages by country — a snapshot, not a series."
+    },
+    {
+      "source_id": "wipo_gii",
+      "name": "WIPO Global Innovation Index 2024",
+      "urls": [
+        "https://tind.wipo.int/record/50062/files/wipo-pub-2000-2024-en-global-innovation-index-2024-17th-edition.pdf"
+      ],
+      "fetched_at": "2026-08-04T19:46:34+00:00",
+      "license": "WIPO publishes the GII under CC BY 4.0 (some content excepted); cite WIPO, Global Innovation Index 2024.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Downloaded the published PDF with a browser User-Agent (both hosts 403 otherwise).",
+        "Extracted text from the first 60 pages with pdfplumber.",
+        "For each country, took the first line containing its name and a number in (5.0, 80.0).",
+        "Recorded the originating line with every value for auditability.",
+        "Countries not confidently matched are omitted rather than guessed."
+      ],
+      "output": "data/processed/wipo_gii.json",
+      "status": "ok",
+      "rows": 13,
+      "coverage": "13/15 countries",
+      "notes": "PDF scraping is fragile by nature; every value carries its source line."
+    },
+    {
+      "source_id": "world_bank",
+      "name": "World Bank Open Data — Indicators API",
+      "urls": [
+        "https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/NY.GDP.PCAP.CD?format=json&per_page=20000&date=1990:2026",
+        "https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/NY.GDP.PCAP.PP.CD?format=json&per_page=20000&date=1990:2026",
+        "https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/FP.CPI.TOTL.ZG?format=json&per_page=20000&date=1990:2026",
+        "https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/SL.UEM.TOTL.ZS?format=json&per_page=20000&date=1990:2026",
+        "https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/SM.POP.NETM?format=json&per_page=20000&date=1990:2026",
+        "https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/SP.POP.TOTL?format=json&per_page=20000&date=1990:2026"
+      ],
+      "fetched_at": "2026-08-04T19:10:45+00:00",
+      "license": "CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Requested 6 indicators for the 15 covered countries in one call each (semicolon-joined ISO3).",
+        "Dropped rows with null values (World Bank returns nulls for unreported years).",
+        "Regrouped from flat rows to {ISO2: {indicator_key: [{year, value}]}} sorted ascending by year.",
+        "No smoothing, no interpolation, no imputation."
+      ],
+      "output": "data/processed/world_bank.json",
+      "status": "ok",
+      "rows": 3203,
+      "coverage": "15/15 countries, 1990-2026 (per-indicator coverage varies by country)",
+      "notes": "Values are as published; gaps are left as gaps."
+    },
+    {
+      "source_id": "world_happiness_report",
+      "name": "World Happiness Report 2026 — Figure 2.1 data panel",
+      "urls": [
+        "https://files.worldhappiness.report/WHR26_Data_Figure_2.1.xlsx"
+      ],
+      "fetched_at": "2026-08-04T19:20:16+00:00",
+      "license": "World Happiness Report data is free to use with attribution. Cite: Helliwell et al., World Happiness Report 2026.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Read the single 'Data for Figure 2.1' sheet from the published xlsx.",
+        "Matched columns by header prefix (life evaluation + the six explanatory components).",
+        "Resolved country names to ISO2 and kept our 15; unmatched names dropped, never guessed.",
+        "Computed the per-year ranked-country count so ranks can be shown with a denominator.",
+        "No interpolation across the missing 2013 wave."
+      ],
+      "output": "data/processed/world_happiness_report.json",
+      "status": "ok",
+      "rows": 203,
+      "coverage": "15/15 countries, 2011-2025",
+      "notes": "Scores are 3-year rolling averages, so year-on-year moves are damped by construction."
+    },
+    {
+      "source_id": "worldbank_gep",
+      "name": "World Bank Global Economic Prospects — growth forecasts",
+      "urls": [
+        "https://www.worldbank.org/en/publication/global-economic-prospects"
+      ],
+      "fetched_at": "2026-08-04T20:49:52+00:00",
+      "license": "CC BY 4.0 — World Bank. Cite: World Bank, Global Economic Prospects.",
+      "redistribution": "raw committed",
+      "transforms": [
+        "Discovered candidate data files by scanning the GEP landing page for xlsx/csv links (the per-release URL changes, so it is not hardcoded).",
+        "Parsed the first table whose header row carries 4-digit years and whose rows resolve to countries.",
+        "Kept growth values keyed by year; nothing inferred when no table parsed."
+      ],
+      "output": "data/processed/worldbank_gep.json",
+      "status": "unavailable",
+      "rows": 0,
+      "coverage": "0/15 countries",
+      "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
+    }
+  ],
+  "updated_at": "2026-08-04T20:49:52+00:00"
+}

@@ -1,0 +1,412 @@
+{
+  "records": [
+    {
+      "id": "sydney",
+      "name": "Sydney",
+      "country": "AU",
+      "salary_usd_year": {
+        "new_grad": 119000,
+        "mid": null,
+        "senior": 119000,
+        "confidence": "crowd",
+        "note": "levels.fyi Sydney: AU$170,318 entry-level / AU$169,006 senior (total comp, self-reported, skewed toward large multinational employers — Atlassian, Google, Apple, The Trade Desk). Entry and senior are unusually close due to a thin, big-tech-heavy sample; treat as an upper-bound signal rather than typical market pay. Mid-level (3-5y) not found in any source (levels.fyi, SEEK, Hays)."
+      },
+      "rent_1br_center_usd_month": 2480,
+      "rent_1br_outside_usd_month": 1700,
+      "col_single_no_rent_usd_month": 1250,
+      "apt_price_center_usd_m2": 12900,
+      "apt_price_outside_usd_m2": 7900,
+      "climate": {
+        "sunshine_hours_yr": 2630,
+        "summer_avg_high_c": 27.0,
+        "winter_avg_low_c": 8.9,
+        "rainy_days_yr": 95
+      },
+      "tehran_travel": {
+        "typical_hours": 18,
+        "stops": 1,
+        "note": "Typical routing via DXB or DOH (~14h Sydney-Gulf leg + layover + ~2h Gulf-Tehran hop) — estimate"
+      },
+      "tech_scene_note": "Australia's largest and highest-paying tech hub — Atlassian's HQ plus large engineering offices for Google, Apple and fintech firms, though also the most competitive and expensive market.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Sydney",
+        "https://www.expatistan.com/cost-of-living/sydney",
+        "https://www.levels.fyi/t/software-engineer/locations/sydney-aus",
+        "https://en.wikipedia.org/wiki/Sydney",
+        "https://www.bom.gov.au/climate/averages/tables/cw_066062.shtml"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "melbourne",
+      "name": "Melbourne",
+      "country": "AU",
+      "salary_usd_year": {
+        "new_grad": 58000,
+        "mid": null,
+        "senior": 104000,
+        "confidence": "crowd",
+        "note": "levels.fyi Melbourne: AU$83,255 median entry-level, AU$148,803 senior (total comp, self-reported, includes named employers like Microsoft). Mid-level (3-5y) not found in available sources (levels.fyi, SEEK, Hays)."
+      },
+      "rent_1br_center_usd_month": 1740,
+      "rent_1br_outside_usd_month": 1380,
+      "col_single_no_rent_usd_month": 1220,
+      "apt_price_center_usd_m2": 7200,
+      "apt_price_outside_usd_m2": 6500,
+      "climate": {
+        "sunshine_hours_yr": 2361,
+        "summer_avg_high_c": 26.8,
+        "winter_avg_low_c": 7.5,
+        "rainy_days_yr": 88
+      },
+      "tehran_travel": {
+        "typical_hours": 18,
+        "stops": 1,
+        "note": "Typical routing via DXB or DOH, similar duration to Sydney — estimate"
+      },
+      "tech_scene_note": "Home to over half of Australia's top 20 tech companies and roughly a third of the national ICT workforce, with a strong overlay of biotech/health-tech and corporate-HQ software teams (Telstra, CSL, major banks).",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Melbourne",
+        "https://www.levels.fyi/t/software-engineer/locations/melbourne-aus",
+        "https://en.wikipedia.org/wiki/Melbourne",
+        "https://www.bom.gov.au/climate/averages/tables/cw_086338.shtml",
+        "https://www.bom.gov.au/clim_data/cdio/tables/text/IDCJCM0035_086282.csv"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "brisbane",
+      "name": "Brisbane",
+      "country": "AU",
+      "salary_usd_year": {
+        "new_grad": 72000,
+        "mid": null,
+        "senior": 131000,
+        "confidence": "crowd",
+        "note": "levels.fyi Brisbane: AU$73,880-130,900 entry-level range (midpoint used), total comp, self-reported. Senior uses the AU-wide levels.fyi band AU$153,792-218,836 (midpoint) since a Brisbane-specific senior figure wasn't surfaced — flagged as a national, not city-specific, proxy. Mid-level (3-5y) not found."
+      },
+      "rent_1br_center_usd_month": 1930,
+      "rent_1br_outside_usd_month": 1410,
+      "col_single_no_rent_usd_month": 1020,
+      "apt_price_center_usd_m2": 8200,
+      "apt_price_outside_usd_m2": 5800,
+      "climate": {
+        "sunshine_hours_yr": 2989,
+        "summer_avg_high_c": 30.4,
+        "winter_avg_low_c": 10.5,
+        "rainy_days_yr": 83
+      },
+      "tehran_travel": {
+        "typical_hours": 19,
+        "stops": 1,
+        "note": "Typical routing via DXB or DOH — estimate"
+      },
+      "tech_scene_note": "A smaller but growing secondary tech market concentrated in the CBD and Fortitude Valley, with IT recognized as a core white-collar industry alongside mining, banking and insurance.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Brisbane",
+        "https://www.levels.fyi/t/software-engineer/locations/brisbane-aus",
+        "https://en.wikipedia.org/wiki/Brisbane"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "perth",
+      "name": "Perth",
+      "country": "AU",
+      "salary_usd_year": {
+        "new_grad": 60000,
+        "mid": null,
+        "senior": 107000,
+        "confidence": "crowd",
+        "note": "levels.fyi Perth: AU$71,901-99,970 entry-level range and AU$113,110-192,569 senior range (midpoints used), total comp, self-reported. Mid-level (3-5y) not found. Perth shows the lowest software-engineer pay of the four major AU cities researched."
+      },
+      "rent_1br_center_usd_month": 1900,
+      "rent_1br_outside_usd_month": 1550,
+      "col_single_no_rent_usd_month": 1150,
+      "apt_price_center_usd_m2": 8300,
+      "apt_price_outside_usd_m2": 5700,
+      "climate": {
+        "sunshine_hours_yr": 3200,
+        "summer_avg_high_c": 31.7,
+        "winter_avg_low_c": 8.1,
+        "rainy_days_yr": 80
+      },
+      "tehran_travel": {
+        "typical_hours": 15,
+        "stops": 1,
+        "note": "Via DXB — Perth-Dubai (~11h) is the shortest Australia-Gulf leg of any researched AU city — estimate"
+      },
+      "tech_scene_note": "A resources/mining-dominated economy overall, but home to a genuine startup scene (Canva got its start here) alongside a smaller, lower-paying software job market than the eastern capitals.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Perth",
+        "https://www.levels.fyi/t/software-engineer/locations/perth-aus",
+        "https://en.wikipedia.org/wiki/Perth",
+        "https://www.bom.gov.au/climate/averages/tables/cw_009225.shtml"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "adelaide",
+      "name": "Adelaide",
+      "country": "AU",
+      "salary_usd_year": {
+        "new_grad": 54000,
+        "mid": 77000,
+        "senior": 79000,
+        "confidence": "crowd",
+        "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$76,708; mid from SEEK Adelaide median AU$110,000 (job-ad based, largest/most robust city figure available); senior from Indeed 'Senior Software Engineer' avg AU$113,008. PayScale samples (n=20-111) broadly consistent but smaller."
+      },
+      "rent_1br_center_usd_month": 1770,
+      "rent_1br_outside_usd_month": 1380,
+      "col_single_no_rent_usd_month": 1140,
+      "apt_price_center_usd_m2": 10200,
+      "apt_price_outside_usd_m2": 7000,
+      "climate": {
+        "sunshine_hours_yr": 2762,
+        "summer_avg_high_c": 28.6,
+        "winter_avg_low_c": 7.4,
+        "rainy_days_yr": 121
+      },
+      "tehran_travel": {
+        "typical_hours": 17,
+        "stops": 1,
+        "note": "Direct Emirates (ADL-DXB) and Qatar Airways (ADL-DOH) both confirmed operating; then DXB/DOH-IKA — estimate"
+      },
+      "tech_scene_note": "Australia's defence-technology and space hub — BAE Systems, Saab, Raytheon and Lockheed Martin cluster around Technology Park, and it's home to the Australian Space Agency, supporting above-market senior salaries.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Adelaide",
+        "https://www.expatistan.com/cost-of-living/adelaide",
+        "https://au.seek.com/career-advice/role/software-engineer/salary/in-adelaide",
+        "https://au.indeed.com/career/software-engineer/salaries/Adelaide-SA",
+        "https://en.wikipedia.org/wiki/Adelaide",
+        "https://www.flightconnections.com/flights-from-adelaide-adl"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "gold-coast",
+      "name": "Gold Coast",
+      "country": "AU",
+      "salary_usd_year": {
+        "new_grad": 53000,
+        "mid": 60000,
+        "senior": 83000,
+        "confidence": "crowd",
+        "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$75,498; mid from SEEK Gold Coast median AU$86,000 (lowest of the 8 AU cities researched, corroborated by Indeed's AU$86,164 general average); senior from Indeed 'Senior Software Engineer' avg AU$118,041."
+      },
+      "rent_1br_center_usd_month": 2410,
+      "rent_1br_outside_usd_month": 1470,
+      "col_single_no_rent_usd_month": 1130,
+      "apt_price_center_usd_m2": 9500,
+      "apt_price_outside_usd_m2": 6400,
+      "climate": {
+        "sunshine_hours_yr": null,
+        "summer_avg_high_c": 28.9,
+        "winter_avg_low_c": 12.0,
+        "rainy_days_yr": 92
+      },
+      "tehran_travel": {
+        "typical_hours": 24,
+        "stops": 2,
+        "note": "No direct long-haul from Gold Coast (OOL) — domestic connection via BNE/SYD, then DXB/DOH, then IKA — estimate"
+      },
+      "tech_scene_note": "A tourism, health and construction-driven economy with limited dedicated tech employers; increasingly functions as a lower-cost remote-work and film/digital-production satellite of Brisbane.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Gold-Coast",
+        "https://www.expatistan.com/cost-of-living/gold-coast",
+        "https://au.seek.com/career-advice/role/software-engineer/salary/in-gold-coast",
+        "https://au.indeed.com/career/software-engineer/salaries/Gold-Coast-QLD",
+        "https://en.wikipedia.org/wiki/Gold_Coast,_Queensland"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "hobart",
+      "name": "Hobart",
+      "country": "AU",
+      "salary_usd_year": {
+        "new_grad": 55000,
+        "mid": 64000,
+        "senior": 99000,
+        "confidence": "crowd",
+        "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$77,946; mid from SEEK Hobart median AU$91,980 (identical to SEEK's Tasmania state-wide figure); senior from Indeed 'Senior Software Engineer' avg AU$141,066. Smallest sample sizes of the researched AU cities (Numbeo: 22 contributors) — lower confidence."
+      },
+      "rent_1br_center_usd_month": 1820,
+      "rent_1br_outside_usd_month": 1380,
+      "col_single_no_rent_usd_month": 1140,
+      "apt_price_center_usd_m2": 9000,
+      "apt_price_outside_usd_m2": 7000,
+      "climate": {
+        "sunshine_hours_yr": 2154,
+        "summer_avg_high_c": 23.1,
+        "winter_avg_low_c": 4.4,
+        "rainy_days_yr": 137
+      },
+      "tehran_travel": {
+        "typical_hours": 25,
+        "stops": 2,
+        "note": "No direct long-haul from Hobart (HBA is a domestic-only airport) — connection via MEL/SYD, then DXB/DOH, then IKA — estimate"
+      },
+      "tech_scene_note": "Australia's Antarctic and Southern Ocean science gateway (Australian Antarctic Division, IMAS) drives a niche in marine/polar research computing, alongside a small, thin general software job market.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Hobart",
+        "https://www.seek.com.au/career-advice/role/software-engineer/salary/in-hobart",
+        "https://au.indeed.com/career/software-engineer/salaries/Hobart-TAS",
+        "https://en.wikipedia.org/wiki/Hobart"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "canberra",
+      "name": "Canberra",
+      "country": "AU",
+      "salary_usd_year": {
+        "new_grad": 67000,
+        "mid": 88000,
+        "senior": 96000,
+        "confidence": "crowd",
+        "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$94,869; mid from SEEK Canberra/ACT median AU$125,290 (highest of the 8 AU cities, reflecting a government/defence premium); senior from Indeed 'Senior Software Engineer' avg AU$137,480 (also highest). PayScale's Canberra page is stale (last updated 2018) and was excluded."
+      },
+      "rent_1br_center_usd_month": 1760,
+      "rent_1br_outside_usd_month": 1490,
+      "col_single_no_rent_usd_month": 1210,
+      "apt_price_center_usd_m2": 11600,
+      "apt_price_outside_usd_m2": 7900,
+      "climate": {
+        "sunshine_hours_yr": 2814,
+        "summer_avg_high_c": 28.8,
+        "winter_avg_low_c": 0.3,
+        "rainy_days_yr": 95
+      },
+      "tehran_travel": {
+        "typical_hours": 23,
+        "stops": 2,
+        "note": "Canberra (CBR) has no scheduled DXB/DOH nonstop as of Aug 2026 (confirmed via flightconnections.com — only Denpasar and Nadi are international nonstop) — connect via SYD/MEL, then DXB/DOH, then IKA — estimate"
+      },
+      "tech_scene_note": "Dominated by public administration plus a dense cluster of defence, cybersecurity and government-IT contractors (Leidos, CSIRO, Geoscience Australia), which pushes software salaries here above every other researched Australian city.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Canberra",
+        "https://au.seek.com/career-advice/role/software-engineer/salary/in-canberra",
+        "https://au.indeed.com/career/software-engineer/salaries/Canberra-ACT",
+        "https://en.wikipedia.org/wiki/Canberra",
+        "https://www.flightconnections.com/flights-from-canberra-cbr"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "dubai",
+      "name": "Dubai",
+      "country": "AE",
+      "salary_usd_year": {
+        "new_grad": 33000,
+        "mid": null,
+        "senior": 100000,
+        "confidence": "crowd",
+        "note": "levels.fyi Dubai: AED120,000 entry-level median / AED367,300 senior median (total comp, self-reported, skewed toward large multinationals — Amazon Dubai reports AED554K-645K). GulfTalent's thinner sample (n=24-29) shows notably lower averages: AED72,000 general / AED144,000 senior. Mid-level (3-5y) not found in a verifiable single source. Salaries are tax-free in the UAE."
+      },
+      "rent_1br_center_usd_month": 2440,
+      "rent_1br_outside_usd_month": 1500,
+      "col_single_no_rent_usd_month": 1120,
+      "apt_price_center_usd_m2": 7000,
+      "apt_price_outside_usd_m2": 4000,
+      "climate": {
+        "sunshine_hours_yr": 3609,
+        "summer_avg_high_c": 41.3,
+        "winter_avg_low_c": 14.3,
+        "rainy_days_yr": 17
+      },
+      "tehran_travel": {
+        "typical_hours": 3,
+        "stops": 0,
+        "note": "Direct DXB-IKA (~2h10m flight, currently operated by Mahan Air) — estimate; carrier availability on this route may fluctuate given regional tensions in 2026"
+      },
+      "tech_scene_note": "The Gulf's largest commercial tech hub — Dubai Internet City, Media City and Silicon Oasis host regional offices of Google, Microsoft, Oracle, IBM and Amazon, with DIFC anchoring fintech and no personal income tax.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Dubai",
+        "https://www.levels.fyi/t/software-engineer/locations/dubai-are",
+        "https://www.gulftalent.com/uae/salaries/dubai/software-engineer",
+        "https://www.gulftalent.com/uae/salaries/dubai/senior-software-engineer",
+        "https://en.wikipedia.org/wiki/Dubai",
+        "https://www.flightconnections.com/flights-from-ika-to-dxb"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "abu-dhabi",
+      "name": "Abu Dhabi",
+      "country": "AE",
+      "salary_usd_year": {
+        "new_grad": 58000,
+        "mid": null,
+        "senior": 105000,
+        "confidence": "crowd",
+        "note": "No Abu Dhabi-specific GulfTalent page exists (UAE-wide avg is AED84,000/yr, n=71, thin). levels.fyi Abu Dhabi entry AED162,009-264,999 / senior AED312,042-460,262 (midpoints used) is heavily skewed by sovereign-wealth/finance employers (Abu Dhabi Investment Authority reports AED522K-745K, First Abu Dhabi Bank ~AED286K) — treat as an elite-employer upper bound, not typical market pay. Mid-level not found. Tax-free."
+      },
+      "rent_1br_center_usd_month": 1960,
+      "rent_1br_outside_usd_month": 1310,
+      "col_single_no_rent_usd_month": 960,
+      "apt_price_center_usd_m2": 4900,
+      "apt_price_outside_usd_m2": 2900,
+      "climate": {
+        "sunshine_hours_yr": 3522,
+        "summer_avg_high_c": 43.4,
+        "winter_avg_low_c": 13.8,
+        "rainy_days_yr": 18
+      },
+      "tehran_travel": {
+        "typical_hours": 7,
+        "stops": 1,
+        "note": "No scheduled direct AUH-IKA route as of Aug 2026 (Wikipedia notes UAE-Iran flight disruption following 2026 regional strikes) — connects via DXB or DOH, a short ~1h regional hop plus layover plus ~2h to IKA — estimate"
+      },
+      "tech_scene_note": "A government-backed AI and fintech push via Hub71 (Microsoft-partnered) and G42, with sovereign-wealth investors (Mubadala, ADQ, ADIA) giving the scene a distinct enterprise/AI tilt versus Dubai's broader commercial mix.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Abu-Dhabi",
+        "https://www.levels.fyi/t/software-engineer/locations/abu-dhabi-are",
+        "https://www.gulftalent.com/uae/salaries/software-engineer",
+        "https://en.wikipedia.org/wiki/Abu_Dhabi",
+        "https://www.flightconnections.com/flights-from-ika-to-auh"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "doha",
+      "name": "Doha",
+      "country": "QA",
+      "salary_usd_year": {
+        "new_grad": 26000,
+        "mid": 30000,
+        "senior": 59000,
+        "confidence": "crowd",
+        "note": "PayScale Qatar (thin, n=7-14): early-career (1-4y) QAR95,585 used for new_grad, corroborated by Glassdoor's Ogoul Technology median of QAR96,000; mid-career QAR110,000. Senior uses Glassdoor's Rheinmetall Barzan Advanced Technologies median QAR216,000; levels.fyi Doha shows a wider all-experience range of QAR95,998-262,296. All Doha salary sources are thin — indicative only. Tax-free."
+      },
+      "rent_1br_center_usd_month": 1980,
+      "rent_1br_outside_usd_month": 1250,
+      "col_single_no_rent_usd_month": 930,
+      "apt_price_center_usd_m2": 4100,
+      "apt_price_outside_usd_m2": 2400,
+      "climate": {
+        "sunshine_hours_yr": 3453,
+        "summer_avg_high_c": 42.4,
+        "winter_avg_low_c": 14.8,
+        "rainy_days_yr": null
+      },
+      "tehran_travel": {
+        "typical_hours": 3,
+        "stops": 0,
+        "note": "Direct DOH-IKA (~2h10m flight, Qatar Airways) — estimate; add buffer for airport processes"
+      },
+      "tech_scene_note": "Tech is an explicit pillar of Qatar's diversification strategy — Google opened a Doha cloud region in 2023, Microsoft has tripled local headcount in two years, and government programs have backed 500+ startups, most of them AI-focused.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Doha",
+        "https://www.expatistan.com/cost-of-living/doha",
+        "https://www.payscale.com/research/QA/Job=Software_Engineer/Salary",
+        "https://www.glassdoor.com/Salaries/doha-qatar-software-engineer-salary-SRCH_IL.0,10_IM1180_KO11,28.htm",
+        "https://www.levels.fyi/t/software-engineer/locations/doha-qat",
+        "https://en.wikipedia.org/wiki/Doha",
+        "https://www.flightconnections.com/flights-from-ika-to-doh"
+      ],
+      "as_of": "2026-08"
+    }
+  ],
+  "as_of": "2026-08"
+}

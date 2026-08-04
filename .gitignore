@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# build output
+site/dist/
+site/.vite/
+*.tsbuildinfo
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# local env
+.env
+.env.local
+
+# pipeline scratch — raw and processed ARE committed on purpose (see docs/SOURCES.md);
+# only oversized or license-restricted payloads are excluded here.
+data/raw/**/*.tmp
+data/raw/_scratch/
+
+# Oversized raw payloads: excluded for repo weight, not for licensing. Both are
+# freely re-downloadable and their fetch scripts are committed, so `make pipeline`
+# still reproduces everything from scratch. The derived aggregates in
+# data/processed/ ARE committed. Sizes are as of 2026-08.
+data/raw/indeed_hiring_lab_job_postings/*.csv   # ~61 MB, refreshed weekly upstream
+data/raw/uk_hpi/*.csv                           # ~35 MB, refreshed monthly upstream
+data/raw/stackoverflow_survey/*.csv             # multi-year survey CSVs, ~100 MB total
+data/raw/stackoverflow_survey/*.zip

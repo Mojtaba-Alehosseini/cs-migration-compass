@@ -1,0 +1,70 @@
+{
+ "source_id": "ef_epi",
+ "generated_at": "2026-08-04T19:46:08+00:00",
+ "meta": {
+  "definition": "EF EPI score (roughly 400-700); higher = stronger English proficiency among non-native speakers.",
+  "confidence": "index",
+  "level": "country",
+  "extraction": "PDF text scraping",
+  "countries_without_data": [
+   "AU",
+   "US",
+   "CA",
+   "GB",
+   "IE"
+  ],
+  "fragility_caveat": "Extracted from a PDF layout, not a data file. A country is recorded only when its name and a plausible score appear on the same line; everything else is left missing. 'source_line' preserves the exact line each value came from so any figure can be audited."
+ },
+ "data": {
+  "DE": {
+   "score": 615.0,
+   "rank": null,
+   "source_line": "04Germany 615 36 Ghana 540 52 Peru 519 68 Iran 492 84 Malawi 465 98 Cameroon 445 113 Iraq 406"
+  },
+  "NL": {
+   "score": 624.0,
+   "rank": 1,
+   "source_line": "01 Netherlands 624 16 Latvia 598 33 Lithuania 543 49 Bolivia 521 65 Ethiopia 499 81 Qatar 469 95 Mongolia 447 111 Mali 408"
+  },
+  "IT": {
+   "score": 513.0,
+   "rank": 59,
+   "source_line": "11 Romania 605 26 Argentina 575 43 Moldova 531 59 Italy 513 75 Brazil 482 91 Syria 456 105 Jordan 425"
+  },
+  "ES": {
+   "score": 540.0,
+   "rank": 36,
+   "source_line": "05 Norway 613 36 Spain 540 53 Uganda 518 68 Morocco 492 84 Mozambique 465 99 Haiti 444 115 Saudi Arabia 404"
+  },
+  "SE": {
+   "score": 609.0,
+   "rank": 8,
+   "source_line": "08 Sweden 609 23 Czechia 582 40Cyprus 537 56 Armenia 515 72 United Arab Emirates 487 88 Laos 461 102 Senegal 442 118 Democratic 400"
+  },
+  "DK": {
+   "score": 611.0,
+   "rank": 7,
+   "source_line": "07 Denmark 611 39 Hong Kong (China) 538 55 Costa Rica 516 71 Turkey 488 87 Palestine 463 101 Kyrgyzstan 443 116 Yemen 402"
+  },
+  "NO": {
+   "score": 613.0,
+   "rank": 5,
+   "source_line": "05 Norway 613 36 Spain 540 53 Uganda 518 68 Morocco 492 84 Mozambique 465 99 Haiti 444 115 Saudi Arabia 404"
+  },
+  "FI": {
+   "score": 603.0,
+   "rank": 12,
+   "source_line": "12 Finland 603 27 Zambia 573 43 Paraguay 531 60Nicaragua 512 76 Colombia 480 91 Turkmenistan 456 106 Sudan 421"
+  },
+  "AE": {
+   "score": 487.0,
+   "rank": 72,
+   "source_line": "08 Sweden 609 23 Czechia 582 40Cyprus 537 56 Armenia 515 72 United Arab Emirates 487 88 Laos 461 102 Senegal 442 118 Democratic 400"
+  },
+  "QA": {
+   "score": 469.0,
+   "rank": 81,
+   "source_line": "01 Netherlands 624 16 Latvia 598 33 Lithuania 543 49 Bolivia 521 65 Ethiopia 499 81 Qatar 469 95 Mongolia 447 111 Mali 408"
+  }
+ }
+}

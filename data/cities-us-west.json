@@ -1,0 +1,423 @@
+{
+  "records": [
+    {
+      "id": "sf_bay_area",
+      "name": "SF Bay Area",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 202000,
+        "mid": 275000,
+        "senior": 378000,
+        "confidence": "crowd",
+        "note": "levels.fyi Bay Area metro aggregate updated Jul 9 2026 (25th pct=new_grad $202k, median=mid $275k, 75th pct=senior $378k, rounded). BLS OEWS San Francisco-Oakland-Fremont MSA 'Computer and mathematical' occupational group mean wage was $78.40/hr (~$163,072/yr annualized, May 2024 data) - well below levels.fyi total comp, as expected since it is base-only pay averaged across all employers/all computer occupations, not total comp at top tech firms."
+      },
+      "rent_1br_center_usd_month": 3770,
+      "rent_1br_outside_usd_month": 2730,
+      "col_single_no_rent_usd_month": 1590,
+      "apt_price_center_usd_m2": 10500,
+      "apt_price_outside_usd_m2": 8600,
+      "climate": {"sunshine_hours_yr": 3062, "summer_avg_high_c": 21.2, "winter_avg_low_c": 8.1, "rainy_days_yr": 73},
+      "tehran_travel": {"typical_hours": 20, "stops": 1, "note": "Estimate; no direct Iran-US flights exist. Typical routing via Doha (Qatar Airways) or Istanbul (Turkish Airlines)."},
+      "tech_scene_note": "Global epicenter of the tech industry, home to the headquarters or major engineering hubs of Google, Apple, Meta, Salesforce, Nvidia, OpenAI, and Anthropic, alongside the world's largest concentration of venture capital and startups.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/san-francisco-bay-area",
+        "https://www.numbeo.com/cost-of-living/in/San-Francisco",
+        "https://en.wikipedia.org/wiki/San_Francisco",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php",
+        "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_sanfrancisco.htm"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "seattle",
+      "name": "Seattle",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 106000,
+        "mid": 157000,
+        "senior": 233000,
+        "confidence": "crowd",
+        "note": "levels.fyi metro page was inaccessible (JS-rendered SPA returned empty HTML) and this session's WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in Seattle, WA (n=2.5k job-posting-derived salaries, updated Jul 27 2026) as new_grad/mid/senior. Cross-checked against ZipRecruiter (avg $167,886/yr; 25th pct $136,600; 90th pct $233,295 - closely matches Indeed's high end) and BLS OEWS Seattle-Tacoma-Bellevue MSA 'Computer and mathematical' group mean wage $73.93/hr (~$153,774/yr, May 2024) - consistent with Indeed's average."
+      },
+      "rent_1br_center_usd_month": 2440,
+      "rent_1br_outside_usd_month": 1920,
+      "col_single_no_rent_usd_month": 1580,
+      "apt_price_center_usd_m2": 7600,
+      "apt_price_outside_usd_m2": 5000,
+      "climate": {"sunshine_hours_yr": 2170, "summer_avg_high_c": 25.3, "winter_avg_low_c": 2.8, "rainy_days_yr": 150},
+      "tehran_travel": {"typical_hours": 19, "stops": 1, "note": "Estimate; no direct Iran-US flights exist. Typical routing via Doha (Qatar Airways) or Istanbul (Turkish Airlines)."},
+      "tech_scene_note": "Major tech hub anchored by the headquarters of Amazon and Microsoft, with large engineering centers for Google, Meta, and Apple, plus a growing cloud-computing and AI startup scene.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Seattle",
+        "https://en.wikipedia.org/wiki/Seattle",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php",
+        "https://www.indeed.com/career/software-engineer/salaries/Seattle--WA",
+        "https://www.ziprecruiter.com/Salaries/Software-Engineer-Salary-in-Seattle,WA",
+        "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_seattle.htm"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "austin",
+      "name": "Austin",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 100000,
+        "mid": 131000,
+        "senior": 207000,
+        "confidence": "crowd",
+        "note": "levels.fyi unavailable this session (WebSearch budget was already exhausted; direct levels.fyi fetch returned an empty JS-rendered page). Fallback used: BLS OEWS May 2023, Austin-Round Rock, TX metro, Software Developers (SOC 15-1252) - median hourly wage $63.14 x 2080 hrs = $131,331 used as 'mid'. new_grad/senior derived by applying national BLS 25th- and 90th-percentile-to-median ratios (0.77x / 1.58x) to the metro median. BLS wages are base salary only (excludes equity/bonus common in tech total comp), so these figures likely understate real total compensation, especially at senior level."
+      },
+      "rent_1br_center_usd_month": 1890,
+      "rent_1br_outside_usd_month": 1300,
+      "col_single_no_rent_usd_month": 1180,
+      "apt_price_center_usd_m2": 7100,
+      "apt_price_outside_usd_m2": 3100,
+      "climate": {"sunshine_hours_yr": 2644, "summer_avg_high_c": 36.6, "winter_avg_low_c": 5.4, "rainy_days_yr": 86},
+      "tehran_travel": {"typical_hours": 24, "stops": 2, "note": "estimate; via Doha/Istanbul or similar hub — no direct Iran-US flights"},
+      "tech_scene_note": "Austin's 'Silicon Hills' tech scene hosts major employers including Tesla's Gigafactory, Apple's second-largest global campus, AMD, Oracle, and NXP, alongside a dense venture-backed startup ecosystem and growing Google and Meta offices.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Austin",
+        "https://en.wikipedia.org/wiki/Austin,_Texas",
+        "https://en.wikipedia.org/wiki/Template:Austin_weatherbox",
+        "https://www.bls.gov/oes/2023/may/oes_12420.htm",
+        "https://www.bls.gov/oes/2023/may/oes151252.htm",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "denver",
+      "name": "Denver",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 103000,
+        "mid": 135000,
+        "senior": 213000,
+        "confidence": "crowd",
+        "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Denver-Aurora-Lakewood, CO metro, Software Developers (SOC 15-1252) - median hourly wage $64.90 x 2080 hrs = $134,992 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level."
+      },
+      "rent_1br_center_usd_month": 2030,
+      "rent_1br_outside_usd_month": 1670,
+      "col_single_no_rent_usd_month": 1320,
+      "apt_price_center_usd_m2": 5700,
+      "apt_price_outside_usd_m2": 3700,
+      "climate": {"sunshine_hours_yr": 3107, "summer_avg_high_c": 32.2, "winter_avg_low_c": -7.6, "rainy_days_yr": 80},
+      "tehran_travel": {"typical_hours": 23, "stops": 2, "note": "estimate; via Doha/Istanbul or similar hub — no direct Iran-US flights"},
+      "tech_scene_note": "The Denver-Boulder corridor is a major tech and aerospace hub, home to companies like Palantir, Ibotta, Gusto, and Zoom's Denver office, plus aerospace/defense employers such as Lockheed Martin and Ball Aerospace and a growing SaaS startup scene.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Denver",
+        "https://en.wikipedia.org/wiki/Denver",
+        "https://en.wikipedia.org/wiki/Template:Denver_weatherbox",
+        "https://www.bls.gov/oes/2023/may/oes_19740.htm",
+        "https://www.bls.gov/oes/2023/may/oes151252.htm",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "los_angeles",
+      "name": "Los Angeles",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 97000,
+        "mid": 154000,
+        "senior": 245000,
+        "confidence": "crowd",
+        "note": "levels.fyi metro page was inaccessible (JS-rendered SPA) and WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in Los Angeles, CA (n=538 postings, updated Jul 20 2026) as new_grad/mid/senior. BLS OEWS Los Angeles-Long Beach-Anaheim MSA 'Computer and mathematical' group mean wage was $60.21/hr (~$125,237/yr, May 2024) - lower than Indeed's average, consistent with it covering a broad occupational group/all employers rather than the software-engineer-specific title at tech-paying firms."
+      },
+      "rent_1br_center_usd_month": 2480,
+      "rent_1br_outside_usd_month": 2260,
+      "col_single_no_rent_usd_month": 1460,
+      "apt_price_center_usd_m2": 8200,
+      "apt_price_outside_usd_m2": 7100,
+      "climate": {"sunshine_hours_yr": 3254, "summer_avg_high_c": 28.9, "winter_avg_low_c": 9.0, "rainy_days_yr": 35},
+      "tehran_travel": {"typical_hours": 20, "stops": 1, "note": "Estimate; no direct Iran-US flights exist. Typical routing via Doha (Qatar Airways) or Istanbul (Turkish Airlines)."},
+      "tech_scene_note": "Diverse 'Silicon Beach' tech scene blending entertainment-tech (Netflix, Hulu), gaming, aerospace (SpaceX headquartered in Hawthorne), and a growing startup ecosystem centered in Santa Monica and Venice.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Los-Angeles",
+        "https://en.wikipedia.org/wiki/Los_Angeles",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php",
+        "https://www.indeed.com/career/software-engineer/salaries/Los-Angeles--CA",
+        "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_losangeles.htm"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "san_diego",
+      "name": "San Diego",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 87000,
+        "mid": 134000,
+        "senior": 205000,
+        "confidence": "crowd",
+        "note": "levels.fyi metro page was inaccessible (JS-rendered SPA) and WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in San Diego, CA (n=625 postings, updated Jul 26 2026) as new_grad/mid/senior. BLS OEWS San Diego-Chula Vista-Carlsbad MSA 'Computer and mathematical' group mean wage was $62.22/hr (~$129,418/yr, May 2024) - a reasonably close cross-check to Indeed's average."
+      },
+      "rent_1br_center_usd_month": 3300,
+      "rent_1br_outside_usd_month": 2610,
+      "col_single_no_rent_usd_month": 1370,
+      "apt_price_center_usd_m2": 8100,
+      "apt_price_outside_usd_m2": 6600,
+      "climate": {"sunshine_hours_yr": 3055, "summer_avg_high_c": 25.2, "winter_avg_low_c": 9.9, "rainy_days_yr": null},
+      "tehran_travel": {"typical_hours": 24, "stops": 2, "note": "Estimate; no direct Iran-US flights exist. Typical routing via Doha or Istanbul with an additional connection (e.g. through a European or Gulf hub)."},
+      "tech_scene_note": "Strong biotech and life-sciences cluster alongside a major wireless/telecom presence anchored by Qualcomm's headquarters, plus a significant defense-tech sector tied to the region's military installations.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/San-Diego",
+        "https://en.wikipedia.org/wiki/San_Diego",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php",
+        "https://www.indeed.com/career/software-engineer/salaries/San-Diego--CA",
+        "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_sandiego.htm"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "sacramento",
+      "name": "Sacramento",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 78000,
+        "mid": 126000,
+        "senior": 204000,
+        "confidence": "crowd",
+        "note": "levels.fyi metro page was inaccessible (JS-rendered SPA) and WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in Sacramento, CA (n=33 postings only - small sample, updated Jul 10 2026) as new_grad/mid/senior. BLS OEWS Sacramento-Roseville-Folsom MSA 'Computer and mathematical' group mean wage was $55.91/hr (~$116,293/yr, May 2024) - a reasonably close cross-check, though both figures should be treated as lower-confidence given Sacramento's smaller tech job market and thin sample."
+      },
+      "rent_1br_center_usd_month": 2090,
+      "rent_1br_outside_usd_month": 1540,
+      "col_single_no_rent_usd_month": 1370,
+      "apt_price_center_usd_m2": 5000,
+      "apt_price_outside_usd_m2": 3500,
+      "climate": {"sunshine_hours_yr": 3608, "summer_avg_high_c": 33.7, "winter_avg_low_c": 3.6, "rainy_days_yr": 58},
+      "tehran_travel": {"typical_hours": 25, "stops": 2, "note": "Estimate; no direct Iran-US flights exist. Typical routing via Doha or Istanbul with an additional connection (e.g. through a European or Gulf hub, plus a US domestic leg)."},
+      "tech_scene_note": "Smaller, government- and healthcare-tech-oriented market centered on state IT contracting and civic-tech, increasingly drawing Bay Area-priced-out tech workers and remote employees due to its relative affordability.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Sacramento",
+        "https://en.wikipedia.org/wiki/Sacramento,_California",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php",
+        "https://www.indeed.com/career/software-engineer/salaries/Sacramento--CA",
+        "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_sacramento.htm"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "portland",
+      "name": "Portland",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 102000,
+        "mid": 133000,
+        "senior": 210000,
+        "confidence": "crowd",
+        "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Portland-Vancouver-Hillsboro, OR-WA metro, Software Developers (SOC 15-1252) - median hourly wage $63.88 x 2080 hrs = $132,870 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level."
+      },
+      "rent_1br_center_usd_month": 2060,
+      "rent_1br_outside_usd_month": 1640,
+      "col_single_no_rent_usd_month": 1350,
+      "apt_price_center_usd_m2": 4000,
+      "apt_price_outside_usd_m2": 3300,
+      "climate": {"sunshine_hours_yr": 2341, "summer_avg_high_c": 27.9, "winter_avg_low_c": 2.3, "rainy_days_yr": 157},
+      "tehran_travel": {"typical_hours": 24, "stops": 2, "note": "estimate; via Doha/Istanbul or similar hub — no direct Iran-US flights"},
+      "tech_scene_note": "Portland's 'Silicon Forest' is anchored by Intel, Oregon's largest private employer with major chip-fabrication campuses in nearby Hillsboro, alongside Nike's large tech/digital organization, Puppet, and a strong open-source/DevOps startup community.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Portland",
+        "https://en.wikipedia.org/wiki/Portland,_Oregon",
+        "https://www.bls.gov/oes/2023/may/oes_38900.htm",
+        "https://www.bls.gov/oes/2023/may/oes151252.htm",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "phoenix",
+      "name": "Phoenix",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 96000,
+        "mid": 126000,
+        "senior": 199000,
+        "confidence": "crowd",
+        "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Phoenix-Mesa-Chandler, AZ metro, Software Developers (SOC 15-1252) - median hourly wage $60.53 x 2080 hrs = $125,902 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level."
+      },
+      "rent_1br_center_usd_month": 1780,
+      "rent_1br_outside_usd_month": 1420,
+      "col_single_no_rent_usd_month": 1300,
+      "apt_price_center_usd_m2": 4700,
+      "apt_price_outside_usd_m2": 3100,
+      "climate": {"sunshine_hours_yr": 3872, "summer_avg_high_c": 41.4, "winter_avg_low_c": 7.4, "rainy_days_yr": 33},
+      "tehran_travel": {"typical_hours": 24, "stops": 2, "note": "estimate; via Doha/Istanbul or similar hub — no direct Iran-US flights"},
+      "tech_scene_note": "Phoenix has a rapidly expanding tech and semiconductor sector anchored by Intel's Ocotillo campus and TSMC's multi-billion-dollar Arizona fabs, plus GoDaddy's headquarters, a large PayPal presence, and growing offices for Amazon and other employers drawing California relocators.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Phoenix",
+        "https://en.wikipedia.org/wiki/Phoenix,_Arizona",
+        "https://www.bls.gov/oes/2023/may/oes_38060.htm",
+        "https://www.bls.gov/oes/2023/may/oes151252.htm",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "salt_lake_city",
+      "name": "Salt Lake City",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 89000,
+        "mid": 116000,
+        "senior": 183000,
+        "confidence": "crowd",
+        "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Salt Lake City, UT metro, Software Developers (SOC 15-1252) - median hourly wage $55.65 x 2080 hrs = $115,752 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level."
+      },
+      "rent_1br_center_usd_month": 1550,
+      "rent_1br_outside_usd_month": 1360,
+      "col_single_no_rent_usd_month": 1120,
+      "apt_price_center_usd_m2": 4200,
+      "apt_price_outside_usd_m2": 2900,
+      "climate": {"sunshine_hours_yr": 3029, "summer_avg_high_c": 34.4, "winter_avg_low_c": -4.3, "rainy_days_yr": 92},
+      "tehran_travel": {"typical_hours": 25, "stops": 2, "note": "estimate; via Doha/Istanbul or similar hub — no direct Iran-US flights"},
+      "tech_scene_note": "Salt Lake City's 'Silicon Slopes' corridor hosts major tech employers and unicorns including Qualtrics, Adobe's large Lehi campus, Ancestry.com, Domo, Pluralsight, and Podium, plus a growing number of national tech-firm satellite offices.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Salt-Lake-City",
+        "https://en.wikipedia.org/wiki/Salt_Lake_City",
+        "https://www.bls.gov/oes/2023/may/oes_41620.htm",
+        "https://www.bls.gov/oes/2023/may/oes151252.htm",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "las_vegas",
+      "name": "Las Vegas",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 94000,
+        "mid": 122000,
+        "senior": 192000,
+        "confidence": "crowd",
+        "note": "BLS OEWS May 2023, Las Vegas-Henderson-Paradise NV MSA, Software Developers (15-1252): median hourly wage $58.57 (x2080 = ~$121,826/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+      },
+      "rent_1br_center_usd_month": 1590,
+      "rent_1br_outside_usd_month": 1390,
+      "col_single_no_rent_usd_month": 1150,
+      "apt_price_center_usd_m2": 4700,
+      "apt_price_outside_usd_m2": 2700,
+      "climate": {"sunshine_hours_yr": 3825, "summer_avg_high_c": 40.3, "winter_avg_low_c": 4.2, "rainy_days_yr": 26},
+      "tehran_travel": {"typical_hours": 25, "stops": 2, "note": "Estimate; no direct Iran-US flights. Typical routing via Istanbul or Doha plus a connection through a major US hub (e.g., LAX/JFK/IAH) before a domestic leg to Las Vegas."},
+      "tech_scene_note": "Las Vegas's tech economy centers on gaming and casino technology (IGT, Everi, Aristocrat Technologies) plus a growing logistics/e-commerce fulfillment tech presence, with a smaller pure-software engineering job market than major coastal hubs.",
+      "sources": [
+        "https://www.bls.gov/oes/2023/may/oes_29820.htm",
+        "https://www.numbeo.com/cost-of-living/in/Las-Vegas",
+        "https://en.wikipedia.org/wiki/Las_Vegas",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "pittsburgh",
+      "name": "Pittsburgh",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 82000,
+        "mid": 107000,
+        "senior": 169000,
+        "confidence": "crowd",
+        "note": "BLS OEWS May 2023, Pittsburgh PA MSA, Software Developers (15-1252): median hourly wage $51.50 (x2080 = $107,120/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+      },
+      "rent_1br_center_usd_month": 1570,
+      "rent_1br_outside_usd_month": 1130,
+      "col_single_no_rent_usd_month": 1200,
+      "apt_price_center_usd_m2": 3000,
+      "apt_price_outside_usd_m2": 1900,
+      "climate": {"sunshine_hours_yr": 2021, "summer_avg_high_c": 28.3, "winter_avg_low_c": -5.9, "rainy_days_yr": null},
+      "tehran_travel": {"typical_hours": 22, "stops": 2, "note": "Estimate; no direct Iran-US flights. Typical routing via Istanbul or Doha plus a connection through a major US East Coast hub (e.g., JFK/IAD) before a short domestic hop to Pittsburgh."},
+      "tech_scene_note": "Pittsburgh's tech scene is driven by Carnegie Mellon University spinoffs in robotics and AI, with Google, Duolingo, and autonomous-vehicle firms maintaining significant local engineering offices.",
+      "sources": [
+        "https://www.bls.gov/oes/2023/may/oes_38300.htm",
+        "https://www.numbeo.com/cost-of-living/in/Pittsburgh",
+        "https://en.wikipedia.org/wiki/Pittsburgh",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "minneapolis",
+      "name": "Minneapolis",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 98000,
+        "mid": 128000,
+        "senior": 202000,
+        "confidence": "crowd",
+        "note": "BLS OEWS May 2023, Minneapolis-St. Paul-Bloomington MN-WI MSA, Software Developers (15-1252): median hourly wage $61.40 (x2080 = $127,712/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+      },
+      "rent_1br_center_usd_month": 1800,
+      "rent_1br_outside_usd_month": 1280,
+      "col_single_no_rent_usd_month": 1290,
+      "apt_price_center_usd_m2": 3400,
+      "apt_price_outside_usd_m2": 2200,
+      "climate": {"sunshine_hours_yr": 2711, "summer_avg_high_c": 28.6, "winter_avg_low_c": -12.9, "rainy_days_yr": null},
+      "tehran_travel": {"typical_hours": 21, "stops": 2, "note": "Estimate; no direct Iran-US flights. Minneapolis-St. Paul is a Delta hub with nonstop service to Amsterdam, which can shorten the first leg, but a connection (e.g., Istanbul/Doha to Amsterdam, then Amsterdam to MSP) is typically still required, giving 2 stops overall."},
+      "tech_scene_note": "Minneapolis has a large enterprise-IT job market anchored by Fortune 500 headquarters including UnitedHealth Group, Target, and Best Buy, alongside a smaller but active standalone tech/startup scene.",
+      "sources": [
+        "https://www.bls.gov/oes/2023/may/oes_33460.htm",
+        "https://www.numbeo.com/cost-of-living/in/Minneapolis",
+        "https://en.wikipedia.org/wiki/Minneapolis",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "columbus",
+      "name": "Columbus",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 88000,
+        "mid": 114000,
+        "senior": 181000,
+        "confidence": "crowd",
+        "note": "BLS OEWS May 2023, Columbus OH MSA, Software Developers (15-1252): median hourly wage $54.97 (x2080 = $114,338/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+      },
+      "rent_1br_center_usd_month": 1570,
+      "rent_1br_outside_usd_month": 1100,
+      "col_single_no_rent_usd_month": 1240,
+      "apt_price_center_usd_m2": 3400,
+      "apt_price_outside_usd_m2": 1800,
+      "climate": {"sunshine_hours_yr": 2183, "summer_avg_high_c": 29.7, "winter_avg_low_c": -5.6, "rainy_days_yr": 141},
+      "tehran_travel": {"typical_hours": 23, "stops": 2, "note": "Estimate; no direct Iran-US flights. Typical routing via Istanbul or Doha plus a connection through a major US hub before reaching Columbus."},
+      "tech_scene_note": "Columbus's tech market is expanding rapidly around Intel's new multi-billion-dollar semiconductor fab under construction nearby in New Albany, layered on an existing base of fintech and insurance-tech employers such as Root Insurance and CoverMyMeds.",
+      "sources": [
+        "https://www.bls.gov/oes/2023/may/oes_18140.htm",
+        "https://www.numbeo.com/cost-of-living/in/Columbus",
+        "https://en.wikipedia.org/wiki/Columbus,_Ohio",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "detroit",
+      "name": "Detroit",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 83000,
+        "mid": 107000,
+        "senior": 170000,
+        "confidence": "crowd",
+        "note": "BLS OEWS May 2023, Detroit-Warren-Dearborn MI MSA, Software Developers (15-1252): median hourly wage $51.68 (x2080 = $107,494/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+      },
+      "rent_1br_center_usd_month": 1520,
+      "rent_1br_outside_usd_month": 940,
+      "col_single_no_rent_usd_month": 1180,
+      "apt_price_center_usd_m2": 4000,
+      "apt_price_outside_usd_m2": 1300,
+      "climate": {"sunshine_hours_yr": 2436, "summer_avg_high_c": 28.7, "winter_avg_low_c": -7.1, "rainy_days_yr": null},
+      "tehran_travel": {"typical_hours": 21, "stops": 2, "note": "Estimate; no direct Iran-US flights. Detroit is a Delta hub with nonstop service to Amsterdam, which can shorten the first leg, but a connection (e.g., Istanbul/Doha to Amsterdam, then Amsterdam to Detroit) is typically still required, giving 2 stops overall."},
+      "tech_scene_note": "Detroit's tech employment concentrates in automotive software and mobility engineering (GM, Ford, Stellantis) alongside Rocket Companies' large fintech/mortgage-tech workforce headquartered downtown.",
+      "sources": [
+        "https://www.bls.gov/oes/2023/may/oes_19820.htm",
+        "https://www.numbeo.com/cost-of-living/in/Detroit",
+        "https://en.wikipedia.org/wiki/Detroit",
+        "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
+      ],
+      "as_of": "2026-08"
+    }
+  ],
+  "as_of": "2026-08"
+}

@@ -1,0 +1,317 @@
+{
+  "patches": {
+    "toronto": {
+      "salary_usd_year": {
+        "new_grad": 66000,
+        "mid": 86000,
+        "senior": 115000,
+        "confidence": "crowd",
+        "note": "talent.com CA (10,000 samples): low $92,500 / median $120,668 / high $161,025 CAD -> /1.4044. Cross-check PayScale Toronto median C$92,450 (433 profiles, base ~ total comp)."
+      },
+      "sources": [
+        "https://ca.talent.com/salary?job=software+engineer&location=toronto",
+        "https://www.payscale.com/research/CA/Job=Software_Engineer/Salary/3a1657a7/Toronto-ON"
+      ]
+    },
+    "vancouver": {
+      "salary_usd_year": {
+        "new_grad": 55000,
+        "mid": 82000,
+        "senior": 116000,
+        "confidence": "crowd",
+        "note": "talent.com CA (10,000 samples): low $77,123 / median $115,000 / high $162,640 CAD -> /1.4044. Cross-check PayScale Vancouver median C$90,383 (182 profiles)."
+      },
+      "sources": [
+        "https://ca.talent.com/salary?job=software+engineer&location=vancouver",
+        "https://www.payscale.com/research/CA/Job=Software_Engineer/Salary/298e8c90/Vancouver-BC"
+      ]
+    },
+    "montreal": {
+      "salary_usd_year": {
+        "new_grad": 64000,
+        "mid": 87000,
+        "senior": 106000,
+        "confidence": "crowd",
+        "note": "talent.com CA (10,000 samples): low $90,000 / median $122,500 / high $148,328 CAD -> /1.4044. DEVIATION FLAG: this median exceeds Toronto/Ottawa ($120,668) and Vancouver ($115,000), contradicting the expected Toronto/Vancouver > Montreal pattern. PayScale Montreal median is only C$81,383 (117 profiles) and would rank Montreal below Toronto/Vancouver/Ottawa/Calgary as expected -- the two sources disagree materially here; treat Montreal's relative ranking with caution."
+      },
+      "sources": [
+        "https://ca.talent.com/salary?job=software+engineer&location=montreal",
+        "https://www.payscale.com/research/CA/Job=Software_Engineer/Salary/c5bd9e19/Montr%C3%A9al-QC"
+      ]
+    },
+    "ottawa": {
+      "salary_usd_year": {
+        "new_grad": 66000,
+        "mid": 86000,
+        "senior": 115000,
+        "confidence": "crowd",
+        "note": "talent.com CA returned figures identical to Toronto (low $92,500 / median $120,668 / high $161,025 CAD -> /1.4044), a possible granularity limit. However PayScale Ottawa median (C$92,077, 74 profiles) independently sits within 0.4% of PayScale Toronto (C$92,450), so Ottawa~=Toronto looks like a genuine market feature, not just a data artifact."
+      },
+      "sources": [
+        "https://ca.talent.com/salary?job=software+engineer&location=ottawa",
+        "https://www.payscale.com/research/CA/Job=Software_Engineer/Salary/6fce299c/Ottawa-ON"
+      ]
+    },
+    "calgary": {
+      "salary_usd_year": {
+        "new_grad": 57000,
+        "mid": 74000,
+        "senior": 87000,
+        "confidence": "crowd",
+        "note": "talent.com CA (10,000 samples): low $80,000 / median $104,418 / high $121,963 CAD -> /1.4044. Cross-check PayScale Calgary median C$89,678 (66 profiles)."
+      },
+      "sources": [
+        "https://ca.talent.com/salary?job=software+engineer&location=calgary",
+        "https://www.payscale.com/research/CA/Job=Software_Engineer/Salary/00eb7e0e/Calgary-AB"
+      ]
+    },
+    "halifax": {
+      "salary_usd_year": {
+        "new_grad": 51000,
+        "mid": 61000,
+        "senior": 86000,
+        "confidence": "crowd",
+        "note": "talent.com CA (10,000 samples): low $72,150 / median $85,000 / high $121,085 CAD -> /1.4044. Cross-check PayScale Halifax median C$71,209 (34 profiles). Lowest of the 6 Canadian cities on both sources, consistent with sanity expectation (Halifax < Montreal/Ottawa/Calgary)."
+      },
+      "sources": [
+        "https://ca.talent.com/salary?job=software+engineer&location=halifax",
+        "https://www.payscale.com/research/CA/Job=Software_Engineer/Salary/be55cc20/Halifax-NS"
+      ]
+    },
+    "london": {
+      "salary_usd_year": {
+        "new_grad": 46000,
+        "mid": 69000,
+        "senior": 114000,
+        "confidence": "crowd",
+        "note": "PRIMARY: PayScale London (507 profiles): 10%=GBP34k / median=GBP51,674 / 90%=GBP85k -> /0.7446. talent.com UK's London page returned figures identical to its Manchester page (GBP40,200 median, 10,000 samples) -- a granularity limit -- so was used only as a secondary reference, not primary. Base ~ total comp assumed per task guidance."
+      },
+      "sources": [
+        "https://www.payscale.com/research/UK/Job=Software_Engineer/Salary/b428ed1a/London",
+        "https://uk.talent.com/salary?job=software+engineer&location=london"
+      ]
+    },
+    "manchester": {
+      "salary_usd_year": {
+        "new_grad": 38000,
+        "mid": 54000,
+        "senior": 71000,
+        "confidence": "crowd",
+        "note": "PRIMARY: PayScale Manchester (89 profiles): 10%=GBP28k / median=GBP40,486 / 90%=GBP53k -> /0.7446. talent.com UK's Manchester page duplicated its London figures exactly (GBP40,200 median), so was not used as primary."
+      },
+      "sources": [
+        "https://www.payscale.com/research/UK/Job=Software_Engineer/Salary/0b4d348e/Manchester",
+        "https://uk.talent.com/salary?job=software+engineer&location=manchester"
+      ]
+    },
+    "edinburgh": {
+      "salary_usd_year": {
+        "new_grad": 38000,
+        "mid": 50000,
+        "senior": 83000,
+        "confidence": "crowd",
+        "note": "PRIMARY: PayScale Edinburgh (75 profiles): 10%=GBP28k / median=GBP37,545 / 90%=GBP62k -> /0.7446. talent.com UK cites a close median of GBP40,000 (10,000 samples) as secondary cross-check. London (GBP51,674 median) > Manchester (GBP40,486) ~= Edinburgh (GBP37,545) -- matches the expected sanity pattern."
+      },
+      "sources": [
+        "https://www.payscale.com/research/UK/Job=Software_Engineer/Salary/34967497/Edinburgh",
+        "https://uk.talent.com/salary?job=software+engineer&location=edinburgh"
+      ]
+    },
+    "dublin": {
+      "salary_usd_year": {
+        "new_grad": 43000,
+        "mid": 61000,
+        "senior": 96000,
+        "confidence": "crowd",
+        "note": "PRIMARY: PayScale Dublin (104 profiles): 10%=EUR37k / median=EUR53,272 / 90%=EUR83k -> /0.8686. talent.com IE returned Dublin and Cork with identical figures (EUR59,000 median, 10,000 samples) -- a granularity limit -- cited only as secondary reference."
+      },
+      "sources": [
+        "https://www.payscale.com/research/IE/Job=Software_Engineer/Salary/1f999540/Dublin",
+        "https://ie.talent.com/salary?job=software+engineer&location=dublin"
+      ]
+    },
+    "cork": {
+      "salary_usd_year": {
+        "new_grad": 44000,
+        "mid": 53000,
+        "senior": 71000,
+        "confidence": "crowd",
+        "note": "PRIMARY: PayScale Cork (37 profiles): 10%=EUR38k / median=EUR46,140 / 90%=EUR62k -> /0.8686. talent.com IE's Cork page duplicated its Dublin figures exactly (EUR59,000 median), so was not used as primary. Dublin (EUR53,272 median) > Cork (EUR46,140) holds clearly on PayScale, matching sanity expectation."
+      },
+      "sources": [
+        "https://www.payscale.com/research/IE/Job=Software_Engineer/Salary/105000cb/Cork",
+        "https://ie.talent.com/salary?job=software+engineer&location=cork"
+      ]
+    },
+    "stockholm": {
+      "salary_usd_year": {
+        "new_grad": 40000,
+        "mid": 55000,
+        "senior": 59000,
+        "confidence": "crowd",
+        "note": "PRIMARY: PayScale Sweden, national -- no Stockholm-specific breakdown exists on either source: Entry-Level=SEK387,088 / Mid-Career=SEK528,123 / Experienced=SEK560,504 -> /9.5589. talent.com SE gave Stockholm and Gothenburg identical figures (median SEK1,050,000 ~ $109,850) which look anomalously high -- more than double PayScale's figure and would make Stockholm the single highest-paid Group-1 city, exceeding London, which conflicts with general knowledge that London tops Europe -- flagged as a likely outlier (only 128 samples) and NOT used. SANITY FLAG: at these rates Helsinki's mid ($60k) exceeds Stockholm's ($55k) in USD despite Sweden's local-currency figure being nominally larger -- this is a currency-conversion effect (SEK has weakened a lot vs EUR/USD: 9.56 SEK/USD vs 0.869 EUR/USD), not a data error. Copenhagen and Oslo do come out above Stockholm as expected."
+      },
+      "sources": [
+        "https://www.payscale.com/research/SE/Job=Software_Engineer/Salary",
+        "https://se.talent.com/salary?job=software+engineer&location=stockholm"
+      ]
+    },
+    "gothenburg": {
+      "salary_usd_year": {
+        "new_grad": 40000,
+        "mid": 55000,
+        "senior": 59000,
+        "confidence": "crowd",
+        "note": "No Gothenburg-specific breakdown found on either source (PayScale Sweden has no per-city data; talent.com SE's Gothenburg page duplicated Stockholm's figures exactly). PayScale Sweden national figures used as proxy for both cities: Entry-Level=SEK387,088 / Mid-Career=SEK528,123 / Experienced=SEK560,504 -> /9.5589. Treat as a national-level estimate, not Gothenburg-specific."
+      },
+      "sources": [
+        "https://www.payscale.com/research/SE/Job=Software_Engineer/Salary",
+        "https://se.talent.com/salary?job=software+engineer&location=gothenburg"
+      ]
+    },
+    "copenhagen": {
+      "salary_usd_year": {
+        "new_grad": 70000,
+        "mid": 81000,
+        "senior": 109000,
+        "confidence": "crowd",
+        "note": "talent.com has no salary tool for Denmark (nav lacks a 'Search salary' link). PRIMARY: PayScale Denmark, national (98 profiles overall): Entry-Level=DKK455,891 / Mid-Career=DKK527,564 / Late-Career=DKK709,859 -> /6.4927 (Late-Career used for senior; the nominal 'Experienced' 10-19y bucket had only 6 profiles and was non-monotonic/noisy, so was discarded as unreliable). Cross-check: Numbeo Copenhagen avg monthly net salary DKK30,357 (~DKK364k/yr net, all occupations, not tech-specific) is a plausible after-tax floor given Denmark's high marginal tax rates relative to our ~DKK527k gross mid estimate."
+      },
+      "sources": [
+        "https://www.payscale.com/research/DK/Job=Software_Engineer/Salary",
+        "https://www.numbeo.com/cost-of-living/in/Copenhagen"
+      ]
+    },
+    "aarhus": {
+      "salary_usd_year": {
+        "new_grad": 70000,
+        "mid": 81000,
+        "senior": 109000,
+        "confidence": "crowd",
+        "note": "No Aarhus-specific salary data found (talent.com has no Denmark salary tool; PayScale Denmark has no city breakdown). PayScale Denmark national figures used as proxy (identical to Copenhagen): Entry-Level=DKK455,891 / Mid-Career=DKK527,564 / Late-Career=DKK709,859 -> /6.4927. Numbeo's Aarhus cost-of-living page could not be retrieved this session (repeated fetch failures) so this city is effectively single-sourced -- treat with extra caution and expect Aarhus to run somewhat below Copenhagen in reality given it is Denmark's second city."
+      },
+      "sources": [
+        "https://www.payscale.com/research/DK/Job=Software_Engineer/Salary"
+      ]
+    },
+    "oslo": {
+      "salary_usd_year": {
+        "new_grad": 53000,
+        "mid": 70000,
+        "senior": 76000,
+        "confidence": "crowd",
+        "note": "talent.com has no salary tool for Norway (nav lacks a 'Search salary' link). PRIMARY: PayScale Norway, national (73 profiles overall): Entry-Level=NOK505,987 / Mid-Career=NOK668,230 / Experienced=NOK724,953 -> /9.5316. Cross-check: Numbeo Oslo avg monthly net salary NOK40,862 (~NOK490k/yr net, all occupations)."
+      },
+      "sources": [
+        "https://www.payscale.com/research/NO/Job=Software_Engineer/Salary",
+        "https://www.numbeo.com/cost-of-living/in/Oslo"
+      ]
+    },
+    "bergen": {
+      "salary_usd_year": {
+        "new_grad": 53000,
+        "mid": 70000,
+        "senior": 76000,
+        "confidence": "crowd",
+        "note": "No Bergen-specific salary data found (talent.com has no Norway salary tool; PayScale Norway has no city breakdown). PayScale Norway national figures used as proxy (identical to Oslo): Entry-Level=NOK505,987 / Mid-Career=NOK668,230 / Experienced=NOK724,953 -> /9.5316. Numbeo Bergen avg monthly net salary (NOK42,509) is actually slightly higher than Oslo's (NOK40,862) -- likely an artifact of a small, energy-sector-skewed all-occupation sample, not tech-specific -- not used to differentiate Bergen from Oslo."
+      },
+      "sources": [
+        "https://www.payscale.com/research/NO/Job=Software_Engineer/Salary",
+        "https://www.numbeo.com/cost-of-living/in/Bergen"
+      ]
+    },
+    "helsinki": {
+      "salary_usd_year": {
+        "new_grad": 43000,
+        "mid": 60000,
+        "senior": 72000,
+        "confidence": "crowd",
+        "note": "talent.com has no salary tool for Finland (nav lacks a 'Search salary' link). PRIMARY: PayScale Finland, national (113 profiles overall; Nokia is a notable named employer in the dataset): Entry-Level=EUR37,437 / Mid-Career=EUR52,224 / Experienced=EUR62,470 -> /0.8686. Cross-check: Numbeo Helsinki avg monthly net salary EUR2,709 (~EUR32.5k/yr net, all occupations). See Stockholm note for a sanity-check flag: Helsinki's mid ($60k) exceeds Stockholm's ($55k) in USD due to SEK weakness vs EUR at current rates, deviating from the 'Stockholm > Helsinki' expectation."
+      },
+      "sources": [
+        "https://www.payscale.com/research/FI/Job=Software_Engineer/Salary",
+        "https://www.numbeo.com/cost-of-living/in/Helsinki"
+      ]
+    },
+    "tampere": {
+      "salary_usd_year": {
+        "new_grad": 43000,
+        "mid": 60000,
+        "senior": 72000,
+        "confidence": "crowd",
+        "note": "No Tampere-specific salary data found (talent.com has no Finland salary tool; PayScale Finland has no city breakdown). PayScale Finland national figures used as proxy (identical to Helsinki): Entry-Level=EUR37,437 / Mid-Career=EUR52,224 / Experienced=EUR62,470 -> /0.8686. Numbeo Tampere avg monthly net salary (EUR2,631) is slightly below Helsinki's (EUR2,709), directionally consistent with Helsinki > Tampere even though the grounded software-engineer bands had to be shared between the two cities."
+      },
+      "sources": [
+        "https://www.payscale.com/research/FI/Job=Software_Engineer/Salary",
+        "https://www.numbeo.com/cost-of-living/in/Tampere"
+      ]
+    },
+    "sydney": {
+      "salary_usd_year": {
+        "mid": 88000,
+        "confidence": "crowd",
+        "note": "Mid = average of talent.com AU median (AUD155,000, 10,000 samples) and PayScale Sydney median (AUD95,629, 280 profiles) = AUD125,315 -> /1.4262. The two sources diverge substantially (talent.com ~62% higher, likely reflecting large-tech-employer job postings vs PayScale's self-reported survey mix); averaged as a considered midpoint given both are legitimate city-specific samples."
+      },
+      "sources": [
+        "https://au.talent.com/salary?job=software+engineer&location=sydney",
+        "https://www.payscale.com/research/AU/Job=Software_Engineer/Salary/1bf78243/Sydney"
+      ]
+    },
+    "melbourne": {
+      "salary_usd_year": {
+        "mid": 76000,
+        "confidence": "crowd",
+        "note": "Mid = average of talent.com AU median (AUD122,087) and PayScale Melbourne median (AUD93,536, 309 profiles) = AUD107,812 -> /1.4262. NOTE: talent.com's Melbourne low/high band (AUD120,000-127,854) is unusually narrow for a 10,000-sample query, suggesting a possible data-quality quirk on talent.com for this city; treat with some caution."
+      },
+      "sources": [
+        "https://au.talent.com/salary?job=software+engineer&location=melbourne",
+        "https://www.payscale.com/research/AU/Job=Software_Engineer/Salary/64341f3a/Melbourne"
+      ]
+    },
+    "brisbane": {
+      "salary_usd_year": {
+        "mid": 81000,
+        "confidence": "crowd",
+        "note": "Mid = average of talent.com AU median (AUD141,640) and PayScale Brisbane median (AUD89,811, 165 profiles) = AUD115,726 -> /1.4262. NOTE: the two sources disagree on Brisbane vs Melbourne ordering (talent.com: Brisbane>Melbourne; PayScale: Melbourne>Brisbane); after averaging, Brisbane edges out Melbourne ($81k vs $76k), but this relative ranking is uncertain given the source disagreement."
+      },
+      "sources": [
+        "https://au.talent.com/salary?job=software+engineer&location=brisbane",
+        "https://www.payscale.com/research/AU/Job=Software_Engineer/Salary/3572a764/Brisbane"
+      ]
+    },
+    "perth": {
+      "salary_usd_year": {
+        "mid": 72000,
+        "confidence": "crowd",
+        "note": "Mid = average of talent.com AU median (AUD115,000, 8,642 samples) and PayScale Perth median (AUD89,661, 82 profiles) = AUD102,331 -> /1.4262. Lowest of the 4 AU cities on both sources."
+      },
+      "sources": [
+        "https://au.talent.com/salary?job=software+engineer&location=perth",
+        "https://www.payscale.com/research/AU/Job=Software_Engineer/Salary/5fbb67be/Perth"
+      ]
+    },
+    "dubai": {
+      "salary_usd_year": {
+        "mid": 24000,
+        "confidence": "crowd",
+        "note": "Mid = average of talent.com AE median (AED90,000, 8,009 samples) and PayScale Dubai median (AED87,498, 28 profiles) = AED88,749 -> /3.6725. The two sources align closely (within 3%). This 'software engineer' aggregate median sits well below commonly-cited premium expat-package figures -- likely reflects the full breadth of Dubai job postings (including outsourcing/staffing-tier roles), not just top-end Western-expat packages."
+      },
+      "sources": [
+        "https://ae.talent.com/salary?job=software+engineer&location=dubai",
+        "https://www.payscale.com/research/AE/Job=Software_Engineer/Salary/aa493546/Dubai"
+      ]
+    },
+    "abu-dhabi": {
+      "salary_usd_year": {
+        "mid": 25000,
+        "confidence": "crowd",
+        "note": "talent.com AE Abu Dhabi median: AED90,000 (2,662 samples) -- identical to its Dubai figure -> /3.6725, consistent with the Dubai ~= Abu Dhabi sanity expectation. PayScale has no Abu Dhabi-specific city page; its UAE country-level median (AED112,403, 217 profiles) is cited as secondary context only and was not blended in (national, not city-level)."
+      },
+      "sources": [
+        "https://ae.talent.com/salary?job=software+engineer&location=abu+dhabi",
+        "https://www.payscale.com/research/AE/Job=Software_Engineer/Salary"
+      ]
+    }
+  },
+  "as_of": "2026-08"
+}

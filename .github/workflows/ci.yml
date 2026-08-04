@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate-data:
+    name: Validate data + provenance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: Install pipeline dependencies
+        run: python -m pip install -r scripts/requirements.txt
+
+      # Runs against the COMMITTED data. It does not hit the network, so a
+      # third-party outage can never turn the build red.
+      - name: Validate
+        run: python scripts/validate_data.py
+
+  build-site:
+    name: Type-check + build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - run: npm ci
+        working-directory: site
+
+      - run: npm run typecheck
+        working-directory: site
+
+      - run: npm run build
+        working-directory: site
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-dist
+          path: site/dist
+          retention-days: 7
+
+  pipeline-smoke:
+    name: Pipeline smoke test (network)
+    runs-on: ubuntu-latest
+    # Third-party endpoints go down; that is their problem, not a broken repo.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r scripts/requirements.txt
+      - name: Run two cheap sources end to end
+        run: python scripts/pipeline.py world_bank eurostat_ict

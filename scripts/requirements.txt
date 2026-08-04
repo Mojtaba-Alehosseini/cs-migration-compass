@@ -1,0 +1,13 @@
+# CS Migration Compass — data pipeline dependencies
+# Pinned loosely on purpose: these are all stable, widely-packaged libraries and
+# the pipeline is re-runnable from scratch with `make pipeline`.
+
+requests>=2.31          # all HTTP (browser UA set in scripts/_common.py)
+pandas>=2.0             # CSV/SDMX frame handling (FHFA, UK HPI, Indeed, RSF, SO survey)
+openpyxl>=3.1           # xlsx readers (UN DESA, WHR, MIPEX, IMF WEO)
+beautifulsoup4>=4.12    # HTML parsing (Wikipedia English speakers, Numbeo)
+lxml>=5.0               # fast HTML/XML backend for bs4 + pandas.read_html
+pdfplumber>=0.11        # PDF text extraction (EF EPI, WIPO GII)
+truststore>=0.9         # use the OS certificate store — housepriceindex.ca (Teranet)
+                        # serves an intermediate that certifi does not carry
+

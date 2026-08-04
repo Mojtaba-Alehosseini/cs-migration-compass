@@ -1,0 +1,651 @@
+{
+  "records": [
+    {
+      "id": "toronto",
+      "name": "Toronto",
+      "country": "CA",
+      "salary_usd_year": {
+        "new_grad": 70000,
+        "mid": 100000,
+        "senior": 140000,
+        "confidence": "crowd",
+        "note": "gross annual total comp incl. bonus/RSU; CAD ~98k/140k/197k at 1.4044; general tech-market knowledge (levels.fyi/Blind live lookup unavailable this session), cross-checked against Numbeo avg net salary C$4,831/mo which reflects all occupations, not just tech"
+      },
+      "rent_1br_center_usd_month": 1610,
+      "rent_1br_outside_usd_month": 1450,
+      "col_single_no_rent_usd_month": 1080,
+      "apt_price_center_usd_m2": 8800,
+      "apt_price_outside_usd_m2": 6900,
+      "climate": {
+        "sunshine_hours_yr": 2066,
+        "summer_avg_high_c": 26.6,
+        "winter_avg_low_c": -6.7,
+        "rainy_days_yr": 145
+      },
+      "tehran_travel": {
+        "typical_hours": 15,
+        "stops": 1,
+        "note": "estimate; no direct IKA-YYZ service, typical routing via IST (Turkish) or FRA/MUC (Lufthansa)"
+      },
+      "tech_scene_note": "Canada's largest tech hub -- big bank fintech, Shopify, and a deep AI/ML research base anchored by the Vector Institute.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Toronto",
+        "https://en.wikipedia.org/wiki/Toronto"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "vancouver",
+      "name": "Vancouver",
+      "country": "CA",
+      "salary_usd_year": {
+        "new_grad": 68000,
+        "mid": 95000,
+        "senior": 130000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; CAD ~95k/133k/183k at 1.4044; general tech-market knowledge, Numbeo avg net salary C$4,710/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1850,
+      "rent_1br_outside_usd_month": 1570,
+      "col_single_no_rent_usd_month": 1090,
+      "apt_price_center_usd_m2": 9000,
+      "apt_price_outside_usd_m2": 7100,
+      "climate": {
+        "sunshine_hours_yr": 1932,
+        "summer_avg_high_c": 22.0,
+        "winter_avg_low_c": 1.7,
+        "rainy_days_yr": 166
+      },
+      "tehran_travel": {
+        "typical_hours": 19,
+        "stops": 2,
+        "note": "estimate; farthest Canadian city from Tehran, typically 2 connections e.g. via FRA+IST or via Asia/Gulf hub"
+      },
+      "tech_scene_note": "Gaming and cloud engineering hub (EA, Microsoft, Amazon offices) tightly linked to the Seattle tech corridor.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Vancouver",
+        "https://en.wikipedia.org/wiki/Vancouver"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "montreal",
+      "name": "Montreal",
+      "country": "CA",
+      "salary_usd_year": {
+        "new_grad": 62000,
+        "mid": 88000,
+        "senior": 120000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; CAD ~87k/124k/169k at 1.4044; general tech-market knowledge, Numbeo avg net salary C$4,140/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1270,
+      "rent_1br_outside_usd_month": 990,
+      "col_single_no_rent_usd_month": 940,
+      "apt_price_center_usd_m2": 5200,
+      "apt_price_outside_usd_m2": 3800,
+      "climate": {
+        "sunshine_hours_yr": 2051,
+        "summer_avg_high_c": 26.7,
+        "winter_avg_low_c": -13.5,
+        "rainy_days_yr": 163
+      },
+      "tehran_travel": {
+        "typical_hours": 15,
+        "stops": 1,
+        "note": "estimate; typical routing via IST or CDG/FRA"
+      },
+      "tech_scene_note": "Global AI research hub anchored by Mila, plus a major gaming industry cluster (Ubisoft, EA) -- lower cost of living than Toronto.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Montreal",
+        "https://en.wikipedia.org/wiki/Montreal"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "ottawa",
+      "name": "Ottawa",
+      "country": "CA",
+      "salary_usd_year": {
+        "new_grad": 65000,
+        "mid": 92000,
+        "senior": 125000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; CAD ~91k/129k/176k at 1.4044; general tech-market knowledge, Numbeo avg net salary C$5,109/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1500,
+      "rent_1br_outside_usd_month": 1250,
+      "col_single_no_rent_usd_month": 1050,
+      "apt_price_center_usd_m2": 4400,
+      "apt_price_outside_usd_m2": 4700,
+      "climate": {
+        "sunshine_hours_yr": 2080,
+        "summer_avg_high_c": 26.7,
+        "winter_avg_low_c": -14.3,
+        "rainy_days_yr": 154
+      },
+      "tehran_travel": {
+        "typical_hours": 17,
+        "stops": 2,
+        "note": "estimate; small airport typically routes via Toronto/Montreal then IST/FRA"
+      },
+      "tech_scene_note": "Government-tech and telecom heritage (former Nortel hub) plus Shopify's headquarters; steadier, less frenetic market than Toronto.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Ottawa",
+        "https://en.wikipedia.org/wiki/Ottawa"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "calgary",
+      "name": "Calgary",
+      "country": "CA",
+      "salary_usd_year": {
+        "new_grad": 65000,
+        "mid": 92000,
+        "senior": 125000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; CAD ~91k/129k/176k at 1.4044; general tech-market knowledge, Numbeo avg net salary C$4,215/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1340,
+      "rent_1br_outside_usd_month": 1090,
+      "col_single_no_rent_usd_month": 1080,
+      "apt_price_center_usd_m2": 3800,
+      "apt_price_outside_usd_m2": 3500,
+      "climate": {
+        "sunshine_hours_yr": 2396,
+        "summer_avg_high_c": 23.5,
+        "winter_avg_low_c": -13.5,
+        "rainy_days_yr": 114
+      },
+      "tehran_travel": {
+        "typical_hours": 18,
+        "stops": 2,
+        "note": "estimate; typically 2 connections e.g. via Toronto/FRA then IST"
+      },
+      "tech_scene_note": "Energy sector is diversifying into fintech and energy-tech; smaller but growing developer market with the sunniest climate of the group.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Calgary",
+        "https://en.wikipedia.org/wiki/Calgary"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "halifax",
+      "name": "Halifax",
+      "country": "CA",
+      "salary_usd_year": {
+        "new_grad": 58000,
+        "mid": 82000,
+        "senior": 110000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; CAD ~81k/115k/154k at 1.4044; general tech-market knowledge, Numbeo avg net salary C$3,808/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1450,
+      "rent_1br_outside_usd_month": 1280,
+      "col_single_no_rent_usd_month": 1020,
+      "apt_price_center_usd_m2": 3200,
+      "apt_price_outside_usd_m2": 2700,
+      "climate": {
+        "sunshine_hours_yr": 1963,
+        "summer_avg_high_c": 23.1,
+        "winter_avg_low_c": -8.2,
+        "rainy_days_yr": 162
+      },
+      "tehran_travel": {
+        "typical_hours": 18,
+        "stops": 2,
+        "note": "estimate; limited direct international links, typically via Toronto/Montreal or London then onward"
+      },
+      "tech_scene_note": "Small but growing East Coast scene centred on ocean/marine tech and a handful of well-funded startups; lowest cost of the Canadian cities here.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Halifax",
+        "https://en.wikipedia.org/wiki/Halifax,_Nova_Scotia"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "london",
+      "name": "London",
+      "country": "UK",
+      "salary_usd_year": {
+        "new_grad": 58000,
+        "mid": 95000,
+        "senior": 150000,
+        "confidence": "crowd",
+        "note": "gross annual total comp incl. bonus/equity; GBP ~£43k/£71k/£112k at 0.7446; general tech-market knowledge (levels.fyi live lookup unavailable this session), Numbeo avg net salary £3,293/mo (all occupations) used as sanity floor only; UK total comp is typically close to base+modest bonus outside a handful of US-HQ offices"
+      },
+      "rent_1br_center_usd_month": 3070,
+      "rent_1br_outside_usd_month": 2370,
+      "col_single_no_rent_usd_month": 1480,
+      "apt_price_center_usd_m2": 20200,
+      "apt_price_outside_usd_m2": 8500,
+      "climate": {
+        "sunshine_hours_yr": 1675,
+        "summer_avg_high_c": 23.9,
+        "winter_avg_low_c": 2.7,
+        "rainy_days_yr": 112
+      },
+      "tehran_travel": {
+        "typical_hours": 8,
+        "stops": 1,
+        "note": "estimate; IranAir/Mahan Air LHR-IKA history has been intermittent/suspended over the years due to sanctions and aircraft restrictions -- current status unverified this session, assume 1 stop via IST or DOH as the reliable default"
+      },
+      "tech_scene_note": "Europe's largest tech and fintech hub by sheer scale -- deepest job market in this list, but also the most competitive and priciest.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/London",
+        "https://en.wikipedia.org/wiki/London"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "manchester",
+      "name": "Manchester",
+      "country": "UK",
+      "salary_usd_year": {
+        "new_grad": 48000,
+        "mid": 72000,
+        "senior": 100000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; GBP ~£36k/£54k/£74k at 0.7446; general tech-market knowledge, Numbeo avg net salary £2,353/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1870,
+      "rent_1br_outside_usd_month": 1260,
+      "col_single_no_rent_usd_month": 1120,
+      "apt_price_center_usd_m2": 5000,
+      "apt_price_outside_usd_m2": 4600,
+      "climate": {
+        "sunshine_hours_yr": 1862,
+        "summer_avg_high_c": 20.6,
+        "winter_avg_low_c": 1.7,
+        "rainy_days_yr": 140
+      },
+      "tehran_travel": {
+        "typical_hours": 9,
+        "stops": 1,
+        "note": "estimate; via IST or DOH, or connecting through LHR"
+      },
+      "tech_scene_note": "UK's second tech hub, anchored by MediaCityUK and a growing fintech/digital-media scene at roughly half London's rents.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Manchester",
+        "https://en.wikipedia.org/wiki/Manchester"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "edinburgh",
+      "name": "Edinburgh",
+      "country": "UK",
+      "salary_usd_year": {
+        "new_grad": 50000,
+        "mid": 75000,
+        "senior": 105000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; GBP ~£37k/£56k/£78k at 0.7446; general tech-market knowledge, Numbeo avg net salary £2,644/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1630,
+      "rent_1br_outside_usd_month": 1220,
+      "col_single_no_rent_usd_month": 1230,
+      "apt_price_center_usd_m2": 6700,
+      "apt_price_outside_usd_m2": 4800,
+      "climate": {
+        "sunshine_hours_yr": 1400,
+        "summer_avg_high_c": 19.0,
+        "winter_avg_low_c": 1.1,
+        "rainy_days_yr": 205
+      },
+      "tehran_travel": {
+        "typical_hours": 10,
+        "stops": 1,
+        "note": "estimate; typically connects via LHR or a European hub (IST/AMS) to IKA"
+      },
+      "tech_scene_note": "Fintech and data-science hub with a strong university talent pipeline (Skyscanner's home city); notably wet climate.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Edinburgh",
+        "https://en.wikipedia.org/wiki/Edinburgh"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "dublin",
+      "name": "Dublin",
+      "country": "IE",
+      "salary_usd_year": {
+        "new_grad": 55000,
+        "mid": 85000,
+        "senior": 125000,
+        "confidence": "crowd",
+        "note": "gross annual total comp incl. bonus/RSU typical of Dublin's big-tech EU HQs (Google, Meta, Stripe); general tech-market knowledge (levels.fyi live lookup unavailable this session), Numbeo avg net salary EUR3,672/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 2520,
+      "rent_1br_outside_usd_month": 2170,
+      "col_single_no_rent_usd_month": 1240,
+      "apt_price_center_usd_m2": 8400,
+      "apt_price_outside_usd_m2": 5600,
+      "climate": {
+        "sunshine_hours_yr": 1485,
+        "summer_avg_high_c": 19.5,
+        "winter_avg_low_c": 2.3,
+        "rainy_days_yr": 137
+      },
+      "tehran_travel": {
+        "typical_hours": 10,
+        "stops": 1,
+        "note": "estimate; via IST/DOH or FRA/AMS"
+      },
+      "tech_scene_note": "European headquarters city for Google, Meta, LinkedIn and Stripe -- highest tech salaries in Ireland but rents to match.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Dublin",
+        "https://en.wikipedia.org/wiki/Dublin"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "cork",
+      "name": "Cork",
+      "country": "IE",
+      "salary_usd_year": {
+        "new_grad": 48000,
+        "mid": 72000,
+        "senior": 100000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; general tech-market knowledge, Numbeo avg net salary EUR3,672/mo figure is actually Cork's own reading (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 2110,
+      "rent_1br_outside_usd_month": 1850,
+      "col_single_no_rent_usd_month": 1180,
+      "apt_price_center_usd_m2": 5000,
+      "apt_price_outside_usd_m2": 3200,
+      "climate": {
+        "sunshine_hours_yr": 1475,
+        "summer_avg_high_c": 18.6,
+        "winter_avg_low_c": 3.2,
+        "rainy_days_yr": 162
+      },
+      "tehran_travel": {
+        "typical_hours": 12,
+        "stops": 2,
+        "note": "estimate; typically connects via Dublin or London before an IST/DOH leg to IKA"
+      },
+      "tech_scene_note": "Apple's European headquarters city -- a smaller, cheaper alternative to Dublin with a growing multinational tech presence.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Cork",
+        "https://en.wikipedia.org/wiki/Cork_(city)"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "stockholm",
+      "name": "Stockholm",
+      "country": "SE",
+      "salary_usd_year": {
+        "new_grad": 52000,
+        "mid": 78000,
+        "senior": 115000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; SEK ~497k/746k/1.10M at 9.5589; general tech-market knowledge (levels.fyi live lookup unavailable this session); Sweden total comp is typically close to base salary; Numbeo avg net salary SEK34,688/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1760,
+      "rent_1br_outside_usd_month": 1140,
+      "col_single_no_rent_usd_month": 1340,
+      "apt_price_center_usd_m2": 11700,
+      "apt_price_outside_usd_m2": 6700,
+      "climate": {
+        "sunshine_hours_yr": 1899,
+        "summer_avg_high_c": 23.6,
+        "winter_avg_low_c": -2.9,
+        "rainy_days_yr": 164
+      },
+      "tehran_travel": {
+        "typical_hours": 8,
+        "stops": 1,
+        "note": "estimate; via IST; Stockholm's large Iranian diaspora has at times supported more direct-ish charter/scheduled service, current status unverified this session"
+      },
+      "tech_scene_note": "Europe's per-capita \"unicorn factory\" -- Spotify, Klarna and King all started here, with a dense, well-funded startup ecosystem.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Stockholm",
+        "https://en.wikipedia.org/wiki/Stockholm"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "gothenburg",
+      "name": "Gothenburg",
+      "country": "SE",
+      "salary_usd_year": {
+        "new_grad": 46000,
+        "mid": 68000,
+        "senior": 95000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; SEK ~440k/650k/908k at 9.5589; general tech-market knowledge, Numbeo avg net salary SEK35,323/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1050,
+      "rent_1br_outside_usd_month": 900,
+      "col_single_no_rent_usd_month": 1050,
+      "apt_price_center_usd_m2": 6500,
+      "apt_price_outside_usd_m2": 3600,
+      "climate": {
+        "sunshine_hours_yr": 1762,
+        "summer_avg_high_c": 22.7,
+        "winter_avg_low_c": -1.6,
+        "rainy_days_yr": 122
+      },
+      "tehran_travel": {
+        "typical_hours": 10,
+        "stops": 1,
+        "note": "estimate; typically connects via Stockholm/Copenhagen then IST, or direct IST-style routing"
+      },
+      "tech_scene_note": "Automotive and mobility tech centre (Volvo, Zenseact, Polestar) with a smaller but tight-knit engineering scene, cheaper than Stockholm.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Gothenburg",
+        "https://en.wikipedia.org/wiki/Gothenburg"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "copenhagen",
+      "name": "Copenhagen",
+      "country": "DK",
+      "salary_usd_year": {
+        "new_grad": 50000,
+        "mid": 76000,
+        "senior": 108000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; DKK ~325k/494k/701k at 6.4927; general tech-market knowledge (levels.fyi live lookup unavailable this session), Numbeo avg net salary DKK30,357/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1950,
+      "rent_1br_outside_usd_month": 1440,
+      "col_single_no_rent_usd_month": 1390,
+      "apt_price_center_usd_m2": 11900,
+      "apt_price_outside_usd_m2": 8400,
+      "climate": {
+        "sunshine_hours_yr": 1629,
+        "summer_avg_high_c": 22.2,
+        "winter_avg_low_c": -0.7,
+        "rainy_days_yr": 157
+      },
+      "tehran_travel": {
+        "typical_hours": 8,
+        "stops": 1,
+        "note": "estimate; via IST"
+      },
+      "tech_scene_note": "Strong fintech and biotech cluster (Novo Nordisk's ecosystem, Pleo, Templafy) with high salaries and consistently high quality-of-life rankings.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Copenhagen",
+        "https://en.wikipedia.org/wiki/Copenhagen"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "aarhus",
+      "name": "Aarhus",
+      "country": "DK",
+      "salary_usd_year": {
+        "new_grad": 42000,
+        "mid": 62000,
+        "senior": 88000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; general tech-market knowledge only -- Numbeo's Aarhus page could not be retrieved this session (repeated empty response), so no local salary cross-check was possible"
+      },
+      "rent_1br_center_usd_month": null,
+      "rent_1br_outside_usd_month": null,
+      "col_single_no_rent_usd_month": null,
+      "apt_price_center_usd_m2": null,
+      "apt_price_outside_usd_m2": null,
+      "climate": {
+        "sunshine_hours_yr": null,
+        "summer_avg_high_c": 21.4,
+        "winter_avg_low_c": -0.9,
+        "rainy_days_yr": null
+      },
+      "tehran_travel": {
+        "typical_hours": 11,
+        "stops": 2,
+        "note": "estimate; small airport, typically connects via Copenhagen then IST"
+      },
+      "tech_scene_note": "Smaller, university-driven scene (Aarhus University, Katrinebjerg IT district) -- a quieter, cheaper alternative to Copenhagen.",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Aarhus",
+        "https://www.numbeo.com/cost-of-living/in/Aarhus-Denmark (fetch failed/empty this session -- cost-of-living fields left null)"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "oslo",
+      "name": "Oslo",
+      "country": "NO",
+      "salary_usd_year": {
+        "new_grad": 55000,
+        "mid": 82000,
+        "senior": 118000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; NOK ~524k/781k/1.12M at 9.5316; general tech-market knowledge (levels.fyi live lookup unavailable this session), Numbeo avg net salary NOK40,862/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1990,
+      "rent_1br_outside_usd_month": 1480,
+      "col_single_no_rent_usd_month": 1540,
+      "apt_price_center_usd_m2": 11700,
+      "apt_price_outside_usd_m2": 7100,
+      "climate": {
+        "sunshine_hours_yr": null,
+        "summer_avg_high_c": 22.7,
+        "winter_avg_low_c": -4.7,
+        "rainy_days_yr": null
+      },
+      "tehran_travel": {
+        "typical_hours": 9,
+        "stops": 1,
+        "note": "estimate; via IST"
+      },
+      "tech_scene_note": "Energy-tech and fintech scene with very high salaries offset by Norway's very high cost of living.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Oslo",
+        "https://en.wikipedia.org/wiki/Oslo"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "bergen",
+      "name": "Bergen",
+      "country": "NO",
+      "salary_usd_year": {
+        "new_grad": 50000,
+        "mid": 74000,
+        "senior": 105000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; NOK ~477k/705k/1.00M at 9.5316; general tech-market knowledge, Numbeo avg net salary NOK42,509/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1410,
+      "rent_1br_outside_usd_month": 1010,
+      "col_single_no_rent_usd_month": 1480,
+      "apt_price_center_usd_m2": 7700,
+      "apt_price_outside_usd_m2": 4800,
+      "climate": {
+        "sunshine_hours_yr": 1575,
+        "summer_avg_high_c": 19.6,
+        "winter_avg_low_c": 0.6,
+        "rainy_days_yr": 201
+      },
+      "tehran_travel": {
+        "typical_hours": 11,
+        "stops": 2,
+        "note": "estimate; typically connects via Oslo then IST"
+      },
+      "tech_scene_note": "Smaller scene tied to maritime and energy tech plus a strong university base; Norway's rainiest major city by a wide margin.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Bergen",
+        "https://en.wikipedia.org/wiki/Bergen"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "helsinki",
+      "name": "Helsinki",
+      "country": "FI",
+      "salary_usd_year": {
+        "new_grad": 46000,
+        "mid": 70000,
+        "senior": 98000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; general tech-market knowledge (levels.fyi live lookup unavailable this session), Numbeo avg net salary EUR2,709/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 1250,
+      "rent_1br_outside_usd_month": 910,
+      "col_single_no_rent_usd_month": 1160,
+      "apt_price_center_usd_m2": 9900,
+      "apt_price_outside_usd_m2": 4500,
+      "climate": {
+        "sunshine_hours_yr": 1858,
+        "summer_avg_high_c": 21.9,
+        "winter_avg_low_c": -5.6,
+        "rainy_days_yr": 184
+      },
+      "tehran_travel": {
+        "typical_hours": 9,
+        "stops": 1,
+        "note": "estimate; via IST, sometimes DOH"
+      },
+      "tech_scene_note": "Gaming-industry hub (Supercell, Rovio, Remedy) and home of the Slush startup conference -- deep, internationally-oriented tech scene.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Helsinki",
+        "https://en.wikipedia.org/wiki/Helsinki"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "tampere",
+      "name": "Tampere",
+      "country": "FI",
+      "salary_usd_year": {
+        "new_grad": 40000,
+        "mid": 60000,
+        "senior": 84000,
+        "confidence": "crowd",
+        "note": "gross annual total comp; general tech-market knowledge, Numbeo avg net salary EUR2,631/mo (all occupations) used as sanity floor only"
+      },
+      "rent_1br_center_usd_month": 990,
+      "rent_1br_outside_usd_month": 770,
+      "col_single_no_rent_usd_month": 1090,
+      "apt_price_center_usd_m2": 4900,
+      "apt_price_outside_usd_m2": 3300,
+      "climate": {
+        "sunshine_hours_yr": null,
+        "summer_avg_high_c": 22.5,
+        "winter_avg_low_c": -8.3,
+        "rainy_days_yr": 109
+      },
+      "tehran_travel": {
+        "typical_hours": 11,
+        "stops": 2,
+        "note": "estimate; typically connects via Helsinki then IST"
+      },
+      "tech_scene_note": "Finland's fast-growing secondary tech hub, driven by Tampere University and a lower cost base than Helsinki.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Tampere",
+        "https://en.wikipedia.org/wiki/Tampere"
+      ],
+      "as_of": "2026-08"
+    }
+  ],
+  "as_of": "2026-08"
+}

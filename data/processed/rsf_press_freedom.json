@@ -1,0 +1,875 @@
+{
+ "source_id": "rsf_press_freedom",
+ "generated_at": "2026-08-04T19:20:41+00:00",
+ "meta": {
+  "score_definition": "RSF composite score 0-100, higher = freer press",
+  "sub_indicators": "political, economic, legal, social, safety — each 0-100, higher = better",
+  "confidence": "index",
+  "years": [
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "countries_without_data": [],
+  "methodology_break": "RSF changed methodology in 2022; scores before and after are not strictly comparable. We only fetch 2022+ for that reason."
+ },
+ "data": {
+  "FI": [
+   {
+    "year": 2022,
+    "score": 88.42,
+    "rank": 5.0,
+    "political": 90.4,
+    "economic": 82.03,
+    "legal": 86.64,
+    "social": 90.77,
+    "safety": 92.26,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 87.94,
+    "rank": 5.0,
+    "political": 91.55,
+    "economic": 83.8,
+    "legal": 84.86,
+    "social": 89.17,
+    "safety": 90.35,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 86.55,
+    "rank": 5.0,
+    "political": 89.05,
+    "economic": 80.9,
+    "legal": 86.16,
+    "social": 84.52,
+    "safety": 92.13,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 87.18,
+    "rank": 5.0,
+    "political": 89.93,
+    "economic": 80.54,
+    "legal": 87.93,
+    "social": 83.87,
+    "safety": 93.65,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 86.22,
+    "rank": 6.0,
+    "political": 89.16,
+    "economic": 78.68,
+    "legal": 85.62,
+    "social": 83.59,
+    "safety": 94.05,
+    "ranked_of": 180
+   }
+  ],
+  "NL": [
+   {
+    "year": 2022,
+    "score": 77.93,
+    "rank": 28.0,
+    "political": 86.3,
+    "economic": 82.86,
+    "legal": 87.28,
+    "social": 86.1,
+    "safety": 47.09,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 87.0,
+    "rank": 6.0,
+    "political": 88.93,
+    "economic": 89.08,
+    "legal": 90.3,
+    "social": 86.53,
+    "safety": 80.18,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 87.73,
+    "rank": 4.0,
+    "political": 88.41,
+    "economic": 84.09,
+    "legal": 87.59,
+    "social": 87.34,
+    "safety": 91.23,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 88.64,
+    "rank": 3.0,
+    "political": 89.95,
+    "economic": 83.85,
+    "legal": 89.69,
+    "social": 88.05,
+    "safety": 91.64,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 88.92,
+    "rank": 2.0,
+    "political": 89.31,
+    "economic": 85.38,
+    "legal": 90.68,
+    "social": 87.7,
+    "safety": 91.52,
+    "ranked_of": 180
+   }
+  ],
+  "SE": [
+   {
+    "year": 2022,
+    "score": 88.84,
+    "rank": 3.0,
+    "political": 91.96,
+    "economic": 87.66,
+    "legal": 90.27,
+    "social": 90.18,
+    "safety": 84.14,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 88.15,
+    "rank": 4.0,
+    "political": 92.58,
+    "economic": 86.08,
+    "legal": 88.74,
+    "social": 88.64,
+    "safety": 84.72,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 88.32,
+    "rank": 3.0,
+    "political": 91.03,
+    "economic": 85.5,
+    "legal": 90.16,
+    "social": 82.78,
+    "safety": 92.12,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 88.13,
+    "rank": 4.0,
+    "political": 90.07,
+    "economic": 82.71,
+    "legal": 90.02,
+    "social": 84.99,
+    "safety": 92.86,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 87.61,
+    "rank": 5.0,
+    "political": 89.61,
+    "economic": 81.67,
+    "legal": 88.82,
+    "social": 84.53,
+    "safety": 93.41,
+    "ranked_of": 180
+   }
+  ],
+  "DK": [
+   {
+    "year": 2022,
+    "score": 90.27,
+    "rank": 2.0,
+    "political": 94.34,
+    "economic": 83.67,
+    "legal": 89.18,
+    "social": 91.17,
+    "safety": 92.97,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 89.48,
+    "rank": 3.0,
+    "political": 91.95,
+    "economic": 85.17,
+    "legal": 87.5,
+    "social": 87.78,
+    "safety": 95.0,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 89.6,
+    "rank": 2.0,
+    "political": 94.11,
+    "economic": 83.07,
+    "legal": 88.82,
+    "social": 86.9,
+    "safety": 95.09,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 86.93,
+    "rank": 6.0,
+    "political": 91.13,
+    "economic": 78.46,
+    "legal": 86.78,
+    "social": 83.85,
+    "safety": 94.43,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 88.47,
+    "rank": 4.0,
+    "political": 91.79,
+    "economic": 79.51,
+    "legal": 86.56,
+    "social": 88.79,
+    "safety": 95.69,
+    "ranked_of": 180
+   }
+  ],
+  "IE": [
+   {
+    "year": 2022,
+    "score": 88.3,
+    "rank": 6.0,
+    "political": 89.24,
+    "economic": 79.08,
+    "legal": 85.09,
+    "social": 92.5,
+    "safety": 95.58,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 89.91,
+    "rank": 2.0,
+    "political": 93.91,
+    "economic": 82.11,
+    "legal": 82.55,
+    "social": 94.03,
+    "safety": 96.94,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 85.59,
+    "rank": 8.0,
+    "political": 89.86,
+    "economic": 77.0,
+    "legal": 80.45,
+    "social": 86.61,
+    "safety": 94.05,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 86.92,
+    "rank": 7.0,
+    "political": 91.3,
+    "economic": 78.77,
+    "legal": 81.49,
+    "social": 87.25,
+    "safety": 95.8,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 85.93,
+    "rank": 7.0,
+    "political": 90.5,
+    "economic": 76.59,
+    "legal": 80.82,
+    "social": 86.2,
+    "safety": 95.54,
+    "ranked_of": 180
+   }
+  ],
+  "NO": [
+   {
+    "year": 2022,
+    "score": 92.65,
+    "rank": 1.0,
+    "political": 94.89,
+    "economic": 90.38,
+    "legal": 92.23,
+    "social": 93.71,
+    "safety": 92.03,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 95.18,
+    "rank": 1.0,
+    "political": 96.54,
+    "economic": 92.46,
+    "legal": 94.92,
+    "social": 95.98,
+    "safety": 95.98,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 91.89,
+    "rank": 1.0,
+    "political": 94.87,
+    "economic": 89.84,
+    "legal": 89.5,
+    "social": 90.48,
+    "safety": 94.74,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 92.31,
+    "rank": 1.0,
+    "political": 96.22,
+    "economic": 87.32,
+    "legal": 91.96,
+    "social": 90.03,
+    "safety": 96.03,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 92.72,
+    "rank": 1.0,
+    "political": 95.98,
+    "economic": 87.22,
+    "legal": 91.76,
+    "social": 92.19,
+    "safety": 96.46,
+    "ranked_of": 180
+   }
+  ],
+  "DE": [
+   {
+    "year": 2022,
+    "score": 82.04,
+    "rank": 16.0,
+    "political": 87.03,
+    "economic": 80.07,
+    "legal": 87.08,
+    "social": 89.47,
+    "safety": 66.58,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 81.91,
+    "rank": 21.0,
+    "political": 87.33,
+    "economic": 82.31,
+    "legal": 85.85,
+    "social": 87.19,
+    "safety": 66.88,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 83.84,
+    "rank": 10.0,
+    "political": 85.22,
+    "economic": 77.63,
+    "legal": 84.69,
+    "social": 82.38,
+    "safety": 89.29,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 83.85,
+    "rank": 11.0,
+    "political": 84.87,
+    "economic": 77.9,
+    "legal": 84.72,
+    "social": 80.93,
+    "safety": 90.82,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 82.17,
+    "rank": 14.0,
+    "political": 82.38,
+    "economic": 75.87,
+    "legal": 84.82,
+    "social": 77.66,
+    "safety": 90.14,
+    "ranked_of": 180
+   }
+  ],
+  "GB": [
+   {
+    "year": 2022,
+    "score": 78.71,
+    "rank": 24.0,
+    "political": 80.57,
+    "economic": 72.75,
+    "legal": 76.63,
+    "social": 84.29,
+    "safety": 79.33,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 78.51,
+    "rank": 26.0,
+    "political": 80.88,
+    "economic": 74.71,
+    "legal": 73.49,
+    "social": 81.36,
+    "safety": 82.12,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 77.51,
+    "rank": 23.0,
+    "political": 80.12,
+    "economic": 69.42,
+    "legal": 74.35,
+    "social": 75.38,
+    "safety": 88.29,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 78.89,
+    "rank": 20.0,
+    "political": 81.54,
+    "economic": 68.43,
+    "legal": 75.6,
+    "social": 78.46,
+    "safety": 90.42,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 79.45,
+    "rank": 18.0,
+    "political": 82.19,
+    "economic": 70.86,
+    "legal": 76.97,
+    "social": 77.37,
+    "safety": 89.85,
+    "ranked_of": 180
+   }
+  ],
+  "CA": [
+   {
+    "year": 2022,
+    "score": 81.74,
+    "rank": 19.0,
+    "political": 82.27,
+    "economic": 71.17,
+    "legal": 80.26,
+    "social": 92.0,
+    "safety": 82.99,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 83.53,
+    "rank": 15.0,
+    "political": 88.13,
+    "economic": 72.22,
+    "legal": 86.48,
+    "social": 88.26,
+    "safety": 82.56,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 81.7,
+    "rank": 14.0,
+    "political": 86.23,
+    "economic": 66.35,
+    "legal": 83.75,
+    "social": 82.38,
+    "safety": 89.76,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 78.75,
+    "rank": 21.0,
+    "political": 82.97,
+    "economic": 63.27,
+    "legal": 81.73,
+    "social": 78.11,
+    "safety": 87.66,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 78.76,
+    "rank": 20.0,
+    "political": 82.75,
+    "economic": 63.7,
+    "legal": 80.54,
+    "social": 78.29,
+    "safety": 88.5,
+    "ranked_of": 180
+   }
+  ],
+  "ES": [
+   {
+    "year": 2022,
+    "score": 76.71,
+    "rank": 32.0,
+    "political": 72.73,
+    "economic": 63.38,
+    "legal": 82.16,
+    "social": 81.89,
+    "safety": 83.4,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 75.37,
+    "rank": 36.0,
+    "political": 72.12,
+    "economic": 60.33,
+    "legal": 78.74,
+    "social": 83.13,
+    "safety": 82.51,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 76.01,
+    "rank": 30.0,
+    "political": 68.96,
+    "economic": 59.72,
+    "legal": 81.73,
+    "social": 79.56,
+    "safety": 90.08,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 77.35,
+    "rank": 23.0,
+    "political": 72.46,
+    "economic": 58.06,
+    "legal": 83.24,
+    "social": 81.51,
+    "safety": 91.5,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 75.42,
+    "rank": 29.0,
+    "political": 71.26,
+    "economic": 55.68,
+    "legal": 80.59,
+    "social": 79.05,
+    "safety": 96.46,
+    "ranked_of": 180
+   }
+  ],
+  "AU": [
+   {
+    "year": 2022,
+    "score": 73.77,
+    "rank": 39.0,
+    "political": 77.17,
+    "economic": 63.44,
+    "legal": 64.18,
+    "social": 84.17,
+    "safety": 79.88,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 78.24,
+    "rank": 27.0,
+    "political": 83.85,
+    "economic": 68.49,
+    "legal": 69.41,
+    "social": 81.98,
+    "safety": 87.46,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 73.42,
+    "rank": 39.0,
+    "political": 74.43,
+    "economic": 64.58,
+    "legal": 69.23,
+    "social": 70.41,
+    "safety": 88.44,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 75.15,
+    "rank": 29.0,
+    "political": 77.97,
+    "economic": 63.25,
+    "legal": 68.78,
+    "social": 74.52,
+    "safety": 91.21,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 74.58,
+    "rank": 33.0,
+    "political": 75.63,
+    "economic": 61.43,
+    "legal": 67.1,
+    "social": 76.74,
+    "safety": 92.0,
+    "ranked_of": 180
+   }
+  ],
+  "IT": [
+   {
+    "year": 2022,
+    "score": 68.16,
+    "rank": 58.0,
+    "political": 65.89,
+    "economic": 47.52,
+    "legal": 73.93,
+    "social": 80.0,
+    "safety": 73.48,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 72.05,
+    "rank": 41.0,
+    "political": 64.2,
+    "economic": 55.04,
+    "legal": 80.32,
+    "social": 73.86,
+    "safety": 86.83,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 69.8,
+    "rank": 46.0,
+    "political": 64.44,
+    "economic": 52.75,
+    "legal": 72.94,
+    "social": 69.98,
+    "safety": 88.86,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 68.01,
+    "rank": 49.0,
+    "political": 58.69,
+    "economic": 50.32,
+    "legal": 74.4,
+    "social": 67.22,
+    "safety": 89.41,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 65.16,
+    "rank": 56.0,
+    "political": 58.81,
+    "economic": 48.72,
+    "legal": 68.81,
+    "social": 62.51,
+    "safety": 86.92,
+    "ranked_of": 180
+   }
+  ],
+  "US": [
+   {
+    "year": 2022,
+    "score": 72.74,
+    "rank": 42.0,
+    "political": 72.99,
+    "economic": 59.33,
+    "legal": 77.32,
+    "social": 81.43,
+    "safety": 72.63,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 71.22,
+    "rank": 45.0,
+    "political": 76.56,
+    "economic": 69.76,
+    "legal": 77.31,
+    "social": 80.0,
+    "safety": 52.49,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 66.59,
+    "rank": 55.0,
+    "political": 69.03,
+    "economic": 61.07,
+    "legal": 74.49,
+    "social": 72.06,
+    "safety": 56.31,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 65.487,
+    "rank": 57.0,
+    "political": 62.38,
+    "economic": 55.65,
+    "legal": 68.81,
+    "social": 62.56,
+    "safety": 78.03,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 62.61,
+    "rank": 64.0,
+    "political": 53.59,
+    "economic": 55.05,
+    "legal": 70.47,
+    "social": 64.27,
+    "safety": 69.68,
+    "ranked_of": 180
+   }
+  ],
+  "QA": [
+   {
+    "year": 2022,
+    "score": 49.03,
+    "rank": 119.0,
+    "political": 59.7,
+    "economic": 46.94,
+    "legal": 43.86,
+    "social": 42.5,
+    "safety": 52.17,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 55.28,
+    "rank": 105.0,
+    "political": 53.13,
+    "economic": 50.0,
+    "legal": 38.21,
+    "social": 51.14,
+    "safety": 83.93,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 58.48,
+    "rank": 84.0,
+    "political": 50.56,
+    "economic": 51.39,
+    "legal": 41.9,
+    "social": 59.9,
+    "safety": 88.66,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 58.25,
+    "rank": 79.0,
+    "political": 49.73,
+    "economic": 50.82,
+    "legal": 41.84,
+    "social": 57.99,
+    "safety": 90.87,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 59.79,
+    "rank": 75.0,
+    "political": 51.26,
+    "economic": 52.6,
+    "legal": 48.09,
+    "social": 55.48,
+    "safety": 91.54,
+    "ranked_of": 180
+   }
+  ],
+  "AE": [
+   {
+    "year": 2022,
+    "score": 44.46,
+    "rank": 138.0,
+    "political": 45.45,
+    "economic": 36.73,
+    "legal": 32.02,
+    "social": 50.5,
+    "safety": 57.59,
+    "ranked_of": 180
+   },
+   {
+    "year": 2023,
+    "score": 42.99,
+    "rank": 145.0,
+    "political": 45.63,
+    "economic": 45.1,
+    "legal": 36.79,
+    "social": 30.68,
+    "safety": 56.77,
+    "ranked_of": 180
+   },
+   {
+    "year": 2024,
+    "score": 30.62,
+    "rank": 160.0,
+    "political": 21.16,
+    "economic": 42.5,
+    "legal": 26.54,
+    "social": 29.52,
+    "safety": 33.39,
+    "ranked_of": 180
+   },
+   {
+    "year": 2025,
+    "score": 26.91,
+    "rank": 164.0,
+    "political": 17.23,
+    "economic": 35.05,
+    "legal": 21.2,
+    "social": 21.76,
+    "safety": 39.3,
+    "ranked_of": 180
+   },
+   {
+    "year": 2026,
+    "score": 30.86,
+    "rank": 158.0,
+    "political": 21.27,
+    "economic": 35.45,
+    "legal": 17.16,
+    "social": 25.44,
+    "safety": 54.97,
+    "ranked_of": 180
+   }
+  ]
+ }
+}

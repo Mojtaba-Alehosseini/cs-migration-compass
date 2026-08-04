@@ -1,0 +1,1570 @@
+{
+ "source_id": "numbeo_history",
+ "generated_at": "2026-08-04T19:54:24+00:00",
+ "meta": {
+  "confidence": "crowd",
+  "level": "country + city",
+  "years_requested": [
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "cities_without_history": [
+   "sydney",
+   "melbourne",
+   "brisbane",
+   "perth",
+   "adelaide",
+   "gold-coast",
+   "hobart",
+   "canberra",
+   "dubai",
+   "abu-dhabi",
+   "doha",
+   "new_york",
+   "boston",
+   "chicago",
+   "atlanta",
+   "raleigh",
+   "dallas",
+   "houston",
+   "san_antonio",
+   "miami",
+   "tampa",
+   "orlando",
+   "nashville",
+   "charlotte",
+   "washington_dc",
+   "philadelphia",
+   "sf_bay_area",
+   "seattle",
+   "austin",
+   "denver",
+   "los_angeles",
+   "san_diego",
+   "sacramento",
+   "portland",
+   "phoenix",
+   "salt_lake_city",
+   "las_vegas",
+   "pittsburgh",
+   "minneapolis",
+   "columbus",
+   "detroit",
+   "toronto",
+   "vancouver",
+   "montreal",
+   "ottawa",
+   "calgary",
+   "halifax",
+   "london",
+   "manchester",
+   "edinburgh",
+   "dublin",
+   "cork",
+   "stockholm",
+   "gothenburg",
+   "copenhagen",
+   "aarhus",
+   "oslo",
+   "bergen",
+   "helsinki",
+   "tampere",
+   "berlin",
+   "munich",
+   "hamburg",
+   "frankfurt",
+   "stuttgart",
+   "amsterdam",
+   "eindhoven",
+   "milan",
+   "rome",
+   "turin",
+   "madrid",
+   "barcelona",
+   "valencia"
+  ],
+  "city_history_probe": "Probe returned navigation chrome only: Numbeo renders city price history client-side, so no year/value pairs exist in the served HTML (?itemId has no effect). No per-city crawl was performed.",
+  "crowd_caveat": "Numbeo is crowd-sourced. Solid for large cities, thin for small ones (Halifax, Aarhus, Tampere, Gold Coast, Detroit are known-thin in this dataset). Indices are relative to Numbeo's own base, so compare shape, not absolute level.",
+  "city_fallback_rule": "Cities with no usable history are listed above. Where the UI substitutes a country trend for them it must say 'city estimate = current value x country trend'.",
+  "failures": []
+ },
+ "data": {
+  "by_country_year": {
+   "2015": {
+    "NO": {
+     "cost_of_living_index": 118.6,
+     "rent_index": 48.7,
+     "cost_of_living_plus_rent_index": 84.4,
+     "groceries_index": 110.1,
+     "restaurant_price_index": 141.5,
+     "local_purchasing_power_index": 96.3
+    },
+    "DK": {
+     "cost_of_living_index": 100.6,
+     "rent_index": 34.7,
+     "cost_of_living_plus_rent_index": 68.4,
+     "groceries_index": 88.6,
+     "restaurant_price_index": 117.5,
+     "local_purchasing_power_index": 105.7
+    },
+    "AU": {
+     "cost_of_living_index": 99.3,
+     "rent_index": 49.5,
+     "cost_of_living_plus_rent_index": 75.0,
+     "groceries_index": 94.3,
+     "restaurant_price_index": 90.6,
+     "local_purchasing_power_index": 110.4
+    },
+    "GB": {
+     "cost_of_living_index": 92.2,
+     "rent_index": 39.2,
+     "cost_of_living_plus_rent_index": 66.3,
+     "groceries_index": 84.6,
+     "restaurant_price_index": 96.0,
+     "local_purchasing_power_index": 98.1
+    },
+    "IE": {
+     "cost_of_living_index": 92.1,
+     "rent_index": 37.5,
+     "cost_of_living_plus_rent_index": 65.4,
+     "groceries_index": 85.1,
+     "restaurant_price_index": 91.6,
+     "local_purchasing_power_index": 95.7
+    },
+    "FI": {
+     "cost_of_living_index": 89.7,
+     "rent_index": 29.9,
+     "cost_of_living_plus_rent_index": 60.5,
+     "groceries_index": 84.3,
+     "restaurant_price_index": 92.4,
+     "local_purchasing_power_index": 101.2
+    },
+    "NL": {
+     "cost_of_living_index": 86.0,
+     "rent_index": 35.5,
+     "cost_of_living_plus_rent_index": 61.3,
+     "groceries_index": 66.8,
+     "restaurant_price_index": 102.1,
+     "local_purchasing_power_index": 102.0
+    },
+    "SE": {
+     "cost_of_living_index": 82.9,
+     "rent_index": 27.5,
+     "cost_of_living_plus_rent_index": 55.8,
+     "groceries_index": 78.7,
+     "restaurant_price_index": 90.0,
+     "local_purchasing_power_index": 110.9
+    },
+    "IT": {
+     "cost_of_living_index": 82.7,
+     "rent_index": 25.7,
+     "cost_of_living_plus_rent_index": 54.9,
+     "groceries_index": 71.4,
+     "restaurant_price_index": 93.1,
+     "local_purchasing_power_index": 79.4
+    },
+    "CA": {
+     "cost_of_living_index": 81.8,
+     "rent_index": 33.1,
+     "cost_of_living_plus_rent_index": 58.0,
+     "groceries_index": 87.4,
+     "restaurant_price_index": 74.1,
+     "local_purchasing_power_index": 105.1
+    },
+    "US": {
+     "cost_of_living_index": 76.5,
+     "rent_index": 36.2,
+     "cost_of_living_plus_rent_index": 56.8,
+     "groceries_index": 81.8,
+     "restaurant_price_index": 68.1,
+     "local_purchasing_power_index": 126.1
+    },
+    "DE": {
+     "cost_of_living_index": 76.3,
+     "rent_index": 27.2,
+     "cost_of_living_plus_rent_index": 52.3,
+     "groceries_index": 64.9,
+     "restaurant_price_index": 72.5,
+     "local_purchasing_power_index": 111.8
+    },
+    "QA": {
+     "cost_of_living_index": 74.0,
+     "rent_index": 76.3,
+     "cost_of_living_plus_rent_index": 75.1,
+     "groceries_index": 65.4,
+     "restaurant_price_index": 78.1,
+     "local_purchasing_power_index": 113.0
+    },
+    "AE": {
+     "cost_of_living_index": 67.2,
+     "rent_index": 66.9,
+     "cost_of_living_plus_rent_index": 67.0,
+     "groceries_index": 60.3,
+     "restaurant_price_index": 63.7,
+     "local_purchasing_power_index": 104.6
+    },
+    "ES": {
+     "cost_of_living_index": 65.7,
+     "rent_index": 21.5,
+     "cost_of_living_plus_rent_index": 44.1,
+     "groceries_index": 54.2,
+     "restaurant_price_index": 71.1,
+     "local_purchasing_power_index": 76.7
+    }
+   },
+   "2016": {
+    "NO": {
+     "cost_of_living_index": 99.8,
+     "rent_index": 37.0,
+     "cost_of_living_plus_rent_index": 69.6,
+     "groceries_index": 93.3,
+     "restaurant_price_index": 110.8,
+     "local_purchasing_power_index": 125.8
+    },
+    "DK": {
+     "cost_of_living_index": 84.9,
+     "rent_index": 30.8,
+     "cost_of_living_plus_rent_index": 58.9,
+     "groceries_index": 69.2,
+     "restaurant_price_index": 97.9,
+     "local_purchasing_power_index": 142.1
+    },
+    "GB": {
+     "cost_of_living_index": 81.0,
+     "rent_index": 36.3,
+     "cost_of_living_plus_rent_index": 59.5,
+     "groceries_index": 68.5,
+     "restaurant_price_index": 86.7,
+     "local_purchasing_power_index": 120.0
+    },
+    "AU": {
+     "cost_of_living_index": 78.5,
+     "rent_index": 41.0,
+     "cost_of_living_plus_rent_index": 60.4,
+     "groceries_index": 74.7,
+     "restaurant_price_index": 74.8,
+     "local_purchasing_power_index": 147.3
+    },
+    "IE": {
+     "cost_of_living_index": 78.0,
+     "rent_index": 37.9,
+     "cost_of_living_plus_rent_index": 58.7,
+     "groceries_index": 66.6,
+     "restaurant_price_index": 82.3,
+     "local_purchasing_power_index": 125.7
+    },
+    "SE": {
+     "cost_of_living_index": 75.7,
+     "rent_index": 25.2,
+     "cost_of_living_plus_rent_index": 51.4,
+     "groceries_index": 67.9,
+     "restaurant_price_index": 79.2,
+     "local_purchasing_power_index": 128.2
+    },
+    "FI": {
+     "cost_of_living_index": 75.2,
+     "rent_index": 27.0,
+     "cost_of_living_plus_rent_index": 52.1,
+     "groceries_index": 66.6,
+     "restaurant_price_index": 76.8,
+     "local_purchasing_power_index": 132.9
+    },
+    "US": {
+     "cost_of_living_index": 74.1,
+     "rent_index": 38.4,
+     "cost_of_living_plus_rent_index": 56.9,
+     "groceries_index": 75.7,
+     "restaurant_price_index": 69.1,
+     "local_purchasing_power_index": 139.2
+    },
+    "NL": {
+     "cost_of_living_index": 72.1,
+     "rent_index": 31.8,
+     "cost_of_living_plus_rent_index": 52.7,
+     "groceries_index": 56.1,
+     "restaurant_price_index": 80.7,
+     "local_purchasing_power_index": 129.3
+    },
+    "QA": {
+     "cost_of_living_index": 70.0,
+     "rent_index": 74.5,
+     "cost_of_living_plus_rent_index": 72.2,
+     "groceries_index": 59.5,
+     "restaurant_price_index": 69.3,
+     "local_purchasing_power_index": 141.9
+    },
+    "IT": {
+     "cost_of_living_index": 68.8,
+     "rent_index": 21.5,
+     "cost_of_living_plus_rent_index": 46.0,
+     "groceries_index": 58.6,
+     "restaurant_price_index": 75.3,
+     "local_purchasing_power_index": 105.7
+    },
+    "AE": {
+     "cost_of_living_index": 66.1,
+     "rent_index": 68.3,
+     "cost_of_living_plus_rent_index": 67.1,
+     "groceries_index": 57.2,
+     "restaurant_price_index": 59.8,
+     "local_purchasing_power_index": 136.4
+    },
+    "DE": {
+     "cost_of_living_index": 65.5,
+     "rent_index": 24.0,
+     "cost_of_living_plus_rent_index": 45.6,
+     "groceries_index": 53.1,
+     "restaurant_price_index": 60.7,
+     "local_purchasing_power_index": 147.6
+    },
+    "CA": {
+     "cost_of_living_index": 64.8,
+     "rent_index": 26.8,
+     "cost_of_living_plus_rent_index": 46.6,
+     "groceries_index": 65.0,
+     "restaurant_price_index": 60.0,
+     "local_purchasing_power_index": 134.8
+    },
+    "ES": {
+     "cost_of_living_index": 56.1,
+     "rent_index": 18.9,
+     "cost_of_living_plus_rent_index": 38.2,
+     "groceries_index": 46.0,
+     "restaurant_price_index": 57.0,
+     "local_purchasing_power_index": 105.3
+    }
+   },
+   "2017": {
+    "NO": {
+     "cost_of_living_index": 106.3,
+     "rent_index": 39.9,
+     "cost_of_living_plus_rent_index": 74.5,
+     "groceries_index": 98.3,
+     "restaurant_price_index": 117.1,
+     "local_purchasing_power_index": 105.6
+    },
+    "IT": {
+     "cost_of_living_index": 83.7,
+     "rent_index": 21.5,
+     "cost_of_living_plus_rent_index": 53.9,
+     "groceries_index": 73.9,
+     "restaurant_price_index": 76.2,
+     "local_purchasing_power_index": 71.8
+    },
+    "DK": {
+     "cost_of_living_index": 83.0,
+     "rent_index": 35.0,
+     "cost_of_living_plus_rent_index": 60.0,
+     "groceries_index": 63.8,
+     "restaurant_price_index": 101.0,
+     "local_purchasing_power_index": 98.8
+    },
+    "AU": {
+     "cost_of_living_index": 80.7,
+     "rent_index": 42.5,
+     "cost_of_living_plus_rent_index": 62.4,
+     "groceries_index": 76.9,
+     "restaurant_price_index": 77.1,
+     "local_purchasing_power_index": 101.9
+    },
+    "IE": {
+     "cost_of_living_index": 77.0,
+     "rent_index": 40.6,
+     "cost_of_living_plus_rent_index": 59.6,
+     "groceries_index": 62.2,
+     "restaurant_price_index": 81.4,
+     "local_purchasing_power_index": 103.5
+    },
+    "SE": {
+     "cost_of_living_index": 75.9,
+     "rent_index": 26.9,
+     "cost_of_living_plus_rent_index": 52.4,
+     "groceries_index": 67.9,
+     "restaurant_price_index": 78.3,
+     "local_purchasing_power_index": 107.2
+    },
+    "US": {
+     "cost_of_living_index": 75.4,
+     "rent_index": 40.3,
+     "cost_of_living_plus_rent_index": 58.6,
+     "groceries_index": 75.6,
+     "restaurant_price_index": 70.0,
+     "local_purchasing_power_index": 123.2
+    },
+    "FI": {
+     "cost_of_living_index": 73.1,
+     "rent_index": 27.0,
+     "cost_of_living_plus_rent_index": 51.0,
+     "groceries_index": 61.5,
+     "restaurant_price_index": 76.4,
+     "local_purchasing_power_index": 115.0
+    },
+    "NL": {
+     "cost_of_living_index": 72.5,
+     "rent_index": 32.4,
+     "cost_of_living_plus_rent_index": 53.3,
+     "groceries_index": 55.9,
+     "restaurant_price_index": 82.3,
+     "local_purchasing_power_index": 86.5
+    },
+    "CA": {
+     "cost_of_living_index": 70.2,
+     "rent_index": 29.8,
+     "cost_of_living_plus_rent_index": 50.8,
+     "groceries_index": 69.3,
+     "restaurant_price_index": 65.6,
+     "local_purchasing_power_index": 108.0
+    },
+    "GB": {
+     "cost_of_living_index": 69.5,
+     "rent_index": 31.0,
+     "cost_of_living_plus_rent_index": 51.0,
+     "groceries_index": 55.8,
+     "restaurant_price_index": 76.8,
+     "local_purchasing_power_index": 96.9
+    },
+    "QA": {
+     "cost_of_living_index": 69.2,
+     "rent_index": 66.8,
+     "cost_of_living_plus_rent_index": 68.1,
+     "groceries_index": 56.1,
+     "restaurant_price_index": 72.7,
+     "local_purchasing_power_index": 111.3
+    },
+    "AE": {
+     "cost_of_living_index": 68.0,
+     "rent_index": 68.8,
+     "cost_of_living_plus_rent_index": 68.4,
+     "groceries_index": 55.4,
+     "restaurant_price_index": 63.9,
+     "local_purchasing_power_index": 116.8
+    },
+    "DE": {
+     "cost_of_living_index": 65.5,
+     "rent_index": 25.4,
+     "cost_of_living_plus_rent_index": 46.3,
+     "groceries_index": 50.1,
+     "restaurant_price_index": 62.6,
+     "local_purchasing_power_index": 124.9
+    },
+    "ES": {
+     "cost_of_living_index": 55.0,
+     "rent_index": 18.8,
+     "cost_of_living_plus_rent_index": 37.7,
+     "groceries_index": 44.7,
+     "restaurant_price_index": 53.7,
+     "local_purchasing_power_index": 87.9
+    }
+   },
+   "2018": {
+    "NO": {
+     "cost_of_living_index": 113.7,
+     "rent_index": 40.9,
+     "cost_of_living_plus_rent_index": 78.6,
+     "groceries_index": 106.5,
+     "restaurant_price_index": 125.0,
+     "local_purchasing_power_index": 108.0
+    },
+    "DK": {
+     "cost_of_living_index": 93.3,
+     "rent_index": 36.6,
+     "cost_of_living_plus_rent_index": 66.0,
+     "groceries_index": 72.5,
+     "restaurant_price_index": 113.4,
+     "local_purchasing_power_index": 117.5
+    },
+    "IE": {
+     "cost_of_living_index": 85.4,
+     "rent_index": 47.2,
+     "cost_of_living_plus_rent_index": 67.0,
+     "groceries_index": 69.5,
+     "restaurant_price_index": 93.2,
+     "local_purchasing_power_index": 96.1
+    },
+    "AU": {
+     "cost_of_living_index": 84.3,
+     "rent_index": 41.8,
+     "cost_of_living_plus_rent_index": 63.8,
+     "groceries_index": 80.7,
+     "restaurant_price_index": 81.6,
+     "local_purchasing_power_index": 123.0
+    },
+    "SE": {
+     "cost_of_living_index": 83.7,
+     "rent_index": 28.0,
+     "cost_of_living_plus_rent_index": 56.8,
+     "groceries_index": 76.1,
+     "restaurant_price_index": 86.7,
+     "local_purchasing_power_index": 113.0
+    },
+    "NL": {
+     "cost_of_living_index": 82.7,
+     "rent_index": 36.2,
+     "cost_of_living_plus_rent_index": 60.3,
+     "groceries_index": 65.8,
+     "restaurant_price_index": 92.7,
+     "local_purchasing_power_index": 109.5
+    },
+    "FI": {
+     "cost_of_living_index": 81.7,
+     "rent_index": 29.7,
+     "cost_of_living_plus_rent_index": 56.6,
+     "groceries_index": 68.8,
+     "restaurant_price_index": 86.9,
+     "local_purchasing_power_index": 119.4
+    },
+    "IT": {
+     "cost_of_living_index": 79.1,
+     "rent_index": 23.1,
+     "cost_of_living_plus_rent_index": 52.1,
+     "groceries_index": 68.0,
+     "restaurant_price_index": 84.7,
+     "local_purchasing_power_index": 81.1
+    },
+    "GB": {
+     "cost_of_living_index": 75.8,
+     "rent_index": 33.4,
+     "cost_of_living_plus_rent_index": 55.4,
+     "groceries_index": 61.0,
+     "restaurant_price_index": 83.9,
+     "local_purchasing_power_index": 108.5
+    },
+    "DE": {
+     "cost_of_living_index": 74.3,
+     "rent_index": 29.1,
+     "cost_of_living_plus_rent_index": 52.5,
+     "groceries_index": 58.9,
+     "restaurant_price_index": 71.2,
+     "local_purchasing_power_index": 125.0
+    },
+    "US": {
+     "cost_of_living_index": 73.0,
+     "rent_index": 38.5,
+     "cost_of_living_plus_rent_index": 56.3,
+     "groceries_index": 73.9,
+     "restaurant_price_index": 70.0,
+     "local_purchasing_power_index": 127.6
+    },
+    "CA": {
+     "cost_of_living_index": 72.5,
+     "rent_index": 30.8,
+     "cost_of_living_plus_rent_index": 52.4,
+     "groceries_index": 71.4,
+     "restaurant_price_index": 68.7,
+     "local_purchasing_power_index": 118.9
+    },
+    "AE": {
+     "cost_of_living_index": 67.2,
+     "rent_index": 60.7,
+     "cost_of_living_plus_rent_index": 64.1,
+     "groceries_index": 55.6,
+     "restaurant_price_index": 63.3,
+     "local_purchasing_power_index": 124.8
+    },
+    "QA": {
+     "cost_of_living_index": 65.4,
+     "rent_index": 65.3,
+     "cost_of_living_plus_rent_index": 65.3,
+     "groceries_index": 57.5,
+     "restaurant_price_index": 64.8,
+     "local_purchasing_power_index": 125.0
+    },
+    "ES": {
+     "cost_of_living_index": 61.8,
+     "rent_index": 22.2,
+     "cost_of_living_plus_rent_index": 42.7,
+     "groceries_index": 51.3,
+     "restaurant_price_index": 60.6,
+     "local_purchasing_power_index": 90.7
+    }
+   },
+   "2019": {
+    "NO": {
+     "cost_of_living_index": 101.0,
+     "rent_index": 37.3,
+     "cost_of_living_plus_rent_index": 70.4,
+     "groceries_index": 92.7,
+     "restaurant_price_index": 111.5,
+     "local_purchasing_power_index": 103.6
+    },
+    "DK": {
+     "cost_of_living_index": 81.4,
+     "rent_index": 32.9,
+     "cost_of_living_plus_rent_index": 58.1,
+     "groceries_index": 63.6,
+     "restaurant_price_index": 95.1,
+     "local_purchasing_power_index": 114.4
+    },
+    "IE": {
+     "cost_of_living_index": 75.3,
+     "rent_index": 41.8,
+     "cost_of_living_plus_rent_index": 59.2,
+     "groceries_index": 59.1,
+     "restaurant_price_index": 82.6,
+     "local_purchasing_power_index": 95.1
+    },
+    "NL": {
+     "cost_of_living_index": 74.8,
+     "rent_index": 34.7,
+     "cost_of_living_plus_rent_index": 55.6,
+     "groceries_index": 58.8,
+     "restaurant_price_index": 83.5,
+     "local_purchasing_power_index": 102.5
+    },
+    "FI": {
+     "cost_of_living_index": 72.8,
+     "rent_index": 26.1,
+     "cost_of_living_plus_rent_index": 50.4,
+     "groceries_index": 60.0,
+     "restaurant_price_index": 77.9,
+     "local_purchasing_power_index": 112.3
+    },
+    "AU": {
+     "cost_of_living_index": 72.1,
+     "rent_index": 35.5,
+     "cost_of_living_plus_rent_index": 54.5,
+     "groceries_index": 66.9,
+     "restaurant_price_index": 70.7,
+     "local_purchasing_power_index": 122.9
+    },
+    "SE": {
+     "cost_of_living_index": 71.6,
+     "rent_index": 26.0,
+     "cost_of_living_plus_rent_index": 49.7,
+     "groceries_index": 63.5,
+     "restaurant_price_index": 75.0,
+     "local_purchasing_power_index": 111.4
+    },
+    "US": {
+     "cost_of_living_index": 69.9,
+     "rent_index": 39.0,
+     "cost_of_living_plus_rent_index": 55.1,
+     "groceries_index": 67.4,
+     "restaurant_price_index": 69.3,
+     "local_purchasing_power_index": 122.0
+    },
+    "IT": {
+     "cost_of_living_index": 69.2,
+     "rent_index": 21.7,
+     "cost_of_living_plus_rent_index": 46.4,
+     "groceries_index": 58.3,
+     "restaurant_price_index": 75.7,
+     "local_purchasing_power_index": 77.5
+    },
+    "DE": {
+     "cost_of_living_index": 67.6,
+     "rent_index": 26.8,
+     "cost_of_living_plus_rent_index": 48.0,
+     "groceries_index": 54.3,
+     "restaurant_price_index": 63.6,
+     "local_purchasing_power_index": 116.2
+    },
+    "GB": {
+     "cost_of_living_index": 65.3,
+     "rent_index": 28.6,
+     "cost_of_living_plus_rent_index": 47.7,
+     "groceries_index": 51.9,
+     "restaurant_price_index": 72.4,
+     "local_purchasing_power_index": 105.7
+    },
+    "CA": {
+     "cost_of_living_index": 65.0,
+     "rent_index": 28.3,
+     "cost_of_living_plus_rent_index": 47.4,
+     "groceries_index": 62.4,
+     "restaurant_price_index": 61.8,
+     "local_purchasing_power_index": 109.4
+    },
+    "QA": {
+     "cost_of_living_index": 59.1,
+     "rent_index": 46.6,
+     "cost_of_living_plus_rent_index": 53.1,
+     "groceries_index": 47.7,
+     "restaurant_price_index": 61.9,
+     "local_purchasing_power_index": 138.3
+    },
+    "AE": {
+     "cost_of_living_index": 56.2,
+     "rent_index": 41.0,
+     "cost_of_living_plus_rent_index": 48.9,
+     "groceries_index": 43.2,
+     "restaurant_price_index": 53.9,
+     "local_purchasing_power_index": 119.6
+    },
+    "ES": {
+     "cost_of_living_index": 54.7,
+     "rent_index": 20.7,
+     "cost_of_living_plus_rent_index": 38.4,
+     "groceries_index": 44.0,
+     "restaurant_price_index": 54.1,
+     "local_purchasing_power_index": 83.8
+    }
+   },
+   "2020": {
+    "NO": {
+     "cost_of_living_index": 101.4,
+     "rent_index": 36.2,
+     "cost_of_living_plus_rent_index": 70.2,
+     "groceries_index": 91.1,
+     "restaurant_price_index": 109.3,
+     "local_purchasing_power_index": 88.4
+    },
+    "DK": {
+     "cost_of_living_index": 83.0,
+     "rent_index": 31.9,
+     "cost_of_living_plus_rent_index": 58.6,
+     "groceries_index": 61.7,
+     "restaurant_price_index": 100.8,
+     "local_purchasing_power_index": 100.9
+    },
+    "IE": {
+     "cost_of_living_index": 75.9,
+     "rent_index": 43.9,
+     "cost_of_living_plus_rent_index": 60.6,
+     "groceries_index": 58.4,
+     "restaurant_price_index": 81.2,
+     "local_purchasing_power_index": 80.9
+    },
+    "NL": {
+     "cost_of_living_index": 73.7,
+     "rent_index": 35.2,
+     "cost_of_living_plus_rent_index": 55.3,
+     "groceries_index": 55.9,
+     "restaurant_price_index": 80.5,
+     "local_purchasing_power_index": 90.7
+    },
+    "AU": {
+     "cost_of_living_index": 73.5,
+     "rent_index": 34.9,
+     "cost_of_living_plus_rent_index": 55.0,
+     "groceries_index": 67.2,
+     "restaurant_price_index": 70.3,
+     "local_purchasing_power_index": 107.3
+    },
+    "US": {
+     "cost_of_living_index": 71.1,
+     "rent_index": 40.3,
+     "cost_of_living_plus_rent_index": 56.4,
+     "groceries_index": 66.6,
+     "restaurant_price_index": 70.7,
+     "local_purchasing_power_index": 109.5
+    },
+    "FI": {
+     "cost_of_living_index": 70.3,
+     "rent_index": 26.2,
+     "cost_of_living_plus_rent_index": 49.2,
+     "groceries_index": 56.5,
+     "restaurant_price_index": 76.8,
+     "local_purchasing_power_index": 99.9
+    },
+    "SE": {
+     "cost_of_living_index": 69.8,
+     "rent_index": 25.9,
+     "cost_of_living_plus_rent_index": 48.8,
+     "groceries_index": 60.5,
+     "restaurant_price_index": 72.3,
+     "local_purchasing_power_index": 101.7
+    },
+    "CA": {
+     "cost_of_living_index": 67.6,
+     "rent_index": 30.7,
+     "cost_of_living_plus_rent_index": 50.0,
+     "groceries_index": 63.7,
+     "restaurant_price_index": 63.5,
+     "local_purchasing_power_index": 95.1
+    },
+    "GB": {
+     "cost_of_living_index": 67.3,
+     "rent_index": 29.8,
+     "cost_of_living_plus_rent_index": 49.4,
+     "groceries_index": 51.3,
+     "restaurant_price_index": 74.1,
+     "local_purchasing_power_index": 91.7
+    },
+    "IT": {
+     "cost_of_living_index": 67.3,
+     "rent_index": 21.2,
+     "cost_of_living_plus_rent_index": 45.2,
+     "groceries_index": 55.4,
+     "restaurant_price_index": 72.3,
+     "local_purchasing_power_index": 65.6
+    },
+    "DE": {
+     "cost_of_living_index": 65.3,
+     "rent_index": 27.1,
+     "cost_of_living_plus_rent_index": 47.0,
+     "groceries_index": 49.2,
+     "restaurant_price_index": 61.6,
+     "local_purchasing_power_index": 102.4
+    },
+    "QA": {
+     "cost_of_living_index": 64.0,
+     "rent_index": 47.4,
+     "cost_of_living_plus_rent_index": 56.1,
+     "groceries_index": 53.6,
+     "restaurant_price_index": 66.8,
+     "local_purchasing_power_index": 111.7
+    },
+    "AE": {
+     "cost_of_living_index": 62.0,
+     "rent_index": 41.1,
+     "cost_of_living_plus_rent_index": 52.0,
+     "groceries_index": 47.6,
+     "restaurant_price_index": 61.3,
+     "local_purchasing_power_index": 91.6
+    },
+    "ES": {
+     "cost_of_living_index": 53.8,
+     "rent_index": 21.8,
+     "cost_of_living_plus_rent_index": 38.5,
+     "groceries_index": 42.4,
+     "restaurant_price_index": 52.1,
+     "local_purchasing_power_index": 72.0
+    }
+   },
+   "2021": {
+    "NO": {
+     "cost_of_living_index": 106.1,
+     "rent_index": 36.2,
+     "cost_of_living_plus_rent_index": 72.7,
+     "groceries_index": 100.6,
+     "restaurant_price_index": 105.9,
+     "local_purchasing_power_index": 79.4
+    },
+    "DK": {
+     "cost_of_living_index": 91.7,
+     "rent_index": 36.2,
+     "cost_of_living_plus_rent_index": 65.2,
+     "groceries_index": 72.6,
+     "restaurant_price_index": 104.9,
+     "local_purchasing_power_index": 94.7
+    },
+    "AU": {
+     "cost_of_living_index": 84.1,
+     "rent_index": 38.4,
+     "cost_of_living_plus_rent_index": 62.3,
+     "groceries_index": 81.1,
+     "restaurant_price_index": 76.3,
+     "local_purchasing_power_index": 99.3
+    },
+    "IE": {
+     "cost_of_living_index": 83.1,
+     "rent_index": 45.4,
+     "cost_of_living_plus_rent_index": 65.1,
+     "groceries_index": 67.8,
+     "restaurant_price_index": 82.3,
+     "local_purchasing_power_index": 73.8
+    },
+    "SE": {
+     "cost_of_living_index": 79.2,
+     "rent_index": 28.1,
+     "cost_of_living_plus_rent_index": 54.8,
+     "groceries_index": 71.7,
+     "restaurant_price_index": 77.2,
+     "local_purchasing_power_index": 90.6
+    },
+    "NL": {
+     "cost_of_living_index": 78.6,
+     "rent_index": 39.3,
+     "cost_of_living_plus_rent_index": 59.8,
+     "groceries_index": 61.6,
+     "restaurant_price_index": 81.6,
+     "local_purchasing_power_index": 83.9
+    },
+    "FI": {
+     "cost_of_living_index": 77.5,
+     "rent_index": 28.0,
+     "cost_of_living_plus_rent_index": 53.9,
+     "groceries_index": 65.6,
+     "restaurant_price_index": 81.2,
+     "local_purchasing_power_index": 89.1
+    },
+    "IT": {
+     "cost_of_living_index": 73.1,
+     "rent_index": 22.9,
+     "cost_of_living_plus_rent_index": 49.1,
+     "groceries_index": 62.5,
+     "restaurant_price_index": 75.6,
+     "local_purchasing_power_index": 58.7
+    },
+    "US": {
+     "cost_of_living_index": 71.9,
+     "rent_index": 41.1,
+     "cost_of_living_plus_rent_index": 57.2,
+     "groceries_index": 70.2,
+     "restaurant_price_index": 69.4,
+     "local_purchasing_power_index": 102.6
+    },
+    "GB": {
+     "cost_of_living_index": 71.0,
+     "rent_index": 31.6,
+     "cost_of_living_plus_rent_index": 52.2,
+     "groceries_index": 56.4,
+     "restaurant_price_index": 74.7,
+     "local_purchasing_power_index": 82.6
+    },
+    "DE": {
+     "cost_of_living_index": 70.6,
+     "rent_index": 29.6,
+     "cost_of_living_plus_rent_index": 51.0,
+     "groceries_index": 54.7,
+     "restaurant_price_index": 65.0,
+     "local_purchasing_power_index": 93.7
+    },
+    "CA": {
+     "cost_of_living_index": 70.1,
+     "rent_index": 32.5,
+     "cost_of_living_plus_rent_index": 52.1,
+     "groceries_index": 68.5,
+     "restaurant_price_index": 64.0,
+     "local_purchasing_power_index": 82.8
+    },
+    "QA": {
+     "cost_of_living_index": 64.2,
+     "rent_index": 46.6,
+     "cost_of_living_plus_rent_index": 55.8,
+     "groceries_index": 56.7,
+     "restaurant_price_index": 62.6,
+     "local_purchasing_power_index": 93.1
+    },
+    "AE": {
+     "cost_of_living_index": 61.7,
+     "rent_index": 40.6,
+     "cost_of_living_plus_rent_index": 51.6,
+     "groceries_index": 48.8,
+     "restaurant_price_index": 61.3,
+     "local_purchasing_power_index": 85.7
+    },
+    "ES": {
+     "cost_of_living_index": 59.1,
+     "rent_index": 23.6,
+     "cost_of_living_plus_rent_index": 42.1,
+     "groceries_index": 48.7,
+     "restaurant_price_index": 57.0,
+     "local_purchasing_power_index": 62.7
+    }
+   },
+   "2022": {
+    "NO": {
+     "cost_of_living_index": 100.9,
+     "rent_index": 34.7,
+     "cost_of_living_plus_rent_index": 69.9,
+     "groceries_index": 97.3,
+     "restaurant_price_index": 105.5,
+     "local_purchasing_power_index": 83.1
+    },
+    "DK": {
+     "cost_of_living_index": 84.1,
+     "rent_index": 33.2,
+     "cost_of_living_plus_rent_index": 60.3,
+     "groceries_index": 68.6,
+     "restaurant_price_index": 98.8,
+     "local_purchasing_power_index": 99.5
+    },
+    "AU": {
+     "cost_of_living_index": 77.7,
+     "rent_index": 36.8,
+     "cost_of_living_plus_rent_index": 58.6,
+     "groceries_index": 77.4,
+     "restaurant_price_index": 73.0,
+     "local_purchasing_power_index": 104.6
+    },
+    "IE": {
+     "cost_of_living_index": 76.1,
+     "rent_index": 42.1,
+     "cost_of_living_plus_rent_index": 60.1,
+     "groceries_index": 62.1,
+     "restaurant_price_index": 80.4,
+     "local_purchasing_power_index": 82.3
+    },
+    "NL": {
+     "cost_of_living_index": 75.7,
+     "rent_index": 36.1,
+     "cost_of_living_plus_rent_index": 57.1,
+     "groceries_index": 65.5,
+     "restaurant_price_index": 76.4,
+     "local_purchasing_power_index": 88.0
+    },
+    "FI": {
+     "cost_of_living_index": 73.2,
+     "rent_index": 25.9,
+     "cost_of_living_plus_rent_index": 51.0,
+     "groceries_index": 65.2,
+     "restaurant_price_index": 77.6,
+     "local_purchasing_power_index": 91.0
+    },
+    "SE": {
+     "cost_of_living_index": 71.7,
+     "rent_index": 25.9,
+     "cost_of_living_plus_rent_index": 50.2,
+     "groceries_index": 65.8,
+     "restaurant_price_index": 72.6,
+     "local_purchasing_power_index": 98.1
+    },
+    "CA": {
+     "cost_of_living_index": 70.2,
+     "rent_index": 34.3,
+     "cost_of_living_plus_rent_index": 53.4,
+     "groceries_index": 70.0,
+     "restaurant_price_index": 67.9,
+     "local_purchasing_power_index": 88.0
+    },
+    "US": {
+     "cost_of_living_index": 70.1,
+     "rent_index": 42.1,
+     "cost_of_living_plus_rent_index": 57.0,
+     "groceries_index": 70.4,
+     "restaurant_price_index": 70.1,
+     "local_purchasing_power_index": 106.3
+    },
+    "GB": {
+     "cost_of_living_index": 69.7,
+     "rent_index": 31.8,
+     "cost_of_living_plus_rent_index": 51.9,
+     "groceries_index": 56.6,
+     "restaurant_price_index": 76.8,
+     "local_purchasing_power_index": 88.8
+    },
+    "IT": {
+     "cost_of_living_index": 66.5,
+     "rent_index": 20.6,
+     "cost_of_living_plus_rent_index": 44.9,
+     "groceries_index": 58.0,
+     "restaurant_price_index": 70.6,
+     "local_purchasing_power_index": 61.7
+    },
+    "DE": {
+     "cost_of_living_index": 65.6,
+     "rent_index": 27.6,
+     "cost_of_living_plus_rent_index": 47.8,
+     "groceries_index": 52.3,
+     "restaurant_price_index": 60.9,
+     "local_purchasing_power_index": 103.1
+    },
+    "QA": {
+     "cost_of_living_index": 62.8,
+     "rent_index": 48.2,
+     "cost_of_living_plus_rent_index": 56.0,
+     "groceries_index": 55.0,
+     "restaurant_price_index": 63.0,
+     "local_purchasing_power_index": 93.7
+    },
+    "AE": {
+     "cost_of_living_index": 58.3,
+     "rent_index": 43.3,
+     "cost_of_living_plus_rent_index": 51.3,
+     "groceries_index": 46.7,
+     "restaurant_price_index": 61.5,
+     "local_purchasing_power_index": 92.2
+    },
+    "ES": {
+     "cost_of_living_index": 53.9,
+     "rent_index": 21.3,
+     "cost_of_living_plus_rent_index": 38.6,
+     "groceries_index": 45.7,
+     "restaurant_price_index": 54.0,
+     "local_purchasing_power_index": 70.0
+    }
+   },
+   "2023": {
+    "NO": {
+     "cost_of_living_index": 88.6,
+     "rent_index": 30.9,
+     "cost_of_living_plus_rent_index": 60.9,
+     "groceries_index": 81.8,
+     "restaurant_price_index": 90.6,
+     "local_purchasing_power_index": 95.0
+    },
+    "DK": {
+     "cost_of_living_index": 78.6,
+     "rent_index": 30.4,
+     "cost_of_living_plus_rent_index": 55.5,
+     "groceries_index": 62.4,
+     "restaurant_price_index": 91.9,
+     "local_purchasing_power_index": 105.0
+    },
+    "AU": {
+     "cost_of_living_index": 75.3,
+     "rent_index": 39.0,
+     "cost_of_living_plus_rent_index": 57.9,
+     "groceries_index": 73.3,
+     "restaurant_price_index": 66.2,
+     "local_purchasing_power_index": 110.9
+    },
+    "US": {
+     "cost_of_living_index": 72.4,
+     "rent_index": 47.1,
+     "cost_of_living_plus_rent_index": 60.3,
+     "groceries_index": 71.4,
+     "restaurant_price_index": 70.8,
+     "local_purchasing_power_index": 115.7
+    },
+    "IE": {
+     "cost_of_living_index": 70.5,
+     "rent_index": 44.4,
+     "cost_of_living_plus_rent_index": 58.0,
+     "groceries_index": 55.8,
+     "restaurant_price_index": 71.9,
+     "local_purchasing_power_index": 82.6
+    },
+    "NL": {
+     "cost_of_living_index": 68.6,
+     "rent_index": 33.4,
+     "cost_of_living_plus_rent_index": 51.7,
+     "groceries_index": 57.4,
+     "restaurant_price_index": 67.6,
+     "local_purchasing_power_index": 107.8
+    },
+    "FI": {
+     "cost_of_living_index": 67.5,
+     "rent_index": 22.7,
+     "cost_of_living_plus_rent_index": 46.0,
+     "groceries_index": 58.2,
+     "restaurant_price_index": 70.4,
+     "local_purchasing_power_index": 98.8
+    },
+    "CA": {
+     "cost_of_living_index": 66.1,
+     "rent_index": 33.4,
+     "cost_of_living_plus_rent_index": 50.4,
+     "groceries_index": 64.2,
+     "restaurant_price_index": 62.8,
+     "local_purchasing_power_index": 102.1
+    },
+    "DE": {
+     "cost_of_living_index": 62.9,
+     "rent_index": 26.1,
+     "cost_of_living_plus_rent_index": 45.3,
+     "groceries_index": 50.9,
+     "restaurant_price_index": 56.2,
+     "local_purchasing_power_index": 107.6
+    },
+    "SE": {
+     "cost_of_living_index": 62.9,
+     "rent_index": 22.7,
+     "cost_of_living_plus_rent_index": 43.6,
+     "groceries_index": 55.2,
+     "restaurant_price_index": 64.3,
+     "local_purchasing_power_index": 101.2
+    },
+    "GB": {
+     "cost_of_living_index": 61.5,
+     "rent_index": 30.3,
+     "cost_of_living_plus_rent_index": 46.6,
+     "groceries_index": 47.7,
+     "restaurant_price_index": 67.9,
+     "local_purchasing_power_index": 98.9
+    },
+    "IT": {
+     "cost_of_living_index": 61.3,
+     "rent_index": 20.5,
+     "cost_of_living_plus_rent_index": 41.7,
+     "groceries_index": 51.9,
+     "restaurant_price_index": 61.9,
+     "local_purchasing_power_index": 66.5
+    },
+    "AE": {
+     "cost_of_living_index": 60.3,
+     "rent_index": 34.0,
+     "cost_of_living_plus_rent_index": 47.6,
+     "groceries_index": 46.6,
+     "restaurant_price_index": 56.6,
+     "local_purchasing_power_index": 123.4
+    },
+    "QA": {
+     "cost_of_living_index": 59.5,
+     "rent_index": 50.0,
+     "cost_of_living_plus_rent_index": 54.9,
+     "groceries_index": 47.7,
+     "restaurant_price_index": 58.3,
+     "local_purchasing_power_index": 123.6
+    },
+    "ES": {
+     "cost_of_living_index": 50.6,
+     "rent_index": 21.7,
+     "cost_of_living_plus_rent_index": 36.7,
+     "groceries_index": 41.0,
+     "restaurant_price_index": 51.5,
+     "local_purchasing_power_index": 82.5
+    }
+   },
+   "2024": {
+    "NO": {
+     "cost_of_living_index": 79.2,
+     "rent_index": 27.8,
+     "cost_of_living_plus_rent_index": 54.8,
+     "groceries_index": 77.5,
+     "restaurant_price_index": 75.9,
+     "local_purchasing_power_index": 94.9
+    },
+    "DK": {
+     "cost_of_living_index": 75.2,
+     "rent_index": 28.6,
+     "cost_of_living_plus_rent_index": 53.1,
+     "groceries_index": 65.0,
+     "restaurant_price_index": 82.6,
+     "local_purchasing_power_index": 103.3
+    },
+    "US": {
+     "cost_of_living_index": 72.9,
+     "rent_index": 44.7,
+     "cost_of_living_plus_rent_index": 59.5,
+     "groceries_index": 74.2,
+     "restaurant_price_index": 68.4,
+     "local_purchasing_power_index": 120.9
+    },
+    "AU": {
+     "cost_of_living_index": 72.8,
+     "rent_index": 36.6,
+     "cost_of_living_plus_rent_index": 55.6,
+     "groceries_index": 73.9,
+     "restaurant_price_index": 66.9,
+     "local_purchasing_power_index": 93.6
+    },
+    "CA": {
+     "cost_of_living_index": 68.4,
+     "rent_index": 36.0,
+     "cost_of_living_plus_rent_index": 53.1,
+     "groceries_index": 70.7,
+     "restaurant_price_index": 64.0,
+     "local_purchasing_power_index": 83.3
+    },
+    "IE": {
+     "cost_of_living_index": 66.5,
+     "rent_index": 47.3,
+     "cost_of_living_plus_rent_index": 57.4,
+     "groceries_index": 58.9,
+     "restaurant_price_index": 65.9,
+     "local_purchasing_power_index": 82.0
+    },
+    "FI": {
+     "cost_of_living_index": 65.5,
+     "rent_index": 20.8,
+     "cost_of_living_plus_rent_index": 44.3,
+     "groceries_index": 61.6,
+     "restaurant_price_index": 63.8,
+     "local_purchasing_power_index": 97.3
+    },
+    "NL": {
+     "cost_of_living_index": 64.3,
+     "rent_index": 34.5,
+     "cost_of_living_plus_rent_index": 50.2,
+     "groceries_index": 57.4,
+     "restaurant_price_index": 61.0,
+     "local_purchasing_power_index": 103.3
+    },
+    "GB": {
+     "cost_of_living_index": 63.7,
+     "rent_index": 33.5,
+     "cost_of_living_plus_rent_index": 49.4,
+     "groceries_index": 55.5,
+     "restaurant_price_index": 63.9,
+     "local_purchasing_power_index": 90.1
+    },
+    "DE": {
+     "cost_of_living_index": 62.7,
+     "rent_index": 26.3,
+     "cost_of_living_plus_rent_index": 45.4,
+     "groceries_index": 57.6,
+     "restaurant_price_index": 52.5,
+     "local_purchasing_power_index": 101.0
+    },
+    "SE": {
+     "cost_of_living_index": 62.2,
+     "rent_index": 23.1,
+     "cost_of_living_plus_rent_index": 43.6,
+     "groceries_index": 61.8,
+     "restaurant_price_index": 56.1,
+     "local_purchasing_power_index": 94.6
+    },
+    "IT": {
+     "cost_of_living_index": 58.9,
+     "rent_index": 21.1,
+     "cost_of_living_plus_rent_index": 41.0,
+     "groceries_index": 56.8,
+     "restaurant_price_index": 55.0,
+     "local_purchasing_power_index": 62.8
+    },
+    "AE": {
+     "cost_of_living_index": 57.8,
+     "rent_index": 46.9,
+     "cost_of_living_plus_rent_index": 52.6,
+     "groceries_index": 45.0,
+     "restaurant_price_index": 50.0,
+     "local_purchasing_power_index": 98.7
+    },
+    "QA": {
+     "cost_of_living_index": 55.0,
+     "rent_index": 40.4,
+     "cost_of_living_plus_rent_index": 48.1,
+     "groceries_index": 44.3,
+     "restaurant_price_index": 49.5,
+     "local_purchasing_power_index": 127.4
+    },
+    "ES": {
+     "cost_of_living_index": 48.4,
+     "rent_index": 23.6,
+     "cost_of_living_plus_rent_index": 36.6,
+     "groceries_index": 45.1,
+     "restaurant_price_index": 44.0,
+     "local_purchasing_power_index": 78.2
+    }
+   },
+   "2025": {
+    "NO": {
+     "cost_of_living_index": 69.0,
+     "rent_index": 24.8,
+     "cost_of_living_plus_rent_index": 49.4,
+     "groceries_index": 71.9,
+     "restaurant_price_index": 74.6,
+     "local_purchasing_power_index": 119.5
+    },
+    "DK": {
+     "cost_of_living_index": 66.9,
+     "rent_index": 25.7,
+     "cost_of_living_plus_rent_index": 48.6,
+     "groceries_index": 61.0,
+     "restaurant_price_index": 80.8,
+     "local_purchasing_power_index": 133.6
+    },
+    "US": {
+     "cost_of_living_index": 64.9,
+     "rent_index": 40.9,
+     "cost_of_living_plus_rent_index": 54.3,
+     "groceries_index": 71.7,
+     "restaurant_price_index": 69.3,
+     "local_purchasing_power_index": 146.2
+    },
+    "AU": {
+     "cost_of_living_index": 60.9,
+     "rent_index": 29.8,
+     "cost_of_living_plus_rent_index": 47.1,
+     "groceries_index": 67.9,
+     "restaurant_price_index": 59.2,
+     "local_purchasing_power_index": 135.4
+    },
+    "NL": {
+     "cost_of_living_index": 60.5,
+     "rent_index": 32.1,
+     "cost_of_living_plus_rent_index": 47.9,
+     "groceries_index": 56.8,
+     "restaurant_price_index": 67.7,
+     "local_purchasing_power_index": 129.9
+    },
+    "IE": {
+     "cost_of_living_index": 59.8,
+     "rent_index": 39.0,
+     "cost_of_living_plus_rent_index": 50.6,
+     "groceries_index": 56.9,
+     "restaurant_price_index": 65.8,
+     "local_purchasing_power_index": 108.9
+    },
+    "GB": {
+     "cost_of_living_index": 59.2,
+     "rent_index": 30.0,
+     "cost_of_living_plus_rent_index": 46.3,
+     "groceries_index": 54.8,
+     "restaurant_price_index": 65.3,
+     "local_purchasing_power_index": 119.9
+    },
+    "FI": {
+     "cost_of_living_index": 58.7,
+     "rent_index": 19.1,
+     "cost_of_living_plus_rent_index": 41.1,
+     "groceries_index": 59.4,
+     "restaurant_price_index": 64.7,
+     "local_purchasing_power_index": 124.5
+    },
+    "CA": {
+     "cost_of_living_index": 58.7,
+     "rent_index": 30.3,
+     "cost_of_living_plus_rent_index": 46.1,
+     "groceries_index": 65.3,
+     "restaurant_price_index": 59.9,
+     "local_purchasing_power_index": 109.1
+    },
+    "DE": {
+     "cost_of_living_index": 58.4,
+     "rent_index": 22.4,
+     "cost_of_living_plus_rent_index": 42.4,
+     "groceries_index": 56.7,
+     "restaurant_price_index": 57.5,
+     "local_purchasing_power_index": 127.1
+    },
+    "SE": {
+     "cost_of_living_index": 54.2,
+     "rent_index": 19.1,
+     "cost_of_living_plus_rent_index": 38.7,
+     "groceries_index": 55.5,
+     "restaurant_price_index": 56.0,
+     "local_purchasing_power_index": 130.3
+    },
+    "AE": {
+     "cost_of_living_index": 54.1,
+     "rent_index": 39.7,
+     "cost_of_living_plus_rent_index": 47.8,
+     "groceries_index": 42.4,
+     "restaurant_price_index": 59.9,
+     "local_purchasing_power_index": 128.3
+    },
+    "IT": {
+     "cost_of_living_index": 51.0,
+     "rent_index": 17.7,
+     "cost_of_living_plus_rent_index": 36.3,
+     "groceries_index": 53.5,
+     "restaurant_price_index": 53.0,
+     "local_purchasing_power_index": 85.1
+    },
+    "QA": {
+     "cost_of_living_index": 47.5,
+     "rent_index": 34.4,
+     "cost_of_living_plus_rent_index": 41.7,
+     "groceries_index": 42.2,
+     "restaurant_price_index": 46.4,
+     "local_purchasing_power_index": 177.9
+    },
+    "ES": {
+     "cost_of_living_index": 43.5,
+     "rent_index": 21.2,
+     "cost_of_living_plus_rent_index": 33.6,
+     "groceries_index": 43.0,
+     "restaurant_price_index": 46.1,
+     "local_purchasing_power_index": 98.1
+    }
+   },
+   "2026": {
+    "NO": {
+     "cost_of_living_index": 83.7,
+     "rent_index": 29.2,
+     "cost_of_living_plus_rent_index": 59.4,
+     "groceries_index": 85.4,
+     "restaurant_price_index": 88.6,
+     "local_purchasing_power_index": 124.7
+    },
+    "DK": {
+     "cost_of_living_index": 78.9,
+     "rent_index": 28.9,
+     "cost_of_living_plus_rent_index": 56.6,
+     "groceries_index": 72.7,
+     "restaurant_price_index": 93.7,
+     "local_purchasing_power_index": 146.6
+    },
+    "NL": {
+     "cost_of_living_index": 73.4,
+     "rent_index": 38.7,
+     "cost_of_living_plus_rent_index": 57.9,
+     "groceries_index": 66.9,
+     "restaurant_price_index": 81.6,
+     "local_purchasing_power_index": 131.9
+    },
+    "IE": {
+     "cost_of_living_index": 70.6,
+     "rent_index": 43.8,
+     "cost_of_living_plus_rent_index": 58.7,
+     "groceries_index": 68.8,
+     "restaurant_price_index": 76.6,
+     "local_purchasing_power_index": 114.4
+    },
+    "FI": {
+     "cost_of_living_index": 69.0,
+     "rent_index": 21.9,
+     "cost_of_living_plus_rent_index": 48.0,
+     "groceries_index": 68.7,
+     "restaurant_price_index": 74.1,
+     "local_purchasing_power_index": 129.4
+    },
+    "US": {
+     "cost_of_living_index": 68.8,
+     "rent_index": 40.7,
+     "cost_of_living_plus_rent_index": 56.3,
+     "groceries_index": 74.0,
+     "restaurant_price_index": 72.8,
+     "local_purchasing_power_index": 146.0
+    },
+    "DE": {
+     "cost_of_living_index": 68.7,
+     "rent_index": 24.6,
+     "cost_of_living_plus_rent_index": 49.0,
+     "groceries_index": 64.9,
+     "restaurant_price_index": 66.9,
+     "local_purchasing_power_index": 138.3
+    },
+    "SE": {
+     "cost_of_living_index": 68.0,
+     "rent_index": 22.6,
+     "cost_of_living_plus_rent_index": 47.8,
+     "groceries_index": 68.4,
+     "restaurant_price_index": 70.8,
+     "local_purchasing_power_index": 133.5
+    },
+    "AU": {
+     "cost_of_living_index": 67.9,
+     "rent_index": 33.7,
+     "cost_of_living_plus_rent_index": 52.7,
+     "groceries_index": 76.5,
+     "restaurant_price_index": 65.6,
+     "local_purchasing_power_index": 137.3
+    },
+    "GB": {
+     "cost_of_living_index": 67.8,
+     "rent_index": 32.1,
+     "cost_of_living_plus_rent_index": 51.9,
+     "groceries_index": 62.8,
+     "restaurant_price_index": 72.9,
+     "local_purchasing_power_index": 122.6
+    },
+    "CA": {
+     "cost_of_living_index": 63.0,
+     "rent_index": 31.5,
+     "cost_of_living_plus_rent_index": 48.9,
+     "groceries_index": 69.6,
+     "restaurant_price_index": 64.1,
+     "local_purchasing_power_index": 119.4
+    },
+    "IT": {
+     "cost_of_living_index": 61.4,
+     "rent_index": 20.5,
+     "cost_of_living_plus_rent_index": 43.1,
+     "groceries_index": 62.7,
+     "restaurant_price_index": 64.7,
+     "local_purchasing_power_index": 89.2
+    },
+    "AE": {
+     "cost_of_living_index": 55.2,
+     "rent_index": 39.6,
+     "cost_of_living_plus_rent_index": 48.2,
+     "groceries_index": 44.4,
+     "restaurant_price_index": 56.5,
+     "local_purchasing_power_index": 126.4
+    },
+    "ES": {
+     "cost_of_living_index": 51.6,
+     "rent_index": 23.2,
+     "cost_of_living_plus_rent_index": 39.0,
+     "groceries_index": 50.6,
+     "restaurant_price_index": 55.1,
+     "local_purchasing_power_index": 104.4
+    },
+    "QA": {
+     "cost_of_living_index": 50.4,
+     "rent_index": 40.0,
+     "cost_of_living_plus_rent_index": 45.8,
+     "groceries_index": 41.6,
+     "restaurant_price_index": 55.4,
+     "local_purchasing_power_index": 153.1
+    }
+   }
+  },
+  "by_city": {}
+ }
+}

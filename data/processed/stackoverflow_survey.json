@@ -1,0 +1,2031 @@
+{
+ "source_id": "stackoverflow_survey",
+ "generated_at": "2026-08-04T19:44:23+00:00",
+ "meta": {
+  "compensation_field": "ConvertedCompYearly (USD, converted by Stack Overflow)",
+  "experience_bands": {
+   "new_grad": "<3 years professional",
+   "mid": "3-6",
+   "senior": "6+"
+  },
+  "confidence": "crowd",
+  "level": "country",
+  "waves": [
+   "2024"
+  ],
+  "min_sample_flag": 5,
+  "outlier_filter": "responses outside $5,000-$1,000,000 dropped as data-entry noise",
+  "self_selection_caveat": "Respondents self-select and skew toward English-speaking, Stack-Overflow-using developers. Useful for SHAPE and cross-country comparison, weaker as an absolute level. Every bucket carries n and a thin_sample flag so the UI can say so.",
+  "failures": []
+ },
+ "data": {
+  "by_country_experience": {
+   "US": {
+    "2024": {
+     "senior": {
+      "median_usd": 160000,
+      "p25_usd": 120000,
+      "p75_usd": 200000,
+      "n": 3333,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 144000,
+      "p25_usd": 101500,
+      "p75_usd": 190000,
+      "n": 4659,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 110000,
+      "p25_usd": 85000,
+      "p75_usd": 145000,
+      "n": 794,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 85000,
+      "p25_usd": 63000,
+      "p75_usd": 114213,
+      "n": 506,
+      "thin_sample": false
+     }
+    }
+   },
+   "GB": {
+    "2024": {
+     "senior": {
+      "median_usd": 99363,
+      "p25_usd": 70063,
+      "p75_usd": 131210,
+      "n": 990,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 84076,
+      "p25_usd": 58598,
+      "p75_usd": 121018,
+      "n": 1393,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 64968,
+      "p25_usd": 50955,
+      "p75_usd": 89172,
+      "n": 227,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 45860,
+      "p25_usd": 35669,
+      "p75_usd": 57325,
+      "n": 160,
+      "thin_sample": false
+     }
+    }
+   },
+   "DE": {
+    "2024": {
+     "new_grad": {
+      "median_usd": 44681,
+      "p25_usd": 16111,
+      "p75_usd": 59073,
+      "n": 261,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 73036,
+      "p25_usd": 54133,
+      "p75_usd": 91546,
+      "n": 2024,
+      "thin_sample": false
+     },
+     "senior": {
+      "median_usd": 81629,
+      "p25_usd": 66592,
+      "p75_usd": 102036,
+      "n": 1295,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 60147,
+      "p25_usd": 48333,
+      "p75_usd": 75184,
+      "n": 462,
+      "thin_sample": false
+     }
+    }
+   },
+   "IT": {
+    "2024": {
+     "mid": {
+      "median_usd": 32759,
+      "p25_usd": 29000,
+      "p75_usd": 42962,
+      "n": 124,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 42962,
+      "p25_usd": 32222,
+      "p75_usd": 57865,
+      "n": 536,
+      "thin_sample": false
+     },
+     "senior": {
+      "median_usd": 48333,
+      "p25_usd": 37860,
+      "p75_usd": 64444,
+      "n": 336,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 25777,
+      "p25_usd": 20541,
+      "p75_usd": 32222,
+      "n": 72,
+      "thin_sample": false
+     }
+    }
+   },
+   "CA": {
+    "2024": {
+     "senior": {
+      "median_usd": 94501,
+      "p25_usd": 75601,
+      "p75_usd": 130847,
+      "n": 593,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 87231,
+      "p25_usd": 65424,
+      "p75_usd": 116309,
+      "n": 868,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 69058,
+      "p25_usd": 54520,
+      "p75_usd": 87231,
+      "n": 161,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 50885,
+      "p25_usd": 38527,
+      "p75_usd": 65424,
+      "n": 104,
+      "thin_sample": false
+     }
+    }
+   },
+   "IE": {
+    "2024": {
+     "senior": {
+      "median_usd": 102036,
+      "p25_usd": 73036,
+      "p75_usd": 150369,
+      "n": 87,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 91295,
+      "p25_usd": 60147,
+      "p75_usd": 128887,
+      "n": 119,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 45111,
+      "p25_usd": 33296,
+      "p75_usd": 64444,
+      "n": 15,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 72499,
+      "p25_usd": 52092,
+      "p75_usd": 100962,
+      "n": 17,
+      "thin_sample": false
+     }
+    }
+   },
+   "ES": {
+    "2024": {
+     "senior": {
+      "median_usd": 59073,
+      "p25_usd": 45111,
+      "p75_usd": 80824,
+      "n": 354,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 51555,
+      "p25_usd": 34370,
+      "p75_usd": 69814,
+      "n": 555,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 26529,
+      "p25_usd": 20407,
+      "p75_usd": 32222,
+      "n": 79,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 37592,
+      "p25_usd": 31040,
+      "p75_usd": 51555,
+      "n": 114,
+      "thin_sample": false
+     }
+    }
+   },
+   "NL": {
+    "2024": {
+     "senior": {
+      "median_usd": 83777,
+      "p25_usd": 64444,
+      "p75_usd": 107406,
+      "n": 387,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 69814,
+      "p25_usd": 53246,
+      "p75_usd": 97310,
+      "n": 561,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 54777,
+      "p25_usd": 42962,
+      "p75_usd": 66592,
+      "n": 107,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 44037,
+      "p25_usd": 38666,
+      "p75_usd": 53703,
+      "n": 61,
+      "thin_sample": false
+     }
+    }
+   },
+   "SE": {
+    "2024": {
+     "senior": {
+      "median_usd": 67150,
+      "p25_usd": 56000,
+      "p75_usd": 81077,
+      "n": 310,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 58280,
+      "p25_usd": 47692,
+      "p75_usd": 76307,
+      "n": 442,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 44258,
+      "p25_usd": 38154,
+      "p75_usd": 49378,
+      "n": 61,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 48074,
+      "p25_usd": 43495,
+      "p75_usd": 57230,
+      "n": 71,
+      "thin_sample": false
+     }
+    }
+   },
+   "NO": {
+    "2024": {
+     "senior": {
+      "median_usd": 89380,
+      "p25_usd": 75294,
+      "p75_usd": 102950,
+      "n": 142,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 79552,
+      "p25_usd": 65514,
+      "p75_usd": 94995,
+      "n": 223,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 61022,
+      "p25_usd": 50305,
+      "p75_usd": 68462,
+      "n": 30,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 70193,
+      "p25_usd": 60366,
+      "p75_usd": 77681,
+      "n": 51,
+      "thin_sample": false
+     }
+    }
+   },
+   "FI": {
+    "2024": {
+     "senior": {
+      "median_usd": 77332,
+      "p25_usd": 64444,
+      "p75_usd": 88878,
+      "n": 102,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 64444,
+      "p25_usd": 46185,
+      "p75_usd": 80555,
+      "n": 167,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 53703,
+      "p25_usd": 43499,
+      "p75_usd": 58617,
+      "n": 32,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 32866,
+      "p25_usd": 28678,
+      "p75_usd": 47796,
+      "n": 33,
+      "thin_sample": false
+     }
+    }
+   },
+   "DK": {
+    "2024": {
+     "senior": {
+      "median_usd": 100801,
+      "p25_usd": 82925,
+      "p75_usd": 122402,
+      "n": 145,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 89569,
+      "p25_usd": 72001,
+      "p75_usd": 115202,
+      "n": 208,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 58465,
+      "p25_usd": 23040,
+      "p75_usd": 72001,
+      "n": 27,
+      "thin_sample": false
+     },
+     "mid": {
+      "median_usd": 79921,
+      "p25_usd": 63721,
+      "p75_usd": 98216,
+      "n": 36,
+      "thin_sample": false
+     }
+    }
+   },
+   "AU": {
+    "2024": {
+     "mid": {
+      "median_usd": 75976,
+      "p25_usd": 59459,
+      "p75_usd": 85886,
+      "n": 87,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 95796,
+      "p25_usd": 72673,
+      "p75_usd": 118919,
+      "n": 507,
+      "thin_sample": false
+     },
+     "senior": {
+      "median_usd": 102865,
+      "p25_usd": 85886,
+      "p75_usd": 130150,
+      "n": 354,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 52853,
+      "p25_usd": 43439,
+      "p75_usd": 72673,
+      "n": 62,
+      "thin_sample": false
+     }
+    }
+   },
+   "AE": {
+    "2024": {
+     "mid": {
+      "median_usd": 40567,
+      "p25_usd": 16744,
+      "p75_usd": 66242,
+      "n": 12,
+      "thin_sample": false
+     },
+     "all": {
+      "median_usd": 60769,
+      "p25_usd": 23959,
+      "p75_usd": 103460,
+      "n": 47,
+      "thin_sample": false
+     },
+     "senior": {
+      "median_usd": 80046,
+      "p25_usd": 40023,
+      "p75_usd": 112990,
+      "n": 32,
+      "thin_sample": false
+     },
+     "new_grad": {
+      "median_usd": 16336,
+      "p25_usd": null,
+      "p75_usd": null,
+      "n": 3,
+      "thin_sample": true
+     }
+    }
+   },
+   "QA": {
+    "2024": {
+     "mid": {
+      "median_usd": 38448,
+      "p25_usd": null,
+      "p75_usd": null,
+      "n": 1,
+      "thin_sample": true
+     },
+     "all": {
+      "median_usd": 68658,
+      "p25_usd": null,
+      "p75_usd": null,
+      "n": 3,
+      "thin_sample": true
+     },
+     "senior": {
+      "median_usd": 85740,
+      "p25_usd": null,
+      "p75_usd": null,
+      "n": 2,
+      "thin_sample": true
+     }
+    }
+   }
+  },
+  "by_country_role": {
+   "US": {
+    "2024": {
+     "Student": {
+      "median_usd": 40800,
+      "n": 26,
+      "thin_sample": false
+     },
+     "Developer, full-stack": {
+      "median_usd": 130000,
+      "n": 1729,
+      "thin_sample": false
+     },
+     "Engineer, site reliability": {
+      "median_usd": 166500,
+      "n": 44,
+      "thin_sample": false
+     },
+     "Developer, front-end": {
+      "median_usd": 135000,
+      "n": 179,
+      "thin_sample": false
+     },
+     "Engineering manager": {
+      "median_usd": 195000,
+      "n": 155,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 170000,
+      "n": 773,
+      "thin_sample": false
+     },
+     "Developer, QA or test": {
+      "median_usd": 130000,
+      "n": 42,
+      "thin_sample": false
+     },
+     "Academic researcher": {
+      "median_usd": 61500,
+      "n": 77,
+      "thin_sample": false
+     },
+     "System administrator": {
+      "median_usd": 90000,
+      "n": 41,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 135000,
+      "n": 208,
+      "thin_sample": false
+     },
+     "Research & Development role": {
+      "median_usd": 150000,
+      "n": 88,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 150500,
+      "n": 162,
+      "thin_sample": false
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 160000,
+      "n": 105,
+      "thin_sample": false
+     },
+     "Security professional": {
+      "median_usd": 130000,
+      "n": 32,
+      "thin_sample": false
+     },
+     "Developer Experience": {
+      "median_usd": 185000,
+      "n": 23,
+      "thin_sample": false
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 165000,
+      "n": 69,
+      "thin_sample": false
+     },
+     "Developer, mobile": {
+      "median_usd": 185000,
+      "n": 96,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 130000,
+      "n": 173,
+      "thin_sample": false
+     },
+     "Developer, game or graphics": {
+      "median_usd": 127500,
+      "n": 32,
+      "thin_sample": false
+     },
+     "Educator": {
+      "median_usd": 77250,
+      "n": 27,
+      "thin_sample": false
+     },
+     "Project manager": {
+      "median_usd": 140000,
+      "n": 21,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 225000,
+      "n": 80,
+      "thin_sample": false
+     },
+     "Product manager": {
+      "median_usd": 153000,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Scientist": {
+      "median_usd": 113940,
+      "n": 42,
+      "thin_sample": false
+     },
+     "Developer, AI": {
+      "median_usd": 160000,
+      "n": 41,
+      "thin_sample": false
+     },
+     "DevOps specialist": {
+      "median_usd": 145000,
+      "n": 83,
+      "thin_sample": false
+     },
+     "Data or business analyst": {
+      "median_usd": 100000,
+      "n": 57,
+      "thin_sample": false
+     },
+     "Data engineer": {
+      "median_usd": 149000,
+      "n": 144,
+      "thin_sample": false
+     },
+     "Designer": {
+      "median_usd": 84000,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Developer Advocate": {
+      "median_usd": 182500,
+      "n": 18,
+      "thin_sample": false
+     },
+     "Database administrator": {
+      "median_usd": 146000,
+      "n": 14,
+      "thin_sample": false
+     },
+     "Hardware Engineer": {
+      "median_usd": 140000,
+      "n": 25,
+      "thin_sample": false
+     },
+     "Blockchain": {
+      "median_usd": 175000,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Marketing or sales professional": {
+      "median_usd": 132500,
+      "n": 4,
+      "thin_sample": true
+     }
+    }
+   },
+   "GB": {
+    "2024": {
+     "Engineering manager": {
+      "median_usd": 140127,
+      "n": 47,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 112738,
+      "n": 48,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 101910,
+      "n": 263,
+      "thin_sample": false
+     },
+     "Developer, front-end": {
+      "median_usd": 82802,
+      "n": 73,
+      "thin_sample": false
+     },
+     "Developer, mobile": {
+      "median_usd": 94268,
+      "n": 44,
+      "thin_sample": false
+     },
+     "Academic researcher": {
+      "median_usd": 54777,
+      "n": 25,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 74522,
+      "n": 54,
+      "thin_sample": false
+     },
+     "Developer, full-stack": {
+      "median_usd": 76433,
+      "n": 525,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 123248,
+      "n": 22,
+      "thin_sample": false
+     },
+     "DevOps specialist": {
+      "median_usd": 89172,
+      "n": 26,
+      "thin_sample": false
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 108280,
+      "n": 14,
+      "thin_sample": false
+     },
+     "Data or business analyst": {
+      "median_usd": 61783,
+      "n": 16,
+      "thin_sample": false
+     },
+     "Developer, game or graphics": {
+      "median_usd": 63694,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 68152,
+      "n": 46,
+      "thin_sample": false
+     },
+     "Engineer, site reliability": {
+      "median_usd": 127388,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Educator": {
+      "median_usd": 57325,
+      "n": 5,
+      "thin_sample": false
+     },
+     "System administrator": {
+      "median_usd": 58598,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 107006,
+      "n": 21,
+      "thin_sample": false
+     },
+     "Product manager": {
+      "median_usd": 85350,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Data engineer": {
+      "median_usd": 89172,
+      "n": 37,
+      "thin_sample": false
+     },
+     "Research & Development role": {
+      "median_usd": 95668,
+      "n": 22,
+      "thin_sample": false
+     },
+     "Scientist": {
+      "median_usd": 63730,
+      "n": 14,
+      "thin_sample": false
+     },
+     "Developer, QA or test": {
+      "median_usd": 97770,
+      "n": 10,
+      "thin_sample": false
+     },
+     "Security professional": {
+      "median_usd": 112102,
+      "n": 10,
+      "thin_sample": false
+     },
+     "Designer": {
+      "median_usd": 108280,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer Experience": {
+      "median_usd": 191082,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Developer, AI": {
+      "median_usd": 123566,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Database administrator": {
+      "median_usd": 82802,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer Advocate": {
+      "median_usd": 124203,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Hardware Engineer": {
+      "median_usd": 54777,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Blockchain": {
+      "median_usd": 137392,
+      "n": 6,
+      "thin_sample": false
+     }
+    }
+   },
+   "DE": {
+    "2024": {
+     "Academic researcher": {
+      "median_usd": 61222,
+      "n": 91,
+      "thin_sample": false
+     },
+     "Developer, full-stack": {
+      "median_usd": 69814,
+      "n": 667,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 75184,
+      "n": 113,
+      "thin_sample": false
+     },
+     "Developer, front-end": {
+      "median_usd": 66615,
+      "n": 95,
+      "thin_sample": false
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 96666,
+      "n": 25,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 79481,
+      "n": 334,
+      "thin_sample": false
+     },
+     "Project manager": {
+      "median_usd": 85925,
+      "n": 15,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 69814,
+      "n": 138,
+      "thin_sample": false
+     },
+     "System administrator": {
+      "median_usd": 55422,
+      "n": 21,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 81629,
+      "n": 65,
+      "thin_sample": false
+     },
+     "DevOps specialist": {
+      "median_usd": 76258,
+      "n": 48,
+      "thin_sample": false
+     },
+     "Developer, mobile": {
+      "median_usd": 77332,
+      "n": 65,
+      "thin_sample": false
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 75184,
+      "n": 49,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 120000,
+      "n": 15,
+      "thin_sample": false
+     },
+     "Engineering manager": {
+      "median_usd": 105258,
+      "n": 30,
+      "thin_sample": false
+     },
+     "Developer, game or graphics": {
+      "median_usd": 56925,
+      "n": 17,
+      "thin_sample": false
+     },
+     "Product manager": {
+      "median_usd": 103110,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Hardware Engineer": {
+      "median_usd": 52629,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Data engineer": {
+      "median_usd": 80555,
+      "n": 34,
+      "thin_sample": false
+     },
+     "Student": {
+      "median_usd": 14229,
+      "n": 41,
+      "thin_sample": false
+     },
+     "Security professional": {
+      "median_usd": 66592,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Research & Development role": {
+      "median_usd": 82166,
+      "n": 44,
+      "thin_sample": false
+     },
+     "Developer, QA or test": {
+      "median_usd": 73036,
+      "n": 15,
+      "thin_sample": false
+     },
+     "Developer, AI": {
+      "median_usd": 76258,
+      "n": 18,
+      "thin_sample": false
+     },
+     "Scientist": {
+      "median_usd": 61758,
+      "n": 10,
+      "thin_sample": false
+     },
+     "Developer Advocate": {
+      "median_usd": 112777,
+      "n": 7,
+      "thin_sample": false
+     },
+     "Educator": {
+      "median_usd": 56388,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Data or business analyst": {
+      "median_usd": 71425,
+      "n": 12,
+      "thin_sample": false
+     },
+     "Developer Experience": {
+      "median_usd": 85925,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Engineer, site reliability": {
+      "median_usd": 91296,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Blockchain": {
+      "median_usd": 135332,
+      "n": 3,
+      "thin_sample": true
+     }
+    }
+   },
+   "IT": {
+    "2024": {
+     "Developer, full-stack": {
+      "median_usd": 37592,
+      "n": 195,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 107406,
+      "n": 7,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 45111,
+      "n": 21,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 42962,
+      "n": 107,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 40814,
+      "n": 32,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 54777,
+      "n": 18,
+      "thin_sample": false
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 47796,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Academic researcher": {
+      "median_usd": 26852,
+      "n": 7,
+      "thin_sample": false
+     },
+     "Developer, front-end": {
+      "median_usd": 34370,
+      "n": 37,
+      "thin_sample": false
+     },
+     "DevOps specialist": {
+      "median_usd": 48333,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Research & Development role": {
+      "median_usd": 45648,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Educator": {
+      "median_usd": 30611,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, mobile": {
+      "median_usd": 41888,
+      "n": 12,
+      "thin_sample": false
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 49407,
+      "n": 10,
+      "thin_sample": false
+     },
+     "Developer, game or graphics": {
+      "median_usd": 67666,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Project manager": {
+      "median_usd": 42962,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Data engineer": {
+      "median_usd": 56388,
+      "n": 12,
+      "thin_sample": false
+     },
+     "Engineering manager": {
+      "median_usd": 64444,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Designer": {
+      "median_usd": 66592,
+      "n": 3,
+      "thin_sample": true
+     },
+     "System administrator": {
+      "median_usd": 37592,
+      "n": 5,
+      "thin_sample": false
+     }
+    }
+   },
+   "CA": {
+    "2024": {
+     "Developer, game or graphics": {
+      "median_usd": 112674,
+      "n": 14,
+      "thin_sample": false
+     },
+     "Developer, full-stack": {
+      "median_usd": 75601,
+      "n": 322,
+      "thin_sample": false
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 123578,
+      "n": 14,
+      "thin_sample": false
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 83597,
+      "n": 15,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 101406,
+      "n": 158,
+      "thin_sample": false
+     },
+     "DevOps specialist": {
+      "median_usd": 87231,
+      "n": 22,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 87231,
+      "n": 46,
+      "thin_sample": false
+     },
+     "Developer Experience": {
+      "median_usd": 159924,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Engineering manager": {
+      "median_usd": 95918,
+      "n": 26,
+      "thin_sample": false
+     },
+     "Engineer, site reliability": {
+      "median_usd": 130847,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Student": {
+      "median_usd": 25443,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Developer, front-end": {
+      "median_usd": 74510,
+      "n": 30,
+      "thin_sample": false
+     },
+     "Research & Development role": {
+      "median_usd": 87231,
+      "n": 15,
+      "thin_sample": false
+     },
+     "Educator": {
+      "median_usd": 69785,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 90866,
+      "n": 31,
+      "thin_sample": false
+     },
+     "Developer, mobile": {
+      "median_usd": 82870,
+      "n": 22,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 65424,
+      "n": 31,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 161742,
+      "n": 14,
+      "thin_sample": false
+     },
+     "Developer, AI": {
+      "median_usd": 134373,
+      "n": 10,
+      "thin_sample": false
+     },
+     "Hardware Engineer": {
+      "median_usd": 74147,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Data or business analyst": {
+      "median_usd": 85414,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Security professional": {
+      "median_usd": 119943,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Blockchain": {
+      "median_usd": 122693,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Data engineer": {
+      "median_usd": 79962,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Designer": {
+      "median_usd": 84687,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Academic researcher": {
+      "median_usd": 20354,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Developer, QA or test": {
+      "median_usd": 70512,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Scientist": {
+      "median_usd": 75601,
+      "n": 8,
+      "thin_sample": false
+     },
+     "System administrator": {
+      "median_usd": 65424,
+      "n": 5,
+      "thin_sample": false
+     }
+    }
+   },
+   "IE": {
+    "2024": {
+     "Developer, full-stack": {
+      "median_usd": 98814,
+      "n": 41,
+      "thin_sample": false
+     },
+     "Data or business analyst": {
+      "median_usd": 62296,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer, back-end": {
+      "median_usd": 91295,
+      "n": 20,
+      "thin_sample": false
+     },
+     "DevOps specialist": {
+      "median_usd": 64444,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer, mobile": {
+      "median_usd": 56926,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Data engineer": {
+      "median_usd": 163794,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Other (please specify):": {
+      "median_usd": 64444,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 90221,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, front-end": {
+      "median_usd": 72499,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Engineer, site reliability": {
+      "median_usd": 194405,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 90221,
+      "n": 4,
+      "thin_sample": true
+     }
+    }
+   },
+   "ES": {
+    "2024": {
+     "DevOps specialist": {
+      "median_usd": 59073,
+      "n": 13,
+      "thin_sample": false
+     },
+     "Engineering manager": {
+      "median_usd": 77332,
+      "n": 17,
+      "thin_sample": false
+     },
+     "Developer, full-stack": {
+      "median_usd": 41888,
+      "n": 158,
+      "thin_sample": false
+     },
+     "Academic researcher": {
+      "median_usd": 35444,
+      "n": 17,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 56388,
+      "n": 131,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 96666,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Developer, front-end": {
+      "median_usd": 56388,
+      "n": 26,
+      "thin_sample": false
+     },
+     "Developer Advocate": {
+      "median_usd": 120295,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 37592,
+      "n": 23,
+      "thin_sample": false
+     },
+     "Developer, mobile": {
+      "median_usd": 59664,
+      "n": 28,
+      "thin_sample": false
+     },
+     "Research & Development role": {
+      "median_usd": 38828,
+      "n": 16,
+      "thin_sample": false
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 52682,
+      "n": 16,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 63370,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 42156,
+      "n": 12,
+      "thin_sample": false
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 72499,
+      "n": 8,
+      "thin_sample": false
+     },
+     "System administrator": {
+      "median_usd": 26315,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Data engineer": {
+      "median_usd": 56925,
+      "n": 14,
+      "thin_sample": false
+     },
+     "Developer, QA or test": {
+      "median_usd": 44305,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Developer, AI": {
+      "median_usd": 57999,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Engineer, site reliability": {
+      "median_usd": 66054,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Data or business analyst": {
+      "median_usd": 42962,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, game or graphics": {
+      "median_usd": 42962,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Product manager": {
+      "median_usd": 48870,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Project manager": {
+      "median_usd": 64444,
+      "n": 3,
+      "thin_sample": true
+     }
+    }
+   },
+   "NL": {
+    "2024": {
+     "Developer, full-stack": {
+      "median_usd": 65758,
+      "n": 189,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 57359,
+      "n": 24,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 83777,
+      "n": 128,
+      "thin_sample": false
+     },
+     "Developer, AI": {
+      "median_usd": 80178,
+      "n": 10,
+      "thin_sample": false
+     },
+     "DevOps specialist": {
+      "median_usd": 66592,
+      "n": 15,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 59073,
+      "n": 28,
+      "thin_sample": false
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 102036,
+      "n": 10,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 139628,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Academic researcher": {
+      "median_usd": 42962,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Educator": {
+      "median_usd": 64444,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer, front-end": {
+      "median_usd": 68740,
+      "n": 40,
+      "thin_sample": false
+     },
+     "Developer, mobile": {
+      "median_usd": 64444,
+      "n": 18,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 91832,
+      "n": 16,
+      "thin_sample": false
+     },
+     "Security professional": {
+      "median_usd": 128887,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Data engineer": {
+      "median_usd": 86785,
+      "n": 21,
+      "thin_sample": false
+     },
+     "Data or business analyst": {
+      "median_usd": 53703,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 86010,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Developer, game or graphics": {
+      "median_usd": 19333,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Project manager": {
+      "median_usd": 73036,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Engineering manager": {
+      "median_usd": 114924,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Research & Development role": {
+      "median_usd": 107406,
+      "n": 9,
+      "thin_sample": false
+     }
+    }
+   },
+   "SE": {
+    "2024": {
+     "Developer, front-end": {
+      "median_usd": 55084,
+      "n": 28,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 66769,
+      "n": 17,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 57230,
+      "n": 104,
+      "thin_sample": false
+     },
+     "Developer, full-stack": {
+      "median_usd": 57230,
+      "n": 158,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 57230,
+      "n": 21,
+      "thin_sample": false
+     },
+     "Research & Development role": {
+      "median_usd": 47692,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 57946,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Academic researcher": {
+      "median_usd": 45304,
+      "n": 10,
+      "thin_sample": false
+     },
+     "Product manager": {
+      "median_usd": 74338,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Engineering manager": {
+      "median_usd": 85846,
+      "n": 7,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 81077,
+      "n": 6,
+      "thin_sample": false
+     },
+     "System administrator": {
+      "median_usd": 42488,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Data engineer": {
+      "median_usd": 75983,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 68677,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Developer, mobile": {
+      "median_usd": 62477,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Developer, AI": {
+      "median_usd": 104000,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Engineer, site reliability": {
+      "median_usd": 72158,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, game or graphics": {
+      "median_usd": 54846,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Developer, QA or test": {
+      "median_usd": 51316,
+      "n": 4,
+      "thin_sample": true
+     },
+     "DevOps specialist": {
+      "median_usd": 69153,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 95384,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer Experience": {
+      "median_usd": 64098,
+      "n": 3,
+      "thin_sample": true
+     }
+    }
+   },
+   "NO": {
+    "2024": {
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 90783,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 79318,
+      "n": 10,
+      "thin_sample": false
+     },
+     "Developer, front-end": {
+      "median_usd": 78382,
+      "n": 18,
+      "thin_sample": false
+     },
+     "Developer, full-stack": {
+      "median_usd": 83296,
+      "n": 87,
+      "thin_sample": false
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 73469,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 76090,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 86104,
+      "n": 45,
+      "thin_sample": false
+     },
+     "Research & Development role": {
+      "median_usd": 62706,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 131028,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 94995,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Data engineer": {
+      "median_usd": 74873,
+      "n": 7,
+      "thin_sample": false
+     },
+     "Academic researcher": {
+      "median_usd": 56716,
+      "n": 5,
+      "thin_sample": false
+     }
+    }
+   },
+   "FI": {
+    "2024": {
+     "Developer, full-stack": {
+      "median_usd": 65786,
+      "n": 66,
+      "thin_sample": false
+     },
+     "Developer, game or graphics": {
+      "median_usd": 54509,
+      "n": 6,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 49407,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 77064,
+      "n": 23,
+      "thin_sample": false
+     },
+     "Engineering manager": {
+      "median_usd": 85925,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 64444,
+      "n": 7,
+      "thin_sample": false
+     },
+     "Data engineer": {
+      "median_usd": 42962,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, QA or test": {
+      "median_usd": 56926,
+      "n": 6,
+      "thin_sample": false
+     },
+     "System administrator": {
+      "median_usd": 38666,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer Experience": {
+      "median_usd": 68364,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 60148,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Other (please specify):": {
+      "median_usd": 75184,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Academic researcher": {
+      "median_usd": 38666,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, mobile": {
+      "median_usd": 56066,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Student": {
+      "median_usd": 11278,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer, front-end": {
+      "median_usd": 51555,
+      "n": 5,
+      "thin_sample": false
+     }
+    }
+   },
+   "DK": {
+    "2024": {
+     "Engineering manager": {
+      "median_usd": 129602,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 84961,
+      "n": 7,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 100801,
+      "n": 44,
+      "thin_sample": false
+     },
+     "Student": {
+      "median_usd": 10368,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer, full-stack": {
+      "median_usd": 86401,
+      "n": 69,
+      "thin_sample": false
+     },
+     "Data engineer": {
+      "median_usd": 80929,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Academic researcher": {
+      "median_usd": 72001,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Developer, front-end": {
+      "median_usd": 88849,
+      "n": 10,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 90721,
+      "n": 11,
+      "thin_sample": false
+     },
+     "DevOps specialist": {
+      "median_usd": 100801,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 105410,
+      "n": 7,
+      "thin_sample": false
+     },
+     "Developer, mobile": {
+      "median_usd": 90721,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 107282,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 57601,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Cloud infrastructure engineer": {
+      "median_usd": 102673,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Engineer, site reliability": {
+      "median_usd": 108002,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Research & Development role": {
+      "median_usd": 120962,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Developer, game or graphics": {
+      "median_usd": 60481,
+      "n": 3,
+      "thin_sample": true
+     }
+    }
+   },
+   "AU": {
+    "2024": {
+     "Cloud infrastructure engineer": {
+      "median_usd": 97448,
+      "n": 8,
+      "thin_sample": false
+     },
+     "Research & Development role": {
+      "median_usd": 99099,
+      "n": 7,
+      "thin_sample": false
+     },
+     "Other (please specify):": {
+      "median_usd": 108018,
+      "n": 20,
+      "thin_sample": false
+     },
+     "Developer, full-stack": {
+      "median_usd": 89189,
+      "n": 220,
+      "thin_sample": false
+     },
+     "Developer, back-end": {
+      "median_usd": 95796,
+      "n": 71,
+      "thin_sample": false
+     },
+     "Scientist": {
+      "median_usd": 52853,
+      "n": 3,
+      "thin_sample": true
+     },
+     "Data engineer": {
+      "median_usd": 95796,
+      "n": 17,
+      "thin_sample": false
+     },
+     "Data scientist or machine learning specialist": {
+      "median_usd": 85886,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Developer, mobile": {
+      "median_usd": 135436,
+      "n": 10,
+      "thin_sample": false
+     },
+     "System administrator": {
+      "median_usd": 52192,
+      "n": 10,
+      "thin_sample": false
+     },
+     "DevOps specialist": {
+      "median_usd": 125526,
+      "n": 12,
+      "thin_sample": false
+     },
+     "Senior Executive (C-Suite, VP, etc.)": {
+      "median_usd": 145345,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Developer, embedded applications or devices": {
+      "median_usd": 72673,
+      "n": 9,
+      "thin_sample": false
+     },
+     "Developer, desktop or enterprise applications": {
+      "median_usd": 89255,
+      "n": 18,
+      "thin_sample": false
+     },
+     "Developer, game or graphics": {
+      "median_usd": 80850,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Security professional": {
+      "median_usd": 72673,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Engineering manager": {
+      "median_usd": 118919,
+      "n": 16,
+      "thin_sample": false
+     },
+     "Developer, front-end": {
+      "median_usd": 95796,
+      "n": 22,
+      "thin_sample": false
+     },
+     "Product manager": {
+      "median_usd": 113303,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Educator": {
+      "median_usd": 59459,
+      "n": 5,
+      "thin_sample": false
+     },
+     "Data or business analyst": {
+      "median_usd": 81922,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Developer, AI": {
+      "median_usd": 133784,
+      "n": 4,
+      "thin_sample": true
+     },
+     "Academic researcher": {
+      "median_usd": 85225,
+      "n": 4,
+      "thin_sample": true
+     }
+    }
+   },
+   "AE": {
+    "2024": {
+     "Developer, back-end": {
+      "median_usd": 94748,
+      "n": 11,
+      "thin_sample": false
+     },
+     "Developer, full-stack": {
+      "median_usd": 55814,
+      "n": 24,
+      "thin_sample": false
+     },
+     "Engineering manager": {
+      "median_usd": 114351,
+      "n": 3,
+      "thin_sample": true
+     }
+    }
+   }
+  }
+ }
+}

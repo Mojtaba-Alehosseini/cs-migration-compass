@@ -1,0 +1,529 @@
+{
+  "records": [
+    {
+      "id": "berlin",
+      "name": "Berlin",
+      "country": "DE",
+      "salary_usd_year": {
+        "new_grad": 83000,
+        "mid": 104000,
+        "senior": 119000,
+        "confidence": "crowd",
+        "note": "levels.fyi self-reported total comp (Jul 2026): entry-level range €55,469-89,483 (midpoint ~€72,000 used); overall average total comp €90,147 (range €77,418-113,412, used as 'mid' proxy since no distinct 3-5y band published); senior range €84,765-121,918 (midpoint ~€103,000 used). Skews toward larger/known tech employers (Wayfair, Meta, Google) vs city-wide market average; gross annual approx."
+      },
+      "rent_1br_center_usd_month": 1530,
+      "rent_1br_outside_usd_month": 1100,
+      "col_single_no_rent_usd_month": 1220,
+      "apt_price_center_usd_m2": 9200,
+      "apt_price_outside_usd_m2": 6100,
+      "climate": {
+        "sunshine_hours_yr": 1720,
+        "summer_avg_high_c": 24.0,
+        "winter_avg_low_c": -1.9,
+        "rainy_days_yr": 100
+      },
+      "tehran_travel": {
+        "typical_hours": 8,
+        "stops": 1,
+        "note": "No direct Berlin-Tehran flights; fastest routing is via Istanbul (Turkish Airlines, IST-THR leg ~3h9m) with total journey ~7-8h; estimate"
+      },
+      "tech_scene_note": "Germany's largest startup ecosystem with deep VC funding, major employers like Zalando, N26 and Delivery Hero, and an English-friendly, internationally diverse tech workforce.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Berlin",
+        "https://www.levels.fyi/t/software-engineer/locations/berlin-deu",
+        "https://www.levels.fyi/t/software-engineer/locations/berlin-metropolitan-region",
+        "https://en.climate-data.org/europe/germany/berlin/berlin-2138/",
+        "https://weather-and-climate.com/average-monthly-hours-Sunshine,Berlin,Germany",
+        "https://www.trip.com/hot/flight-time-from-berlin-to-tehran/",
+        "https://www.expatistan.com/cost-of-living/berlin"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "munich",
+      "name": "Munich",
+      "country": "DE",
+      "salary_usd_year": {
+        "new_grad": 72000,
+        "mid": 97000,
+        "senior": 118000,
+        "confidence": "crowd",
+        "note": "levels.fyi self-reported gross annual total comp: entry-level €54,809-71,052 (midpoint ~€62,931); overall average total comp €84,056 (range €67,347-105,927, used as 'mid' proxy since no distinct 3-5y band was published); senior €83,406-121,420 (midpoint ~€102,413). Skews toward large/known tech employers (Google, Apple, BMW, SAP) vs. city-wide market average; StepStone/Gehalt.de corroborates Munich as one of Germany's highest-paying tech cities."
+      },
+      "rent_1br_center_usd_month": 1730,
+      "rent_1br_outside_usd_month": 1330,
+      "col_single_no_rent_usd_month": 1270,
+      "apt_price_center_usd_m2": 13100,
+      "apt_price_outside_usd_m2": 8900,
+      "climate": {
+        "sunshine_hours_yr": 1789,
+        "summer_avg_high_c": 24.2,
+        "winter_avg_low_c": -3.5,
+        "rainy_days_yr": 131
+      },
+      "tehran_travel": {
+        "typical_hours": 9,
+        "stops": 1,
+        "note": "No direct flights confirmed for 2026; typical routing via Istanbul (Turkish Airlines), MUC-IST nonstop ~2h45m + IST-THR ~3h58m plus layover; estimate."
+      },
+      "tech_scene_note": "Germany's premier tech hub with major R&D centers for Google, Microsoft, Apple and IBM alongside deep automotive/enterprise-software roots (BMW, Siemens, SAP-adjacent), but also the country's most expensive city.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Munich",
+        "https://www.climatestotravel.com/climate/germany/munich",
+        "https://www.worlddata.info/europe/germany/climate.php",
+        "https://www.levels.fyi/t/software-engineer/locations/munich-deu",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/munich-metro-region",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/munich-deu",
+        "https://www.turkishairlines.com/en-de/flights-from-munich-to-tehran",
+        "https://www.omio.com/flights/munich-airport/tehran-ch1oq"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "hamburg",
+      "name": "Hamburg",
+      "country": "DE",
+      "salary_usd_year": {
+        "new_grad": 57000,
+        "mid": 85000,
+        "senior": 97000,
+        "confidence": "crowd",
+        "note": "levels.fyi self-reported gross annual total comp: entry-level €43,513-55,303 (midpoint ~€49,408); overall average total comp €73,621 (range €62,008-85,878, used as 'mid' proxy); senior €72,198-96,243 (midpoint ~€84,221). Skews toward larger/known employers (top payer cited: Drager, €87,723 avg); Hamburg trails Munich/Frankfurt per StepStone city-tier commentary, consistent with a large base of non-listed SMEs/agencies."
+      },
+      "rent_1br_center_usd_month": 1270,
+      "rent_1br_outside_usd_month": 950,
+      "col_single_no_rent_usd_month": 1170,
+      "apt_price_center_usd_m2": 10300,
+      "apt_price_outside_usd_m2": 5300,
+      "climate": {
+        "sunshine_hours_yr": 1643,
+        "summer_avg_high_c": 22.6,
+        "winter_avg_low_c": -0.5,
+        "rainy_days_yr": 108
+      },
+      "tehran_travel": {
+        "typical_hours": 10,
+        "stops": 1,
+        "note": "No direct flights as of 2026; Mahan Air (which historically served Iran-Germany routes) has been banned from German airspace since January 2019, ending prospects of direct HAM-IKA service. Typical 1-stop routing via Istanbul; estimate."
+      },
+      "tech_scene_note": "A media, e-commerce and logistics-tech center (Otto Group, Google and Facebook offices, XING/New Work SE, a growing startup scene) that is noticeably more affordable than Munich or Frankfurt while still offering solid engineering demand.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Hamburg",
+        "https://en.climate-data.org/europe/germany/hamburg/hamburg-69/",
+        "https://www.worlddata.info/europe/germany/climate-hamburg.php",
+        "https://www.levels.fyi/t/software-engineer/locations/hamburg-deu",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/hamburg-deu",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/hamburg-metro-region",
+        "https://en.wikipedia.org/wiki/Mahan_Air",
+        "https://www.skyscanner.net/routes/hamb/thra/hamburg-to-tehran.html",
+        "https://www.flightsfrom.com/HAM-IKA"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "frankfurt",
+      "name": "Frankfurt",
+      "country": "DE",
+      "salary_usd_year": {
+        "new_grad": 77000,
+        "mid": 85000,
+        "senior": 99000,
+        "confidence": "crowd",
+        "note": "levels.fyi self-reported gross annual total comp: entry-level €54,177-79,876 (unusually wide range suggesting a small/skewed sample; midpoint ~€67,027); overall average total comp €74,051 (range €58,282-85,111, used as 'mid' proxy); senior €74,535-96,765 (midpoint ~€85,650). Frankfurt is Germany's finance/fintech capital (Deutsche Bank, ECB, Commerzbank, DWS), which StepStone notes lifts city salaries above the national average, particularly for backend/quant-adjacent roles."
+      },
+      "rent_1br_center_usd_month": 1380,
+      "rent_1br_outside_usd_month": 1160,
+      "col_single_no_rent_usd_month": 1240,
+      "apt_price_center_usd_m2": 8400,
+      "apt_price_outside_usd_m2": 4400,
+      "climate": {
+        "sunshine_hours_yr": 1679,
+        "summer_avg_high_c": 24.5,
+        "winter_avg_low_c": -0.6,
+        "rainy_days_yr": 101
+      },
+      "tehran_travel": {
+        "typical_hours": 9,
+        "stops": 1,
+        "note": "Direct Lufthansa FRA-IKA nonstop service is currently suspended (0 flights/week as of Aug 2026) but is scheduled to resume 25 October 2026 (nonstop ~5h when operating). As of Aug 2026, typical routing is 1-stop via Istanbul; total journey time estimated."
+      },
+      "tech_scene_note": "Germany's financial capital, home to the ECB, Deutsche Bank, Commerzbank and DWS, driving strong demand for fintech, backend and quant-adjacent software engineers alongside a growing independent startup scene.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Frankfurt",
+        "https://en.climate-data.org/europe/germany/hesse/frankfurt-am-main-447/",
+        "https://www.worlddata.info/europe/germany/climate.php",
+        "https://www.levels.fyi/t/software-engineer/locations/frankfurt-deu",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/frankfurt-deu",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/frankfurt-deu",
+        "https://www.flightconnections.com/flights-from-fra-to-ika",
+        "https://www.lufthansa.com/lhg/de/en/o-d/cy-cy/frankfurt-tehran",
+        "https://www.stepstone.de/gehalt/Software-Developer.html"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "stuttgart",
+      "name": "Stuttgart",
+      "country": "DE",
+      "salary_usd_year": {
+        "new_grad": 61000,
+        "mid": 85000,
+        "senior": 112000,
+        "confidence": "crowd",
+        "note": "Gross annual total compensation (base+bonus+equity where applicable) from levels.fyi Stuttgart, self-reported and skewed toward large employers with Stuttgart offices (Bosch, Mercedes-Benz, Porsche, Microsoft, Nvidia, Capgemini) vs. city-wide market average. EUR figures: entry-level range €31,272-74,861 (midpoint ~€53,000 used); mid-level uses a Germany-wide levels.fyi/TechPays 'medior' proxy figure of €73,807 (~€74,000) since no Stuttgart-specific mid-level figure exists; senior range €81,962-111,599 (midpoint ~€97,000 used). Stuttgart median total comp across all levels is €82,930."
+      },
+      "rent_1br_center_usd_month": 1170,
+      "rent_1br_outside_usd_month": 860,
+      "col_single_no_rent_usd_month": 1190,
+      "apt_price_center_usd_m2": 7100,
+      "apt_price_outside_usd_m2": 4400,
+      "climate": {
+        "sunshine_hours_yr": 1816,
+        "summer_avg_high_c": 23.7,
+        "winter_avg_low_c": -2.1,
+        "rainy_days_yr": 112
+      },
+      "tehran_travel": {
+        "typical_hours": 8,
+        "stops": 1,
+        "note": "No direct STR-THR service. Fastest confirmed routing is 1 stop via Istanbul on Turkish Airlines; real listed itineraries total ~7h20m-8h50m including layover; estimate."
+      },
+      "tech_scene_note": "Germany's automotive and industrial-engineering software hub, anchored by Bosch, Mercedes-Benz, and Porsche R&D, with strong demand for embedded-systems and mobility-tech engineers plus a sizeable enterprise-IT/consulting layer.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Stuttgart",
+        "https://en.climate-data.org/europe/germany/baden-wuerttemberg/stuttgart-6363/",
+        "https://weather-and-climate.com/average-monthly-hours-Sunshine,stuttgart,Germany",
+        "https://www.levels.fyi/t/software-engineer/locations/stuttgart-deu",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/stuttgart-metro-region",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/stuttgart-deu",
+        "https://techpays.com/europe/germany/eng_generic/mid-level",
+        "https://ci.wego.com/en/schedules/str/thr/flight-schedules-from-stuttgart-6940-to-tehran"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "amsterdam",
+      "name": "Amsterdam",
+      "country": "NL",
+      "salary_usd_year": {
+        "new_grad": 87000,
+        "mid": 94000,
+        "senior": 139000,
+        "confidence": "crowd",
+        "note": "Gross annual total compensation (base+bonus+equity) from levels.fyi Amsterdam, self-reported and skewed toward larger/known tech employers (Google, Amazon, Uber, ING, Booking.com) vs. city-wide market average. EUR figures: entry-level range €52,414-99,060 (midpoint ~€76,000 used); mid-level €70,000-90,000 range with median ~€80,000-82,447 per TechPays/levels.fyi (~€82,000 used); senior range €93,539-148,378 (midpoint ~€121,000 used). Overall blended average across all levels is €80,269-135,962 (avg €102,536)."
+      },
+      "rent_1br_center_usd_month": 2580,
+      "rent_1br_outside_usd_month": 1950,
+      "col_single_no_rent_usd_month": 1310,
+      "apt_price_center_usd_m2": 11000,
+      "apt_price_outside_usd_m2": 7400,
+      "climate": {
+        "sunshine_hours_yr": 1662,
+        "summer_avg_high_c": 22.5,
+        "winter_avg_low_c": 1.0,
+        "rainy_days_yr": 134
+      },
+      "tehran_travel": {
+        "typical_hours": 9,
+        "stops": 1,
+        "note": "Iran Air historically flew AMS-IKA nonstop, but confirmed via FlightsFrom.com that this ended (last Iran Air flight scheduled 2022-04-02; last KLM flight 2018-09-22) and no direct service is currently operating in 2026. Fastest current routing is 1 stop via Istanbul (Turkish Airlines), ~9h total including layover."
+      },
+      "tech_scene_note": "The Netherlands' largest and most international tech hub, home to scale-ups Booking.com and Adyen alongside EMEA engineering offices for Google, Amazon, Uber, and Netflix, with a dense fintech and startup ecosystem.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Amsterdam",
+        "https://www.climatestotravel.com/climate/netherlands/amsterdam",
+        "https://cdn.knmi.nl/knmi/map/page/klimatologie/klimaatatlas/tabel/stationsdata/klimtab_9120_240.pdf",
+        "https://www.levels.fyi/t/software-engineer/locations/amsterdam-nld",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/amsterdam-nld",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/amsterdam-nld",
+        "https://techpays.com/europe/netherlands/amsterdam/eng/mid-level",
+        "https://www.flightsfrom.com/AMS-IKA"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "eindhoven",
+      "name": "Eindhoven",
+      "country": "NL",
+      "salary_usd_year": {
+        "new_grad": 55000,
+        "mid": 75000,
+        "senior": 92000,
+        "confidence": "crowd",
+        "note": "Gross annual total compensation. Entry-level (€42,171-53,880, midpoint ~€48,000) and senior (€69,395-91,150, midpoint ~€80,000) bands are from a dedicated levels.fyi Eindhoven page (self-reported, thin sample). Mid-level (~€65,000) is a triangulated estimate combining Glassdoor's Software Engineer average (€63,250, range €50,250-80,000) and TechPays' Eindhoven all-tech-roles average (€67,250, 141 data points), since no dedicated Eindhoven mid-level figure was found. City-specific data here is notably thinner than Amsterdam's; treat as directional given Eindhoven's smaller, more specialized (semiconductor/hardware) labor market."
+      },
+      "rent_1br_center_usd_month": 1670,
+      "rent_1br_outside_usd_month": 1400,
+      "col_single_no_rent_usd_month": 1130,
+      "apt_price_center_usd_m2": 6500,
+      "apt_price_outside_usd_m2": 4900,
+      "climate": {
+        "sunshine_hours_yr": 1720,
+        "summer_avg_high_c": 23.0,
+        "winter_avg_low_c": 1.0,
+        "rainy_days_yr": 111
+      },
+      "tehran_travel": {
+        "typical_hours": 9.5,
+        "stops": 1,
+        "note": "estimate - no direct EIN-THR service and EIN is a smaller, budget-carrier-oriented airport (Ryanair, Wizz Air, Pegasus, Turkish Airlines). Fastest realistic routing is 1 stop via Istanbul, estimated ~9-10h total by analogy with confirmed Stuttgart/Amsterdam Istanbul-routing itineraries; precise combined EIN-IST-THR schedule data was thin."
+      },
+      "tech_scene_note": "The heart of the Dutch 'Brainport' deep-tech region, dominated by semiconductor and hardware-adjacent software work at ASML and NXP Semiconductors, with the High Tech Campus and TU Eindhoven feeding a strong embedded-engineering talent pipeline.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Eindhoven",
+        "https://en.climate-data.org/europe/the-netherlands/north-brabant/eindhoven-896/",
+        "https://weather-and-climate.com/average-monthly-hours-Sunshine,Eindhoven,Netherlands",
+        "https://www.levels.fyi/t/software-engineer/locations/eindhoven-nld",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/eindhoven-nld",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/eindhoven-nld",
+        "https://techpays.com/europe/netherlands/eindhoven",
+        "https://www.glassdoor.com/Salaries/eindhoven-netherlands-software-engineer-salary-SRCH_IL.0,21_IM1106_KO22,39.htm",
+        "https://www.payscale.com/research/NL/Location=Eindhoven/Salary"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "milan",
+      "name": "Milan",
+      "country": "IT",
+      "salary_usd_year": {
+        "new_grad": 31000,
+        "mid": 45000,
+        "senior": 63000,
+        "confidence": "crowd",
+        "note": "Gross annual. EUR: new_grad ~€27,000 (Glassdoor Italia junior avg €26,800; levels.fyi entry-level €23,607-33,890); mid ~€39,000 (Indeed.it Milano blended avg €33,480-33,512; Milan-specific commentary of €38-47k average); senior ~€55,000 (levels.fyi senior €43,692-73,134; Indeed.it notes senior devs at €42,000-70,000). levels.fyi's blended 'average total comp' (€40,267, driven by a Meta office at €246k) reflects multinational self-selection bias and was excluded from headline figures; Numbeo user comments independently corroborate a ~€25-33k typical junior range and a ~€40-50k 'glass ceiling' for most non-outlier developers."
+      },
+      "rent_1br_center_usd_month": 1730,
+      "rent_1br_outside_usd_month": 1210,
+      "col_single_no_rent_usd_month": 1210,
+      "apt_price_center_usd_m2": 11000,
+      "apt_price_outside_usd_m2": 5400,
+      "climate": {
+        "sunshine_hours_yr": 1915,
+        "summer_avg_high_c": 28.8,
+        "winter_avg_low_c": -1.2,
+        "rainy_days_yr": 84
+      },
+      "tehran_travel": {
+        "typical_hours": 9,
+        "stops": 1,
+        "note": "No confirmed nonstop MXP/BGY-IKA service in 2026 (Skyscanner: route currently served by 0 airlines); realistic 1-stop itineraries via Istanbul (Turkish Airlines/Pegasus/AJet) run roughly 9-14h total depending on carrier and layover length; estimate."
+      },
+      "tech_scene_note": "Italy's leading tech and finance hub, hosting multinational offices (Amazon, Microsoft, Accenture, Meta) plus fintech/fashion-tech scale-ups, though pay still trails Northern European hubs substantially.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Milan",
+        "https://en.climate-data.org/europe/italy/lombardy/milan-1094/",
+        "https://www.climatestotravel.com/climate/italy/milan",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/milan-metro-area",
+        "https://www.levels.fyi/t/software-engineer/locations/milano-ita",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/milano-ita",
+        "https://it.indeed.com/career/sviluppatore-software/salaries/Milano--Lombardia",
+        "https://www.glassdoor.com/Salaries/milan-italy-software-engineer-salary-SRCH_IL.0,11_IM1058_KO12,29.htm",
+        "https://www.skyscanner.net/routes/mxp/thra/milan-malpensa-to-tehran.html",
+        "https://www.trip.com/hot/flight-time-from-milan-to-tehran/"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "rome",
+      "name": "Rome",
+      "country": "IT",
+      "salary_usd_year": {
+        "new_grad": 29000,
+        "mid": 39000,
+        "senior": 52000,
+        "confidence": "crowd",
+        "note": "Gross annual. EUR: new_grad ~€25,000 (levels.fyi entry-level €24,691-31,935; national Glassdoor Italia junior avg €26,800, with Rome typically a bit below Milan); mid ~€34,000 (Indeed.it Roma blended 'sviluppatore' avg €30,195 as a floor; national mid-level range €35-45k); senior ~€45,000. levels.fyi's Rome senior range (€36,836-94,794, driven by an Uber-linked entry at €238k) shows the same multinational-outlier skew seen in Milan — the high end was excluded from the headline figure."
+      },
+      "rent_1br_center_usd_month": 1270,
+      "rent_1br_outside_usd_month": 930,
+      "col_single_no_rent_usd_month": 980,
+      "apt_price_center_usd_m2": 8600,
+      "apt_price_outside_usd_m2": 3400,
+      "climate": {
+        "sunshine_hours_yr": 2600,
+        "summer_avg_high_c": 31.4,
+        "winter_avg_low_c": 3.5,
+        "rainy_days_yr": 72
+      },
+      "tehran_travel": {
+        "typical_hours": 5,
+        "stops": 0,
+        "note": "A direct Iran Air flight FCO-IKA exists (flight IR738, ~4h50m per flight-tracker schedule data), but frequency appears limited/irregular (tracking sites show it not consistently scheduled) — verify the current timetable before booking. The reliable fallback is 1-stop via Istanbul (Turkish Airlines), roughly 9-10h; estimate."
+      },
+      "tech_scene_note": "A smaller but growing tech scene centered on telecom (TIM), IT consulting, and EU/public-sector-adjacent digital work, generally paying somewhat less than Milan.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Rome",
+        "https://www.climatestotravel.com/climate/italy/rome",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/rome-ita",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/rome-ita",
+        "https://it.indeed.com/career/sviluppatore/salaries/Roma--Lazio",
+        "https://www.directflights.com/FCO-IKA",
+        "https://www.airportia.com/flights/ir738/rome/tehran/",
+        "https://www.flightsfrom.com/FCO-IKA"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "turin",
+      "name": "Turin",
+      "country": "IT",
+      "salary_usd_year": {
+        "new_grad": 29000,
+        "mid": 38000,
+        "senior": 53000,
+        "confidence": "crowd",
+        "note": "Gross annual. EUR: new_grad ~€25,500 (Glassdoor Turin software developer 25th percentile €25,525 of 540 submissions, used as junior proxy); mid ~€33,000 (Glassdoor Turin software developer avg €30,100 / software engineer avg €35,000 blended; Indeed/jobted-style blended avg €34,217); senior ~€46,000 (Glassdoor 90th percentile €45,100; levels.fyi senior €47,163-59,153). Turin's sampled tech postings skew toward automotive/embedded-software roles (Stellantis-adjacent) rather than a broad consumer-tech market, and levels.fyi's Turin pages failed to render directly (WebSearch-summarized figures used instead) — treat bands as less certain than Milan/Rome."
+      },
+      "rent_1br_center_usd_month": 860,
+      "rent_1br_outside_usd_month": 610,
+      "col_single_no_rent_usd_month": 1040,
+      "apt_price_center_usd_m2": 4700,
+      "apt_price_outside_usd_m2": 2300,
+      "climate": {
+        "sunshine_hours_yr": 1990,
+        "summer_avg_high_c": 27.3,
+        "winter_avg_low_c": -1.7,
+        "rainy_days_yr": 82
+      },
+      "tehran_travel": {
+        "typical_hours": 10,
+        "stops": 1,
+        "note": "No direct flights; connects via Istanbul (Turkish Airlines) or via Milan/Rome first. Estimate based on regional 1-stop itinerary patterns, likely somewhat longer than Milan's routing given Turin's smaller airport and fewer connection options."
+      },
+      "tech_scene_note": "A traditional automotive/industrial engineering city (Stellantis HQ) with a compact tech scene weighted toward embedded systems and automotive software rather than a broad consumer-tech startup culture.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Turin",
+        "https://en.climate-data.org/europe/italy/piemont/turin-1108/",
+        "https://www.climatestotravel.com/climate/italy/turin",
+        "https://www.levels.fyi/t/software-engineer/locations/turin-ita",
+        "https://www.glassdoor.com/Salaries/turin-software-developer-salary-SRCH_IL.0,5_IM1486_KO6,24.htm",
+        "https://www.edreams.net/us/flights/turin-tehran/TRN/THR/",
+        "https://it.jobtome.com/salaries/sviluppatore-software"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "madrid",
+      "name": "Madrid",
+      "country": "ES",
+      "salary_usd_year": {
+        "new_grad": 29000,
+        "mid": 51000,
+        "senior": 69000,
+        "confidence": "crowd",
+        "note": "Gross annual, triangulated from Glassdoor España + KeepCoding (citing Randstad/Jobted) + 10Code (citing LinkedIn Salary/InfoJobs): new_grad €22-30k (used €25k), mid €38-50k for 3-5yr Madrid/Barcelona devs (used €44k), senior — Glassdoor's 'Senior Software Engineer, Madrid' page reports average total comp €59,300 (base €45-63k) and a separate search found median €62k/range €48-77k (used €60k). levels.fyi shows much higher figures (median total comp €53,877 all-levels; entry-level median €29,792) because its self-reporting user base skews toward large multinational/FAANG offices (Google L3-L5 €114-143k, Meta E5 €157-184k) — real but non-representative; Glassdoor's EY junior salary band (€22.7-32.4k) is far more typical of the broad market."
+      },
+      "rent_1br_center_usd_month": 1610,
+      "rent_1br_outside_usd_month": 1220,
+      "col_single_no_rent_usd_month": 940,
+      "apt_price_center_usd_m2": 9200,
+      "apt_price_outside_usd_m2": 4400,
+      "climate": {
+        "sunshine_hours_yr": 2769,
+        "summer_avg_high_c": 32.4,
+        "winter_avg_low_c": 0.9,
+        "rainy_days_yr": 48
+      },
+      "tehran_travel": {
+        "typical_hours": 9,
+        "stops": 1,
+        "note": "No direct MAD-IKA service; fastest realistic routing is 1-stop via Istanbul (Turkish Airlines) or Doha (Qatar Airways)/Dubai (Emirates), all of which serve Madrid directly; estimate based on general route/schedule knowledge."
+      },
+      "tech_scene_note": "Spain's largest tech hub, home to major multinational offices (Amazon, Google, Meta), deep enterprise/consulting IT presence (Indra, BBVA, Telefonica) and a growing startup scene, but line-level software salaries remain well below Western/Northern Europe.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Madrid",
+        "https://www.expatistan.com/cost-of-living/madrid",
+        "https://en.climate-data.org/europe/spain/community-of-madrid/madrid-92/",
+        "https://www.aemet.es/en/serviciosclimaticos/datosclimatologicos/valoresclimatologicos?k=mad&l=3195",
+        "https://en.wikipedia.org/wiki/Climate_of_Madrid",
+        "https://www.levels.fyi/t/software-engineer/locations/madrid-esp",
+        "https://desarrollosoftware.es/salarios-desarrolladores-espana-2026/",
+        "https://keepcoding.io/blog/salario-programador-junior-en-espana/",
+        "https://www.glassdoor.es/Sueldos/madrid-senior-software-engineer-sueldo-SRCH_IL.0,6_IM1030_KO7,31.htm"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "barcelona",
+      "name": "Barcelona",
+      "country": "ES",
+      "salary_usd_year": {
+        "new_grad": 26000,
+        "mid": 46000,
+        "senior": 64000,
+        "confidence": "crowd",
+        "note": "Gross annual, triangulated from Glassdoor España (direct: 'Programador Junior' Barcelona average base ~€21,000 + ~€2,000 supplements ~€23,000/yr total, range €18,950-27,500) + KeepCoding/Randstad city breakdown (€21-27k junior) + 10Code national bands adjusted for Barcelona's ~18% city premium: mid ~€40k (cross-checked against a '3-5yr Madrid/Barcelona developer €38-50k' figure), senior ~€56k (Glassdoor's Barcelona 'Senior Software Engineer' individual listings cluster €60-81k but skew toward 10-14yr veterans, scaled down toward a 6+yr entry-senior band). levels.fyi shows higher figures (median total comp €59,297) again skewed by multinational offices (Microsoft avg €93.7k, N26 up to €198k) — treat as outliers, not typical."
+      },
+      "rent_1br_center_usd_month": 1680,
+      "rent_1br_outside_usd_month": 1270,
+      "col_single_no_rent_usd_month": 940,
+      "apt_price_center_usd_m2": 7600,
+      "apt_price_outside_usd_m2": 5200,
+      "climate": {
+        "sunshine_hours_yr": 2506,
+        "summer_avg_high_c": 27.6,
+        "winter_avg_low_c": 4.0,
+        "rainy_days_yr": 68
+      },
+      "tehran_travel": {
+        "typical_hours": 8,
+        "stops": 1,
+        "note": "No direct BCN-IKA service; Barcelona-El Prat has confirmed direct flights to Istanbul (Turkish Airlines), Doha (Qatar Airways), Dubai (Emirates), and Abu Dhabi (Etihad) per flightsfrom.com, all of which connect onward to Tehran — the most route options of the three Spanish cities; Istanbul routing is likely fastest; estimate."
+      },
+      "tech_scene_note": "Pay is roughly comparable to Madrid but with a stronger startup/scale-up culture (Glovo, TravelPerk, Factorial) centered on the 22@ innovation district, plus a large international/expat tech workforce.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Barcelona",
+        "https://en.climate-data.org/europe/spain/catalonia/barcelona-1564/",
+        "https://www.aemet.es/en/serviciosclimaticos/datosclimatologicos/valoresclimatologicos?l=0200E&k=cat",
+        "https://www.levels.fyi/t/software-engineer/locations/barcelona-esp",
+        "https://desarrollosoftware.es/salarios-desarrolladores-espana-2026/",
+        "https://keepcoding.io/blog/salario-programador-junior-en-espana/",
+        "https://www.glassdoor.es/Sueldos/barcelona-programador-junior-sueldo-SRCH_IL.0,9_IC2547194_KO10,28.htm",
+        "https://www.flightsfrom.com/BCN"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "valencia",
+      "name": "Valencia",
+      "country": "ES",
+      "salary_usd_year": {
+        "new_grad": 24000,
+        "mid": 32000,
+        "senior": 48000,
+        "confidence": "crowd",
+        "note": "Thinner data than Madrid/Barcelona. Triangulated from KeepCoding's city breakdown (junior €18-23k), individual Glassdoor-submitted Valencia salaries for 1-3yr 'Programador' (two data points: €17-19k and €26k), and a blended talent.com/Glassdoor 'Programador' figure spanning all experience levels (median €27,250, 25th pct €22,805, 75th pct €44,750, '1% below national average') used as an anchor for mid/senior since no clean per-level Valencia breakdown exists. Resulting EUR estimates: new_grad €21k, mid €28k, senior €42k. levels.fyi Valencia data (entry-level median ~€19-20k, but 'all levels' median total comp €54,487) looked internally inconsistent and thin-sample, so was not used as the headline figure."
+      },
+      "rent_1br_center_usd_month": 1450,
+      "rent_1br_outside_usd_month": 1070,
+      "col_single_no_rent_usd_month": 830,
+      "apt_price_center_usd_m2": 5700,
+      "apt_price_outside_usd_m2": 3400,
+      "climate": {
+        "sunshine_hours_yr": 2696,
+        "summer_avg_high_c": 30.8,
+        "winter_avg_low_c": 6.6,
+        "rainy_days_yr": 46
+      },
+      "tehran_travel": {
+        "typical_hours": 9,
+        "stops": 1,
+        "note": "No direct VLC-IKA service; Valencia airport has a confirmed direct Turkish Airlines flight to Istanbul (per flightsfrom.com) which connects onward to Tehran; unlike Madrid/Barcelona, Valencia has no direct Gulf-carrier (Qatar/Emirates/Etihad) service, so Istanbul is the main realistic 1-stop option; estimate."
+      },
+      "tech_scene_note": "A smaller but fast-growing tech scene anchored by local scaleups and an increasing remote-work/digital-nomad community, with noticeably lower software salaries than Madrid or Barcelona offset by a lower cost of living.",
+      "sources": [
+        "https://www.numbeo.com/cost-of-living/in/Valencia",
+        "https://en.climate-data.org/europe/spain/valencian-community/valencia-845/",
+        "https://www.aemet.es/en/serviciosclimaticos/datosclimatologicos/valoresclimatologicos?l=8416&k=val",
+        "https://www.levels.fyi/t/software-engineer/locations/valencia-esp",
+        "https://keepcoding.io/blog/salario-programador-junior-en-espana/",
+        "https://www.glassdoor.es/Sueldos/val%C3%A8ncia-programador-sueldo-SRCH_IL.0,8_IM3125_KO9,20.htm",
+        "https://desarrollosoftware.es/salarios-desarrolladores-espana-2026/",
+        "https://www.flightsfrom.com/VLC"
+      ],
+      "as_of": "2026-08"
+    }
+  ],
+  "as_of": "2026-08"
+}

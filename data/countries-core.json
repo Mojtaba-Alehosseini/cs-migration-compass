@@ -1,0 +1,784 @@
+{
+  "records": [
+    {
+      "id": "AU",
+      "name": "Australia",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Skills in Demand visa (subclass 482, Core Skills stream)",
+            "type": "employer_offer",
+            "summary": "Employer-sponsored 4-year work visa; leads to permanent Employer Nomination Scheme (186) after 2 years with the sponsor. Software roles qualify on the Core Skills Occupation List.",
+            "salary_threshold_usd": 55700,
+            "threshold_note": "CSIT AUD 79,423 from 1 Jul 2026 (indexed +3.9%); Specialist Skills stream (SSIT) AUD 146,576 = ~USD 102,800 skips occupation lists"
+          },
+          {
+            "name": "Skilled Independent / State Nominated (189/190/491)",
+            "type": "points",
+            "summary": "Points-tested permanent residence via SkillSelect EOI. A leaked 2025 FOI tier model puts ICT occupations in the lowest-priority Tier 4, so software applicants realistically need very high points (roughly 85-95 in recent rounds) or state nomination (190/491) rather than the formal 65-point minimum.",
+            "salary_threshold_usd": null,
+            "threshold_note": "No salary threshold; points-based. ICT = Tier 4 (lowest invitation priority) per May-2025 FOI minute"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 32300,
+          "post_study_visa_months": 24,
+          "note": "Typical international CS master's AUD 40k-52k/yr at public unis (midpoint AUD 46k used; estimate). Temporary Graduate 485 Post-Higher-Education stream: 2 yrs for bachelor/master (3 for research/PhD), age <35; application fee doubled to AUD 4,600 on 1 Mar 2026 - world's most expensive post-study visa."
+        },
+        "processing_months_typical": "2-12",
+        "iran_friction": {
+          "level": "high",
+          "notes": "Iranian applicants routinely face multi-year external security checks on 485/189/190; in July 2026 Home Affairs declined to give any timeline for delayed Iranian skilled-visa cases (Iran International). Student visas are granted but with elevated scrutiny and high evidentiary bars; sanctions banking complicates fee payment and fund transfers from Iran. Community reporting shows 1-3 year waits on PR-track grants for Iranian nationals.",
+          "sources": [
+            "https://eiglaw.com/australia-skilled-visa-income-thresholds-rise-july-2026/",
+            "https://news.google.com/rss/search?q=Australia+Iranian+skilled+visa+delayed"
+          ]
+        }
+      },
+      "pr_years_typical": 2,
+      "citizenship_years_typical": 4,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Dual citizenship permitted since 2002; no renunciation required, so Iran's non-recognition of renunciation creates no issue."
+      },
+      "tax": {
+        "summary": "Progressive income tax (top 45% + 2% Medicare); no employee social security, but employer pays ~12% superannuation on top of salary.",
+        "net_pct_single_mid_dev": 76,
+        "net_note": "~AUD 110,000 mid-level dev salary; 2025-26 ATO resident rates + 2% Medicare, own computation (net ~AUD 84,000)",
+        "expat_scheme": null
+      },
+      "sources": [
+        "https://eiglaw.com/australia-skilled-visa-income-thresholds-rise-july-2026/",
+        "https://www.bdo.com.au/en-au/insights/migration-services/updated-income-thresholds-for-skilled-visas-what-employers-need-to-know",
+        "https://ethosmigration.com.au/understanding-the-occupation-tier-system-for-sc189-invitations/",
+        "https://monitor.icef.com/2026/03/australia-doubles-post-study-work-visa-application-fee/"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "US",
+      "name": "United States",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "H-1B (specialty occupation)",
+            "type": "employer_offer",
+            "summary": "Employer-petitioned, cap-subject (85k/yr). Registrations vastly exceed the cap (FY2024: 758,994 registrations for 110,791 selections); from 27 Feb 2026 selection is wage-level-weighted (Level IV entered 4x, Level I once), disadvantaging new grads. The Sept 2025 $100,000 supplemental fee proclamation was voided by a federal judge on 8 Jun 2026 (litigation ongoing).",
+            "salary_threshold_usd": null,
+            "threshold_note": "No fixed statutory minimum; DOL prevailing wage by occupation/area governs, and low wage levels now rarely win the weighted lottery"
+          },
+          {
+            "name": "O-1A (extraordinary ability)",
+            "type": "talent",
+            "summary": "Uncapped employer/agent-petitioned route for individuals with sustained acclaim (publications, awards, critical roles); increasingly used by elite engineers/founders. No lottery, premium processing available - but consular issuance is blocked for Iranian nationals under the travel ban.",
+            "salary_threshold_usd": null,
+            "threshold_note": "No salary threshold; evidence-based standard"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 40000,
+          "post_study_visa_months": 36,
+          "note": "Public-university international MS tuition typically $30k-55k/yr (privates higher); estimate $40k. F-1 OPT 12 months + 24-month STEM extension = 36 months for CS. Caveat: new F-1 visas are currently not issued to single-nationality Iranians under Proclamation 10949."
+        },
+        "processing_months_typical": "6-10",
+        "iran_friction": {
+          "level": "high",
+          "notes": "Proclamation 10949 (in force 9 Jun 2025) fully suspends immigrant and nonimmigrant entry of Iranian nationals; Proclamation 10998 (eff. 1 Jan 2026) expanded the ban to 39 countries and removed the adoption/immediate-relative exceptions. Exemptions cover existing visa holders, green-card holders, dual nationals using a non-banned passport, persecuted religious/ethnic minorities (immigrant visas) and major sports events. Practically: no new F-1/H-1B/O-1 visas for most Iranians while the ban stands; change of status inside the US remains possible.",
+          "sources": [
+            "https://en.wikipedia.org/wiki/Second_Trump_travel_ban"
+          ]
+        }
+      },
+      "pr_years_typical": 4,
+      "citizenship_years_typical": 8,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "US tolerates dual citizenship; naturalization oath is not enforced as renunciation, so Iranian nationality can be retained."
+      },
+      "tax": {
+        "summary": "Federal progressive tax (10-37%) + 7.65% FICA + state income tax (0-13% depending on state).",
+        "net_pct_single_mid_dev": 73,
+        "net_note": "$120,000 mid-level dev salary, single filer, 2026 federal brackets + FICA + ~5% average state tax, own computation (SmartAsset-style); ranges ~66% (CA/NY) to ~77% (TX/WA)",
+        "expat_scheme": null
+      },
+      "sources": [
+        "https://en.wikipedia.org/wiki/Second_Trump_travel_ban",
+        "https://en.wikipedia.org/wiki/H-1B_visa",
+        "https://en.wikipedia.org/wiki/O-1_visa",
+        "https://en.wikipedia.org/wiki/Optional_Practical_Training"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "CA",
+      "name": "Canada",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Express Entry (FSW/CEC) + PNP",
+            "type": "points",
+            "summary": "CRS-ranked pool with targeted draws. In 2025-26 there are no all-program draws: invitations go to CEC (Canadian experience), provincial nominees, French speakers and narrow categories - July 2026 CEC cutoffs were 516-517, French draws dipped below 400. Candidates abroad without Canadian experience or strong French have little realistic draw access; the practical route is study/work in Canada first (or a PNP employer job offer).",
+            "salary_threshold_usd": null,
+            "threshold_note": "No salary threshold; CRS points. Realistic 2026 cutoffs: CEC ~516, PNP ~700s (incl. +600 nomination), French <400"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 19900,
+          "post_study_visa_months": 36,
+          "note": "International master's typically CAD 20k-40k/yr at public universities (est. CAD 28k). PGWP up to 3 years; master's grads (programs >=8 months) qualify for the 3-year permit and university-degree grads are exempt from the field-of-study restrictions that apply to college programs; CLB 7 language proof required."
+        },
+        "processing_months_typical": "6-9",
+        "iran_friction": {
+          "level": "medium",
+          "notes": "No visa office or biometrics collection in Iran - applicants travel to Türkiye, Armenia, Georgia or the UAE. Iranian study-permit refusal rates have run roughly 40-60% in recent years, and files often sit in extended security screening well beyond service standards (IRCC itself reported rising work/study permit wait times in July 2026). 2026 also saw security-inadmissibility proceedings against Iranian STEM doctoral students over alleged dual-use research links. Express Entry itself is nationality-neutral and Canada has a large Iranian community.",
+          "sources": [
+            "https://news.google.com/rss/search?q=Iranian+students+Canada+visa+processing+delays+security",
+            "https://www.cicnews.com/2026/07/ircc-reports-increased-wait-times-for-work-permits-and-study-permits-0778684.html"
+          ]
+        }
+      },
+      "pr_years_typical": 1.5,
+      "citizenship_years_typical": 5,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Dual citizenship fully permitted; Iranian nationality retention is not an obstacle."
+      },
+      "tax": {
+        "summary": "Federal + provincial progressive income tax plus CPP/EI contributions; overall burden moderate.",
+        "net_pct_single_mid_dev": 73,
+        "net_note": "CAD 100,000 mid-level dev (Ontario): federal+provincial tax, CPP/CPP2 and EI per 2025-26 rates, own computation (net ~CAD 73,000)",
+        "expat_scheme": null
+      },
+      "sources": [
+        "https://www.canadim.com/blog/express-entry-cec-draw-428/",
+        "https://immigcanada.com/express-entry-draw-428-issues-2000-cec-invitations/",
+        "https://en.wikipedia.org/wiki/Canadian_nationality_law"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "GB",
+      "name": "United Kingdom",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Skilled Worker visa",
+            "type": "employer_offer",
+            "summary": "Sponsored by a licensed employer for an RQF6+ role; salary must meet BOTH the general threshold and the occupation going rate. Leads to settlement (currently after 5 years - reform pending).",
+            "salary_threshold_usd": 56000,
+            "threshold_note": "GBP 41,700 general threshold (from 22 Jul 2025); new entrants (incl. recent grads/under-26) GBP 33,400 = ~USD 44,900; occupation going rates may be higher"
+          },
+          {
+            "name": "High Potential Individual / Graduate routes",
+            "type": "talent",
+            "summary": "HPI: 2-year unsponsored visa (3 for PhD) for graduates of top-ranked global universities. Graduate route: post-study, unsponsored (see study_pathway). Neither leads directly to settlement; both are bridges into Skilled Worker.",
+            "salary_threshold_usd": null,
+            "threshold_note": "No salary requirement"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 37600,
+          "post_study_visa_months": 24,
+          "note": "International CS master's typically GBP 22k-35k (est. GBP 28k). Graduate visa: 2 years if you apply on or before 31 Dec 2026; 18 months for applications from 1 Jan 2027; 3 years for PhDs (gov.uk, verified Aug 2026)."
+        },
+        "processing_months_typical": "1-2",
+        "iran_friction": {
+          "level": "medium",
+          "notes": "Iranian nationals need ATAS clearance for many sensitive STEM postgraduate courses (including parts of CS/AI), adding weeks and refusal risk. UK visa biometrics are generally not available inside Iran, so applicants usually travel to a third country. Sanctions-related banking checks complicate tuition and maintenance-funds transfers. The routes themselves are nationality-neutral and the UK has a large Iranian community. Big caveat for planning: the 'earned settlement' reform is expected to lengthen standard ILR from 5 to ~10 years (baseline) with earn-back provisions, applied retrospectively - final rules due autumn 2026.",
+          "sources": [
+            "https://www.gov.uk/guidance/academic-technology-approval-scheme",
+            "https://news.google.com/rss/search?q=UK+earned+settlement+10+years+indefinite+leave+consultation+outcome"
+          ]
+        }
+      },
+      "pr_years_typical": 5,
+      "citizenship_years_typical": 6,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Dual citizenship fully permitted; no renunciation issue for Iranians."
+      },
+      "tax": {
+        "summary": "Progressive income tax (20/40/45%) plus 8%/2% employee National Insurance.",
+        "net_pct_single_mid_dev": 77,
+        "net_note": "GBP 55,000 mid-level dev salary; 2025-26 HMRC rates (income tax + Class 1 NI), own computation (net ~GBP 42,460). Note: 5-to-10-year ILR reform pending",
+        "expat_scheme": null
+      },
+      "sources": [
+        "https://www.gov.uk/skilled-worker-visa/your-job",
+        "https://www.gov.uk/graduate-visa",
+        "https://www.gov.uk/guidance/academic-technology-approval-scheme"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "IE",
+      "name": "Ireland",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Critical Skills Employment Permit (CSEP)",
+            "type": "employer_offer",
+            "summary": "For ICT professionals with a 2-year job offer; no labour market test, immediate family reunification, and after the 2-year permit holders move to Stamp 4 (work without permit). Fee EUR 1,000; apply >=12 weeks before start.",
+            "salary_threshold_usd": 47100,
+            "threshold_note": "EUR 40,904 minimum for degree-holders on the Critical Skills list (EUR 36,848 = ~USD 42,400 if qualification obtained within past 12 months; EUR 68,911 for off-list occupations) - verified Aug 2026"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 18400,
+          "post_study_visa_months": 24,
+          "note": "Non-EU master's tuition typically EUR 12k-25k (est. EUR 16k). Third Level Graduate Programme (Stamp 1G): 12 months for level-8 (bachelor) and up to 24 months for level-9+ (master's/PhD) graduates - standing policy; primary pages were unreachable this session, treat as stable but re-verify."
+        },
+        "processing_months_typical": "3-5",
+        "iran_friction": {
+          "level": "medium",
+          "notes": "The Irish Times (Apr 2026) reported 'inhumane' family-reunification visa delays for critical-skills workers, with Iranians among those affected. Iranian applicants face months-long study/work entry-visa processing and a small consular footprint (applications handled via third countries/Ankara or Abu Dhabi at times). The permit system itself is nationality-neutral.",
+          "sources": [
+            "https://news.google.com/rss/search?q=Iranian+critical+skills+workers+Ireland+visa+delays"
+          ]
+        }
+      },
+      "pr_years_typical": 2,
+      "citizenship_years_typical": 5,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Dual citizenship fully permitted; no renunciation issue for Iranians."
+      },
+      "tax": {
+        "summary": "Income tax 20/40% with credits, USC surcharge and 4.2% PRSI; moderate at mid salaries, steep above EUR 44k.",
+        "net_pct_single_mid_dev": 77,
+        "net_note": "EUR 55,000 mid-level dev salary; 2025-26 rates (income tax minus EUR 4,000 credits, USC, PRSI 4.2%), own computation (net ~EUR 42,300)",
+        "expat_scheme": "SARP: 30% income-tax relief on employment income over EUR 100k for qualifying relocated employees (min salary EUR 125k), through 2030"
+      },
+      "sources": [
+        "https://enterprise.gov.ie/en/what-we-do/workplace-and-skills/employment-permits/permit-types/critical-skills-employment-permit/"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "DE",
+      "name": "Germany",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "EU Blue Card",
+            "type": "employer_offer",
+            "summary": "For university graduates (or IT specialists with 3+ years experience, no degree needed) with a German job offer. PR after 27 months (21 with B1 German); language not required at entry.",
+            "salary_threshold_usd": 58400,
+            "threshold_note": "EUR 50,700 standard / EUR 45,934.20 (~USD 52,900) for IT & bottleneck occupations and graduates within 3 years (45.3% of 2026 pension assessment ceiling)"
+          },
+          {
+            "name": "Opportunity Card (Chancenkarte)",
+            "type": "job_seeker",
+            "summary": "Points-based 1-year job-search residence (education, experience, language, age); requires blocked-account funds, allows 20h/week trial work. Converts to work permit/Blue Card on hire.",
+            "salary_threshold_usd": null,
+            "threshold_note": "No salary threshold; points + ~EUR 13k blocked account"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 0,
+          "post_study_visa_months": 18,
+          "note": "Public universities are tuition-free for most master's programs (semester fee EUR 150-400); exception: Baden-Wuerttemberg charges non-EU students EUR 1,500/semester (~USD 3,500/yr). 18-month job-seeking residence permit after graduation."
+        },
+        "processing_months_typical": "3-9",
+        "iran_friction": {
+          "level": "high",
+          "notes": "The German Embassy Tehran has chronic appointment backlogs for national (work/study) visas - often a year or more for some categories. In late 2025 it paused and then resumed Schengen operations while Germany accused Iran of withholding diplomat visas, 'crippling embassy operations'; Iran International reported Iranians stranded and separated from families by German visa delays (Nov 2025). The 2026 regional conflict adds travel and document-legalization disruption. Blue Card applicants get some priority but long waits remain standard for Iranians.",
+          "sources": [
+            "https://news.google.com/rss/search?q=German+embassy+Tehran+visa+appointment+waiting+time",
+            "https://iclg.com/practice-areas/corporate-immigration-laws-and-regulations/germany"
+          ]
+        }
+      },
+      "pr_years_typical": 2,
+      "citizenship_years_typical": 5,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Multiple nationality allowed without restriction since 27 Jun 2024, so Iran's renunciation bar is irrelevant. Note: the 3-year fast-track naturalization was abolished in Oct 2025; standard is 5 years."
+      },
+      "tax": {
+        "summary": "Progressive income tax (14-45%) plus heavy employee social contributions (~21%: pension, health, care, unemployment); overall one of the highest wedges in the OECD.",
+        "net_pct_single_mid_dev": 62,
+        "net_note": "EUR 60,000 mid-level dev salary, tax class I; 2026 tariff + social contributions, own computation cross-checked against BMF/SteuerGo-style calculators (net ~EUR 37,100)",
+        "expat_scheme": null
+      },
+      "sources": [
+        "https://iclg.com/practice-areas/corporate-immigration-laws-and-regulations/germany",
+        "https://en.wikipedia.org/wiki/German_nationality_law",
+        "https://news.google.com/rss/search?q=Germany+abolish+three-year+fast-track+naturalization+turbo"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "NL",
+      "name": "Netherlands",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Highly Skilled Migrant (kennismigrant)",
+            "type": "employer_offer",
+            "summary": "Employer must be an IND-recognized sponsor; very fast (2-4 weeks). Age-banded salary criteria; a reduced criterion applies within 3 years of graduation/orientation year.",
+            "salary_threshold_usd": 82100,
+            "threshold_note": "2026 gross/month excl. holiday allowance: EUR 5,942 (30+) = ~USD 82,100/yr; EUR 4,357 (<30) = ~USD 60,200/yr; EUR 3,122 reduced criterion after Dutch study = ~USD 43,100/yr (IND official)"
+          },
+          {
+            "name": "EU Blue Card (NL)",
+            "type": "employer_offer",
+            "summary": "Alternative to HSM with EU-wide mobility perks; recognized sponsorship not strictly required.",
+            "salary_threshold_usd": 82100,
+            "threshold_note": "EUR 5,942/month 2026; reduced EUR 4,754 (~USD 65,700/yr) for graduates within 3 years"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 21900,
+          "post_study_visa_months": 12,
+          "note": "Non-EU master's institutional tuition typically EUR 16k-22k (est. EUR 19k). Orientation year (zoekjaar hoogopgeleiden): 12 months unrestricted work; usable within 3 years of graduation and unlocks the reduced HSM salary criterion."
+        },
+        "processing_months_typical": "1-2",
+        "iran_friction": {
+          "level": "medium",
+          "notes": "Dutch knowledge-security screening targets sensitive tech fields and universities have rejected hundreds of 'risky' international researchers (NL Times 2025); Iranian students were historically constrained by sanctions-era rules. MVV collection in Tehran and sanctions banking add delays, and tuition/maintenance transfers from Iran are hard. The HSM route itself is fast and nationality-neutral via recognized sponsors.",
+          "sources": [
+            "https://news.google.com/rss/search?q=Iranian+students+Netherlands+security+screening+sanctions+universities"
+          ]
+        }
+      },
+      "pr_years_typical": 5,
+      "citizenship_years_typical": 5,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Naturalization normally requires renouncing, BUT a statutory exception applies when the origin country's law does not allow renunciation - Iranians are treated as unable to renounce in practice, so they effectively keep Iranian citizenship (exception documented in Dutch nationality law)."
+      },
+      "tax": {
+        "summary": "Box-1 progressive tax (~35.7%/37.6%/49.5% in 2026) with substantial general and labour tax credits; no separate employee social premiums beyond box 1.",
+        "net_pct_single_mid_dev": 73,
+        "net_note": "EUR 60,000 mid-level dev salary; 2026 box-1 rates and credits, own computation (net ~EUR 43,700), excl. 30% ruling",
+        "expat_scheme": "30% ruling: ~30% of salary tax-free for up to 5 years for recruited expats (27% from 2027 for new grants; salary norm applies) - big boost to net pay"
+      },
+      "sources": [
+        "https://ind.nl/en/required-amounts-income-requirements",
+        "https://en.wikipedia.org/wiki/Dutch_nationality_law"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "IT",
+      "name": "Italy",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "EU Blue Card (Italy)",
+            "type": "employer_offer",
+            "summary": "Post-2023 reform: open to graduates, IT specialists with 3 years' experience, and quota-exempt (outside decreto flussi). Salary must meet the applicable national collective agreement (CCNL) level.",
+            "salary_threshold_usd": null,
+            "threshold_note": "No fixed national euro threshold published for 2026; salary must not be below the relevant CCNL rate (in practice roughly EUR 25k-35k). Not verified against an official 2026 figure this session."
+          },
+          {
+            "name": "Decreto Flussi work visa",
+            "type": "employer_offer",
+            "summary": "Annual quota system (500k visas planned 2026-28) with 'click day' applications; mostly non-graduate roles, slow and unpredictable - Blue Card is the realistic dev route.",
+            "salary_threshold_usd": null,
+            "threshold_note": "Quota-based; no skill salary threshold"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 2900,
+          "post_study_visa_months": 12,
+          "note": "Public-university fees are income-scaled, typically EUR 900-4,000/yr for non-EU students (est. EUR 2,500); many scholarships (DSU) even cover living costs. Graduates can convert to a 12-month 'attesa occupazione' (job-seeking) permit."
+        },
+        "processing_months_typical": "4-10",
+        "iran_friction": {
+          "level": "medium",
+          "notes": "Main frictions are consular: scarce appointment slots at the Italian Embassy Tehran for study (Universitaly pre-enrolment) and work visas, plus document legalization queues. Italy actively recruits international students (incl. many Iranians) and renewed that commitment in Nov 2025; the 2026 regional conflict adds travel/banking disruption. No documented Iran-specific refusal pattern beyond consular capacity.",
+          "sources": [
+            "https://news.google.com/rss/search?q=Italy+student+visa+Tehran+appointment+Universitaly"
+          ]
+        }
+      },
+      "pr_years_typical": 5,
+      "citizenship_years_typical": 10,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Dual citizenship permitted; no renunciation issue. Note: 10-year residence requirement (a June 2025 referendum to cut it to 5 failed on turnout), plus ~2-3 years' application processing in practice."
+      },
+      "tax": {
+        "summary": "IRPEF 23-43% plus ~9.2% employee INPS contributions and regional/municipal surtaxes.",
+        "net_pct_single_mid_dev": 65,
+        "net_note": "EUR 45,000 mid-level dev salary; 2025-26 IRPEF + INPS 9.19% + ~2% local surtaxes, own computation (net ~EUR 29,500)",
+        "expat_scheme": "Lavoratori impatriati: 50% of employment income exempt for 5 years (cap EUR 600k, degree + residency conditions)"
+      },
+      "sources": [
+        "https://en.wikipedia.org/wiki/Blue_Card_(European_Union)",
+        "https://news.google.com/rss/search?q=Italy+work+visa+decreto+flussi+2026"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "ES",
+      "name": "Spain",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "EU Blue Card / Highly Qualified Professional (Ley 14/2013)",
+            "type": "employer_offer",
+            "summary": "Fast-track UGE processing (~20 working days) for graduate-level hires; Blue Card thresholds were reset by Order PJC/44/2026.",
+            "salary_threshold_usd": 45200,
+            "threshold_note": "EUR 39,269.92/yr (1.4x average gross income, 2026); reduced EUR 31,415.94 = ~USD 36,200 for shortage-list roles and graduates within 3 years (official, Order PJC/44/2026)"
+          },
+          {
+            "name": "Digital Nomad Visa (teletrabajo)",
+            "type": "talent",
+            "summary": "Remote-work residence for employees/freelancers of foreign companies; popular fallback for devs (income requirement ~200% SMI, ~EUR 2,800/mo).",
+            "salary_threshold_usd": null,
+            "threshold_note": "~200% of minimum wage; verify current SMI"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 5200,
+          "post_study_visa_months": 12,
+          "note": "Public master's fees are per-credit and region-dependent; non-EU students typically EUR 1.5k-8k/yr (est. EUR 4.5k). Graduates can take a 12-month job-search/entrepreneurship stay or (since the 2025 immigration regulation) switch directly to work status; students may work up to 30h/week."
+        },
+        "processing_months_typical": "1-3",
+        "iran_friction": {
+          "level": "medium",
+          "notes": "Frictions are mostly consular and administrative: limited appointment capacity for legalizations/visas in Tehran, sanctions banking for transferring funds, and slow civil-registry steps later on. Evidence of an Iran-specific refusal pattern is thinner than for AU/CA/DE - treat level as an informed estimate. The big structural bar is citizenship: 10 years plus renunciation formalities.",
+          "sources": [
+            "https://newlandchase.com/spain-revises-salary-thresholds-for-eu-blue-card-applicants/"
+          ]
+        }
+      },
+      "pr_years_typical": 5,
+      "citizenship_years_typical": 10,
+      "dual_citizenship": {
+        "allowed": false,
+        "note": "Naturalizers from non-Ibero-American countries must formally declare renunciation of their prior nationality before the Civil Registry. Spain does not verify effective loss under foreign law and Iran does not recognize renunciation, so Iranians de facto retain Iranian nationality - but formally Spain treats it as renounced and using it can theoretically prejudice Spanish nationality."
+      },
+      "tax": {
+        "summary": "Progressive IRPF (19-47% combined state+regional) plus ~6.5% employee social security.",
+        "net_pct_single_mid_dev": 72,
+        "net_note": "EUR 45,000 mid-level dev salary; 2025-26 IRPF (state+typical regional scale) + 6.48% SS, own computation (net ~EUR 32,600)",
+        "expat_scheme": "Beckham law: opt-in 24% flat tax on employment income up to EUR 600k for 6 years for new residents"
+      },
+      "sources": [
+        "https://newlandchase.com/spain-revises-salary-thresholds-for-eu-blue-card-applicants/",
+        "https://en.wikipedia.org/wiki/Spanish_nationality_law"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "SE",
+      "name": "Sweden",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Work permit (arbetstillstand)",
+            "type": "employer_offer",
+            "summary": "Employer-offer permit; advertised job + collective-agreement-level terms. From 1 Jun 2026 the salary floor is 90% of the Swedish median wage, and the Migration Agency can refuse over employer deficiencies. Certified employers get ~2-week processing.",
+            "salary_threshold_usd": 43300,
+            "threshold_note": "SEK 34,470/month (90% of SCB median, updated 16 Jun 2026) = ~SEK 413,640/yr; 27 exempt occupations at 75%; transitional 80% rule for pre-Jun-2026 permit holders until 1 Dec 2026"
+          },
+          {
+            "name": "EU Blue Card (SE)",
+            "type": "employer_offer",
+            "summary": "Now grantable up to 4 years; higher salary bar than the ordinary permit but EU mobility benefits.",
+            "salary_threshold_usd": 65300,
+            "threshold_note": "SEK 52,000/month (unchanged 2026) = ~SEK 624,000/yr"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 14600,
+          "post_study_visa_months": 12,
+          "note": "Non-EU master's tuition typically SEK 120k-145k/yr (est. SEK 140k); generous university scholarships exist. After graduation: 12-month residence permit to seek work or start a business."
+        },
+        "processing_months_typical": "1-4",
+        "iran_friction": {
+          "level": "medium",
+          "notes": "SAPO security vetting has blocked or revoked permits and citizenship for a number of Iranian researchers/engineers in dual-use fields - covered as 'Sweden is ruining people's careers' (The Local, 2025) and 'Sweden's security service has gone a little crazy' (Meduza, 2025). Ordinary dev roles usually clear, and Sweden hosts a very large Iranian diaspora. From Jun 2026, stricter salary, self-sufficiency and (from Aug 2026) civics-test requirements raise general hurdles including for pending citizenship files, which are re-assessed under the new 8-year rule.",
+          "sources": [
+            "https://news.google.com/rss/search?q=Iranians+Sweden+work+permit+security+police+rejection",
+            "https://newlandchase.com/sweden-work-permit-reform-in-force-from-june-1-2026/"
+          ]
+        }
+      },
+      "pr_years_typical": 4,
+      "citizenship_years_typical": 8,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Dual citizenship permitted since 2001; no renunciation issue. Citizenship reform (in force 6 Jun 2026): 8 years' residence (up from 5), self-sufficiency (income >= 3 income base amounts), civics/language tests phased in from Aug 2026/Oct 2027 - applied even to already-pending applications."
+      },
+      "tax": {
+        "summary": "Municipal tax ~32% (plus 20% state tax above ~SEK 640k/yr) softened by earned-income tax credit; no separate employee social fees.",
+        "net_pct_single_mid_dev": 76,
+        "net_note": "SEK 45,000/month (540,000/yr) mid-level dev; municipal ~32% with jobbskatteavdrag, below state-tax threshold, own computation (net ~SEK 410,000), Ekonomifakta-style",
+        "expat_scheme": "Expert tax relief: 25% of remuneration tax-free for up to 7 years for qualifying foreign experts/high earners"
+      },
+      "sources": [
+        "https://newlandchase.com/sweden-work-permit-reform-in-force-from-june-1-2026/",
+        "https://eiglaw.com/sweden-introduces-new-work-permit-rules-from-june-2026/",
+        "https://www.imidaily.com/europe/sweden-passes-law-curtailing-naturalization-8-year-wait-income-floor/"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "DK",
+      "name": "Denmark",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Pay Limit Scheme",
+            "type": "employer_offer",
+            "summary": "Any job qualifies if pay is high enough and matches Danish standards; salary must be paid into a Danish bank account. Fast (1 month normal). Supplementary lower-threshold track exists for certified companies.",
+            "salary_threshold_usd": 85000,
+            "threshold_note": "DKK 552,000/yr minimum for 2026 (official nyidanmark.dk; indexed annually); supplementary scheme has a lower bar (~DKK 415k+, employer-certified)"
+          },
+          {
+            "name": "Positive List for Higher Education",
+            "type": "employer_offer",
+            "summary": "Shortage-occupation route (software developers regularly listed) without the Pay Limit salary floor - pay must still match Danish standards.",
+            "salary_threshold_usd": null,
+            "threshold_note": "No fixed threshold; collective-agreement-level pay required"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 15400,
+          "post_study_visa_months": 36,
+          "note": "Non-EU tuition typically DKK 75k-120k/yr (est. DKK 100k). Graduates of state-approved Danish programs automatically get a 3-year job-seeking period with full work rights (6 months for some non-state-approved programs; none for those applied for after 2 May 2025)."
+        },
+        "processing_months_typical": "1-3",
+        "iran_friction": {
+          "level": "low",
+          "notes": "No documented Iran-specific refusal pattern; standard security screening applies. Practical frictions: opening the mandatory Danish bank account within 180 days, sanctions-related transfer/document issues from Iran, and 2026 conflict travel disruption. Denmark's high salary floor is the real gate, not nationality.",
+          "sources": [
+            "https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Pay-limit-scheme"
+          ]
+        }
+      },
+      "pr_years_typical": 8,
+      "citizenship_years_typical": 9,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Dual citizenship permitted since Sept 2015; no renunciation issue. Citizenship itself is slow: 9 years' residence (last 2 as permanent resident), PR normally 8 years (4 on fast-track)."
+      },
+      "tax": {
+        "summary": "8% AM-bidrag plus bottom/municipal taxes (~37% combined at mid incomes, top tax above ~DKK 640k); no other employee social contributions.",
+        "net_pct_single_mid_dev": 64,
+        "net_note": "DKK 550,000 mid-level dev salary; AM-bidrag + bottom/municipal tax with employment deduction, own computation (net ~DKK 352,000), Skat.dk-style",
+        "expat_scheme": "Researcher/key-employee scheme: flat 27% + AM-bidrag (~32.8% total) for up to 7 years (2026 min salary ~DKK 78,000/month)"
+      },
+      "sources": [
+        "https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Pay-limit-scheme",
+        "https://www.nyidanmark.dk/en-GB/You-want-to-apply/Study/Higher-education",
+        "https://en.wikipedia.org/wiki/Danish_nationality_law"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "NO",
+      "name": "Norway",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Skilled worker residence permit",
+            "type": "employer_offer",
+            "summary": "For degree-holders (or certified trades) with a Norwegian job offer; pay must match Norwegian norms - UDI enforces explicit salary floors where no collective agreement applies.",
+            "salary_threshold_usd": 62900,
+            "threshold_note": "From 1 Sep 2025: NOK 599,200/yr for master's-level positions, NOK 522,600 (~USD 54,800) for bachelor's-level (UDI via EIG)"
+          },
+          {
+            "name": "Job-seeker permit for graduates/researchers",
+            "type": "job_seeker",
+            "summary": "12-month post-completion permit for those who studied/researched in Norway, with work rights while searching (regular foreign job-seeker variant is 6 months, no work).",
+            "salary_threshold_usd": null,
+            "threshold_note": "No salary threshold; funds requirement"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 26200,
+          "post_study_visa_months": 12,
+          "note": "Tuition-free era ended autumn 2023 for non-EU/EEA students; fees vary hugely (NOK 150k-580k/yr by program/university; est. NOK 250k). 12-month graduate job-seeker permit with work rights."
+        },
+        "processing_months_typical": "1-3",
+        "iran_friction": {
+          "level": "medium",
+          "notes": "Norway has a documented history of export-control screening hitting Iranian students and researchers in technical fields (2014-16 rejection/deportation cases; continued vetting for sensitive subjects incl. some CS/AI specializations). Employment-based skilled-worker visas are generally processed normally, though UDI wait times drew complaints in 2026. Sanctions banking friction applies to funds from Iran.",
+          "sources": [
+            "https://news.google.com/rss/search?q=Norway+Iranian+students+export+control+rejection",
+            "https://eiglaw.com/norway-raises-salary-thresholds-for-skilled-workers-effective-september-2025/"
+          ]
+        }
+      },
+      "pr_years_typical": 3,
+      "citizenship_years_typical": 8,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Dual citizenship permitted since 1 Jan 2020; no renunciation issue. Citizenship requires ~8 of the last 11 years' residence (B1 Norwegian and self-support conditions apply)."
+      },
+      "tax": {
+        "summary": "22% ordinary tax after deductions plus progressive bracket tax and 7.7% national insurance.",
+        "net_pct_single_mid_dev": 73,
+        "net_note": "NOK 750,000 mid-level dev salary; 2025-26 rates (ordinary tax with minimum/personal deductions, bracket tax, NI), own computation (net ~NOK 550,000), Skatteetaten-style",
+        "expat_scheme": "Optional flat 25% PAYE scheme for foreign workers in their first year (income cap ~NOK 700k)"
+      },
+      "sources": [
+        "https://eiglaw.com/norway-raises-salary-thresholds-for-skilled-workers-effective-september-2025/",
+        "https://www.lifeinnorway.net/job-seeker-visa/"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "FI",
+      "name": "Finland",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Residence permit for specialists",
+            "type": "employer_offer",
+            "summary": "For expert roles requiring higher education (ICT explicitly included); fast-track D-visa decisions in ~2 weeks for applicants and families.",
+            "salary_threshold_usd": 54400,
+            "threshold_note": "EUR 3,937/month gross in 2026 (Migri official) = ~EUR 47,244/yr"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 16100,
+          "post_study_visa_months": 24,
+          "note": "Non-EU master's tuition typically EUR 10k-18k/yr (est. EUR 14k) with widespread 50-100% scholarships. Post-study job-search permit: up to 2 years, usable in instalments within 5 years of graduation."
+        },
+        "processing_months_typical": "0.5-2",
+        "iran_friction": {
+          "level": "low",
+          "notes": "No notable Iran-specific refusal pattern documented; standard security checks apply. Practical frictions: proving funds from Iran under sanctions banking, document legalization via the Finnish Embassy Tehran, and 2026 conflict travel disruption. Note the tightening baseline for everyone: citizenship 8 years (Oct 2024), financial-resources requirement (Dec 2025), citizenship test coming 1 Jan 2027, and new PR integration requirements from 8 Jan 2026.",
+          "sources": [
+            "https://migri.fi/en/specialist",
+            "https://migri.fi/en/amendments-to-aliens-act-regarding-permanent-residence-permits-2026"
+          ]
+        }
+      },
+      "pr_years_typical": 4,
+      "citizenship_years_typical": 8,
+      "dual_citizenship": {
+        "allowed": true,
+        "note": "Multiple citizenship accepted (Migri states this explicitly); no renunciation issue for Iranians."
+      },
+      "tax": {
+        "summary": "Progressive state + municipal tax plus ~9% employee contributions (pension 7.15%, unemployment, health).",
+        "net_pct_single_mid_dev": 69,
+        "net_note": "EUR 55,000 mid-level dev salary; 2025-26 state/municipal scales + employee contributions, own computation (net ~EUR 38,000), Vero-style",
+        "expat_scheme": "Foreign key-employee regime: flat 32% withholding for up to 7 years (salary >= ~EUR 5,800/month)"
+      },
+      "sources": [
+        "https://migri.fi/en/specialist",
+        "https://migri.fi/en/period-of-residence",
+        "https://migri.fi/en/amendments-to-aliens-act-regarding-permanent-residence-permits-2026",
+        "https://migri.fi/en/finnish-citizenship"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "AE",
+      "name": "United Arab Emirates",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Standard employment visa",
+            "type": "employer_offer",
+            "summary": "Employer-sponsored 2-year residence; fast (days-weeks), no points or degree-based salary floor for most roles. Residence lapses ~6 months after job loss unless switched.",
+            "salary_threshold_usd": null,
+            "threshold_note": "No published skill salary threshold; MOHRE skill-level classification applies"
+          },
+          {
+            "name": "Golden Visa (skilled professionals)",
+            "type": "talent",
+            "summary": "10-year self-sponsored residence for degree-holding professionals with high salaries; also merit tracks for exceptional students/scientists.",
+            "salary_threshold_usd": 98000,
+            "threshold_note": "AED 30,000/month salary + bachelor's degree per u.ae criteria (widely documented; official page not fetchable this session)"
+          },
+          {
+            "name": "Green Visa (skilled worker)",
+            "type": "talent",
+            "summary": "5-year self-sponsored residence without employer tie for skilled employees.",
+            "salary_threshold_usd": 49000,
+            "threshold_note": "AED 15,000/month + bachelor's degree (Wikipedia, citing UAE government)"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": 19100,
+          "post_study_visa_months": null,
+          "note": "University tuition typically AED 55k-90k/yr (est. AED 70k); Khalifa/MBZUAI offer free study with stipends. No standard post-study work visa - graduates need an employer sponsor, though top students can qualify for Golden Visas."
+        },
+        "processing_months_typical": "0.5-2",
+        "iran_friction": {
+          "level": "medium",
+          "notes": "Employment visas for Iranians have long been routine (Dubai hosts a very large Iranian community), but in March 2026 Iranian expats reported the UAE cancelling residency visas and leaving holders stranded amid the 2026 conflict; security clearance can quietly fail for sensitive roles, and UAE banks aggressively de-risk Iranian clients (account freezes/refusals). Regional escalation caused airspace and processing disruption in 2026.",
+          "sources": [
+            "https://news.google.com/rss/search?q=Iranians+UAE+visa+restrictions+employment+2026",
+            "https://wolfsdorf.com/legal-alert-middle-east-escalation-immediate-visa-mobility-disruptions/"
+          ]
+        }
+      },
+      "pr_years_typical": null,
+      "citizenship_years_typical": null,
+      "dual_citizenship": {
+        "allowed": false,
+        "note": "Citizenship is discretionary (30 years' residence for non-Arabs, by nomination since the 2021 amendments for select talents/investors) and effectively unavailable to ordinary migrants; dual nationality is permitted only in those exceptional grants. Golden Visa (10-yr renewable) is the practical 'settlement' ceiling - no naturalization path matters for Iranians here."
+      },
+      "tax": {
+        "summary": "No personal income tax and no social insurance for expatriates (GPSSA pension applies to UAE/GCC nationals only); 5% VAT on consumption.",
+        "net_pct_single_mid_dev": 100,
+        "net_note": "AED 300,000/yr (~AED 25k/month) dev salary assumed; 100% net - no income tax or expat social contributions",
+        "expat_scheme": null
+      },
+      "sources": [
+        "https://en.wikipedia.org/wiki/Visa_policy_of_the_United_Arab_Emirates",
+        "https://en.wikipedia.org/wiki/Emirati_nationality_law",
+        "https://en.wikipedia.org/wiki/UAE_Golden_Visa"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "QA",
+      "name": "Qatar",
+      "visa": {
+        "skilled_routes": [
+          {
+            "name": "Employment visa (employer sponsorship)",
+            "type": "employer_offer",
+            "summary": "Employer-driven: Ministry of Labour approval, entry visa, medicals and residence permit (QID) - typically 1-3 months end-to-end. Residence is tied to the employer despite kafala reforms; NOC abolition improved job mobility on paper.",
+            "salary_threshold_usd": null,
+            "threshold_note": "No published salary threshold for skilled roles; minimum wage QAR 1,000/month is the only statutory floor"
+          }
+        ],
+        "study_pathway": {
+          "masters_tuition_intl_usd_yr": null,
+          "post_study_visa_months": null,
+          "note": "Education City/HBKU graduate programs are commonly fully funded with stipends; Qatar University charges per-credit fees for internationals (figures not verified this session). No post-study work visa - employment requires a sponsor."
+        },
+        "processing_months_typical": "1-3",
+        "iran_friction": {
+          "level": "low",
+          "notes": "Employer-sponsored visas are processed routinely for Iranian nationals and Doha maintains working relations with Tehran (Qatar even hosted Iran World Cup visa processing arrangements). The 2026 regional escalation briefly closed airspace and slowed processing. Main caveats are structural, not Iran-specific: sponsorship dependency and essentially no settlement track; sanctions banking still complicates transfers from Iran.",
+          "sources": [
+            "https://wolfsdorf.com/legal-alert-middle-east-escalation-immediate-visa-mobility-disruptions/",
+            "https://news.google.com/rss/search?q=Qatar+work+visa+Iranians"
+          ]
+        }
+      },
+      "pr_years_typical": 20,
+      "citizenship_years_typical": null,
+      "dual_citizenship": {
+        "allowed": false,
+        "note": "Qatar does not recognize dual citizenship; naturalization has no defined process, is capped (max 50/yr) and is practically unavailable. PR under Law 10/2018 requires 20 years' residence, capped at 100 grants/yr - treat Qatar as work-and-save, not settle."
+      },
+      "tax": {
+        "summary": "No personal income tax; no social insurance contributions for expatriate employees (pension scheme covers Qatari/GCC nationals only).",
+        "net_pct_single_mid_dev": 100,
+        "net_note": "QAR 240,000/yr (~QAR 20k/month) dev salary assumed; 100% net - no income tax for employees",
+        "expat_scheme": null
+      },
+      "sources": [
+        "https://en.wikipedia.org/wiki/Qatari_nationality_law",
+        "https://wolfsdorf.com/legal-alert-middle-east-escalation-immediate-visa-mobility-disruptions/"
+      ],
+      "as_of": "2026-08"
+    }
+  ],
+  "as_of": "2026-08"
+}

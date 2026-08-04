@@ -1,0 +1,771 @@
+{
+  "records": [
+    {
+      "id": "AU",
+      "indices": {
+        "whr_score": 6.916,
+        "whr_rank": 15,
+        "gpi_rank": 20,
+        "hdi": 0.958,
+        "ef_epi_score": null,
+        "ef_epi_band": "native",
+        "numbeo_qol_index": 186.8,
+        "numbeo_healthcare_index": 72.0,
+        "freedom_note": "Australia is a stable liberal democracy with marriage equality (since 2017) and strong formal protections, but there is no federal ban on LGBTQ+ conversion practices, a 2026 hate-speech law reform left LGBTQIA+ protections largely unaddressed, and asylum-seeker policy has hardened further, including a 2026 forced-deportation arrangement with Nauru struck after courts ruled indefinite detention illegal."
+      },
+      "job_market": {
+        "summary": "Australia's tech sector is large (A$167 billion) but 2026 hiring has clearly cooled: national job ads were down about 5% in February 2026, and tech-specific layoffs jumped from 874 in all of 2025 to over 4,450 in early 2026 alone, including WiseTech Global cutting 30% of staff and Atlassian cutting roughly 1,600 roles. Sydney posted around 3,600 tech layoffs in 2026, the third-highest of any city globally after Seattle and San Francisco. Demand has shifted away from generalist software development toward cybersecurity, cloud, data/AI, and platform engineering; Sydney and Melbourne are the dominant hubs, with Brisbane, Canberra, Adelaide, and Perth smaller markets.",
+        "new_grad_reality": "Genuinely hard and getting harder: recruiters report shrinking entry-level roles as AI absorbs junior tasks, competition averages around 185 applicants per IT role, and hiring now takes 8-10 weeks instead of 5-6. For a foreign new grad with no local network or existing work rights, a first dev job typically means a long, multi-month search.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "English (no legally declared official language, but English is the de facto language of government, education, and all visa/citizenship testing)",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Citizenship applicants generally must demonstrate 'competent English' (similar to the points-tested skilled-visa standard) and pass a citizenship test delivered in English (75%+ to pass; a 2025-2026 reform added assessed writing, listening and speaking). Passport holders from the UK, US, Canada, NZ or Ireland are exempt from separate English testing - an exemption that does not extend to Iranian nationals. This area is under active reform; verify current specifics on the Department of Home Affairs site."
+      },
+      "reality_paragraph": "For a skilled migrant, Australia offers a genuinely high standard of living, a strong work-life-balance culture, and Medicare once you have PR - but 2026 is a cooler year for tech hiring than usual, and housing is the biggest financial shock: Sydney's median dwelling price is around A$1.3 million and renting a typical house there now takes roughly A$135,000/year in income to avoid 'rental stress'; Melbourne is somewhat more affordable but still tight. Integration is generally logistically smooth - English-speaking, Western institutions, an established multicultural population - but diaspora and academic research paint a more mixed social picture: interviews with Iranian-Australian women describe workplace discrimination compounded by Islamophobia, while other research suggests more recently arrived, secular-leaning Iranian migrants in Sydney report less day-to-day racism than more religious or refugee-background arrivals, suggesting experience depends heavily on background. Australia's Iranian community is smaller than the US or Canada's - about 71,000 Iran-born residents (2021 Census), concentrated in Sydney (~26,000) and Melbourne (~21,000) - and about 12.4% of Iran-born Australians report not speaking English well, pointing to a real settlement gap for some arrivals even though skilled migrants themselves usually arrive fluent. There's no Iran-specific travel ban comparable to the US's, but Australia expelled Iran's ambassador in 2024 after attributing antisemitic attacks on Australian soil to the Iranian state, which can mean extra security scrutiny for Iranian nationals. A commonly cited regret is underestimating how long and expensive it is to buy property, plus the isolation of a long, costly flight from family; what people love is the lifestyle trade-off - shorter effective work weeks, outdoor living, and a less frantic professional culture.",
+      "flags": [
+        "Tech hiring cooled sharply in 2026 - layoffs jumped from 874 (all of 2025) to 4,450+ (early 2026 alone); Sydney had the 3rd-most tech layoffs of any city worldwide",
+        "Entry-level/junior dev roles are shrinking as AI absorbs testing and basic tasks",
+        "Severe housing unaffordability in Sydney; Melbourne somewhat better but still stretched",
+        "No citizenship English-testing exemption for Iranian passport holders",
+        "High competition per role (~185 applicants average in 2026) and slower hiring timelines"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://tickernews.co/global-tech-layoffs-rise-sharply-in-2026-blamed-on-ai/",
+        "https://www.emanatetechnology.com.au/news/it-job-market-australia-2026",
+        "https://www.fuserecruitment.com/blogs/australias-tech-job-market-has-changed-heres-how-to-navigate-it/",
+        "https://immi.homeaffairs.gov.au/help-support/meeting-our-requirements/english-language/competent-english",
+        "https://www.bal.com/immigration-news/australia-moves-to-toughen-citizenship-requirements/",
+        "https://fenro.com.au/australia-housing-affordability-2026/",
+        "https://urbanrenters.com.au/blog/average-rent-in-sydney-2026/",
+        "https://freedomhouse.org/country/australia/freedom-world/2026",
+        "https://www.hrw.org/world-report/2026/country-chapters/australia",
+        "https://www.yahoo.com/news/articles/australia-says-iran-behind-anti-064642102.html",
+        "https://link.springer.com/article/10.1007/s12134-023-01054-4"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "US",
+      "indices": {
+        "whr_score": 6.816,
+        "whr_rank": 23,
+        "gpi_rank": 134,
+        "hdi": 0.938,
+        "ef_epi_score": null,
+        "ef_epi_band": "native",
+        "numbeo_qol_index": 184.7,
+        "numbeo_healthcare_index": 67.0,
+        "freedom_note": "The US remains a rule-of-law democracy with strong formal free-speech and press protections, but LGBTQ+ rights and the lived social climate now vary sharply by state and have grown more polarized - 2025 alone saw anti-LGBTQ legislative action in at least 22 states against pro-LGBTQ action in only 14 - so whether the US feels accepting depends heavily on which state and community you land in."
+      },
+      "job_market": {
+        "summary": "US tech layoffs remain severe in 2026 - over 117,000 tech jobs cut so far this year, including Microsoft (15,000+) and Oracle (20,000-30,000) - even as companies keep hiring for AI-related and senior roles. Main hubs remain the SF Bay Area, Seattle, New York, and Austin, though some hiring is dispersing toward lower-cost metros. The long-run outlook is still positive on paper (BLS projects +15% software-developer growth through 2034), but that's little comfort for anyone job-hunting in 2026 itself.",
+        "new_grad_reality": "Genuinely brutal, and worse specifically for foreign grads: entry-level postings have shrunk to roughly 7.5% of listings, new grads now make up only ~7% of Big Tech hires (down over 50% from 2019), and only 44.6% of international students land a US job after graduating versus 62.1% of domestic peers. The new wage-weighted H-1B lottery (effective February 2026) gives entry-level applicants only about a 15% selection chance versus roughly 61% for senior roles, so even a job offer doesn't guarantee a visa.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "English (no federally declared official language, but the de facto language of government and business, and a core naturalization requirement)",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Naturalization requires passing an English test (reading, writing, speaking) plus a civics test, with narrow age/residency exemptions: applicants 50+ with 20 years as a permanent resident, or 55+ with 15 years, are exempt from the English test (still take civics with an interpreter); 65+ with 20 years get a simplified civics test in their native language. Most working-age skilled migrants face full English-plus-civics testing with no shortcut."
+      },
+      "reality_paragraph": "The US still offers the highest ceiling on tech compensation and the deepest concentration of cutting-edge employers of any country here, but 2026 is a genuinely hard year to break in, with layoffs topping 117,000 tech jobs and entry-level hiring the tightest part of the market. Cost of living in the major hubs is extreme: San Francisco rent has hit a record ~$3,827/month, and even Seattle - the relatively 'affordable' option - runs a median rent around $2,058-2,119/month. But the single most important fact for an Iranian national right now isn't economic: as of January 1, 2026, Presidential Proclamation 10998 suspends US visa issuance to Iranian nationals across nearly every immigrant and nonimmigrant category, including student and work visas, with only narrow exceptions (dual nationals on a non-restricted passport, persecuted religious/ethnic minorities, existing green-card/valid-visa holders). People who already held a valid visa before that date haven't had it revoked, but anyone applying fresh from Iran faces close to a categorical bar - this is a fast-moving, actively litigated policy area (last confirmed February 2026) and must be re-verified before relying on it. For the roughly 750,000-strong Iranian-American community - the largest, most institutionally developed Persian diaspora of any country here, concentrated in LA's 'Tehrangeles' (~230,000) with further hubs in Texas, New York, and DC - diaspora reporting describes real cultural infrastructure alongside notably strong socioeconomic outcomes (median Iranian-American household income around $97,000 vs. a national median of about $70,000), plus a persistent undercurrent of displacement described in diaspora writing as 'ghorbat.' A commonly cited regret is underestimating healthcare costs and the precarity of an employer-tied visa, since losing a job can mean losing legal status within months; what people love is the sheer career ceiling and speed of professional advancement at the top of the US market.",
+      "flags": [
+        "Iran is on the full US visa suspension list (Presidential Proclamation 10998, effective Jan 1, 2026) - as of the last official confirmation (Feb 2026) Iranian nationals cannot obtain new US visas of any kind except narrow exceptions; verify current status before relying on this",
+        "New-grad tech hiring is historically weak in 2025-2026",
+        "International students land US jobs at a much lower rate than domestic grads (44.6% vs 62.1%)",
+        "H-1B lottery is now wage-weighted - entry-level roles have only ~15% selection odds vs ~61% for senior roles",
+        "New $100,000 employer fee applies to H-1B petitions for candidates residing outside the US (largely moot given the visa suspension)",
+        "Extreme cost of living in major tech hubs",
+        "Employer-tied work visas create real job-loss precarity"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://finance.yahoo.com/sectors/technology/articles/class-2026-breaking-tech-means-112050162.html",
+        "https://www.kore1.com/tech-layoffs-2026/",
+        "https://news.crunchbase.com/startups/tech-layoffs/",
+        "https://www.extern.com/post/computer-science-job-market-2026-guide",
+        "https://www.finalroundai.com/blog/computer-science-graduates-face-worst-job-market-in-decades",
+        "https://www.tryalma.com/learn/h1b-wage-level-rule",
+        "https://travel.state.gov/content/travel/en/News/visas-news/suspension-of-visa-issuance-to-foreign-nationals-to-protect-the-security-of-the-united-states.html",
+        "https://www.tryalma.com/learn/iran-travel-ban-visas-iranian-nationals",
+        "https://en.sedaily.com/finance/2026/07/07/ai-boom-pushes-san-francisco-rents-to-record-3827-a-month",
+        "https://www.aclu.org/legislative-attacks-on-lgbtq-rights-2026",
+        "https://newlinesmag.com/reportage/the-dilemmas-of-americas-iranian-diaspora/",
+        "https://theworlddata.com/iranian-in-us-statistics/"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "CA",
+      "indices": {
+        "whr_score": 6.741,
+        "whr_rank": 25,
+        "gpi_rank": 14,
+        "hdi": 0.939,
+        "ef_epi_score": null,
+        "ef_epi_band": "native",
+        "numbeo_qol_index": 169.5,
+        "numbeo_healthcare_index": 68.6,
+        "freedom_note": "Canada's federal legal protections for LGBTQ+ rights, press freedom, and civil liberties remain strong and largely unchanged, but the social climate has grown more contested as US-style polarization spills across the border into debates over trans rights and education, and a 2024 Quebec survey found roughly 1 in 3 LGBT respondents had experienced workplace discrimination - legal equality doesn't automatically mean uniform day-to-day comfort."
+      },
+      "job_market": {
+        "summary": "Canadian tech hiring in 2026 is described by industry reports as being in 'steady recovery' - demand is strong for AI/ML, cybersecurity, data analytics, and cloud roles, and the Greater Toronto Area alone sees 8,700+ unique software-developer postings a year. Layoffs continue in pockets (e.g., roughly 250 roles cut at Arctic Wolf in 2026), and generalist software-development roles are comparatively crowded compared to specialized AI/cybersecurity skills. Toronto (and the wider Toronto-Waterloo corridor) is the dominant hub, with Vancouver, Montreal, and Ottawa as secondary centers.",
+        "new_grad_reality": "Still difficult for a foreign new grad specifically: generalist developer roles are the most crowded part of the market, and employers frequently weight 'Canadian experience' and credential recognition, so international graduates without a local internship or co-op tend to face a longer search than domestic grads - though the overall climate is less brutal than the US's right now.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "English and French (bilingual federation; English dominates business and tech outside Quebec and parts of eastern Ontario/New Brunswick)",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Citizenship applicants aged 18-54 must prove Canadian Language Benchmark (CLB) Level 4 in either English or French - a functional-intermediate speaking-and-listening standard - via an approved test, education credentials, or government language-training records. Applicants under 18 or over 54 are exempt from the language requirement, though a separate citizenship knowledge test is still generally required."
+      },
+      "reality_paragraph": "Canada offers a clearer, more predictable path from skilled migrant to permanent resident to citizen than the US's employer-dependent system, but 2026 tech hiring - while framed as 'steady recovery' - is still selective: AI/ML and cybersecurity skills command a real premium while generalist developer roles are comparatively crowded. Housing is the main financial strain: a one-bedroom in Toronto runs around C$2,150/month and requires roughly C$96,000/year in gross income to stay within the standard 30%-of-income guideline, Vancouver is worse (~C$2,495/month, ~C$104,000/year needed), and home-purchase prices in both cities (roughly C$1.0-1.2 million median) are out of reach for most new arrivals for years. Integration is generally regarded as smoother than the US's on paper - the immigration system is explicitly built around skilled economic migrants - and there's a large, multi-generational Iranian-Persian community (about 280,805 combined Iranian/Persian-origin per the 2021 Census, concentrated in Greater Toronto ~97,000 and Greater Vancouver ~46,000) with established businesses, media, and Persian-language services. That said, a survey of 600+ Iranian-Canadians by the Iranian Canadian Congress found 65% report personally experiencing discrimination - half in employment/business settings and over a quarter during air travel or airport security - linked partly to hostile international rhetoric toward Iran. Canada has no Iran-specific travel ban comparable to the US's, which makes it the more realistic of the two North American options for Iranian nationals in 2026. A commonly cited regret is underestimating the housing crunch and how 'Canadian experience' requirements slow down a job search that actually matches your qualifications; what people love is the more predictable, less precarious path to permanent status and accessible provincial healthcare once it kicks in.",
+      "flags": [
+        "Generalist software-developer roles are comparatively crowded in 2026; AI/ML and cybersecurity skills command the real premium",
+        "'Canadian experience' expectations and credential-recognition hurdles slow down foreign new grads specifically",
+        "Housing affordability pressure in Toronto and especially Vancouver",
+        "Diaspora survey reports notable discrimination - 65% of 600+ surveyed Iranian-Canadians report personally experiencing it, concentrated in employment and air travel/airport screening",
+        "Pockets of continued tech layoffs even amid overall 'steady recovery' framing"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://medium.com/@careertips101/the-2026-tech-labour-market-in-canada-a-predictive-analysis-of-opportunities-and-structural-shifts-2818843773f5",
+        "https://www.roberthalf.com/ca/en/insights/research/it-and-tech-salary-guide-2026-trends",
+        "https://betakit.com/layoffs/",
+        "https://www.comptia.org/en-us/resources/research/state-of-the-tech-workforce-canada-2026/",
+        "https://www.rcicnews.com/2026/06/breaking-canada-changes-citizenship-language-rules-what-you-need",
+        "https://www.tenantpay.com/blogs/average-rent-prices-for-apartments-in-canada-2026-market-guide",
+        "https://cfe.torontomu.ca/issues/freedom-press",
+        "https://www.iccongress.ca/survey_on_discrimination_faced_by_iranian_canadians",
+        "https://en.wikipedia.org/wiki/Iranian_Canadians"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "GB",
+      "indices": {
+        "whr_score": 6.694,
+        "whr_rank": 29,
+        "gpi_rank": 39,
+        "hdi": 0.946,
+        "ef_epi_score": null,
+        "ef_epi_band": "native",
+        "numbeo_qol_index": 173.8,
+        "numbeo_healthcare_index": 72.7,
+        "freedom_note": "The UK is rated 'Free' by Freedom House (92/100) with strong press freedom (around 18th of 180 countries in 2026) and full legal protection for LGBTQ+ people under the Equality Act 2010, but it is currently dealing with a real and rising climate of Islamophobic and religiously-motivated hate crime (sharply up since the 2024 Southport riots) and an increasingly contested political and legal fight over trans rights specifically."
+      },
+      "job_market": {
+        "summary": "UK tech hiring in 2026 is best described as 'not a crash, a correction': vacancies are down roughly 18% from the late-2024 peak and entry-level/junior roles (especially frontend-only and manual QA) are genuinely contracting as AI tooling absorbs junior tasks, while cybersecurity, cloud/platform engineering, data engineering and AI-adjacent roles remain in strong, under-supplied demand. London remains the dominant hub, with secondary clusters growing in Manchester, Birmingham, Edinburgh, Bristol and Leeds. Contract/project-based hiring is gaining ground on permanent hiring as employers stay cautious about headcount.",
+        "new_grad_reality": "A genuinely tough market for a foreign new grad: roughly two-thirds of UK enterprises are scaling back entry-level hiring as AI absorbs junior tasks, and junior salaries (about £28-40k in London) often don't clear the Skilled Worker visa's sponsorship salary threshold (now above £41,700) in the first place - so foreign new grads compete for a shrinking pool of roles that also happen to meet a salary bar most junior postings don't reach.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "English (Welsh also has co-official status in Wales specifically)",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Indefinite Leave to Remain (settlement) currently requires 5 years' continuous lawful residence, English at B1, and a pass on the Life in the UK test - but the UK government has confirmed plans to extend this qualifying period from 5 to 10 years, expected around Autumn 2026 (transitional rules for people already mid-residence were unclear in research - verify current Home Office guidance). The English requirement is also set to rise from B1 to B2 from 26 March 2027. Citizenship can follow 12 months after ILR, reusing the English/Life in the UK test plus a 'good character' test."
+      },
+      "reality_paragraph": "Life as a skilled migrant in London is genuinely good professionally, but it sits on top of a housing market close to breaking point. Average Greater London rent hit about £2,280/month in March 2026, now eating roughly 42% of the average renter's income, and fewer than 2% of listed rentals nationwide are affordable to lower earners - most people who move here describe underestimating this before they arrive. Integration on the language and culture front is easy - everything from banking to job interviews runs in English - but the visa system is a long-term source of stress: the government has confirmed the settlement (ILR) qualifying period is moving from 5 to 10 years, resetting the timeline anyone was planning around. London has by far the largest Iranian community of the English-speaking countries here: around 87,700 Persian/Farsi speakers across England & Wales (2021 Census), historically centered around Kensington/West London and now spreading into Barnet, Ealing, Harrow and Brent, with real infrastructure to match. Discrimination isn't universal, but it isn't invented either: reported anti-Muslim and religiously-motivated hate crime has risen sharply since 2024, and that climate affects how Iranians are sometimes perceived regardless of actual religious practice. The most common regret is underestimating how much of your salary rent will eat before you find your footing outside Zone 1-2; the most common thing people say they'd do again is choose London specifically, for the job density and the sheer number of other people who've made the same move.",
+      "flags": [
+        "London rent crisis is severe - average renter spends ~42% of income on rent",
+        "UK settlement (ILR) qualifying period expected to move from 5 to 10 years around Autumn 2026 - verify current status before planning around it",
+        "Graduate Route post-study work visa shortens from 2 years to 18 months for applications made from 1 Jan 2027",
+        "Entry-level dev hiring is genuinely contracting (AI absorbing junior tasks)",
+        "Reported Islamophobic/religious hate crime up sharply since 2024"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://www.itjobboard.co.uk/blog/353/state-of-uk-it-jobs-market-2026-full-report/",
+        "https://singularity.cv/blog/uk-tech-job-market-2026",
+        "https://www.jobbatical.com/blog/uk-graduate-visa-18-months-2027-recruitment-impact-shortened",
+        "https://ilrtracker.com/guides/ilr-rules",
+        "https://optivest.co.uk/en/blogs/uk-ilr-requirements-settlement-2026",
+        "https://freedomhouse.org/country/united-kingdom/freedom-world/2025",
+        "https://rsf.org/en/country/united-kingdom",
+        "https://www.aljazeera.com/news/2026/2/26/mosques-attacked-children-racially-abused-as-hard-right-rises-in-uk",
+        "https://www.zoopla.co.uk/discover/property-news/rental-market-report/",
+        "https://www.crisis.org.uk/about-us/crisis-media-centre/fewer-than-2-of-properties-in-britain-considered-affordable-for-renters-on-housing-benefit-1/",
+        "https://en.wikipedia.org/wiki/Iranians_in_the_United_Kingdom"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "IE",
+      "indices": {
+        "whr_score": 6.928,
+        "whr_rank": 13,
+        "gpi_rank": 5,
+        "hdi": 0.949,
+        "ef_epi_score": null,
+        "ef_epi_band": "native",
+        "numbeo_qol_index": 169.6,
+        "numbeo_healthcare_index": 51.2,
+        "freedom_note": "Ireland is rated 'Free' by Freedom House with one of the highest scores globally (98/100) and ranks 14th in Europe for LGBTQ+ rights and law per the ILGA-Europe 2026 Rainbow Map (marriage equality since the 2015 referendum), though a 2026 Trans Rights Index flagged real gaps in trans healthcare access, and Freedom House notes 'some societal discrimination' against Irish Travellers and newly arrived immigrants/asylum seekers."
+      },
+      "job_market": {
+        "summary": "Ireland's tech market in 2026 remains resilient and competitive, anchored by Dublin's dense cluster of US tech multinationals alongside secondary hubs in Cork, Galway and Limerick, plus domestic growth in fintech, medtech and AI-powered SaaS. Demand keeps outpacing supply for experienced engineers - AI/ML, cloud, cybersecurity and data roles especially - though hybrid/remote work now means Dublin employers compete directly with Cork, Berlin and Lisbon-based teams for the same developers.",
+        "new_grad_reality": "Hard for a non-EU/EEA new grad without an Irish degree: the Critical Skills Employment Permit needs a job offer clearing a salary threshold (~€40,904) that many genuine entry-level roles don't reach, and Dublin's big multinationals mostly sponsor experienced hires, not first jobs. Without an Irish qualification or graduate-route status, the honest picture is a narrow path in.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "Irish (constitutional first official language, Article 8), though English is the de facto majority/working language of government, business and daily life - Irish is not needed for work or citizenship",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Ireland does NOT require an Irish or English language test for naturalization - one of the few EU countries with no formal language or civics test for citizenship at all. The core requirement is residency: broadly 5 years of 'reckonable residence' (1 year immediately before applying, plus 4 of the previous 8 years), being of 'good character', and a declaration of fidelity to the nation."
+      },
+      "reality_paragraph": "Ireland offers a genuinely warm, English-speaking entry point into Europe with a tech job market still hungry for talent - InterNations' 2025/2026 Expat Insider survey rates Ireland as Europe's best country for working abroad. That collides head-on with what may be the worst housing shortage in Europe right now: Dublin had roughly 1,800-2,300 total rental properties listed across the entire market in early 2026 - the lowest since records began in 2006 - with a typical two-bed apartment averaging about €2,600/month, and housing economists expect the shortage to persist for another decade or more. Integration itself is comparatively easy since naturalization requires no language or civics test at all, unusual even within the EU. The Iranian community, though, is small - informal secondary-source estimates put it around 2,000-3,000 people nationally, mostly students (official CSO figures broken out specifically for Iran were not found and should be verified directly if precision matters), centered on Dublin with small Nowruz and Shab-e Yalda gatherings rather than the dense infrastructure London or Hamburg offer. Discrimination against Iranians specifically isn't documented as a distinct pattern, though Freedom House notes real societal friction nationally around immigration and asylum-seeker accommodation. The most common regret is underestimating how brutal the rental search itself would be; the most common thing people love is how quickly the basics feel workable - English everywhere, genuine tech demand, and a widely-echoed impression of an easier 'settling in' than continental Europe typically offers.",
+      "flags": [
+        "Dublin/national rental shortage may be the worst in Europe right now - lowest listing counts since records began (2006)",
+        "Iranian community is small (~2,000-3,000 estimated, unverified by official census breakdown) - limited infrastructure vs London or Hamburg",
+        "Critical Skills Employment Permit salary threshold filters out many genuine entry-level roles for non-EU new grads",
+        "No language/civics test for citizenship - a genuine advantage relative to Germany and (post-2026) the UK"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://www.solasit.ie/the-trends-shaping-irelands-it-market-in-2026/",
+        "https://www.gempool.ie/insights/software-development-hiring-trends-what-to-expect-in-2026/",
+        "https://citizenx.com/insights/irish-citizenship-requirements",
+        "https://emn.ie/ahq-citizenship-tests/",
+        "https://freedomhouse.org/country/ireland/freedom-world/2026",
+        "https://gcn.ie/ireland-14th-europe-lgbtq-laws-policies/",
+        "https://www.worldpropertyjournal.com/real-estate-news/ireland/dublin/ireland-apartment-rental-data-february-2026-daftie-rental-report-apartment-rents-in-ireland-in-2026-ronan-lyons-trinity-college-dublin-14688.php",
+        "https://www.remoters.io/en/blog/dublin-housing-crisis-2026-why-so-hard",
+        "https://www.cnbc.com/2025/09/17/best-countries-for-expats-internations-expat-survey.html"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "DE",
+      "indices": {
+        "whr_score": 6.882,
+        "whr_rank": 17,
+        "gpi_rank": 28,
+        "hdi": 0.959,
+        "ef_epi_score": 615,
+        "ef_epi_band": "very high",
+        "numbeo_qol_index": 195.0,
+        "numbeo_healthcare_index": 72.4,
+        "freedom_note": "Germany is legally progressive on paper - marriage equality since 2017, a Self-Determination Act since November 2024 letting trans/non-binary/intersex people change legal name and gender by simple declaration - but the political climate has cooled sharply, with the far-right AfD (20.8% in the 2025 federal election, formally designated a 'right-wing extremist' entity by German domestic intelligence in May 2025) coinciding with a documented 40% jump in politically-motivated hate crimes in 2024, including sharp rises in anti-Muslim and anti-LGBTQ+ incidents."
+      },
+      "job_market": {
+        "summary": "Germany's IT sector is a bright spot inside a stagnant wider economy (GDP growth ~1.2% in 2026): over 137,000 IT positions reportedly sit unfilled, making it one of the more accessible major economies for qualified tech workers. Hiring is concentrated in Berlin (fintech, B2B SaaS), Munich (enterprise/automotive software, highest ML/AI salaries), and secondary hubs Hamburg and Frankfurt. Layoffs have been less of a defining story here than in UK/US tech - the binding constraint is unfilled vacancies rather than headcount cuts.",
+        "new_grad_reality": "On paper favorable - IT is an official shortage occupation, lowering the EU Blue Card salary threshold (~€45,934, further reduced for recent grads) - but the practical filter is German-language ability: outside a handful of Berlin-style English-first startups, most employers, especially in Munich or traditional enterprise, expect at least conversational German, narrowing the realistic playing field well below the headline vacancy numbers.",
+        "english_work": "medium"
+      },
+      "language": {
+        "official": "German",
+        "english_work": "medium",
+        "pr_citizenship_language_req": "Two distinct tracks. (1) Citizenship/naturalization: the June 2024 reform cut the standard residency requirement from 8 to 5 years and now permits full dual citizenship, but requires German at B1; the 3-year 'fast-track' route (which had required C1 German) was abolished effective 30 October 2025, so 5 years plus B1 is now the only naturalization path. A still-active 1929 Germany-Iran treaty requires German authorities to seek Iranian government approval before naturalizing Iranian nationals - a real, usually procedural, extra step (most Iranian-Germans end up holding both nationalities in practice, since Iran rarely formally releases citizens). (2) Permanent settlement (Niederlassungserlaubnis) is separate: EU Blue Card holders can qualify after just 21 months with B1 German, or 27 months with only basic A1, versus 33 months for other Blue Card cases or 4 years for general skilled workers - reaching this quickly does not shortcut the 5-year/B1 citizenship clock."
+      },
+      "reality_paragraph": "Germany is the classic 'the work is fine, the paperwork will break you' migration story. InterNations' Expat Insider survey ranked Germany 30th of 31 countries in both 2025 and 2026 - second-to-last overall - specifically because of bureaucracy (65% of expats rate it negatively), slow digitization, and a cash-heavy admin culture, even though 60% of respondents still say they're personally happy living there. Cost of living is genuinely more affordable than London or Dublin on average, but city rents are still up about 44% versus 2016, and finding housing in Berlin or Munich is its own real struggle. Integration is the theme that comes up in almost every serious account: even in English-speaking tech jobs - genuinely common in Berlin, less so in Munich or outside the startup bubble - daily life outside the office (the Bürgeramt, the tax office, apartment contracts) runs in German and is frequently described as opaque even by people who speak German well. Germany has by a wide margin the largest and most historically rooted Iranian community of the English/native-adjacent comparison set here: an estimated 319,000 people of Iranian background nationally (2024 Destatis estimate; a narrower count of 114,125 Iranian citizens specifically was recorded in 2021), concentrated in Berlin, Munich, Hamburg (which alone has at least 20,000 Iranians and trade ties to Iran going back over a century), Frankfurt and Heidelberg. Discrimination is a documented pattern here, not just an impression: hate crime statistics rose sharply through 2024-2025 alongside the AfD's rise, and academic research on second-generation Iranian-Germans describes persistent feelings of marginalization despite high education and language fluency. The most common regret is underestimating how isolating the language-and-bureaucracy barrier feels even when your job runs entirely in English; what people say they'd do again is the quality-of-life basics - job security, healthcare, vacation time, public transit - plus, for Iranians specifically, landing in a community large enough to feel like an actual community.",
+      "flags": [
+        "German bureaucracy/paperwork culture is a well-documented, repeated shock - Germany ranked 2nd-to-last of 31 countries in InterNations Expat Insider, two years running",
+        "English-friendly tech jobs are real but concentrated in Berlin - do not assume this reflects Munich or the national market",
+        "AfD's rise and a documented 40% jump in 2024 politically-motivated hate crimes are a real, current part of the climate",
+        "3-year fast-track citizenship route was abolished October 2025 - 5 years plus B1 German is now the only naturalization path",
+        "A 1929 Germany-Iran treaty requires Iranian-government approval before naturalizing Iranian nationals",
+        "Don't conflate Niederlassungserlaubnis (settlement, possible in ~21 months with B1) with citizenship (5-year minimum, separate process)"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://jobtrackr.it/blog/de-it-job-market-march-2026",
+        "https://andersenlab.com/blueprint/it-job-market-germany",
+        "https://migaku.com/blog/language-fun/how-to-find-english-speaking-jobs-in-berlins-tech-scene",
+        "https://www.thelocal.de/20251031/law-repealing-germanys-three-year-citizenship-track-takes-effect",
+        "https://www.fragomen.com/insights/germany-fast-track-naturalization-pathway-abolished.html",
+        "https://viobean.com/immigration/niederlassungserlaubnis-b1",
+        "https://en.wikipedia.org/wiki/Iranians_in_Germany",
+        "https://www.iamexpat.de/expat-info/germany-news/germany-2nd-worst-country-move-say-internationals",
+        "https://www.hrw.org/world-report/2026/country-chapters/germany",
+        "https://www.csis.org/analysis/far-right-breakthrough-germanys-afd-brink-state-level-governance",
+        "https://en.wikipedia.org/wiki/LGBTQ_rights_in_Germany"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "NL",
+      "indices": {
+        "whr_score": 7.223,
+        "whr_rank": 7,
+        "gpi_rank": 17,
+        "hdi": 0.955,
+        "ef_epi_score": 624,
+        "ef_epi_band": "very high",
+        "numbeo_qol_index": 205.6,
+        "numbeo_healthcare_index": 81.5,
+        "freedom_note": "The Netherlands ranks among the world's freest press environments (2nd of 180 in the 2026 RSF World Press Freedom Index) and has strong legal LGBTQ+ protections - reinforced by a 2026 conversion-therapy ban and the country's first openly gay prime minister (Rob Jetten) taking office in February 2026 - but reported LGBTQ+ discrimination and hate incidents have been rising per a 2026 police/anti-discrimination agency report, and the political climate has shifted toward a more conservative, immigration-skeptical coalition."
+      },
+      "job_market": {
+        "summary": "Dutch tech hiring in 2026 is bifurcated: layoffs have hit generalist and platform-ops roles (ASML cut ~1,700 jobs in January 2026 despite strong AI-driven demand; Amsterdam also saw cuts at Just Eat Takeaway, Bird, and TomTom), while demand for MLOps, LLM engineering, cloud, and cybersecurity specialists keeps rising, with ICT vacancies still numbering roughly 23,000. Amsterdam (Booking.com, Adyen, Databricks, the wider scaleup ecosystem) and Brainport Eindhoven (ASML and its supply chain) are the two main hubs.",
+        "new_grad_reality": "Realistically moderate-to-hard: junior roles rarely come with direct visa sponsorship, but the one-year 'orientation year' (zoekjaar) visa for recent graduates of a Dutch university (or a short list of top-ranked foreign universities) lets you job-hunt without a sponsor and then qualify for a reduced Highly Skilled Migrant salary threshold (~€3,122/month) - without that route, landing a first sponsored dev job as a new grad is a tough ask.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "Dutch",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Civic integration (inburgering) is mandatory for both permanent residence and naturalisation. As of mid-2026 the standard requirement remains Dutch level A2 (via the integration-exam route, after 5 years of legal residence); there has been recurring political discussion about raising this to B1, and a rumored mid-2026 change did not materialize - this is genuinely in flux and should be re-verified against IND/government.nl before relying on it."
+      },
+      "reality_paragraph": "For a skilled migrant on a Highly Skilled Migrant or EU Blue Card visa, day-to-day life in the Netherlands is genuinely comfortable: the tech job itself is very likely to run in English, bureaucracy is largely digitized, and infrastructure, healthcare, and work-life balance are strong by any standard. The catch is housing - Amsterdam's private rental market has a structural regional shortage of roughly 45,000-47,000 homes, a one-bedroom in the free sector averages around €2,200/month, and decent listings often disappear within 24-48 hours, so budget serious time and money for the search (Eindhoven and Rotterdam are somewhat easier). The Iranian community here is the most established of the Continental European countries in this comparison - tens of thousands of people, with roots going back to the 1979 revolution and a visible, multi-generational presence of student associations and cultural organizations in Amsterdam, Rotterdam, The Hague, and especially Delft; this is an impression from community reporting rather than a rigorous survey, but the consistent sense is of an accessible network. Integration still takes real effort: civic integration with a Dutch exam is mandatory for permanent residence and citizenship, and while your job and early daily life can run almost entirely in English, many people report hitting a ceiling in mid-level bureaucracy, healthcare navigation, and workplace social life if they never move past English. Discrimination isn't absent - LGBTQ+ hate-incident reports have risen recently even as legal protections stay strong - but the country's anti-discrimination institutions remain among the strongest in Europe. A commonly reported regret is underestimating the housing search and the isolation of the first year before language and local friendships catch up; a commonly cited thing people love is the sheer predictability of the place - functioning trains, bike infrastructure, and a tech scene where you can build a real career without ever mastering Dutch.",
+      "flags": [
+        "Severe Amsterdam housing shortage - regional deficit of ~45,000-47,000 homes; 1-bed private rentals average ~€2,200/month and can vanish within 24-48 hours of listing",
+        "Entry-level tech roles rarely come with direct visa sponsorship - the 'orientation year' route matters much more than usual for new grads",
+        "30% expat tax ruling drops to 27% for rulings granted from 1 January 2027 onward",
+        "A2 Dutch is required for PR/citizenship today, but political pressure to raise it to B1 is ongoing - verify current status",
+        "Reported LGBTQ+ discrimination/hate incidents rising despite strong legal protections"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://kitalent.com/articles/article-amsterdam-tech-talent-split/",
+        "https://dutchreview.com/expat/dutch-job-market-2026/",
+        "https://www.portsighttax.com/en/insights/30-procent-regeling-2026",
+        "https://www.iamexpat.nl/education/education-news/dutch-integration-exam-do-you-need-language-level-a2-or-b1",
+        "https://ind.nl/en/living-in-the-netherlands-with-a-residence-permit/civic-integration-for-more-secure-residence-permit-and-naturalisation",
+        "https://en.wikipedia.org/wiki/Iranians_in_the_Netherlands",
+        "https://nltimes.nl/2026/04/14/amsterdam-expats-can-beat-odds-grab-ready-go-apartment-despite-housing-crunch",
+        "https://sidetrack.blog/2026/05/03/netherlands-lgbtqia-discrimination-continues-to-rise/",
+        "https://thehomoculture.com/netherlands-gay-prime-minister-lgbtq-rights/",
+        "https://rsf.org/en/country/netherlands"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "IT",
+      "indices": {
+        "whr_score": 6.42,
+        "whr_rank": 40,
+        "gpi_rank": 35,
+        "hdi": 0.915,
+        "ef_epi_score": 513,
+        "ef_epi_band": "moderate",
+        "numbeo_qol_index": 156.2,
+        "numbeo_healthcare_index": 64.9,
+        "freedom_note": "Italy's press freedom has been declining (56th of 180 in the 2026 RSF Index, down from 49th in 2025, amid a 'gag law' restricting court reporting and political pressure on public broadcaster RAI), and LGBTQ+ people have meaningfully weaker legal protections than in the Netherlands or Spain - civil unions but no marriage equality, conversion therapy not banned, and a governing coalition actively pursuing rollbacks including limits on registering both parents in same-sex couples."
+      },
+      "job_market": {
+        "summary": "Italy's IT job market grew an estimated 18% in 2026 (roughly 12,000 new positions), heavily concentrated in Milan (about 55% of openings, plus an 11% salary premium over the national average), with Rome (~20%, largely public-sector IT/cybersecurity) and Turin (~8%, automotive/mobility tech around Stellantis) well behind. Demand is strongest for full-stack, cloud, AI, and cybersecurity roles, with typical developer salaries around €35,000-65,000, but the market outside Milan and a handful of multinational offices remains considerably more local and Italian-language-driven.",
+        "new_grad_reality": "Hard: Italy has no early-career visa shortcut, entry-level salaries (roughly €28,000-35,000) sit close to typical sponsorship thresholds, non-EU work permits run through the capped annual decreto flussi quota system (the EU Blue Card sits outside the quota but requires a qualifying job offer), and most employers outside a handful of Milan multinationals and internationally-facing startups expect at least functional Italian even for technical roles.",
+        "english_work": "low"
+      },
+      "language": {
+        "official": "Italian",
+        "english_work": "low",
+        "pr_citizenship_language_req": "Citizenship by residency requires 10 years of continuous legal residence - one of the longest qualifying periods in the EU - plus a certified B1 Italian language level (required since 2018), proof of sufficient annual income (minimum roughly €8,263 for a single applicant), and a clean criminal record in both Italy and the home country."
+      },
+      "reality_paragraph": "Life for a skilled migrant in Italy involves a real trade-off: the lifestyle, food, and climate are genuinely valued by expats and frequently cited as the reason people stay despite a tougher bureaucratic and economic environment than Northern Europe. Milan is the only city where the tech job market resembles what a CS grad might expect from Northern Europe or the US, and even there, English gets you through the office but not through daily life - renting an apartment, dealing with the questura for your permesso di soggiorno, opening a bank account, or seeing a doctor outside a private international clinic will require functional Italian fairly quickly. Housing adds real pressure: rental vacancy in Milan and Rome sits at roughly 1-3%, among the tightest in Western Europe, rents rose nationally by about 6.6% over the past year, and a typical city-center one-bedroom in Milan can absorb around 72% of an average net Italian salary (about 65% in Rome). The Iranian community is small and comparatively new - official residency figures put it at roughly 20,000-24,000 people nationally (sources vary by year and measure), having reportedly doubled since 2019, concentrated in Rome and Milan and skewing toward students, about half of them women - a much thinner, newer network than the Netherlands' community. Italy has no strong points-based tech visa - non-EU nationals go through either the EU Blue Card or the capped decreto flussi quota system - and the path to citizenship by residency is 10 years plus a B1 Italian certificate. Discrimination against migrants generally isn't the top-cited concern in available sources, but the current government's rhetoric and rollback of same-sex-parent recognition are worth knowing about, and press freedom has been declining amid gag-law and public-broadcaster concerns. The most common regret is underestimating how much the language barrier and slow bureaucracy affect daily life even when the job itself is in English; the most consistently cited thing people love is the quality of life once the administrative hurdles are cleared.",
+      "flags": [
+        "No points-based or strong skilled-worker visa - non-EU tech workers rely on the EU Blue Card or the capped decreto flussi quota",
+        "Low share of English-only tech jobs outside Milan multinationals and international-facing startups",
+        "10-year residency requirement for citizenship (one of the longest in the EU) plus a B1 Italian certificate",
+        "Milan/Rome rental vacancy near 1-3%; Milan center rent can absorb ~72% of an average net salary",
+        "Press freedom declining - dropped from 49th to 56th of 180 (RSF, 2025 to 2026)",
+        "Weaker LGBTQ+ legal protections than NL/ES - civil unions only, no marriage equality, conversion therapy not banned",
+        "Small, recent Iranian community (~20,000-24,000 nationally), concentrated in Rome/Milan, largely students"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://worldpopulationreview.com/country-rankings/happiest-countries-in-the-world",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/regions/europe/italy/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://blog.drjobpro.com/it-jobs-in-italy-2026/",
+        "https://jobtrackr.it/blog/it-it-job-market-april-2026",
+        "https://italyhandbook.com/tech-jobs-in-italy-hotspots-and-salary-overview/",
+        "https://visafalcon.com/italy-citizenship-by-residency",
+        "https://italyhandbook.com/the-italian-citizenship-language-requirement-b1-explained/",
+        "https://en.ilsole24ore.com/art/iranian-community-italia-doubled-in-the-last-six-years-AIJXH9nB",
+        "https://www.spotahome.com/blog/milan-rental-market-2026/",
+        "https://rsf.org/en/country/italy",
+        "https://www.equaldex.com/region/italy",
+        "https://www.illiberalism.org/melonis-mark-the-revival-of-the-traditional-family-in-italian-law-and-politics/"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "ES",
+      "indices": {
+        "whr_score": 6.47,
+        "whr_rank": 38,
+        "gpi_rank": 27,
+        "hdi": 0.918,
+        "ef_epi_score": 540,
+        "ef_epi_band": "moderate",
+        "numbeo_qol_index": 183.4,
+        "numbeo_healthcare_index": 77.2,
+        "freedom_note": "Spain combines strong, comprehensive legal LGBTQ+ protections (full marriage equality, joint adoption rights, banned conversion therapy) and a press freedom ranking that remains solidly good (29th of 180 in the 2026 RSF Index, though down from 23rd in 2025) with a more polarized political climate marked by the rise of the far-right Vox party and increased harassment of journalists."
+      },
+      "job_market": {
+        "summary": "Spain's tech hiring is concentrated in Madrid (~47% of software engineering openings) and Barcelona (~27%), with Valencia, Malaga, and Bilbao emerging as smaller hubs; AI/ML, cloud, and cybersecurity roles are growing fastest, and the government's 'Digital Spain 2026' initiative is actively pushing international recruitment because digital specialists remain a smaller share of the workforce (3.2%) than the EU average (3.9%). Employers report raising pay significantly to compete for scarce senior talent, though entry-level competition remains stiff.",
+        "new_grad_reality": "Also hard for a true first job with zero experience, though structurally a bit more favorable than Italy - Spain has no points-based visa either, but is actively simplifying its Highly Qualified Professional visa and EU Blue Card route, and Barcelona's startup/multinational scene and Madrid's international base offer the best odds of an English-language hiring process, provided you can clear the initial bar without local experience or a strong network.",
+        "english_work": "medium"
+      },
+      "language": {
+        "official": "Spanish (Castilian); Catalan, Basque, and Galician are co-official regional languages in their respective autonomous communities but are not required for national residency or citizenship processes",
+        "english_work": "medium",
+        "pr_citizenship_language_req": "Citizenship by residency requires 10 years of continuous legal residence for Iranian nationals - the reduced 2-year route applies only to Ibero-American countries, the Philippines, Andorra, Equatorial Guinea, Portugal, and people of Sephardic origin, not Iran - plus passing the DELE A2 Spanish language exam (~€130) and the CCSE Spanish culture/constitution test (~€85). Real-world processing time reportedly ranges from about 3 to 24 months depending on the regional civil registry's backlog."
+      },
+      "reality_paragraph": "Spain offers something the Netherlands and Italy don't quite match for many skilled migrants: a genuinely well-liked lifestyle - climate, food, and a slower pace of life are consistently cited by expats as the reason they stay, though that's a subjective, self-reported signal rather than a hard metric. The tech job market is real and growing - Madrid and Barcelona together account for roughly three-quarters of software engineering openings, Barcelona in particular has a genuinely English-friendly startup and multinational scene (the 22@ district), and 'Digital Spain 2026' is actively trying to ease international hiring because digital specialists are a documented gap in the workforce. That said, outside the Madrid/Barcelona international bubble, Spanish is expected for most roles, and daily bureaucracy - NIE/TIE paperwork, banking, healthcare registration - runs in Spanish regardless of what language your job is in. Housing is under real pressure in both major cities as part of a broader national debate over rent and tourism-driven housing costs, though current, precisely-citable figures were not confidently located in this research pass - treat this as a real budgeting risk rather than a footnote. The Iranian community is the smallest of the Continental European countries covered here - official statistics put it at somewhere between roughly 5,000 and 10,000 people depending on the year and whether measured by nationality or birthplace, concentrated in Madrid (about a third), Barcelona, and Malaga, with roots tracing to the 1979 revolution - a noticeably smaller, less institutionally visible community than the Netherlands'. Spain has no points-based tech visa either - it relies on the employer-sponsored Highly Qualified Professional visa and EU Blue Card - and citizenship by residency takes 10 years for Iranian nationals, plus the DELE A2 exam and the CCSE test. A commonly reported regret is underestimating the Spanish-language requirement for anything outside the international tech bubble; the most consistently cited thing people love is quality of life - outdoor culture, food, and climate - which shows up repeatedly in independent expat-satisfaction surveys.",
+      "flags": [
+        "No points-based tech visa - relies on the employer-sponsored Highly Qualified Professional visa and EU Blue Card",
+        "Low-to-medium share of English-only tech jobs outside Barcelona's startup scene and Madrid's multinational base",
+        "10-year residency requirement for citizenship - the 2-year fast track does not apply to Iranian nationals",
+        "Madrid/Barcelona rent and housing pressure is significant - specific current figures were not independently verified in this research pass",
+        "Smallest Iranian community of the Continental European countries compared here - roughly 5,000-10,000 nationally, concentrated in Madrid/Barcelona/Malaga",
+        "Press freedom slipped from 23rd to 29th of 180 (RSF, 2025 to 2026) amid polarization and far-right harassment of journalists"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://worldpopulationreview.com/country-rankings/happiest-countries-in-the-world",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/regions/europe/spain/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://www.jobbatical.com/blog/digital-spain-talent-relocation",
+        "https://euroweeklynews.com/2026/01/22/spains-job-market-in-2026-where-the-work-really-is-right-now/",
+        "https://www.jobbatical.com/blog/spanish-citizenship-eligibility-process-requirements",
+        "https://illaylegal.com/dele-a2-exam-spanish-citizenship/",
+        "https://easytospain.com/blogs/spanish-nationality-the-10-year-route-and-the-2-year-exception",
+        "https://en.wikipedia.org/wiki/Iranians_in_Spain",
+        "https://centerforiraniandiasporastudies.wordpress.com/2022/10/24/the-iranian-diaspora-in-spain-first-insights-from-fieldwork-2019-2022/",
+        "https://rsf.org/en/country/spain",
+        "https://www.equaldex.com/region/spain"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "SE",
+      "indices": {
+        "whr_score": 7.255,
+        "whr_rank": 5,
+        "gpi_rank": 40,
+        "hdi": 0.959,
+        "ef_epi_score": 609,
+        "ef_epi_band": "very high",
+        "numbeo_qol_index": 187.6,
+        "numbeo_healthcare_index": 68.3,
+        "freedom_note": "Sweden ranks 5th globally on RSF's 2026 World Press Freedom Index and has strong LGBTQ+ legal protections (marriage equality since 2009), but the national-conservative Sweden Democrats are now the second-largest party in the Riksdag and immigration policy has shifted markedly rightward heading into the 13 September 2026 general election."
+      },
+      "job_market": {
+        "summary": "Sweden's 2026 tech market is selective rather than booming: national unemployment sits around 8%, but software developers remain consistently in demand, IT salaries have risen sharply, and AI/cloud skills are especially sought after per TechSverige's January 2026 labour-market analysis. Stockholm (fintech/gaming/startups - the Spotify/Klarna/King/Mojang heritage), Gothenburg (automotive/industrial tech) and Malmo are the main hubs, but hiring isn't uniformly hot: gaming has seen real layoffs (DICE Stockholm cut roughly 640 to 420 staff 2022-24, Paradox Interactive cut 50+) and startup funding is down about 47% from its 2021 peak.",
+        "new_grad_reality": "Realistically hard but not impossible: many junior postings still list conversational Swedish as a plus or requirement outside the most international scale-ups, and from 1 June 2026 a new non-EU work-permit salary floor (90% of the Swedish median, roughly SEK 33,390/month) may sit above some genuinely entry-level offers, so sponsorship terms are worth checking before counting on a specific job.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "Swedish",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Verified current as of 6 June 2026 (new law, no transitional protection for pending cases): the habitual residence requirement rose from 5 to 8 years (2 years for Nordic citizens, 7 for refugees/spouses); a new self-sufficiency test requires income of at least three income-base-amounts/year (~SEK 250,200/year) sustained for 3 consecutive years, with welfare receipt capped at 6 months in that window; and knowledge of Swedish and Swedish society is now mandatory for applicants aged 16-66, shown via school grades/SFI course D/komvux, or a citizenship test (medborgarskapsprovet) if no such evidence exists. The society-knowledge test began a Stockholm-only pilot on 15 August 2026; a dedicated Swedish-language test is legislated but not yet active, expected 1 October 2027 at the earliest. Dual citizenship remains allowed (since 2001)."
+      },
+      "reality_paragraph": "Sweden is the one Nordic country where a skilled Iranian migrant can plug into a genuinely large, multi-generational community rather than starting from zero: Statistics Sweden counted 87,292 Iran-born residents in 2025 (plus tens of thousands more Sweden-born to Iranian parents), and Iranian-Swedes have reached the Riksdag (about a dozen MPs after the 2022 election) and cabinet posts. Professionally, Stockholm's startup/gaming/fintech scene is genuinely English-friendly and meritocratic, but housing is a real shock: Stockholm's public rental system runs on queue time, not income, and it became 'essentially impossible' during the 2010s to get a lease with under five years in the queue, with central addresses often taking far longer - most newcomers end up in the pricier private sublet or ownership market instead. Income tax is high (Sweden is routinely near the top of OECD tax-burden rankings). Socially, the pattern described in InterNations' annual Expat Insider survey - an impression, but a very consistently repeated one for the Nordic region - is that Sweden is professionally welcoming and personally slow: colleagues are warm, but close Swedish friendships can take years to form. There's no verifiable pattern of discrimination specific to Iranian migrants, but the political backdrop has shifted: citizenship rules tightened sharply on 6 June 2026 and the Sweden Democrats' rise has pulled mainstream migration rhetoric rightward over the past decade. What people commonly regret is underestimating the housing queue and the multi-year timeline to real social integration; what they commonly love is the flat workplace hierarchy, real work-life balance and parental leave, and - for Iranians specifically - that Stockholm's community is large enough to actually build a life within.",
+      "flags": [
+        "Stockholm rental queue: often 5+ years for any lease, commonly a decade or more for central addresses",
+        "Citizenship residency requirement just rose from 5 to 8 years (6 June 2026), plus new income/self-sufficiency test and mandatory civics test",
+        "Swedish-language citizenship test still to come (~Oct 2027 earliest)",
+        "New (1 June 2026) non-EU work-permit salary floor (~SEK 33,390/month) may exclude some genuinely entry-level offers",
+        "Gaming-sector layoffs (DICE, Paradox, Embracer) show the tech market isn't uniformly hot",
+        "Sweden Democrats are the 2nd-largest party; national election 13 Sept 2026 keeps migration policy in flux",
+        "High marginal income tax",
+        "Nordic social integration is professionally easy but personally slow, per expat surveys"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://www.migrationsverket.se/en/news-archive/news/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html",
+        "https://civics.se/en/blog/whats-new-2026/",
+        "https://en.wikipedia.org/wiki/Swedish_Iranians",
+        "https://en.wikipedia.org/wiki/2026_Swedish_general_election",
+        "https://rsf.org/en/index",
+        "https://kitalent.com/articles/stockholm-games-senior-talent-gap",
+        "https://www.edstellar.com/blog/skills-in-demand-in-sweden"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "DK",
+      "indices": {
+        "whr_score": 7.539,
+        "whr_rank": 3,
+        "gpi_rank": 11,
+        "hdi": 0.962,
+        "ef_epi_score": 611,
+        "ef_epi_band": "very high",
+        "numbeo_qol_index": 203.9,
+        "numbeo_healthcare_index": 77.2,
+        "freedom_note": "Denmark ranks 4th globally on RSF's 2026 World Press Freedom Index and has strong LGBTQ+ protections (the world's first registered-partnership law in 1989, marriage equality since 2012), but successive governments - including the governing Social Democrats - have pursued a deliberately restrictive immigration and integration policy for over a decade, which shapes political rhetoric more than any documented pattern of day-to-day treatment of skilled migrants."
+      },
+      "job_market": {
+        "summary": "Denmark's tech sector shows a structural shortage rather than a hiring freeze: industry estimates cite a 7,000+ IT-specialist gap and a projected 13,000 STEM graduate shortfall by 2030, with steady demand for software engineers, cloud, data and cybersecurity roles. Copenhagen dominates (roughly 83% of software-developer openings) with Aarhus a distant second hub; no Denmark-specific 2026 tech-layoff wave was found in research, though global layoffs at multinationals with a Danish presence remain a background risk as anywhere.",
+        "new_grad_reality": "The structural shortage helps, but Denmark's work-permit salary gates are real: the general Pay Limit Scheme requires a job offer of at least DKK 552,000/year (2026) - above many entry-level salaries - so the more realistic route for a non-EU new grad is Denmark's lower-threshold Positive List for shortage occupations (IT roles are regularly included), which is worth checking against the specific offer in hand.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "Danish",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Confirmed via Denmark's official citizen-information site (lifeindenmark.borger.dk), and this is genuinely the strictest regime in the Nordics: 9 years of continuous residence as the general rule (8 for refugees/stateless, 2 for Nordic citizens, 6-8 for spouses of Danish citizens depending on marriage length); a Danish language test at level 3 ('Dansk 3' / Prøve i Dansk 3, widely described in secondary sources as roughly CEFR B2); a citizenship test ('Indfødsretsprøven af 2021'); proof of ordinary full-time employment for at least 3 years and 6 months of the last 4 years; no social-assistance receipt at all in the 2 years before applying (max 4 months total in the preceding 5 years); a clean criminal record; and a signed declaration of allegiance. Uniquely among the Nordics, citizenship is granted only via an individual Act of Parliament, followed by a mandatory municipal ceremony. Denmark has allowed dual citizenship since 2015 (stable and well-established, though not re-verified against a primary source in this research pass)."
+      },
+      "reality_paragraph": "Denmark's Iranian community is real but modest: Statistics Denmark counted about 28,491 people of Iranian background (immigrants plus Danish-born descendants combined) as of 2025 - the 10th-largest immigrant-origin group in the country - concentrated in and around Copenhagen, versus roughly 87,000 Iran-born alone in Sweden, so newcomers should expect a much smaller, tighter-knit network rather than a large ready-made community. Copenhagen's tech scene is genuinely strong and operates comfortably in English at the company level, but Denmark pairs that openness with the toughest naturalization bar in the Nordics and work-permit salary floors that can sit above entry-level pay. Income tax is high - Denmark is consistently near the top of OECD tax-burden rankings. Social integration follows the pattern InterNations' Expat Insider survey has reported for years: Denmark is specifically and repeatedly singled out by expats as one of the harder European countries in which to build close local friendships, even when colleagues are warm and professional - a widely cited survey impression, not a universal experience. Danish immigration politics have trended restrictive across governments of multiple parties for over a decade; there is no verifiable pattern of discrimination specific to Iranian migrants beyond that general policy climate. The common regret people report is underestimating the language-plus-employment-history bar for citizenship and the small size of the diaspora network outside Copenhagen; the common draw is Denmark's strong welfare state, Copenhagen's liveability and cycling culture, and a genuinely humane work-life balance.",
+      "flags": [
+        "Strictest Nordic citizenship requirements: 9-year residency, B2-level Danish test, near-continuous employment history test, near-zero welfare tolerance",
+        "Citizenship granted only via individual Act of Parliament, not routine administrative approval",
+        "Standard work-permit salary floor (Pay Limit Scheme) is DKK 552,000/year (2026) - likely above many entry-level salaries; check Positive List eligibility instead",
+        "Smaller Iranian community (~28,500 incl. descendants, 2025) than Sweden - thinner support network",
+        "High income tax",
+        "Denmark is specifically and repeatedly singled out in expat-friendliness surveys as hard for building close local friendships",
+        "Immigration/integration policy has trended restrictive across governments of multiple parties for over a decade"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://lifeindenmark.borger.dk/settle-in-denmark/danish-citizenship/conditions-for-foreign-citizens--acquisition-of-danish-citizenship",
+        "https://www.nyidanmark.dk/en-GB/You-want-to-apply/Work/Pay-Limit-Scheme",
+        "https://en.wikipedia.org/wiki/Demographics_of_Denmark",
+        "https://en.wikipedia.org/wiki/Iranian_diaspora",
+        "https://rsf.org/en/index",
+        "https://agency-partners.com/reports/market-insights/denmark-copenhagen-software",
+        "https://www.edstellar.com/blog/skills-in-demand-in-denmark"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "NO",
+      "indices": {
+        "whr_score": 7.242,
+        "whr_rank": 6,
+        "gpi_rank": 33,
+        "hdi": 0.970,
+        "ef_epi_score": 613,
+        "ef_epi_band": "very high",
+        "numbeo_qol_index": 193.5,
+        "numbeo_healthcare_index": 75.8,
+        "freedom_note": "Norway ranks 1st globally on RSF's 2026 World Press Freedom Index and has strong LGBTQ+ legal protections (marriage equality since 2009); anti-immigration politics exist mainly via the Progress Party but are comparatively less dominant in day-to-day national debate than in Sweden or Denmark, though this is a general impression rather than a polling-verified claim."
+      },
+      "job_market": {
+        "summary": "Norway's tech sector is smaller than Sweden's or Denmark's but genuinely tight on talent: the Norwegian Computer Society projects a need for 16,000+ additional developers, and NHO's Kompetansebarometer has talent scarcity as the top-cited obstacle to growth for roughly 30% of executives. Oslo is the clear hub (roughly half of all Norwegian IT jobs, strong in fintech/startups), with Bergen (ocean/maritime tech), Trondheim and Stavanger as secondary centres; pay is high in absolute terms, underpinned by Norway's oil-linked public wealth.",
+        "new_grad_reality": "Talent scarcity works somewhat in a new grad's favour, and junior developer pay is high in absolute terms (roughly NOK 500,000-900,000/year depending on city, role and source), but Norway is a small market with correspondingly few new-grad-specific openings, so the realistic path is a relevant degree plus a genuine skills match rather than a mass graduate-scheme culture.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "Norwegian (Bokmål/Nynorsk); Sámi has official regional status",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Confirmed via UDI (Norwegian Directorate of Immigration): applicants aged 18-67 must pass an oral Norwegian test at B1 or higher, plus either the citizenship test (Statsborgerprøven) or the social-studies test in Norwegian. A2 is accepted only for stateless applicants, refugees/resettled refugees over 55, disability-benefit recipients over 55, or anyone who applied before 1 October 2022. The general residence requirement is 8 years within the last 11. Norway has allowed dual citizenship since 1 January 2020, so naturalizing does not require formally renouncing Iranian citizenship under Norwegian law - Iran's own rules on renunciation are a separate legal question applicants should check independently."
+      },
+      "reality_paragraph": "Norway's Iranian community is the smallest of the three Nordic countries here: Statistics Norway's figures put the Iran-background population (immigrants plus Norway-born children of immigrants combined) at roughly 26,500, heavily concentrated in and around Oslo - real, and with a visible record of political integration (Iranian-Norwegians have reached the presidency of the Storting and other senior roles), but nowhere near Stockholm's critical mass. Oslo's tech and fintech scene is genuinely growing, and salaries are high in absolute terms, which helps offset Norway's famously high cost of living, though it doesn't eliminate it - groceries, restaurants and general consumer prices are among the highest in Europe. Norway's naturalization rules are comparatively more moderate than Denmark's but still substantial (8 years' residence, a B1 oral language test, a citizenship test), and unlike some countries, Norway does not require renouncing an existing citizenship. Income tax is high, as everywhere in the region, but oil-linked public wealth funds an excellent social safety net and public services. As with Sweden and Denmark, the commonly cited expat-survey pattern is that Norwegians are welcoming and fair at work but slower to open up socially outside it, so a real friend group often forms through hobbies, children's schools or a partner's network rather than the workplace. There's no verifiable pattern of discrimination specific to Iranian migrants. The common regret is underestimating the cost of living and the time it takes to build a non-work social life in a small community; the common draw is nature access, high wages, strong family/parental benefits, and a functional, low-drama welfare state.",
+      "flags": [
+        "Small overall tech market and new-grad pool relative to Sweden - fewer graduate-scheme-style entry points",
+        "High cost of living, partly offset by high salaries",
+        "8-year residency requirement (within last 11 years) plus B1 oral language test and citizenship test",
+        "Smallest of the three Nordic Iranian communities compared here (~26,500 incl. descendants) - thin support network outside Oslo",
+        "High income tax",
+        "Nordic social integration is professionally easy but personally slow, per expat surveys",
+        "Norway allows dual citizenship, but Iran's own renunciation rules are a separate question - verify independently"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://www.udi.no/en/word-definitions/test-requirements-norwegian-citizenship/",
+        "https://en.wikipedia.org/wiki/Norwegian_Iranians",
+        "https://www.ssb.no/en/befolkning/innvandrere/statistikk/innvandrere-og-norskfodte-med-innvandrerforeldre",
+        "https://rsf.org/en/index",
+        "https://www.nucamp.co/blog/top-10-tech-startups-hiring-junior-developers-in-norway-in-2026",
+        "https://thehub.io/jobs/location/norway"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "FI",
+      "indices": {
+        "whr_score": 7.764,
+        "whr_rank": 1,
+        "gpi_rank": 9,
+        "hdi": 0.948,
+        "ef_epi_score": 603,
+        "ef_epi_band": "very high",
+        "numbeo_qol_index": 201.5,
+        "numbeo_healthcare_index": 77.6,
+        "freedom_note": "Personal, social, and press freedoms are consistently among the highest in the world - Finland ranked 6th of 180 countries in RSF's 2026 World Press Freedom Index - with no meaningful restrictions on migrants' daily life, relationships, or self-expression."
+      },
+      "job_market": {
+        "summary": "Tech hiring cooled in 2026: IT and consulting-sector employment kept declining through the first half of the year and national unemployment ticked up (297,000 in June 2026 per Statistics Finland), even though technology remains central to the economy (about 50% of exports, 30% of GDP value-added). Helsinki/Uusimaa and Tampere/Pirkanmaa are the two main hubs; Helsinki is also home to a globally significant gaming industry (Supercell, Remedy Entertainment, roughly 141 studios across the wider tracked cluster) that keeps hiring internationally even as the broader IT market softens.",
+        "new_grad_reality": "Finland offers a genuinely useful post-study residence permit - up to 2 years to job-hunt with no work restrictions - which is structurally more generous than most countries, but Finland's own press regularly reports on how hard it is for foreigners to actually land a job here, so treat the permit as runway, not a guaranteed outcome.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "Finnish and Swedish are both official nationally (Finnish is the mother tongue of about 84% of the population, Swedish about 5%); Sámi has official status in certain regions",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Reformed effective 1 October 2024: standard naturalization now requires 8 years of continuous legal residence, up from 5 years pre-reform. This drops to 5 years if you already meet the language requirement, are married to a Finnish citizen (3+ years cohabiting), or are stateless; Nordic citizens qualify in 2 years. Language requirement: National Certificate of Language Proficiency (YKI) level 3 ('intermediate') in Finnish or Swedish - roughly equivalent to CEFR B1, though that specific CEFR mapping is an inference rather than something migri.fi states verbatim."
+      },
+      "reality_paragraph": "Helsinki is expensive by Finnish standards but genuinely workable on a developer salary: a one-bedroom apartment in the city centre runs roughly €1,000-1,400 a month against IT-sector gross salaries averaging around €4,900 a month, and rents eased slightly through 2026 as new supply came online. Integration is a mixed bag - Finnish culture is widely described, in impression-level reporting rather than a rigorous survey, as reserved and genuinely hard to break into socially, even though the underlying society is high-trust and highly functional, with public services and rule of law that simply work. The Iranian community is small but real and growing fast: Statistics Finland counted about 13,600 Iran-born residents, 7,200 Iranian citizenship-holders, and just over 24,000 Persian speakers in 2025 - a figure that has roughly doubled every five years since the 1990s - though it remains a fraction of Sweden's much larger, longer-established Iranian population (roughly 87,000-120,000 depending on measure). There is no unusual security or discrimination risk tied to Iranian background specifically; Finland is uninvolved in the 2026 regional conflict affecting the Gulf states, and reported friction is more about a reserved culture and a genuinely hard language than anything structural. The 2026 job market is softer than Finland's reputation implies, with IT/consulting employment declining and unemployment ticking up, even as the post-study residence permit gives new grads real time to search. A commonly cited regret is that the Finnish language remains a real ceiling on deeper career progression and social life no matter how well English works day-to-day in tech, plus long, dark winters. What people consistently love is nature, safety, functioning institutions, and work-life balance, on top of genuinely high personal and press freedom.",
+      "flags": [
+        "Tech/IT hiring softened in 2026 (declining IT/consulting employment, rising national unemployment) - recheck current conditions close to publication",
+        "Naturalization tightened Oct 2024: default residency requirement rose from 5 to 8 years, plus a Finnish/Swedish language test (YKI level 3) required to access the faster 5-year track",
+        "Finnish language remains a real barrier to deep social/career integration despite high English usability in tech workplaces",
+        "Long, dark winters and a reserved social culture are frequently cited downsides (impression-based)"
+      ],
+      "sources": [
+        "https://www.mappr.co/world-happiness-report-ranking/",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://migri.fi/en/citizenship",
+        "https://migri.fi/en/period-of-residence-before-10/2024",
+        "https://migri.fi/en/language-skills",
+        "https://migri.fi/en/residence-permit-to-look-for-work",
+        "https://en.wikipedia.org/wiki/Finnish_Iranians",
+        "https://stat.fi/en/publication/cmg6f46k91y0e07w0qtdt6yl7",
+        "https://rsf.org/en/country/finland",
+        "https://teknologiateollisuus.fi/en/new-orders-and-order-books-level-off-in-the-technology-industry-uncertainty-overshadows-growth-outlooks/",
+        "https://neogames.fi/",
+        "https://yle.fi/a/74-20236831"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "AE",
+      "indices": {
+        "whr_score": 6.76,
+        "whr_rank": 21,
+        "gpi_rank": 73,
+        "hdi": 0.940,
+        "ef_epi_score": 487,
+        "ef_epi_band": "low",
+        "numbeo_qol_index": 168.5,
+        "numbeo_healthcare_index": 70.8,
+        "freedom_note": "Personal freedom is real but bounded and unevenly enforced: alcohol is available in licensed hotels/venues (Dubai markedly more liberal in daily practice than dry Sharjah) and unmarried cohabitation was decriminalized in 2020, but LGBTQ+ status remains criminalized under federal law (prosecutions of private consensual conduct are rare in practice per US State Department reporting), political power stays concentrated in the ruling families with only an indirectly-elected advisory federal council, press freedom is low (UAE ranked 158th of 180 in RSF's 2026 index), and since February 2026 the country has also been a direct military target in the regional Iran conflict, adding a genuine current security dimension on top of the usual social-freedom picture."
+      },
+      "job_market": {
+        "summary": "Dubai and Abu Dhabi have real, substantial tech ecosystems: Dubai Internet City alone hosts 1,600+ companies including regional HQs for Meta, Visa, and Intel's Gulf AI R&D centre, while Dubai's DIFC and Abu Dhabi's ADGM free zones are pushing hard on fintech and crypto - ADGM's virtual-asset regulatory framework dates to 2018 and company registrations were still up 31% in 2024. Reliable 2026-specific tech hiring/layoff data was not found; it's reasonable to assume the 2026 regional conflict has added some uncertainty to hiring and investment sentiment, but no direct evidence of a broad tech hiring slowdown surfaced in research - a genuine information gap, not a confirmed trend either way.",
+        "new_grad_reality": "Employers here sponsor and strongly prefer experienced hires over new graduates - the self-sponsored 'Green Visa' route requires a bachelor's degree plus a minimum salary around AED 15,000/month (~US$4,084), a bar that presumes an existing, fairly senior job offer rather than a first job out of university.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "Arabic (constitutional); English is the de facto business and expat working language and is heard more often than Arabic in much of Dubai's private sector day to day",
+        "english_work": "high",
+        "pr_citizenship_language_req": "No standard naturalization path exists for ordinary skilled expatriate migrants - this is not a real option for a typical CS/tech migrant. The UAE's 2021 'golden nationality' scheme allows citizenship for investors, specialized professionals/scientists, doctors, engineers, and creative talents, but grants are invitation/nomination-based at the discretion of authorities, not an application-based route. Standard non-golden naturalization nominally requires 7-30 years of residency plus Arabic proficiency, which is not realistic for most migrants on a normal timeline. There is no meaningful language-level requirement to specify for ordinary migrants because there is, in practice, no ordinary path to apply it to."
+      },
+      "reality_paragraph": "Life in the UAE for a skilled migrant is, even in normal times, a well-paid expatriate arrangement rather than integration in any immigration sense - residency is a renewable work visa, not a step toward belonging. Housing in Dubai is the priciest of the countries covered in this comparison: a one-bedroom apartment in a decent central area runs roughly US$2,400/month (about $1,500 outside downtown), though tax-free salaries typically offset this for tech and finance hires. Dubai has one of the largest and most historically rooted Iranian communities outside Iran itself - estimates range widely, from about 500,000 to 800,000 people, since no precise current census-level figure exists - concentrated in Deira and Bur Dubai, with roots tracing to 19th-century Persian trading families and more than 8,000 Iranian trading firms still registered in the city. That history made Dubai historically one of the easiest places for Iranian nationals to bank and do business, well outside the reach of Western sanctions regimes. That has changed materially and recently: since Iran struck the UAE with missiles and drones starting 28 February 2026 (UAE officials reported 13 killed and 224+ injured nationwide, with hits on Dubai International Airport and the Burj Al Arab), the UAE has closed its Tehran embassy, explored freezing Iranian assets, arrested people accused of moving IRGC-linked money, revoked the licenses of several Iranian-curriculum schools, and was later reported (May 2026, per a Wall Street Journal account) to have conducted its own strikes on Iran alongside the US and Israel - a real, current source of both banking friction and physical risk for anyone connected to Iran. A ceasefire (the 'Islamabad Memorandum,' signed 17 June 2026) was already reported violated by both sides as of the most recent independently verifiable reporting checked (around 28 June 2026); the exact status as of today (August 2026) could not be confirmed and MUST be rechecked before this is used for real decisions. The most common non-conflict regret cited for the UAE is that there is no path to permanence - children born here do not acquire citizenship, and decades of residence never convert into a real claim on the country. What people consistently loved about the UAE in normal times - tax-free income, safety, infrastructure - is genuinely in question for anyone with Iranian ties until the security situation is clearer.",
+      "flags": [
+        "no citizenship path",
+        "residency tied to employment",
+        "ACTIVE/RECENT REGIONAL CONFLICT - verify immediately before relying on this: Iran struck the UAE with missiles and drones starting 28 Feb 2026 (UAE reported 13 killed, 224+ injured nationwide; Dubai Intl Airport and the Burj Al Arab were hit). UAE closed its Tehran embassy 1 Mar 2026 and was later reported to have carried out counter-strikes on Iran alongside the US/Israel. A ceasefire ('Islamabad Memorandum,' signed 17 Jun 2026, nominally a 60-day truce) was already being violated by both sides as of the last verifiable reporting (28 Jun 2026). Status as of today could not be confirmed from available sources - this is a data-freshness gap, not a resolved situation",
+        "Banking/immigration friction for Iranian nationals intensified sharply from March 2026 onward (asset-freeze exploration, arrests linked to IRGC money transfers, closure of Iranian-curriculum schools) - a marked reversal from the UAE's historically easier relationship with Iranian business and residents"
+      ],
+      "sources": [
+        "https://worldpopulationreview.com/country-rankings/happiest-countries-in-the-world",
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/regions/middle-east/united-arab-emirates/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://en.wikipedia.org/wiki/Iran%E2%80%93United_Arab_Emirates_relations",
+        "https://en.wikipedia.org/wiki/2026_Iran_war",
+        "https://en.wikipedia.org/wiki/United_Arab_Emirates_in_the_2026_Iran_war",
+        "https://en.wikipedia.org/wiki/2026_Iran_war_ceasefire",
+        "https://en.wikipedia.org/wiki/Islamabad_Memorandum",
+        "https://en.wikipedia.org/wiki/Iranians_in_the_United_Arab_Emirates",
+        "https://en.wikipedia.org/wiki/Emirati_nationality_law",
+        "https://en.wikipedia.org/wiki/LGBTQ_rights_in_the_United_Arab_Emirates",
+        "https://freedomhouse.org/country/united-arab-emirates",
+        "https://rsf.org/en/country/united-arab-emirates",
+        "https://www.wam.ae/en/article/byyv9j5-uae-announces-closure-of-embassy-in-tehran",
+        "https://english.alarabiya.net/News/middle-east/2026/03/01/uae-closes-its-embassy-in-tehran-withdraws-ambassador-from-iran"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "QA",
+      "indices": {
+        "whr_score": null,
+        "whr_rank": null,
+        "gpi_rank": 31,
+        "hdi": 0.886,
+        "ef_epi_score": 469,
+        "ef_epi_band": "low",
+        "numbeo_qol_index": 188.6,
+        "numbeo_healthcare_index": 73.6,
+        "freedom_note": "Qatar is more socially conservative than the UAE in daily lived practice - alcohol is restricted to a handful of hotel venues plus a single state-run liquor store requiring a personal permit, unmarried cohabitation remains illegal and actively enforced, and Human Rights Watch has documented police entrapment and abuse of LGBTQ+ people as recently as 2022-2024 - while formal political power is similarly concentrated in practice (Qatar rolled back its brief 2021-2024 experiment with an elected Shura Council in late 2024), and Qatar too has been a direct target in the 2026 regional conflict (Al Udeid Air Base and its Ras Laffan gas export infrastructure were struck) even though, notably, it has kept diplomatic channels with Iran open throughout."
+      },
+      "job_market": {
+        "summary": "Doha's tech sector is smaller and more state-directed than Dubai's - Qatar's own National Vision 2030 names heavy reliance on expatriate labor as a challenge it wants to reduce, and 'Qatarization' policy explicitly targets Qatari nationals for around half of industry/energy-sector jobs. Reliable 2026-specific hiring data for Doha's tech sector specifically was not found, consistent with it being smaller and less internationally documented than Dubai's - a genuine information gap, not a confirmed slowdown.",
+        "new_grad_reality": "As in the UAE, Qatari employers sponsor and strongly prefer experienced hires over new graduates - standard residency requires an employer-sponsored work visa most realistically obtained with an existing track record, and 'Qatarization' targets add a further structural preference for hiring Qatari nationals over expatriates, new grads included, in strategic sectors.",
+        "english_work": "high"
+      },
+      "language": {
+        "official": "Arabic (constitutional, reinforced by a 2019 Arabic Language Protection Law); English is the de facto second language and dominant language of business - Arabic speakers are estimated at only around 11% of Qatar's population given the scale of the expatriate workforce",
+        "english_work": "high",
+        "pr_citizenship_language_req": "Qatar has essentially no naturalization path for expatriate skilled workers to describe a language requirement for. Naturalization has been capped at a maximum of 50 people per year since 2005 regardless of qualifications; nominal criteria (25 consecutive years of residency, legitimate income, good conduct) exist on paper but the annual cap makes this unavailable in practice to almost everyone. Citizenship is not granted by birth in Qatar. Since a 2018 reform, children of Qatari mothers and non-Qatari fathers can receive permanent residency (not citizenship) with some citizen-like benefits, itself subject to an annual cap. No dual citizenship is permitted for Qatari nationals."
+      },
+      "reality_paragraph": "Qatar offers the same basic bargain as the UAE - a well-paid, temporary, employer-tied residency rather than any real path to integration or citizenship - on a smaller, more state-controlled, and more socially conservative scale. Housing in Doha runs somewhat cheaper than Dubai (a central one-bedroom around $2,000/month versus Dubai's $2,400) and the expat scene is smaller and more concentrated around the energy sector and a handful of large employers. Qatar's Iranian community is real but modest and Doha-centered - a commonly cited figure is around 30,000, though this traces to a single older secondary source rather than a current demographic survey, so it should be treated with real caution; some Qatari citizens also trace ethnic Persian ('Ajam') ancestry back generations, a distinct group from the expatriate Iranian population. Qatar has historically kept a warmer relationship with Iran than the UAE - the two countries share the world's largest gas field, and Qatar has served as a trusted intermediary between Washington and Tehran, including returning frozen Iranian funds as part of a 2023 prisoner swap. That relationship has been tested but not broken by the 2026 war: Iran struck Al Udeid Air Base and the Ras Laffan gas facilities (a mid-March strike alone reportedly disrupted around 17% of LNG exports), and Qatar recorded casualties across several separate incidents from February through at least June 2026 - yet, unlike the UAE, Qatar does not appear to have closed its Tehran embassy, and it kept playing a mediating role between the US and Iran into at least June 2026. As with the UAE, the most recent independently verifiable reporting (around 28 June 2026) shows a formally-active but already-violated ceasefire, and the real situation as of today (August 2026) needs to be rechecked before this is relied on. A common regret here, conflict aside, mirrors the UAE's - no path to citizenship even for children born locally - compounded by a more visibly conservative daily social climate and now, potentially, security exposure tied to hosting the region's largest US air base. What people still cite as the draw, when things are calm, is tax-free pay, high personal safety/low street crime, and a genuinely multicultural professional environment.",
+      "flags": [
+        "no citizenship path",
+        "residency tied to employment",
+        "Naturalization capped at 50 people/year since 2005 regardless of qualifications - even more restrictive on paper than the UAE's exceptional golden-nationality route",
+        "ACTIVE/RECENT REGIONAL CONFLICT - verify immediately before relying on this: Qatar's Al Udeid Air Base (the largest US base in the Middle East) and its Ras Laffan/Mesaieed gas export infrastructure were struck by Iran during 2026 (a mid-March strike reportedly disrupted ~17% of LNG exports); Qatar recorded casualties across multiple separate incidents Feb-June 2026, including a 21 June explosion at Ras Laffan (13 killed, 66 injured) that Qatar officially attributed to a technical accident rather than sabotage. Unlike the UAE, Qatar does not appear to have closed its Tehran embassy and continued mediating US-Iran talks into June 2026. A ceasefire ('Islamabad Memorandum,' 17 Jun 2026) was already being violated by both sides as of the last verifiable reporting (28 Jun 2026). Status as of today could not be confirmed - this is a data-freshness gap, not a resolved situation",
+        "World Happiness Report does not include Qatar in its main 2026 ranking table - happiness score/rank unavailable"
+      ],
+      "sources": [
+        "https://statranker.org/cities-urban-life/most-peaceful-countries-2026-global-peace-index-ranking/",
+        "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index",
+        "https://www.ef.com/wwen/epi/regions/middle-east/qatar/",
+        "https://www.numbeo.com/quality-of-life/rankings_by_country.jsp",
+        "https://www.numbeo.com/health-care/rankings_by_country.jsp",
+        "https://en.wikipedia.org/wiki/Iran%E2%80%93Qatar_relations",
+        "https://en.wikipedia.org/wiki/2026_Iranian_strikes_on_Qatar",
+        "https://en.wikipedia.org/wiki/2026_Iran_war",
+        "https://en.wikipedia.org/wiki/2026_Iran_war_ceasefire",
+        "https://en.wikipedia.org/wiki/Islamabad_Memorandum",
+        "https://en.wikipedia.org/wiki/Iranians_in_Qatar",
+        "https://en.wikipedia.org/wiki/Qatari_nationality_law",
+        "https://en.wikipedia.org/wiki/LGBTQ_rights_in_Qatar",
+        "https://en.wikipedia.org/wiki/Qatar_National_Vision_2030",
+        "https://freedomhouse.org/country/qatar",
+        "https://rsf.org/en/country/qatar"
+      ],
+      "as_of": "2026-08"
+    }
+  ],
+  "as_of": "2026-08"
+}

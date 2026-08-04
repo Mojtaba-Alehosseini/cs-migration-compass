@@ -1,0 +1,581 @@
+{
+  "records": [
+    {
+      "id": "new_york",
+      "name": "New York",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 145000,
+        "mid": 197000,
+        "senior": 250000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"new-york-city-area\" location page. new_grad=Entry Level band p50 (n=1559); mid approximated from all-levels aggregate median (n=8877) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=3422). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $166,830."
+      },
+      "rent_1br_center_usd_month": 4410,
+      "rent_1br_outside_usd_month": 2950,
+      "col_single_no_rent_usd_month": 1670,
+      "apt_price_center_usd_m2": 18800,
+      "apt_price_outside_usd_m2": 6500,
+      "climate": {
+        "sunshine_hours_yr": 2535,
+        "summer_avg_high_c": 29.4,
+        "winter_avg_low_c": -2.3,
+        "rainy_days_yr": 125
+      },
+      "tehran_travel": {
+        "typical_hours": 16,
+        "stops": 1,
+        "note": "Estimate: no direct Iran-US flights exist. Typical routing via Istanbul (IST) or Doha (DOH); Turkish Airlines/Qatar Airways/Emirates all fly nonstop to JFK from their hub."
+      },
+      "tech_scene_note": "Second-largest US tech hub after the Bay Area, with deep fintech overlap (Wall Street) and large engineering offices for Google, Amazon, Meta, and countless startups.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/new-york-city-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/new-york-city-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/new-york-city-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/New-York",
+        "https://en.wikipedia.org/wiki/Template:New_York_City_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "boston",
+      "name": "Boston",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 120000,
+        "mid": 169000,
+        "senior": 218000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"greater-boston-area\" location page. new_grad=Entry Level band p50 (n=343); mid approximated from all-levels aggregate median (n=2078) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=883). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $166,090."
+      },
+      "rent_1br_center_usd_month": 3400,
+      "rent_1br_outside_usd_month": 2600,
+      "col_single_no_rent_usd_month": 1500,
+      "apt_price_center_usd_m2": 13700,
+      "apt_price_outside_usd_m2": 6500,
+      "climate": {
+        "sunshine_hours_yr": 2634,
+        "summer_avg_high_c": 27.8,
+        "winter_avg_low_c": -4.9,
+        "rainy_days_yr": 128
+      },
+      "tehran_travel": {
+        "typical_hours": 16.5,
+        "stops": 1,
+        "note": "Estimate: via Istanbul (IST) -- Turkish Airlines flies IST-BOS nonstop. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Strong biotech/healthtech and enterprise-software cluster anchored by MIT/Harvard talent, HubSpot and Wayfair HQs, and a large Google/Amazon/Meta presence in Kendall Square.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/greater-boston-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/greater-boston-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/greater-boston-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Boston",
+        "https://en.wikipedia.org/wiki/Template:Boston,_MA_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "chicago",
+      "name": "Chicago",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 106000,
+        "mid": 150000,
+        "senior": 190000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"greater-chicago-area\" location page. new_grad=Entry Level band p50 (n=250); mid approximated from all-levels aggregate median (n=1599) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=649). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $134,380."
+      },
+      "rent_1br_center_usd_month": 2370,
+      "rent_1br_outside_usd_month": 1660,
+      "col_single_no_rent_usd_month": 1280,
+      "apt_price_center_usd_m2": 4100,
+      "apt_price_outside_usd_m2": 2700,
+      "climate": {
+        "sunshine_hours_yr": 2508,
+        "summer_avg_high_c": 29.2,
+        "winter_avg_low_c": -7.3,
+        "rainy_days_yr": 127
+      },
+      "tehran_travel": {
+        "typical_hours": 17,
+        "stops": 1,
+        "note": "Estimate: via Istanbul (IST) or Doha (DOH), both with nonstop service to ORD. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Diversified Midwest tech scene with a major quant-trading/fintech cluster (Citadel, Jump Trading) plus large Google and Salesforce offices, less saturated than coastal hubs.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/greater-chicago-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/greater-chicago-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/greater-chicago-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Chicago",
+        "https://en.wikipedia.org/wiki/Template:Chicago_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "atlanta",
+      "name": "Atlanta",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 94000,
+        "mid": 145000,
+        "senior": 179000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"atlanta-area\" location page. new_grad=Entry Level band p50 (n=138); mid approximated from all-levels aggregate median (n=992) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=482). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $132,960."
+      },
+      "rent_1br_center_usd_month": 2020,
+      "rent_1br_outside_usd_month": 1460,
+      "col_single_no_rent_usd_month": 1380,
+      "apt_price_center_usd_m2": 3900,
+      "apt_price_outside_usd_m2": 2600,
+      "climate": {
+        "sunshine_hours_yr": 2738,
+        "summer_avg_high_c": 32.3,
+        "winter_avg_low_c": 2.0,
+        "rainy_days_yr": 116
+      },
+      "tehran_travel": {
+        "typical_hours": 18.5,
+        "stops": 1,
+        "note": "Estimate: via Doha (DOH) -- Qatar Airways flies nonstop DOH-ATL. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Historic fintech-transaction-processing hub (NCR, First Data/Fiserv heritage) with growing Microsoft, Google, and Cisco offices and a lower cost of entry than coastal cities.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/atlanta-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/atlanta-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/atlanta-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Atlanta",
+        "https://en.wikipedia.org/wiki/Template:Atlanta_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "raleigh",
+      "name": "Raleigh",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 97000,
+        "mid": 150000,
+        "senior": 182000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"raleigh-durham-area\" location page. new_grad=Entry Level band p50 (n=73); mid approximated from all-levels aggregate median (n=566) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=277). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $132,770."
+      },
+      "rent_1br_center_usd_month": 1740,
+      "rent_1br_outside_usd_month": 1280,
+      "col_single_no_rent_usd_month": 1170,
+      "apt_price_center_usd_m2": 3900,
+      "apt_price_outside_usd_m2": 2200,
+      "climate": {
+        "sunshine_hours_yr": 2606,
+        "summer_avg_high_c": 32.7,
+        "winter_avg_low_c": -0.1,
+        "rainy_days_yr": 118
+      },
+      "tehran_travel": {
+        "typical_hours": 20.5,
+        "stops": 2,
+        "note": "Estimate: no Gulf/Turkish nonstop to RDU; typically routed via IST/DOH plus one US domestic connection. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Anchored by Research Triangle Park with IBM, Cisco, and a Red Hat headquarters, plus Epic Games and a fast-growing biotech corridor alongside three major research universities.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/raleigh-durham-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/raleigh-durham-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/raleigh-durham-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Raleigh",
+        "https://en.wikipedia.org/wiki/Raleigh,_North_Carolina"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "dallas",
+      "name": "Dallas",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 100000,
+        "mid": 135000,
+        "senior": 170000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"greater-dallas-area\" location page. new_grad=Entry Level band p50 (n=318); mid approximated from all-levels aggregate median (n=2000) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=855). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $133,290."
+      },
+      "rent_1br_center_usd_month": 1830,
+      "rent_1br_outside_usd_month": 1440,
+      "col_single_no_rent_usd_month": 1300,
+      "apt_price_center_usd_m2": 9400,
+      "apt_price_outside_usd_m2": 3200,
+      "climate": {
+        "sunshine_hours_yr": 2850,
+        "summer_avg_high_c": 35.4,
+        "winter_avg_low_c": 2.3,
+        "rainy_days_yr": 82
+      },
+      "tehran_travel": {
+        "typical_hours": 19,
+        "stops": 1,
+        "note": "Estimate: via Doha (DOH) or Dubai (DXB), both with nonstop service to DFW. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Large enterprise-IT and corporate-tech base (AT&T HQ, Texas Instruments, Capital One and Fidelity regional hubs) with one of the biggest CS job markets in the South.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/greater-dallas-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/greater-dallas-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/greater-dallas-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Dallas",
+        "https://en.wikipedia.org/wiki/Template:Dallas_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "houston",
+      "name": "Houston",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 97000,
+        "mid": 130000,
+        "senior": 165000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"greater-houston-area\" location page. new_grad=Entry Level band p50 (n=62); mid approximated from all-levels aggregate median (n=473) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=193). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $129,440."
+      },
+      "rent_1br_center_usd_month": 1710,
+      "rent_1br_outside_usd_month": 1410,
+      "col_single_no_rent_usd_month": 1120,
+      "apt_price_center_usd_m2": 2500,
+      "apt_price_outside_usd_m2": 1800,
+      "climate": {
+        "sunshine_hours_yr": 2578,
+        "summer_avg_high_c": 34.9,
+        "winter_avg_low_c": 6.5,
+        "rainy_days_yr": 104
+      },
+      "tehran_travel": {
+        "typical_hours": 19.5,
+        "stops": 1,
+        "note": "Estimate: via Doha (DOH) or Dubai (DXB), both with nonstop service to IAH. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Energy-sector digitalization (oil & gas software) and NASA/aerospace engineering drive demand, alongside a growing general tech scene still smaller than Dallas or Austin.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/greater-houston-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/greater-houston-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/greater-houston-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Houston",
+        "https://en.wikipedia.org/wiki/Template:Houston_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "san_antonio",
+      "name": "San Antonio",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 87000,
+        "mid": 127000,
+        "senior": 164000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"san-antonio-area\" location page. new_grad=Entry Level band p50 (n=9); mid approximated from all-levels aggregate median (n=71) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=31). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $128,430."
+      },
+      "rent_1br_center_usd_month": 1510,
+      "rent_1br_outside_usd_month": 1060,
+      "col_single_no_rent_usd_month": 1110,
+      "apt_price_center_usd_m2": 4500,
+      "apt_price_outside_usd_m2": 1800,
+      "climate": {
+        "sunshine_hours_yr": 2629,
+        "summer_avg_high_c": 35.6,
+        "winter_avg_low_c": 5.0,
+        "rainy_days_yr": 81
+      },
+      "tehran_travel": {
+        "typical_hours": 21.5,
+        "stops": 2,
+        "note": "Estimate: no Gulf/Turkish nonstop to SAT; typically routed via IST/DOH/DXB plus one US domestic connection. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "National cybersecurity hub built around military/intelligence-adjacent employers and USAA's headquarters, with a smaller overall tech market than other Texas metros.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/san-antonio-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/san-antonio-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/san-antonio-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/San-Antonio",
+        "https://en.wikipedia.org/wiki/Template:San_Antonio_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "miami",
+      "name": "Miami",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 100000,
+        "mid": 140000,
+        "senior": 169000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"miami-ft-lauderdale-area\" location page. new_grad=Entry Level band p50 (n=44); mid approximated from all-levels aggregate median (n=375) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=180). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $132,650."
+      },
+      "rent_1br_center_usd_month": 2770,
+      "rent_1br_outside_usd_month": 2160,
+      "col_single_no_rent_usd_month": 1450,
+      "apt_price_center_usd_m2": 7100,
+      "apt_price_outside_usd_m2": 3600,
+      "climate": {
+        "sunshine_hours_yr": 3154,
+        "summer_avg_high_c": 32.6,
+        "winter_avg_low_c": 16.1,
+        "rainy_days_yr": 141
+      },
+      "tehran_travel": {
+        "typical_hours": 17.5,
+        "stops": 1,
+        "note": "Estimate: via Istanbul (IST) or Doha (DOH), both with nonstop service to MIA. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Fast-growing fintech/crypto and VC scene accelerated by post-2020 relocations (Citadel HQ), still smaller and less mature than legacy tech hubs.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/miami-ft-lauderdale-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/miami-ft-lauderdale-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/miami-ft-lauderdale-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Miami",
+        "https://en.wikipedia.org/wiki/Template:Miami_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "tampa",
+      "name": "Tampa",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 78000,
+        "mid": 130000,
+        "senior": 207000,
+        "confidence": "official",
+        "note": "levels.fyi has no dedicated metro page for this city (confirmed by direct URL testing); Glassdoor was attempted as the task's specified fallback but blocked automated access (Cloudflare). Bands instead derived from BLS OES May 2025 Software Developers (15-1252) wage percentiles for this metro: p10=$78,480 (new_grad proxy), median=$130,450 (mid proxy), p90=$207,330 (senior proxy). CAVEAT: BLS figures are base wage only (exclude stock/bonus) and are percentiles across ALL experience levels blended together (not discrete career-stage bands like levels.fyi uses), so these are not directly comparable to the total-comp bands used for the levels.fyi-covered cities in this dataset -- treat as a rougher estimate."
+      },
+      "rent_1br_center_usd_month": 2370,
+      "rent_1br_outside_usd_month": 1700,
+      "col_single_no_rent_usd_month": 1210,
+      "apt_price_center_usd_m2": 5800,
+      "apt_price_outside_usd_m2": 2200,
+      "climate": {
+        "sunshine_hours_yr": 3166,
+        "summer_avg_high_c": 32.9,
+        "winter_avg_low_c": 11.6,
+        "rainy_days_yr": 108
+      },
+      "tehran_travel": {
+        "typical_hours": 19.5,
+        "stops": 1,
+        "note": "Estimate: via Dubai (DXB) -- Emirates has served DXB-TPA nonstop. No direct Iran-US flights exist; confirm seasonality before booking."
+      },
+      "tech_scene_note": "Emerging fintech/insurance-tech cluster (Raymond James, ConnectWise) with lower profile than Miami or Orlando but steady corporate-IT growth.",
+      "sources": [
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Tampa",
+        "https://en.wikipedia.org/wiki/Template:Tampa,_FL_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "orlando",
+      "name": "Orlando",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 80000,
+        "mid": 130000,
+        "senior": 177000,
+        "confidence": "official",
+        "note": "levels.fyi has no dedicated metro page for this city (confirmed by direct URL testing); Glassdoor was attempted as the task's specified fallback but blocked automated access (Cloudflare). Bands instead derived from BLS OES May 2025 Software Developers (15-1252) wage percentiles for this metro: p10=$80,170 (new_grad proxy), median=$129,620 (mid proxy), p90=$176,800 (senior proxy). CAVEAT: BLS figures are base wage only (exclude stock/bonus) and are percentiles across ALL experience levels blended together (not discrete career-stage bands like levels.fyi uses), so these are not directly comparable to the total-comp bands used for the levels.fyi-covered cities in this dataset -- treat as a rougher estimate."
+      },
+      "rent_1br_center_usd_month": 1930,
+      "rent_1br_outside_usd_month": 1520,
+      "col_single_no_rent_usd_month": 1240,
+      "apt_price_center_usd_m2": 3000,
+      "apt_price_outside_usd_m2": 2800,
+      "climate": {
+        "sunshine_hours_yr": null,
+        "summer_avg_high_c": 33.3,
+        "winter_avg_low_c": 9.7,
+        "rainy_days_yr": 121
+      },
+      "tehran_travel": {
+        "typical_hours": 19,
+        "stops": 1,
+        "note": "Estimate: via Dubai (DXB) -- Emirates flies nonstop DXB-MCO. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Modeling-and-simulation/defense-tech cluster (Team Orlando, Lockheed Martin) plus theme-park engineering (Disney, Universal), alongside UCF's large CS pipeline.",
+      "sources": [
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Orlando",
+        "https://en.wikipedia.org/wiki/Template:Orlando,_Florida_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "nashville",
+      "name": "Nashville",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 138000,
+        "mid": 154000,
+        "senior": 185000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"nashville-area\" location page. new_grad=Entry Level band p50 (n=20); mid approximated from all-levels aggregate median (n=156) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=70). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $126,610."
+      },
+      "rent_1br_center_usd_month": 1950,
+      "rent_1br_outside_usd_month": 1400,
+      "col_single_no_rent_usd_month": 1250,
+      "apt_price_center_usd_m2": 7900,
+      "apt_price_outside_usd_m2": 2700,
+      "climate": {
+        "sunshine_hours_yr": 2510,
+        "summer_avg_high_c": 32.7,
+        "winter_avg_low_c": -1.1,
+        "rainy_days_yr": 123
+      },
+      "tehran_travel": {
+        "typical_hours": 20,
+        "stops": 2,
+        "note": "Estimate: no Gulf/Turkish nonstop to BNA; typically routed via IST/DOH plus one US domestic connection. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Healthcare-IT hub anchored by HCA Healthcare's HQ and a large healthtech cluster, boosted by a major Oracle campus under development and fast population growth.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/nashville-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/nashville-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/nashville-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Nashville",
+        "https://en.wikipedia.org/wiki/Template:Nashville,_Tennessee_weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "charlotte",
+      "name": "Charlotte",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 94000,
+        "mid": 136000,
+        "senior": 172000,
+        "confidence": "official",
+        "note": "levels.fyi has no dedicated metro page for this city (confirmed by direct URL testing); Glassdoor was attempted as the task's specified fallback but blocked automated access (Cloudflare). Bands instead derived from BLS OES May 2025 Software Developers (15-1252) wage percentiles for this metro: p10=$93,690 (new_grad proxy), median=$135,920 (mid proxy), p90=$172,360 (senior proxy). CAVEAT: BLS figures are base wage only (exclude stock/bonus) and are percentiles across ALL experience levels blended together (not discrete career-stage bands like levels.fyi uses), so these are not directly comparable to the total-comp bands used for the levels.fyi-covered cities in this dataset -- treat as a rougher estimate."
+      },
+      "rent_1br_center_usd_month": 1900,
+      "rent_1br_outside_usd_month": 1380,
+      "col_single_no_rent_usd_month": 1230,
+      "apt_price_center_usd_m2": 4300,
+      "apt_price_outside_usd_m2": 2400,
+      "climate": {
+        "sunshine_hours_yr": 2821,
+        "summer_avg_high_c": 32.4,
+        "winter_avg_low_c": -0.1,
+        "rainy_days_yr": 112
+      },
+      "tehran_travel": {
+        "typical_hours": 20.5,
+        "stops": 2,
+        "note": "Estimate: no Gulf/Turkish nonstop to CLT; typically routed via IST/DOH plus one US domestic connection. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Second-largest US banking hub (Bank of America HQ, Wells Fargo East Coast operations) driving strong fintech and corporate-IT demand.",
+      "sources": [
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Charlotte",
+        "https://en.wikipedia.org/wiki/Charlotte,_North_Carolina"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "washington_dc",
+      "name": "Washington DC",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 130000,
+        "mid": 158000,
+        "senior": 202000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"northern-virginia-washington-dc\" location page. new_grad=Entry Level band p50 (n=328); mid approximated from all-levels aggregate median (n=1778) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=665). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $154,930."
+      },
+      "rent_1br_center_usd_month": 2630,
+      "rent_1br_outside_usd_month": 2120,
+      "col_single_no_rent_usd_month": 1580,
+      "apt_price_center_usd_m2": 8600,
+      "apt_price_outside_usd_m2": 3300,
+      "climate": {
+        "sunshine_hours_yr": 2528,
+        "summer_avg_high_c": 32.0,
+        "winter_avg_low_c": -1.1,
+        "rainy_days_yr": 118
+      },
+      "tehran_travel": {
+        "typical_hours": 16.5,
+        "stops": 1,
+        "note": "Estimate: via Istanbul (IST) or Doha (DOH), both with nonstop service to Washington Dulles (IAD). No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Massive govtech/federal-contractor market (Booz Allen, Northrop, Amazon HQ2 in Arlington) with the country's densest concentration of cybersecurity roles.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/northern-virginia-washington-dc",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/northern-virginia-washington-dc",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/northern-virginia-washington-dc",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Washington",
+        "https://en.wikipedia.org/wiki/Template:Washington,_D.C._weatherbox"
+      ],
+      "as_of": "2026-08"
+    },
+    {
+      "id": "philadelphia",
+      "name": "Philadelphia",
+      "country": "US",
+      "salary_usd_year": {
+        "new_grad": 90000,
+        "mid": 128000,
+        "senior": 170000,
+        "confidence": "crowd",
+        "note": "levels.fyi total comp (base+stock+bonus), \"philadelphia-area\" location page. new_grad=Entry Level band p50 (n=102); mid approximated from all-levels aggregate median (n=722) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=278). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $133,040."
+      },
+      "rent_1br_center_usd_month": 1970,
+      "rent_1br_outside_usd_month": 1320,
+      "col_single_no_rent_usd_month": 1390,
+      "apt_price_center_usd_m2": 4100,
+      "apt_price_outside_usd_m2": 1900,
+      "climate": {
+        "sunshine_hours_yr": 2498,
+        "summer_avg_high_c": 31.0,
+        "winter_avg_low_c": -3.3,
+        "rainy_days_yr": 121
+      },
+      "tehran_travel": {
+        "typical_hours": 20,
+        "stops": 2,
+        "note": "Estimate: no consistently reliable Gulf/Turkish nonstop to PHL; typically routed via IST or DOH plus one additional US domestic connection. No direct Iran-US flights exist."
+      },
+      "tech_scene_note": "Comcast HQ plus a growing healthtech/edtech and biotech corridor around University City (Penn, Drexel), with a lower cost base than New York or Boston.",
+      "sources": [
+        "https://www.levels.fyi/t/software-engineer/locations/philadelphia-area",
+        "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/philadelphia-area",
+        "https://www.levels.fyi/t/software-engineer/levels/senior/locations/philadelphia-area",
+        "https://api.bls.gov/publicAPI/v2/timeseries/data/ (OEWS series OEUM...151252, May 2025)",
+        "https://www.bls.gov/oes/2025/may/oessrcma.htm",
+        "https://www.numbeo.com/cost-of-living/in/Philadelphia",
+        "https://en.wikipedia.org/wiki/Template:Philadelphia_weatherbox"
+      ],
+      "as_of": "2026-08"
+    }
+  ],
+  "as_of": "2026-08"
+}

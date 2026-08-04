@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "project": "CS Migration Compass",
+    "created": "2026-08-04",
+    "fx_rates_usd_base": {
+      "note": "Pinned for consistency across all collection agents. Snapshot early 2026; Gulf currencies are USD-pegged (exact). Comparisons robust to small FX drift.",
+      "EUR": 0.8686, "GBP": 0.7446, "AUD": 1.4262, "CAD": 1.4044,
+      "SEK": 9.5589, "NOK": 9.5316, "DKK": 6.4927, "AED": 3.6725, "QAR": 3.64
+    },
+    "confidence_tiers": {
+      "official": "Government/statistical body (gov sites, BLS, OECD, WMO)",
+      "index": "Established published index (WHR, GPI, EF EPI, HDI)",
+      "crowd": "Crowd-sourced or survey (Numbeo, levels.fyi, InterNations, Glassdoor)"
+    },
+    "staleness_rules_months": { "visa": 6, "prices_salaries": 12, "indices": 18, "climate": 120 }
+  },
+  "city_metrics": {
+    "salary_usd_year": { "desc": "Gross annual dev salary, 3 bands: new_grad / mid (3-5y) / senior (6y+)", "direction": "higher_better", "primary": "levels.fyi", "crosscheck": "BLS OES (US) / local surveys (EU)", "confidence": "crowd" },
+    "rent_1br_center_usd_month": { "desc": "1-bedroom apartment rent, city centre", "direction": "lower_better", "primary": "Numbeo", "crosscheck": "Expatistan", "confidence": "crowd" },
+    "rent_1br_outside_usd_month": { "desc": "1-bedroom rent outside centre", "direction": "lower_better", "primary": "Numbeo", "confidence": "crowd" },
+    "col_single_no_rent_usd_month": { "desc": "Monthly living costs, single person, excluding rent", "direction": "lower_better", "primary": "Numbeo", "confidence": "crowd" },
+    "apt_price_center_usd_m2": { "desc": "Apartment purchase price per m2, centre", "direction": "lower_better", "primary": "Numbeo", "confidence": "crowd" },
+    "apt_price_outside_usd_m2": { "desc": "Apartment purchase price per m2, outside centre", "direction": "lower_better", "primary": "Numbeo", "confidence": "crowd" },
+    "climate": { "desc": "sunshine_hours_yr, summer_avg_high_c, winter_avg_low_c, rainy_days_yr", "direction": "preference_match", "primary": "WMO climate normals / climate-data.org / Wikipedia climate boxes", "confidence": "official" },
+    "tehran_travel": { "desc": "Typical door-to-door flight hours + number of stops from Tehran IKA", "direction": "lower_better", "primary": "flight schedule data", "confidence": "index" }
+  },
+  "country_metrics": {
+    "visa_skilled_routes": { "desc": "Main skilled visa routes, requirements, thresholds, realistic difficulty", "primary": "official government sites", "confidence": "official" },
+    "study_pathway": { "desc": "International master's tuition/yr + post-study work visa months", "primary": "official government sites", "confidence": "official" },
+    "iran_friction": { "desc": "Extra processing time / rejection risk for Iranian passport holders: low|medium|high + notes", "primary": "news + official + community reports", "confidence": "index" },
+    "pr_years_typical": { "desc": "Typical years from arrival to permanent residency", "direction": "lower_better", "confidence": "official" },
+    "citizenship_years_typical": { "desc": "Typical years from arrival to citizenship eligibility", "direction": "lower_better", "confidence": "official" },
+    "dual_citizenship": { "desc": "Dual citizenship permitted (relevant: Iran does not release citizens easily)", "confidence": "official" },
+    "tax_net_pct": { "desc": "Net take-home % for single person at mid-level dev salary, incl. expat schemes", "direction": "higher_better", "primary": "OECD Taxing Wages + national calculators", "confidence": "official" },
+    "job_market": { "desc": "Tech demand, new-grad reality, English-workability", "primary": "SO survey, CompTIA, national stats", "confidence": "index" },
+    "indices": { "desc": "WHR score/rank, GPI rank, HDI, EF EPI, Numbeo QoL, healthcare index", "confidence": "index" },
+    "language": { "desc": "official language, work_english high|medium|low, language required for PR/citizenship", "confidence": "official" },
+    "reality_paragraph": { "desc": "Short honest narrative per country incl. Iranian community perspective", "confidence": "crowd" }
+  },
+  "computed_metrics": {
+    "savings_usd_year": "net salary (band-dependent) - 12 * (col_single_no_rent + rent_1br_outside)",
+    "years_to_home": "(90 * apt_price_outside_usd_m2) / savings_usd_year",
+    "feasibility_score": "Group A weighted vs user profile (experience, study willingness, passport)",
+    "attractiveness_score": "Groups B-F weighted by user preset/sliders",
+    "climate_match_pct": "distance between city climate vector and user preference profile"
+  }
+}
