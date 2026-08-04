@@ -39,6 +39,16 @@ jobs:
           cache: npm
           cache-dependency-path: site/package-lock.json
 
+      # `npm run build` invokes the Python data-bundle and OG-image generators.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: Install pipeline dependencies
+        run: python -m pip install -r scripts/requirements.txt
+
       - run: npm ci
         working-directory: site
 

@@ -27,6 +27,17 @@ jobs:
           cache: npm
           cache-dependency-path: site/package-lock.json
 
+      # `npm run build` shells out to Python: build_site_data.py assembles the
+      # data bundle and generate_og_images.py renders the link previews.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: Install pipeline dependencies
+        run: python -m pip install -r scripts/requirements.txt
+
       - run: npm ci
         working-directory: site
 

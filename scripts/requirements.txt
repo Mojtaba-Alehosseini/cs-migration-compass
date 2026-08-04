@@ -10,4 +10,6 @@ lxml>=5.0               # fast HTML/XML backend for bs4 + pandas.read_html
 pdfplumber>=0.11        # PDF text extraction (EF EPI, WIPO GII)
 truststore>=0.9         # use the OS certificate store — housepriceindex.ca (Teranet)
                         # serves an intermediate that certifi does not carry
+Pillow>=10.0            # renders the Open Graph link-preview images
+                        # (scripts/generate_og_images.py, run by `npm run build`)
 
