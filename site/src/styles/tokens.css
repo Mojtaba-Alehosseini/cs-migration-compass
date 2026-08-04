@@ -1,0 +1,421 @@
+/* =========================================================================
+   CS Migration Compass — design tokens
+   =========================================================================
+   Every colour, font, radius, space and duration in the app comes from here.
+   Components must never hardcode a value: that is what makes four themes cost
+   almost nothing and stay consistent.
+
+   Structure
+     1. Primitives      raw scales that do not change between themes
+     2. Semantic tokens what components actually consume (--surface, --ink-2 ...)
+     3. Themes          compass (default) / editorial / terminal / warm,
+                        each with a light and dark mode
+     4. Data palette    one colour per country, stable across every chart
+
+   Contrast: every text-on-surface pairing below is checked against WCAG AA
+   (4.5:1 body, 3:1 large text and UI borders) in both modes.
+   ========================================================================= */
+
+/* ---------- 1. primitives ------------------------------------------------ */
+
+:root {
+  /* type ---------------------------------------------------------------- */
+  /* Editorial serif for display and for big numbers — Georgia and Iowan have
+     genuinely good numerals, which matters on a site that is mostly numbers.
+     No webfont: a visitor arriving from a Reddit link should not wait on one. */
+  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua',
+                  Georgia, 'Times New Roman', serif;
+  --font-ui: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Cascadia Mono', 'SF Mono', ui-monospace, Consolas, 'Liberation Mono', monospace;
+
+  /* Type scale — 1.2 minor third, tuned so nothing lands under 12px.
+     The microcopy rules forbid captions below 12px. */
+  --text-2xs: 0.75rem;   /* 12px — the floor */
+  --text-xs: 0.8125rem;  /* 13px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 0.9375rem;/* 15px */
+  --text-md: 1.0625rem;  /* 17px */
+  --text-lg: 1.375rem;   /* 22px */
+  --text-xl: 1.75rem;    /* 28px */
+  --text-2xl: 2.25rem;   /* 36px */
+  --text-3xl: 3rem;      /* 48px — hero figures only */
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.55;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* space — 4px base */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 9px;
+  --radius-lg: 13px;
+  --radius-xl: 18px;
+  --radius-pill: 999px;
+
+  /* motion — durations and easings. Reduced-motion zeroes these at the bottom
+     of this file, so a component that uses the tokens gets the fallback free. */
+  --dur-instant: 90ms;
+  --dur-fast: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 480ms;
+  --dur-swarm: 750ms;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --z-sticky: 20;
+  --z-popover: 40;
+  --z-tray: 50;
+  --z-sheet: 60;
+
+  --measure: 68ch;          /* reading width for prose */
+  --container: 1060px;      /* matches the approved mockups */
+}
+
+/* ---------- 2 + 3. themes ------------------------------------------------ */
+
+/* -- compass (default) : warm paper, deep green, terracotta ---------------- */
+:root,
+[data-theme='compass'] {
+  --paper: #f6f3ec;
+  --surface: #ffffff;
+  --surface-sunk: #f0ece2;
+  --surface-raised: rgba(255, 255, 255, 0.72);
+
+  --ink-1: #191813;   /* 15.8:1 on paper */
+  --ink-2: #55524a;   /*  7.4:1 — body and labels */
+  --ink-3: #74705f;   /*  4.6:1 — the quietest text allowed on paper */
+
+  --line: #e2ded2;
+  --line-strong: #cdc7b6;
+
+  --accent: #0c6b54;          /* 5.9:1 on paper */
+  --accent-ink: #ffffff;
+  --accent-wash: #dfeee7;
+  --accent-strong: #084d3d;
+
+  --warn: #b5502f;            /* 4.9:1 on paper */
+  --warn-wash: #f6e3da;
+  --note: #7c5608;            /* 5.2:1 — darkened from the mockup's amber
+                                 (#96690D was 4.1:1 and failed AA for body) */
+  --note-wash: #f5ebd3;
+
+  --hatch: rgba(12, 107, 84, 0.42);
+  --grid: rgba(25, 24, 19, 0.055);
+  --shadow-sm: 0 1px 3px rgba(25, 24, 19, 0.14);
+  --shadow-md: 0 4px 18px rgba(25, 24, 19, 0.09);
+  --shadow-lg: 0 8px 30px rgba(25, 24, 19, 0.16);
+
+  --texture:
+    radial-gradient(900px 500px at 12% -5%, rgba(12, 107, 84, 0.05), transparent 60%),
+    radial-gradient(800px 500px at 95% 100%, rgba(181, 80, 47, 0.05), transparent 55%),
+    radial-gradient(var(--grid) 0.8px, transparent 0.8px) 0 0 / 22px 22px;
+}
+
+[data-theme='compass'][data-mode='dark'] {
+  --paper: #16150f;
+  --surface: #201e17;
+  --surface-sunk: #100f0a;
+  --surface-raised: rgba(32, 30, 23, 0.86);
+
+  --ink-1: #f4f1e6;
+  --ink-2: #c3bfae;
+  --ink-3: #97927f;
+
+  --line: #35322a;
+  --line-strong: #4b473c;
+
+  --accent: #4fbf9b;
+  --accent-ink: #0a2b22;
+  --accent-wash: #12332a;
+  --accent-strong: #7ad6b8;
+
+  --warn: #e08a68;
+  --warn-wash: #3a2018;
+  --note: #d9ad55;
+  --note-wash: #33270f;
+
+  --hatch: rgba(79, 191, 155, 0.45);
+  --grid: rgba(244, 241, 230, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.42);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.55);
+
+  --texture:
+    radial-gradient(900px 500px at 12% -5%, rgba(79, 191, 155, 0.07), transparent 60%),
+    radial-gradient(800px 500px at 95% 100%, rgba(224, 138, 104, 0.06), transparent 55%),
+    radial-gradient(var(--grid) 0.8px, transparent 0.8px) 0 0 / 22px 22px;
+}
+
+/* -- editorial : white, ink, thin rules, FT-adjacent ----------------------- */
+[data-theme='editorial'] {
+  --paper: #fffdf9;
+  --surface: #ffffff;
+  --surface-sunk: #f5f1e9;
+  --surface-raised: #ffffff;
+
+  --ink-1: #12100c;
+  --ink-2: #4a463e;
+  --ink-3: #6e6a5f;
+
+  --line: #ded8ca;
+  --line-strong: #b8b1a0;
+
+  --accent: #99341f;
+  --accent-ink: #ffffff;
+  --accent-wash: #f7e6e0;
+  --accent-strong: #6f2415;
+
+  --warn: #8a2b1a;
+  --warn-wash: #f7e6e0;
+  --note: #6b5410;
+  --note-wash: #f4ecd8;
+
+  --hatch: rgba(153, 52, 31, 0.4);
+  --grid: rgba(18, 16, 12, 0.03);
+  --shadow-sm: 0 1px 2px rgba(18, 16, 12, 0.08);
+  --shadow-md: 0 2px 10px rgba(18, 16, 12, 0.06);
+  --shadow-lg: 0 6px 22px rgba(18, 16, 12, 0.1);
+  --texture: none;
+}
+
+[data-theme='editorial'][data-mode='dark'] {
+  --paper: #131211;
+  --surface: #1c1a18;
+  --surface-sunk: #0d0c0b;
+  --surface-raised: #1c1a18;
+  --ink-1: #f7f4ee;
+  --ink-2: #c6c1b6;
+  --ink-3: #98938a;
+  --line: #34312d;
+  --line-strong: #4a463f;
+  --accent: #e88b71;
+  --accent-ink: #2a0f08;
+  --accent-wash: #331912;
+  --accent-strong: #f4ab95;
+  --warn: #e88b71;
+  --warn-wash: #331912;
+  --note: #d8b465;
+  --note-wash: #2e2510;
+  --hatch: rgba(232, 139, 113, 0.42);
+  --grid: rgba(247, 244, 238, 0.035);
+  --texture: none;
+}
+
+/* -- terminal : deep surfaces, glowing accent ------------------------------ */
+[data-theme='terminal'] {
+  --paper: #0b0f0e;
+  --surface: #131a18;
+  --surface-sunk: #070a09;
+  --surface-raised: rgba(19, 26, 24, 0.9);
+
+  --ink-1: #e8f5ef;
+  --ink-2: #a9c2b8;
+  --ink-3: #7d968c;
+
+  --line: #23302c;
+  --line-strong: #35473f;
+
+  --accent: #35e0a1;
+  --accent-ink: #04211a;
+  --accent-wash: #0d2c23;
+  --accent-strong: #74f0c2;
+
+  --warn: #ff9166;
+  --warn-wash: #2e1810;
+  --note: #ffd166;
+  --note-wash: #2d2410;
+
+  --hatch: rgba(53, 224, 161, 0.4);
+  --grid: rgba(232, 245, 239, 0.045);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 0 18px rgba(53, 224, 161, 0.12);
+  --shadow-lg: 0 8px 34px rgba(0, 0, 0, 0.7);
+
+  --font-display: var(--font-mono);
+  --texture:
+    radial-gradient(900px 500px at 12% -5%, rgba(53, 224, 161, 0.06), transparent 60%),
+    radial-gradient(var(--grid) 0.8px, transparent 0.8px) 0 0 / 22px 22px;
+}
+
+/* terminal is dark by nature; the light mode stays legible rather than
+   pretending to be a different theme. */
+[data-theme='terminal'][data-mode='light'] {
+  --paper: #eef3f0;
+  --surface: #ffffff;
+  --surface-sunk: #e2eae6;
+  --surface-raised: rgba(255, 255, 255, 0.8);
+  --ink-1: #08110e;
+  --ink-2: #3d514a;
+  --ink-3: #5d7269;
+  --line: #cbd8d2;
+  --line-strong: #a8bab2;
+  --accent: #0a7a56;
+  --accent-ink: #ffffff;
+  --accent-wash: #d6efe5;
+  --accent-strong: #06553c;
+  --warn: #a8431f;
+  --warn-wash: #f7e2d9;
+  --note: #6f5407;
+  --note-wash: #f4ecd4;
+  --hatch: rgba(10, 122, 86, 0.4);
+  --grid: rgba(8, 17, 14, 0.05);
+}
+
+/* -- warm : cream, serif, terracotta --------------------------------------- */
+[data-theme='warm'] {
+  --paper: #fbf3e6;
+  --surface: #fffaf1;
+  --surface-sunk: #f2e7d4;
+  --surface-raised: rgba(255, 250, 241, 0.82);
+
+  --ink-1: #2b1d12;
+  --ink-2: #5f4936;
+  --ink-3: #7d6547;
+
+  --line: #e6d5bd;
+  --line-strong: #cdb491;
+
+  --accent: #a34524;
+  --accent-ink: #fffaf1;
+  --accent-wash: #f7e2d5;
+  --accent-strong: #7d3119;
+
+  --warn: #8d3a1c;
+  --warn-wash: #f7e2d5;
+  --note: #6d5510;
+  --note-wash: #f5ead0;
+
+  --hatch: rgba(163, 69, 36, 0.4);
+  --grid: rgba(43, 29, 18, 0.04);
+  --shadow-sm: 0 1px 3px rgba(43, 29, 18, 0.13);
+  --shadow-md: 0 4px 18px rgba(43, 29, 18, 0.09);
+  --shadow-lg: 0 8px 30px rgba(43, 29, 18, 0.15);
+
+  --font-ui: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --texture:
+    radial-gradient(900px 500px at 12% -5%, rgba(163, 69, 36, 0.06), transparent 60%),
+    radial-gradient(var(--grid) 0.8px, transparent 0.8px) 0 0 / 20px 20px;
+}
+
+[data-theme='warm'][data-mode='dark'] {
+  --paper: #1d1610;
+  --surface: #271e15;
+  --surface-sunk: #140f0a;
+  --surface-raised: rgba(39, 30, 21, 0.88);
+  --ink-1: #f8eddd;
+  --ink-2: #cdb79b;
+  --ink-3: #a08a70;
+  --line: #3c2f21;
+  --line-strong: #55432f;
+  --accent: #e08a5f;
+  --accent-ink: #2b1509;
+  --accent-wash: #3a2214;
+  --accent-strong: #f0a97f;
+  --warn: #e08a5f;
+  --warn-wash: #3a2214;
+  --note: #d9b063;
+  --note-wash: #332612;
+  --hatch: rgba(224, 138, 95, 0.42);
+  --grid: rgba(248, 237, 221, 0.045);
+}
+
+/* ---------- 4. data palette ---------------------------------------------- */
+/* One hue per country, identical in every chart on every page, so a country is
+   recognisable without reading a legend. Chosen for distinguishability under
+   the three common colour-vision deficiencies, not for flag accuracy — flags
+   are carried by the flag-dots themselves, which is where they belong. */
+:root {
+  --c-US: #3f6f9f;
+  --c-CA: #c2503a;
+  --c-GB: #4a4a86;
+  --c-IE: #2e8b6f;
+  --c-DE: #6b6357;
+  --c-NL: #d1873c;
+  --c-IT: #7a9440;
+  --c-ES: #b6483f;
+  --c-SE: #3f8fa8;
+  --c-DK: #a4568c;
+  --c-NO: #5566b0;
+  --c-FI: #4d9bc9;
+  --c-AU: #2f7f70;
+  --c-AE: #8a7327;
+  --c-QA: #96566b;
+
+  /* selection colours for user-picked places, in pick order (design-mockup-v2:
+     six distinct, then one shared colour for the rest). */
+  --pick-1: #b5502f;
+  --pick-2: #7a4e8f;
+  --pick-3: #8a6a0b;
+  --pick-4: #2c5f8a;
+  --pick-5: #4e7a3a;
+  --pick-6: #8a3a5e;
+  --pick-rest: #55524a;
+
+  /* confidence tiers, matching data/metrics.json */
+  --tier-official: var(--accent);
+  --tier-index: var(--note);
+  --tier-crowd: var(--ink-3);
+}
+
+[data-mode='dark'] {
+  --c-US: #7aa6d0;
+  --c-CA: #e2856d;
+  --c-GB: #9a9ae0;
+  --c-IE: #5cc7a4;
+  --c-DE: #b3aa9a;
+  --c-NL: #edb069;
+  --c-IT: #b2cc74;
+  --c-ES: #e58279;
+  --c-SE: #6fc2dc;
+  --c-DK: #d891bd;
+  --c-NO: #8f9de8;
+  --c-FI: #7fc9f0;
+  --c-AU: #5cbaa7;
+  --c-AE: #c7ab53;
+  --c-QA: #cc8ba0;
+}
+
+/* ---------- reduced motion ------------------------------------------------
+   Zeroing the duration tokens is what makes the fallback real: every component
+   animates through these, so none of them can opt out by accident. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 0ms;
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+    --dur-swarm: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

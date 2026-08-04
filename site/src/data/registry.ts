@@ -1,0 +1,430 @@
+/* The metric registry.
+ *
+ * One definition per metric, consumed by Compare, the scatter builder and the
+ * weights tool, so a metric behaves identically everywhere and only has to be
+ * described once. Themes match the seven groups in the brief.
+ *
+ * `direction` exists so composite tools know which way is "better" — it is NOT
+ * used to rank anything by default. Nothing in this file decides an ordering. */
+
+import type { Band, City, Confidence, Country } from './types'
+import { m2PerYear, savingsPerYear, yearsToHome, netFor } from './compute'
+import { money, moneyShort, num, pct, rankOf, years, NO_DATA } from './format'
+
+export type ThemeKey = 'money' | 'visa' | 'jobs' | 'housing' | 'people' | 'life' | 'climate'
+
+export const THEMES: { key: ThemeKey; label: string; blurb: string }[] = [
+  { key: 'money', label: 'Money', blurb: 'Pay, tax, what is left at the end of a year' },
+  { key: 'visa', label: 'Visas & staying', blurb: 'Getting in, staying, becoming a citizen' },
+  { key: 'jobs', label: 'Finding work', blurb: 'How many tech jobs exist and who is hiring' },
+  { key: 'housing', label: 'Homes & rent', blurb: 'Rent, purchase prices, years to own' },
+  { key: 'people', label: 'People like you', blurb: 'Who already moved there, and from where' },
+  { key: 'life', label: 'Daily life', blurb: 'Happiness, safety, health, press freedom' },
+  { key: 'climate', label: 'Weather', blurb: 'Sun, summer heat, winter cold, rain' },
+]
+
+export interface MetricDef {
+  key: string
+  label: string
+  /** Full plain-language statement for headers and tooltips. */
+  hint: string
+  theme: ThemeKey
+  /** null when the place genuinely has no value for it. */
+  value: (city: City, country: Country | undefined, band: Band) => number | null
+  format: (v: number | null) => string
+  direction: 'higher_better' | 'lower_better' | 'neutral'
+  confidence: Confidence
+  /** Which source the figure comes from, for the popover. */
+  source?: (city: City, country: Country | undefined) => { name: string; url?: string; what?: string }
+  /** Default headline metrics shown before the user adds anything. */
+  headline?: boolean
+  unit?: string
+}
+
+const numbeo = (city: City, what: string) => ({
+  name: 'Numbeo',
+  url: city.sources.find((s) => s.includes('numbeo')) ?? 'https://www.numbeo.com/cost-of-living/',
+  what,
+})
+
+export const METRICS: MetricDef[] = [
+  // ---------------- Money ----------------
+  {
+    key: 'salary_gross',
+    label: 'Developer salary',
+    hint: 'What a developer earns per year, before tax',
+    theme: 'money',
+    headline: true,
+    value: (c, _k, band) => c.salary_usd_year[band],
+    format: money,
+    direction: 'higher_better',
+    confidence: 'crowd',
+    source: (c) => ({
+      name: 'talent.com + PayScale',
+      url: c.sources.find((s) => s.includes('talent.com') || s.includes('payscale')),
+      what: c.salary_usd_year.note ?? 'Market-wide band for this city.',
+    }),
+  },
+  {
+    key: 'salary_levels_fyi',
+    label: 'Top-employer pay',
+    hint: 'Median total compensation at large, known employers — base plus stock plus bonus',
+    theme: 'money',
+    value: (c) => c.salary_levels_fyi?.median_total_comp_usd ?? null,
+    format: money,
+    direction: 'higher_better',
+    confidence: 'crowd',
+    source: (c) => ({
+      name: 'levels.fyi',
+      url: c.salary_levels_fyi?.source,
+      what: 'Total compensation, so partly a definition difference from the market band, not purely an employer premium.',
+    }),
+  },
+  {
+    key: 'salary_net',
+    label: 'Take-home pay',
+    hint: 'Per year, after that country’s real tax and social contributions',
+    theme: 'money',
+    value: (c, _k, band) => netFor(c, band),
+    format: money,
+    direction: 'higher_better',
+    confidence: 'official',
+    source: (_c, k) => ({
+      name: 'OECD Taxing Wages + national calculators',
+      what: k?.tax.net_note ?? 'Single person at a mid-level developer salary.',
+    }),
+  },
+  {
+    key: 'savings',
+    label: 'Kept after rent and living',
+    hint: 'What is actually left at the end of a year, after tax, rent and living costs',
+    theme: 'money',
+    headline: true,
+    value: (c, _k, band) => savingsPerYear(c, band),
+    format: money,
+    direction: 'higher_better',
+    confidence: 'crowd',
+  },
+  {
+    key: 'net_pct',
+    label: 'Share of pay you keep',
+    hint: 'How much of the gross salary survives tax',
+    theme: 'money',
+    value: (c) => c.net_pct,
+    format: (v) => pct(v),
+    direction: 'higher_better',
+    confidence: 'official',
+  },
+
+  // ---------------- Visas & staying ----------------
+  {
+    key: 'pr_years',
+    label: 'Years to permanent residency',
+    hint: 'Typical time from arriving to being allowed to stay for good',
+    theme: 'visa',
+    headline: true,
+    value: (_c, k) => k?.pr_years_typical ?? null,
+    format: (v) => (v == null ? 'no permanent path' : `~${num(v, v && v % 1 ? 1 : 0)} yrs`),
+    direction: 'lower_better',
+    confidence: 'official',
+  },
+  {
+    key: 'citizenship_years',
+    label: 'Years to citizenship',
+    hint: 'Typical time from arriving to being eligible for a passport',
+    theme: 'visa',
+    value: (_c, k) => k?.citizenship_years_typical ?? null,
+    format: (v) => (v == null ? 'no citizenship path' : `~${num(v)} yrs`),
+    direction: 'lower_better',
+    confidence: 'official',
+  },
+  {
+    key: 'tuition',
+    label: 'Master’s tuition',
+    hint: 'A year of an international master’s, if you come as a student',
+    theme: 'visa',
+    value: (_c, k) => k?.visa.study_pathway?.masters_tuition_intl_usd_yr ?? null,
+    format: (v) => (v === 0 ? 'free' : money(v)),
+    direction: 'lower_better',
+    confidence: 'official',
+  },
+  {
+    key: 'post_study_months',
+    label: 'Stay-back after studying',
+    hint: 'Months you may stay to look for work after graduating',
+    theme: 'visa',
+    value: (_c, k) => k?.visa.study_pathway?.post_study_visa_months ?? null,
+    format: (v) => (v == null ? NO_DATA : `${num(v)} months`),
+    direction: 'higher_better',
+    confidence: 'official',
+  },
+
+  // ---------------- Finding work ----------------
+  {
+    key: 'ict_specialists',
+    label: 'IT specialists employed',
+    hint: 'How many people work in IT nationally — the size of the job market',
+    theme: 'jobs',
+    value: (_c, k) => (k?.enriched.ict_specialists?.thousands ?? null),
+    format: (v) => (v == null ? NO_DATA : `${num(v * 1000)}`),
+    direction: 'higher_better',
+    confidence: 'official',
+    source: () => ({
+      name: 'Eurostat',
+      url: 'https://ec.europa.eu/eurostat/databrowser/view/isoc_sks_itspt',
+      what: 'Employed ICT specialists. EU/EFTA only — other countries show no data rather than a substitute.',
+    }),
+  },
+  {
+    key: 'ict_share',
+    label: 'IT share of all jobs',
+    hint: 'What proportion of everyone working is in IT',
+    theme: 'jobs',
+    value: (_c, k) => k?.enriched.ict_specialists?.share_pct ?? null,
+    format: (v) => pct(v, 1),
+    direction: 'higher_better',
+    confidence: 'official',
+  },
+
+  // ---------------- Homes & rent ----------------
+  {
+    key: 'rent_outside',
+    label: 'Rent, 1-bed outside centre',
+    hint: 'Monthly rent for a one-bedroom flat away from the centre',
+    theme: 'housing',
+    headline: true,
+    value: (c) => c.rent_1br_outside_usd_month,
+    format: (v) => money(v),
+    direction: 'lower_better',
+    confidence: 'crowd',
+    source: (c) => numbeo(c, 'Crowd-reported rents. Solid in big cities, thin in small ones.'),
+  },
+  {
+    key: 'rent_centre',
+    label: 'Rent, 1-bed in the centre',
+    hint: 'Monthly rent for a one-bedroom flat in the city centre',
+    theme: 'housing',
+    value: (c) => c.rent_1br_center_usd_month,
+    format: (v) => money(v),
+    direction: 'lower_better',
+    confidence: 'crowd',
+    source: (c) => numbeo(c, 'Crowd-reported rents.'),
+  },
+  {
+    key: 'living_costs',
+    label: 'Living costs, excluding rent',
+    hint: 'Food, transport, phone and everything else for one person per month',
+    theme: 'housing',
+    value: (c) => c.col_single_no_rent_usd_month,
+    format: (v) => money(v),
+    direction: 'lower_better',
+    confidence: 'crowd',
+    source: (c) => numbeo(c, 'Single person, excluding rent.'),
+  },
+  {
+    key: 'total_monthly',
+    label: 'Total monthly cost',
+    hint: 'Rent plus living costs — the real monthly number',
+    theme: 'housing',
+    value: (c) =>
+      c.rent_1br_outside_usd_month == null || c.col_single_no_rent_usd_month == null
+        ? null
+        : c.rent_1br_outside_usd_month + c.col_single_no_rent_usd_month,
+    format: (v) => money(v),
+    direction: 'lower_better',
+    confidence: 'crowd',
+  },
+  {
+    key: 'apt_m2',
+    label: 'Apartment price per m²',
+    hint: 'What a square metre costs to buy, outside the centre',
+    theme: 'housing',
+    value: (c) => c.apt_price_outside_usd_m2,
+    format: (v) => money(v),
+    direction: 'lower_better',
+    confidence: 'crowd',
+    source: (c) => numbeo(c, 'Purchase price per square metre, outside the centre.'),
+  },
+  {
+    key: 'years_to_home',
+    label: 'Years to own a 90 m² flat',
+    hint: 'How long your savings take to buy a home outright',
+    theme: 'housing',
+    headline: true,
+    value: (c, _k, band) => yearsToHome(c, band),
+    format: (v) => years(v),
+    direction: 'lower_better',
+    confidence: 'crowd',
+  },
+  {
+    key: 'm2_per_year',
+    label: 'Square metres bought per year',
+    hint: 'How much of a flat a year of saving actually buys',
+    theme: 'housing',
+    value: (c, _k, band) => m2PerYear(c, band),
+    format: (v) => (v == null ? NO_DATA : `${num(v, 1)} m²`),
+    direction: 'higher_better',
+    confidence: 'crowd',
+  },
+
+  // ---------------- People like you ----------------
+  {
+    key: 'foreign_born',
+    label: 'People born abroad',
+    hint: 'Share of the population that moved there from another country',
+    theme: 'people',
+    headline: true,
+    value: (_c, k) => k?.enriched.foreign_born?.share_pct ?? null,
+    format: (v) => pct(v, 1),
+    direction: 'neutral',
+    confidence: 'official',
+    source: (_c, k) => ({
+      name: 'UN DESA ÷ World Bank',
+      url: 'https://www.un.org/development/desa/pd/content/international-migrant-stock',
+      what: k?.enriched.foreign_born?.formula,
+    }),
+  },
+  {
+    key: 'iranian_born',
+    label: 'Iranian-born residents',
+    hint: 'How many people born in Iran already live there',
+    theme: 'people',
+    value: (_c, k) => k?.enriched.iranian_born?.count ?? null,
+    format: (v) => (v == null ? NO_DATA : num(v)),
+    direction: 'neutral',
+    confidence: 'official',
+    source: () => ({
+      name: 'UN DESA migrant stock 2024',
+      url: 'https://www.un.org/development/desa/pd/content/international-migrant-stock',
+      what: 'Origin-by-destination matrix, 2024 reference year.',
+    }),
+  },
+  {
+    key: 'english_work',
+    label: 'English at work',
+    hint: 'Whether you can realistically work in English',
+    theme: 'people',
+    value: (_c, k) => {
+      const v = k?.language.english_work
+      return v === 'high' ? 3 : v === 'medium' ? 2 : v === 'low' ? 1 : null
+    },
+    format: (v) => (v === 3 ? 'usually yes' : v === 2 ? 'often, depends on the employer' : v === 1 ? 'rarely' : NO_DATA),
+    direction: 'higher_better',
+    confidence: 'official',
+  },
+
+  // ---------------- Daily life ----------------
+  {
+    key: 'happiness_rank',
+    label: 'Happiness rank',
+    hint: 'Where the country lands when residents rate their own lives',
+    theme: 'life',
+    value: (_c, k) => k?.enriched.happiness?.rank ?? k?.indices.whr_rank ?? null,
+    format: (v) => (v == null ? NO_DATA : `#${num(v)}`),
+    direction: 'lower_better',
+    confidence: 'index',
+    source: (_c, k) => ({
+      name: 'World Happiness Report',
+      url: 'https://worldhappiness.report/',
+      what: k?.enriched.happiness
+        ? `${rankOf(k.enriched.happiness.rank, k.enriched.happiness.of)} in ${k.enriched.happiness.year}.`
+        : undefined,
+    }),
+  },
+  {
+    key: 'peace_rank',
+    label: 'Peacefulness rank',
+    hint: 'Global Peace Index position — lower is more peaceful',
+    theme: 'life',
+    value: (_c, k) => k?.indices.gpi_rank ?? null,
+    format: (v) => (v == null ? NO_DATA : `#${num(v)} of 163`),
+    direction: 'lower_better',
+    confidence: 'index',
+  },
+  {
+    key: 'healthcare',
+    label: 'Healthcare score',
+    hint: 'How residents rate the health system',
+    theme: 'life',
+    value: (_c, k) => k?.indices.numbeo_healthcare_index ?? null,
+    format: (v) => (v == null ? NO_DATA : num(v, 1)),
+    direction: 'higher_better',
+    confidence: 'crowd',
+  },
+  {
+    key: 'hdi',
+    label: 'Human Development Index',
+    hint: 'The UN’s combined measure of health, education and income',
+    theme: 'life',
+    value: (_c, k) => k?.indices.hdi ?? null,
+    format: (v) => (v == null ? NO_DATA : v.toFixed(3)),
+    direction: 'higher_better',
+    confidence: 'index',
+  },
+
+  // ---------------- Weather ----------------
+  {
+    key: 'sunshine',
+    label: 'Hours of sunshine a year',
+    hint: 'Total annual sunshine — the winter-darkness question',
+    theme: 'climate',
+    value: (c) => c.climate.sunshine_hours_yr,
+    format: (v) => (v == null ? NO_DATA : `${num(v)} h`),
+    direction: 'higher_better',
+    confidence: 'official',
+  },
+  {
+    key: 'summer_high',
+    label: 'Typical summer high',
+    hint: 'Average daytime high in the warmest months',
+    theme: 'climate',
+    value: (c) => c.climate.summer_avg_high_c,
+    format: (v) => (v == null ? NO_DATA : `${num(v, 1)} °C`),
+    direction: 'neutral',
+    confidence: 'official',
+  },
+  {
+    key: 'winter_low',
+    label: 'Typical winter low',
+    hint: 'Average overnight low in the coldest months',
+    theme: 'climate',
+    value: (c) => c.climate.winter_avg_low_c,
+    format: (v) => (v == null ? NO_DATA : `${num(v, 1)} °C`),
+    direction: 'neutral',
+    confidence: 'official',
+  },
+  {
+    key: 'rainy_days',
+    label: 'Rainy days a year',
+    hint: 'How many days a year see rain',
+    theme: 'climate',
+    value: (c) => c.climate.rainy_days_yr,
+    format: (v) => (v == null ? NO_DATA : `${num(v)} days`),
+    direction: 'lower_better',
+    confidence: 'official',
+  },
+  {
+    key: 'tehran_hours',
+    label: 'Flight time from Tehran',
+    hint: 'Typical door-to-door hours, including stops',
+    theme: 'climate',
+    value: (c) => c.tehran_travel?.typical_hours ?? null,
+    format: (v) => (v == null ? NO_DATA : `${num(v)} h`),
+    direction: 'lower_better',
+    confidence: 'index',
+  },
+]
+
+export const METRIC_BY_KEY = new Map(METRICS.map((m) => [m.key, m]))
+
+export const HEADLINE_KEYS = METRICS.filter((m) => m.headline).map((m) => m.key)
+
+export function metricsByTheme(theme: ThemeKey): MetricDef[] {
+  return METRICS.filter((m) => m.theme === theme)
+}
+
+/** Compact formatter used in dense chart axes. */
+export function compactFor(metric: MetricDef): (v: number | null) => string {
+  if (metric.format === money) return moneyShort
+  return metric.format
+}

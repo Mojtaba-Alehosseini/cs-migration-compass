@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CS Migration Compass — how far one developer salary goes</title>
+    <meta name="description" content="Compare 15 countries and 73 cities on salary, rent, savings and years to a home. Every number sourced and dated." />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CS Migration Compass" />
+    <meta property="og:title" content="How far one developer salary goes" />
+    <meta property="og:description" content="15 countries, 73 cities. Salary, rent, savings, years to a home — every number sourced and dated." />
+    <meta property="og:image" content="./og/default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="How far one developer salary goes" />
+    <meta name="twitter:description" content="15 countries, 73 cities. Every number sourced and dated." />
+    <meta name="twitter:image" content="./og/default.png" />
+
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#F6F3EC" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16150F" media="(prefers-color-scheme: dark)" />
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230C6B54'/%3E%3Cpath d='M16 1a15 15 0 0 1 13 22L16 16z' fill='%23B5502F'/%3E%3C/svg%3E" />
+
+    <script>
+      // Apply the stored theme before first paint so there is no flash of the
+      // wrong palette. Kept inline and tiny on purpose.
+      (function () {
+        try {
+          var t = localStorage.getItem('compass:theme') || 'compass';
+          var m = localStorage.getItem('compass:mode');
+          if (!m) m = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.dataset.theme = t;
+          document.documentElement.dataset.mode = m;
+          document.documentElement.style.colorScheme = m;
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="max-width: 640px; margin: 60px auto; padding: 0 22px; font-family: system-ui, sans-serif">
+        <h1>CS Migration Compass</h1>
+        <p>
+          This site compares 15 countries and 73 cities on salary, rent, savings and years to a home.
+          It needs JavaScript to render the charts and tables.
+        </p>
+        <p>
+          The underlying data is plain JSON and needs nothing at all:
+          <a href="./data/cities.json">cities.json</a>,
+          <a href="./data/countries.json">countries.json</a>,
+          <a href="./data/provenance.json">provenance.json</a>.
+        </p>
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
