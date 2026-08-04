@@ -46,12 +46,21 @@ jobs:
       # og:image paths, so a root-relative one silently fails to unfurl.
       # Both default sensibly for a custom domain — set BASE_PATH to "/" and
       # SITE_URL to the domain root.
+      # The owner is lowercased because Pages hostnames are canonically lower
+      # case. Mixed case resolves, but crawlers cache Open Graph data by exact
+      # URL, so the canonical form avoids duplicate or missed previews.
+      - name: Resolve deployed origin
+        id: origin
+        run: |
+          owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "url=https://${owner}.github.io/${{ github.event.repository.name }}/" >> "$GITHUB_OUTPUT"
+
       - name: Build
         run: npm run build
         working-directory: site
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
-          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          SITE_URL: ${{ steps.origin.outputs.url }}
 
       # GitHub Pages serves a 404 for unknown paths; copying index.html to
       # 404.html makes client-side routes deep-linkable and shareable, which the
