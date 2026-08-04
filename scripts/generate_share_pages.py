@@ -135,6 +135,21 @@ def run() -> None:
     log(f"    {n} share pages written under {DIST.name}/city/ and {DIST.name}/country/")
     log("    crawlers read these; humans are redirected into the app")
 
+    # The root index.html ships relative og:image paths so it works from any
+    # location during development. Crawlers do not resolve those, so once we know
+    # the deployed origin we rewrite them to absolute.
+    root = DIST / "index.html"
+    if root.exists() and base.startswith("http"):
+        html_text = root.read_text(encoding="utf-8")
+        before = html_text
+        html_text = html_text.replace('content="./og/default.png"', f'content="{base}og/default.png"')
+        if html_text != before:
+            root.write_text(html_text, encoding="utf-8")
+            log(f"    rewrote root og:image to absolute ({base}og/default.png)")
+    elif root.exists():
+        log("    SITE_URL not set — root og:image left relative "
+            "(set SITE_URL to the deployed origin for link previews to unfurl)")
+
 
 if __name__ == "__main__":
     main_guard(run)

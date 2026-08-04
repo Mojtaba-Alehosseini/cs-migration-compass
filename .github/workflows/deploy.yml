@@ -31,12 +31,16 @@ jobs:
         working-directory: site
 
       # BASE_PATH makes the build work under https://<user>.github.io/<repo>/.
-      # Set it to "/" if you deploy to a custom domain or a user/org root site.
+      # SITE_URL must be ABSOLUTE: Open Graph crawlers do not resolve relative
+      # og:image paths, so a root-relative one silently fails to unfurl.
+      # Both default sensibly for a custom domain — set BASE_PATH to "/" and
+      # SITE_URL to the domain root.
       - name: Build
         run: npm run build
         working-directory: site
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
 
       # GitHub Pages serves a 404 for unknown paths; copying index.html to
       # 404.html makes client-side routes deep-linkable and shareable, which the
