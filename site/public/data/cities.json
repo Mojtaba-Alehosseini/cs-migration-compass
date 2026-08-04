@@ -35,7 +35,21 @@
     "https://en.wikipedia.org/wiki/Sydney",
     "https://www.bom.gov.au/climate/averages/tables/cw_066062.shtml"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 111447,
+    "p25_total_comp_usd": 86435,
+    "p75_total_comp_usd": 141560,
+    "currency_original": "AUD",
+    "median_original": 158945,
+    "p25_original": 123273,
+    "p75_original": 201893,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/sydney-aus"
+   }
   },
   {
    "id": "melbourne",
@@ -72,7 +86,21 @@
     "https://www.bom.gov.au/climate/averages/tables/cw_086338.shtml",
     "https://www.bom.gov.au/clim_data/cdio/tables/text/IDCJCM0035_086282.csv"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 101775,
+    "p25_total_comp_usd": 76991,
+    "p75_total_comp_usd": 124201,
+    "currency_original": "AUD",
+    "median_original": 145152,
+    "p25_original": 109804,
+    "p75_original": 177135,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/melbourne-aus"
+   }
   },
   {
    "id": "brisbane",
@@ -107,7 +135,21 @@
     "https://www.levels.fyi/t/software-engineer/locations/brisbane-aus",
     "https://en.wikipedia.org/wiki/Brisbane"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 86463,
+    "p25_total_comp_usd": 69701,
+    "p75_total_comp_usd": 114747,
+    "currency_original": "AUD",
+    "median_original": 123314,
+    "p25_original": 99408,
+    "p75_original": 163652,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/brisbane-aus"
+   }
   },
   {
    "id": "perth",
@@ -143,7 +185,21 @@
     "https://en.wikipedia.org/wiki/Perth",
     "https://www.bom.gov.au/climate/averages/tables/cw_009225.shtml"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 87295,
+    "p25_total_comp_usd": 70445,
+    "p75_total_comp_usd": 112335,
+    "currency_original": "AUD",
+    "median_original": 124500,
+    "p25_original": 100468,
+    "p75_original": 160212,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/perth-aus"
+   }
   },
   {
    "id": "adelaide",
@@ -181,7 +237,21 @@
     "https://en.wikipedia.org/wiki/Adelaide",
     "https://www.flightconnections.com/flights-from-adelaide-adl"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 89456,
+    "p25_total_comp_usd": 66449,
+    "p75_total_comp_usd": 107224,
+    "currency_original": "AUD",
+    "median_original": 127582,
+    "p25_original": 94769,
+    "p75_original": 152923,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/adelaide-aus"
+   }
   },
   {
    "id": "gold-coast",
@@ -218,7 +288,21 @@
     "https://au.indeed.com/career/software-engineer/salaries/Gold-Coast-QLD",
     "https://en.wikipedia.org/wiki/Gold_Coast,_Queensland"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 100233,
+    "p25_total_comp_usd": 58713,
+    "p75_total_comp_usd": 104935,
+    "currency_original": "AUD",
+    "median_original": 142952,
+    "p25_original": 83736,
+    "p75_original": 149658,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/gold-coast-aus"
+   }
   },
   {
    "id": "hobart",
@@ -254,7 +338,21 @@
     "https://au.indeed.com/career/software-engineer/salaries/Hobart-TAS",
     "https://en.wikipedia.org/wiki/Hobart"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 67270,
+    "p25_total_comp_usd": 66162,
+    "p75_total_comp_usd": 70988,
+    "currency_original": "AUD",
+    "median_original": 95941,
+    "p25_original": 94360,
+    "p75_original": 101243,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/hobart-aus"
+   }
   },
   {
    "id": "canberra",
@@ -291,7 +389,21 @@
     "https://en.wikipedia.org/wiki/Canberra",
     "https://www.flightconnections.com/flights-from-canberra-cbr"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 74691,
+    "p25_total_comp_usd": 43902,
+    "p75_total_comp_usd": 114319,
+    "currency_original": "AUD",
+    "median_original": 106524,
+    "p25_original": 62613,
+    "p75_original": 163042,
+    "as_of": "2026-08-02",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/canberra-aus"
+   }
   },
   {
    "id": "dubai",
@@ -329,7 +441,21 @@
     "https://en.wikipedia.org/wiki/Dubai",
     "https://www.flightconnections.com/flights-from-ika-to-dxb"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 84952,
+    "p25_total_comp_usd": 63609,
+    "p75_total_comp_usd": 117843,
+    "currency_original": "AED",
+    "median_original": 311987,
+    "p25_original": 233603,
+    "p75_original": 432778,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/dubai-are"
+   }
   },
   {
    "id": "abu-dhabi",
@@ -366,7 +492,21 @@
     "https://en.wikipedia.org/wiki/Abu_Dhabi",
     "https://www.flightconnections.com/flights-from-ika-to-auh"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 98039,
+    "p25_total_comp_usd": 74619,
+    "p75_total_comp_usd": 130018,
+    "currency_original": "AED",
+    "median_original": 360049,
+    "p25_original": 274037,
+    "p75_original": 477490,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/abu-dhabi-are"
+   }
   },
   {
    "id": "doha",
@@ -405,7 +545,21 @@
     "https://en.wikipedia.org/wiki/Doha",
     "https://www.flightconnections.com/flights-from-ika-to-doh"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 66145,
+    "p25_total_comp_usd": 46231,
+    "p75_total_comp_usd": 72660,
+    "currency_original": "QAR",
+    "median_original": 240768,
+    "p25_original": 168282,
+    "p75_original": 264482,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/doha-qat"
+   }
   },
   {
    "id": "new_york",
@@ -444,7 +598,21 @@
     "https://www.numbeo.com/cost-of-living/in/New-York",
     "https://en.wikipedia.org/wiki/Template:New_York_City_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 200000,
+    "p25_total_comp_usd": 143750,
+    "p75_total_comp_usd": 288000,
+    "currency_original": "USD",
+    "median_original": 200000,
+    "p25_original": 143750,
+    "p75_original": 288000,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/new-york-city-usa"
+   }
   },
   {
    "id": "boston",
@@ -483,7 +651,21 @@
     "https://www.numbeo.com/cost-of-living/in/Boston",
     "https://en.wikipedia.org/wiki/Template:Boston,_MA_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 179000,
+    "p25_total_comp_usd": 130000,
+    "p75_total_comp_usd": 240000,
+    "currency_original": "USD",
+    "median_original": 179000,
+    "p25_original": 130000,
+    "p75_original": 240000,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/boston-usa"
+   }
   },
   {
    "id": "chicago",
@@ -522,7 +704,21 @@
     "https://www.numbeo.com/cost-of-living/in/Chicago",
     "https://en.wikipedia.org/wiki/Template:Chicago_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 150000,
+    "p25_total_comp_usd": 115000,
+    "p75_total_comp_usd": 204000,
+    "currency_original": "USD",
+    "median_original": 150000,
+    "p25_original": 115000,
+    "p75_original": 204000,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/chicago-usa"
+   }
   },
   {
    "id": "atlanta",
@@ -561,7 +757,21 @@
     "https://www.numbeo.com/cost-of-living/in/Atlanta",
     "https://en.wikipedia.org/wiki/Template:Atlanta_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 150000,
+    "p25_total_comp_usd": 110000,
+    "p75_total_comp_usd": 190000,
+    "currency_original": "USD",
+    "median_original": 150000,
+    "p25_original": 110000,
+    "p75_original": 190000,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/atlanta-usa"
+   }
   },
   {
    "id": "raleigh",
@@ -600,7 +810,21 @@
     "https://www.numbeo.com/cost-of-living/in/Raleigh",
     "https://en.wikipedia.org/wiki/Raleigh,_North_Carolina"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 153000,
+    "p25_total_comp_usd": 118500,
+    "p75_total_comp_usd": 191250,
+    "currency_original": "USD",
+    "median_original": 153000,
+    "p25_original": 118500,
+    "p75_original": 191250,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/raleigh-usa"
+   }
   },
   {
    "id": "dallas",
@@ -639,7 +863,13 @@
     "https://www.numbeo.com/cost-of-living/in/Dallas",
     "https://en.wikipedia.org/wiki/Template:Dallas_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "houston",
@@ -678,7 +908,13 @@
     "https://www.numbeo.com/cost-of-living/in/Houston",
     "https://en.wikipedia.org/wiki/Template:Houston_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "san_antonio",
@@ -717,7 +953,21 @@
     "https://www.numbeo.com/cost-of-living/in/San-Antonio",
     "https://en.wikipedia.org/wiki/Template:San_Antonio_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 126677,
+    "p25_total_comp_usd": 93000,
+    "p75_total_comp_usd": 165025,
+    "currency_original": "USD",
+    "median_original": 126677,
+    "p25_original": 93000,
+    "p75_original": 165025,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/san-antonio-usa"
+   }
   },
   {
    "id": "miami",
@@ -756,7 +1006,21 @@
     "https://www.numbeo.com/cost-of-living/in/Miami",
     "https://en.wikipedia.org/wiki/Template:Miami_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 140000,
+    "p25_total_comp_usd": 101250,
+    "p75_total_comp_usd": 195000,
+    "currency_original": "USD",
+    "median_original": 140000,
+    "p25_original": 101250,
+    "p75_original": 195000,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/miami-usa"
+   }
   },
   {
    "id": "tampa",
@@ -792,7 +1056,21 @@
     "https://www.numbeo.com/cost-of-living/in/Tampa",
     "https://en.wikipedia.org/wiki/Template:Tampa,_FL_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 125000,
+    "p25_total_comp_usd": 100000,
+    "p75_total_comp_usd": 150000,
+    "currency_original": "USD",
+    "median_original": 125000,
+    "p25_original": 100000,
+    "p75_original": 150000,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/tampa-usa"
+   }
   },
   {
    "id": "orlando",
@@ -828,7 +1106,21 @@
     "https://www.numbeo.com/cost-of-living/in/Orlando",
     "https://en.wikipedia.org/wiki/Template:Orlando,_Florida_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 129352,
+    "p25_total_comp_usd": 89055,
+    "p75_total_comp_usd": 178770,
+    "currency_original": "USD",
+    "median_original": 129352,
+    "p25_original": 89055,
+    "p75_original": 178770,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/orlando-usa"
+   }
   },
   {
    "id": "nashville",
@@ -867,7 +1159,13 @@
     "https://www.numbeo.com/cost-of-living/in/Nashville",
     "https://en.wikipedia.org/wiki/Template:Nashville,_Tennessee_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "charlotte",
@@ -903,7 +1201,13 @@
     "https://www.numbeo.com/cost-of-living/in/Charlotte",
     "https://en.wikipedia.org/wiki/Charlotte,_North_Carolina"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "washington_dc",
@@ -942,7 +1246,21 @@
     "https://www.numbeo.com/cost-of-living/in/Washington",
     "https://en.wikipedia.org/wiki/Template:Washington,_D.C._weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 250000,
+    "p25_total_comp_usd": 185500,
+    "p75_total_comp_usd": 329000,
+    "currency_original": "USD",
+    "median_original": 250000,
+    "p25_original": 185500,
+    "p75_original": 329000,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/washington-usa"
+   }
   },
   {
    "id": "philadelphia",
@@ -981,7 +1299,13 @@
     "https://www.numbeo.com/cost-of-living/in/Philadelphia",
     "https://en.wikipedia.org/wiki/Template:Philadelphia_weatherbox"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "sf_bay_area",
@@ -1018,7 +1342,21 @@
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php",
     "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_sanfrancisco.htm"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 285000,
+    "p25_total_comp_usd": 201000,
+    "p75_total_comp_usd": 402000,
+    "currency_original": "USD",
+    "median_original": 285000,
+    "p25_original": 201000,
+    "p75_original": 402000,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/san-francisco-usa"
+   }
   },
   {
    "id": "seattle",
@@ -1056,7 +1394,21 @@
     "https://www.ziprecruiter.com/Salaries/Software-Engineer-Salary-in-Seattle,WA",
     "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_seattle.htm"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 254000,
+    "p25_total_comp_usd": 189500,
+    "p75_total_comp_usd": 337000,
+    "currency_original": "USD",
+    "median_original": 254000,
+    "p25_original": 189500,
+    "p75_original": 337000,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/seattle-usa"
+   }
   },
   {
    "id": "austin",
@@ -1094,7 +1446,13 @@
     "https://www.bls.gov/oes/2023/may/oes151252.htm",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "These slugs returned a different page layout: a median with no 25th/75th percentile and no 'last updated' date, and the value was implausible against every other source (Austin $100,000 against a market mid of $131,000). Treated as an unreliable parse and NOT written into the dataset.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "denver",
@@ -1132,7 +1490,21 @@
     "https://www.bls.gov/oes/2023/may/oes151252.htm",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 163000,
+    "p25_total_comp_usd": 125000,
+    "p75_total_comp_usd": 207000,
+    "currency_original": "USD",
+    "median_original": 163000,
+    "p25_original": 125000,
+    "p75_original": 207000,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/denver-usa"
+   }
   },
   {
    "id": "los_angeles",
@@ -1169,7 +1541,21 @@
     "https://www.indeed.com/career/software-engineer/salaries/Los-Angeles--CA",
     "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_losangeles.htm"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 180000,
+    "p25_total_comp_usd": 130000,
+    "p75_total_comp_usd": 250000,
+    "currency_original": "USD",
+    "median_original": 180000,
+    "p25_original": 130000,
+    "p75_original": 250000,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/los-angeles-usa"
+   }
   },
   {
    "id": "san_diego",
@@ -1206,7 +1592,21 @@
     "https://www.indeed.com/career/software-engineer/salaries/San-Diego--CA",
     "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_sandiego.htm"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 190000,
+    "p25_total_comp_usd": 150500,
+    "p75_total_comp_usd": 252000,
+    "currency_original": "USD",
+    "median_original": 190000,
+    "p25_original": 150500,
+    "p75_original": 252000,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/san-diego-usa"
+   }
   },
   {
    "id": "sacramento",
@@ -1243,7 +1643,21 @@
     "https://www.indeed.com/career/software-engineer/salaries/Sacramento--CA",
     "https://www.bls.gov/regions/west/news-release/occupationalemploymentandwages_sacramento.htm"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 140000,
+    "p25_total_comp_usd": 87360,
+    "p75_total_comp_usd": 269000,
+    "currency_original": "USD",
+    "median_original": 140000,
+    "p25_original": 87360,
+    "p75_original": 269000,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/sacramento-usa"
+   }
   },
   {
    "id": "portland",
@@ -1280,7 +1694,13 @@
     "https://www.bls.gov/oes/2023/may/oes151252.htm",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "phoenix",
@@ -1317,7 +1737,21 @@
     "https://www.bls.gov/oes/2023/may/oes151252.htm",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 140000,
+    "p25_total_comp_usd": 100000,
+    "p75_total_comp_usd": 176100,
+    "currency_original": "USD",
+    "median_original": 140000,
+    "p25_original": 100000,
+    "p75_original": 176100,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/phoenix-usa"
+   }
   },
   {
    "id": "salt_lake_city",
@@ -1354,7 +1788,21 @@
     "https://www.bls.gov/oes/2023/may/oes151252.htm",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 146000,
+    "p25_total_comp_usd": 115000,
+    "p75_total_comp_usd": 178600,
+    "currency_original": "USD",
+    "median_original": 146000,
+    "p25_original": 115000,
+    "p75_original": 178600,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/salt-lake-city-usa"
+   }
   },
   {
    "id": "las_vegas",
@@ -1390,7 +1838,13 @@
     "https://en.wikipedia.org/wiki/Las_Vegas",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "pittsburgh",
@@ -1426,7 +1880,21 @@
     "https://en.wikipedia.org/wiki/Pittsburgh",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 135000,
+    "p25_total_comp_usd": 100500,
+    "p75_total_comp_usd": 205000,
+    "currency_original": "USD",
+    "median_original": 135000,
+    "p25_original": 100500,
+    "p75_original": 205000,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/pittsburgh-usa"
+   }
   },
   {
    "id": "minneapolis",
@@ -1462,7 +1930,13 @@
     "https://en.wikipedia.org/wiki/Minneapolis",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "These slugs returned a different page layout: a median with no 25th/75th percentile and no 'last updated' date, and the value was implausible against every other source (Austin $100,000 against a market mid of $131,000). Treated as an unreliable parse and NOT written into the dataset.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "columbus",
@@ -1498,7 +1972,13 @@
     "https://en.wikipedia.org/wiki/Columbus,_Ohio",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "unavailable_reason": "These slugs returned a different page layout: a median with no 25th/75th percentile and no 'last updated' date, and the value was implausible against every other source (Austin $100,000 against a market mid of $131,000). Treated as an unreliable parse and NOT written into the dataset.",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/",
+    "confidence": "crowd"
+   }
   },
   {
    "id": "detroit",
@@ -1534,7 +2014,21 @@
     "https://en.wikipedia.org/wiki/Detroit",
     "https://www.currentresults.com/Weather/US/average-annual-sunshine-by-city.php"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 130000,
+    "p25_total_comp_usd": 100000,
+    "p75_total_comp_usd": 172500,
+    "currency_original": "USD",
+    "median_original": 130000,
+    "p25_original": 100000,
+    "p75_original": 172500,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/detroit-usa"
+   }
   },
   {
    "id": "toronto",
@@ -1569,7 +2063,21 @@
     "https://www.numbeo.com/cost-of-living/in/Toronto",
     "https://en.wikipedia.org/wiki/Toronto"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 103557,
+    "p25_total_comp_usd": 77834,
+    "p75_total_comp_usd": 139054,
+    "currency_original": "CAD",
+    "median_original": 145435,
+    "p25_original": 109310,
+    "p75_original": 195288,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/toronto-can"
+   }
   },
   {
    "id": "vancouver",
@@ -1604,7 +2112,21 @@
     "https://www.numbeo.com/cost-of-living/in/Vancouver",
     "https://en.wikipedia.org/wiki/Vancouver"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 123282,
+    "p25_total_comp_usd": 95474,
+    "p75_total_comp_usd": 155567,
+    "currency_original": "CAD",
+    "median_original": 173137,
+    "p25_original": 134084,
+    "p75_original": 218478,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/vancouver-can"
+   }
   },
   {
    "id": "montreal",
@@ -1639,7 +2161,21 @@
     "https://www.numbeo.com/cost-of-living/in/Montreal",
     "https://en.wikipedia.org/wiki/Montreal"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 80063,
+    "p25_total_comp_usd": 62947,
+    "p75_total_comp_usd": 105389,
+    "currency_original": "CAD",
+    "median_original": 112440,
+    "p25_original": 88403,
+    "p75_original": 148009,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/montreal-can"
+   }
   },
   {
    "id": "ottawa",
@@ -1674,7 +2210,21 @@
     "https://www.numbeo.com/cost-of-living/in/Ottawa",
     "https://en.wikipedia.org/wiki/Ottawa"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 83416,
+    "p25_total_comp_usd": 67583,
+    "p75_total_comp_usd": 99769,
+    "currency_original": "CAD",
+    "median_original": 117150,
+    "p25_original": 94914,
+    "p75_original": 140116,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/ottawa-can"
+   }
   },
   {
    "id": "calgary",
@@ -1709,7 +2259,21 @@
     "https://www.numbeo.com/cost-of-living/in/Calgary",
     "https://en.wikipedia.org/wiki/Calgary"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 81952,
+    "p25_total_comp_usd": 65499,
+    "p75_total_comp_usd": 109161,
+    "currency_original": "CAD",
+    "median_original": 115093,
+    "p25_original": 91987,
+    "p75_original": 153306,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/calgary-can"
+   }
   },
   {
    "id": "halifax",
@@ -1744,7 +2308,21 @@
     "https://www.numbeo.com/cost-of-living/in/Halifax",
     "https://en.wikipedia.org/wiki/Halifax,_Nova_Scotia"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 70104,
+    "p25_total_comp_usd": 52323,
+    "p75_total_comp_usd": 84697,
+    "currency_original": "CAD",
+    "median_original": 98454,
+    "p25_original": 73482,
+    "p75_original": 118948,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/halifax-can"
+   }
   },
   {
    "id": "london",
@@ -1779,7 +2357,21 @@
     "https://www.numbeo.com/cost-of-living/in/London",
     "https://en.wikipedia.org/wiki/London"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 134809,
+    "p25_total_comp_usd": 98789,
+    "p75_total_comp_usd": 192196,
+    "currency_original": "GBP",
+    "median_original": 100379,
+    "p25_original": 73558,
+    "p75_original": 143109,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/london-gbr"
+   }
   },
   {
    "id": "manchester",
@@ -1814,7 +2406,21 @@
     "https://www.numbeo.com/cost-of-living/in/Manchester",
     "https://en.wikipedia.org/wiki/Manchester"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 71420,
+    "p25_total_comp_usd": 55103,
+    "p75_total_comp_usd": 97603,
+    "currency_original": "GBP",
+    "median_original": 53179,
+    "p25_original": 41030,
+    "p75_original": 72675,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/manchester-gbr"
+   }
   },
   {
    "id": "edinburgh",
@@ -1849,7 +2455,21 @@
     "https://www.numbeo.com/cost-of-living/in/Edinburgh",
     "https://en.wikipedia.org/wiki/Edinburgh"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 86628,
+    "p25_total_comp_usd": 61370,
+    "p75_total_comp_usd": 115098,
+    "currency_original": "GBP",
+    "median_original": 64503,
+    "p25_original": 45696,
+    "p75_original": 85702,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/edinburgh-gbr"
+   }
   },
   {
    "id": "dublin",
@@ -1884,7 +2504,21 @@
     "https://www.numbeo.com/cost-of-living/in/Dublin",
     "https://en.wikipedia.org/wiki/Dublin"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 124346,
+    "p25_total_comp_usd": 95206,
+    "p75_total_comp_usd": 162722,
+    "currency_original": "EUR",
+    "median_original": 108007,
+    "p25_original": 82696,
+    "p75_original": 141340,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/dublin-irl"
+   }
   },
   {
    "id": "cork",
@@ -1919,7 +2553,21 @@
     "https://www.numbeo.com/cost-of-living/in/Cork",
     "https://en.wikipedia.org/wiki/Cork_(city)"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 93175,
+    "p25_total_comp_usd": 68586,
+    "p75_total_comp_usd": 135125,
+    "currency_original": "EUR",
+    "median_original": 80932,
+    "p25_original": 59574,
+    "p75_original": 117370,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/cork-irl"
+   }
   },
   {
    "id": "stockholm",
@@ -1954,7 +2602,21 @@
     "https://www.numbeo.com/cost-of-living/in/Stockholm",
     "https://en.wikipedia.org/wiki/Stockholm"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "p25_total_comp_usd": 62011,
+    "p75_total_comp_usd": 92556,
+    "currency_original": "SEK",
+    "median_original": null,
+    "p25_original": 592756,
+    "p75_original": 884734,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/stockholm-swe"
+   }
   },
   {
    "id": "gothenburg",
@@ -1989,7 +2651,21 @@
     "https://www.numbeo.com/cost-of-living/in/Gothenburg",
     "https://en.wikipedia.org/wiki/Gothenburg"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "p25_total_comp_usd": 53546,
+    "p75_total_comp_usd": 69976,
+    "currency_original": "SEK",
+    "median_original": null,
+    "p25_original": 511837,
+    "p75_original": 668890,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/gothenburg-swe"
+   }
   },
   {
    "id": "copenhagen",
@@ -2024,7 +2700,21 @@
     "https://www.numbeo.com/cost-of-living/in/Copenhagen",
     "https://en.wikipedia.org/wiki/Copenhagen"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "p25_total_comp_usd": 91819,
+    "p75_total_comp_usd": 127402,
+    "currency_original": "DKK",
+    "median_original": null,
+    "p25_original": 596152,
+    "p75_original": 827186,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/copenhagen-dnk"
+   }
   },
   {
    "id": "aarhus",
@@ -2061,7 +2751,21 @@
     "https://www.expatistan.com/cost-of-living/aarhus"
    ],
    "as_of": "2026-08",
-   "data_note": "Rents from Expatistan Jun-2026 (45m2 furnished studio as 1BR proxy; expensive area = centre, normal = outside; site warns <5 contributors, 51 prices - low confidence). col_single & purchase prices remain null: Numbeo Aarhus empty, no other source found this session."
+   "data_note": "Rents from Expatistan Jun-2026 (45m2 furnished studio as 1BR proxy; expensive area = centre, normal = outside; site warns <5 contributors, 51 prices - low confidence). col_single & purchase prices remain null: Numbeo Aarhus empty, no other source found this session.",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "p25_total_comp_usd": 87702,
+    "p75_total_comp_usd": 136180,
+    "currency_original": "DKK",
+    "median_original": null,
+    "p25_original": 569423,
+    "p75_original": 884175,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/aarhus-dnk"
+   }
   },
   {
    "id": "oslo",
@@ -2096,7 +2800,21 @@
     "https://www.numbeo.com/cost-of-living/in/Oslo",
     "https://en.wikipedia.org/wiki/Oslo"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "p25_total_comp_usd": 80492,
+    "p75_total_comp_usd": 115753,
+    "currency_original": "NOK",
+    "median_original": null,
+    "p25_original": 767219,
+    "p75_original": 1103315,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/oslo-nor"
+   }
   },
   {
    "id": "bergen",
@@ -2131,7 +2849,21 @@
     "https://www.numbeo.com/cost-of-living/in/Bergen",
     "https://en.wikipedia.org/wiki/Bergen"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": null,
+    "p25_total_comp_usd": 64345,
+    "p75_total_comp_usd": 80431,
+    "currency_original": "NOK",
+    "median_original": null,
+    "p25_original": 613312,
+    "p75_original": 766640,
+    "as_of": "2026-08-03",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/bergen-nor"
+   }
   },
   {
    "id": "helsinki",
@@ -2166,7 +2898,21 @@
     "https://www.numbeo.com/cost-of-living/in/Helsinki",
     "https://en.wikipedia.org/wiki/Helsinki"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 84817,
+    "p25_total_comp_usd": 62974,
+    "p75_total_comp_usd": 113891,
+    "currency_original": "EUR",
+    "median_original": 73672,
+    "p25_original": 54699,
+    "p75_original": 98926,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/helsinki-fin"
+   }
   },
   {
    "id": "tampere",
@@ -2201,7 +2947,21 @@
     "https://www.numbeo.com/cost-of-living/in/Tampere",
     "https://en.wikipedia.org/wiki/Tampere"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 58242,
+    "p25_total_comp_usd": 53919,
+    "p75_total_comp_usd": 70627,
+    "currency_original": "EUR",
+    "median_original": 50589,
+    "p25_original": 46834,
+    "p75_original": 61347,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/tampere-fin"
+   }
   },
   {
    "id": "berlin",
@@ -2240,7 +3000,21 @@
     "https://www.trip.com/hot/flight-time-from-berlin-to-tehran/",
     "https://www.expatistan.com/cost-of-living/berlin"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 104269,
+    "p25_total_comp_usd": 89703,
+    "p75_total_comp_usd": 131781,
+    "currency_original": "EUR",
+    "median_original": 90568,
+    "p25_original": 77916,
+    "p75_original": 114465,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/berlin-deu"
+   }
   },
   {
    "id": "munich",
@@ -2280,7 +3054,21 @@
     "https://www.turkishairlines.com/en-de/flights-from-munich-to-tehran",
     "https://www.omio.com/flights/munich-airport/tehran-ch1oq"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 96872,
+    "p25_total_comp_usd": 78266,
+    "p75_total_comp_usd": 121580,
+    "currency_original": "EUR",
+    "median_original": 84143,
+    "p25_original": 67982,
+    "p75_original": 105604,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/munich-deu"
+   }
   },
   {
    "id": "hamburg",
@@ -2321,7 +3109,21 @@
     "https://www.skyscanner.net/routes/hamb/thra/hamburg-to-tehran.html",
     "https://www.flightsfrom.com/HAM-IKA"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 85035,
+    "p25_total_comp_usd": 72826,
+    "p75_total_comp_usd": 100603,
+    "currency_original": "EUR",
+    "median_original": 73861,
+    "p25_original": 63257,
+    "p75_original": 87384,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/hamburg-deu"
+   }
   },
   {
    "id": "frankfurt",
@@ -2362,7 +3164,21 @@
     "https://www.lufthansa.com/lhg/de/en/o-d/cy-cy/frankfurt-tehran",
     "https://www.stepstone.de/gehalt/Software-Developer.html"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 89354,
+    "p25_total_comp_usd": 76763,
+    "p75_total_comp_usd": 100197,
+    "currency_original": "EUR",
+    "median_original": 77613,
+    "p25_original": 66676,
+    "p75_original": 87031,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/frankfurt-deu"
+   }
   },
   {
    "id": "stuttgart",
@@ -2402,7 +3218,21 @@
     "https://techpays.com/europe/germany/eng_generic/mid-level",
     "https://ci.wego.com/en/schedules/str/thr/flight-schedules-from-stuttgart-6940-to-tehran"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 97275,
+    "p25_total_comp_usd": 79553,
+    "p75_total_comp_usd": 115784,
+    "currency_original": "EUR",
+    "median_original": 84493,
+    "p25_original": 69100,
+    "p75_original": 100570,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/stuttgart-deu"
+   }
   },
   {
    "id": "amsterdam",
@@ -2442,7 +3272,21 @@
     "https://techpays.com/europe/netherlands/amsterdam/eng/mid-level",
     "https://www.flightsfrom.com/AMS-IKA"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 119781,
+    "p25_total_comp_usd": 92382,
+    "p75_total_comp_usd": 157945,
+    "currency_original": "EUR",
+    "median_original": 104042,
+    "p25_original": 80243,
+    "p75_original": 137191,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/amsterdam-nld"
+   }
   },
   {
    "id": "eindhoven",
@@ -2483,7 +3327,21 @@
     "https://www.glassdoor.com/Salaries/eindhoven-netherlands-software-engineer-salary-SRCH_IL.0,21_IM1106_KO22,39.htm",
     "https://www.payscale.com/research/NL/Location=Eindhoven/Salary"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 81058,
+    "p25_total_comp_usd": 63342,
+    "p75_total_comp_usd": 101232,
+    "currency_original": "EUR",
+    "median_original": 70407,
+    "p25_original": 55019,
+    "p75_original": 87930,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/eindhoven-nld"
+   }
   },
   {
    "id": "milan",
@@ -2525,7 +3383,21 @@
     "https://www.skyscanner.net/routes/mxp/thra/milan-malpensa-to-tehran.html",
     "https://www.trip.com/hot/flight-time-from-milan-to-tehran/"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 47512,
+    "p25_total_comp_usd": 37901,
+    "p75_total_comp_usd": 62594,
+    "currency_original": "EUR",
+    "median_original": 41269,
+    "p25_original": 32921,
+    "p75_original": 54369,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/milano-ita"
+   }
   },
   {
    "id": "rome",
@@ -2565,7 +3437,21 @@
     "https://www.airportia.com/flights/ir738/rome/tehran/",
     "https://www.flightsfrom.com/FCO-IKA"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 40809,
+    "p25_total_comp_usd": 32423,
+    "p75_total_comp_usd": 49796,
+    "currency_original": "EUR",
+    "median_original": 35447,
+    "p25_original": 28163,
+    "p75_original": 43253,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/rome-ita"
+   }
   },
   {
    "id": "turin",
@@ -2604,7 +3490,21 @@
     "https://www.edreams.net/us/flights/turin-tehran/TRN/THR/",
     "https://it.jobtome.com/salaries/sviluppatore-software"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 44420,
+    "p25_total_comp_usd": 38754,
+    "p75_total_comp_usd": 53483,
+    "currency_original": "EUR",
+    "median_original": 38583,
+    "p25_original": 33662,
+    "p75_original": 46455,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/turin-ita"
+   }
   },
   {
    "id": "madrid",
@@ -2645,7 +3545,21 @@
     "https://keepcoding.io/blog/salario-programador-junior-en-espana/",
     "https://www.glassdoor.es/Sueldos/madrid-senior-software-engineer-sueldo-SRCH_IL.0,6_IM1030_KO7,31.htm"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 62425,
+    "p25_total_comp_usd": 44963,
+    "p75_total_comp_usd": 90120,
+    "currency_original": "EUR",
+    "median_original": 54222,
+    "p25_original": 39055,
+    "p75_original": 78278,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/madrid-esp"
+   }
   },
   {
    "id": "barcelona",
@@ -2685,7 +3599,21 @@
     "https://www.glassdoor.es/Sueldos/barcelona-programador-junior-sueldo-SRCH_IL.0,9_IC2547194_KO10,28.htm",
     "https://www.flightsfrom.com/BCN"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 73589,
+    "p25_total_comp_usd": 52024,
+    "p75_total_comp_usd": 94883,
+    "currency_original": "EUR",
+    "median_original": 63919,
+    "p25_original": 45188,
+    "p75_original": 82415,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/barcelona-esp"
+   }
   },
   {
    "id": "valencia",
@@ -2725,8 +3653,23 @@
     "https://desarrollosoftware.es/salarios-desarrolladores-espana-2026/",
     "https://www.flightsfrom.com/VLC"
    ],
-   "as_of": "2026-08"
+   "as_of": "2026-08",
+   "salary_levels_fyi": {
+    "median_total_comp_usd": 64780,
+    "p25_total_comp_usd": 40607,
+    "p75_total_comp_usd": 97427,
+    "currency_original": "EUR",
+    "median_original": 56268,
+    "p25_original": 35271,
+    "p75_original": 84625,
+    "as_of": "2026-08-04",
+    "role": "Software Engineer, all levels",
+    "basis": "total compensation (base + stock + bonus)",
+    "confidence": "crowd",
+    "source": "https://www.levels.fyi/t/software-engineer/locations/valencia-esp"
+   }
   }
  ],
- "as_of": "2026-08"
+ "as_of": "2026-08",
+ "levels_fyi_enriched_at": "2026-08-04"
 }

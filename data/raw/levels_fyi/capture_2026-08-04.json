@@ -1,0 +1,91 @@
+{
+  "captured_at": "2026-08-04",
+  "method": "Browser session on levels.fyi; same-origin fetch of /t/software-engineer/locations/<slug> pages, which are server-rendered. levels.fyi robots.txt explicitly invites LLM/agent access and points to its sitemaps.",
+  "role": "Software Engineer, all levels",
+  "figure": "TOTAL COMPENSATION (base + stock + bonus) — not base salary. This is the 'top employers' band, deliberately kept separate from the market-wide figures already in cities.json.",
+  "currency_note": "Values are in the currency levels.fyi displays for that metro; conversion to USD happens in scripts/src_levels_fyi.py using the pinned FX rates in data/metrics.json.",
+  "unresolved": {
+    "cities": ["dallas", "houston", "charlotte", "las_vegas", "nashville", "philadelphia", "portland"],
+    "why": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted."
+  },
+  "unverified": {
+    "cities": ["austin", "columbus", "minneapolis"],
+    "why": "These slugs returned a different page layout: a median with no 25th/75th percentile and no 'last updated' date, and the value was implausible against every other source (Austin $100,000 against a market mid of $131,000). Treated as an unreliable parse and NOT written into the dataset.",
+    "raw_seen": { "austin": "$100,000", "columbus": "$112,000", "minneapolis": "$109,000 (slug twin-cities-usa)" }
+  },
+  "records": {
+    "toronto":        { "slug": "toronto-can",        "currency": "CAD", "median": 145435, "p25": 109310, "p75": 195288, "updated": "2026-08-04" },
+    "vancouver":      { "slug": "vancouver-can",      "currency": "CAD", "median": 173137, "p25": 134084, "p75": 218478, "updated": "2026-08-03" },
+    "montreal":       { "slug": "montreal-can",       "currency": "CAD", "median": 112440, "p25": 88403,  "p75": 148009, "updated": "2026-08-04" },
+    "ottawa":         { "slug": "ottawa-can",         "currency": "CAD", "median": 117150, "p25": 94914,  "p75": 140116, "updated": "2026-08-03" },
+    "calgary":        { "slug": "calgary-can",        "currency": "CAD", "median": 115093, "p25": 91987,  "p75": 153306, "updated": "2026-08-04" },
+    "halifax":        { "slug": "halifax-can",        "currency": "CAD", "median": 98454,  "p25": 73482,  "p75": 118948, "updated": "2026-08-04" },
+
+    "london":         { "slug": "london-gbr",         "currency": "GBP", "median": 100379, "p25": 73558,  "p75": 143109, "updated": "2026-08-04" },
+    "manchester":     { "slug": "manchester-gbr",     "currency": "GBP", "median": 53179,  "p25": 41030,  "p75": 72675,  "updated": "2026-08-04" },
+    "edinburgh":      { "slug": "edinburgh-gbr",      "currency": "GBP", "median": 64503,  "p25": 45696,  "p75": 85702,  "updated": "2026-08-04" },
+
+    "dublin":         { "slug": "dublin-irl",         "currency": "EUR", "median": 108007, "p25": 82696,  "p75": 141340, "updated": "2026-08-04" },
+    "cork":           { "slug": "cork-irl",           "currency": "EUR", "median": 80932,  "p25": 59574,  "p75": 117370, "updated": "2026-08-03" },
+
+    "stockholm":      { "slug": "stockholm-swe",      "currency": "SEK", "median": null,   "p25": 592756, "p75": 884734, "updated": "2026-08-04" },
+    "gothenburg":     { "slug": "gothenburg-swe",     "currency": "SEK", "median": null,   "p25": 511837, "p75": 668890, "updated": "2026-08-03" },
+    "copenhagen":     { "slug": "copenhagen-dnk",     "currency": "DKK", "median": null,   "p25": 596152, "p75": 827186, "updated": "2026-08-04" },
+    "aarhus":         { "slug": "aarhus-dnk",         "currency": "DKK", "median": null,   "p25": 569423, "p75": 884175, "updated": "2026-08-03" },
+    "oslo":           { "slug": "oslo-nor",           "currency": "NOK", "median": null,   "p25": 767219, "p75": 1103315, "updated": "2026-08-03" },
+    "bergen":         { "slug": "bergen-nor",         "currency": "NOK", "median": null,   "p25": 613312, "p75": 766640, "updated": "2026-08-03" },
+    "helsinki":       { "slug": "helsinki-fin",       "currency": "EUR", "median": 73672,  "p25": 54699,  "p75": 98926,  "updated": "2026-08-04" },
+    "tampere":        { "slug": "tampere-fin",        "currency": "EUR", "median": 50589,  "p25": 46834,  "p75": 61347,  "updated": "2026-08-04" },
+
+    "dubai":          { "slug": "dubai-are",          "currency": "AED", "median": 311987, "p25": 233603, "p75": 432778, "updated": "2026-08-04" },
+    "abu-dhabi":      { "slug": "abu-dhabi-are",      "currency": "AED", "median": 360049, "p25": 274037, "p75": 477490, "updated": "2026-08-04" },
+    "doha":           { "slug": "doha-qat",           "currency": "QAR", "median": 240768, "p25": 168282, "p75": 264482, "updated": "2026-08-04" },
+
+    "sydney":         { "slug": "sydney-aus",         "currency": "AUD", "median": 158945, "p25": 123273, "p75": 201893, "updated": "2026-08-04" },
+    "melbourne":      { "slug": "melbourne-aus",      "currency": "AUD", "median": 145152, "p25": 109804, "p75": 177135, "updated": "2026-08-03" },
+    "brisbane":       { "slug": "brisbane-aus",       "currency": "AUD", "median": 123314, "p25": 99408,  "p75": 163652, "updated": "2026-08-03" },
+    "perth":          { "slug": "perth-aus",          "currency": "AUD", "median": 124500, "p25": 100468, "p75": 160212, "updated": "2026-08-04" },
+    "adelaide":       { "slug": "adelaide-aus",       "currency": "AUD", "median": 127582, "p25": 94769,  "p75": 152923, "updated": "2026-08-03" },
+    "gold-coast":     { "slug": "gold-coast-aus",     "currency": "AUD", "median": 142952, "p25": 83736,  "p75": 149658, "updated": "2026-08-04" },
+    "hobart":         { "slug": "hobart-aus",         "currency": "AUD", "median": 95941,  "p25": 94360,  "p75": 101243, "updated": "2026-08-04" },
+    "canberra":       { "slug": "canberra-aus",       "currency": "AUD", "median": 106524, "p25": 62613,  "p75": 163042, "updated": "2026-08-02" },
+
+    "berlin":         { "slug": "berlin-deu",         "currency": "EUR", "median": 90568,  "p25": 77916,  "p75": 114465, "updated": "2026-08-04" },
+    "munich":         { "slug": "munich-deu",         "currency": "EUR", "median": 84143,  "p25": 67982,  "p75": 105604, "updated": "2026-08-04" },
+    "hamburg":        { "slug": "hamburg-deu",        "currency": "EUR", "median": 73861,  "p25": 63257,  "p75": 87384,  "updated": "2026-08-04" },
+    "frankfurt":      { "slug": "frankfurt-deu",      "currency": "EUR", "median": 77613,  "p25": 66676,  "p75": 87031,  "updated": "2026-08-04" },
+    "stuttgart":      { "slug": "stuttgart-deu",      "currency": "EUR", "median": 84493,  "p25": 69100,  "p75": 100570, "updated": "2026-08-04" },
+
+    "amsterdam":      { "slug": "amsterdam-nld",      "currency": "EUR", "median": 104042, "p25": 80243,  "p75": 137191, "updated": "2026-08-04" },
+    "eindhoven":      { "slug": "eindhoven-nld",      "currency": "EUR", "median": 70407,  "p25": 55019,  "p75": 87930,  "updated": "2026-08-04" },
+
+    "madrid":         { "slug": "madrid-esp",         "currency": "EUR", "median": 54222,  "p25": 39055,  "p75": 78278,  "updated": "2026-08-04" },
+    "barcelona":      { "slug": "barcelona-esp",      "currency": "EUR", "median": 63919,  "p25": 45188,  "p75": 82415,  "updated": "2026-08-04" },
+    "valencia":       { "slug": "valencia-esp",       "currency": "EUR", "median": 56268,  "p25": 35271,  "p75": 84625,  "updated": "2026-08-04" },
+
+    "milan":          { "slug": "milano-ita",         "currency": "EUR", "median": 41269,  "p25": 32921,  "p75": 54369,  "updated": "2026-08-04" },
+    "rome":           { "slug": "rome-ita",           "currency": "EUR", "median": 35447,  "p25": 28163,  "p75": 43253,  "updated": "2026-08-04" },
+    "turin":          { "slug": "turin-ita",          "currency": "EUR", "median": 38583,  "p25": 33662,  "p75": 46455,  "updated": "2026-08-04" },
+
+    "new_york":       { "slug": "new-york-city-usa",  "currency": "USD", "median": 200000, "p25": 143750, "p75": 288000, "updated": "2026-08-03" },
+    "boston":         { "slug": "boston-usa",         "currency": "USD", "median": 179000, "p25": 130000, "p75": 240000, "updated": "2026-08-04" },
+    "chicago":        { "slug": "chicago-usa",        "currency": "USD", "median": 150000, "p25": 115000, "p75": 204000, "updated": "2026-08-03" },
+    "atlanta":        { "slug": "atlanta-usa",        "currency": "USD", "median": 150000, "p25": 110000, "p75": 190000, "updated": "2026-08-04" },
+    "raleigh":        { "slug": "raleigh-usa",        "currency": "USD", "median": 153000, "p25": 118500, "p75": 191250, "updated": "2026-08-03" },
+    "san_antonio":    { "slug": "san-antonio-usa",    "currency": "USD", "median": 126677, "p25": 93000,  "p75": 165025, "updated": "2026-08-04" },
+    "miami":          { "slug": "miami-usa",          "currency": "USD", "median": 140000, "p25": 101250, "p75": 195000, "updated": "2026-08-04" },
+    "tampa":          { "slug": "tampa-usa",          "currency": "USD", "median": 125000, "p25": 100000, "p75": 150000, "updated": "2026-08-04" },
+    "orlando":        { "slug": "orlando-usa",        "currency": "USD", "median": 129352, "p25": 89055,  "p75": 178770, "updated": "2026-08-04" },
+    "washington_dc":  { "slug": "washington-usa",     "currency": "USD", "median": 250000, "p25": 185500, "p75": 329000, "updated": "2026-08-04" },
+    "sf_bay_area":    { "slug": "san-francisco-usa",  "currency": "USD", "median": 285000, "p25": 201000, "p75": 402000, "updated": "2026-08-03" },
+    "seattle":        { "slug": "seattle-usa",        "currency": "USD", "median": 254000, "p25": 189500, "p75": 337000, "updated": "2026-08-03" },
+    "denver":         { "slug": "denver-usa",         "currency": "USD", "median": 163000, "p25": 125000, "p75": 207000, "updated": "2026-08-04" },
+    "los_angeles":    { "slug": "los-angeles-usa",    "currency": "USD", "median": 180000, "p25": 130000, "p75": 250000, "updated": "2026-08-03" },
+    "san_diego":      { "slug": "san-diego-usa",      "currency": "USD", "median": 190000, "p25": 150500, "p75": 252000, "updated": "2026-08-04" },
+    "sacramento":     { "slug": "sacramento-usa",     "currency": "USD", "median": 140000, "p25": 87360,  "p75": 269000, "updated": "2026-08-03" },
+    "phoenix":        { "slug": "phoenix-usa",        "currency": "USD", "median": 140000, "p25": 100000, "p75": 176100, "updated": "2026-08-03" },
+    "salt_lake_city": { "slug": "salt-lake-city-usa", "currency": "USD", "median": 146000, "p25": 115000, "p75": 178600, "updated": "2026-08-03" },
+    "pittsburgh":     { "slug": "pittsburgh-usa",     "currency": "USD", "median": 135000, "p25": 100500, "p75": 205000, "updated": "2026-08-03" },
+    "detroit":        { "slug": "detroit-usa",        "currency": "USD", "median": 130000, "p25": 100000, "p75": 172500, "updated": "2026-08-04" }
+  }
+}

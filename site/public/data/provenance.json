@@ -176,6 +176,35 @@
       "notes": "All-postings index, not software-specific — labelled as such in the UI."
     },
     {
+      "source_id": "levels_fyi",
+      "name": "levels.fyi — Software Engineer total compensation by metro",
+      "urls": [
+        "https://www.levels.fyi/t/software-engineer/locations/toronto-can",
+        "https://www.levels.fyi/t/software-engineer/locations/vancouver-can",
+        "https://www.levels.fyi/t/software-engineer/locations/montreal-can",
+        "https://www.levels.fyi/t/software-engineer/locations/ottawa-can",
+        "https://www.levels.fyi/t/software-engineer/locations/calgary-can",
+        "https://www.levels.fyi/t/software-engineer/locations/halifax-can",
+        "https://www.levels.fyi/t/software-engineer/locations/london-gbr",
+        "https://www.levels.fyi/t/software-engineer/locations/manchester-gbr",
+        "https://www.levels.fyi/t/software-engineer/locations/<city-slug>"
+      ],
+      "fetched_at": "2026-08-04T21:01:37+00:00",
+      "license": "levels.fyi publishes these metro pages publicly and its robots.txt explicitly invites agent access. Data is crowd-sourced and remains theirs; we store derived per-city figures and cite levels.fyi on every one. No bulk redistribution.",
+      "redistribution": "derived per-city figures committed; cited on every figure",
+      "transforms": [
+        "Read server-rendered /t/software-engineer/locations/<slug> pages in a browser session; captured median, 25th and 75th percentile total comp verbatim per metro.",
+        "Converted local currency to USD using the FX rates pinned in data/metrics.json.",
+        "Wrote a NEW salary_levels_fyi field on each city; salary_usd_year was left untouched.",
+        "7 metros had no resolvable route and 3 returned an implausible value from a different page layout; all 10 are written with an explicit unavailable_reason instead of a number."
+      ],
+      "output": "data/processed/levels_fyi.json",
+      "status": "ok",
+      "rows": 63,
+      "coverage": "63/73 cities (10 explicitly unavailable)",
+      "notes": "Second salary band — top employers, total comp. Never merged with the market band."
+    },
+    {
       "source_id": "mipex",
       "name": "MIPEX — Migrant Integration Policy Index (EU policy indicators 2020-2024)",
       "urls": [
@@ -518,5 +547,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-04T20:49:52+00:00"
+  "updated_at": "2026-08-04T21:01:37+00:00"
 }
