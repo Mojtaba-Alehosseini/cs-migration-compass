@@ -26,11 +26,25 @@ Thumbs.db
 data/raw/**/*.tmp
 data/raw/_scratch/
 
-# Oversized raw payloads: excluded for repo weight, not for licensing. Both are
+# Oversized raw payloads: excluded for repo weight, not for licensing. All are
 # freely re-downloadable and their fetch scripts are committed, so `make pipeline`
 # still reproduces everything from scratch. The derived aggregates in
-# data/processed/ ARE committed. Sizes are as of 2026-08.
-data/raw/indeed_hiring_lab_job_postings/*.csv   # ~61 MB, refreshed weekly upstream
-data/raw/uk_hpi/*.csv                           # ~35 MB, refreshed monthly upstream
-data/raw/stackoverflow_survey/*.csv             # multi-year survey CSVs, ~100 MB total
+# data/processed/ ARE committed.
+#
+# NOTE: .gitignore has no inline comments — a trailing "# ..." becomes part of the
+# pattern and the rule silently matches nothing. Keep every comment on its own line.
+#
+# ~159 MB per wave, one file per survey year
+data/raw/stackoverflow_survey/*.csv
 data/raw/stackoverflow_survey/*.zip
+# ~61 MB, refreshed weekly upstream
+data/raw/indeed_hiring_lab_job_postings/*.csv
+# ~35 MB, refreshed monthly upstream
+data/raw/uk_hpi/*.csv
+# ~17 MB gzip
+data/raw/un_wpp/*.csv.gz
+# ~14 MB
+data/raw/oecd_indicators/tax_wedge.csv
+# 8-11 MB report PDFs, re-downloadable from the publisher
+data/raw/ef_epi/*.pdf
+data/raw/wipo_gii/*.pdf
