@@ -37,7 +37,7 @@ export function DataMethods() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
         <div className="panel" style={{ gridColumn: '1 / -1' }}>
-          <h3>The sources</h3>
+          <h2>The sources</h2>
           <div className="sub">
             {ok.length} datasets fed the site on the last pipeline run
             {prov?.updated_at && ` (${asOfLabel(prov.updated_at.slice(0, 7))})`}.
@@ -76,7 +76,7 @@ export function DataMethods() {
 
         {missing.length > 0 && (
           <div className="panel" style={{ gridColumn: '1 / -1' }}>
-            <h3>Sources we could not get</h3>
+            <h2>Sources we could not get</h2>
             <div className="sub">
               Listed for the same reason the others are: if a source is missing, the honest thing is to
               say so rather than quietly fill the gap.
@@ -92,7 +92,7 @@ export function DataMethods() {
         )}
 
         <div className="panel">
-          <h3>The one formula that matters</h3>
+          <h2>The one formula that matters</h2>
           <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', lineHeight: 1.9, marginTop: 6 }}>
             <b>Years to a home</b> = the price of a {HOME_M2} m² flat outside the centre ÷ what you save
             in a year.
@@ -104,7 +104,7 @@ export function DataMethods() {
         </div>
 
         <div className="panel">
-          <h3>Where we might be wrong</h3>
+          <h2>Where we might be wrong</h2>
           <ul style={{ margin: '8px 0 0 16px', padding: 0, fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', lineHeight: 1.7 }}>
             <li><b>US salaries lean low.</b> Official medians, not big-tech packages. The levels.fyi band shows the other side.</li>
             <li><b>Gulf salaries split in two.</b> Multinationals pay 2–4× the local market. Both bands are shown, never averaged.</li>
@@ -115,7 +115,7 @@ export function DataMethods() {
         </div>
 
         <div className="panel" style={{ gridColumn: '1 / -1' }}>
-          <h3>Take the data</h3>
+          <h2>Take the data</h2>
           <div className="sub">Everything the site uses, in the form the pipeline produced it.</div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
             {[

@@ -41,7 +41,7 @@ export function CountryProfile() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12, padding: '12px 0' }}>
 
         <div className="panel">
-          <h3>Getting in</h3>
+          <h2>Getting in</h2>
           <div className="sub">Main skilled routes. These change often — each carries its date.</div>
           {country.visa.skilled_routes.map((r, i) => (
             <div key={i} style={{ marginTop: 10, paddingTop: 10, borderTop: i ? '1px solid var(--line)' : undefined }}>
@@ -63,7 +63,7 @@ export function CountryProfile() {
         </div>
 
         <div className="panel">
-          <h3>Finding work</h3>
+          <h2>Finding work</h2>
           <div className="sub">How big the tech job market actually is.</div>
           {e.ict_specialists ? (
             <>
@@ -95,7 +95,7 @@ export function CountryProfile() {
         </div>
 
         <div className="panel">
-          <h3>Who already lives there</h3>
+          <h2>Who already lives there</h2>
           <div className="sub">People born in another country, and where they came from.</div>
           {e.foreign_born ? (
             <>
@@ -122,7 +122,7 @@ export function CountryProfile() {
         </div>
 
         <div className="panel">
-          <h3>Life, measured</h3>
+          <h2>Life, measured</h2>
           <div className="sub">Global indices translated into ranks with their denominator.</div>
           <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
             <li style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)' }}>
@@ -153,7 +153,7 @@ export function CountryProfile() {
         </div>
 
         <div className="panel" style={{ gridColumn: '1 / -1' }}>
-          <h3>The honest version</h3>
+          <h2>The honest version</h2>
           <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', lineHeight: 'var(--leading-relaxed)', marginTop: 6 }}>
             {country.reality_paragraph}
           </p>

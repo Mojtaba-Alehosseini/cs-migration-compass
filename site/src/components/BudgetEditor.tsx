@@ -26,7 +26,7 @@ export function BudgetEditor({ cities, budget, onChange, band }: Props) {
 
   return (
     <div className="panel" style={{ marginTop: 18 }}>
-      <h3>Your assumptions</h3>
+      <h2>Your assumptions</h2>
       <div className="sub">
         These start from each city’s own averages. Move them and every figure below recalculates —
         nothing is baked in.

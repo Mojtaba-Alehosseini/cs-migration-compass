@@ -157,10 +157,16 @@ export function Compare() {
       {/* ---- the comparison ---- */}
       {view === 'table' ? (
         <div className="panel" style={{ overflowX: 'auto', padding: 0 }}>
-          <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, fontSize: 'var(--text-xs)' }}>
+          {/* minWidth keeps columns readable on a phone and lets the panel scroll
+              horizontally instead of squeezing the label column to two words a line.
+              The page body never scrolls sideways — only this container does. */}
+          <table style={{
+            width: '100%', minWidth: 620, borderCollapse: 'separate', borderSpacing: 0,
+            fontSize: 'var(--text-xs)',
+          }}>
             <thead>
               <tr>
-                <th style={{ ...th, width: 220 }}>Metric</th>
+                <th style={{ ...th, width: 200, minWidth: 160 }}>Metric</th>
                 {cities.map((c) => (
                   <th key={c.id} style={th}>
                     <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -362,7 +368,7 @@ function ChartView({ rows }: { rows: { metric: typeof METRICS[number]; values: {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 380, damping: 32 }}>
-            <h3>{metric.label}</h3>
+            <h2>{metric.label}</h2>
             <div className="sub">{metric.hint}</div>
             {values.map(({ city, value }) => (
               <div key={city.id} style={{ margin: '9px 0' }}>

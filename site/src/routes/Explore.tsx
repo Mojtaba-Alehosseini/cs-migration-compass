@@ -126,7 +126,7 @@ function EconomyHistory() {
 
   return (
     <div className="panel" style={{ marginBottom: 12 }}>
-      <h3>Income per person, and where two institutions think it goes</h3>
+      <h2>Income per person, and where two institutions think it goes</h2>
       <div className="sub">
         GDP per person since 1990. The solid extension is a real forecast; the dashed one is ours and
         is not a forecast. They are shown side by side and never averaged.
@@ -202,7 +202,7 @@ function ScatterBuilder() {
 
   return (
     <div className="panel">
-      <h3>Ask your own question</h3>
+      <h2>Ask your own question</h2>
       <div className="sub">
         Pick any two things and every city is placed by its real numbers. Presets are examples, not
         recommendations.

@@ -70,7 +70,7 @@ export function CityProfile() {
 
         {/* ---- salaries ---- */}
         <div className="panel">
-          <h3>What developers earn here</h3>
+          <h2>What developers earn here</h2>
           <div className="sub">Per year, before tax. Tap any number to see where it comes from.</div>
 
           <div style={{ display: 'inline-flex', border: '1px solid var(--line)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: 12 }}>
@@ -148,7 +148,7 @@ export function CityProfile() {
 
         {/* ---- a month here ---- */}
         <div className="panel">
-          <h3>A month in {city.name}</h3>
+          <h2>A month in {city.name}</h2>
           {net != null && city.rent_1br_outside_usd_month != null && city.col_single_no_rent_usd_month != null ? (
             <>
               <div className="sub">
@@ -179,7 +179,7 @@ export function CityProfile() {
 
         {/* ---- years to home ---- */}
         <div className="panel">
-          <h3>The path to owning a home</h3>
+          <h2>The path to owning a home</h2>
           <div className="sub">Every step shown, every number editable in Compare.</div>
           {never ? (
             <p style={{ fontSize: 'var(--text-xs)', color: 'var(--warn)', marginTop: 8 }}>
@@ -222,7 +222,7 @@ export function CityProfile() {
 
         {/* ---- journey ---- */}
         <div className="panel">
-          <h3>From landing to a {country.name} passport</h3>
+          <h2>From landing to a {country.name} passport</h2>
           <div className="sub">The legal road, step by step. Typical times — real cases vary.</div>
           <Journey
             cc={country.id}
@@ -235,7 +235,7 @@ export function CityProfile() {
 
         {/* ---- life measured ---- */}
         <div className="panel">
-          <h3>Life here, measured</h3>
+          <h2>Life here, measured</h2>
           <div className="sub">The big global surveys, in plain words.</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 6 }}>
             {country.enriched.happiness?.rank != null && (
@@ -267,7 +267,7 @@ export function CityProfile() {
 
         {/* ---- reality ---- */}
         <div className="panel" style={{ gridColumn: '1 / -1' }}>
-          <h3>What people actually say</h3>
+          <h2>What people actually say</h2>
           <div className="sub">Our honest summary of expat surveys and community reports — not marketing.</div>
           <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', lineHeight: 'var(--leading-relaxed)' }}>
             {country.reality_paragraph}

@@ -1,0 +1,738 @@
+# Sources
+
+<!-- GENERATED FILE — do not edit by hand.
+     Regenerate with `make docs` (scripts/generate_sources_doc.py).
+     Content comes from data/provenance.json, written by the pipeline itself. -->
+
+Last pipeline run: **2026-08-04T21:01:37+00:00**
+
+22 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+
+Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
+
+## Licences at a glance
+
+The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organisations below and carries their terms.
+
+| Dataset | Licence / terms | What this repo redistributes |
+| --- | --- | --- |
+| BIS — Selected residential property prices (quarterly) | BIS statistics are free to use with attribution for non-commercial purposes. Cite: Bank for International Settlements, Selected residential property prices. | raw committed |
+| BLS Occupational Employment and Wage Statistics (OEWS) — software developers | US federal government work — public domain. Cite: U.S. Bureau of Labor Statistics, OEWS. | raw committed |
+| EF English Proficiency Index 2025 | EF publishes the EPI report freely; cite EF Education First, EF English Proficiency Index 2025. | raw committed |
+| Eurostat — Employed ICT specialists (isoc_sks_itspt) | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, isoc_sks_itspt. | raw committed |
+| Eurostat — Population and employment, national accounts (nama_10_pe) | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, nama_10_pe. | raw committed |
+| FHFA House Price Index — All-Transactions, Metropolitan Areas (quarterly) | US federal government work — public domain. Cite: FHFA House Price Index. | raw committed |
+| Indeed Hiring Lab — Job Postings Index (US metros) | Indeed Hiring Lab publishes this tracker publicly on GitHub for free use with attribution. Cite: Indeed Hiring Lab Job Postings Index. | monthly aggregate committed; the 61 MB daily raw file is cached locally but not committed |
+| levels.fyi — Software Engineer total compensation by metro | levels.fyi publishes these metro pages publicly and its robots.txt explicitly invites agent access. Data is crowd-sourced and remains theirs; we store derived per-city figures and cite levels.fyi on every one. No bulk redistribution. | derived per-city figures committed; cited on every figure |
+| MIPEX — Migrant Integration Policy Index (EU policy indicators 2020-2024) | MIPEX is published under CC BY-NC-SA. Cite: Solano & Huddleston, Migrant Integration Policy Index. | raw committed |
+| Numbeo — yearly country indices and per-city cost-of-living history | Numbeo data is crowd-sourced and its terms restrict bulk redistribution. We commit the derived per-year/per-city aggregates and the fetch script, and cite Numbeo on every figure. | derived aggregates committed (Numbeo terms restrict bulk redistribution) |
+| OECD Economic Outlook 119 — projections | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Economic Outlook 119. | raw committed |
+| OECD Data Explorer (SDMX) — house prices, wages, hours, tax wedge | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Data Explorer, dataflow IDs listed per block. | raw committed |
+| Reporters Without Borders — World Press Freedom Index | RSF publishes the index openly; cite Reporters Without Borders (RSF), World Press Freedom Index. | raw committed |
+| Stack Overflow Annual Developer Survey — salaries by country | Stack Overflow releases survey results under the Open Database License (ODbL). Cite: Stack Overflow Annual Developer Survey. | aggregates committed; raw survey CSVs not committed (size) |
+| Teranet–National Bank House Price Index (Canada) | Teranet & National Bank of Canada. Free public access for non-commercial use with attribution; index values are proprietary. We commit the derived per-city series. | derived per-city series committed; raw payload also committed (public endpoint) |
+| UK House Price Index — full file (HM Land Registry) | Contains HM Land Registry data © Crown copyright and database right. Open Government Licence v3.0. | raw committed |
+| UN DESA — International Migrant Stock 2024 (by destination and origin) | UN public data, free to use with attribution. Cite: United Nations Department of Economic and Social Affairs, Population Division (2024). International Migrant Stock 2024. | raw committed |
+| UN World Population Prospects 2024 — bulk CSV | CC BY 3.0 IGO. Cite: United Nations, Department of Economic and Social Affairs, Population Division (2024). World Population Prospects 2024. | raw committed |
+| Wikipedia — List of countries by English-speaking population | Wikipedia text is CC BY-SA 4.0. Underlying figures belong to the cited national sources. | raw committed |
+| WIPO Global Innovation Index 2024 | WIPO publishes the GII under CC BY 4.0 (some content excepted); cite WIPO, Global Innovation Index 2024. | raw committed |
+| World Bank Open Data — Indicators API | CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators. | raw committed |
+| World Happiness Report 2026 — Figure 2.1 data panel | World Happiness Report data is free to use with attribution. Cite: Helliwell et al., World Happiness Report 2026. | raw committed |
+| IMF World Economic Outlook — country projections | IMF WEO database is free to download and use with attribution. | raw committed |
+| World Bank Global Economic Prospects — growth forecasts | CC BY 4.0 — World Bank. Cite: World Bank, Global Economic Prospects. | raw committed |
+
+## Live sources
+
+### BIS — Selected residential property prices (quarterly)
+
+- **Status** — live
+- **Coverage** — 13/15 countries (BIS excludes AE, QA), quarterly from 1927-Q1
+- **Rows processed** — 11,952
+- **Fetched** — 2026-08-04T19:23:39+00:00
+- **Licence** — BIS statistics are free to use with attribution for non-commercial purposes. Cite: Bank for International Settlements, Selected residential property prices.
+- **Output** — `data/processed/bis_property_prices.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 1970-2026 Q1 (Australia; start year varies by country)
+
+**URLs**
+
+- <https://stats.bis.org/api/v2/data/dataflow/BIS/WS_SPP/1.0/Q.AU+US+CA+GB+IE+DE+NL+IT+ES+SE+DK+NO+FI?format=csv>
+
+**What we do to it**
+
+1. One SDMX-CSV request for all 13 covered countries (key Q.<A>+<B>+...).
+1. Split into four series per country by VALUE (real/nominal) x UNIT_MEASURE (index / YoY %).
+1. Kept TIME_PERIOD verbatim as 'YYYY-Qn'; sorted ascending.
+1. Dropped non-numeric observations. No rebasing — BIS bases differ by country.
+1. AE and QA are not published in this dataflow and are recorded as uncovered.
+
+> Index bases differ by country — comparable in shape, not in level.
+
+<details><summary>Verification notes from the source survey</summary>
+
+Human page https://www.bis.org/statistics/pp.htm 302-redirects to a JS-heavy dashboard (dataportal/pp.htm); the old flat-file guess full_pp_csv.zip is dead (404). Use the SDMX v2 REST API instead - confirmed working, returns both nominal and real index series (UNIT_MEASURE 628/771) back to 1970-Q1 through 2026-Q1 for Australia. Full API docs: https://stats.bis.org/api-doc/v2/.
+
+</details>
+
+### BLS Occupational Employment and Wage Statistics (OEWS) — software developers
+
+- **Status** — live
+- **Coverage** — 30/30 US cities, current reference year only
+- **Rows processed** — 96
+- **Fetched** — 2026-08-04T19:40:17+00:00
+- **Licence** — US federal government work — public domain. Cite: U.S. Bureau of Labor Statistics, OEWS.
+- **Output** — `data/processed/bls_oews.json`
+- **Fetch script** — `scripts/src_bls_oews.py`
+
+**URLs**
+
+- `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)`
+- `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)`
+- `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)`
+- `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (21 series)`
+
+**What we do to it**
+
+1. Constructed OEWS series IDs for 30 metros (+ San Jose, + national) x 3 datatypes.
+1. Requested them from the v2 API in batches of 25 (the keyless per-request limit).
+1. Kept employment counts, hourly mean and annual median wages where the API returned data.
+1. Series returning 'No Data Available' are counted and omitted — never back-filled or estimated.
+
+> Snapshot only — the API exposes no OEWS history. Stated on the page, not hidden.
+
+### EF English Proficiency Index 2025
+
+- **Status** — live
+- **Coverage** — 10/15 countries
+- **Rows processed** — 10
+- **Fetched** — 2026-08-04T19:46:08+00:00
+- **Licence** — EF publishes the EPI report freely; cite EF Education First, EF English Proficiency Index 2025.
+- **Output** — `data/processed/ef_epi.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 2025 edition (report appendix also lists prior-year scores back to ~2011)
+
+**URLs**
+
+- <https://www.ef.com/assetscdn/WIBIwq6RdJvcD9bc8RMd/cefcom-epi-site/reports/2025/ef-epi-2025-english.pdf>
+
+**What we do to it**
+
+1. Downloaded the published PDF with a browser User-Agent (both hosts 403 otherwise).
+1. Extracted text from the first 60 pages with pdfplumber.
+1. For each country, took the first line containing its name and a number in (300.0, 750.0).
+1. Recorded the originating line with every value for auditability.
+1. Countries not confidently matched are omitted rather than guessed.
+
+> PDF scraping is fragile by nature; every value carries its source line.
+
+<details><summary>Verification notes from the source survey</summary>
+
+https://www.ef.com/wwen/epi/ loads fine (200, needs a browser-like UA) and links directly to the full PDF report. HEAD confirmed 200, content-type application/pdf, 10,797,848 bytes, last-modified Nov 2025. No structured CSV/XLSX export found - pipeline needs to parse the PDF's score table/appendix.
+
+</details>
+
+### Eurostat — Employed ICT specialists (isoc_sks_itspt)
+
+- **Status** — live
+- **Coverage** — 10/15 countries (EU/EFTA only), 2004-2025 annual
+- **Rows processed** — 400
+- **Fetched** — 2026-08-04T19:12:06+00:00
+- **Licence** — Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, isoc_sks_itspt.
+- **Output** — `data/processed/eurostat_ict_specialists.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 2004-2025 annual (22 years), 37 areas (EU27_2020 aggregate + individual EU/EFTA/candidate countries)
+
+**URLs**
+
+- <https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/isoc_sks_itspt?format=JSON&lang=en>
+
+**What we do to it**
+
+1. Fetched full JSON-stat 2.0 cube (freq x unit x geo x time).
+1. Decoded the sparse row-major value map to explicit (unit, geo, year) rows.
+1. Kept the 15 covered countries plus the EU27_2020 aggregate as a benchmark line.
+1. Mapped Eurostat geo 'UK' to our ISO2 'GB'; dropped all other geographies.
+1. Split the two units into separate series: absolute count and share of employment.
+
+> Non-EU countries genuinely have no series here; recorded as missing, not imputed.
+
+<details><summary>Verification notes from the source survey</summary>
+
+Task's exact sample URL worked as-is (HTTP 200, real data, 30KB) - no variant needed. Confirmed via dimension inspection that the 'unit' dimension includes BOTH THS_PER (Thousand persons, actual headcount) and PC_EMP (Percentage of total employment), so this single dataset gives both the raw CS/IT employment COUNT and the share metric, per country per year. This directly satisfies the CS/IT-specific employment requirement at country level with 22 years of history.
+
+</details>
+
+### Eurostat — Population and employment, national accounts (nama_10_pe)
+
+- **Status** — live
+- **Coverage** — 9/15 countries (EU/EFTA only), 1975-2025 annual
+- **Rows processed** — 1,280
+- **Fetched** — 2026-08-04T19:12:11+00:00
+- **Licence** — Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, nama_10_pe.
+- **Output** — `data/processed/eurostat_total_employment.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 1975-2025 annual (51 years), 44 countries
+
+**URLs**
+
+- <https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nama_10_pe?format=JSON&lang=en>
+
+**What we do to it**
+
+1. Fetched full JSON-stat 2.0 cube (freq x unit x na_item x geo x time).
+1. Kept unit THS_PER only; dropped the percentage-change unit.
+1. Kept 4 na_items: total employment, employees, self-employed, population (national concept).
+1. Mapped Eurostat geo 'UK' to ISO2 'GB'; dropped aggregates (EU27, EA*) and other geographies.
+
+> Pairs with eurostat_ict_specialists to give IT jobs as a share of a real total.
+
+<details><summary>Verification notes from the source survey</summary>
+
+Task suggested une_rt_a or lfsi_emp_a as the total-employment dataset; both return HTTP 200 valid JSON, but neither is a clean raw headcount: une_rt_a is an unemployment RATE, and lfsi_emp_a's unit dimension is THS_PER+PC_POP i.e. mixes a real headcount with a %-of-population rate (2003-2025, 38 geos). nama_10_pe is the better match - it has an explicit na_item='Total employment national concept' (EMP_NC) in Thousand persons, covering 44 countries back to 1975 (7 na_item categories total, incl. EMP_DC domestic concept, SAL_NC/SAL_DC employees, SELF_NC/SELF_DC self-employed - useful sub-breakdowns). All three endpoints verified live (200, real JSON) this session; nama_10_pe recommended as the primary 'total employment' series.
+
+</details>
+
+### FHFA House Price Index — All-Transactions, Metropolitan Areas (quarterly)
+
+- **Status** — live
+- **Coverage** — 30/30 US cities, 1975Q1-latest quarterly
+- **Rows processed** — 6,154
+- **Fetched** — 2026-08-04T19:16:07+00:00
+- **Licence** — US federal government work — public domain. Cite: FHFA House Price Index.
+- **Output** — `data/processed/fhfa_hpi_metro.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 1975 Q1 - 2026 Q1
+
+**URLs**
+
+- <https://www.fhfa.gov/hpi/download/quarterly_datasets/hpi_at_metro.csv>
+
+**What we do to it**
+
+1. Downloaded the headerless all-transactions metro CSV (410 metros, 84k rows).
+1. Selected the 30 metros matching our US cities, plus San Jose as the Bay Area's second series.
+1. Dropped rows where the index is '-' (period before a metro's series begins).
+1. Sorted each series by (year, quarter); recorded the published area name and an is_metro_division flag rather than silently treating a division as the whole metro.
+1. No rebasing, no smoothing, no interpolation.
+
+> Real city-level history — not a country trend applied to a city.
+
+<details><summary>Verification notes from the source survey</summary>
+
+Task's guessed URL https://www.fhfa.gov/hpi/download/monthly/hpi_at_metro.csv is WRONG (404) - metro data lives under 'quarterly_datasets', not 'monthly', in the path. The legacy hpi/datasets.aspx page now returns 503, and fhfa.gov/DataTools/Downloads 301-redirects through /data/datasets -> /data/hpi -> /data/hpi/datasets, a modern page listing ~30 dataset files across monthly/quarterly/annual tabs. Verified the correct URL directly: HTTP 200, 4.17MB CSV, no header row (columns: metro name, CBSA code, year, quarter, index value, annual %-change-in-parens), 84,050 rows, 410 distinct metro names, spanning 1975 Q1 to 2026 Q1.
+
+</details>
+
+### Indeed Hiring Lab — Job Postings Index (US metros)
+
+- **Status** — live
+- **Coverage** — 30/30 US cities, monthly 2020-02 → latest
+- **Rows processed** — 73,563
+- **Fetched** — 2026-08-04T19:19:18+00:00
+- **Licence** — Indeed Hiring Lab publishes this tracker publicly on GitHub for free use with attribution. Cite: Indeed Hiring Lab Job Postings Index.
+- **Output** — `data/processed/indeed_hiring_lab_job_postings.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 2020-02-01 to present, daily (repo self-updates weekly; latest row observed 2026-07-24)
+
+**URLs**
+
+- <https://raw.githubusercontent.com/hiring-lab/job_postings_tracker/master/US/metro_job_postings_us.csv>
+
+**What we do to it**
+
+1. Downloaded the ~61 MB daily US-metro postings CSV.
+1. Kept only rows whose cbsa_code matches our 30 US metros (plus San Jose for the Bay Area).
+1. Aggregated daily values to monthly arithmetic means, retaining the observation count per month.
+1. No smoothing beyond that mean; no gap filling.
+
+> All-postings index, not software-specific — labelled as such in the UI.
+
+<details><summary>Verification notes from the source survey</summary>
+
+Task's guessed https://github.com/hiring-lab/data 301-redirects to the real, current repo hiring-lab/job_postings_tracker. IMPORTANT: this is a seasonally-adjusted INDEX (% change vs the Feb 1 2020 baseline), NOT raw posting counts - note this distinction for the pipeline. Confirmed live: US metro_job_postings_us.csv has 1,403,039 rows spanning 2020-02-01 to 2026-07-24 across US metro areas (by CBSA code); US job_postings_by_sector_US.csv (194,013 rows) confirms a 'Software Development' category with daily values across the same range. Australia's AU folder only has country+sector files (no city/metro breakdown), and its sector taxonomy uses 'IT Infrastructure' / 'IT Systems & Solutions' / 'Data & Analytics' instead of 'Software Development'. The UK's GB folder DOES include city_postings_gb.csv for city-level data. Ireland is explicitly excluded from sector-level data per the repo README.
+
+</details>
+
+### levels.fyi — Software Engineer total compensation by metro
+
+- **Status** — live
+- **Coverage** — 63/73 cities (10 explicitly unavailable)
+- **Rows processed** — 63
+- **Fetched** — 2026-08-04T21:01:37+00:00
+- **Licence** — levels.fyi publishes these metro pages publicly and its robots.txt explicitly invites agent access. Data is crowd-sourced and remains theirs; we store derived per-city figures and cite levels.fyi on every one. No bulk redistribution.
+- **Output** — `data/processed/levels_fyi.json`
+- **Fetch script** — `scripts/src_levels_fyi.py`
+
+**URLs**
+
+- <https://www.levels.fyi/t/software-engineer/locations/toronto-can>
+- <https://www.levels.fyi/t/software-engineer/locations/vancouver-can>
+- <https://www.levels.fyi/t/software-engineer/locations/montreal-can>
+- <https://www.levels.fyi/t/software-engineer/locations/ottawa-can>
+- <https://www.levels.fyi/t/software-engineer/locations/calgary-can>
+- <https://www.levels.fyi/t/software-engineer/locations/halifax-can>
+- …and 3 more of the same shape
+
+**What we do to it**
+
+1. Read server-rendered /t/software-engineer/locations/<slug> pages in a browser session; captured median, 25th and 75th percentile total comp verbatim per metro.
+1. Converted local currency to USD using the FX rates pinned in data/metrics.json.
+1. Wrote a NEW salary_levels_fyi field on each city; salary_usd_year was left untouched.
+1. 7 metros had no resolvable route and 3 returned an implausible value from a different page layout; all 10 are written with an explicit unavailable_reason instead of a number.
+
+> Second salary band — top employers, total comp. Never merged with the market band.
+
+### MIPEX — Migrant Integration Policy Index (EU policy indicators 2020-2024)
+
+- **Status** — live
+- **Coverage** — 9/15 countries, 2020-2024
+- **Rows processed** — 41
+- **Fetched** — 2026-08-04T19:40:08+00:00
+- **Licence** — MIPEX is published under CC BY-NC-SA. Cite: Solano & Huddleston, Migrant Integration Policy Index.
+- **Output** — `data/processed/mipex.json`
+- **Fetch script** — `scripts/src_mipex.py`
+- **Historical range** — 2007-2024 (two files combined: 2007-2019 core indicators + 2020-2024 EU scores)
+
+**URLs**
+
+- <https://mipex.eu/sites/default/files/downloads/pdf/EU%20Policy%20Indicators%20Scores%20(2020-2024).xlsx>
+
+**What we do to it**
+
+1. Downloaded the 2020-2024 EU policy-indicator workbook (one sheet per country).
+1. For each of our countries present as a sheet, parsed the 'Overall Scores' block (year -> score) and the 'Policy strand' block (year -> per-strand scores).
+1. Rounded to 2 decimals; sorted by year. Countries without a sheet are recorded as missing.
+
+> Measures policy, not experience — stated explicitly in the UI.
+
+<details><summary>Verification notes from the source survey</summary>
+
+mipex.eu/download redirects to /history (an old page); the current data lives behind /download-pdf (an Angular page whose server-rendered HTML still exposes the real static file links). Two working xlsx files confirmed via HEAD: (1) this download_url [949KB, 200] and (2) https://mipex.eu/sites/default/files/downloads/pdf/Policy%20Indicators%20Scores%20(2007-2019)%20%E2%80%93%20core%20set%20of%20indicators.xlsx [3.16MB, 200]. Full narrative report PDF also confirmed: https://mipex.eu/sites/default/files/downloads/files/mipex_2025_full.pdf [12.6MB, 200]. URLs contain spaces and an en-dash character - must be percent-encoded exactly as shown or the request 404s.
+
+</details>
+
+### Numbeo — yearly country indices and per-city cost-of-living history
+
+- **Status** — live
+- **Coverage** — 12 country-years, 0/73 city histories
+- **Rows processed** — 180
+- **Fetched** — 2026-08-04T19:54:24+00:00
+- **Licence** — Numbeo data is crowd-sourced and its terms restrict bulk redistribution. We commit the derived per-year/per-city aggregates and the fetch script, and cite Numbeo on every figure.
+- **Output** — `data/processed/numbeo_history.json`
+- **Fetch script** — `scripts/src_numbeo_history.py`
+
+**URLs**
+
+- <https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2015>
+- <https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2016>
+- <https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2017>
+- <https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2018>
+- <https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2019>
+- <https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2020>
+
+**What we do to it**
+
+1. Requested country ranking pages for 2015-2026 via the ?title=YYYY parameter.
+1. Parsed the rankings table, resolving country labels to our ISO2 set.
+1. Probed ONE city-history page rather than crawling all 73: the served HTML contains only navigation chrome because Numbeo renders the price series client-side (verified for itemIds 1/26/27/105). The finding is recorded; no data was invented from it.
+1. Rate-limited to one request per 1.5s.
+
+> Crowd-sourced; thin for small cities and labelled as such everywhere it appears.
+
+### OECD Economic Outlook 119 — projections
+
+- **Status** — live
+- **Coverage** — 13/15 countries (AE, QA are not OECD members), projections to 2027
+- **Rows processed** — 1,820
+- **Fetched** — 2026-08-04T19:29:21+00:00
+- **Licence** — OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Economic Outlook 119.
+- **Output** — `data/processed/oecd_economic_outlook.json`
+- **Fetch script** — `scripts/src_oecd_economic_outlook.py`
+
+**URLs**
+
+- <https://sdmx.oecd.org/public/rest/data/OECD.ECO.MAD,DSD_EO@DF_EO,1.5/AUS+USA+CAN+GBR+IRL+DEU+NLD+ITA+ESP+SWE+DNK+NOR+FIN..A?format=csv&startPeriod=2000>
+
+**What we do to it**
+
+1. Requested annual EO series for 13 OECD countries from OECD.ECO.MAD,DSD_EO@DF_EO,1.5.
+1. Kept 5 measures: real and nominal GDP growth, unemployment, population, net lending.
+1. Derived is_projection per point by comparing the EO year against the last World Bank actual year for the same country — the EO cube has no projection flag.
+1. Sorted ascending by year. No blending with any other forecast or with our extrapolation.
+
+> Institutional forecast — rendered solid and attributed, kept separate from naive extrapolation.
+
+### OECD Data Explorer (SDMX) — house prices, wages, hours, tax wedge
+
+- **Status** — live
+- **Coverage** — 13/15 countries (AE, QA are not OECD members)
+- **Rows processed** — 22,703
+- **Fetched** — 2026-08-04T19:23:54+00:00
+- **Licence** — OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Data Explorer, dataflow IDs listed per block.
+- **Output** — `data/processed/oecd_indicators.json`
+- **Fetch script** — `scripts/src_oecd_indicators.py`
+
+**URLs**
+
+- <https://sdmx.oecd.org/public/rest/data/OECD.ECO.MPD,DSD_AN_HOUSE_PRICES@DF_HOUSE_PRICES,1.0/AUS+USA+CAN+GBR+IRL+DEU+NLD+ITA+ESP+SWE+DNK+NOR+FIN.Q..?format=csv&startPeriod=1970>
+- <https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@AV_AN_WAGE,1.0/all?format=csv&startPeriod=1990>
+- <https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_HW@DF_AVG_ANN_HRS_WKD,1.0/all?format=csv&startPeriod=1990>
+- <https://sdmx.oecd.org/public/rest/data/OECD.CTP.TPS,DSD_TAX_WAGES_COMP@DF_TW_COMP,2.1/all?format=csv&startPeriod=2000>
+
+**What we do to it**
+
+1. Resolved all four dataflow IDs from the live OECD SDMX registry (several plausible IDs do not exist).
+1. Requested SDMX-CSV per dataflow; used the 'all' key where the flow requires more key positions than we filter on.
+1. Mapped REF_AREA ISO3 to our ISO2 set; every other country dropped.
+1. avg_wages: kept USD_PPP and national-currency series, both sexes combined (SEX=_Z).
+1. hours_worked: kept total worker status (_T).
+1. tax_wedge: filtered to single person without children at 100% of the average wage; kept average tax wedge, average income tax rate, gross earnings and net income.
+1. Grouped into MEASURE_UNITMEASURE series and sorted by period. No rebasing or smoothing.
+
+> Index bases differ by country and block — compare shape, not level.
+
+### Reporters Without Borders — World Press Freedom Index
+
+- **Status** — live
+- **Coverage** — 15/15 countries, 2022-2026
+- **Rows processed** — 75
+- **Fetched** — 2026-08-04T19:20:41+00:00
+- **Licence** — RSF publishes the index openly; cite Reporters Without Borders (RSF), World Press Freedom Index.
+- **Output** — `data/processed/rsf_press_freedom.json`
+- **Fetch script** — `scripts/src_rsf_press_freedom.py`
+- **Historical range** — 2026 confirmed; pattern likely works for recent prior years too (not individually tested)
+
+**URLs**
+
+- <https://rsf.org/sites/default/files/import_classement/2026.csv>
+- <https://rsf.org/sites/default/files/import_classement/2025.csv>
+- <https://rsf.org/sites/default/files/import_classement/2024.csv>
+- <https://rsf.org/sites/default/files/import_classement/2023.csv>
+- <https://rsf.org/sites/default/files/import_classement/2022.csv>
+
+**What we do to it**
+
+1. Fetched the per-year CSV for 2022, 2023, 2024, 2025, 2026 (semicolon-delimited).
+1. Converted comma decimal separators to points.
+1. Resolved ISO3 codes to our 15 ISO2 countries; all other rows dropped.
+1. Captured overall score, rank and the five sub-indicators, plus the worldwide ranked count per year so a rank can be shown with its denominator.
+1. Restricted to 2022+ because RSF's methodology changed that year.
+
+> Years that failed to download are omitted, never interpolated.
+
+<details><summary>Verification notes from the source survey</summary>
+
+Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26,930 bytes) with the full score breakdown per country. Found via a link on https://rsf.org/en/index. Uses ';' as the field delimiter and ',' as the decimal separator (European format), plus what looks like Latin-1/Windows-1252 encoding in accented country names rather than UTF-8 - handle encoding carefully when parsing.
+
+</details>
+
+### Stack Overflow Annual Developer Survey — salaries by country
+
+- **Status** — live
+- **Coverage** — 15/15 countries across 1 wave(s)
+- **Rows processed** — 65,437
+- **Fetched** — 2026-08-04T19:44:23+00:00
+- **Licence** — Stack Overflow releases survey results under the Open Database License (ODbL). Cite: Stack Overflow Annual Developer Survey.
+- **Output** — `data/processed/stackoverflow_survey.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 2011-2025
+
+**URLs**
+
+- <https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2024/results.csv>
+
+**What we do to it**
+
+1. Streamed the annual results CSV for waves: 2024 (~150 MB each).
+1. Resolved the free-text Country column to our 15 ISO2 codes; all other responses dropped.
+1. Dropped compensation outside $5,000-$1,000,000.
+1. Bucketed by experience (<3 / 3-6 / 6+ professional years) and separately by DevType role.
+1. Computed median plus p25/p75 per bucket, always retaining n and a thin_sample flag.
+1. Raw CSVs are cached locally but excluded from the repo for size (see .gitignore).
+
+> Self-selected sample — comparative signal, not an authoritative wage level.
+
+<details><summary>Verification notes from the source survey</summary>
+
+survey.stackoverflow.co now links directly to a GitHub-hosted archive (StackExchange/Survey repo) rather than the old per-year zip-on-S3 pattern. Verified the 2024 link resolves (302 redirect to media.githubusercontent.com, then 200). Schema/columns differ by year (salary-by-country fields especially), so the pipeline should handle per-year column mapping rather than assume a fixed schema.
+
+</details>
+
+### Teranet–National Bank House Price Index (Canada)
+
+- **Status** — live
+- **Coverage** — 6/6 Canadian cities, monthly 1990-06-01→2026-06-01
+- **Rows processed** — 2,303
+- **Fetched** — 2026-08-04T19:16:10+00:00
+- **Licence** — Teranet & National Bank of Canada. Free public access for non-commercial use with attribution; index values are proprietary. We commit the derived per-city series.
+- **Output** — `data/processed/teranet_national_bank_hpi.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 1990-06-01 to 2026-06-01 (433 monthly points); individual cities start later than the array start - e.g. Vancouver has data for the full range from index 0, while Toronto/Calgary/the 11-city Composite only start around index 96-104 (roughly 1998-1999) - exact per-city start is the first non-null array entry
+
+**URLs**
+
+- <https://housepriceindex.ca/_data/indx_data.json>
+
+**What we do to it**
+
+1. Fetched the JSON payload backing housepriceindex.ca (35 profiles, 7 data blocks).
+1. Rebuilt the monthly date axis from data.meta.start_date and the series length.
+1. Selected the 6 series matching our Canadian cities; dropped leading nulls (a city's index simply starts later) rather than back-filling.
+1. Kept the Composite 11 series separately as a labelled national benchmark.
+1. No rebasing, no smoothing.
+
+> Real city-level history for Canada.
+
+<details><summary>Verification notes from the source survey</summary>
+
+Best surprise of the session. housepriceindex.ca required curl -k (its TLS chain didn't validate against curl's default CA bundle) - worth checking before production use. The homepage has NO visible CSV/download button; the real data source was found only by grepping the homepage's raw HTML for '.json' references, which surfaced /_data/indx_data.json - a 558KB undocumented file behind the interactive chart widget, with a 'profiles' object (metadata + latest value per city, 35 entries) and a 'data' object containing full per-city monthly arrays (index, seasonally-adjusted index, sales-price composite, plus *_ch change variants) and an exact {start_date, end_date} meta block. A fully free, structured, 36-year city-level dataset with no login/paywall, sitting undocumented behind a marketing site.
+
+</details>
+
+### UK House Price Index — full file (HM Land Registry)
+
+- **Status** — live
+- **Coverage** — 3/3 UK cities, monthly (values sparse before the mid-1990s)
+- **Rows processed** — 1,344
+- **Fetched** — 2026-08-04T19:19:04+00:00
+- **Licence** — Contains HM Land Registry data © Crown copyright and database right. Open Government Licence v3.0.
+- **Output** — `data/processed/uk_hpi.json`
+- **Fetch script** — `scripts/src_uk_hpi.py`
+
+**URLs**
+
+- <https://publicdata.landregistry.gov.uk/market-trend-data/house-price-index-data/UK-HPI-full-file-2026-05.csv>
+
+**What we do to it**
+
+1. Discovered the latest monthly full-file release by HEAD-probing back from the current month.
+1. Streamed the ~35 MB CSV and kept only rows whose RegionName matches our 3 UK cities.
+1. Parsed dd/mm/yyyy dates to YYYY-MM; dropped rows with neither an average price nor an index.
+1. Kept average price, index, detached and flat prices; sorted ascending by month.
+1. Left values in GBP — no FX conversion of a multi-decade series.
+
+> Real city-level history including an actual price level, not just an index.
+
+### UN DESA — International Migrant Stock 2024 (by destination and origin)
+
+- **Status** — live
+- **Coverage** — 15/15 destinations, reference years 1990-2024
+- **Rows processed** — 2,094
+- **Fetched** — 2026-08-04T19:27:27+00:00
+- **Licence** — UN public data, free to use with attribution. Cite: United Nations Department of Economic and Social Affairs, Population Division (2024). International Migrant Stock 2024.
+- **Output** — `data/processed/un_migrant_stock.json`
+- **Fetch script** — `scripts/src_un_migrant_stock.py`
+- **Historical range** — 1990-2024 (reference years within file typically 1990,1995,2000,2005,2010,2015,2020,2024)
+
+**URLs**
+
+- <https://www.un.org/development/desa/pd/sites/www.un.org.development.desa.pd/files/undesa_pd_2024_ims_stock_by_sex_destination_and_origin.xlsx>
+
+**What we do to it**
+
+1. Downloaded the 6 MB origin-by-destination workbook with a browser User-Agent (un.org 403s otherwise).
+1. Read 'Table 1', locating the header at row 11 and detecting year columns by 4-digit headers.
+1. Kept rows whose destination M49 code is one of our 15 countries.
+1. Split into: total foreign-born (origin = World/900), per-origin breakdown for the latest reference year (country origins only, codes < 900), and the Iranian-born series (M49 364).
+1. Sorted origin breakdowns by descending stock. No estimation of missing corridors.
+
+> Absolute counts; shares are computed in-site against World Bank population and shown as a formula.
+
+<details><summary>Verification notes from the source survey</summary>
+
+Listing page https://www.un.org/development/desa/pd/content/international-migrant-stock returns HTTP 403 without a browser-like User-Agent header - MUST send a UA string (e.g. 'Mozilla/5.0') or all requests are blocked. Verified via HEAD: content-length 6,005,287 bytes, content-type application/vnd.openxmlformats...sheet, last-modified 2025-01-27. Sibling files also present for 2017/2019/2020 vintages and age/sex-only breakdowns at the same base path.
+
+</details>
+
+### UN World Population Prospects 2024 — bulk CSV
+
+- **Status** — live
+- **Coverage** — 15/15 countries, 1990-2100 (projections from 2024)
+- **Rows processed** — 1,665
+- **Fetched** — 2026-08-04T19:38:46+00:00
+- **Licence** — CC BY 3.0 IGO. Cite: United Nations, Department of Economic and Social Affairs, Population Division (2024). World Population Prospects 2024.
+- **Output** — `data/processed/un_wpp.json`
+- **Fetch script** — `scripts/src_un_wpp.py`
+
+**URLs**
+
+- <https://population.un.org/wpp/assets/Excel%20Files/1_Indicator%20(Standard)/CSV_FILES/WPP2024_TotalPopulationBySex.csv.gz>
+
+**What we do to it**
+
+1. Downloaded and gunzipped the 17 MB total-population bulk CSV (~720k rows).
+1. Kept only the 'Estimates' and medium 'Medium' variants; all other projection variants dropped.
+1. Filtered to our 15 countries by ISO2/ISO3 code and to years 1990-2100.
+1. Converted WPP's thousands to persons.
+1. Marked years after 2023 as projections; de-duplicated by year.
+
+> Medium variant only — high/low variants deliberately not shown, to avoid implying a range we did not model.
+
+### Wikipedia — List of countries by English-speaking population
+
+- **Status** — live
+- **Coverage** — 13/15 countries, single snapshot
+- **Rows processed** — 13
+- **Fetched** — 2026-08-04T19:34:07+00:00
+- **Licence** — Wikipedia text is CC BY-SA 4.0. Underlying figures belong to the cited national sources.
+- **Output** — `data/processed/wikipedia_english_speakers.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — single snapshot, sourced from ~2012 Eurobarometer plus varying national census years
+
+**URLs**
+
+- <https://en.wikipedia.org/wiki/List_of_countries_by_English-speaking_population>
+
+**What we do to it**
+
+1. Fetched the article HTML and parsed every wikitable whose header mentions English.
+1. Resolved the first cell of each row to one of our 15 countries; all other rows dropped.
+1. Extracted the first percentage and the first large integer found in the row.
+1. Countries absent from the table are recorded as missing, never estimated.
+
+> Mixed vintages by country — a snapshot, not a series.
+
+<details><summary>Verification notes from the source survey</summary>
+
+Confirmed page loads (200), contains 8 tables, and cites 'Eurobarometer' 3 times, matching the expected source. No CSV export exists - pipeline should parse the HTML tables directly or use Wikipedia's action API for cleaner structured extraction.
+
+</details>
+
+### WIPO Global Innovation Index 2024
+
+- **Status** — live
+- **Coverage** — 13/15 countries
+- **Rows processed** — 13
+- **Fetched** — 2026-08-04T19:46:34+00:00
+- **Licence** — WIPO publishes the GII under CC BY 4.0 (some content excepted); cite WIPO, Global Innovation Index 2024.
+- **Output** — `data/processed/wipo_gii.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 2024 edition (17th) confirmed; 2025 edition (18th) URL guessed at the same record and also returned 200 but content not independently opened
+
+**URLs**
+
+- <https://tind.wipo.int/record/50062/files/wipo-pub-2000-2024-en-global-innovation-index-2024-17th-edition.pdf>
+
+**What we do to it**
+
+1. Downloaded the published PDF with a browser User-Agent (both hosts 403 otherwise).
+1. Extracted text from the first 60 pages with pdfplumber.
+1. For each country, took the first line containing its name and a number in (5.0, 80.0).
+1. Recorded the originating line with every value for auditability.
+1. Countries not confidently matched are omitted rather than guessed.
+
+> PDF scraping is fragile by nature; every value carries its source line.
+
+<details><summary>Verification notes from the source survey</summary>
+
+wipo.int/global_innovation_index/en/ redirects to a modern JS-driven page with almost no static content, and the interactive wipo.int/gii-ranking/en/ page is likewise a near-empty JS shell (3KB) - neither is scrapable directly. The actual report PDFs live in WIPO's TIND institutional repository. Confirmed via HEAD: the URL 302-redirects to a watermarked-download endpoint (TIND's normal file-serving flow), which is a strong signal the file is real and servable. Report PDF's annex contains the full country score/rank table; no separate machine-readable XLSX was found.
+
+</details>
+
+### World Bank Open Data — Indicators API
+
+- **Status** — live
+- **Coverage** — 15/15 countries, 1990-2026 (per-indicator coverage varies by country)
+- **Rows processed** — 3,203
+- **Fetched** — 2026-08-04T19:10:45+00:00
+- **Licence** — CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators.
+- **Output** — `data/processed/world_bank.json`
+- **Fetch script** — `scripts/src_world_bank.py`
+
+**URLs**
+
+- <https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/NY.GDP.PCAP.CD?format=json&per_page=20000&date=1990:2026>
+- <https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/NY.GDP.PCAP.PP.CD?format=json&per_page=20000&date=1990:2026>
+- <https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/FP.CPI.TOTL.ZG?format=json&per_page=20000&date=1990:2026>
+- <https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/SL.UEM.TOTL.ZS?format=json&per_page=20000&date=1990:2026>
+- <https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/SM.POP.NETM?format=json&per_page=20000&date=1990:2026>
+- <https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/SP.POP.TOTL?format=json&per_page=20000&date=1990:2026>
+
+**What we do to it**
+
+1. Requested 6 indicators for the 15 covered countries in one call each (semicolon-joined ISO3).
+1. Dropped rows with null values (World Bank returns nulls for unreported years).
+1. Regrouped from flat rows to {ISO2: {indicator_key: [{year, value}]}} sorted ascending by year.
+1. No smoothing, no interpolation, no imputation.
+
+> Values are as published; gaps are left as gaps.
+
+### World Happiness Report 2026 — Figure 2.1 data panel
+
+- **Status** — live
+- **Coverage** — 15/15 countries, 2011-2025
+- **Rows processed** — 203
+- **Fetched** — 2026-08-04T19:20:16+00:00
+- **Licence** — World Happiness Report data is free to use with attribution. Cite: Helliwell et al., World Happiness Report 2026.
+- **Output** — `data/processed/world_happiness_report.json`
+- **Fetch script** — see `scripts/`
+- **Historical range** — 2011-2025 (within the WHR26 file, 2013 appears absent); earlier per-report vintage files exist but do not form one unbroken 2005+ panel
+
+**URLs**
+
+- <https://files.worldhappiness.report/WHR26_Data_Figure_2.1.xlsx>
+
+**What we do to it**
+
+1. Read the single 'Data for Figure 2.1' sheet from the published xlsx.
+1. Matched columns by header prefix (life evaluation + the six explanatory components).
+1. Resolved country names to ISO2 and kept our 15; unmatched names dropped, never guessed.
+1. Computed the per-year ranked-country count so ranks can be shown with a denominator.
+1. No interpolation across the missing 2013 wave.
+
+> Scores are 3-year rolling averages, so year-on-year moves are damped by construction.
+
+<details><summary>Verification notes from the source survey</summary>
+
+data.worldhappiness.report/table is a client-side-rendered Next.js app with no static download link exposed to curl. Real files live on a separate domain, files.worldhappiness.report, linked from https://www.worldhappiness.report/data-sharing/ (note: bare worldhappiness.report redirects to the www subdomain; a guessed /data/ path 404s). Verified by unzipping the xlsx: columns are Year, Rank, Country name, Life evaluation (3yr avg), whiskers, 6 factor columns; 2117 data rows, ~140 countries/year. Task wanted 2005+ but true 2005-2010 data is NOT in this file - would need older per-report appendix files (WHR12_Data.xlsx, WHR15_Ch03_Data.xlsx, etc., also confirmed present) as supplements.
+
+</details>
+
+## Sources we could not get
+
+These are documented at the same level of detail as the working ones. The site renders nothing for them rather than filling the gap.
+
+### IMF World Economic Outlook — country projections — blocked
+
+- **Why** — imf.org is unreachable from this environment (HTTP 403 at the Akamai edge). The parser is complete and runs wherever IMF is reachable; a manual drop-in path is documented.
+- **Attempted** — 2026-08-04T20:49:37+00:00
+- Tried: <https://www.imf.org/-/media/Files/Publications/WEO/WEO-Database/2026/April/WEOApr2026all.ashx>
+- Tried: <https://www.imf.org/-/media/Files/Publications/WEO/WEO-Database/2026/october/WEOOct2026all.ashx>
+- Tried: <https://www.imf.org/external/pubs/ft/weo/2026/01/weodata/WEOApr2026all.xls>
+
+### World Bank Global Economic Prospects — growth forecasts — unavailable
+
+- **Why** — No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections.
+- **Attempted** — 2026-08-04T20:49:52+00:00
+- Tried: <https://www.worldbank.org/en/publication/global-economic-prospects>
+
+## Manual drop-in sources
+
+Some well-known datasets are paid, gated, or unreachable from automated builds. They are supported as documented hand-placed files rather than pretended-away.
+
+| Source | How to obtain it | Where to put it |
+| --- | --- | --- |
+| IMF World Economic Outlook | imf.org → Publications → WEO → *World Economic Outlook Databases* → download the entire database (free, tab-delimited). | `data/manual/imf_weo.json` — see the shape documented at the top of `scripts/src_imf_weo.py`. |
+| EIU liveability & cost of living | Paid report. Quote the headline figure only. | Forecast card in `data/manual/forecast_cards.json` with source and date. |
+| Knight Frank / CBRE / JLL housing outlooks | Free registration, per-report PDFs. | Forecast card, attributed and dated. |
+| Gartner / IDC tech market forecasts | Paid. Press releases carry citable headline numbers. | Forecast card, attributed and dated. |
+| StatCan occupation counts | Table 14-10-0335-01, inactive since 2022. | `data/manual/` drop-in; documented as historical only. |
+| Jobs and Skills Australia / ABS | ABS labour-force releases. | `data/manual/` drop-in. |
+
+Forecast cards are rendered as attributed quote-cards — a headline figure, the institution, and the date — never merged into a chart line.
+
+## Confidence tiers
+
+- **official** — Government/statistical body (gov sites, BLS, OECD, WMO)
+- **index** — Established published index (WHR, GPI, EF EPI, HDI)
+- **crowd** — Crowd-sourced or survey (Numbeo, levels.fyi, InterNations, Glassdoor)
+
+## Staleness rules
+
+A figure older than its rule shows a warning on the site rather than being hidden.
+
+- `visa` — warn after 6 months
+- `prices_salaries` — warn after 12 months
+- `indices` — warn after 18 months
+- `climate` — warn after 120 months
+
