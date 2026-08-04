@@ -3,9 +3,8 @@
 Known weak spots, kept in plain sight. This file is the source for the "Where we
 might be wrong" panel on the site's Data & methods page.
 
-Sections 1–5 are carried over verbatim in substance from `phase-3-report.md` §3,
-the verification report for the curated dataset. Sections 6–9 record what the
-pipeline build added.
+Sections 1–5 come from the verification pass on the curated dataset. Sections
+6–9 record what the pipeline build added.
 
 ---
 
@@ -126,5 +125,12 @@ be re-verified before relying on them: the Iran–Gulf conflict and its effect o
 residency security for Iranian citizens in the UAE, the US proclamation
 restricting Iranian-national visa issuance, Sweden's citizenship tightening
 (5 → 8 years), the UK's proposed ILR extension (5 → 10 years), and Australia's
-deprioritisation of ICT occupations. Each is documented with its verification
-status in `phase-3-report.md` §4.
+deprioritisation of ICT occupations.
+
+Their verification status differs and matters. The Iran–Gulf strikes, Sweden's
+citizenship change and Germany's stability were confirmed directly against
+multiple outlets. The US visa proclamation, the UK ILR proposal and Australia's
+ICT tiering were corroborated but not independently re-verified, and each
+should be checked against the official source before anyone acts on it. Every
+affected field in `data/countries.json` carries its own `sources` array and
+`as_of` date.

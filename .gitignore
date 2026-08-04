@@ -1,3 +1,7 @@
+# NOTE: .gitignore has no inline comment syntax. A trailing "# ..." on a pattern
+# line becomes part of the pattern and the rule silently matches nothing.
+# Keep every comment on its own line.
+
 # dependencies
 node_modules/
 .venv/
@@ -21,30 +25,37 @@ Thumbs.db
 .env
 .env.local
 
-# pipeline scratch — raw and processed ARE committed on purpose (see docs/SOURCES.md);
-# only oversized or license-restricted payloads are excluded here.
-data/raw/**/*.tmp
-data/raw/_scratch/
+# logs
+*.log
+npm-debug.log*
+logs/
 
-# Oversized raw payloads: excluded for repo weight, not for licensing. All are
-# freely re-downloadable and their fetch scripts are committed, so `make pipeline`
-# still reproduces everything from scratch. The derived aggregates in
-# data/processed/ ARE committed.
+# ---------------------------------------------------------------------------
+# Raw download caches.
 #
-# NOTE: .gitignore has no inline comments — a trailing "# ..." becomes part of the
-# pattern and the rule silently matches nothing. Keep every comment on its own line.
-#
-# ~159 MB per wave, one file per survey year
-data/raw/stackoverflow_survey/*.csv
-data/raw/stackoverflow_survey/*.zip
-# ~61 MB, refreshed weekly upstream
-data/raw/indeed_hiring_lab_job_postings/*.csv
-# ~35 MB, refreshed monthly upstream
-data/raw/uk_hpi/*.csv
-# ~17 MB gzip
-data/raw/un_wpp/*.csv.gz
-# ~14 MB
-data/raw/oecd_indicators/tax_wedge.csv
-# 8-11 MB report PDFs, re-downloadable from the publisher
-data/raw/ef_epi/*.pdf
-data/raw/wipo_gii/*.pdf
+# Everything under data/raw/ is a cache of a third-party download. It is
+# re-created by `make pipeline`, so it is kept on disk but out of the repo:
+# the committed artefacts are data/processed/ (the derived outputs) plus
+# data/provenance.json (which records exactly where each file came from and
+# what was done to it).
+# ---------------------------------------------------------------------------
+data/raw/*
+
+# EXCEPTION: this one is an INPUT, not a cache. It is the hand-collected
+# levels.fyi capture that scripts/src_levels_fyi.py reads to build the
+# top-employer salary band. Nothing re-downloads it, so dropping it would make
+# that step unreproducible.
+!data/raw/levels_fyi/
+
+# ---------------------------------------------------------------------------
+# Internal working files — planning notes, drafts and design mockups kept
+# locally, not part of the published project.
+# ---------------------------------------------------------------------------
+phase-1-data-sources.md
+phase-2-strategy.md
+phase-3-report.md
+claude-code-prompt.md
+design-mockup.html
+design-mockup-v2.html
+design-mockup-pages.html
+structure-samples.html

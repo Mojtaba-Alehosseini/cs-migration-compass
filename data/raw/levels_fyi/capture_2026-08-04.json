@@ -1,6 +1,6 @@
 {
   "captured_at": "2026-08-04",
-  "method": "Browser session on levels.fyi; same-origin fetch of /t/software-engineer/locations/<slug> pages, which are server-rendered. levels.fyi robots.txt explicitly invites LLM/agent access and points to its sitemaps.",
+  "method": "Browser session on levels.fyi; same-origin fetch of /t/software-engineer/locations/<slug> pages, which are server-rendered. levels.fyi robots.txt explicitly permits automated access and points to its sitemaps.",
   "role": "Software Engineer, all levels",
   "figure": "TOTAL COMPENSATION (base + stock + bonus) — not base salary. This is the 'top employers' band, deliberately kept separate from the market-wide figures already in cities.json.",
   "currency_note": "Values are in the currency levels.fyi displays for that metro; conversion to USD happens in scripts/src_levels_fyi.py using the pinned FX rates in data/metrics.json.",

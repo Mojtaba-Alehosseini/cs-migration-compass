@@ -15,9 +15,11 @@ carries display text and big numbers, humanist sans carries the interface, and
 the flag-dot — every city wearing its country's flag — is the signature motif
 that makes a field of 73 dots readable without a legend.
 
-Two files are the binding references and the source of this language:
-`design-mockup-v2.html` (the dot field) and `design-mockup-pages.html` (city
-profile, Explore theme, Data & methods).
+The language was fixed in design review before any component was written, and
+`docs/design/checkpoint.html` is the record of it — three palette candidates,
+a Compare screen built on real data, and the Home first screen, all driven by
+the same tokens the app ships. Open it directly in a browser; it needs no build
+step.
 
 ---
 
