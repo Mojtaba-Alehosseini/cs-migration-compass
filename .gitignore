@@ -59,3 +59,7 @@ design-mockup.html
 design-mockup-v2.html
 design-mockup-pages.html
 structure-samples.html
+
+# local tooling config
+.claude/
+.cursor/
