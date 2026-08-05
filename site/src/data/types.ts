@@ -9,11 +9,24 @@ export type Mode = 'light' | 'dark'
 export type Band = 'new_grad' | 'mid' | 'senior'
 export type Lens = 'gross' | 'net' | 'after'
 
+export interface MonthlyNormal {
+  month: number          // 1-12
+  avg_high_c: number
+  avg_low_c: number
+  mean_c: number
+  wet_days: number | null
+  precip_mm: number | null
+}
+
 export interface Climate {
   sunshine_hours_yr: number | null
   summer_avg_high_c: number | null
   winter_avg_low_c: number | null
   rainy_days_yr: number | null
+  /** 1991-2020 normals, added by scripts/src_climate_normals.py. Absent for any
+   *  city whose normals could not be computed — never partially filled. */
+  monthly?: MonthlyNormal[]
+  monthly_source?: string
 }
 
 export interface SalaryBands {

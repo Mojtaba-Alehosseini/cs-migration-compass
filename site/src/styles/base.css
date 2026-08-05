@@ -156,6 +156,90 @@ a { color: var(--ink-2); }
 .chip-note { background: var(--note-wash); color: var(--note); }
 .chip-quiet { background: var(--surface-sunk); color: var(--ink-2); }
 
+/* ---------- the dot field ---------- */
+
+.swarm-stage {
+  position: relative;
+  margin-top: var(--space-2);
+  background: color-mix(in srgb, var(--surface) 42%, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 8px 14px 24px;
+}
+
+.swarm-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  /* The flag reads at 17px, but a 17px tap target fails WCAG 2.5.8 and is
+     genuinely hard to hit on a phone — which is most of this audience. Padding
+     grows the hit area to 25px without moving the mark: the dot is centred by
+     transform, so the extra space is symmetrical and the layout maths (which
+     works in left/top percentages) is untouched. */
+  min-width: 25px;
+  min-height: 25px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  transition:
+    left var(--dur-swarm) var(--ease-in-out),
+    top var(--dur-swarm) var(--ease-in-out);
+}
+
+.swarm-mark {
+  display: block;
+  margin: 0 auto;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.swarm-dot small {
+  display: block;
+  font-size: 9.5px;
+  line-height: 1.25;
+  color: var(--ink-2);
+  margin-top: 2px;
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
+  border-radius: 3px;
+  padding: 0 3px;
+  transition: opacity var(--dur-base);
+}
+
+/* Label above the dot when it sits in an upper lane, so text never covers the
+   dot below it. */
+.swarm-dot[data-labup] small {
+  position: absolute;
+  bottom: calc(100% + 1px);
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+}
+
+/* Collision packing hides crowded labels; hover, focus and selection bring one
+   back. Anchor cities are exempt so the field keeps fixed reference points. */
+.swarm-dot[data-crowd] small { opacity: 0; }
+.swarm-dot:hover small,
+.swarm-dot:focus-visible small,
+.swarm-dot[data-sel] small { opacity: 1; z-index: 9; }
+
+.swarm-dot:hover { z-index: 8; }
+.swarm-dot:hover .swarm-mark { transform: scale(1.45); }
+
+.swarm-dot[data-sel] .swarm-mark {
+  transform: scale(1.4);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2.5px var(--sc), 0 0 0 7px color-mix(in srgb, var(--sc) 20%, transparent);
+}
+.swarm-dot[data-sel] small { color: var(--sc); font-weight: 600; }
+
+/* Cities with no value for this question: hollow, dashed, parked in the gutter. */
+.swarm-null .swarm-mark { opacity: 0.45; filter: grayscale(1); }
+.swarm-null small { font-size: 9px; }
+
 /* view transitions between routes; reduced-motion turns them off via tokens */
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root) { animation: vt-out var(--dur-fast) var(--ease-out) both; }

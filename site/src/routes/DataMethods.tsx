@@ -36,7 +36,9 @@ export function DataMethods() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
-        <div className="panel" style={{ gridColumn: '1 / -1' }}>
+        {/* min-height reserves the space this async table will fill. Without it
+            provenance.json lands late and shifts the whole page (CLS 0.38). */}
+        <div className="panel" style={{ gridColumn: '1 / -1', minHeight: prov ? undefined : 640 }}>
           <h2>The sources</h2>
           <div className="sub">
             {ok.length} datasets fed the site on the last pipeline run

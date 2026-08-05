@@ -1,0 +1,6 @@
+# CS Migration Compass
+# Everything here is public and meant to be shared.
+User-agent: *
+Allow: /
+
+Sitemap: https://mojtaba-alehosseini.github.io/cs-migration-compass/sitemap.xml

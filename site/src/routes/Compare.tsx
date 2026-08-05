@@ -12,6 +12,7 @@ import { Flag, FlagRibbon } from '../components/Flag'
 import { Figure } from '../components/Figure'
 import { BudgetEditor } from '../components/BudgetEditor'
 import { MetricPicker } from '../components/MetricPicker'
+import { ClimateOverlay } from '../components/ClimateOverlay'
 import { useData } from '../data/store'
 import { HEADLINE_KEYS, METRIC_BY_KEY, METRICS } from '../data/registry'
 import { LENS_LABEL, isNeverAffordable, missingInputs, type Budget } from '../data/compute'
@@ -240,6 +241,15 @@ export function Compare() {
       )}
 
       <BudgetEditor cities={cities} budget={budget} onChange={setBudget} band={band} />
+
+      <div className="panel" style={{ marginTop: 12 }}>
+        <h2>A year of weather, side by side</h2>
+        <div className="sub">
+          Twelve-month normals for the places you are comparing. An annual average hides whether a
+          February is survivable.
+        </div>
+        <ClimateOverlay cities={cities} />
+      </div>
     </div>
   )
 }

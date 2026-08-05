@@ -1,3 +1,5 @@
+import { useId } from 'react'
+
 /* The flag-dot — the signature motif of the whole site.
  *
  * Every city dot wears its country's flag, so a swarm of 73 dots is readable
@@ -150,7 +152,10 @@ function Shapes({ cc }: { cc: string }) {
 }
 
 export function Flag({ cc, size = 20, className, title }: Props) {
-  const id = `clip-${cc}-${size}`
+  // Unique per instance. With 73 dots on screen a shared id would make every
+  // flag resolve url(#id) to whichever copy mounted first, and unmounting that
+  // one would break the rest.
+  const id = useId()
   return (
     <svg
       width={size}

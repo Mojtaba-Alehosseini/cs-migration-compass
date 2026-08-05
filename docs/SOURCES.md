@@ -4,9 +4,9 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-04T21:01:37+00:00**
+Last pipeline run: **2026-08-05T00:29:41+00:00**
 
-22 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+23 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
 Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
 
@@ -38,6 +38,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | WIPO Global Innovation Index 2024 | WIPO publishes the GII under CC BY 4.0 (some content excepted); cite WIPO, Global Innovation Index 2024. | raw committed |
 | World Bank Open Data — Indicators API | CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators. | raw committed |
 | World Happiness Report 2026 — Figure 2.1 data panel | World Happiness Report data is free to use with attribution. Cite: Helliwell et al., World Happiness Report 2026. | raw committed |
+| Open-Meteo ERA5 archive — 1991-2020 monthly climate normals | Open-Meteo data is CC BY 4.0; underlying ERA5 is Copernicus Climate Change Service information. Cite: Open-Meteo / Copernicus ERA5. | raw committed |
 | IMF World Economic Outlook — country projections | IMF WEO database is free to download and use with attribution. | raw committed |
 | World Bank Global Economic Prospects — growth forecasts | CC BY 4.0 — World Bank. Cite: World Bank, Global Economic Prospects. | raw committed |
 
@@ -687,6 +688,30 @@ wipo.int/global_innovation_index/en/ redirects to a modern JS-driven page with a
 data.worldhappiness.report/table is a client-side-rendered Next.js app with no static download link exposed to curl. Real files live on a separate domain, files.worldhappiness.report, linked from https://www.worldhappiness.report/data-sharing/ (note: bare worldhappiness.report redirects to the www subdomain; a guessed /data/ path 404s). Verified by unzipping the xlsx: columns are Year, Rank, Country name, Life evaluation (3yr avg), whiskers, 6 factor columns; 2117 data rows, ~140 countries/year. Task wanted 2005+ but true 2005-2010 data is NOT in this file - would need older per-report appendix files (WHR12_Data.xlsx, WHR15_Ch03_Data.xlsx, etc., also confirmed present) as supplements.
 
 </details>
+
+### Open-Meteo ERA5 archive — 1991-2020 monthly climate normals
+
+- **Status** — partial
+- **Coverage** — 21/73 cities x 12 months, 1991-2020 (WMO standard reference period)
+- **Rows processed** — 252
+- **Fetched** — 2026-08-05T00:29:41+00:00
+- **Licence** — Open-Meteo data is CC BY 4.0; underlying ERA5 is Copernicus Climate Change Service information. Cite: Open-Meteo / Copernicus ERA5.
+- **Output** — `data/processed/climate_normals.json`
+- **Fetch script** — `scripts/src_climate_normals.py`
+
+**URLs**
+
+- <https://geocoding-api.open-meteo.com/v1/search?name=<city>>
+- <https://archive-api.open-meteo.com/v1/archive?latitude=..&longitude=..&start_date=1991-01-01&end_date=2020-12-31>
+
+**What we do to it**
+
+1. Geocoded each city, keeping only hits whose country code matches the city's own (there are five Valencias) and preferring the largest by population.
+1. Fetched daily max/min temperature and precipitation for 1991-01-01..2020-12-31 (10,958 days per city).
+1. Aggregated to 12 calendar-month normals: mean daily max, mean daily min, their midpoint, mean count of days with >= 1 mm precipitation, and mean monthly precipitation total.
+1. Wrote the series to climate.monthly on each city record. Existing annual climate fields were NOT modified — they come from station data and are kept as an independent signal.
+
+> Reanalysis, not station observations — tagged 'index' rather than 'official'.
 
 ## Sources we could not get
 

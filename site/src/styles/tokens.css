@@ -116,7 +116,10 @@
   --accent-wash: #dfeee7;
   --accent-strong: #084d3d;
 
-  --warn: #b5502f;            /* 4.9:1 on paper */
+  --warn: #a8471f;            /* 5.3:1 on paper, 4.7:1 on --warn-wash.
+                                 Was #B5502F, which passed on paper but was only
+                                 4.07:1 inside its own chip — the pairing that
+                                 actually ships. */
   --warn-wash: #f6e3da;
   --note: #7c5608;            /* 5.2:1 — darkened from the mockup's amber
                                  (#96690D was 4.1:1 and failed AA for body) */
@@ -272,7 +275,8 @@
   --ink-3: #5d7269;
   --line: #cbd8d2;
   --line-strong: #a8bab2;
-  --accent: #0a7a56;
+  --accent: #07684a;          /* darkened from #0A7A56, which was 4.41:1 on
+                                 --accent-wash and failed AA inside a chip */
   --accent-ink: #ffffff;
   --accent-wash: #d6efe5;
   --accent-strong: #06553c;

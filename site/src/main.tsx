@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState } from 'react'
+import { StrictMode, Suspense, lazy, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider, createHashRouter } from 'react-router-dom'
 import { MotionConfig } from 'motion/react'
@@ -7,12 +7,28 @@ import { App } from './App'
 import { ThemeProvider } from './components/Theme'
 import { DataContext, indexCore, loadCore, type Dataset } from './data/store'
 import { Home } from './routes/Home'
-import { Compare } from './routes/Compare'
-import { Explore } from './routes/Explore'
-import { CityProfile } from './routes/CityProfile'
-import { CountryProfile } from './routes/CountryProfile'
-import { DataMethods } from './routes/DataMethods'
 import { NotFound } from './routes/NotFound'
+
+/* Home is eager — it is the landing surface and must paint immediately.
+   Everything else is lazy so that Recharts (111 KB) only downloads for the two
+   routes that actually draw charts, instead of riding along on every page. */
+const Compare = lazy(() => import('./routes/Compare').then((m) => ({ default: m.Compare })))
+const Explore = lazy(() => import('./routes/Explore').then((m) => ({ default: m.Explore })))
+const CityProfile = lazy(() => import('./routes/CityProfile').then((m) => ({ default: m.CityProfile })))
+const CountryProfile = lazy(() => import('./routes/CountryProfile').then((m) => ({ default: m.CountryProfile })))
+const DataMethods = lazy(() => import('./routes/DataMethods').then((m) => ({ default: m.DataMethods })))
+
+/* A fixed-height placeholder, not a spinner: it reserves the space the page is
+   about to occupy so the swap does not shove the layout around. */
+function RouteFallback() {
+  return (
+    <div className="wrap" style={{ paddingTop: 22, minHeight: '70vh' }} aria-busy="true">
+      <div className="kicker">Loading…</div>
+    </div>
+  )
+}
+
+const lazyRoute = (el: React.ReactNode) => <Suspense fallback={<RouteFallback />}>{el}</Suspense>
 
 /* Hash routing: GitHub Pages serves a 404 for unknown paths, and comparison
    links are meant to be pasted into Reddit and Telegram and just work. A hash
@@ -23,12 +39,12 @@ const router = createHashRouter([
     element: <App />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'compare', element: <Compare /> },
-      { path: 'explore', element: <Explore /> },
-      { path: 'explore/:theme', element: <Explore /> },
-      { path: 'city/:id', element: <CityProfile /> },
-      { path: 'country/:id', element: <CountryProfile /> },
-      { path: 'data', element: <DataMethods /> },
+      { path: 'compare', element: lazyRoute(<Compare />) },
+      { path: 'explore', element: lazyRoute(<Explore />) },
+      { path: 'explore/:theme', element: lazyRoute(<Explore />) },
+      { path: 'city/:id', element: lazyRoute(<CityProfile />) },
+      { path: 'country/:id', element: lazyRoute(<CountryProfile />) },
+      { path: 'data', element: lazyRoute(<DataMethods />) },
       { path: '*', element: <NotFound /> },
     ],
   },
