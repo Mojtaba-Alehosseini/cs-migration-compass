@@ -8,8 +8,18 @@
  *   scatter  the same dots gaining a second axis (the approved presets)
  *   country  PR/citizenship as two-stage bars, where dots would say nothing
  *
+ * Scatter is a first-class state, not a swarm with the dots nudged upwards: it
+ * builds a real y-axis (ticks, values, a plain-words title), drops the
+ * swarm-only furniture, re-collides the labels in two dimensions, and sends any
+ * city missing EITHER value to the gutter. A dot whose height means nothing is
+ * worse than no second axis at all.
+ *
  * Cities with no value are never dropped. They park in a "no data" gutter at
  * the edge, which is the whole point of the Oslo sunshine case.
+ *
+ * Positions are applied as transforms rather than left/top so the swarm→scatter
+ * morph is a single compositor-friendly property, and so reduced motion turns it
+ * into an instant state change through the duration tokens.
  */
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
@@ -26,12 +36,28 @@ const FIELD_H = 440
 const BAR_ROW_H = 29
 const GUTTER_X = 87       // swarm ends here when the no-data gutter is showing
 
+/* Scatter insets. The left column carries the y tick values; the top strip
+   carries the y-axis title; the bottom band is the one the x tick labels
+   already live in. Swarm keeps its full-bleed field, so none of this applies. */
+const Y_AXIS_W = 54
+const Y_AXIS_W_NARROW = 38
+const NARROW = 560
+const PLOT_TOP = 22
+const PLOT_BOTTOM = 26
+const SWARM_TICK_BOTTOM = 18
+/* The gutter box is 64px wide with a 6px margin; a dot is 25px wide, so the
+   plot has to stop 84px short of the edge for the rightmost mark to clear it. */
+const GUTTER_RESERVE = 84
+
 export interface Placed {
   city: City
-  value: number | null
-  x: number          // 0-100
+  value: number
+  /** The second-axis value, when a second axis is active. */
+  y: number | null
+  x: number          // 0-100 on the question's own scale; the plot maps it to px
   lane: number
   crowded: boolean
+  labUp: boolean
   capped: boolean
 }
 
@@ -43,6 +69,64 @@ interface Props {
   selected: string[]
   onToggle: (id: string) => void
   intro: boolean
+}
+
+interface Box { l: number; r: number; t: number; b: number }
+
+const overlaps = (a: Box, b: Box) => a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b
+
+/* Label collision in two dimensions.
+ *
+ * The swarm can pack labels by lane because everything shares one row grid.
+ * A scatter has no lanes, so labels are placed greedily: anchors first (they are
+ * the fixed reference points a reader orients by and always win), then the rest
+ * left to right. Each label tries below its dot, then above; if neither box is
+ * free of another label or another dot's mark, it is hidden — hover, focus and
+ * selection still bring it back, exactly as in the swarm. */
+function collide2D(
+  items: { id: string; name: string; x: number; y: number; anchor: boolean }[],
+  reserved: Box[] = [],
+): Map<string, { show: boolean; up: boolean }> {
+  const MARK = 11        // half the flag mark's box
+  const LAB_H = 12
+  const LAB_DY = 16      // label centre, relative to the dot centre
+  const halfWidth = (name: string) => (name.length * 5.1 + 8) / 2
+
+  const marks: Box[] = items.map((i) => ({ l: i.x - MARK, r: i.x + MARK, t: i.y - MARK, b: i.y + MARK }))
+  // The no-data gutter is furniture, not a dot, so nothing may be written under it.
+  const taken: Box[] = [...reserved]
+  const out = new Map<string, { show: boolean; up: boolean }>()
+
+  const order = items
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) =>
+      a.item.anchor === b.item.anchor ? a.item.x - b.item.x : a.item.anchor ? -1 : 1,
+    )
+
+  const free = (box: Box, self: number) =>
+    !taken.some((t) => overlaps(t, box)) &&
+    !marks.some((m, j) => j !== self && overlaps(box, m))
+
+  for (const { item, index } of order) {
+    const w = halfWidth(item.name)
+    const below: Box = { l: item.x - w, r: item.x + w, t: item.y + LAB_DY - LAB_H / 2, b: item.y + LAB_DY + LAB_H / 2 }
+    const above: Box = { l: item.x - w, r: item.x + w, t: item.y - LAB_DY - LAB_H / 2, b: item.y - LAB_DY + LAB_H / 2 }
+
+    if (free(below, index)) {
+      taken.push(below)
+      out.set(item.id, { show: true, up: false })
+    } else if (free(above, index)) {
+      taken.push(above)
+      out.set(item.id, { show: true, up: true })
+    } else if (item.anchor) {
+      // Anchors are never hidden; they take the box that collides least badly.
+      taken.push(below)
+      out.set(item.id, { show: true, up: false })
+    } else {
+      out.set(item.id, { show: false, up: false })
+    }
+  }
+  return out
 }
 
 export function SwarmField({
@@ -71,14 +155,25 @@ export function SwarmField({
     [cities],
   )
 
-  const { placed, missing, gutter } = useMemo(() => {
-    const withValues = cities.map((city) => ({
-      city,
-      value: question.value(city, countryOf(city)),
-    }))
+  const scatter = secondAxis != null && question.kind !== 'country'
 
-    const missing = withValues.filter((p) => p.value == null).map((p) => p.city)
-    const present = withValues.filter((p) => p.value != null) as { city: City; value: number }[]
+  const { placed, missing, gutter } = useMemo(() => {
+    const rows = cities.map((city) => {
+      const country = countryOf(city)
+      return {
+        city,
+        value: question.value(city, country),
+        y: secondAxis ? secondAxis.value(city, country) : null,
+      }
+    })
+
+    // In scatter a city needs BOTH values. Half a coordinate is not a position,
+    // it is a guess, so it goes to the gutter with everything else we don't know.
+    const has = (r: { value: number | null; y: number | null }) =>
+      r.value != null && (!secondAxis || r.y != null)
+
+    const missing = rows.filter((r) => !has(r)).map((r) => r.city)
+    const present = rows.filter(has) as { city: City; value: number; y: number | null }[]
     const gutter = missing.length > 0
 
     present.sort((a, b) => a.value - b.value)
@@ -89,11 +184,16 @@ export function SwarmField({
     const squeeze = gutter ? GUTTER_X : 100
 
     const taken: { x: number; lane: number }[] = []
-    const placed: Placed[] = present.map(({ city, value }) => {
+    const placed: Placed[] = present.map(({ city, value, y }) => {
       const capped = question.cap != null && value >= question.cap
       const shown = capped ? question.cap! : value
-      const x = (question.scale(shown) / 100) * squeeze
-      const xpx = (x / 100) * width
+      const x = question.scale(shown)
+      const xpx = (x / 100) * (squeeze / 100) * width
+
+      if (scatter) {
+        // No lanes in a scatter: height is the second value, and nothing else.
+        return { city, value, y, x, lane: 0, crowded: false, labUp: false, capped }
+      }
 
       let lane = 0
       for (const cand of LANE_ORDER) {
@@ -107,11 +207,54 @@ export function SwarmField({
       )
       taken.push({ x: xpx, lane })
 
-      return { city, value, x, lane, crowded: crowded && !ANCHORS.has(city.id), capped }
+      return {
+        city, value, y, x, lane,
+        crowded: crowded && !ANCHORS.has(city.id),
+        labUp: lane < 0,
+        capped,
+      }
     })
 
     return { placed, missing, gutter }
-  }, [cities, countryOf, question, width])
+  }, [cities, countryOf, question, secondAxis, scatter, width])
+
+  /* Plot geometry, in pixels.
+   *
+   * The swarm is unchanged: it spends a percentage of the field and gives the
+   * last 13% back to the gutter, which is fine because it only ever ran at
+   * comfortable widths. The scatter reserves the gutter in PIXELS instead —
+   * 13% of a 250px phone field is 32px, narrower than the 70px gutter, so a
+   * percentage would post dots underneath it. It also gives up a left column
+   * to the y tick values and a strip at the top to the y-axis title. */
+  const squeeze = gutter ? GUTTER_X : 100
+  const yAxisW = scatter ? (width < NARROW ? Y_AXIS_W_NARROW : Y_AXIS_W) : 0
+  const plotTop = scatter ? PLOT_TOP : 0
+  const plotBottom = FIELD_H - (scatter ? PLOT_BOTTOM : 0)
+  const plotRight = scatter
+    ? width - (gutter ? GUTTER_RESERVE : 0)
+    : (squeeze / 100) * width
+  /** A 0-100 position on the question's own scale -> a pixel across the plot.
+   *  In swarm yAxisW is 0 and plotRight is the squeezed width, so this reduces
+   *  to exactly the percentage the swarm has always used. */
+  const toX = (pct: number) => yAxisW + (pct / 100) * (plotRight - yAxisW)
+  const toY = (pct: number) => plotBottom - (pct / 100) * (plotBottom - plotTop)
+
+  /* Scatter labels re-collide in 2D, against the positions actually rendered. */
+  const labels = useMemo(() => {
+    if (!scatter || !secondAxis) return null
+    return collide2D(
+      placed.map((p) => ({
+        id: p.city.id,
+        name: p.city.name,
+        x: toX(p.x),
+        y: p.y == null ? plotBottom : toY(secondAxis.scale(p.y)),
+        anchor: ANCHORS.has(p.city.id),
+      })),
+      gutter ? [{ l: width - 70, r: width - 6, t: 6, b: FIELD_H - 22 }] : [],
+    )
+    // toX/toY are closures rebuilt every render, but they are pure functions of
+    // the geometry listed here, so this is the complete dependency set.
+  }, [scatter, secondAxis, placed, gutter, yAxisW, width, plotTop, plotBottom])
 
   const selIndex = (id: string) => selected.indexOf(id)
 
@@ -129,13 +272,18 @@ export function SwarmField({
           transition: 'height var(--dur-slow) var(--ease-out)',
         }}
       >
-        {/* centre line + tick grid */}
-        <div style={{ position: 'absolute', inset: '50% 0 auto 0', height: 1, background: 'var(--grid)' }} />
+        {/* Swarm-only furniture: the centreline is the lane grid's spine, and a
+            scatter has no lanes for it to describe. */}
+        {!scatter && (
+          <div style={{ position: 'absolute', inset: '50% 0 auto 0', height: 1, background: 'var(--grid)' }} />
+        )}
+
+        {/* x ticks — vertical rules with their value underneath */}
         {question.ticks.map(([v, label]) => (
           <div key={label} aria-hidden="true"
             style={{
-              position: 'absolute', top: 0, bottom: 18, width: 1,
-              left: `${(question.scale(v) / 100) * (gutter ? GUTTER_X : 100)}%`, background: 'var(--grid)',
+              position: 'absolute', top: plotTop, bottom: FIELD_H - plotBottom + (scatter ? 0 : SWARM_TICK_BOTTOM),
+              width: 1, left: toX(question.scale(v)), background: 'var(--grid)',
             }}>
             <b style={{
               position: 'absolute', bottom: -16, left: -20, width: 40, textAlign: 'center',
@@ -144,36 +292,70 @@ export function SwarmField({
           </div>
         ))}
 
+        {/* y axis — the same rules and the same 10px values as the x ticks, laid
+            the other way, plus a title that says which direction is which. */}
+        {scatter && secondAxis && (
+          <>
+            {secondAxis.ticks.map(([v, label]) => (
+              <div key={label} aria-hidden="true"
+                style={{
+                  position: 'absolute', left: yAxisW, top: toY(secondAxis.scale(v)),
+                  width: Math.max(0, plotRight - yAxisW), height: 1, background: 'var(--grid)',
+                }}>
+                <b style={{
+                  position: 'absolute', right: '100%', top: -7, marginRight: 6,
+                  fontWeight: 400, fontSize: 10, color: 'var(--ink-3)', whiteSpace: 'nowrap',
+                }}>{label}</b>
+              </div>
+            ))}
+            <div
+              data-y-axis-label=""
+              style={{
+                position: 'absolute', left: 0, top: 0, fontSize: 11,
+                color: 'var(--ink-2)', whiteSpace: 'nowrap',
+              }}
+            >
+              ↑ {secondAxis.axisLabel}
+            </div>
+          </>
+        )}
+
         {/* dots */}
         {placed.map((p) => {
           const i = cities.indexOf(p.city)
           const si = selIndex(p.city.id)
           const isSel = si >= 0
           const introStyle = introPos[i] ?? { left: 50, top: 50, rot: 0 }
-          const y = secondAxis
-            ? secondAxis.value(p.city, countryOf(p.city))
-            : null
-          const yPos = secondAxis && y != null ? 100 - secondAxis.scale(y) : null
+          const lab = labels?.get(p.city.id)
+
+          const px = intro ? (introStyle.left / 100) * width : toX(p.x)
+          const py = intro
+            ? (introStyle.top / 100) * FIELD_H
+            : scatter && secondAxis && p.y != null
+              ? toY(secondAxis.scale(p.y))
+              : FIELD_H / 2 + p.lane * LANE_H
+
+          const xText = question.fmt(p.capped ? question.cap! : p.value)
+          const yText = scatter && secondAxis ? secondAxis.fmt(p.y) : null
+          const reading = yText ? `${xText} · ${yText}` : xText
+
+          const crowded = scatter ? lab?.show === false : p.crowded
+          const labUp = scatter ? lab?.up === true : p.labUp
 
           return (
             <button
               key={p.city.id}
               onClick={() => onToggle(p.city.id)}
               aria-pressed={isSel}
-              aria-label={`${p.city.name} — ${question.fmt(p.capped ? question.cap! : p.value)}${isSel ? ', selected' : ''}`}
-              title={`${p.city.name} · ${question.fmt(p.capped ? question.cap! : p.value)}`}
+              aria-label={`${p.city.name} — ${reading}${isSel ? ', selected' : ''}`}
+              title={`${p.city.name} · ${reading}`}
               className="swarm-dot"
+              data-city={p.city.id}
               data-sel={isSel || undefined}
-              data-crowd={p.crowded && !isSel ? '' : undefined}
-              data-labup={p.lane < 0 ? '' : undefined}
+              data-crowd={crowded && !isSel ? '' : undefined}
+              data-labup={labUp ? '' : undefined}
               style={{
-                position: 'absolute',
-                left: intro ? `${introStyle.left}%` : `${p.x}%`,
-                top: intro
-                  ? `${introStyle.top}%`
-                  : secondAxis && yPos != null
-                    ? `${yPos}%`
-                    : `calc(50% + ${p.lane * LANE_H}px)`,
+                transform: `translate(${px}px, ${py}px) translate(-50%, -50%)`,
                 ['--sc' as string]: isSel ? pickColor(si) : undefined,
                 zIndex: isSel ? 7 : undefined,
               }}
@@ -200,14 +382,16 @@ export function SwarmField({
             <div style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center', marginTop: 8 }}>
               {missing.map((c) => {
                 const si = selIndex(c.id)
+                const why = scatter ? 'no data for one of these two axes' : 'no data for this question'
                 return (
                   <button
                     key={c.id}
                     onClick={() => onToggle(c.id)}
                     aria-pressed={si >= 0}
-                    aria-label={`${c.name} — no data for this question${si >= 0 ? ', selected' : ''}`}
-                    title={`${c.name} — no data`}
+                    aria-label={`${c.name} — ${why}${si >= 0 ? ', selected' : ''}`}
+                    title={`${c.name} — ${why}`}
                     className="swarm-dot swarm-null"
+                    data-city={c.id}
                     data-sel={si >= 0 || undefined}
                     style={{ position: 'static', ['--sc' as string]: si >= 0 ? pickColor(si) : undefined }}
                   >
@@ -220,17 +404,6 @@ export function SwarmField({
           </div>
         )}
       </div>
-
-      {secondAxis && (
-        <div style={{
-          display: 'flex', justifyContent: 'space-between', fontSize: 11,
-          color: 'var(--ink-3)', paddingTop: 4,
-        }}>
-          <span>{secondAxis.axisL} (bottom)</span>
-          <span style={{ color: 'var(--ink-2)' }}>up ↑ {secondAxis.label}</span>
-          <span>{secondAxis.axisR} (top)</span>
-        </div>
-      )}
     </>
   )
 }

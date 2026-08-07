@@ -19,7 +19,7 @@ import { SwarmField } from '../components/SwarmField'
 import { BudgetEditor } from '../components/BudgetEditor'
 import { ProfileNudge } from '../components/ProfileNudge'
 import { useData } from '../data/store'
-import { QUESTIONS, SUMMER_AXIS, pickColor } from '../data/questions'
+import { QUESTIONS, pickColor } from '../data/questions'
 import type { SecondAxis } from '../data/questions'
 import { money, years } from '../data/format'
 import { savingsPerYear, yearsToHome, type Budget } from '../data/compute'
@@ -36,7 +36,7 @@ export function Home() {
   const [qi, setQi] = useState(0)
   const [selected, setSelected] = useState<string[]>([])
   const [secondOn, setSecondOn] = useState(false)
-  const [season, setSeason] = useState<'winter' | 'summer'>('winter')
+  const [axisId, setAxisId] = useState<string | null>(null)
   const [tableOpen, setTableOpen] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [budget, setBudget] = useState<Budget>({})
@@ -56,12 +56,14 @@ export function Home() {
   }, [intro])
 
   // A second axis only exists for questions that have an approved partner, and
-  // never for the PR/citizenship bars.
+  // never for the PR/citizenship bars. Where a question offers two partners
+  // (sunshine's winter/summer pair) the chip picks between them; anything else
+  // falls back to the first, which is also the only one.
+  const axisChoices = question.secondAxes ?? []
   const secondAxis: SecondAxis | null = useMemo(() => {
-    if (!secondOn || !question.secondAxis) return null
-    if (question.secondAxis.seasonSwitch && season === 'summer') return SUMMER_AXIS
-    return question.secondAxis
-  }, [secondOn, question, season])
+    if (!secondOn || axisChoices.length === 0) return null
+    return axisChoices.find((a) => a.id === axisId) ?? axisChoices[0]!
+  }, [secondOn, axisChoices, axisId])
 
   const toggle = useCallback((id: string) => {
     setSelected((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]))
@@ -136,7 +138,7 @@ export function Home() {
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', padding: '14px 0 4px' }}>
         {QUESTIONS.map((q, i) => (
           <button key={q.id} className="pill" aria-pressed={i === qi}
-            onClick={() => { setQi(i); setSecondOn(false) }}>
+            onClick={() => { setQi(i); setSecondOn(false); setAxisId(null) }}>
             {q.q}
           </button>
         ))}
@@ -154,12 +156,19 @@ export function Home() {
           </button>
         )}
 
+        {/* The x ruler: its two ends, its direction, and — once a second axis
+            makes "which one is this?" a real question — what it measures.
+            Naming it here rather than under the ticks keeps the field's height
+            identical in both states, so the morph moves dots and nothing else. */}
         <div style={{
           display: 'flex', justifyContent: 'space-between', fontSize: 11.5,
           color: 'var(--ink-2)', padding: '4px 2px',
         }}>
           <span>{question.axisL}</span>
-          <span style={{ color: 'var(--accent)', fontWeight: 550 }}>{question.dir}</span>
+          <span data-x-axis-label="">
+            <span style={{ color: 'var(--accent)', fontWeight: 550 }}>{question.dir}</span>
+            {secondAxis && <> · {question.xLabel}</>}
+          </span>
           <span>{question.axisR}</span>
         </div>
 
@@ -176,10 +185,17 @@ export function Home() {
         {/* scorecard — your picks, on this question */}
         {selected.length > 0 && (
           <div style={{
-            position: 'absolute', left: 14, top: 40, width: 214, zIndex: 12,
+            // The card overlays the field's quiet corner. In scatter that corner
+            // belongs to the y axis, so it steps clear of the title and the tick
+            // values rather than sitting on top of the ruler it is read against.
+            position: 'absolute',
+            left: secondAxis ? 70 : 14,
+            top: secondAxis ? 58 : 40,
+            width: 214, zIndex: 12,
             background: 'var(--surface)', border: '1px solid var(--line)',
             borderRadius: 'var(--radius-lg)', padding: '12px 14px',
             fontSize: 'var(--text-2xs)', boxShadow: 'var(--shadow-md)',
+            transition: 'left var(--dur-slow) var(--ease-out), top var(--dur-slow) var(--ease-out)',
           }}>
             <h2 style={{
               fontSize: 11, color: 'var(--ink-3)', fontWeight: 500, marginBottom: 6,
@@ -214,15 +230,32 @@ export function Home() {
       }}>
         <span>Every dot wears its country's flag — hover for names, tap to compare.</span>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-          {question.secondAxis && (
+          {/* No approved partner, no toggle — which is why the PR/citizenship
+              bars never show one. */}
+          {axisChoices.length > 0 && (
             <button className="pill" aria-pressed={secondOn} onClick={() => setSecondOn((v) => !v)}>
-              {secondOn ? `↕ ${secondAxis?.label ?? ''} on` : '+ second axis'}
+              {secondOn ? '↕ second axis on' : '+ second axis'}
             </button>
           )}
-          {secondOn && secondAxis?.seasonSwitch && (
-            <button className="pill" onClick={() => setSeason((s) => (s === 'winter' ? 'summer' : 'winter'))}>
-              {season === 'winter' ? '❄ winter' : '☀ summer'}
-            </button>
+          {/* The pairing, named. A caret only where a choice actually exists. */}
+          {secondOn && secondAxis && (
+            axisChoices.length > 1 ? (
+              <span className="axis-chip-wrap">
+                <select
+                  className="axis-chip"
+                  aria-label="Second axis metric"
+                  value={secondAxis.id}
+                  onChange={(e) => setAxisId(e.target.value)}
+                >
+                  {axisChoices.map((a) => (
+                    <option key={a.id} value={a.id}>vs {a.label}</option>
+                  ))}
+                </select>
+                <span aria-hidden="true">▾</span>
+              </span>
+            ) : (
+              <span className="axis-chip">vs {secondAxis.label}</span>
+            )
           )}
           <button className="pill" aria-pressed={tableOpen} onClick={() => setTableOpen((v) => !v)}>
             ⇄ table
@@ -231,7 +264,8 @@ export function Home() {
       </div>
       {secondOn && secondAxis && (
         <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6 }}>
-          {secondAxis.hint}. Cities missing either value sit in the gutter rather than at zero.
+          Height is {secondAxis.axisLabel} — {secondAxis.hint}. Cities missing either value sit in
+          the gutter rather than at zero.
         </p>
       )}
 

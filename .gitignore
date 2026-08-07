@@ -30,6 +30,10 @@ Thumbs.db
 npm-debug.log*
 logs/
 
+# work-order scratch: run status markers and the prompt files that drive them
+.status/
+prompts/
+
 # ---------------------------------------------------------------------------
 # Raw download caches.
 #
@@ -59,6 +63,9 @@ design-mockup.html
 design-mockup-v2.html
 design-mockup-pages.html
 structure-samples.html
+REPORT-P1.md
+REPORT-P2.md
+REPORT-P3.md
 
 # local tooling config
 .claude/

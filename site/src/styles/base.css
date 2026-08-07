@@ -169,13 +169,19 @@ a { color: var(--ink-2); }
 
 .swarm-dot {
   position: absolute;
-  transform: translate(-50%, -50%);
+  /* Every dot is placed from the field's top-left corner by its own transform,
+     which is what lets the swarm→scatter morph animate one compositor property
+     instead of two layout ones. The component supplies
+     `translate(Xpx, Ypx) translate(-50%, -50%)`; the second half centres the
+     mark on that point. */
+  left: 0;
+  top: 0;
   text-align: center;
   /* The flag reads at 17px, but a 17px tap target fails WCAG 2.5.8 and is
      genuinely hard to hit on a phone — which is most of this audience. Padding
      grows the hit area to 25px without moving the mark: the dot is centred by
-     transform, so the extra space is symmetrical and the layout maths (which
-     works in left/top percentages) is untouched. */
+     transform, so the extra space is symmetrical and the layout maths is
+     untouched. */
   min-width: 25px;
   min-height: 25px;
   padding: 4px;
@@ -185,9 +191,7 @@ a { color: var(--ink-2); }
   justify-content: center;
   background: none;
   border: none;
-  transition:
-    left var(--dur-swarm) var(--ease-in-out),
-    top var(--dur-swarm) var(--ease-in-out);
+  transition: transform var(--dur-swarm) var(--ease-in-out);
 }
 
 .swarm-mark {
@@ -236,9 +240,46 @@ a { color: var(--ink-2); }
 }
 .swarm-dot[data-sel] small { color: var(--sc); font-weight: 600; }
 
-/* Cities with no value for this question: hollow, dashed, parked in the gutter. */
+/* Cities with no value for this question: hollow, dashed, parked in the gutter.
+   The gutter stacks them in normal flow, so they carry no placement transform
+   and must not inherit the field's centring one. */
+.swarm-null { transform: none; }
 .swarm-null .swarm-mark { opacity: 0.45; filter: grayscale(1); }
 .swarm-null small { font-size: 9px; }
+
+/* The preset chip: which approved partner metric the second axis is showing.
+   Same shape as .chip so it reads as a label, with a caret only where there is
+   genuinely something to choose. */
+.axis-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: inherit;
+  font-size: var(--text-2xs);
+  line-height: var(--leading-snug);
+  padding: 5px 12px;
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+
+select.axis-chip {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 26px;
+  cursor: pointer;
+}
+
+.axis-chip-wrap { position: relative; display: inline-flex; }
+.axis-chip-wrap > span[aria-hidden] {
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 9px;
+  color: var(--accent);
+}
 
 /* view transitions between routes; reduced-motion turns them off via tokens */
 @media (prefers-reduced-motion: no-preference) {
