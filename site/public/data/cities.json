@@ -148,7 +148,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/sydney-aus"
-   }
+   },
+   "lat": -33.8678,
+   "lon": 151.2073
   },
   {
    "id": "melbourne",
@@ -298,7 +300,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/melbourne-aus"
-   }
+   },
+   "lat": -37.814,
+   "lon": 144.9633
   },
   {
    "id": "brisbane",
@@ -446,7 +450,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/brisbane-aus"
-   }
+   },
+   "lat": -27.4679,
+   "lon": 153.0281
   },
   {
    "id": "perth",
@@ -496,7 +502,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/perth-aus"
-   }
+   },
+   "lat": -31.9522,
+   "lon": 115.8614
   },
   {
    "id": "adelaide",
@@ -548,7 +556,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/adelaide-aus"
-   }
+   },
+   "lat": -34.9287,
+   "lon": 138.5986
   },
   {
    "id": "gold-coast",
@@ -698,7 +708,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/gold-coast-aus"
-   }
+   },
+   "lat": -28.0003,
+   "lon": 153.4309
   },
   {
    "id": "hobart",
@@ -847,7 +859,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/hobart-aus"
-   }
+   },
+   "lat": -42.8794,
+   "lon": 147.3294
   },
   {
    "id": "canberra",
@@ -997,7 +1011,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/canberra-aus"
-   }
+   },
+   "lat": -35.2835,
+   "lon": 149.1281
   },
   {
    "id": "dubai",
@@ -1049,7 +1065,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/dubai-are"
-   }
+   },
+   "lat": 25.0772,
+   "lon": 55.3093
   },
   {
    "id": "abu-dhabi",
@@ -1199,7 +1217,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/abu-dhabi-are"
-   }
+   },
+   "lat": 24.4512,
+   "lon": 54.397
   },
   {
    "id": "doha",
@@ -1252,7 +1272,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/doha-qat"
-   }
+   },
+   "lat": 25.2855,
+   "lon": 51.531
   },
   {
    "id": "new_york",
@@ -1404,7 +1426,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/new-york-city-usa"
-   }
+   },
+   "lat": 40.7143,
+   "lon": -74.006
   },
   {
    "id": "boston",
@@ -1556,7 +1580,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/boston-usa"
-   }
+   },
+   "lat": 42.3584,
+   "lon": -71.0598
   },
   {
    "id": "chicago",
@@ -1708,7 +1734,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/chicago-usa"
-   }
+   },
+   "lat": 41.85,
+   "lon": -87.65
   },
   {
    "id": "atlanta",
@@ -1860,7 +1888,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/atlanta-usa"
-   }
+   },
+   "lat": 33.749,
+   "lon": -84.388
   },
   {
    "id": "raleigh",
@@ -2012,7 +2042,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/raleigh-usa"
-   }
+   },
+   "lat": 35.7721,
+   "lon": -78.6386
   },
   {
    "id": "dallas",
@@ -2156,7 +2188,9 @@
     "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 32.7831,
+   "lon": -96.8067
   },
   {
    "id": "houston",
@@ -2201,7 +2235,9 @@
     "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 29.7633,
+   "lon": -95.3633
   },
   {
    "id": "san_antonio",
@@ -2254,7 +2290,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/san-antonio-usa"
-   }
+   },
+   "lat": 29.4241,
+   "lon": -98.4936
   },
   {
    "id": "miami",
@@ -2307,7 +2345,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/miami-usa"
-   }
+   },
+   "lat": 25.7743,
+   "lon": -80.1937
   },
   {
    "id": "tampa",
@@ -2456,7 +2496,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/tampa-usa"
-   }
+   },
+   "lat": 27.9475,
+   "lon": -82.4584
   },
   {
    "id": "orlando",
@@ -2605,7 +2647,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/orlando-usa"
-   }
+   },
+   "lat": 28.5383,
+   "lon": -81.3792
   },
   {
    "id": "nashville",
@@ -2749,7 +2793,9 @@
     "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 36.1659,
+   "lon": -86.7844
   },
   {
    "id": "charlotte",
@@ -2890,7 +2936,9 @@
     "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 35.2271,
+   "lon": -80.8431
   },
   {
    "id": "washington_dc",
@@ -3042,7 +3090,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/washington-usa"
-   }
+   },
+   "lat": 38.8951,
+   "lon": -77.0364
   },
   {
    "id": "philadelphia",
@@ -3186,7 +3236,9 @@
     "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 39.9524,
+   "lon": -75.1636
   },
   {
    "id": "sf_bay_area",
@@ -3336,7 +3388,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/san-francisco-usa"
-   }
+   },
+   "lat": 37.7749,
+   "lon": -122.4194
   },
   {
    "id": "seattle",
@@ -3487,7 +3541,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/seattle-usa"
-   }
+   },
+   "lat": 47.6062,
+   "lon": -122.3321
   },
   {
    "id": "austin",
@@ -3531,7 +3587,9 @@
     "unavailable_reason": "These slugs returned a different page layout: a median with no 25th/75th percentile and no 'last updated' date, and the value was implausible against every other source (Austin $100,000 against a market mid of $131,000). Treated as an unreliable parse and NOT written into the dataset.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 30.2672,
+   "lon": -97.7431
   },
   {
    "id": "denver",
@@ -3583,7 +3641,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/denver-usa"
-   }
+   },
+   "lat": 39.7392,
+   "lon": -104.9847
   },
   {
    "id": "los_angeles",
@@ -3634,7 +3694,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/los-angeles-usa"
-   }
+   },
+   "lat": 34.0522,
+   "lon": -118.2437
   },
   {
    "id": "san_diego",
@@ -3685,7 +3747,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/san-diego-usa"
-   }
+   },
+   "lat": 32.7157,
+   "lon": -117.1647
   },
   {
    "id": "sacramento",
@@ -3736,7 +3800,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/sacramento-usa"
-   }
+   },
+   "lat": 38.5816,
+   "lon": -121.4944
   },
   {
    "id": "portland",
@@ -3779,7 +3845,9 @@
     "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 45.5234,
+   "lon": -122.6762
   },
   {
    "id": "phoenix",
@@ -3830,7 +3898,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/phoenix-usa"
-   }
+   },
+   "lat": 33.4484,
+   "lon": -112.074
   },
   {
    "id": "salt_lake_city",
@@ -3881,7 +3951,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/salt-lake-city-usa"
-   }
+   },
+   "lat": 40.7608,
+   "lon": -111.8911
   },
   {
    "id": "las_vegas",
@@ -3923,7 +3995,9 @@
     "unavailable_reason": "No /t/software-engineer/locations/<slug> route resolved after trying city, metro-area, state-suffixed and 'greater-' variants; these routes are absent from levels.fyi's public sitemaps. Recorded as missing rather than substituted.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 36.175,
+   "lon": -115.1372
   },
   {
    "id": "pittsburgh",
@@ -3973,7 +4047,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/pittsburgh-usa"
-   }
+   },
+   "lat": 40.4406,
+   "lon": -79.9959
   },
   {
    "id": "minneapolis",
@@ -4015,7 +4091,9 @@
     "unavailable_reason": "These slugs returned a different page layout: a median with no 25th/75th percentile and no 'last updated' date, and the value was implausible against every other source (Austin $100,000 against a market mid of $131,000). Treated as an unreliable parse and NOT written into the dataset.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 44.98,
+   "lon": -93.2638
   },
   {
    "id": "columbus",
@@ -4057,7 +4135,9 @@
     "unavailable_reason": "These slugs returned a different page layout: a median with no 25th/75th percentile and no 'last updated' date, and the value was implausible against every other source (Austin $100,000 against a market mid of $131,000). Treated as an unreliable parse and NOT written into the dataset.",
     "source": "https://www.levels.fyi/t/software-engineer/locations/",
     "confidence": "crowd"
-   }
+   },
+   "lat": 39.9612,
+   "lon": -82.9988
   },
   {
    "id": "detroit",
@@ -4107,7 +4187,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/detroit-usa"
-   }
+   },
+   "lat": 42.3314,
+   "lon": -83.0457
   },
   {
    "id": "toronto",
@@ -4156,7 +4238,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/toronto-can"
-   }
+   },
+   "lat": 43.7064,
+   "lon": -79.3986
   },
   {
    "id": "vancouver",
@@ -4205,7 +4289,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/vancouver-can"
-   }
+   },
+   "lat": 49.6506,
+   "lon": -125.4494
   },
   {
    "id": "montreal",
@@ -4254,7 +4340,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/montreal-can"
-   }
+   },
+   "lat": 45.5088,
+   "lon": -73.5878
   },
   {
    "id": "ottawa",
@@ -4303,7 +4391,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/ottawa-can"
-   }
+   },
+   "lat": 45.4112,
+   "lon": -75.6981
   },
   {
    "id": "calgary",
@@ -4352,7 +4442,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/calgary-can"
-   }
+   },
+   "lat": 51.0501,
+   "lon": -114.0853
   },
   {
    "id": "halifax",
@@ -4401,7 +4493,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/halifax-can"
-   }
+   },
+   "lat": 44.6427,
+   "lon": -63.5769
   },
   {
    "id": "london",
@@ -4450,7 +4544,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/london-gbr"
-   }
+   },
+   "lat": 51.5085,
+   "lon": -0.1257
   },
   {
    "id": "manchester",
@@ -4499,7 +4595,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/manchester-gbr"
-   }
+   },
+   "lat": 53.4809,
+   "lon": -2.2374
   },
   {
    "id": "edinburgh",
@@ -4548,7 +4646,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/edinburgh-gbr"
-   }
+   },
+   "lat": 55.9521,
+   "lon": -3.1965
   },
   {
    "id": "dublin",
@@ -4597,7 +4697,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/dublin-irl"
-   }
+   },
+   "lat": 53.3331,
+   "lon": -6.2489
   },
   {
    "id": "cork",
@@ -4646,7 +4748,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/cork-irl"
-   }
+   },
+   "lat": 51.898,
+   "lon": -8.4706
   },
   {
    "id": "stockholm",
@@ -4695,7 +4799,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/stockholm-swe"
-   }
+   },
+   "lat": 59.3294,
+   "lon": 18.0687
   },
   {
    "id": "gothenburg",
@@ -4744,7 +4850,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/gothenburg-swe"
-   }
+   },
+   "lat": 57.7072,
+   "lon": 11.9668
   },
   {
    "id": "copenhagen",
@@ -4793,7 +4901,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/copenhagen-dnk"
-   }
+   },
+   "lat": 55.6759,
+   "lon": 12.5655
   },
   {
    "id": "aarhus",
@@ -4844,7 +4954,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/aarhus-dnk"
-   }
+   },
+   "lat": 56.1567,
+   "lon": 10.2108
   },
   {
    "id": "oslo",
@@ -4893,7 +5005,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/oslo-nor"
-   }
+   },
+   "lat": 59.9127,
+   "lon": 10.7461
   },
   {
    "id": "bergen",
@@ -4942,7 +5056,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/bergen-nor"
-   }
+   },
+   "lat": 60.393,
+   "lon": 5.3242
   },
   {
    "id": "helsinki",
@@ -4991,7 +5107,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/helsinki-fin"
-   }
+   },
+   "lat": 60.1695,
+   "lon": 24.9354
   },
   {
    "id": "tampere",
@@ -5040,7 +5158,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/tampere-fin"
-   }
+   },
+   "lat": 61.4991,
+   "lon": 23.7871
   },
   {
    "id": "berlin",
@@ -5093,7 +5213,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/berlin-deu"
-   }
+   },
+   "lat": 52.5244,
+   "lon": 13.4105
   },
   {
    "id": "munich",
@@ -5147,7 +5269,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/munich-deu"
-   }
+   },
+   "lat": 48.1374,
+   "lon": 11.5755
   },
   {
    "id": "hamburg",
@@ -5202,7 +5326,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/hamburg-deu"
-   }
+   },
+   "lat": 53.5507,
+   "lon": 9.993
   },
   {
    "id": "frankfurt",
@@ -5257,7 +5383,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/frankfurt-deu"
-   }
+   },
+   "lat": 50.1155,
+   "lon": 8.6842
   },
   {
    "id": "stuttgart",
@@ -5311,7 +5439,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/stuttgart-deu"
-   }
+   },
+   "lat": 48.7823,
+   "lon": 9.177
   },
   {
    "id": "amsterdam",
@@ -5365,7 +5495,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/amsterdam-nld"
-   }
+   },
+   "lat": 52.374,
+   "lon": 4.8897
   },
   {
    "id": "eindhoven",
@@ -5420,7 +5552,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/eindhoven-nld"
-   }
+   },
+   "lat": 51.4408,
+   "lon": 5.4778
   },
   {
    "id": "milan",
@@ -5476,7 +5610,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/milano-ita"
-   }
+   },
+   "lat": 45.4643,
+   "lon": 9.1895
   },
   {
    "id": "rome",
@@ -5530,7 +5666,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/rome-ita"
-   }
+   },
+   "lat": 41.8919,
+   "lon": 12.5113
   },
   {
    "id": "turin",
@@ -5583,7 +5721,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/turin-ita"
-   }
+   },
+   "lat": 45.0705,
+   "lon": 7.6868
   },
   {
    "id": "madrid",
@@ -5638,7 +5778,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/madrid-esp"
-   }
+   },
+   "lat": 40.4165,
+   "lon": -3.7026
   },
   {
    "id": "barcelona",
@@ -5692,7 +5834,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/barcelona-esp"
-   }
+   },
+   "lat": 41.3888,
+   "lon": 2.159
   },
   {
    "id": "valencia",
@@ -5746,7 +5890,9 @@
     "basis": "total compensation (base + stock + bonus)",
     "confidence": "crowd",
     "source": "https://www.levels.fyi/t/software-engineer/locations/valencia-esp"
-   }
+   },
+   "lat": 39.4739,
+   "lon": -0.3797
   }
  ],
  "as_of": "2026-08",

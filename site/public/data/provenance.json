@@ -48,6 +48,27 @@
       "notes": "Snapshot only — the API exposes no OEWS history. Stated on the page, not hidden."
     },
     {
+      "source_id": "city_coordinates",
+      "name": "Open-Meteo geocoding (GeoNames) — city coordinates",
+      "urls": [
+        "https://geocoding-api.open-meteo.com/v1/search?name=<city>&count=10&language=en"
+      ],
+      "fetched_at": "2026-08-10T07:48:14+00:00",
+      "license": "Open-Meteo's geocoding API serves GeoNames data — GeoNames is CC BY 4.0, Open-Meteo's own API terms are CC BY 4.0. Cite: GeoNames / Open-Meteo.",
+      "redistribution": "lat/lon per city committed in data/cities.json",
+      "transforms": [
+        "Geocoded each of the 73 cities by name, accepting only hits whose country code matches the city's own and preferring the largest by population — the same rule, and the same cached responses, as the climate-normals step, so the two can never disagree about where a city is.",
+        "Kept latitude/longitude as decimal degrees (WGS 84), rounded to 4 dp. GeoNames populated-place point (the settlement's principal point, roughly the city centre) — not a metro-area centroid.",
+        "Recorded the matched place name in geocoded_as, so the two region-named records (sf_bay_area -> San Francisco, washington_dc -> Washington) show their substitution.",
+        "Added lat and lon to each record in data/cities.json. No existing field was read, moved or modified; the step refuses to move a point it did not itself add."
+      ],
+      "output": "data/processed/city_coordinates.json",
+      "status": "ok",
+      "rows": 73,
+      "coverage": "73/73 cities",
+      "notes": "Feeds the Compare map only. Every figure on the site remains reachable without it — the country list under the map is the canonical browser."
+    },
+    {
       "source_id": "climate_normals",
       "name": "Open-Meteo ERA5 archive — 1991-2020 monthly climate normals",
       "urls": [
@@ -245,6 +266,25 @@
       "rows": 41,
       "coverage": "9/15 countries, 2020-2024",
       "notes": "Measures policy, not experience — stated explicitly in the UI."
+    },
+    {
+      "source_id": "natural_earth_land",
+      "name": "Natural Earth 110m physical land — map outline",
+      "urls": [
+        "https://www.naturalearthdata.com/downloads/110m-physical-vectors/110m-land/"
+      ],
+      "fetched_at": "2026-08-10T07:48:14+00:00",
+      "license": "Public domain. Natural Earth asks for attribution but imposes no restriction: \"Made with Natural Earth.\"",
+      "redistribution": "derived outline committed in site/src/data/land.ts",
+      "transforms": [
+        "Natural Earth 110m physical land, projected to the Compare map's Mercator box (lon -128..157, lat -45..62, 980x440 units) and decimated to ~14 KB of SVG path data — small enough to ship inline with no request and no map library.",
+        "Committed as a derived asset rather than re-derived at build time: it is fixed geometry that never changes between runs, and shipping it inline is what keeps the map free of a runtime dependency."
+      ],
+      "output": "site/src/data/land.ts",
+      "status": "ok",
+      "rows": null,
+      "coverage": "world coastline within the map's crop",
+      "notes": "Decorative context for the dots. It carries no data: every value on the site is read from the list, never from the map."
     },
     {
       "source_id": "numbeo_history",
@@ -569,5 +609,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-05T00:29:41+00:00"
+  "updated_at": "2026-08-10T07:48:14+00:00"
 }

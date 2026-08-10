@@ -62,10 +62,14 @@ claude-code-prompt.md
 design-mockup.html
 design-mockup-v2.html
 design-mockup-pages.html
+design-mockup-compare.html
+design-mockup-explore.html
 structure-samples.html
 REPORT-P1.md
 REPORT-P2.md
 REPORT-P3.md
+REPORT-P4.md
+REPORT-P5.md
 
 # local tooling config
 .claude/

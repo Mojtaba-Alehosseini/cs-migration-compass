@@ -178,9 +178,19 @@ def check_processed() -> None:
             if not doc.get("data"):
                 warn(f"processed/{path.name}: status ok but data is empty")
 
+    # Most sources land in data/processed/. A few do not — a source whose output
+    # is a committed derived asset elsewhere in the repo still needs provenance
+    # and a citation line, so check what the entry actually claims rather than
+    # assuming where it claims it.
     orphans = set(entries) - {p.stem for p in files}
     for o in orphans:
-        warn(f"provenance[{o}] has no processed file")
+        output = (entries[o].get("output") or "").replace("\\", "/")
+        if not output:
+            warn(f"provenance[{o}] records no output at all")
+        elif output.startswith("data/processed/"):
+            warn(f"provenance[{o}] claims {output} but no such file exists")
+        elif not (ROOT / output).exists():
+            err(f"provenance[{o}] claims {output}, which is not in the repo")
     log(f"  {len(files)} datasets — {ok} with data, {blocked} recorded as blocked/unavailable")
 
 

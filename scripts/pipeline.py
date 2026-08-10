@@ -24,6 +24,7 @@ from _common import ROOT, load_provenance, log  # noqa: E402
 # (module, human label). Order matters: world_bank must precede
 # oecd_economic_outlook, which derives its actual/projection cutoff from it.
 SOURCES: list[tuple[str, str]] = [
+    ("src_city_coordinates", "City coordinates (GeoNames via Open-Meteo)"),
     ("src_world_bank", "World Bank economy history"),
     ("src_eurostat_ict", "Eurostat ICT specialists"),
     ("src_eurostat_employment", "Eurostat total employment"),

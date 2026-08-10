@@ -4,9 +4,9 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-05T00:29:41+00:00**
+Last pipeline run: **2026-08-10T07:48:14+00:00**
 
-23 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+25 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
 Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
 
@@ -18,6 +18,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | --- | --- | --- |
 | BIS — Selected residential property prices (quarterly) | BIS statistics are free to use with attribution for non-commercial purposes. Cite: Bank for International Settlements, Selected residential property prices. | raw committed |
 | BLS Occupational Employment and Wage Statistics (OEWS) — software developers | US federal government work — public domain. Cite: U.S. Bureau of Labor Statistics, OEWS. | raw committed |
+| Open-Meteo geocoding (GeoNames) — city coordinates | Open-Meteo's geocoding API serves GeoNames data — GeoNames is CC BY 4.0, Open-Meteo's own API terms are CC BY 4.0. Cite: GeoNames / Open-Meteo. | lat/lon per city committed in data/cities.json |
 | EF English Proficiency Index 2025 | EF publishes the EPI report freely; cite EF Education First, EF English Proficiency Index 2025. | raw committed |
 | Eurostat — Employed ICT specialists (isoc_sks_itspt) | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, isoc_sks_itspt. | raw committed |
 | Eurostat — Population and employment, national accounts (nama_10_pe) | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, nama_10_pe. | raw committed |
@@ -25,6 +26,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | Indeed Hiring Lab — Job Postings Index (US metros) | Indeed Hiring Lab publishes this tracker publicly on GitHub for free use with attribution. Cite: Indeed Hiring Lab Job Postings Index. | monthly aggregate committed; the 61 MB daily raw file is cached locally but not committed |
 | levels.fyi — Software Engineer total compensation by metro | levels.fyi publishes these metro pages publicly and its robots.txt explicitly invites agent access. Data is crowd-sourced and remains theirs; we store derived per-city figures and cite levels.fyi on every one. No bulk redistribution. | derived per-city figures committed; cited on every figure |
 | MIPEX — Migrant Integration Policy Index (EU policy indicators 2020-2024) | MIPEX is published under CC BY-NC-SA. Cite: Solano & Huddleston, Migrant Integration Policy Index. | raw committed |
+| Natural Earth 110m physical land — map outline | Public domain. Natural Earth asks for attribution but imposes no restriction: "Made with Natural Earth." | derived outline committed in site/src/data/land.ts |
 | Numbeo — yearly country indices and per-city cost-of-living history | Numbeo data is crowd-sourced and its terms restrict bulk redistribution. We commit the derived per-year/per-city aggregates and the fetch script, and cite Numbeo on every figure. | derived aggregates committed (Numbeo terms restrict bulk redistribution) |
 | OECD Economic Outlook 119 — projections | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Economic Outlook 119. | raw committed |
 | OECD Data Explorer (SDMX) — house prices, wages, hours, tax wedge | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Data Explorer, dataflow IDs listed per block. | raw committed |
@@ -100,6 +102,29 @@ Human page https://www.bis.org/statistics/pp.htm 302-redirects to a JS-heavy das
 1. Series returning 'No Data Available' are counted and omitted — never back-filled or estimated.
 
 > Snapshot only — the API exposes no OEWS history. Stated on the page, not hidden.
+
+### Open-Meteo geocoding (GeoNames) — city coordinates
+
+- **Status** — live
+- **Coverage** — 73/73 cities
+- **Rows processed** — 73
+- **Fetched** — 2026-08-10T07:48:14+00:00
+- **Licence** — Open-Meteo's geocoding API serves GeoNames data — GeoNames is CC BY 4.0, Open-Meteo's own API terms are CC BY 4.0. Cite: GeoNames / Open-Meteo.
+- **Output** — `data/processed/city_coordinates.json`
+- **Fetch script** — `scripts/src_city_coordinates.py`
+
+**URLs**
+
+- <https://geocoding-api.open-meteo.com/v1/search?name=<city>&count=10&language=en>
+
+**What we do to it**
+
+1. Geocoded each of the 73 cities by name, accepting only hits whose country code matches the city's own and preferring the largest by population — the same rule, and the same cached responses, as the climate-normals step, so the two can never disagree about where a city is.
+1. Kept latitude/longitude as decimal degrees (WGS 84), rounded to 4 dp. GeoNames populated-place point (the settlement's principal point, roughly the city centre) — not a metro-area centroid.
+1. Recorded the matched place name in geocoded_as, so the two region-named records (sf_bay_area -> San Francisco, washington_dc -> Washington) show their substitution.
+1. Added lat and lon to each record in data/cities.json. No existing field was read, moved or modified; the step refuses to move a point it did not itself add.
+
+> Feeds the Compare map only. Every figure on the site remains reachable without it — the country list under the map is the canonical browser.
 
 ### EF English Proficiency Index 2025
 
@@ -311,6 +336,26 @@ Task's guessed https://github.com/hiring-lab/data 301-redirects to the real, cur
 mipex.eu/download redirects to /history (an old page); the current data lives behind /download-pdf (an Angular page whose server-rendered HTML still exposes the real static file links). Two working xlsx files confirmed via HEAD: (1) this download_url [949KB, 200] and (2) https://mipex.eu/sites/default/files/downloads/pdf/Policy%20Indicators%20Scores%20(2007-2019)%20%E2%80%93%20core%20set%20of%20indicators.xlsx [3.16MB, 200]. Full narrative report PDF also confirmed: https://mipex.eu/sites/default/files/downloads/files/mipex_2025_full.pdf [12.6MB, 200]. URLs contain spaces and an en-dash character - must be percent-encoded exactly as shown or the request 404s.
 
 </details>
+
+### Natural Earth 110m physical land — map outline
+
+- **Status** — live
+- **Coverage** — world coastline within the map's crop
+- **Fetched** — 2026-08-10T07:48:14+00:00
+- **Licence** — Public domain. Natural Earth asks for attribution but imposes no restriction: "Made with Natural Earth."
+- **Output** — `site/src/data/land.ts`
+- **Fetch script** — see `scripts/`
+
+**URLs**
+
+- <https://www.naturalearthdata.com/downloads/110m-physical-vectors/110m-land/>
+
+**What we do to it**
+
+1. Natural Earth 110m physical land, projected to the Compare map's Mercator box (lon -128..157, lat -45..62, 980x440 units) and decimated to ~14 KB of SVG path data — small enough to ship inline with no request and no map library.
+1. Committed as a derived asset rather than re-derived at build time: it is fixed geometry that never changes between runs, and shipping it inline is what keeps the map free of a runtime dependency.
+
+> Decorative context for the dots. It carries no data: every value on the site is read from the list, never from the map.
 
 ### Numbeo — yearly country indices and per-city cost-of-living history
 
