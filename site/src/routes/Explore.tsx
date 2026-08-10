@@ -1,11 +1,15 @@
-/* Explore — per-theme deep dives.
+/* Explore — seven themes, one chart language.
  *
- * Two things here carry the most weight:
- *   1. History charts overlay a REAL institutional forecast (solid, with an
- *      attribution chip) alongside our naive extrapolation (hatched band,
- *      labelled "not a forecast"). They are never averaged.
- *   2. The scatter builder lets any metric meet any other. Presets exist as
- *      examples, never as a default lens the site pushes. */
+ * Every theme opens with three numbers computed from its own data, then the
+ * charts that earn them. Each chart carries one deliberate control, a title
+ * that states a finding, a sub-line that explains the method, and a footer with
+ * its confidence, its caveat and its CSV.
+ *
+ * Where a dataset does not exist, is blocked, or does not mean what a curve
+ * would imply, the panel says so in words. There is no blank panel anywhere on
+ * this page: a visitor must always be able to tell a deliberate absence from a
+ * broken pipeline.
+ */
 
 import { Suspense, lazy } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -13,11 +17,30 @@ import { THEMES, type ThemeKey } from '../data/registry'
 import { WeightsTool } from '../components/WeightsTool'
 import { ClimateMatcher } from '../components/ClimateMatcher'
 import { DeferUntilVisible } from '../components/DeferUntilVisible'
+import { Hero, ChartSkeleton } from '../components/explore/Controls'
+import { useAsync } from '../components/explore/useAsync'
+import { useData } from '../data/store'
+import { loadMoney, loadJobs, loadHousing, loadPeople, loadLife } from '../data/explore'
+import { moneyHero, MoneyTheme } from '../components/explore/Money'
+import { visaHero, VisasTheme } from '../components/explore/Visas'
+import { jobsHero, JobsTheme } from '../components/explore/Jobs'
+import { housingHero, HousingTheme } from '../components/explore/Housing'
+import { peopleHero, PeopleTheme, lifeHero, LifeTheme } from '../components/explore/PeopleLife'
+import { weatherHero, WeatherTheme } from '../components/explore/Weather'
 
-const EconomyHistory = lazy(() =>
-  import('../components/ExploreCharts').then((m) => ({ default: m.EconomyHistory })))
 const ScatterBuilder = lazy(() =>
   import('../components/ExploreCharts').then((m) => ({ default: m.ScatterBuilder })))
+
+/** The one-line statement of what a theme is for. */
+const INTRO: Record<ThemeKey, string> = {
+  money: 'What you’d earn, what economies are doing, and where one institution honestly thinks they’re going.',
+  visa: 'Rules, not trends. Every figure is dated, because these change by decree.',
+  jobs: 'How many tech jobs exist — and whether anyone is posting new ones this month.',
+  housing: 'Half a century of house prices, and real city series where they truly exist.',
+  people: 'Who already moved, how policy treats them, and how full each country will be.',
+  life: 'Happiness and press freedom, measured yearly — and what we refuse to average.',
+  climate: 'Thirty-year averages. The question is February, not the mean.',
+}
 
 export function Explore() {
   const { theme } = useParams()
@@ -26,46 +49,92 @@ export function Explore() {
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
       <div className="kicker">Explore</div>
-      <h1 style={{ fontSize: 'var(--text-xl)', marginTop: 4 }}>
-        {THEMES.find((t) => t.key === active)?.label}
-      </h1>
-      <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', margin: '6px 0 14px' }}>
-        {THEMES.find((t) => t.key === active)?.blurb}
-      </p>
+      <h1 className="pg">{THEMES.find((t) => t.key === active)?.label}</h1>
+      <p className="oneline">{INTRO[active]}</p>
 
-      <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', marginBottom: 16 }}>
-        {THEMES.map((t) => (
-          <Link key={t.key} to={`/explore/${t.key}`} className="pill"
-            aria-current={t.key === active ? 'page' : undefined}
-            style={{
-              textDecoration: 'none',
-              background: t.key === active ? 'var(--ink-1)' : 'var(--surface)',
-              color: t.key === active ? 'var(--paper)' : 'var(--ink-2)',
-              borderColor: t.key === active ? 'var(--ink-1)' : 'var(--line)',
-            }}>
-            {t.label}
-          </Link>
-        ))}
+      {/* Remounting per theme is deliberate: the numbers count up on arrival,
+          which is how a theme announces what it is about. */}
+      <ThemeHero key={active} theme={active} />
+
+      <div className="themesbar">
+        <div className="wrap rail">
+          {THEMES.map((t) => (
+            <Link key={t.key} to={`/explore/${t.key}`} className="tchip"
+              aria-current={t.key === active ? 'page' : undefined}>
+              {t.label}
+            </Link>
+          ))}
+        </div>
       </div>
 
-      {/* Each panel mounts as it comes into reach. Rendering all three up front
-          cost ~580 ms of blocked main thread for charts below the fold. */}
-      {active === 'money' && (
-        <DeferUntilVisible minHeight={430} label="Income history and forecasts">
-          <Suspense fallback={null}><EconomyHistory /></Suspense>
-        </DeferUntilVisible>
-      )}
+      <section className="tsec">
+        <div className="egrid">
+          {active === 'money' && <MoneyTheme />}
+          {active === 'visa' && <VisasTheme />}
+          {active === 'jobs' && <JobsTheme />}
+          {active === 'housing' && <HousingTheme />}
+          {active === 'people' && <PeopleTheme />}
+          {active === 'life' && <LifeTheme />}
+          {active === 'climate' && <WeatherTheme />}
+        </div>
+      </section>
+
       {active === 'climate' && (
         <DeferUntilVisible minHeight={360} label="Climate matcher">
           <ClimateMatcher />
         </DeferUntilVisible>
       )}
+
+      {/* Both tools live on every theme, unchanged by this package. */}
       <DeferUntilVisible minHeight={520} label="Scatter builder">
-        <Suspense fallback={null}><ScatterBuilder /></Suspense>
+        <Suspense fallback={<ChartSkeleton height={520} />}><ScatterBuilder /></Suspense>
       </DeferUntilVisible>
       <DeferUntilVisible minHeight={200} label="Weights tool">
         <WeightsTool />
       </DeferUntilVisible>
     </div>
   )
+}
+
+/* Each theme's heroes come from its own data, so they load with it rather than
+   holding the page. A theme whose data is still arriving reserves their height
+   instead of collapsing. */
+function ThemeHero({ theme }: { theme: ThemeKey }) {
+  switch (theme) {
+    case 'money': return <AsyncHero load={loadMoney} k="money" to={moneyHero} />
+    case 'jobs': return <AsyncHero load={loadJobs} k="jobs" to={jobsHero} />
+    case 'housing': return <AsyncHero load={loadHousing} k="housing" to={housingHero} />
+    case 'people': return <AsyncHero load={loadPeople} k="people" to={peopleHero} />
+    case 'life': return <AsyncHero load={loadLife} k="life" to={lifeHero} />
+    case 'visa': return <CoreHero kind="visa" />
+    case 'climate': return <CoreHero kind="climate" />
+    default: return null
+  }
+}
+
+function AsyncHero<T>({ load, k, to }: { load: () => Promise<T>; k: string; to: (d: T) => ReturnType<typeof moneyHero> }) {
+  const { data, error } = useAsync(load, k)
+  if (error) return <div className="hero" aria-hidden="true" />
+  // Same three lines as a loaded card, so the numbers arriving change nothing
+  // about the page's shape.
+  if (!data) {
+    return (
+      <div className="hero" aria-busy="true">
+        {[0, 1, 2].map((i) => (
+          <div className="hstat" key={i}>
+            <div className="v tnum">&nbsp;</div>
+            <div className="l">&nbsp;</div>
+            <div className="s">&nbsp;</div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+  return <Hero stats={to(data)} />
+}
+
+/** Visas and Weather read core.json, which is already loaded — no fetch, no wait. */
+function CoreHero({ kind }: { kind: 'visa' | 'climate' }) {
+  const data = useData()
+  return <Hero stats={kind === 'visa' ? visaHero(data.countries) : weatherHero(data.cities)} />
 }

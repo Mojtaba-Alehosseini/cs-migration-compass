@@ -1,0 +1,296 @@
+/* Explore's data layer.
+ *
+ * One place where a processed dataset becomes the series a chart draws, so the
+ * shaping rules are stated once and can be checked against the files.
+ *
+ * The annualisation rules below are not interchangeable, and each was chosen by
+ * the source rather than by taste:
+ *
+ *   BIS, FHFA   quarterly index → the LAST quarter of each year. An index level
+ *               is a point in time; averaging four of them invents a quarter
+ *               that never happened.
+ *   Teranet, UK monthly price   → the MEAN of the year's months. These are
+ *               transaction prices, so the year's average is the real quantity.
+ *   UN WPP      every second year — 111 annual points per country is more
+ *               resolution than a 110-year line can show, and the file is large.
+ *
+ * Nothing here repairs, fills or smooths. A gap stays a gap.
+ */
+
+import { loadHistory } from './store'
+
+export type Pair = [number, number]
+
+const byYear = <T,>(rows: T[], year: (r: T) => number) => {
+  const m = new Map<number, T[]>()
+  for (const r of rows) {
+    const y = year(r)
+    const list = m.get(y)
+    if (list) list.push(r)
+    else m.set(y, [r])
+  }
+  return m
+}
+
+const lastPerYear = <T,>(rows: T[], year: (r: T) => number, value: (r: T) => number, dp = 1): Pair[] =>
+  [...byYear(rows, year).entries()]
+    .map(([y, rs]) => [y, round(value(rs[rs.length - 1]!), dp)] as Pair)
+    .sort((a, b) => a[0] - b[0])
+
+const meanPerYear = <T,>(rows: T[], year: (r: T) => number, value: (r: T) => number, dp = 1): Pair[] =>
+  [...byYear(rows, year).entries()]
+    .map(([y, rs]) => [y, round(rs.reduce((s, r) => s + value(r), 0) / rs.length, dp)] as Pair)
+    .sort((a, b) => a[0] - b[0])
+
+const round = (v: number, dp: number) => {
+  const f = 10 ** dp
+  return Math.round(v * f) / f
+}
+
+/* ---------------------------------------------------------------- money --- */
+
+export interface MoneyData {
+  /** GDP per person, nominal US$, by country. */
+  gdp: Record<string, Pair[]>
+  /** OECD projected REAL growth %, projection years only. */
+  eo: Record<string, Pair[]>
+  eoChip: string
+  /** p25 / median / p75 / n / thin, by country and experience band. */
+  so: Record<string, Record<'ng' | 'mid' | 'sr', [number, number, number, number, boolean] | null>>
+}
+
+type WBRow = { year: number; value: number }
+type EORow = { year: number; value: number; is_projection: boolean }
+
+export async function loadMoney(): Promise<MoneyData> {
+  const [wb, eo, so] = await Promise.all([
+    loadHistory<Record<string, Record<string, WBRow[]>>>('world_bank'),
+    loadHistory<Record<string, Record<string, EORow[]>>>('oecd_economic_outlook'),
+    loadHistory<{ by_country_experience: Record<string, Record<string, Record<string, {
+      median_usd: number | null; p25_usd: number | null; p75_usd: number | null
+      n: number; thin_sample: boolean
+    }>>> }>('stackoverflow_survey'),
+  ])
+
+  const gdp: Record<string, Pair[]> = {}
+  for (const [cc, block] of Object.entries(wb.data)) {
+    const rows = block.gdp_per_capita_usd ?? []
+    if (rows.length) gdp[cc] = rows.map((r) => [r.year, Math.round(r.value)] as Pair)
+  }
+
+  // Only the projected years. The OECD's own history is not redrawn here — the
+  // World Bank line already holds the past, and two histories of the same thing
+  // on one chart is exactly the blending the forecast grammar forbids.
+  const eoOut: Record<string, Pair[]> = {}
+  for (const [cc, block] of Object.entries(eo.data)) {
+    const rows = (block.real_gdp_growth_pct ?? []).filter((r) => r.is_projection)
+    if (rows.length) eoOut[cc] = rows.map((r) => [r.year, round(r.value, 2)] as Pair)
+  }
+
+  const soOut: MoneyData['so'] = {}
+  const BANDS = { ng: 'new_grad', mid: 'mid', sr: 'senior' } as const
+  for (const [cc, waves] of Object.entries(so.data.by_country_experience ?? {})) {
+    const wave = waves['2024']
+    if (!wave) continue
+    const entry = {} as MoneyData['so'][string]
+    for (const [short, long] of Object.entries(BANDS)) {
+      const b = wave[long]
+      entry[short as keyof typeof BANDS] = b && b.median_usd != null
+        ? [b.p25_usd ?? b.median_usd, b.median_usd, b.p75_usd ?? b.median_usd, b.n, b.thin_sample]
+        : null
+    }
+    soOut[cc] = entry
+  }
+
+  return {
+    gdp,
+    eo: eoOut,
+    eoChip: String(eo.meta.attribution_chip ?? 'OECD Economic Outlook'),
+    so: soOut,
+  }
+}
+
+/* ----------------------------------------------------------------- jobs --- */
+
+export interface JobsData {
+  /** ICT specialists as a share of employment. `EU27` is the benchmark. */
+  ict: Record<string, Pair[]>
+  /** Postings index, x = decimal year. */
+  indeed: Record<string, Pair[]>
+  /** How many metros the file holds, so the page can say what it is not drawing. */
+  metrosAvailable: number
+}
+
+/** The eight the design draws, and the order it draws them in — which is also
+ *  the order of the `--m-1…8` palette. */
+export const METROS = [
+  'austin', 'sf_bay_area', 'new_york', 'seattle', 'denver', 'atlanta', 'boston', 'chicago',
+] as const
+
+export const METRO_LABEL: Record<string, string> = {
+  austin: 'Austin', sf_bay_area: 'SF Bay', new_york: 'New York', seattle: 'Seattle',
+  denver: 'Denver', atlanta: 'Atlanta', boston: 'Boston', chicago: 'Chicago',
+}
+
+/** "2020-02" → 2020.083, so months plot on a continuous year axis. */
+export const monthToX = (s: string) => {
+  const [y, m] = s.split('-')
+  return Number(y) + (Number(m) - 1) / 12
+}
+
+export async function loadJobs(): Promise<JobsData> {
+  const [ict, ind] = await Promise.all([
+    loadHistory<{
+      countries: Record<string, Record<string, { year: number; value: number }[]>>
+      eu27_benchmark: Record<string, { year: number; value: number }[]>
+    }>('eurostat_ict_specialists'),
+    loadHistory<Record<string, { series: { month: string; index: number }[] }>>('indeed_hiring_lab_job_postings'),
+  ])
+
+  const out: Record<string, Pair[]> = {}
+  for (const [cc, block] of Object.entries(ict.data.countries ?? {})) {
+    const rows = block.ict_share_of_employment_pct ?? []
+    if (rows.length) out[cc] = rows.map((r) => [r.year, round(r.value, 1)] as Pair)
+  }
+  const eu = ict.data.eu27_benchmark?.ict_share_of_employment_pct ?? []
+  if (eu.length) out.EU27 = eu.map((r) => [r.year, round(r.value, 1)] as Pair)
+
+  const indeed: Record<string, Pair[]> = {}
+  for (const m of METROS) {
+    const rows = ind.data[m]?.series ?? []
+    if (rows.length) indeed[m] = rows.map((r) => [monthToX(r.month), round(r.index, 1)] as Pair)
+  }
+
+  return { ict: out, indeed, metrosAvailable: Object.keys(ind.data).length }
+}
+
+/* -------------------------------------------------------------- housing --- */
+
+export interface HousingData {
+  bis: Record<string, Pair[]>
+  fhfa: Record<'detroit' | 'sf_bay_area', Pair[]>
+  teranet: Record<'toronto' | 'vancouver', Pair[]>
+  london: Pair[]
+}
+
+export async function loadHousing(): Promise<HousingData> {
+  const [bis, fhfa, ter, uk] = await Promise.all([
+    loadHistory<Record<string, { real_index: { period: string; value: number }[] }>>('bis_property_prices'),
+    loadHistory<Record<string, { series: { year: number; quarter: number; index: number }[] }>>('fhfa_hpi_metro'),
+    loadHistory<{ cities: Record<string, { series: { date: string; index: number }[] }> }>('teranet_national_bank_hpi'),
+    loadHistory<Record<string, { series: { month: string; avg_price_gbp: number | null }[] }>>('uk_hpi'),
+  ])
+
+  const bisOut: Record<string, Pair[]> = {}
+  for (const [cc, block] of Object.entries(bis.data)) {
+    const rows = block.real_index ?? []
+    if (rows.length) bisOut[cc] = lastPerYear(rows, (r) => Number(r.period.slice(0, 4)), (r) => r.value)
+  }
+
+  const fhfaOut = {} as HousingData['fhfa']
+  for (const m of ['detroit', 'sf_bay_area'] as const) {
+    const rows = (fhfa.data[m]?.series ?? []).filter((r) => r.year >= 1990)
+    fhfaOut[m] = lastPerYear(rows, (r) => r.year, (r) => r.index)
+  }
+
+  const terOut = {} as HousingData['teranet']
+  for (const c of ['toronto', 'vancouver'] as const) {
+    const rows = ter.data.cities?.[c]?.series ?? []
+    terOut[c] = meanPerYear(rows, (r) => Number(r.date.slice(0, 4)), (r) => r.index)
+  }
+
+  const lonRows = (uk.data.london?.series ?? []).filter((r) => r.avg_price_gbp != null)
+  const london = meanPerYear(lonRows, (r) => Number(r.month.slice(0, 4)), (r) => r.avg_price_gbp!, 0)
+
+  return { bis: bisOut, fhfa: fhfaOut, teranet: terOut, london }
+}
+
+/* --------------------------------------------------------------- people --- */
+
+export interface PeopleData {
+  mipex: Record<string, Pair[]>
+  /** [year, millions, isProjection] */
+  wpp: Record<string, [number, number, boolean][]>
+}
+
+export async function loadPeople(): Promise<PeopleData> {
+  const [mip, wpp] = await Promise.all([
+    loadHistory<Record<string, { overall: { year: number; score: number }[] }>>('mipex'),
+    loadHistory<Record<string, { total_population: { year: number; value: number; is_projection: boolean }[] }>>('un_wpp'),
+  ])
+
+  const mipexOut: Record<string, Pair[]> = {}
+  for (const [cc, block] of Object.entries(mip.data)) {
+    const rows = block.overall ?? []
+    if (rows.length) mipexOut[cc] = rows.map((r) => [r.year, round(r.score, 2)] as Pair)
+  }
+
+  const wppOut: PeopleData['wpp'] = {}
+  for (const [cc, block] of Object.entries(wpp.data)) {
+    const rows = block.total_population ?? []
+    const sampled = rows.filter((_, i) => i % 2 === 0 || i === rows.length - 1)
+    if (sampled.length) {
+      wppOut[cc] = sampled.map((r) => [r.year, round(r.value / 1_000_000, 2), r.is_projection])
+    }
+  }
+
+  return { mipex: mipexOut, wpp: wppOut }
+}
+
+/* ----------------------------------------------------------------- life --- */
+
+export interface LifeData {
+  /** [year, score, rank] */
+  whr: Record<string, [number, number, number][]>
+  rsf: Record<string, Pair[]>
+  /** How many countries were ranked, per year — a rank without its denominator
+   *  is not a fact. */
+  whrRankedOf: Record<string, number>
+}
+
+export async function loadLife(): Promise<LifeData> {
+  const [whr, rsf] = await Promise.all([
+    loadHistory<{
+      countries: Record<string, { year: number; rank: number; score: number }[]>
+      ranked_countries_per_year: Record<string, number>
+    }>('world_happiness_report'),
+    loadHistory<Record<string, { year: number; score: number }[]>>('rsf_press_freedom'),
+  ])
+
+  const whrOut: LifeData['whr'] = {}
+  for (const [cc, rows] of Object.entries(whr.data.countries ?? {})) {
+    if (rows.length) whrOut[cc] = rows.map((r) => [r.year, r.score, r.rank])
+  }
+
+  const rsfOut: Record<string, Pair[]> = {}
+  for (const [cc, rows] of Object.entries(rsf.data)) {
+    if (rows.length) rsfOut[cc] = rows.map((r) => [r.year, round(r.score, 2)] as Pair)
+  }
+
+  return { whr: whrOut, rsf: rsfOut, whrRankedOf: whr.data.ranked_countries_per_year ?? {} }
+}
+
+/* ------------------------------------------------------------- naive ext --- */
+
+/** Our own extrapolation: the average slope of the last ten points, extended.
+ *  Deliberately dumb, drawn dashed, and labelled "not a forecast" wherever it
+ *  appears. It is never merged with an institution's projection. */
+export function naiveLine(pts: Pair[], to: number): Pair[] {
+  const s = [...pts].sort((a, b) => a[0] - b[0]).slice(-10)
+  const f = s[0]
+  const l = s[s.length - 1]
+  if (!f || !l || l[0] === f[0]) return []
+  const k = (l[1] - f[1]) / (l[0] - f[0])
+  const out: Pair[] = [[l[0], l[1]]]
+  for (let x = l[0] + 1; x <= to; x++) out.push([x, l[1] + k * (x - l[0])])
+  return out
+}
+
+/** Year-on-year change, in per cent. */
+export function yoy(pts: Pair[]): Pair[] {
+  const out: Pair[] = []
+  for (let i = 1; i < pts.length; i++) {
+    out.push([pts[i]![0], (pts[i]![1] / pts[i - 1]![1] - 1) * 100])
+  }
+  return out
+}
