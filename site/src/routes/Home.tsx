@@ -19,6 +19,8 @@ import { SwarmField } from '../components/SwarmField'
 import { BudgetEditor } from '../components/BudgetEditor'
 import { ProfileNudge } from '../components/ProfileNudge'
 import { useData } from '../data/store'
+import { MAX_PLACES, useSelection } from '../data/selection'
+import { useToast } from '../components/Toast'
 import { QUESTIONS, pickColor } from '../data/questions'
 import type { SecondAxis } from '../data/questions'
 import { money, years } from '../data/format'
@@ -33,8 +35,12 @@ export function Home() {
   const data = useData()
   const navigate = useNavigate()
 
+  // The field's picks and Compare's places are one list — see data/selection.ts.
+  const sel = useSelection()
+  const toast = useToast()
+  const selected = sel.ids
+
   const [qi, setQi] = useState(0)
-  const [selected, setSelected] = useState<string[]>([])
   const [secondOn, setSecondOn] = useState(false)
   const [axisId, setAxisId] = useState<string | null>(null)
   const [tableOpen, setTableOpen] = useState(false)
@@ -66,8 +72,8 @@ export function Home() {
   }, [secondOn, axisChoices, axisId])
 
   const toggle = useCallback((id: string) => {
-    setSelected((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]))
-  }, [])
+    if (!sel.toggle(id)) toast(`${MAX_PLACES} places is the limit — remove one first`)
+  }, [sel, toast])
 
   const selectedCities = useMemo(
     () => selected.map((id) => data.cityById.get(id)).filter((c): c is City => !!c),
@@ -342,7 +348,7 @@ export function Home() {
             style={{ background: 'transparent', color: 'var(--paper)', borderColor: 'var(--ink-3)', textDecoration: 'none' }}>
             Compare
           </Link>
-          <button className="pill" onClick={() => setSelected([])}
+          <button className="pill" onClick={() => sel.clear()}
             style={{ background: 'transparent', color: 'var(--paper)', borderColor: 'var(--ink-3)' }}>
             Clear
           </button>

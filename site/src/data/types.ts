@@ -74,6 +74,10 @@ export interface City {
   apt_price_center_usd_m2: number | null
   apt_price_outside_usd_m2: number | null
   climate: Climate
+  /** GeoNames populated-place point, via Open-Meteo geocoding. Drives the
+   *  Compare map only — no figure on the site is derived from it. */
+  lat?: number | null
+  lon?: number | null
   tehran_travel?: { typical_hours: number | null; stops: number | null; note?: string }
   tech_scene_note?: string
   sources: string[]

@@ -288,3 +288,421 @@ select.axis-chip {
 }
 @keyframes vt-out { to { opacity: 0; transform: translateY(-4px); } }
 @keyframes vt-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* =========================================================================
+   Compare — the browser (screen 1) and the comparison (screen 2).
+   Ported from the locked design pass; every value routes through tokens.
+   ========================================================================= */
+
+/* Height of the sticky site header, which the table's own header row parks
+   under. Sticky offsets cannot be measured in CSS, so App.tsx observes the real
+   header and overwrites this; these are the measured defaults for the frame
+   before that lands. */
+:root { --header-h: 56px; }
+@media (max-width: 760px) { :root { --header-h: 48px; } }
+
+h1.pg { font-size: var(--text-xl); margin-top: 4px; }
+.oneline {
+  font-size: var(--text-xs);
+  color: var(--ink-2);
+  margin: 6px 0 0;
+  max-width: 68ch;
+}
+
+/* ---- search ---- */
+.searchrow {
+  display: flex; gap: 10px; align-items: center;
+  margin: var(--space-4) 0 0; flex-wrap: wrap;
+}
+.bigsearch {
+  flex: 1; min-width: 240px; max-width: 430px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--ink-1);
+}
+.bigsearch::placeholder { color: var(--ink-3); }
+.searchrow .hint { font-size: var(--text-2xs); color: var(--ink-3); }
+
+/* ---- popular pairs ---- */
+.pairs {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  margin: var(--space-3) 0 2px;
+}
+.pairs .lbl { font-size: var(--text-2xs); color: var(--ink-3); }
+.pairbtn {
+  display: inline-flex; gap: 7px; align-items: center;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 6px 13px 6px 8px;
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  transition: border-color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+.pairbtn:hover { border-color: var(--line-strong); box-shadow: var(--shadow-sm); }
+.pairbtn:active { transform: scale(0.97); }
+.pairbtn .vs { color: var(--ink-3); font-size: 11px; }
+
+/* ---- the country list: the canonical browser ---- */
+.groups { margin-top: var(--space-4); }
+.cg { padding: var(--space-3) 0 4px; border-top: 1px solid var(--line); }
+.cg:first-child { border-top: none; }
+.cgh { display: flex; gap: 9px; align-items: baseline; flex-wrap: wrap; }
+.cgh > svg { align-self: center; }
+.cgh b {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+.cgh .n { font-size: var(--text-2xs); color: var(--ink-3); }
+.cgh .stay { font-size: var(--text-2xs); color: var(--ink-3); margin-left: auto; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+  gap: 8px;
+  padding: 10px 0 8px;
+}
+.ccard {
+  position: relative; text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 9px 11px 8px;
+  transition: transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+.ccard:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); border-color: var(--line-strong); }
+.ccard:active { transform: scale(0.97); }
+.ccard .nm {
+  display: flex; gap: 7px; align-items: center;
+  font-size: var(--text-2xs); font-weight: var(--weight-semibold); color: var(--ink-1);
+}
+.ccard .nm .ck {
+  margin-left: auto; font-size: 11px; font-style: normal;
+  color: var(--accent); opacity: 0; transition: opacity var(--dur-fast) var(--ease-out);
+}
+.ccard .nums { display: flex; gap: 12px; margin-top: 6px; }
+.ccard .nums > span { display: flex; flex-direction: column; }
+.ccard .nums b {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+}
+.ccard .nums b.nvr-inline { color: var(--warn); font-size: var(--text-2xs); }
+.ccard .nums small { font-size: 11px; color: var(--ink-3); }
+.ccard .nums .nd {
+  font-size: var(--text-2xs); color: var(--ink-3); font-style: italic;
+  align-self: flex-end; padding-bottom: 1px;
+}
+.ccard[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.ccard[aria-pressed='true'] .ck { opacity: 1; }
+/* Past the cap the cards dim rather than disappear, so the list never changes
+   shape under the reader — and a toast says why. */
+.ccard.dim { opacity: 0.35; pointer-events: none; }
+
+.quiet { font-size: var(--text-2xs); color: var(--ink-3); padding: var(--space-4) 0 0; }
+.quiet b { color: var(--ink-2); font-weight: var(--weight-medium); }
+
+/* ---- the map ---- */
+.mapline {
+  display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap;
+  margin-top: var(--space-4);
+}
+.mapline .sub { font-size: var(--text-2xs); color: var(--ink-2); }
+.mapline .sub b { color: var(--ink-1); font-weight: var(--weight-medium); }
+.maptoggle {
+  margin-left: auto; font-size: var(--text-2xs); color: var(--ink-3);
+  border-bottom: 1px dashed var(--ink-3);
+}
+.mappanel {
+  position: relative; margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+.mappanel svg { display: block; width: 100%; height: auto; }
+.mappanel .land {
+  fill: var(--surface-sunk);
+  stroke: var(--line);
+  stroke-width: 0.6;
+}
+.mapdots { position: absolute; inset: 0; }
+.mdot {
+  position: absolute; transform: translate(-50%, -50%);
+  padding: 2px; z-index: 2;
+}
+.mdot .mdot-mark { transition: transform var(--dur-fast) var(--ease-out); }
+.mdot small {
+  position: absolute; top: calc(100% - 1px); left: 50%; transform: translateX(-50%);
+  font-size: 10px; color: var(--ink-2);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border-radius: var(--radius-xs); padding: 0 4px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity var(--dur-fast) var(--ease-out);
+}
+.mdot:hover, .mdot:focus-visible { z-index: 8; }
+.mdot:hover .mdot-mark, .mdot:focus-visible .mdot-mark { transform: scale(1.55); }
+.mdot:hover small, .mdot:focus-visible small, .mdot[aria-pressed='true'] small { opacity: 1; }
+.mdot[aria-pressed='true'] { z-index: 6; }
+.mdot[aria-pressed='true'] .mdot-mark {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 2px var(--accent), 0 0 0 6px var(--accent-wash);
+}
+.mdot[aria-pressed='true'] small { color: var(--accent); font-weight: var(--weight-semibold); }
+.mdot.dim { opacity: 0.15; pointer-events: none; }
+.mapfoot { font-size: 11px; color: var(--ink-3); margin-top: 6px; }
+
+/* Below 560px the map yields to the list rather than becoming an untappable
+   thumbnail. The list holds the same 73 cities, so nothing is lost. */
+@media (max-width: 560px) {
+  .mappanel, .mapfoot, .maptoggle { display: none; }
+  .mapline .sub::after {
+    content: ' (the map needs a wider screen — the list below is the same 73 cities)';
+  }
+}
+
+/* ---- the selection tray ---- */
+.tray {
+  position: fixed; left: 50%; bottom: 14px;
+  transform: translate(-50%, 140px);
+  /* Off-screen is not hidden: without this the empty tray's buttons stay in the
+     tab order and in the accessibility tree. `visibility` is what removes them,
+     and it transitions discretely so the slide still reads as a slide. */
+  visibility: hidden;
+  transition: transform var(--dur-base) var(--ease-out),
+              visibility 0s linear var(--dur-base);
+  background: var(--ink-1); color: var(--paper);
+  border-radius: var(--radius-lg); padding: 10px 14px;
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  z-index: var(--z-tray); box-shadow: var(--shadow-lg); max-width: 92vw;
+}
+.tray.show {
+  transform: translate(-50%, 0);
+  visibility: visible;
+  transition: transform var(--dur-base) var(--ease-out), visibility 0s;
+}
+.tray .cnt { font-size: 12px; color: var(--ink-3); }
+.tray .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.tray .tchip {
+  font-size: 12px;
+  background: color-mix(in srgb, var(--paper) 12%, transparent);
+  border-radius: var(--radius-xl); padding: 4px 10px;
+  display: flex; gap: 6px; align-items: center;
+}
+.tray .tchip button { color: var(--ink-3); padding: 0 1px; font-size: 11px; }
+.tray .go {
+  background: var(--accent); color: var(--accent-ink);
+  border-radius: var(--radius-md); padding: 8px 14px;
+  font-size: 13px; font-weight: var(--weight-medium);
+}
+.tray .clear {
+  border: 1px solid var(--ink-3); border-radius: var(--radius-md);
+  padding: 7px 12px; font-size: 12px; color: var(--paper);
+}
+
+/* ---- screen 2: the toolbar ---- */
+.toolbar {
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+  margin: var(--space-4) 0 0; padding: 10px 12px;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+.tgroup { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.tgroup .tl {
+  font-size: 11px; color: var(--ink-3);
+  text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-right: 2px;
+}
+.seg {
+  display: inline-flex; border: 1px solid var(--line);
+  border-radius: var(--radius-md); overflow: hidden; background: var(--surface);
+}
+.seg button {
+  padding: 6px 11px; font-size: var(--text-2xs); color: var(--ink-2);
+  border-right: 1px solid var(--line);
+}
+.seg button:last-child { border-right: none; }
+.seg button[aria-pressed='true'] { background: var(--ink-1); color: var(--paper); }
+.tactions { margin-left: auto; display: flex; gap: 8px; }
+.tbtn {
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+  border-radius: var(--radius-md); padding: 6px 12px; font-size: var(--text-2xs);
+}
+.tbtn:active { transform: scale(0.97); }
+.tbtn[aria-pressed='true'] { background: var(--ink-1); color: var(--paper); border-color: var(--ink-1); }
+
+/* ---- the address strip: the distribution model, made visible ---- */
+.urlstrip {
+  display: flex; gap: 9px; align-items: center; margin: 10px 0 0;
+  font-size: var(--text-2xs); color: var(--ink-3); flex-wrap: wrap;
+}
+.urlstrip code {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-sunk); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 4px 9px;
+  color: var(--ink-2); word-break: break-all;
+}
+.urlstrip button { font-size: var(--text-2xs); color: var(--accent); border-bottom: 1px dashed var(--accent); }
+
+/* ---- city chips ---- */
+.citychips { display: flex; gap: 8px; flex-wrap: wrap; margin: var(--space-3) 0 12px; align-items: center; }
+.kchip {
+  display: inline-flex; gap: 7px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius-xl); padding: 5px 10px 5px 6px;
+  font-size: var(--text-2xs); font-weight: var(--weight-semibold);
+}
+.kchip a { text-decoration: none; color: var(--ink-1); }
+.kchip button { color: var(--ink-3); font-size: 11px; padding: 0 2px; }
+.addbtn {
+  border: 1px dashed var(--line-strong); border-radius: var(--radius-xl);
+  padding: 6px 13px; font-size: var(--text-2xs); color: var(--ink-2); background: transparent;
+}
+.addbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- the table ---- */
+.tablewrap {
+  background: var(--surface-raised); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); overflow-x: auto;
+}
+/* A horizontal scroll container is also a vertical scrollport, which defeats a
+   sticky header row: it would pin to this box instead of to the viewport. So
+   when the table fits — every width where nothing needs scrolling sideways —
+   Compare.tsx marks it and the box stops being a scroll container. `clip` is
+   safe here precisely because there is nothing to clip. Where the table really
+   is wider than the screen, horizontal scrolling wins and the metric-label
+   column pinning left is what keeps a row identifiable. */
+.tablewrap[data-fits='true'] { overflow-x: clip; overflow-y: visible; }
+table.cmp {
+  width: 100%; min-width: 640px;
+  border-collapse: separate; border-spacing: 0;
+  font-size: var(--text-xs);
+}
+/* The city header row parks under the site header while the table scrolls, so
+   a column is always identifiable. */
+.cmp th {
+  position: sticky; top: var(--header-h);
+  background: var(--paper); text-align: left; padding: 10px 12px;
+  font-size: var(--text-2xs); font-weight: var(--weight-medium);
+  color: var(--ink-3); letter-spacing: var(--tracking-wide); text-transform: uppercase;
+  border-bottom: 1px solid var(--line); z-index: 5;
+}
+/* When the table has to scroll sideways, this box is the scrollport, so `top`
+   would offset the row DOWN from the box's own edge and drop it on top of the
+   first data row rather than pinning it to the viewport. `top: auto` switches
+   the vertical stickiness off cleanly and leaves the horizontal stickiness of
+   the metric column — the half that keeps a row identifiable here — intact. */
+.tablewrap:not([data-fits='true']) .cmp th { top: auto; }
+
+.cmp th .cityh {
+  display: flex; gap: 8px; align-items: center;
+  text-transform: none; letter-spacing: var(--tracking-normal);
+}
+.cmp th .cityh b { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--ink-1); }
+.cmp th .cityh button { color: var(--ink-3); font-size: 11px; }
+.cmp td { padding: 11px 12px; vertical-align: top; border-top: 1px solid var(--line); }
+.cmp tbody tr:first-child td { border-top: none; }
+.cmp td.mlab, .cmp th.mlab-h { color: var(--ink-2); width: 200px; min-width: 160px; }
+.cmp td.mlab small {
+  display: block; font-size: var(--text-2xs); color: var(--ink-3);
+  margin-top: 2px; font-weight: var(--weight-normal);
+}
+.nvr { color: var(--warn); font-size: var(--text-xs); }
+.nvr small { display: block; color: var(--ink-3); margin-top: 2px; font-size: var(--text-2xs); }
+.stayrow { display: flex; align-items: center; gap: 7px; font-size: var(--text-2xs); color: var(--ink-2); flex-wrap: wrap; }
+.stayrow b { font-weight: var(--weight-medium); white-space: nowrap; }
+.stayrow .ext { height: 5px; border-radius: var(--radius-xs); opacity: 0.5; background: var(--hatch); flex: none; }
+.staynote { font-size: var(--text-2xs); color: var(--ink-3); margin-top: 4px; }
+.staywarn { font-size: var(--text-xs); color: var(--warn); }
+
+/* On a phone the metric column stays put while the cities scroll past it, so a
+   row is always identifiable. */
+@media (max-width: 760px) {
+  .cmp td.mlab, .cmp th.mlab-h {
+    position: sticky; left: 0; z-index: 4;
+    width: 130px; min-width: 110px;
+    background: var(--paper);
+  }
+  .cmp th.mlab-h { z-index: 6; }
+  .cards { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .tactions { margin-left: 0; }
+}
+
+/* ---- the chart view ---- */
+.chartgrid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  margin-top: 2px;
+}
+.brow { margin: 8px 0; }
+.brow .l { display: flex; justify-content: space-between; font-size: var(--text-2xs); color: var(--ink-2); }
+.brow .l b { color: var(--ink-1); font-variant-numeric: tabular-nums; }
+.brow .track {
+  height: 9px; background: var(--surface-sunk); border-radius: var(--radius-sm);
+  margin-top: 4px; overflow: hidden;
+}
+.brow .fill {
+  height: 100%; border-radius: var(--radius-sm);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+.chartnote { font-size: var(--text-2xs); color: var(--ink-3); margin-top: 8px; }
+
+.foot {
+  font-size: var(--text-2xs); color: var(--ink-3);
+  padding: var(--space-3) 2px 0; max-width: 76ch; line-height: var(--leading-relaxed);
+}
+.foot b { color: var(--ink-2); font-weight: var(--weight-medium); }
+
+/* ---- the add-a-city sheet: the same browser, in a drawer ---- */
+.sheetbg {
+  position: fixed; inset: 0; background: rgba(20, 19, 15, 0.35);
+  z-index: var(--z-sheet);
+}
+.sheet {
+  position: fixed; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: min(880px, 96vw); max-height: 84vh; overflow: auto;
+  background: var(--surface);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border: 1px solid var(--line);
+  z-index: calc(var(--z-sheet) + 1);
+  padding: 18px 22px 26px;
+}
+.sheet .shead {
+  display: flex; gap: 12px; align-items: baseline;
+  position: sticky; top: -18px; background: var(--surface);
+  padding: 4px 0 10px; z-index: 6;
+}
+.sheet .shead h2 { font-size: var(--text-md); }
+.sheet .shead span { font-size: var(--text-2xs); color: var(--ink-3); }
+.sheet .sheet-close {
+  margin-left: auto; font-size: 15px; color: var(--ink-2);
+  background: var(--paper); border-radius: 50%; width: 30px; height: 30px; flex: none;
+}
+.sheet .bigsearch { width: 100%; max-width: none; margin: 2px 0 4px; }
+.sheet .cgh b { font-size: var(--text-sm); }
+.sheet .cards { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+
+/* ---- toast ---- */
+.toast {
+  position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%);
+  background: var(--ink-1); color: var(--paper);
+  font-size: var(--text-xs); border-radius: var(--radius-md);
+  padding: 9px 16px; z-index: var(--z-popover);
+  box-shadow: var(--shadow-lg); pointer-events: none;
+  max-width: 92vw; text-align: center;
+  animation: toast-in var(--dur-base) var(--ease-out) both;
+}
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 12px); } }

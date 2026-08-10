@@ -19,10 +19,13 @@ const CountryProfile = lazy(() => import('./routes/CountryProfile').then((m) => 
 const DataMethods = lazy(() => import('./routes/DataMethods').then((m) => ({ default: m.DataMethods })))
 
 /* A fixed-height placeholder, not a spinner: it reserves the space the page is
-   about to occupy so the swap does not shove the layout around. */
+   about to occupy so the swap does not shove the layout around.
+   A full viewport, not most of one — every real route is taller than the fold,
+   so anything less leaves the footer inside the viewport and then drops it when
+   the route arrives, which is a layout shift the reader sees. */
 function RouteFallback() {
   return (
-    <div className="wrap" style={{ paddingTop: 22, minHeight: '70vh' }} aria-busy="true">
+    <div className="wrap" style={{ paddingTop: 22, minHeight: '100vh' }} aria-busy="true">
       <div className="kicker">Loading…</div>
     </div>
   )

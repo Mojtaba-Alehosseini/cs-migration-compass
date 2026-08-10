@@ -1,6 +1,8 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { ThemeSwitcher } from './components/Theme'
+import { ToastHost } from './components/Toast'
+import { SelectionContext, useSelectionState } from './data/selection'
 
 const NAV = [
   { to: '/compare', label: 'Compare' },
@@ -11,6 +13,10 @@ const NAV = [
 export function App() {
   const { pathname } = useLocation()
 
+  // One selection for the whole session, mounted above both routes: dots picked
+  // on the field are the same list as cards ticked in Compare.
+  const selection = useSelectionState()
+
   // Route changes move focus to the main region so keyboard and screen-reader
   // users are not left at the top of a stale document.
   useEffect(() => {
@@ -18,11 +24,29 @@ export function App() {
     window.scrollTo(0, 0)
   }, [pathname])
 
+  // Compare's table header parks under this header while the table scrolls, so
+  // it needs the header's real height. It is a wrapping flex row, so the height
+  // is a measurement rather than a constant — the CSS carries a sane default
+  // and this keeps it honest at any width or zoom.
+  const headerRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const apply = () => document.documentElement.style
+      .setProperty('--header-h', `${Math.round(el.getBoundingClientRect().height)}px`)
+    apply()
+    const ro = new ResizeObserver(apply)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
   return (
-    <>
+    <SelectionContext.Provider value={selection}>
+    <ToastHost>
       <a className="skip-link" href="#main">Skip to content</a>
 
       <header
+        ref={headerRef}
         style={{
           position: 'sticky', top: 0, zIndex: 'var(--z-sticky)' as never,
           background: 'var(--paper)', borderBottom: '1px solid var(--line)',
@@ -98,6 +122,7 @@ export function App() {
           </a>
         </div>
       </footer>
-    </>
+    </ToastHost>
+    </SelectionContext.Provider>
   )
 }
