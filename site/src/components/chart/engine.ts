@@ -93,6 +93,28 @@ function dur(name: string, fallback: number): number {
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
+const warned = new Set<string>()
+
+/** An axis whose labels are not injective describes nothing: two positions that
+ *  say the same thing cannot both be read. This is how a clamping formatter —
+ *  right for a single figure, wrong for a scale — got onto an axis and rendered
+ *  five of six ticks as "100+ yrs".
+ *
+ *  Loud in development, once and quiet in production: a visitor should still get
+ *  their chart, but nobody should be able to ship this again. */
+export function assertInjectiveTicks(axis: 'x' | 'y', ticks: [number, string][], aria: string) {
+  const labels = ticks.map(([, l]) => l)
+  if (new Set(labels).size === labels.length) return
+  const dupes = labels.filter((l, i) => labels.indexOf(l) !== i)
+  const msg = `Chart "${aria}": the ${axis} axis has ${labels.length} ticks but `
+    + `${new Set(labels).size} distinct labels — ${JSON.stringify([...new Set(dupes)])} repeats. `
+    + 'A tick formatter must be injective over its tick set; use the metric\'s tickFormat, '
+    + 'not its display format.'
+  if (import.meta.env.DEV) throw new Error(msg)
+  const key = `${aria}:${axis}`
+  if (!warned.has(key)) { warned.add(key); console.error(msg) }
+}
+
 export function makeChart(host: HTMLElement) {
   const st: {
     cfg: ChartCfg | null
@@ -142,6 +164,8 @@ export function makeChart(host: HTMLElement) {
 
   function build(c: ChartCfg, noDraw?: boolean) {
     st.cfg = c
+    assertInjectiveTicks('x', c.x.ticks, c.aria)
+    assertInjectiveTicks('y', c.y.ticks, c.aria)
     const S = scales(c)
     st.S = S
     st.pts = toScreen(c, S)

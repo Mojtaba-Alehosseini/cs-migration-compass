@@ -28,7 +28,11 @@ import { useToast } from '../components/Toast'
 import { useData } from '../data/store'
 import { MAX_PLACES, normalise, useSelection } from '../data/selection'
 import { HEADLINE_KEYS, METRIC_BY_KEY, type MetricDef } from '../data/registry'
-import { LENS_LABEL, isNeverAffordable, missingInputs, salaryByLens, type Budget } from '../data/compute'
+import {
+  LENS_LABEL, UNSTABLE_METRIC_KEYS, instabilityNote, isNeverAffordable, missingInputs,
+  salaryByLens, stabilityOf, type Budget,
+} from '../data/compute'
+import { UnstableMark } from '../components/Unstable'
 import { money, residencyRange } from '../data/format'
 import type { Band, City, Country, Lens } from '../data/types'
 import { downloadCsv, downloadJson } from '../lib/export'
@@ -354,7 +358,7 @@ export function Compare() {
           </table>
         </div>
       ) : (
-        <ChartView rows={rows} />
+        <ChartView rows={rows} band={band} />
       )}
 
       <p className="foot">
@@ -511,13 +515,28 @@ function Cell({ metric, city, value, band, lens }:
     ? salarySource(city, country, lens)
     : metric.source?.(city, country) ?? fallbackSource(metric, city, country)
   const negative = value < 0
+  // A figure smaller than the rounding on its own inputs keeps its place and
+  // its number, and says so — here and on every other surface.
+  const shaky = UNSTABLE_METRIC_KEYS.has(metric.key) && stabilityOf(city, band) === 'unstable'
+  const note = shaky ? instabilityNote(city, band) : null
   const body = (
     <span className="big" style={negative ? { color: 'var(--warn)' } : undefined}>
+      <UnstableMark city={city} band={band} />
       {negative ? `−${metric.format(Math.abs(value))}` : metric.format(value)}
     </span>
   )
 
-  return <Figure source={{ ...src, asOf: city.as_of, confidence: metric.confidence }}>{body}</Figure>
+  return (
+    <>
+      <Figure source={{
+        ...src,
+        asOf: city.as_of,
+        confidence: metric.confidence,
+        what: note ? `${src.what ? `${src.what} ` : ''}${note}` : src.what,
+      }}>{body}</Figure>
+      {note && <span className="unstable-note">{note}</span>}
+    </>
+  )
 }
 
 function ResidencyBar({ cc, pr, cit }: { cc: string; pr: number | null; cit: number | null }) {
@@ -543,8 +562,9 @@ function ResidencyBar({ cc, pr, cit }: { cc: string; pr: number | null; cit: num
 /* --------------------------------------------------------------- chart ---- */
 
 /** One small multiple per metric, bars in the user's column order. */
-function ChartView({ rows }: {
+function ChartView({ rows, band }: {
   rows: { metric: MetricDef; hint: string; values: { city: City; value: number | null }[] }[]
+  band: Band
 }) {
   return (
     <LayoutGroup>
@@ -552,8 +572,13 @@ function ChartView({ rows }: {
         <AnimatePresence mode="popLayout">
           {rows.map(({ metric, hint, values }) => {
             // Only positive values set the scale — a negative "kept per year" is
-            // a fact about that city, not a new zero for everyone else.
-            const nums = values.map((v) => v.value).filter((v): v is number => v != null && v > 0)
+            // a fact about that city, not a new zero for everyone else. Nor does
+            // a figure the site has flagged as rounding-limited: it keeps its
+            // bar and its number, but it does not decide the scale.
+            const risky = UNSTABLE_METRIC_KEYS.has(metric.key)
+            const nums = values
+              .filter((v) => !(risky && stabilityOf(v.city, band) === 'unstable'))
+              .map((v) => v.value).filter((v): v is number => v != null && v > 0)
             const max = nums.length ? Math.max(...nums) : 0
             return (
               <motion.div key={metric.key} className="panel" layout
@@ -563,31 +588,40 @@ function ChartView({ rows }: {
                 transition={{ type: 'spring', stiffness: 380, damping: 32 }}>
                 <h2>{metric.label}</h2>
                 <div className="sub">{hint}</div>
-                {values.map(({ city, value }) => (
-                  <div key={city.id} className="brow">
-                    <div className="l">
-                      <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                        <Flag cc={city.country} size={13} />{city.name}
-                      </span>
-                      <b className="tnum">
-                        {value == null
-                          ? 'no data'
-                          : value < 0 ? `−${metric.format(Math.abs(value))}` : metric.format(value)}
-                      </b>
+                {values.map(({ city, value }) => {
+                  const shaky = risky && stabilityOf(city, band) === 'unstable'
+                  return (
+                    <div key={city.id} className="brow">
+                      <div className="l">
+                        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                          <Flag cc={city.country} size={13} />{city.name}
+                        </span>
+                        <b className="tnum">
+                          {shaky && <UnstableMark city={city} band={band} />}
+                          {value == null
+                            ? 'no data'
+                            : value < 0 ? `−${metric.format(Math.abs(value))}` : metric.format(value)}
+                        </b>
+                      </div>
+                      <div className="track">
+                        {value != null && value > 0 && max > 0 && (
+                          // A flagged value runs the full track in the warning
+                          // colour: it is past the scale, and the number beside
+                          // it is the real one.
+                          <div className="fill" style={{
+                            width: `${Math.min(100, Math.max(2, (value / max) * 100))}%`,
+                            background: shaky ? 'var(--warn)' : `var(--c-${city.country})`,
+                          }} />
+                        )}
+                      </div>
                     </div>
-                    <div className="track">
-                      {value != null && value > 0 && max > 0 && (
-                        <div className="fill" style={{
-                          width: `${Math.max(2, (value / max) * 100)}%`,
-                          background: `var(--c-${city.country})`,
-                        }} />
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
                 <div className="chartnote">
                   Bars scale to the largest value shown — not to a ranking.
                   {values.some((v) => v.value == null) && ' Cities with no data have no bar.'}
+                  {values.some((v) => risky && stabilityOf(v.city, band) === 'unstable')
+                    && ' A ≈ marks a figure smaller than the rounding on its own inputs — it keeps its number but does not set the scale.'}
                 </div>
               </motion.div>
             )

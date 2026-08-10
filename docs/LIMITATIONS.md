@@ -134,3 +134,28 @@ ICT tiering were corroborated but not independently re-verified, and each
 should be checked against the official source before anyone acts on it. Every
 affected field in `data/countries.json` carries its own `sources` array and
 `as_of` date.
+
+---
+
+## 11. Two metrics that cannot occupy a chart axis
+
+The scatter builder lets any metric become either axis, which means every metric
+has to be honest as a *scale*, not only as a figure. Two are not, and are handled
+by exclusion rather than by formatting around them.
+
+**English at work is categorical.** The underlying data is three named states —
+high, medium, low — which the site stores as 3, 2, 1 so it can be compared at
+all. On an axis that becomes a lie twice over: a tick at 1.5 has no meaning, and
+the gap between "rarely" and "often, depends on the employer" is not a distance
+that can be measured. It is therefore **not offered in the axis pickers**. It
+remains available everywhere a single value is read — country pages, Compare, the
+metric picker — where three named states are exactly what it is.
+
+**Rank metrics read backwards on a rising axis.** Happiness rank and
+peacefulness rank are better when lower, so on an axis that ascends left to
+right the best places sit at the left. We have not silently inverted them: an
+axis that reverses without saying so is its own trap, and Explore already offers
+happiness in rank space with #1 at the top as an explicit, labelled choice. The
+axis label states which direction is better instead. If a future pass wants
+per-metric axis inversion, that is a design decision to take deliberately, not a
+default to slip in.

@@ -7,10 +7,12 @@
 import { Link, useParams } from 'react-router-dom'
 import { Flag, FlagRibbon } from '../components/Flag'
 import { Figure } from '../components/Figure'
+import { UnstableMark } from '../components/Unstable'
 import { useData } from '../data/store'
 import { money, num, pct, sourceName, years, NO_DATA, asOfLabel } from '../data/format'
 import {
-  HOME_M2, isNeverAffordable, m2PerYear, missingInputs, netFor, savingsPerYear, yearsToHome,
+  HOME_M2, instabilityNote, isNeverAffordable, m2PerYear, missingInputs, netFor,
+  savingsPerYear, yearsToHome,
 } from '../data/compute'
 import { NotFound } from './NotFound'
 import type { Band } from '../data/types'
@@ -188,7 +190,12 @@ export function CityProfile() {
             </p>
           ) : y2h != null && m2 != null && city.apt_price_outside_usd_m2 != null ? (
             <>
-              <div className="big" style={{ fontSize: 'var(--text-2xl)' }}>{years(y2h)}</div>
+              <div className="big" style={{ fontSize: 'var(--text-2xl)' }}>
+                <UnstableMark city={city} band={band} />{years(y2h)}
+              </div>
+              {instabilityNote(city, band) && (
+                <p className="unstable-note">{instabilityNote(city, band)}</p>
+              )}
               <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', marginTop: 6, lineHeight: 1.7 }}>
                 A {HOME_M2} m² flat outside the centre costs{' '}
                 <Figure source={{

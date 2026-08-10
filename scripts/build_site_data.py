@@ -60,6 +60,31 @@ HISTORY_SETS = {
 # A 90 m2 apartment is the reference home, matching metrics.json.
 HOME_M2 = 90
 
+# Is years-to-home bigger than its own error bars?
+#
+# savings is a DIFFERENCE of two large numbers and years-to-home divides by it.
+# Rent and living costs are each published to $10/month, so both moving one step
+# is $240/year. A savings figure smaller than that is the rounding on its inputs,
+# not a measurement, and dividing by it reports a ratio the inputs cannot
+# support. The threshold is the inputs' own precision, not a chosen number.
+#
+# This mirrors yearsToHomeStability() in site/src/data/compute.ts exactly; the
+# client recomputes it when the user edits the budget. Against the live data it
+# flags exactly Milan and Valencia — the worst of the other 70 moves 11%.
+SAVINGS_PRECISION_USD_YEAR = 12 * 10 * 2
+STABILITY_TOLERANCE = 0.25
+
+
+def _stability(savings: float, apt: float) -> str:
+    base = (HOME_M2 * apt) / savings
+    for delta in (SAVINGS_PRECISION_USD_YEAR, -SAVINGS_PRECISION_USD_YEAR):
+        shifted = savings + delta
+        if shifted <= 0:
+            return "unstable"
+        if abs((HOME_M2 * apt) / shifted - base) / base > STABILITY_TOLERANCE:
+            return "unstable"
+    return "stable"
+
 
 def load_processed(source_id: str) -> dict | None:
     path = PROCESSED / f"{source_id}.json"
@@ -102,6 +127,7 @@ def derive_city(city: dict, country: dict) -> dict:
             "monthly_living_usd": col if isinstance(col, (int, float)) else None,
             "savings_usd_year": None,
             "years_to_home": None,
+            "years_to_home_stability": None,
             "m2_per_year": None,
             "missing_inputs": missing,
         }
@@ -116,6 +142,7 @@ def derive_city(city: dict, country: dict) -> dict:
                     if savings > 0:
                         entry["years_to_home"] = round((HOME_M2 * apt) / savings, 1)
                         entry["m2_per_year"] = round(savings / apt, 1)
+                        entry["years_to_home_stability"] = _stability(savings, apt)
                     else:
                         # Zero or negative savings means "never on this income",
                         # not a very large number. The UI says so in words.

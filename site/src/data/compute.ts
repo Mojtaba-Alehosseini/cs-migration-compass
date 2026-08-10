@@ -76,6 +76,85 @@ export function isNeverAffordable(city: City, band: Band, b: Budget = {}): boole
   return savings != null && savings <= 0 && city.apt_price_outside_usd_m2 != null
 }
 
+/* ---------------------------------------------------------------------------
+ * Is this number bigger than its own error bars?
+ *
+ * savings_usd_year is a DIFFERENCE of two large numbers, and years-to-home
+ * divides by it. Rent and living costs are each published to $10/month, so both
+ * moving one step is $240/year. A savings figure smaller than that is the
+ * rounding on its inputs, not a measurement — and dividing by it reports a
+ * ratio to four significant figures that the inputs cannot support.
+ *
+ * Milan is the live example: $210 saved a year is $17.50 a month. Move its rent
+ * by one step and years-to-home goes 2,314 → 1,080, or disappears entirely.
+ *
+ * The threshold is not chosen, it is the inputs' own precision. We do not
+ * suppress the number — we mark it and say what is wrong with it.
+ * ------------------------------------------------------------------------- */
+
+/** One published rounding step on each of rent and living costs, for a year. */
+export const SAVINGS_PRECISION_USD_YEAR = 12 * 10 * 2
+
+/** How far years-to-home may move under that perturbation before the figure is
+ *  reporting precision it does not have. */
+export const STABILITY_TOLERANCE = 0.25
+
+export type Stability = 'stable' | 'unstable'
+
+/** Years-to-home with savings shifted by `delta`, for the perturbation test. */
+function yearsToHomeShifted(city: City, band: Band, b: Budget, delta: number): number | null {
+  const savings = savingsPerYear(city, band, b)
+  const perM2 = city.apt_price_outside_usd_m2
+  if (savings == null || perM2 == null) return null
+  const shifted = savings + delta
+  if (shifted <= 0) return null
+  return (HOME_M2 * perM2) / shifted
+}
+
+/** `'unstable'` when one rounding step on the inputs moves years-to-home by more
+ *  than a quarter, or removes it altogether. `null` when there is no figure to
+ *  judge. Against the live data this flags exactly Milan and Valencia; the worst
+ *  of the other 70 moves 11%. */
+export function yearsToHomeStability(city: City, band: Band, b: Budget = {}): Stability | null {
+  const base = yearsToHome(city, band, b)
+  if (base == null) return null
+  for (const delta of [SAVINGS_PRECISION_USD_YEAR, -SAVINGS_PRECISION_USD_YEAR]) {
+    const alt = yearsToHomeShifted(city, band, b, delta)
+    if (alt == null) return 'unstable'
+    if (Math.abs(alt - base) / base > STABILITY_TOLERANCE) return 'unstable'
+  }
+  return 'stable'
+}
+
+/** The three savings-derived metrics share one root cause, so they share one
+ *  flag: if years-to-home is unstable here, what the city saves in a year is
+ *  too small to divide by, and `m2_per_year` and `savings` inherit that. */
+export const UNSTABLE_METRIC_KEYS = new Set(['years_to_home', 'm2_per_year', 'savings'])
+
+/** Read the flag the pipeline already computed, falling back to computing it —
+ *  needed when the user has edited the budget and the shipped figure no longer
+ *  applies. */
+export function stabilityOf(city: City, band: Band, b: Budget = {}): Stability | null {
+  const hasEdits =
+    b.rentUsd != null || b.livingUsd != null || b.rentFactor != null || b.livingFactor != null
+  if (!hasEdits) {
+    const shipped = city.computed?.[band]?.years_to_home_stability
+    if (shipped) return shipped
+  }
+  return yearsToHomeStability(city, band, b)
+}
+
+/** The sentence that goes on the source card and in the export. Plain words,
+ *  the actual figure, and what to do with it. */
+export function instabilityNote(city: City, band: Band, b: Budget = {}): string | null {
+  if (stabilityOf(city, band, b) !== 'unstable') return null
+  const savings = savingsPerYear(city, band, b)
+  const amount = savings == null ? 'What is left at the end of a year here' : `What’s left at the end of a year here — $${Math.round(savings).toLocaleString('en-US')} —`
+  return `${amount} is smaller than the rounding on its own rent figure. `
+    + 'A $20 change in either direction moves this number by thousands of years, or removes it '
+    + 'entirely. Read it as “effectively out of reach”, not as a count of years.'
+}
+
 /** Which inputs are missing, for the "no data, and here's why" copy. */
 export function missingInputs(city: City, band: Band): string[] {
   const missing: string[] = []
@@ -237,6 +316,9 @@ export function computedOrLive(city: City, band: Band, b: Budget): Computed {
     monthly_living_usd: effectiveLiving(city, b),
     savings_usd_year: savingsPerYear(city, band, b),
     years_to_home: yearsToHome(city, band, b),
+    // Recomputed, not carried over: an edited budget can move a figure across
+    // the stability line in either direction.
+    years_to_home_stability: yearsToHomeStability(city, band, b),
     m2_per_year: m2PerYear(city, band, b),
     missing_inputs: city.computed[band].missing_inputs,
   }

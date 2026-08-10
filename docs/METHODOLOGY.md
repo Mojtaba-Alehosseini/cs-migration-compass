@@ -98,9 +98,54 @@ a place is to buy into on a developer salary*, not a financial plan. Real buyers
 use mortgages and get there sooner.
 
 **When savings are zero or negative**, the site says *"never on this salary"*.
-It does not print the arithmetic result. Milan at a mid-level salary computes to
-roughly 2,300 years; showing that number invites people to read it as a
-duration, when the honest statement is that nothing is left over at all.
+It does not print the arithmetic result, because the honest statement is that
+nothing is left over at all.
+
+### When the number is smaller than its own error bars
+
+Savings is a **difference of two large numbers**, and years-to-home divides by
+it. That makes the ratio arbitrarily sensitive exactly where savings are small —
+and "small" here has a precise meaning, because we know the precision of the
+inputs.
+
+Rent and living costs are published to the nearest **$10 a month**. Both moving
+one step is **$240 a year**. A savings figure below that is not a measurement of
+anything; it is the rounding on its own inputs. Milan is the live example: it
+saves **$210 a year**, which is $17.50 a month, and years-to-home comes out at
+2,314. Move its rent by one rounding step and that becomes 1,080 years, or
+disappears entirely.
+
+So the site tests every years-to-home figure against the precision of what
+produced it:
+
+> Recompute savings with rent and living costs each perturbed by one published
+> rounding step (±$10/month, ±$240/year on the pair). If years-to-home moves by
+> more than **25%** in either direction, or flips to "never on this salary", the
+> figure is **rounding-limited**.
+
+**The threshold is not a number we chose.** It is the inputs' own published
+grid. We did not pick 25% to catch particular cities and we did not tune it: run
+against the current data it flags **exactly two of 72 cities — Milan and
+Valencia** — and the worst of the other seventy moves 11%. Nothing sits near the
+line.
+
+**A rounding-limited figure is kept, not hidden.** We do not suppress numbers;
+we say what is wrong with them. The value still appears everywhere it appeared
+before, carrying a `≈` marker in the same warning language as every other
+caveat, and its source card explains in plain words that what the city saves in
+a year is smaller than the rounding on its own rent, and that the figure should
+be read as *"effectively out of reach"* rather than as a count of years.
+
+One thing does change: **a rounding-limited figure is never allowed to set the
+scale of a chart.** It is drawn in a labelled band at the edge of the plot, with
+its real number in the readout and in the CSV export, so 70 well-measured cities
+are not crushed into a line by a value that is mostly rounding. The same rule
+keeps it out of the min/max the weights tool normalises against, where a bad
+extreme would silently change every other city's score.
+
+The old `savings <= 0` guard sat on a discontinuity: at +$1 saved the site
+reported 486,000 years, and at −$1 it reported "never". Those were the same
+statement about the world, and now they read the same way.
 
 ---
 

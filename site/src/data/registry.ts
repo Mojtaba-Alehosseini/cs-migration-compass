@@ -13,6 +13,24 @@ import { money, moneyShort, num, pct, rankOf, years, NO_DATA } from './format'
 
 export type ThemeKey = 'money' | 'visa' | 'jobs' | 'housing' | 'people' | 'life' | 'climate'
 
+/** A tick label, given the value and the distance to the next tick. */
+export type TickFormat = (v: number, step: number) => string
+
+/** How many decimals a step of this size needs before two neighbouring ticks
+ *  round to the same string. */
+const decimalsFor = (step: number) =>
+  Math.min(6, Math.max(0, Math.ceil(-Math.log10(Math.abs(step || 1)) + 1e-9)))
+
+/** Money on an axis. Compact only where the step is coarse enough to survive
+ *  it — at a $500 step, "$1k" and "$1k" would be two different places. */
+const moneyTick: TickFormat = (v, step) =>
+  Math.abs(step) >= 1000
+    ? `${v < 0 ? '−' : ''}$${num(Math.abs(v) / 1000, decimalsFor(step / 1000))}k`
+    : money(v)
+
+const yearsTick: TickFormat = (v, step) => `${num(v, decimalsFor(step))} yrs`
+const rankTick: TickFormat = (v, step) => `#${num(v, decimalsFor(step))}`
+
 export const THEMES: { key: ThemeKey; label: string; blurb: string }[] = [
   { key: 'money', label: 'Money', blurb: 'Pay, tax, what is left at the end of a year' },
   { key: 'visa', label: 'Visas & staying', blurb: 'Getting in, staying, becoming a citizen' },
@@ -31,7 +49,23 @@ export interface MetricDef {
   theme: ThemeKey
   /** null when the place genuinely has no value for it. */
   value: (city: City, country: Country | undefined, band: Band) => number | null
+  /** How ONE figure reads. May clamp, bucket or return words — "100+ yrs",
+   *  "free", "usually yes" are all correct for a single datum. */
   format: (v: number | null) => string
+  /** How an AXIS TICK reads, which is a different job. A formatter that clamps
+   *  or buckets makes two ticks say the same thing, and an axis whose labels are
+   *  not injective describes nothing.
+   *
+   *  It is given the axis STEP as well as the value, because precision is a
+   *  property of the spacing, not of the number: `$1k` is a fine label when
+   *  ticks are 50,000 apart and a collision when they are 500 apart. Defaults to
+   *  plain numeric; override only where the unit genuinely carries meaning. */
+  tickFormat?: TickFormat
+  /** Ticks are not allowed below this. Ranks start at #1: there is no #0. */
+  axisFloor?: number
+  /** False for categorical metrics. The distance between "rarely" and "often"
+   *  is not a number, so they cannot honestly occupy a continuous axis. */
+  axisEligible?: boolean
   direction: 'higher_better' | 'lower_better' | 'neutral'
   confidence: Confidence
   /** Which source the figure comes from, for the popover. */
@@ -57,6 +91,7 @@ export const METRICS: MetricDef[] = [
     headline: true,
     value: (c, _k, band) => c.salary_usd_year[band],
     format: money,
+    tickFormat: moneyTick,
     direction: 'higher_better',
     confidence: 'crowd',
     source: (c) => ({
@@ -72,6 +107,7 @@ export const METRICS: MetricDef[] = [
     theme: 'money',
     value: (c) => c.salary_levels_fyi?.median_total_comp_usd ?? null,
     format: money,
+    tickFormat: moneyTick,
     direction: 'higher_better',
     confidence: 'crowd',
     source: (c) => ({
@@ -87,6 +123,7 @@ export const METRICS: MetricDef[] = [
     theme: 'money',
     value: (c, _k, band) => netFor(c, band),
     format: money,
+    tickFormat: moneyTick,
     direction: 'higher_better',
     confidence: 'official',
     source: (_c, k) => ({
@@ -102,6 +139,7 @@ export const METRICS: MetricDef[] = [
     headline: true,
     value: (c, _k, band) => savingsPerYear(c, band),
     format: money,
+    tickFormat: moneyTick,
     direction: 'higher_better',
     confidence: 'crowd',
   },
@@ -125,6 +163,9 @@ export const METRICS: MetricDef[] = [
     headline: true,
     value: (_c, k) => k?.pr_years_typical ?? null,
     format: (v) => (v == null ? 'no permanent path' : `~${num(v, v && v % 1 ? 1 : 0)} yrs`),
+    // The tilde means "typically, for this country". A scale point is exact, so
+    // it does not carry one.
+    tickFormat: yearsTick,
     direction: 'lower_better',
     confidence: 'official',
   },
@@ -135,6 +176,7 @@ export const METRICS: MetricDef[] = [
     theme: 'visa',
     value: (_c, k) => k?.citizenship_years_typical ?? null,
     format: (v) => (v == null ? 'no citizenship path' : `~${num(v)} yrs`),
+    tickFormat: yearsTick,
     direction: 'lower_better',
     confidence: 'official',
   },
@@ -145,6 +187,8 @@ export const METRICS: MetricDef[] = [
     theme: 'visa',
     value: (_c, k) => k?.visa.study_pathway?.masters_tuition_intl_usd_yr ?? null,
     format: (v) => (v === 0 ? 'free' : money(v)),
+    // "free" is a fact about a country, not a point on a scale.
+    tickFormat: moneyTick,
     direction: 'lower_better',
     confidence: 'official',
   },
@@ -195,6 +239,7 @@ export const METRICS: MetricDef[] = [
     headline: true,
     value: (c) => c.rent_1br_outside_usd_month,
     format: (v) => money(v),
+    tickFormat: moneyTick,
     direction: 'lower_better',
     confidence: 'crowd',
     source: (c) => numbeo(c, 'Crowd-reported rents. Solid in big cities, thin in small ones.'),
@@ -206,6 +251,7 @@ export const METRICS: MetricDef[] = [
     theme: 'housing',
     value: (c) => c.rent_1br_center_usd_month,
     format: (v) => money(v),
+    tickFormat: moneyTick,
     direction: 'lower_better',
     confidence: 'crowd',
     source: (c) => numbeo(c, 'Crowd-reported rents.'),
@@ -217,6 +263,7 @@ export const METRICS: MetricDef[] = [
     theme: 'housing',
     value: (c) => c.col_single_no_rent_usd_month,
     format: (v) => money(v),
+    tickFormat: moneyTick,
     direction: 'lower_better',
     confidence: 'crowd',
     source: (c) => numbeo(c, 'Single person, excluding rent.'),
@@ -231,6 +278,7 @@ export const METRICS: MetricDef[] = [
         ? null
         : c.rent_1br_outside_usd_month + c.col_single_no_rent_usd_month,
     format: (v) => money(v),
+    tickFormat: moneyTick,
     direction: 'lower_better',
     confidence: 'crowd',
   },
@@ -241,6 +289,7 @@ export const METRICS: MetricDef[] = [
     theme: 'housing',
     value: (c) => c.apt_price_outside_usd_m2,
     format: (v) => money(v),
+    tickFormat: moneyTick,
     direction: 'lower_better',
     confidence: 'crowd',
     source: (c) => numbeo(c, 'Purchase price per square metre, outside the centre.'),
@@ -253,6 +302,9 @@ export const METRICS: MetricDef[] = [
     headline: true,
     value: (c, _k, band) => yearsToHome(c, band),
     format: (v) => years(v),
+    // `years()` clamps at "100+ yrs", which is right for one city and fatal for
+    // a scale: with a 0–2,500 domain it made five of six ticks identical.
+    tickFormat: yearsTick,
     direction: 'lower_better',
     confidence: 'crowd',
   },
@@ -309,6 +361,10 @@ export const METRICS: MetricDef[] = [
       return v === 'high' ? 3 : v === 'medium' ? 2 : v === 'low' ? 1 : null
     },
     format: (v) => (v === 3 ? 'usually yes' : v === 2 ? 'often, depends on the employer' : v === 1 ? 'rarely' : NO_DATA),
+    // Three named categories dressed as 1/2/3. A tick at 1.5 means nothing and
+    // the gap between "rarely" and "often" is not a distance, so this metric
+    // does not belong on a continuous axis at all. See docs/LIMITATIONS.md.
+    axisEligible: false,
     direction: 'higher_better',
     confidence: 'official',
   },
@@ -321,6 +377,9 @@ export const METRICS: MetricDef[] = [
     theme: 'life',
     value: (_c, k) => k?.enriched.happiness?.rank ?? k?.indices.whr_rank ?? null,
     format: (v) => (v == null ? NO_DATA : `#${num(v)}`),
+    // There is no rank #0, so the axis is not allowed to draw one.
+    tickFormat: rankTick,
+    axisFloor: 1,
     direction: 'lower_better',
     confidence: 'index',
     source: (_c, k) => ({
@@ -338,6 +397,8 @@ export const METRICS: MetricDef[] = [
     theme: 'life',
     value: (_c, k) => k?.indices.gpi_rank ?? null,
     format: (v) => (v == null ? NO_DATA : `#${num(v)} of 163`),
+    tickFormat: rankTick,
+    axisFloor: 1,
     direction: 'lower_better',
     confidence: 'index',
   },
@@ -416,6 +477,20 @@ export const METRICS: MetricDef[] = [
 ]
 
 export const METRIC_BY_KEY = new Map(METRICS.map((m) => [m.key, m]))
+
+/** Plain numeric, the default for every axis: no clamping, no bucketing, no
+ *  words — the three things that make two ticks say the same thing — and
+ *  enough decimals for the step it is given. */
+export const numericTick: TickFormat = (v, step) => num(v, decimalsFor(step))
+
+/** How a tick on THIS metric's axis should read. */
+export function tickFormatFor(metric: MetricDef): TickFormat {
+  return metric.tickFormat ?? numericTick
+}
+
+/** Metrics that can honestly occupy a continuous axis. A categorical metric is
+ *  excluded here rather than formatted around. */
+export const AXIS_METRICS = METRICS.filter((m) => m.axisEligible !== false)
 
 export const HEADLINE_KEYS = METRICS.filter((m) => m.headline).map((m) => m.key)
 

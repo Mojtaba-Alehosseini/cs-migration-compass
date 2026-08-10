@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 import { Flag } from './Flag'
 import { useData } from '../data/store'
 import { METRICS, METRIC_BY_KEY, THEMES } from '../data/registry'
-import { composite, type WeightedInput } from '../data/compute'
+import { UNSTABLE_METRIC_KEYS, composite, stabilityOf, type WeightedInput } from '../data/compute'
 import { downloadCsv } from '../lib/export'
 
 /* Deliberately varied so no single lens reads as the site's opinion. */
@@ -59,7 +59,14 @@ export function WeightsTool() {
     for (const [key] of active) {
       const m = METRIC_BY_KEY.get(key)
       if (!m) continue
+      // A figure the site has flagged as smaller than the rounding on its own
+      // inputs must not set this range. Here that matters more than on a chart:
+      // a bad extreme does not merely draw badly, it changes the normalised
+      // score of every other city. The flagged city still gets scored — it just
+      // does not define the scale it is scored against.
+      const risky = UNSTABLE_METRIC_KEYS.has(key)
       const vals = data.cities
+        .filter((c) => !(risky && stabilityOf(c, 'mid') === 'unstable'))
         .map((c) => m.value(c, data.countryById.get(c.country), 'mid'))
         .filter((v): v is number => v != null)
       if (vals.length) ranges.set(key, { min: Math.min(...vals), max: Math.max(...vals) })

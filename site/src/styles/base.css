@@ -941,3 +941,21 @@ table.cmp {
 @media (prefers-reduced-motion: reduce) {
   .chart path.ser { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
 }
+
+/* A figure smaller than the rounding on its own inputs. The same warning
+   language as every other caveat on the site — a marker, not an alarm. */
+.unstable-mark {
+  color: var(--warn);
+  font-weight: var(--weight-semibold);
+  margin-right: 3px;
+  font-family: var(--font-ui);
+  cursor: help;
+}
+.unstable-note {
+  display: block;
+  color: var(--warn);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-normal);
+  margin-top: 3px;
+  max-width: 46ch;
+}

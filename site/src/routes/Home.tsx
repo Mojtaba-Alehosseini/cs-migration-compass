@@ -20,6 +20,7 @@ import { BudgetEditor } from '../components/BudgetEditor'
 import { ProfileNudge } from '../components/ProfileNudge'
 import { useData } from '../data/store'
 import { MAX_PLACES, useSelection } from '../data/selection'
+import { UnstableMark } from '../components/Unstable'
 import { useToast } from '../components/Toast'
 import { QUESTIONS, pickColor } from '../data/questions'
 import type { SecondAxis } from '../data/questions'
@@ -219,6 +220,9 @@ export function Home() {
                   {c.name}
                 </span>
                 <span>
+                  {/* The same marker the table and Compare use: this question's
+                      axis is years-to-home, which can be rounding-limited. */}
+                  {question.id === 'home' && <UnstableMark city={c} band="mid" />}
                   <b className="tnum">{question.fmt(question.value(c, countryOf(c)))}</b>{' '}
                   <button onClick={() => toggle(c.id)} aria-label={`Remove ${c.name}`}
                     style={{ color: 'var(--ink-3)', padding: '0 2px' }}>✕</button>
@@ -297,7 +301,10 @@ export function Home() {
                       <Flag cc={city.country} size={14} />{city.name}
                     </Link>
                   </td>
-                  <td style={cell}><span className="tnum">{question.fmt(v)}</span></td>
+                  <td style={cell}>
+                    {question.id === 'home' && <UnstableMark city={city} band="mid" />}
+                    <span className="tnum">{question.fmt(v)}</span>
+                  </td>
                   <td style={cell}><span className="tnum">{money(city.salary_usd_year.mid)}</span></td>
                   <td style={cell}><span className="tnum">{money(savingsPerYear(city, 'mid'))}</span></td>
                 </tr>

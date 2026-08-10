@@ -91,6 +91,32 @@ flag accuracy — flag accuracy is carried by the flag-dots themselves, which is
 where it belongs. Colour is never the only channel: every series is also
 labelled.
 
+### Axis rules
+
+Two rules the chart kit enforces rather than trusts, both of which shipped as
+bugs first.
+
+**Tick labels must be injective.** A formatter that clamps, buckets or returns
+words is correct for a single figure and wrong for a scale: `years()` reads
+`100+ yrs`, which is right for one city and made *five of six ticks say the same
+thing* on a 0–2,500 axis. So a metric carries two formatters — `format` for one
+datum, `tickFormat` for an axis — and the kit asserts on every build that an
+axis's labels are distinct, throwing in development and logging once in
+production. An axis whose labels repeat describes nothing.
+
+Categorical metrics are excluded from axes entirely rather than formatted
+around. The distance between "rarely" and "often" is not a number.
+
+**A value the site has flagged cannot set a domain.** Domains are computed from
+stable values only; a rounding-limited figure (see METHODOLOGY §2) is drawn in a
+labelled band at the edge of the plot, in the warning language, keeping its real
+number in the readout and the export. This extends the gutter the Home field
+already uses for cities missing a value — the same idea, one step further: shown
+and named, but not allowed to decide where everything else is drawn.
+
+Neither rule clips, winsorises or drops a point. Nothing is removed from a chart
+for being inconvenient.
+
 ---
 
 ## Motion

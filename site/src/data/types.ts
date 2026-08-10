@@ -58,6 +58,9 @@ export interface Computed {
   monthly_living_usd: number | null
   savings_usd_year: number | null
   years_to_home: number | null
+  /** Whether years-to-home survives one rounding step on its own inputs. See
+   *  the stability rule in compute.ts and docs/METHODOLOGY.md. */
+  years_to_home_stability?: 'stable' | 'unstable' | null
   m2_per_year: number | null
   missing_inputs: string[]
   never_note?: string
