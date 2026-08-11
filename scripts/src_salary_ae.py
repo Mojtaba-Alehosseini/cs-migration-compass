@@ -32,11 +32,14 @@ ILOSTAT_URL = "https://sdmx.ilo.org/rest/data/ILO,DF_EAR_EMTA_SEX_OCU_NB,1.0/ARE
 # kept as a snapshot rather than re-fetched each run, because the source
 # itself has published nothing newer to fetch.
 LAST_KNOWN_2009 = {
-    "isco08_major:2": {"title": "Professionals", "monthly_average_wage_aed": 13688.694},
-    "isco08_major:1": {"title": "Managers", "monthly_average_wage_aed": 22038.627},
+    "isco08_major:2": {"title": "Professionals", "monthly_average_wage_aed": 13688.694,
+                        "distribution": "mean-only"},
+    "isco08_major:1": {"title": "Managers", "monthly_average_wage_aed": 22038.627,
+                        "distribution": "mean-only"},
     "isco08_major:3": {"title": "Technicians and associate professionals",
-                        "monthly_average_wage_aed": 10221.388},
-    "isco08_major:0": {"title": "Armed forces occupations", "monthly_average_wage_aed": 20959.023},
+                        "monthly_average_wage_aed": 10221.388, "distribution": "mean-only"},
+    "isco08_major:0": {"title": "Armed forces occupations", "monthly_average_wage_aed": 20959.023,
+                        "distribution": "mean-only"},
 }
 
 
@@ -61,7 +64,8 @@ def run() -> None:
             "primary_code": "isco08_major:2",
             "primary_label": "Professionals",
             "classification": "ISCO-08 major group, 2009 vintage only",
-            "unit": "AED per month",
+            "unit": "AED per month. Only a mean is published for this vintage — no median, no "
+                "percentiles — so every record carries distribution: 'mean-only'.",
             "confidence": "official",
             "status": "no-series",
             "level": "country (United Arab Emirates)",

@@ -14,6 +14,13 @@ violation fails the build instead of quietly shipping:
   * the ODbL Stack Overflow survey never reaches core.json (share-alike risk)
   * survey earnings and advertised pay never occupy the same field
   * a percentile is never labelled a seniority band, in a field name or in prose
+  * the crosswalk's comparison rule never reports a depth deeper than either
+    side's own mapping supports
+  * every crosswalk mapping carries a real, checked-against evidence note
+  * a "no-series" salary record is well formed: a status, a reason, and
+    either a dated last-known figure or an explicit statement that none exists
+  * a source with no percentiles says so explicitly (a `distribution` flag),
+    rather than a silently missing field that looks like a fetch omission
 
 Exit code 1 on any ERROR. Warnings are reported but do not fail the build.
 """
@@ -386,6 +393,153 @@ def check_percentiles_not_seniority(source_ids=None, processed_dir: Path = PROCE
                     f"— check this is not labelling a percentile as a seniority band: {line.strip()!r}")
 
 
+def _load_mappings(occ_file: Path | None = None) -> list[dict] | None:
+    path = occ_file or (DATA / "occupations.json")
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding="utf-8")).get("mappings", [])
+
+
+def check_crosswalk_comparison_depth(mappings: list[dict] | None = None,
+                                      compare_fn=None) -> None:
+    """Package 8, assertion 1. The 'meet in the middle' comparison rule
+    (scripts/crosswalk.py's compare()) must never report a resolved depth
+    deeper than either side's own mapping supports. Checked systematically
+    across every pair of mappings — not eyeballed on the handful of samples
+    crosswalk.py prints — so a future change to compare() that quietly
+    breaks the rule for some untested pair still gets caught.
+
+    compare_fn is overridable so this can be tested against a deliberately
+    broken implementation without touching scripts/crosswalk.py."""
+    log("· crosswalk comparison rule never reports a depth deeper than either side supports")
+    if mappings is None:
+        mappings = _load_mappings()
+        if mappings is None:
+            err("data/occupations.json is missing — cannot check the comparison rule")
+            return
+    import crosswalk
+    compare = compare_fn or crosswalk.compare
+    checked = bad = 0
+    for i, a in enumerate(mappings):
+        for b in mappings[i + 1:]:
+            checked += 1
+            result = compare(a, b)
+            if not result.get("comparable"):
+                continue
+            depth_a, depth_b = crosswalk.depth_of(a["shared_key"]), crosswalk.depth_of(b["shared_key"])
+            if depth_a is None or depth_b is None:
+                bad += 1
+                err(f"comparison rule: {a['country']}/{a['national_code']} vs "
+                    f"{b['country']}/{b['national_code']} reported comparable=True but at least one "
+                    "side has no ISCO-08 depth at all (shared_key 'unmapped') — must be refused")
+                continue
+            if result.get("depth") is None or result["depth"] > min(depth_a, depth_b):
+                bad += 1
+                err(f"comparison rule: {a['country']}/{a['national_code']} (depth {depth_a}) vs "
+                    f"{b['country']}/{b['national_code']} (depth {depth_b}) resolved to depth "
+                    f"{result.get('depth')!r}, deeper than the shallower side supports")
+    log(f"  {checked} mapping pairs checked, {bad} depth violation(s)")
+
+
+def check_crosswalk_notes(mappings: list[dict] | None = None) -> None:
+    """Package 8, assertion 2. Every crosswalk mapping must carry a real,
+    non-trivial note — the same bar scripts/crosswalk.py's own audit holds
+    mappings to, checked here too so `make validate` (the gate CI actually
+    runs) catches a thin note even if the crosswalk audit is not run."""
+    log("· every crosswalk mapping carries a real, checked-against note")
+    if mappings is None:
+        mappings = _load_mappings()
+        if mappings is None:
+            err("data/occupations.json is missing — cannot check crosswalk notes")
+            return
+    thin = 0
+    for m in mappings:
+        note = (m.get("note") or "").strip()
+        if len(note) < 40:
+            thin += 1
+            err(f"occupations.json: {m.get('country')}/{m.get('national_code')} has no real "
+                f"evidence note ({len(note)} chars) — a mapping nobody checked is a guess, not a mapping")
+    log(f"  {len(mappings)} mappings, {thin} without a real note")
+
+
+def check_no_series_records(source_ids=None, processed_dir: Path = PROCESSED) -> None:
+    """Package 8, assertion 3. A 'no-series' (or 'no-occupation-series')
+    salary record is well formed: it carries that status, AND either a
+    dated last-known figure (a year appears somewhere in its data — the
+    UAE's case) or an explicit reason why no figure exists at all (a
+    meta.why_it_matters or data.alternative pointer — Italy's case).
+    Absence with no reason given is indistinguishable from a bug.
+
+    Scans every processed dataset by default (not just files named
+    salary_*.json — that pattern would silently skip bls_oews.json, exactly
+    the scoping mistake package 7's own review caught in
+    check_survey_vs_advertised_pay). source_ids/processed_dir are
+    overridable so this can be tested against a scratch directory."""
+    log("· 'no-series' salary records carry a status, a reason, and dated or explicitly-absent data")
+    checked = 0
+    for path in _processed_files(processed_dir, source_ids):
+        try:
+            doc = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        data = doc.get("data") or {}
+        status = data.get("status")
+        if not isinstance(status, str) or not status.startswith("no-"):
+            continue
+        checked += 1
+        meta = doc.get("meta") or {}
+        occs = data.get("occupations") or {}
+        if occs:
+            # The year can live inside the occupation records themselves (a
+            # by_year breakdown) or as a sibling of "occupations" (the UAE's
+            # last_known_year) — search the whole data blob, not just occs.
+            blob = json.dumps(data)
+            if not re.search(r"\b(19|20)\d{2}\b", blob):
+                err(f"processed/{path.name}: status {status!r} has non-empty occupations but no year "
+                    "appears anywhere in its data — a 'no-series' record that still shows data must date it")
+        else:
+            if not meta.get("why_it_matters") and not data.get("alternative"):
+                err(f"processed/{path.name}: status {status!r} has empty occupations and no "
+                    "explanation (meta.why_it_matters or data.alternative) — absence with no reason "
+                    "given is indistinguishable from a bug")
+        if meta.get("status") != status:
+            err(f"processed/{path.name}: data.status={status!r} but meta.status={meta.get('status')!r} "
+                "— these must agree")
+    log(f"  {checked} no-data record(s) found and checked")
+
+
+def check_percentile_absence_explicit(source_ids=None, processed_dir: Path = PROCESSED) -> None:
+    """Package 8, assertion 4. A salary source with no percentile fields
+    must say so explicitly via a `distribution` flag (e.g.
+    'central-tendency-only', 'mean-only') on every occupation record.
+    Otherwise a genuinely percentile-less source (Australia, Ireland, Qatar,
+    the UAE) is indistinguishable from a harvester that simply forgot to
+    ask for percentiles — package 9's estimator needs to tell those apart.
+
+    Scans every processed dataset by default — see check_no_series_records
+    for why a salary_*.json-only glob is the wrong default here."""
+    log("· sources with no percentiles say so explicitly (a distribution flag)")
+    percentile_field_re = re.compile(r"(?:^|_)p\d{1,3}(?:_|$)")
+    checked = 0
+    for path in _processed_files(processed_dir, source_ids):
+        try:
+            doc = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        occs = (doc.get("data") or {}).get("occupations") or {}
+        for code, occ in occs.items():
+            if not isinstance(occ, dict):
+                continue
+            checked += 1
+            names = {n.lower() for n in _field_names(occ)}
+            has_percentile = any(percentile_field_re.search(n) for n in names)
+            if not has_percentile and "distribution" not in occ:
+                err(f"processed/{path.name}: occupation {code!r} has no percentile field and no "
+                    "'distribution' flag — must be explicit (e.g. distribution: 'central-tendency-only' "
+                    "or 'mean-only'), not silently missing")
+    log(f"  {checked} occupation record(s) checked")
+
+
 def main() -> int:
     log("CS Migration Compass — data validation")
     log("")
@@ -396,6 +550,10 @@ def main() -> int:
     check_odbl_isolation()
     check_survey_vs_advertised_pay()
     check_percentiles_not_seniority()
+    check_crosswalk_comparison_depth()
+    check_crosswalk_notes()
+    check_no_series_records()
+    check_percentile_absence_explicit()
 
     log("")
     if WARNINGS:

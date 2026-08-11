@@ -68,6 +68,7 @@ def run() -> None:
             "soc1:2": {
                 "title": occ_label,
                 "scope": "1-digit SOC major group — NOT ICT-specific, see module docstring",
+                "distribution": "central-tendency-only",
                 "by_year": by_year,
             },
         },
@@ -87,7 +88,9 @@ def run() -> None:
             "primary_label": occ_label,
             "classification": "UK-derived Standard Occupational Classification, 1-digit major group "
                 "(Ireland's SES06 does not publish any finer occupation breakdown)",
-            "unit": "EUR per hour (mean, median) and paid weekly hours (mean, median)",
+            "unit": "EUR per hour (mean, median) and paid weekly hours (mean, median). No percentiles "
+                "exist in SES06 — every record carries distribution: 'central-tendency-only' rather "
+                "than silently omitting a spread measure the source never published.",
             "confidence": "official",
             "level": "country (Ireland)",
             "years": years,

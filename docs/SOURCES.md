@@ -4,7 +4,7 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-11T22:56:08+00:00**
+Last pipeline run: **2026-08-11T23:06:39+00:00**
 
 38 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
@@ -494,7 +494,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - **Status** — live
 - **Coverage** — 4 ISCO-08 major groups, single year (2009), UAE only
 - **Rows processed** — 4
-- **Fetched** — 2026-08-11T22:55:23+00:00
+- **Fetched** — 2026-08-11T23:06:39+00:00
 - **Licence** — ILOSTAT open data terms (ILO). Cite: International Labour Organization (ILO), ILOSTAT, flow DF_EAR_EMTA_SEX_OCU_NB. Underlying national source: UAE Federal Competitiveness and Statistics Centre (FCSC), 2009 Labour Force Survey.
 - **Output** — `data/processed/salary_ae.json`
 - **Fetch script** — `scripts/src_salary_ae.py`
@@ -626,7 +626,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - **Status** — live
 - **Coverage** — 1 SOC major group x 2 years, Ireland only
 - **Rows processed** — 8
-- **Fetched** — 2026-08-11T22:49:41+00:00
+- **Fetched** — 2026-08-11T23:06:35+00:00
 - **Licence** — CC BY 4.0 (CSO Ireland open data licence, PxStat). Cite: Central Statistics Office (CSO) Ireland, table SES06.
 - **Output** — `data/processed/salary_ie.json`
 - **Fetch script** — `scripts/src_salary_ie.py`
@@ -712,7 +712,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - **Status** — live
 - **Coverage** — 1 ISCO major group x 2 sexes x 4 years, Qatar only
 - **Rows processed** — 8
-- **Fetched** — 2026-08-11T22:53:39+00:00
+- **Fetched** — 2026-08-11T23:06:37+00:00
 - **Licence** — CC BY 4.0 (data.gov.qa open data licence). Cite: Qatar Planning and Statistics Authority (PSA), via data.gov.qa.
 - **Output** — `data/processed/salary_qa.json`
 - **Fetch script** — `scripts/src_salary_qa.py`

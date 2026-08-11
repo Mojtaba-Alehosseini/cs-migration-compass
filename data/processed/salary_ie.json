@@ -1,12 +1,12 @@
 {
  "source_id": "salary_ie",
- "generated_at": "2026-08-11T22:49:41+00:00",
+ "generated_at": "2026-08-11T23:06:35+00:00",
  "meta": {
   "occupation_family": "SOC, 1-digit major groups only — the coarsest occupation depth in this salary spine",
   "primary_code": "soc1:2",
   "primary_label": "Professional",
   "classification": "UK-derived Standard Occupational Classification, 1-digit major group (Ireland's SES06 does not publish any finer occupation breakdown)",
-  "unit": "EUR per hour (mean, median) and paid weekly hours (mean, median)",
+  "unit": "EUR per hour (mean, median) and paid weekly hours (mean, median). No percentiles exist in SES06 — every record carries distribution: 'central-tendency-only' rather than silently omitting a spread measure the source never published.",
   "confidence": "official",
   "level": "country (Ireland)",
   "years": [
@@ -21,6 +21,7 @@
    "soc1:2": {
     "title": "Professional",
     "scope": "1-digit SOC major group — NOT ICT-specific, see module docstring",
+    "distribution": "central-tendency-only",
     "by_year": {
      "2018": {
       "mean_eur_hour": 32.21,

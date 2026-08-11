@@ -1,12 +1,12 @@
 {
  "source_id": "salary_ae",
- "generated_at": "2026-08-11T22:55:22+00:00",
+ "generated_at": "2026-08-11T23:06:39+00:00",
  "meta": {
   "occupation_family": "ISCO-08 major groups (1-digit-equivalent) — the last depth the UAE published at all",
   "primary_code": "isco08_major:2",
   "primary_label": "Professionals",
   "classification": "ISCO-08 major group, 2009 vintage only",
-  "unit": "AED per month",
+  "unit": "AED per month. Only a mean is published for this vintage — no median, no percentiles — so every record carries distribution: 'mean-only'.",
   "confidence": "official",
   "status": "no-series",
   "level": "country (United Arab Emirates)",
@@ -20,19 +20,23 @@
   "occupations": {
    "isco08_major:2": {
     "title": "Professionals",
-    "monthly_average_wage_aed": 13688.694
+    "monthly_average_wage_aed": 13688.694,
+    "distribution": "mean-only"
    },
    "isco08_major:1": {
     "title": "Managers",
-    "monthly_average_wage_aed": 22038.627
+    "monthly_average_wage_aed": 22038.627,
+    "distribution": "mean-only"
    },
    "isco08_major:3": {
     "title": "Technicians and associate professionals",
-    "monthly_average_wage_aed": 10221.388
+    "monthly_average_wage_aed": 10221.388,
+    "distribution": "mean-only"
    },
    "isco08_major:0": {
     "title": "Armed forces occupations",
-    "monthly_average_wage_aed": 20959.023
+    "monthly_average_wage_aed": 20959.023,
+    "distribution": "mean-only"
    }
   },
   "status": "no-series",

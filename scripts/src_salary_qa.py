@@ -77,6 +77,7 @@ def run() -> None:
             "isco08_major:2": {
                 "title": TARGET_OCCUPATION,
                 "scope": "ISCO-08 major group 2 — NOT ICT-specific, see module docstring",
+                "distribution": "mean-only",
                 "by_year": by_year_sex,
             },
         },
@@ -92,7 +93,9 @@ def run() -> None:
             "primary_label": TARGET_OCCUPATION,
             "classification": "ISCO-08 major group (Qatar's PSA publishes 9 major groups; no finer "
                 "occupation code is exposed by this dataset)",
-            "unit": "QAR per month (monthly_average_wage_qar); paid_employment_workers is a headcount",
+            "unit": "QAR per month (monthly_average_wage_qar); paid_employment_workers is a headcount. "
+                "Only a mean is published — no median, no percentiles — so every record carries "
+                "distribution: 'mean-only' rather than silently omitting a spread measure.",
             "confidence": "official",
             "level": "country (Qatar)",
             "years": years,
