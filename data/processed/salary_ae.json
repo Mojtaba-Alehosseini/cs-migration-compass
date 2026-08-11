@@ -1,0 +1,42 @@
+{
+ "source_id": "salary_ae",
+ "generated_at": "2026-08-11T22:55:22+00:00",
+ "meta": {
+  "occupation_family": "ISCO-08 major groups (1-digit-equivalent) — the last depth the UAE published at all",
+  "primary_code": "isco08_major:2",
+  "primary_label": "Professionals",
+  "classification": "ISCO-08 major group, 2009 vintage only",
+  "unit": "AED per month",
+  "confidence": "official",
+  "status": "no-series",
+  "level": "country (United Arab Emirates)",
+  "years": [
+   2009
+  ],
+  "crosswalk_hazard": "'Professionals' is ISCO major group 2 in full, not IT-specific — same caveat as Ireland's SES06 and Qatar's PSA series. On top of that, this figure is 17 years stale as of this package's run; it should be surfaced on the site as a dated historical reference, never as a current wage estimate.",
+  "why_it_matters": "Confirms the site's Explore Jobs copy ('the UAE's last occupation-level wage statistic is from 2009') with an exact figure and source, rather than the unsupported assertion the copy made before package 7's correction."
+ },
+ "data": {
+  "occupations": {
+   "isco08_major:2": {
+    "title": "Professionals",
+    "monthly_average_wage_aed": 13688.694
+   },
+   "isco08_major:1": {
+    "title": "Managers",
+    "monthly_average_wage_aed": 22038.627
+   },
+   "isco08_major:3": {
+    "title": "Technicians and associate professionals",
+    "monthly_average_wage_aed": 10221.388
+   },
+   "isco08_major:0": {
+    "title": "Armed forces occupations",
+    "monthly_average_wage_aed": 20959.023
+   }
+  },
+  "status": "no-series",
+  "last_known_year": 2009,
+  "years_stale": "package build year minus 2009 — 17 years as of this run (2026)"
+ }
+}

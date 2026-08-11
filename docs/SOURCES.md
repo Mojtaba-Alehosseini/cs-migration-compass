@@ -4,9 +4,9 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-11T22:49:41+00:00**
+Last pipeline run: **2026-08-11T22:56:08+00:00**
 
-35 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+38 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
 Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
 
@@ -31,14 +31,17 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | OECD Economic Outlook 119 — projections | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Economic Outlook 119. | raw committed |
 | OECD Data Explorer (SDMX) — house prices, wages, hours, tax wedge | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Data Explorer, dataflow IDs listed per block. | raw committed |
 | Reporters Without Borders — World Press Freedom Index | RSF publishes the index openly; cite Reporters Without Borders (RSF), World Press Freedom Index. | raw committed |
+| UAE — no occupation-level wage series since 2009 (ILOSTAT last known figures) | ILOSTAT open data terms (ILO). Cite: International Labour Organization (ILO), ILOSTAT, flow DF_EAR_EMTA_SEX_OCU_NB. Underlying national source: UAE Federal Competitiveness and Statistics Centre (FCSC), 2009 Labour Force Survey. | the four cited 2009 figures are reproduced directly in data/processed/salary_ae.json (there is no larger raw payload to separately redistribute — see module docstring; this source does not fetch a raw file at run time). |
 | ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation | CC BY 2.5 AU. Cite: Australian Taxation Office (ATO), Taxation statistics 2023-24, Table 15A, via data.gov.au. | processed derivative only — the raw 700 KB ATO workbook is cached under data/raw/salary_au/ but that directory is gitignored, so this repo does not redistribute the raw download (CC BY 2.5 AU would permit it; the repo simply doesn't). Only the derived data/processed/salary_au.json is committed. |
 | Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region | Open Government Licence - Canada 2.0. Cite: Employment and Social Development Canada (ESDC) / Job Bank, Wages. | processed derivative only — the raw 18 MB wages CSV is cached under data/raw/salary_ca/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL-Canada 2.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_ca.json is committed. |
 | Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08) | CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20. | processed derivative only — the raw StatBank JSON-stat payload is cached under data/raw/salary_dk/ but that directory is gitignored, so this repo does not redistribute the raw source (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_dk.json is committed. |
 | INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11 | Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES). | processed derivative only — the raw Tempus3 JSON payloads are cached under data/raw/salary_es/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_es.json is committed. |
 | Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) | CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au. | processed derivative only — the raw json-stat2 payload is cached under data/raw/salary_fi/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_fi.json is committed. |
 | CSO Ireland — SES06 earnings, 'Professional' 1-digit SOC major group | CC BY 4.0 (CSO Ireland open data licence, PxStat). Cite: Central Statistics Office (CSO) Ireland, table SES06. | processed derivative only — the raw JSON-stat2 payload is cached under data/raw/salary_ie/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_ie.json is committed. |
+| Italy — no occupation-level wage earnings flow exists (ISTAT) | N/A — no data fetched. If a future session locates a genuine CP2011 earnings flow, record its actual licence then. | N/A — no raw data fetched or cached. |
 | CBS (Statistics Netherlands) — software/application developer wages (BRC 2014) | CC BY 4.0 (CBS StatLine open data licence). Cite: Statistics Netherlands (CBS), table 85517NED. | processed derivative only — the raw OData JSON payload is cached under data/raw/salary_nl/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_nl.json is committed. |
 | SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08) | CC BY 4.0 (Statistics Norway open data licence, data.norge.no / SSB API terms). Cite: Statistics Norway (SSB), tables 11418 and 11658. | processed derivative only — the raw JSON-stat2 payloads are cached under data/raw/salary_no/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_no.json is committed. |
+| Qatar Planning and Statistics Authority — wages by ISCO major group, via data.gov.qa | CC BY 4.0 (data.gov.qa open data licence). Cite: Qatar Planning and Statistics Authority (PSA), via data.gov.qa. | processed derivative only — the raw OpenDataSoft JSON payload is cached under data/raw/salary_qa/ but that directory is gitignored, so this repo does not redistribute the raw source (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_qa.json is committed. |
 | SCB wage structure statistics — ICT occupations (SSYK 2012) | CC0 1.0 Universal (SCB adopted CC0 for all open data 2021-07-01; no attribution required). Cite: Statistics Sweden (SCB), wage and salary structures, private and public sector. | processed derivative only — the raw PxWeb JSON payloads are cached under data/raw/salary_se/ but that directory is gitignored, so this repo does not redistribute the raw source (CC0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_se.json is committed. |
 | ONS ASHE Table 14.7 — Annual pay (Gross), IT occupations, SOC 2020 4-digit | Open Government Licence v3.0. Cite: Office for National Statistics (ONS), Annual Survey of Hours and Earnings (ASHE), Table 14. | processed derivative only — the raw 11 MB ASHE zip is cached under data/raw/salary_uk/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL v3.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_uk.json is committed. |
 | Stack Overflow Annual Developer Survey — salaries by country | Stack Overflow releases survey results under the Open Database License (ODbL). Cite: Stack Overflow Annual Developer Survey. | aggregates committed; raw survey CSVs not committed (size) |
@@ -486,6 +489,26 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 </details>
 
+### UAE — no occupation-level wage series since 2009 (ILOSTAT last known figures)
+
+- **Status** — live
+- **Coverage** — 4 ISCO-08 major groups, single year (2009), UAE only
+- **Rows processed** — 4
+- **Fetched** — 2026-08-11T22:55:23+00:00
+- **Licence** — ILOSTAT open data terms (ILO). Cite: International Labour Organization (ILO), ILOSTAT, flow DF_EAR_EMTA_SEX_OCU_NB. Underlying national source: UAE Federal Competitiveness and Statistics Centre (FCSC), 2009 Labour Force Survey.
+- **Output** — `data/processed/salary_ae.json`
+- **Fetch script** — `scripts/src_salary_ae.py`
+
+**URLs**
+
+- <https://sdmx.ilo.org/rest/data/ILO,DF_EAR_EMTA_SEX_OCU_NB,1.0/ARE.......?startPeriod=1990>
+
+**What we do to it**
+
+1. No transform — this is a dated snapshot of ILOSTAT's own published 2009 values for the UAE, verified live against the full 39-row flow before being pinned here (every row in the flow is 2009; nothing more recent exists to prefer over these).
+
+> No occupation-level wage statistic exists for the UAE newer than 2009 in ILOSTAT or in the national statistics body's (FCSC) own releases — verified, not assumed. This file exists so that absence is a sourced, dated data record instead of a silent gap.
+
 ### ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation
 
 - **Status** — live
@@ -619,6 +642,26 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 > 1-digit SOC only — confirmed against the table's own live dimension, not assumed. No ICT-specific series exists in Irish official statistics at any finer depth via this table.
 
+### Italy — no occupation-level wage earnings flow exists (ISTAT)
+
+- **Status** — live
+- **Coverage** — no occupation-level coverage exists for Italy in this pipeline
+- **Rows processed** — 0
+- **Fetched** — 2026-08-11T22:56:08+00:00
+- **Licence** — N/A — no data fetched. If a future session locates a genuine CP2011 earnings flow, record its actual licence then.
+- **Output** — `data/processed/salary_it.json`
+- **Fetch script** — `scripts/src_salary_it.py`
+
+**URLs**
+
+- <https://esploradati.istat.it/SDMXWS/rest/dataflow/IT1/ALL/latest>
+
+**What we do to it**
+
+1. No transform — this file records the absence of a source, inherited from this package's own prior scan of ISTAT's full SDMX dataflow catalogue (4,896 flows), not re-scanned here.
+
+> ISTAT publishes no occupation-level (CP2011) earnings flow. Its CONTRACTUAL_OCCUPATION dimension is contract grade (operaio/impiegato/quadro/dirigente), not occupation. The only CP2011-crossed earnings flow is a school-leaver cohort survey, not a general wage structure and not comparable to this spine's other sources. NACE J sector earnings are the named alternative, not substituted here because a sector figure is not an occupation figure.
+
 ### CBS (Statistics Netherlands) — software/application developer wages (BRC 2014)
 
 - **Status** — live
@@ -663,6 +706,29 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 1. Queried the same codes x 3 age bands x the latest available quarter (2026K1) from table 11658.
 1. Kept mean, median, quartiles, N (11418) and age-banded median/mean (11658) verbatim.
 1. Occupation titles are the API's own labels, not hand-typed.
+
+### Qatar Planning and Statistics Authority — wages by ISCO major group, via data.gov.qa
+
+- **Status** — live
+- **Coverage** — 1 ISCO major group x 2 sexes x 4 years, Qatar only
+- **Rows processed** — 8
+- **Fetched** — 2026-08-11T22:53:39+00:00
+- **Licence** — CC BY 4.0 (data.gov.qa open data licence). Cite: Qatar Planning and Statistics Authority (PSA), via data.gov.qa.
+- **Output** — `data/processed/salary_qa.json`
+- **Fetch script** — `scripts/src_salary_qa.py`
+
+**URLs**
+
+- <https://www.data.gov.qa/api/explore/v2.1/catalog/datasets/workers-in-paid-employment-15-years-and-above-and-monthly-average-wage-q1/records?limit=100>
+- <https://sdmx.ilo.org/rest/data/ILO,DF_EAR_EMTA_SEX_OCU_NB,1.0/QAT.......?startPeriod=2018>
+
+**What we do to it**
+
+1. Fetched all records from the data.gov.qa OpenDataSoft dataset and kept only the 'Professionals' (ISCO major group 2) rows, both sexes, 2020-2023.
+1. Kept paid-employment headcount and monthly average wage (QAR) verbatim, per sex, per year — no total/blended figure computed.
+1. Corroborated against ILOSTAT flow DF_EAR_EMTA_SEX_OCU_NB (verified live, QAT filter returns real rows) — cited in provenance, not re-parsed into this file's data.
+
+> Major-group depth only — the finest occupation breakdown data.gov.qa publishes for this indicator. Not IT-specific.
 
 ### SCB wage structure statistics — ICT occupations (SSYK 2012)
 

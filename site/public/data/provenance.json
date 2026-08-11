@@ -395,6 +395,24 @@
       "notes": "Years that failed to download are omitted, never interpolated."
     },
     {
+      "source_id": "salary_ae",
+      "name": "UAE — no occupation-level wage series since 2009 (ILOSTAT last known figures)",
+      "urls": [
+        "https://sdmx.ilo.org/rest/data/ILO,DF_EAR_EMTA_SEX_OCU_NB,1.0/ARE.......?startPeriod=1990"
+      ],
+      "fetched_at": "2026-08-11T22:55:23+00:00",
+      "license": "ILOSTAT open data terms (ILO). Cite: International Labour Organization (ILO), ILOSTAT, flow DF_EAR_EMTA_SEX_OCU_NB. Underlying national source: UAE Federal Competitiveness and Statistics Centre (FCSC), 2009 Labour Force Survey.",
+      "redistribution": "the four cited 2009 figures are reproduced directly in data/processed/salary_ae.json (there is no larger raw payload to separately redistribute — see module docstring; this source does not fetch a raw file at run time).",
+      "transforms": [
+        "No transform — this is a dated snapshot of ILOSTAT's own published 2009 values for the UAE, verified live against the full 39-row flow before being pinned here (every row in the flow is 2009; nothing more recent exists to prefer over these)."
+      ],
+      "output": "data/processed/salary_ae.json",
+      "status": "ok",
+      "rows": 4,
+      "coverage": "4 ISCO-08 major groups, single year (2009), UAE only",
+      "notes": "No occupation-level wage statistic exists for the UAE newer than 2009 in ILOSTAT or in the national statistics body's (FCSC) own releases — verified, not assumed. This file exists so that absence is a sourced, dated data record instead of a silent gap."
+    },
+    {
       "source_id": "salary_au",
       "name": "ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation",
       "urls": [
@@ -518,6 +536,24 @@
       "notes": "1-digit SOC only — confirmed against the table's own live dimension, not assumed. No ICT-specific series exists in Irish official statistics at any finer depth via this table."
     },
     {
+      "source_id": "salary_it",
+      "name": "Italy — no occupation-level wage earnings flow exists (ISTAT)",
+      "urls": [
+        "https://esploradati.istat.it/SDMXWS/rest/dataflow/IT1/ALL/latest"
+      ],
+      "fetched_at": "2026-08-11T22:56:08+00:00",
+      "license": "N/A — no data fetched. If a future session locates a genuine CP2011 earnings flow, record its actual licence then.",
+      "redistribution": "N/A — no raw data fetched or cached.",
+      "transforms": [
+        "No transform — this file records the absence of a source, inherited from this package's own prior scan of ISTAT's full SDMX dataflow catalogue (4,896 flows), not re-scanned here."
+      ],
+      "output": "data/processed/salary_it.json",
+      "status": "ok",
+      "rows": 0,
+      "coverage": "no occupation-level coverage exists for Italy in this pipeline",
+      "notes": "ISTAT publishes no occupation-level (CP2011) earnings flow. Its CONTRACTUAL_OCCUPATION dimension is contract grade (operaio/impiegato/quadro/dirigente), not occupation. The only CP2011-crossed earnings flow is a school-leaver cohort survey, not a general wage structure and not comparable to this spine's other sources. NACE J sector earnings are the named alternative, not substituted here because a sector figure is not an occupation figure."
+    },
+    {
       "source_id": "salary_nl",
       "name": "CBS (Statistics Netherlands) — software/application developer wages (BRC 2014)",
       "urls": [
@@ -559,6 +595,27 @@
       "rows": 149,
       "coverage": "5 STYRK-08 occupations x 5 years + age cross, Norway only",
       "notes": null
+    },
+    {
+      "source_id": "salary_qa",
+      "name": "Qatar Planning and Statistics Authority — wages by ISCO major group, via data.gov.qa",
+      "urls": [
+        "https://www.data.gov.qa/api/explore/v2.1/catalog/datasets/workers-in-paid-employment-15-years-and-above-and-monthly-average-wage-q1/records?limit=100",
+        "https://sdmx.ilo.org/rest/data/ILO,DF_EAR_EMTA_SEX_OCU_NB,1.0/QAT.......?startPeriod=2018"
+      ],
+      "fetched_at": "2026-08-11T22:53:39+00:00",
+      "license": "CC BY 4.0 (data.gov.qa open data licence). Cite: Qatar Planning and Statistics Authority (PSA), via data.gov.qa.",
+      "redistribution": "processed derivative only — the raw OpenDataSoft JSON payload is cached under data/raw/salary_qa/ but that directory is gitignored, so this repo does not redistribute the raw source (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_qa.json is committed.",
+      "transforms": [
+        "Fetched all records from the data.gov.qa OpenDataSoft dataset and kept only the 'Professionals' (ISCO major group 2) rows, both sexes, 2020-2023.",
+        "Kept paid-employment headcount and monthly average wage (QAR) verbatim, per sex, per year — no total/blended figure computed.",
+        "Corroborated against ILOSTAT flow DF_EAR_EMTA_SEX_OCU_NB (verified live, QAT filter returns real rows) — cited in provenance, not re-parsed into this file's data."
+      ],
+      "output": "data/processed/salary_qa.json",
+      "status": "ok",
+      "rows": 8,
+      "coverage": "1 ISCO major group x 2 sexes x 4 years, Qatar only",
+      "notes": "Major-group depth only — the finest occupation breakdown data.gov.qa publishes for this indicator. Not IT-specific."
     },
     {
       "source_id": "salary_se",
@@ -827,5 +884,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-11T22:49:41+00:00"
+  "updated_at": "2026-08-11T22:56:08+00:00"
 }

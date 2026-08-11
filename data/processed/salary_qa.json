@@ -1,0 +1,72 @@
+{
+ "source_id": "salary_qa",
+ "generated_at": "2026-08-11T22:53:39+00:00",
+ "meta": {
+  "occupation_family": "ISCO-08 major groups only (1-digit-equivalent) — this dataset's finest occupation breakdown",
+  "primary_code": "isco08_major:2",
+  "primary_label": "Professionals",
+  "classification": "ISCO-08 major group (Qatar's PSA publishes 9 major groups; no finer occupation code is exposed by this dataset)",
+  "unit": "QAR per month (monthly_average_wage_qar); paid_employment_workers is a headcount",
+  "confidence": "official",
+  "level": "country (Qatar)",
+  "years": [
+   "2020",
+   "2021",
+   "2022",
+   "2023"
+  ],
+  "sex_note": "Source publishes Males and Females separately; no combined figure exists and none is computed here — see module docstring.",
+  "crosswalk_hazard": "'Professionals' is ISCO major group 2 in full — every professional occupation, not IT specifically. This is the site's ONLY Gulf wage series (the UAE has none since 2009 — see salary_ae), and the copy correction in package 7 depends on this file existing; but it must never be presented as a software-developer-specific figure.",
+  "why_it_matters": "The wage series Explore's Jobs theme now correctly says exists for the Gulf (package 7 fixed the copy that used to claim otherwise). This is that series, finally wired to real data rather than just a corrected sentence."
+ },
+ "data": {
+  "occupations": {
+   "isco08_major:2": {
+    "title": "Professionals",
+    "scope": "ISCO-08 major group 2 — NOT ICT-specific, see module docstring",
+    "by_year": {
+     "2020": {
+      "Males": {
+       "paid_employment_workers": 173027,
+       "monthly_average_wage_qar": 29883
+      },
+      "Females": {
+       "paid_employment_workers": 65112,
+       "monthly_average_wage_qar": 26073
+      }
+     },
+     "2021": {
+      "Males": {
+       "paid_employment_workers": 152482,
+       "monthly_average_wage_qar": 30547
+      },
+      "Females": {
+       "paid_employment_workers": 71499,
+       "monthly_average_wage_qar": 23767
+      }
+     },
+     "2022": {
+      "Females": {
+       "paid_employment_workers": 101233,
+       "monthly_average_wage_qar": 24556
+      },
+      "Males": {
+       "paid_employment_workers": 203206,
+       "monthly_average_wage_qar": 28612
+      }
+     },
+     "2023": {
+      "Females": {
+       "paid_employment_workers": 122701,
+       "monthly_average_wage_qar": 23536
+      },
+      "Males": {
+       "paid_employment_workers": 209114,
+       "monthly_average_wage_qar": 28941
+      }
+     }
+    }
+   }
+  }
+ }
+}

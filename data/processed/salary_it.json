@@ -1,0 +1,23 @@
+{
+ "source_id": "salary_it",
+ "generated_at": "2026-08-11T22:56:08+00:00",
+ "meta": {
+  "occupation_family": null,
+  "primary_code": null,
+  "classification": "CP2011 (Italy's ISCO-08 adaptation) exists as a classification, but no ISTAT flow crosses it with earnings — see module docstring for what was checked.",
+  "confidence": "official",
+  "status": "no-occupation-series",
+  "level": "country (Italy)",
+  "years": [],
+  "why_it_matters": "The honest answer for Italy is absence, documented with what was checked and why, not silence and not a substituted sector figure presented as an occupation one."
+ },
+ "data": {
+  "occupations": {},
+  "status": "no-occupation-series",
+  "alternative": {
+   "route": "NACE J (information and communication) sector earnings",
+   "scope": "SECTOR, not occupation — includes every job in the ICT sector (support staff, sales, management), not software developers specifically",
+   "note": "Not fetched by this script. Eurostat earn_ses_pub2n covers NACE J for other countries in this spine but is empty for Italy specifically, per this package's own prior research."
+  }
+ }
+}
