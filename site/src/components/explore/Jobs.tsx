@@ -54,7 +54,7 @@ export function JobsTheme() {
       <Gap title="Two honest holes" where={<>Both on the <a href="#/data">Data &amp; methods page →</a></>}>
         <p><b>US dev headcounts are a snapshot.</b> The BLS API returns the current year only —
           verified, not assumed — so city pages show the number and draw no curve.</p>
-        <p><b>The Gulf has no series.</b> Eurostat stops at EU/EFTA; the UAE and Qatar publish no
+        <p><b>The Gulf has no ICT headcount series.</b> Eurostat stops at EU/EFTA; the UAE and Qatar publish no
           ICT count we can cite. We don’t substitute.</p>
       </Gap>
     </>

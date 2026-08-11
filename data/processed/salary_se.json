@@ -1,0 +1,874 @@
+{
+ "source_id": "salary_se",
+ "generated_at": "2026-08-11T19:32:28+00:00",
+ "meta": {
+  "occupation_family": "SSYK 2012 group 251 — Software and applications developers and analysts",
+  "occupation_codes": {
+   "2511": "System analysts and ICT-architects",
+   "2512": "Software- and system developers",
+   "2513": "Games and digital media developers",
+   "2514": "System testers and test managers",
+   "2515": "System administrators",
+   "2516": "Security specialists (ICT)",
+   "2519": "ICT-specialist professionals not elsewhere classified "
+  },
+  "primary_code": "2512",
+  "classification": "SSYK 2012 (Sweden's national adaptation of ISCO-08)",
+  "unit": "SEK per month, gross, all sectors, both sexes",
+  "measures": {
+   "dispersion_by_year": "mean, median, P10/P25/P75/P90 (each _sek_month) and each measure's own 95% CI HALF-WIDTH (each _ci95_margin_sek_month — add/subtract from the point estimate, it is not an interval's bounds) — table AM0110A/LoneSpridSektYrk4AN",
+   "age_by_year": "monthly salary (SEK) and employee count (N) by 7 age bands plus total — table AM0110A/LonYrkeAlder4AN. N is sometimes null for small cells (e.g. the 18-24 band) — that is SCB's own suppression: jsonstat_rows() drops cells the API returns as null rather than inventing a placeholder, so the key is simply absent for that band/year, not present-and-null."
+  },
+  "confidence": "official",
+  "level": "country (Sweden, all sectors combined)",
+  "years": [
+   "2023",
+   "2024",
+   "2025"
+  ],
+  "crosswalk_hazard": "SSYK 2012's fourth digit does not track ISCO-08's fourth digit at the same code point. 2514 here is 'System testers and test managers', not 'Applications programmers' (ISCO-08's 2514). Only 2512 has a checked, evidenced 4-digit mapping — see data/occupations.json.",
+  "why_it_matters": "The only source of the four with confidence intervals, and one of only four official occupation x age crosses across all fifteen countries — the age gradient package 9 needs."
+ },
+ "data": {
+  "occupations": {
+   "2511": {
+    "title": "System analysts and ICT-architects",
+    "dispersion_by_year": {
+     "2023": {
+      "mean_sek_month": 55100,
+      "median_sek_month": 52100,
+      "p10_sek_month": 38000,
+      "p25_sek_month": 44300,
+      "p75_sek_month": 62900,
+      "p90_sek_month": 75000,
+      "median_ci95_margin_sek_month": 1190,
+      "p10_ci95_margin_sek_month": 1130,
+      "p25_ci95_margin_sek_month": 1510,
+      "p75_ci95_margin_sek_month": 1660,
+      "p90_ci95_margin_sek_month": 1860
+     },
+     "2024": {
+      "mean_sek_month": 56800,
+      "median_sek_month": 55000,
+      "p10_sek_month": 39500,
+      "p25_sek_month": 46000,
+      "p75_sek_month": 65200,
+      "p90_sek_month": 75300,
+      "mean_ci95_margin_sek_month": 620,
+      "median_ci95_margin_sek_month": 910,
+      "p10_ci95_margin_sek_month": 330,
+      "p25_ci95_margin_sek_month": 570,
+      "p75_ci95_margin_sek_month": 1260,
+      "p90_ci95_margin_sek_month": 1180
+     },
+     "2025": {
+      "mean_sek_month": 58500,
+      "median_sek_month": 56200,
+      "p10_sek_month": 41000,
+      "p25_sek_month": 47700,
+      "p75_sek_month": 66700,
+      "p90_sek_month": 77800,
+      "mean_ci95_margin_sek_month": 590,
+      "median_ci95_margin_sek_month": 790,
+      "p10_ci95_margin_sek_month": 490,
+      "p25_ci95_margin_sek_month": 1020,
+      "p75_ci95_margin_sek_month": 1240,
+      "p90_ci95_margin_sek_month": 1480
+     }
+    },
+    "age_by_year": {
+     "2023": {
+      "18-24": {
+       "monthly_salary_sek": 34300,
+       "n_employees": 320
+      },
+      "25-34": {
+       "monthly_salary_sek": 46200,
+       "n_employees": 4500
+      },
+      "35-44": {
+       "monthly_salary_sek": 56200,
+       "n_employees": 8000
+      },
+      "45-54": {
+       "monthly_salary_sek": 59300,
+       "n_employees": 8300
+      },
+      "55-64": {
+       "monthly_salary_sek": 55700,
+       "n_employees": 5400
+      },
+      "65-68": {
+       "monthly_salary_sek": 51900,
+       "n_employees": 340
+      },
+      "tot": {
+       "monthly_salary_sek": 55100,
+       "n_employees": 26900
+      }
+     },
+     "2024": {
+      "18-24": {
+       "monthly_salary_sek": 35000,
+       "n_employees": 260
+      },
+      "25-34": {
+       "monthly_salary_sek": 49100,
+       "n_employees": 4700
+      },
+      "35-44": {
+       "monthly_salary_sek": 57300,
+       "n_employees": 7800
+      },
+      "45-54": {
+       "monthly_salary_sek": 60200,
+       "n_employees": 8200
+      },
+      "55-64": {
+       "monthly_salary_sek": 58800,
+       "n_employees": 6400
+      },
+      "65-68": {
+       "monthly_salary_sek": 53100,
+       "n_employees": 460
+      },
+      "tot": {
+       "monthly_salary_sek": 56800,
+       "n_employees": 27800
+      }
+     },
+     "2025": {
+      "25-34": {
+       "monthly_salary_sek": 50200,
+       "n_employees": 4800
+      },
+      "35-44": {
+       "monthly_salary_sek": 58500,
+       "n_employees": 8300
+      },
+      "45-54": {
+       "monthly_salary_sek": 61900,
+       "n_employees": 8200
+      },
+      "55-64": {
+       "monthly_salary_sek": 61500,
+       "n_employees": 6300
+      },
+      "65-68": {
+       "monthly_salary_sek": 56800,
+       "n_employees": 430
+      },
+      "tot": {
+       "monthly_salary_sek": 58500,
+       "n_employees": 28500
+      }
+     }
+    }
+   },
+   "2512": {
+    "title": "Software- and system developers",
+    "dispersion_by_year": {
+     "2023": {
+      "mean_sek_month": 52800,
+      "median_sek_month": 51000,
+      "p10_sek_month": 37200,
+      "p25_sek_month": 43200,
+      "p75_sek_month": 60000,
+      "p90_sek_month": 69500,
+      "median_ci95_margin_sek_month": 840,
+      "p10_ci95_margin_sek_month": 840,
+      "p25_ci95_margin_sek_month": 900,
+      "p75_ci95_margin_sek_month": 920,
+      "p90_ci95_margin_sek_month": 1380
+     },
+     "2024": {
+      "mean_sek_month": 54900,
+      "median_sek_month": 52500,
+      "p10_sek_month": 38800,
+      "p25_sek_month": 45200,
+      "p75_sek_month": 62000,
+      "p90_sek_month": 72500,
+      "mean_ci95_margin_sek_month": 1130,
+      "median_ci95_margin_sek_month": 990,
+      "p10_ci95_margin_sek_month": 930,
+      "p25_ci95_margin_sek_month": 1110,
+      "p75_ci95_margin_sek_month": 1390,
+      "p90_ci95_margin_sek_month": 2260
+     },
+     "2025": {
+      "mean_sek_month": 55500,
+      "median_sek_month": 53500,
+      "p10_sek_month": 39600,
+      "p25_sek_month": 46200,
+      "p75_sek_month": 62600,
+      "p90_sek_month": 72600,
+      "mean_ci95_margin_sek_month": 940,
+      "median_ci95_margin_sek_month": 880,
+      "p10_ci95_margin_sek_month": 1080,
+      "p25_ci95_margin_sek_month": 970,
+      "p75_ci95_margin_sek_month": 1160,
+      "p90_ci95_margin_sek_month": 1340
+     }
+    },
+    "age_by_year": {
+     "2023": {
+      "18-24": {
+       "monthly_salary_sek": 35300,
+       "n_employees": 3000
+      },
+      "25-34": {
+       "monthly_salary_sek": 46800,
+       "n_employees": 36800
+      },
+      "35-44": {
+       "monthly_salary_sek": 54800,
+       "n_employees": 31800
+      },
+      "45-54": {
+       "monthly_salary_sek": 58200,
+       "n_employees": 23300
+      },
+      "55-64": {
+       "monthly_salary_sek": 59900,
+       "n_employees": 11900
+      },
+      "tot": {
+       "monthly_salary_sek": 52800,
+       "n_employees": 108000
+      }
+     },
+     "2024": {
+      "18-24": {
+       "monthly_salary_sek": 37000,
+       "n_employees": 2300
+      },
+      "25-34": {
+       "monthly_salary_sek": 48300,
+       "n_employees": 33100
+      },
+      "35-44": {
+       "monthly_salary_sek": 56700,
+       "n_employees": 33700
+      },
+      "45-54": {
+       "monthly_salary_sek": 60300,
+       "n_employees": 22500
+      },
+      "55-64": {
+       "monthly_salary_sek": 60400,
+       "n_employees": 13900
+      },
+      "65-68": {
+       "monthly_salary_sek": 56900
+      },
+      "tot": {
+       "monthly_salary_sek": 54900,
+       "n_employees": 107300
+      }
+     },
+     "2025": {
+      "18-24": {
+       "monthly_salary_sek": 36100
+      },
+      "25-34": {
+       "monthly_salary_sek": 49300,
+       "n_employees": 35500
+      },
+      "35-44": {
+       "monthly_salary_sek": 56600,
+       "n_employees": 36000
+      },
+      "45-54": {
+       "monthly_salary_sek": 61100,
+       "n_employees": 25800
+      },
+      "55-64": {
+       "monthly_salary_sek": 62300,
+       "n_employees": 12600
+      },
+      "65-68": {
+       "monthly_salary_sek": 58800,
+       "n_employees": 690
+      },
+      "tot": {
+       "monthly_salary_sek": 55500,
+       "n_employees": 113100
+      }
+     }
+    }
+   },
+   "2513": {
+    "title": "Games and digital media developers",
+    "dispersion_by_year": {
+     "2023": {
+      "mean_sek_month": 54500,
+      "median_sek_month": 51500,
+      "p10_sek_month": 35500,
+      "p25_sek_month": 42000,
+      "p75_sek_month": 64100,
+      "p90_sek_month": 77200,
+      "median_ci95_margin_sek_month": 4000,
+      "p10_ci95_margin_sek_month": 2760,
+      "p25_ci95_margin_sek_month": 3490,
+      "p75_ci95_margin_sek_month": 5770,
+      "p90_ci95_margin_sek_month": 5600
+     },
+     "2024": {
+      "mean_sek_month": 55800,
+      "median_sek_month": 53200,
+      "p10_sek_month": 36600,
+      "p25_sek_month": 43000,
+      "p75_sek_month": 64400,
+      "p90_sek_month": 79400,
+      "mean_ci95_margin_sek_month": 3380,
+      "median_ci95_margin_sek_month": 3430,
+      "p10_ci95_margin_sek_month": 3460,
+      "p25_ci95_margin_sek_month": 3190,
+      "p75_ci95_margin_sek_month": 4710,
+      "p90_ci95_margin_sek_month": 5000
+     },
+     "2025": {
+      "mean_sek_month": 55300,
+      "median_sek_month": 52300,
+      "p10_sek_month": 36500,
+      "p25_sek_month": 43800,
+      "p75_sek_month": 64400,
+      "p90_sek_month": 78000,
+      "mean_ci95_margin_sek_month": 2830,
+      "median_ci95_margin_sek_month": 2910,
+      "p10_ci95_margin_sek_month": 3660,
+      "p25_ci95_margin_sek_month": 2840,
+      "p75_ci95_margin_sek_month": 3000,
+      "p90_ci95_margin_sek_month": 3570
+     }
+    },
+    "age_by_year": {
+     "2023": {
+      "25-34": {
+       "monthly_salary_sek": 48800,
+       "n_employees": 1400
+      },
+      "35-44": {
+       "monthly_salary_sek": 59200,
+       "n_employees": 1300
+      },
+      "45-54": {
+       "monthly_salary_sek": 62000,
+       "n_employees": 430
+      },
+      "55-64": {
+       "monthly_salary_sek": 55100,
+       "n_employees": 160
+      },
+      "tot": {
+       "monthly_salary_sek": 54500,
+       "n_employees": 3400
+      }
+     },
+     "2024": {
+      "25-34": {
+       "monthly_salary_sek": 50200,
+       "n_employees": 1900
+      },
+      "35-44": {
+       "monthly_salary_sek": 59600,
+       "n_employees": 1600
+      },
+      "45-54": {
+       "monthly_salary_sek": 65500,
+       "n_employees": 590
+      },
+      "55-64": {
+       "monthly_salary_sek": 60000,
+       "n_employees": 160
+      },
+      "tot": {
+       "monthly_salary_sek": 55800,
+       "n_employees": 4300
+      }
+     },
+     "2025": {
+      "25-34": {
+       "monthly_salary_sek": 49200,
+       "n_employees": 1800
+      },
+      "35-44": {
+       "monthly_salary_sek": 60400,
+       "n_employees": 1500
+      },
+      "45-54": {
+       "monthly_salary_sek": 66800,
+       "n_employees": 590
+      },
+      "55-64": {
+       "monthly_salary_sek": 59300,
+       "n_employees": 150
+      },
+      "tot": {
+       "monthly_salary_sek": 55300,
+       "n_employees": 4200
+      }
+     }
+    }
+   },
+   "2514": {
+    "title": "System testers and test managers",
+    "dispersion_by_year": {
+     "2023": {
+      "mean_sek_month": 47600,
+      "median_sek_month": 46300,
+      "p10_sek_month": 35500,
+      "p25_sek_month": 41300,
+      "p75_sek_month": 53000,
+      "p90_sek_month": 60200,
+      "median_ci95_margin_sek_month": 2110,
+      "p10_ci95_margin_sek_month": 1260,
+      "p25_ci95_margin_sek_month": 1200,
+      "p75_ci95_margin_sek_month": 1890,
+      "p90_ci95_margin_sek_month": 2170
+     },
+     "2024": {
+      "mean_sek_month": 48600,
+      "median_sek_month": 48000,
+      "p10_sek_month": 35500,
+      "p25_sek_month": 41000,
+      "p75_sek_month": 55500,
+      "p90_sek_month": 61500,
+      "mean_ci95_margin_sek_month": 1590,
+      "median_ci95_margin_sek_month": 2500,
+      "p10_ci95_margin_sek_month": 1790,
+      "p25_ci95_margin_sek_month": 1720,
+      "p75_ci95_margin_sek_month": 1530,
+      "p90_ci95_margin_sek_month": 1770
+     },
+     "2025": {
+      "mean_sek_month": 49200,
+      "median_sek_month": 49000,
+      "p25_sek_month": 41300,
+      "p75_sek_month": 56200,
+      "p90_sek_month": 62900,
+      "mean_ci95_margin_sek_month": 2500,
+      "median_ci95_margin_sek_month": 2440,
+      "p25_ci95_margin_sek_month": 3530,
+      "p75_ci95_margin_sek_month": 1800,
+      "p90_ci95_margin_sek_month": 2640
+     }
+    },
+    "age_by_year": {
+     "2023": {
+      "25-34": {
+       "monthly_salary_sek": 41100
+      },
+      "35-44": {
+       "monthly_salary_sek": 47000
+      },
+      "45-54": {
+       "monthly_salary_sek": 51900,
+       "n_employees": 1900
+      },
+      "55-64": {
+       "monthly_salary_sek": 53400,
+       "n_employees": 1400
+      },
+      "tot": {
+       "monthly_salary_sek": 47600,
+       "n_employees": 7500
+      }
+     },
+     "2024": {
+      "25-34": {
+       "monthly_salary_sek": 41800
+      },
+      "35-44": {
+       "monthly_salary_sek": 47800
+      },
+      "45-54": {
+       "monthly_salary_sek": 51800,
+       "n_employees": 2300
+      },
+      "55-64": {
+       "monthly_salary_sek": 53700,
+       "n_employees": 1400
+      },
+      "tot": {
+       "monthly_salary_sek": 48600,
+       "n_employees": 7600
+      }
+     },
+     "2025": {
+      "25-34": {
+       "monthly_salary_sek": 43400
+      },
+      "35-44": {
+       "monthly_salary_sek": 49400
+      },
+      "45-54": {
+       "monthly_salary_sek": 49300
+      },
+      "55-64": {
+       "monthly_salary_sek": 55200,
+       "n_employees": 1300
+      },
+      "tot": {
+       "monthly_salary_sek": 49200
+      }
+     }
+    }
+   },
+   "2515": {
+    "title": "System administrators",
+    "dispersion_by_year": {
+     "2023": {
+      "mean_sek_month": 50600,
+      "median_sek_month": 49200,
+      "p10_sek_month": 38000,
+      "p25_sek_month": 41500,
+      "p75_sek_month": 56400,
+      "p90_sek_month": 64200,
+      "median_ci95_margin_sek_month": 1480,
+      "p10_ci95_margin_sek_month": 560,
+      "p25_ci95_margin_sek_month": 2410,
+      "p75_ci95_margin_sek_month": 1500,
+      "p90_ci95_margin_sek_month": 1820
+     },
+     "2024": {
+      "mean_sek_month": 52600,
+      "median_sek_month": 50600,
+      "p10_sek_month": 39500,
+      "p25_sek_month": 43000,
+      "p75_sek_month": 59100,
+      "p90_sek_month": 68100,
+      "mean_ci95_margin_sek_month": 1710,
+      "median_ci95_margin_sek_month": 1810,
+      "p10_ci95_margin_sek_month": 3630,
+      "p25_ci95_margin_sek_month": 2630,
+      "p75_ci95_margin_sek_month": 1630,
+      "p90_ci95_margin_sek_month": 1630
+     },
+     "2025": {
+      "mean_sek_month": 53800,
+      "median_sek_month": 52500,
+      "p10_sek_month": 39500,
+      "p25_sek_month": 44600,
+      "p75_sek_month": 61100,
+      "p90_sek_month": 69600,
+      "mean_ci95_margin_sek_month": 1840,
+      "median_ci95_margin_sek_month": 1930,
+      "p10_ci95_margin_sek_month": 4890,
+      "p25_ci95_margin_sek_month": 2840,
+      "p75_ci95_margin_sek_month": 1930,
+      "p90_ci95_margin_sek_month": 940
+     }
+    },
+    "age_by_year": {
+     "2023": {
+      "25-34": {
+       "monthly_salary_sek": 45200,
+       "n_employees": 1200
+      },
+      "35-44": {
+       "monthly_salary_sek": 52100,
+       "n_employees": 1600
+      },
+      "45-54": {
+       "monthly_salary_sek": 51800,
+       "n_employees": 2500
+      },
+      "55-64": {
+       "monthly_salary_sek": 52400,
+       "n_employees": 1400
+      },
+      "tot": {
+       "monthly_salary_sek": 50600,
+       "n_employees": 6900
+      }
+     },
+     "2024": {
+      "25-34": {
+       "monthly_salary_sek": 46700,
+       "n_employees": 970
+      },
+      "35-44": {
+       "monthly_salary_sek": 54500,
+       "n_employees": 1400
+      },
+      "45-54": {
+       "monthly_salary_sek": 53300,
+       "n_employees": 2300
+      },
+      "55-64": {
+       "monthly_salary_sek": 54800,
+       "n_employees": 1500
+      },
+      "tot": {
+       "monthly_salary_sek": 52600,
+       "n_employees": 6400
+      }
+     },
+     "2025": {
+      "25-34": {
+       "monthly_salary_sek": 50000,
+       "n_employees": 1100
+      },
+      "35-44": {
+       "monthly_salary_sek": 55300,
+       "n_employees": 1500
+      },
+      "45-54": {
+       "monthly_salary_sek": 53400,
+       "n_employees": 2300
+      },
+      "55-64": {
+       "monthly_salary_sek": 56500,
+       "n_employees": 1600
+      },
+      "tot": {
+       "monthly_salary_sek": 53800,
+       "n_employees": 6700
+      }
+     }
+    }
+   },
+   "2516": {
+    "title": "Security specialists (ICT)",
+    "dispersion_by_year": {
+     "2023": {
+      "mean_sek_month": 51800,
+      "median_sek_month": 50000,
+      "p10_sek_month": 36300,
+      "p25_sek_month": 43000,
+      "p75_sek_month": 57200,
+      "p90_sek_month": 69400,
+      "median_ci95_margin_sek_month": 3150,
+      "p10_ci95_margin_sek_month": 2000,
+      "p25_ci95_margin_sek_month": 5240,
+      "p75_ci95_margin_sek_month": 6270,
+      "p90_ci95_margin_sek_month": 5240
+     },
+     "2024": {
+      "mean_sek_month": 55500,
+      "median_sek_month": 55000,
+      "p10_sek_month": 37000,
+      "p25_sek_month": 44400,
+      "p75_sek_month": 62000,
+      "p90_sek_month": 73800,
+      "mean_ci95_margin_sek_month": 3330,
+      "median_ci95_margin_sek_month": 1280,
+      "p10_ci95_margin_sek_month": 2740,
+      "p25_ci95_margin_sek_month": 3100,
+      "p75_ci95_margin_sek_month": 7650,
+      "p90_ci95_margin_sek_month": 4600
+     },
+     "2025": {
+      "mean_sek_month": 57800,
+      "median_sek_month": 54900,
+      "p10_sek_month": 38600,
+      "p25_sek_month": 45200,
+      "p75_sek_month": 67000,
+      "p90_sek_month": 79200,
+      "mean_ci95_margin_sek_month": 4740,
+      "median_ci95_margin_sek_month": 3630,
+      "p10_ci95_margin_sek_month": 3830,
+      "p25_ci95_margin_sek_month": 4070,
+      "p75_ci95_margin_sek_month": 6430,
+      "p90_ci95_margin_sek_month": 5310
+     }
+    },
+    "age_by_year": {
+     "2023": {
+      "25-34": {
+       "monthly_salary_sek": 43600
+      },
+      "35-44": {
+       "monthly_salary_sek": 54200
+      },
+      "45-54": {
+       "monthly_salary_sek": 52300
+      },
+      "55-64": {
+       "monthly_salary_sek": 63800,
+       "n_employees": 390
+      },
+      "tot": {
+       "monthly_salary_sek": 51800
+      }
+     },
+     "2024": {
+      "25-34": {
+       "monthly_salary_sek": 45800
+      },
+      "35-44": {
+       "monthly_salary_sek": 57200
+      },
+      "45-54": {
+       "monthly_salary_sek": 66400,
+       "n_employees": 740
+      },
+      "55-64": {
+       "monthly_salary_sek": 61200
+      },
+      "tot": {
+       "monthly_salary_sek": 55500
+      }
+     },
+     "2025": {
+      "25-34": {
+       "monthly_salary_sek": 49100
+      },
+      "35-44": {
+       "monthly_salary_sek": 58800
+      },
+      "45-54": {
+       "monthly_salary_sek": 66800,
+       "n_employees": 900
+      },
+      "55-64": {
+       "monthly_salary_sek": 64900,
+       "n_employees": 520
+      },
+      "tot": {
+       "monthly_salary_sek": 57800
+      }
+     }
+    }
+   },
+   "2519": {
+    "title": "ICT-specialist professionals not elsewhere classified ",
+    "dispersion_by_year": {
+     "2023": {
+      "mean_sek_month": 54500,
+      "median_sek_month": 52200,
+      "p10_sek_month": 37500,
+      "p25_sek_month": 43600,
+      "p75_sek_month": 61700,
+      "p90_sek_month": 72200,
+      "median_ci95_margin_sek_month": 1700,
+      "p10_ci95_margin_sek_month": 830,
+      "p25_ci95_margin_sek_month": 1360,
+      "p75_ci95_margin_sek_month": 2480,
+      "p90_ci95_margin_sek_month": 3630
+     },
+     "2024": {
+      "mean_sek_month": 57400,
+      "median_sek_month": 54700,
+      "p10_sek_month": 39800,
+      "p25_sek_month": 45600,
+      "p75_sek_month": 64700,
+      "p90_sek_month": 76800,
+      "mean_ci95_margin_sek_month": 1970,
+      "median_ci95_margin_sek_month": 1670,
+      "p10_ci95_margin_sek_month": 720,
+      "p25_ci95_margin_sek_month": 1380,
+      "p75_ci95_margin_sek_month": 2270,
+      "p90_ci95_margin_sek_month": 3420
+     },
+     "2025": {
+      "mean_sek_month": 57500,
+      "median_sek_month": 55600,
+      "p10_sek_month": 40500,
+      "p25_sek_month": 47300,
+      "p75_sek_month": 65100,
+      "p90_sek_month": 76300,
+      "mean_ci95_margin_sek_month": 1910,
+      "median_ci95_margin_sek_month": 2490,
+      "p10_ci95_margin_sek_month": 1270,
+      "p25_ci95_margin_sek_month": 2450,
+      "p75_ci95_margin_sek_month": 2320,
+      "p90_ci95_margin_sek_month": 2770
+     }
+    },
+    "age_by_year": {
+     "2023": {
+      "18-24": {
+       "monthly_salary_sek": 33100,
+       "n_employees": 340
+      },
+      "25-34": {
+       "monthly_salary_sek": 45600,
+       "n_employees": 4400
+      },
+      "35-44": {
+       "monthly_salary_sek": 55700,
+       "n_employees": 4800
+      },
+      "45-54": {
+       "monthly_salary_sek": 59400,
+       "n_employees": 5100
+      },
+      "55-64": {
+       "monthly_salary_sek": 59600,
+       "n_employees": 3100
+      },
+      "65-68": {
+       "monthly_salary_sek": 56500,
+       "n_employees": 120
+      },
+      "tot": {
+       "monthly_salary_sek": 54500,
+       "n_employees": 17900
+      }
+     },
+     "2024": {
+      "18-24": {
+       "monthly_salary_sek": 34200,
+       "n_employees": 250
+      },
+      "25-34": {
+       "monthly_salary_sek": 48100,
+       "n_employees": 4400
+      },
+      "35-44": {
+       "monthly_salary_sek": 58100,
+       "n_employees": 5600
+      },
+      "45-54": {
+       "monthly_salary_sek": 62100,
+       "n_employees": 5000
+      },
+      "55-64": {
+       "monthly_salary_sek": 62700,
+       "n_employees": 3300
+      },
+      "65-68": {
+       "monthly_salary_sek": 60500,
+       "n_employees": 130
+      },
+      "tot": {
+       "monthly_salary_sek": 57400,
+       "n_employees": 18600
+      }
+     },
+     "2025": {
+      "18-24": {
+       "monthly_salary_sek": 34700
+      },
+      "25-34": {
+       "monthly_salary_sek": 50400,
+       "n_employees": 5500
+      },
+      "35-44": {
+       "monthly_salary_sek": 59600,
+       "n_employees": 5500
+      },
+      "45-54": {
+       "monthly_salary_sek": 62500,
+       "n_employees": 5000
+      },
+      "55-64": {
+       "monthly_salary_sek": 61200,
+       "n_employees": 3400
+      },
+      "65-68": {
+       "monthly_salary_sek": 61800,
+       "n_employees": 150
+      },
+      "tot": {
+       "monthly_salary_sek": 57500,
+       "n_employees": 20000
+      }
+     }
+    }
+   }
+  }
+ }
+}

@@ -387,6 +387,71 @@
       "notes": "Years that failed to download are omitted, never interpolated."
     },
     {
+      "source_id": "salary_ca",
+      "name": "Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region",
+      "urls": [
+        "https://open.canada.ca/data/dataset/adad580f-76b0-4502-bd05-20c125de9116/resource/9da94d63-b178-4a64-aeb3-b6a3bd721ad2/download/2a71-das-wage2025opendata-esdc-all-19nov2025-vf.csv",
+        "https://open.canada.ca/data/en/dataset/adad580f-76b0-4502-bd05-20c125de9116"
+      ],
+      "fetched_at": "2026-08-11T19:32:46+00:00",
+      "license": "Open Government Licence - Canada 2.0. Cite: Employment and Social Development Canada (ESDC) / Job Bank, Wages.",
+      "redistribution": "processed derivative only — the raw 18 MB wages CSV is cached under data/raw/salary_ca/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL-Canada 2.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_ca.json is committed.",
+      "transforms": [
+        "Downloaded the 2025 wages CSV (44,376 rows, all NOC 2021 occupations, all geographies) and filtered to 4 target NOC codes.",
+        "Kept every geography row for each target NOC verbatim, including rows where the wage fields are null because Job Bank suppressed them for small-area reliability — the geography is kept, not dropped, with the null and Job Bank's own comment intact.",
+        "Confirmed via the file's own Annual_Wage_Flag that all four target occupations are published hourly, not annual; no unit conversion performed."
+      ],
+      "output": "data/processed/salary_ca.json",
+      "status": "ok",
+      "rows": 344,
+      "coverage": "4/4 target NOC codes x up to 86 geographies each",
+      "notes": null
+    },
+    {
+      "source_id": "salary_se",
+      "name": "SCB wage structure statistics — ICT occupations (SSYK 2012)",
+      "urls": [
+        "https://api.scb.se/OV0104/v1/doris/en/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+        "https://api.scb.se/OV0104/v1/doris/en/ssd/AM/AM0110/AM0110A/LonYrkeAlder4AN"
+      ],
+      "fetched_at": "2026-08-11T19:32:28+00:00",
+      "license": "CC0 1.0 Universal (SCB adopted CC0 for all open data 2021-07-01; no attribution required). Cite: Statistics Sweden (SCB), wage and salary structures, private and public sector.",
+      "redistribution": "processed derivative only — the raw PxWeb JSON payloads are cached under data/raw/salary_se/ but that directory is gitignored, so this repo does not redistribute the raw source (CC0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_se.json is committed.",
+      "transforms": [
+        "Queried SSYK 2012 codes 2511, 2512, 2513, 2514, 2515, 2516, 2519 (group 251, ICT professionals) x all sectors x both sexes x 2023-2025 from two PxWeb tables via POST, response format json-stat2.",
+        "Dispersion table: kept mean, median, P10/P25/P75/P90 and each measure's 95% CI verbatim.",
+        "Age table: kept monthly salary and employee count (N) for 7 age bands plus the total, verbatim, including SCB's own null suppression on small cells.",
+        "Occupation titles are the API's own labels, not hand-typed."
+      ],
+      "output": "data/processed/salary_se.json",
+      "status": "ok",
+      "rows": 463,
+      "coverage": "7 SSYK occupations x 3 years, Sweden only (no sub-national breakdown in these tables)",
+      "notes": "Reference implementation of the salary spine: CC0, 4-digit, with published confidence intervals."
+    },
+    {
+      "source_id": "salary_uk",
+      "name": "ONS ASHE Table 14.7 — Annual pay (Gross), IT occupations, SOC 2020 4-digit",
+      "urls": [
+        "https://www.ons.gov.uk/file?uri=/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation4digitsoc2010ashetable14/2025provisional/ashetable142025provisional.zip",
+        "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation4digitsoc2010ashetable14"
+      ],
+      "fetched_at": "2026-08-11T19:32:31+00:00",
+      "license": "Open Government Licence v3.0. Cite: Office for National Statistics (ONS), Annual Survey of Hours and Earnings (ASHE), Table 14.",
+      "redistribution": "processed derivative only — the raw 11 MB ASHE zip is cached under data/raw/salary_uk/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL v3.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_uk.json is committed.",
+      "transforms": [
+        "Downloaded the 2025-provisional ASHE Table 14 zip and extracted the paired 14.7 (Annual pay - Gross) workbooks: 'a' (values) and 'b' (coefficients of variation).",
+        "Read the 'All' sheet (both sexes, full-time + part-time combined) of each.",
+        "Kept rows for SOC 2020 codes 1137, 2133-2137 verbatim: description, job count, mean, median, the full published percentile set, year-on-year % change, and CV.",
+        "ONS's own suppression markers ('x' = CV>20% unreliable, '..' = disclosive) become null — never a guessed number."
+      ],
+      "output": "data/processed/salary_uk.json",
+      "status": "ok",
+      "rows": 6,
+      "coverage": "6/6 target SOC 2020 codes, UK-wide, 2025 provisional",
+      "notes": "2025 data is PROVISIONAL; the revised vintage follows Oct/Nov 2026 and should replace this."
+    },
+    {
       "source_id": "stackoverflow_survey",
       "name": "Stack Overflow Annual Developer Survey — salaries by country",
       "urls": [
@@ -609,5 +674,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-10T07:48:14+00:00"
+  "updated_at": "2026-08-11T19:36:22+00:00"
 }

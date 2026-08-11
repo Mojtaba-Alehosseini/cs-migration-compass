@@ -79,6 +79,35 @@ compensation** (base + stock + bonus) while the market bands are closer to base
 salary. Part of the gap between them is a definition difference, not an employer
 premium. The site says so wherever both appear.
 
+### PPP: not wired here, and two traps for whoever wires it
+
+Package 7 added official wage data for Sweden, the UK, Canada and an extended
+US percentile set (`data/processed/salary_se.json`, `salary_uk.json`,
+`salary_ca.json`, `bls_oews.json`). None of it is purchasing-power adjusted,
+and this package does not wire a deflator — this note exists so the package
+that does reaches for the right one.
+
+The site already carries two PPP-flavoured numbers, and neither is the right
+tool for deflating a wage. **`world_bank.json` carries `NY.GDP.PCAP.PP.CD`**
+— GDP per capita, PPP-adjusted. GDP per capita measures what a country
+*produces* per person, not what a household *buys*; deflating a wage with it
+smuggles in capital intensity, trade balance and everything else GDP contains
+that no individual ever sees in their own cost of living. The correct
+deflator for a wage figure is a household-consumption PPP — the World Bank
+publishes one, `PA.NUS.PRVT.PP` ("PPP conversion factor, households and
+NPISHs final consumption expenditure"), and it is the only PPP series that
+covers all fifteen countries this site compares. **`oecd_indicators.json`
+carries OECD `avg_wages` in `USD_PPP`** — which OECD has already converted
+using its own household PPP before it reaches this pipeline. Running a second
+deflator over it does not refine it; it double-counts the adjustment and
+silently shrinks or inflates the figure a second time.
+
+Neither trap is live today — nothing in this codebase currently deflates a
+wage with either series. Whichever package does: deflate the *nominal*
+figures in `salary_se`/`salary_uk`/`salary_ca`/`bls_oews`/the crowd-sourced
+`salary_usd_year` bands with `PA.NUS.PRVT.PP`, never with `NY.GDP.PCAP.PP.CD`,
+and never touch the already-converted `avg_wages` a second time.
+
 ---
 
 ## 2. Years to a home

@@ -1,0 +1,230 @@
+{
+  "schema": "cs-migration-compass/occupations@1",
+  "purpose": "Maps each country's own occupation classification code to a shared key, so package 9 can compare wage figures across countries without silently comparing two different jobs. This table is the guard rail, not a formality: every mapping records what was actually checked, and a mapping nobody is confident in is marked unsure rather than rounded up to look precise.",
+  "shared_key_scheme": {
+    "id": "isco08",
+    "description": "ISCO-08 (International Standard Classification of Occupations, ILO 2008) unit-group codes. Chosen as the shared key because every national system here either is explicitly built on it (Sweden's SSYK 2012) or maintains its own correspondence to it (UK SOC 2020, Canada NOC 2021, US SOC 2018). A 4-digit key such as 'isco08:2512' names a specific unit group; a 2-digit key such as 'isco08:25' means only the sub-major group ('Information and communications technology professionals') is defensible for that national code — see the confidence field on each mapping.",
+    "verified_against": "ESCO (the European Commission's classification portal, esco.ec.europa.eu), which mirrors ILO's official ISCO-08 structure. Fetched directly, not recalled from memory, before any mapping below was written."
+  },
+  "confidence_levels": {
+    "high": "The national code's own official definition text corresponds closely, at the same digit depth, to the shared key's official scope, with no split/merge or scope-width caveat. Safe for the primary developer-wage comparison across countries.",
+    "moderate": "Real correspondence exists, but with a documented scope difference — the national code is broader or narrower than the shared key, or the two classifications split/merge the concept differently. Usable with the caveat in the note.",
+    "2-digit-only": "No defensible 4-digit correspondence was found, so the mapping falls back to a 2-digit shared key. This is the majority case for anything that is not the primary software-developer target: ISCO-08 was published in 2008 and simply does not carve out 4-digit units for testing, cyber security or several other now-common IT specialisations."
+  },
+  "shared_keys": {
+    "isco08:2511": { "title": "Systems analysts", "level": 4 },
+    "isco08:2512": { "title": "Software developers", "level": 4 },
+    "isco08:2513": { "title": "Web and multimedia developers", "level": 4 },
+    "isco08:2522": { "title": "Systems administrators", "level": 4 },
+    "isco08:2523": { "title": "Computer network professionals", "level": 4 },
+    "isco08:1330": { "title": "Information and communications technology service managers", "level": 4 },
+    "isco08:25": { "title": "Information and communications technology professionals", "level": 2 },
+    "isco08:21": { "title": "Science and engineering professionals", "level": 2 }
+  },
+  "primary_target_note": "The primary cross-country comparison is isco08:2512 ('Software developers'). Four countries reach it: Sweden (2512), the UK (2134), the US (15-1252), and Canada — where NOC 2021 splits the same ISCO-08 concept into TWO codes (21231 'engineers and designers' and 21232 'developers and programmers') along a professional-engineering-licensure axis ISCO-08 itself does not draw. Package 9 should decide explicitly whether to sum 21231+21232 or show them separately when comparing Canada to the other three — do not silently pick one.",
+  "known_hazards_checked": [
+    "SSYK 2012's fourth digit does not track ISCO-08's fourth digit at the same code point. SE 2514 ('System testers and test managers') is not ISCO-08 2514 ('Applications programmers') despite the identical number — see that mapping's note.",
+    "SE 2515 ('System administrators') independently shows the same hazard from a different angle: its ISCO-08 equivalent (2522) is not just a different digit, it is in an entirely different ISCO-08 sub-major group (252, not 251).",
+    "NOC 21311 ('Computer engineers, except software engineers and designers') is not an ICT-professionals occupation at all, despite being listed as a Canadian sibling code in this package's work order. It is hardware/telecommunications engineering — see that mapping's note for why it is anchored to isco08:21, a different branch of the tree, not isco08:25."
+  ],
+  "mappings": [
+    {
+      "country": "SE",
+      "source_id": "salary_se",
+      "classification": "SSYK 2012",
+      "national_code": "2511",
+      "national_title": "System analysts and ICT-architects",
+      "shared_key": "isco08:2511",
+      "is_primary_target": false,
+      "confidence": "moderate",
+      "note": "ISCO-08 2511 'Systems analysts' covers the analyst core. SSYK's label adds 'ICT-architects', a role ISCO-08 does not separately break out at 4-digit. SCB's own SSYK 2012 documentation states the classification carries a certified concordance to ISCO-08 only at the 3-digit level ('251'); the 4th digit is not separately certified by SCB, so this rests on definitional correspondence between the two codes' own titles, not an official code-for-code table."
+    },
+    {
+      "country": "SE",
+      "source_id": "salary_se",
+      "classification": "SSYK 2012",
+      "national_code": "2512",
+      "national_title": "Software- and system developers",
+      "shared_key": "isco08:2512",
+      "is_primary_target": true,
+      "confidence": "high",
+      "note": "Code number, title, and SCB's SSYK-2012-is-ISCO-08-based design all agree. Checked against the API's own live label ('Software- and system developers'), not assumed from the code number alone. This is the package's reference mapping — the cleanest of the eighteen."
+    },
+    {
+      "country": "SE",
+      "source_id": "salary_se",
+      "classification": "SSYK 2012",
+      "national_code": "2513",
+      "national_title": "Games and digital media developers",
+      "shared_key": "isco08:2513",
+      "is_primary_target": false,
+      "confidence": "moderate",
+      "note": "ISCO-08 2513 is 'Web and multimedia developers' — broader than SCB's games-specific framing. Real overlap (both sit outside general software development, on the creative/production side) but SSYK's scope is narrower than the ISCO-08 unit it is mapped to."
+    },
+    {
+      "country": "SE",
+      "source_id": "salary_se",
+      "classification": "SSYK 2012",
+      "national_code": "2514",
+      "national_title": "System testers and test managers",
+      "shared_key": "isco08:25",
+      "is_primary_target": false,
+      "confidence": "2-digit-only",
+      "note": "THE FLAGGED HAZARD. SSYK 2514's number coincides with ISCO-08 2514 ('Applications programmers'), but SCB's own definition is 'System testers and test managers' — testing and QA management, a different occupation. Do not assume SSYK's fourth digit tracks ISCO-08's fourth digit at the same code point. No ISCO-08 4-digit unit exists for software testing as its own occupation (the 2008 classification does not carve it out from development), so this falls back to the 2-digit ICT-professionals bucket, which the occupation genuinely belongs to."
+    },
+    {
+      "country": "SE",
+      "source_id": "salary_se",
+      "classification": "SSYK 2012",
+      "national_code": "2515",
+      "national_title": "System administrators",
+      "shared_key": "isco08:2522",
+      "is_primary_target": false,
+      "confidence": "moderate",
+      "note": "Title corresponds cleanly to ISCO-08 2522 'Systems administrators' — but the code numbers do not align at all: SSYK places this within its own '251' family at position 2515, while ISCO-08 places the equivalent function in the adjacent '252' family at 2522. A second, independent demonstration (after 2514) that SSYK's numbering must never be read positionally against ISCO-08's."
+    },
+    {
+      "country": "SE",
+      "source_id": "salary_se",
+      "classification": "SSYK 2012",
+      "national_code": "2516",
+      "national_title": "Security specialists (ICT)",
+      "shared_key": "isco08:25",
+      "is_primary_target": false,
+      "confidence": "2-digit-only",
+      "note": "No ISCO-08 4-digit unit group is dedicated to ICT security — the 2008 classification predates 'cyber security' as a distinct occupational category almost everywhere. Falls back to the 2-digit bucket."
+    },
+    {
+      "country": "SE",
+      "source_id": "salary_se",
+      "classification": "SSYK 2012",
+      "national_code": "2519",
+      "national_title": "ICT-specialist professionals not elsewhere classified",
+      "shared_key": "isco08:25",
+      "is_primary_target": false,
+      "confidence": "2-digit-only",
+      "note": "Both codes are 'not elsewhere classified' residuals, but the residual SCOPE differs: ISCO-08's 2519 is a residual only within the narrower '251' (software/apps) group, while SSYK's residual here spans a wider set of ICT specialisms. A residual mapped to a residual is not worth certifying at 4-digit; falls back to 2-digit."
+    },
+    {
+      "country": "GB",
+      "source_id": "salary_uk",
+      "classification": "SOC 2020",
+      "national_code": "2133",
+      "national_title": "IT business analysts, architects and systems designers",
+      "shared_key": "isco08:2511",
+      "is_primary_target": false,
+      "confidence": "moderate",
+      "note": "Corresponds to ISCO-08 2511 'Systems analysts' in its analyst/design core, but SOC 2020 explicitly bundles 'architects' and 'systems designers' into the same 4-digit code — a wider scope than ISCO-08 draws at 2511 alone."
+    },
+    {
+      "country": "GB",
+      "source_id": "salary_uk",
+      "classification": "SOC 2020",
+      "national_code": "2134",
+      "national_title": "Programmers and software development professionals",
+      "shared_key": "isco08:2512",
+      "is_primary_target": true,
+      "confidence": "high",
+      "note": "Verified against the live 2025-provisional ASHE file: this code carries 360,000 jobs and a GBP 55,587 median, exactly the reference figures this package's work order cites, confirming the code is right, not just plausible. SOC 2020's title matches ISCO-08 2512's scope closely, though 'programmers' here also absorbs some of what ISCO-08 separately calls 2514 'Applications programmers' — SOC 2020 does not draw that line at 4-digit. Treated as high confidence for this site's broad developer comparison; the absorbed scope is a real but small caveat, not a reason to mark it down."
+    },
+    {
+      "country": "GB",
+      "source_id": "salary_uk",
+      "classification": "SOC 2020",
+      "national_code": "2135",
+      "national_title": "Cyber security professionals",
+      "shared_key": "isco08:25",
+      "is_primary_target": false,
+      "confidence": "2-digit-only",
+      "note": "Same reasoning as SE 2516: no ISCO-08 4-digit unit exists for cyber security specifically. Falls back to 2-digit."
+    },
+    {
+      "country": "GB",
+      "source_id": "salary_uk",
+      "classification": "SOC 2020",
+      "national_code": "2136",
+      "national_title": "IT quality and testing professionals",
+      "shared_key": "isco08:25",
+      "is_primary_target": false,
+      "confidence": "2-digit-only",
+      "note": "No ISCO-08 4-digit unit for testing/QA specifically — the same gap that produces the SE 2514 hazard, independently confirmed here from the UK side: two unrelated national classifications both carve out a 'testing' occupation that ISCO-08 does not itself distinguish."
+    },
+    {
+      "country": "GB",
+      "source_id": "salary_uk",
+      "classification": "SOC 2020",
+      "national_code": "2137",
+      "national_title": "IT network professionals",
+      "shared_key": "isco08:2523",
+      "is_primary_target": false,
+      "confidence": "moderate",
+      "note": "Clean title correspondence to ISCO-08 2523 'Computer network professionals'. Marked moderate rather than high only because, as with every UK code here, this rests on definitional comparison rather than an ONS-published SOC-to-ISCO concordance table, which was not located."
+    },
+    {
+      "country": "GB",
+      "source_id": "salary_uk",
+      "classification": "SOC 2020",
+      "national_code": "1137",
+      "national_title": "Information technology directors",
+      "shared_key": "isco08:1330",
+      "is_primary_target": false,
+      "confidence": "moderate",
+      "note": "Corresponds to ISCO-08 1330 'Information and communications technology service managers' — a management unit group entirely outside the '25' ICT-professionals family, kept as its own shared key rather than folded into isco08:25. A director's wage is not comparable to an individual-contributor developer's; do not blend these two shared keys in any future comparison."
+    },
+    {
+      "country": "CA",
+      "source_id": "salary_ca",
+      "classification": "NOC 2021 v1.0",
+      "national_code": "21231",
+      "national_title": "Software engineers and designers",
+      "shared_key": "isco08:2512",
+      "is_primary_target": true,
+      "confidence": "moderate",
+      "note": "StatCan's own unit-group definition ('research, design, evaluate, integrate and maintain software applications ... embedded software ... telecommunications software') matches ISCO-08 2512's scope. Marked moderate, not high, by this file's own rubric: NOC draws an engineering-licensure line between 'engineers and designers' (this code) and 'developers and programmers' (21232) that ISCO-08 does not itself distinguish, so this code covers roughly half of isco08:2512's scope, not the whole of it — see that mapping and the top-level primary_target_note."
+    },
+    {
+      "country": "CA",
+      "source_id": "salary_ca",
+      "classification": "NOC 2021 v1.0",
+      "national_code": "21232",
+      "national_title": "Software developers and programmers",
+      "shared_key": "isco08:2512",
+      "is_primary_target": true,
+      "confidence": "moderate",
+      "note": "StatCan's definition ('design, write, and test code for new systems and software') matches ISCO-08 2512. Marked moderate, not high, for the same reason as 21231: maps to the SAME shared key as 21231 — NOC splits one ISCO-08 concept into two codes along a professional-engineering axis that ISCO-08 does not draw, so this is a split/merge case by this file's own confidence_levels definition, not a clean one-to-one. Package 9 must decide explicitly whether to sum 21231+21232 or show them separately, not silently pick one."
+    },
+    {
+      "country": "CA",
+      "source_id": "salary_ca",
+      "classification": "NOC 2021 v1.0",
+      "national_code": "21234",
+      "national_title": "Web developers and programmers",
+      "shared_key": "isco08:2513",
+      "is_primary_target": false,
+      "confidence": "moderate",
+      "note": "StatCan's definition ('design, create and modify websites ... content, graphics, performance and website capacity') matches ISCO-08 2513 'Web and multimedia developers' closely, though NOC's title omits 'multimedia' explicitly — marked moderate rather than high for that scope gap."
+    },
+    {
+      "country": "CA",
+      "source_id": "salary_ca",
+      "classification": "NOC 2021 v1.0",
+      "national_code": "21311",
+      "national_title": "Computer engineers (except software engineers and designers)",
+      "shared_key": "isco08:21",
+      "is_primary_target": false,
+      "confidence": "2-digit-only",
+      "note": "SECOND HAZARD, independently discovered while checking this list (not named in the work order — found by reading StatCan's own definition rather than trusting the code's surface similarity to the others). This is NOT an ICT-professionals (isco08:25) occupation despite sitting in this package's Canadian sibling list. StatCan's own definition is hardware/telecommunications engineering: 'computer and telecommunications hardware ... mainframe systems ... fibre-optic networks ... wireless communication networks'. NOC itself classifies this unit group under Minor Group 2131 'Electrical, electronics and computer engineers', not the software/web minor group (2123) that 21231/21232/21234 belong to. The nearest ISCO-08 anchor is sub-major group 21 'Science and engineering professionals' (specifically its 215 'Electrotechnology engineers' family) — a different branch of the tree from 25. Recorded here, at 2-digit and in a different family, specifically so this wage figure is never folded into a 'software developer' comparison it does not belong in."
+    },
+    {
+      "country": "US",
+      "source_id": "bls_oews",
+      "classification": "SOC 2018",
+      "national_code": "15-1252",
+      "national_title": "Software Developers",
+      "shared_key": "isco08:2512",
+      "is_primary_target": true,
+      "confidence": "high",
+      "note": "Title is identical to ISCO-08 2512's official title ('Software Developers' / 'Software developers'). The least ambiguous mapping of the four countries' primary targets — no scope gap, no residual-category question, no code-number coincidence to untangle."
+    }
+  ]
+}

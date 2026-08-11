@@ -139,3 +139,64 @@ one exception: the purchase price is dropped from the "kept after rent and
 living" reasons, because that formula never uses it.
 
 **Decide:** nothing, unless the hyphenated forms were deliberate.
+
+---
+
+# Package 7 — The salary spine
+
+## 12. Canada's NOC 2021 splits one ISCO-08 job into two codes; nothing sums them
+
+`data/occupations.json` maps NOC 21231 ("Software engineers and designers")
+**and** NOC 21232 ("Software developers and programmers") to the *same* shared
+key, `isco08:2512` — the same job Sweden, the UK and the US each report under
+one code. NOC draws a professional-engineering-licensure line between the two
+that ISCO-08 does not itself draw, so there is no single "Canadian equivalent"
+figure to hand back; there are two, and they differ (Toronto: 21231 median
+CAD 56.49/hr, 21232 CAD 48.08/hr — not close enough to treat as noise).
+
+**Shipped:** both codes are recorded in full, each individually correct, with
+`is_primary_target: true` on both and a note on each pointing at the other.
+Nothing sums them, nothing picks one and drops the other.
+
+**Decide:** when package 9 builds the cross-country developer-pay comparison,
+should Canada's figure be 21231+21232 combined (the fuller "everyone who
+codes for a living" population, closer to what Sweden/UK/US each already
+report as one number), 21231 and 21232 shown side by side (preserves the
+signal that Canada's own classification treats these as different jobs), or
+just 21232 alone (the closer semantic match to "developer" as opposed to
+"engineer")? Whichever is picked changes where Canada lands relative to the
+other three on that chart.
+
+## 13. BLS OEWS's percentile extension is written and verified, but not committed as data
+
+`scripts/src_bls_oews.py` now requests 8 datatypes (employment, hourly mean,
+annual mean, annual P10/P25/median/P75/P90) instead of the old 3, and fixes a
+real pre-existing bug: datatype 04 was fetched and stored as
+`hourly_mean_usd` but is actually the ANNUAL mean (148,100 for the 2025
+national series — obviously not an hourly rate). Both the extension and the
+fix were run successfully and spot-checked against raw API bytes twice during
+this session, with every figure matching the work order's own cited reference
+numbers exactly (employment 1,687,890; P10 82,460; median 135,980; P90
+214,670; San Jose P90 289,150, confirming BLS's May 2025 release now publishes
+real uncapped high percentiles instead of the old ">=$239,200" top-code).
+
+**Not shipped:** `data/processed/bls_oews.json` as committed by this package
+is UNCHANGED from its pre-package-7 state. BLS's unregistered API caps at 25
+requests/day; this session's own repeated development and verification runs
+exhausted it, twice — the second time immediately after a request that had
+briefly succeeded, suggesting the cap or its reset window is stricter than a
+simple daily boundary. Committing a broken/empty fetch in place of the
+working file that existed before this package touched it would have been a
+real regression, so the processed file and its provenance entry were both
+reverted to their exact pre-package-7 state instead. `salary_se`/`salary_uk`/
+`salary_ca` are unaffected — they hit no such limit and are fully committed
+with fresh, verified data.
+
+**Decide:** nothing about the design — the code is ready as written. What's
+needed is either (a) running `python scripts/pipeline.py bls_oews` once on a
+day/window where the unregistered quota is available (it takes one run, 9-11
+requests), or (b) registering a free BLS API key (raises the cap to
+500/day) and adding it to the request — registering a new external account
+is outside what an unattended run should do on its own. Either way, the very
+next successful run of this exact script produces the full percentile output;
+nothing further needs to change in the code for that to happen.
