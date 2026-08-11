@@ -4,9 +4,9 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-11T22:39:10+00:00**
+Last pipeline run: **2026-08-11T22:49:41+00:00**
 
-32 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+35 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
 Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
 
@@ -31,10 +31,13 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | OECD Economic Outlook 119 — projections | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Economic Outlook 119. | raw committed |
 | OECD Data Explorer (SDMX) — house prices, wages, hours, tax wedge | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Data Explorer, dataflow IDs listed per block. | raw committed |
 | Reporters Without Borders — World Press Freedom Index | RSF publishes the index openly; cite Reporters Without Borders (RSF), World Press Freedom Index. | raw committed |
+| ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation | CC BY 2.5 AU. Cite: Australian Taxation Office (ATO), Taxation statistics 2023-24, Table 15A, via data.gov.au. | processed derivative only — the raw 700 KB ATO workbook is cached under data/raw/salary_au/ but that directory is gitignored, so this repo does not redistribute the raw download (CC BY 2.5 AU would permit it; the repo simply doesn't). Only the derived data/processed/salary_au.json is committed. |
 | Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region | Open Government Licence - Canada 2.0. Cite: Employment and Social Development Canada (ESDC) / Job Bank, Wages. | processed derivative only — the raw 18 MB wages CSV is cached under data/raw/salary_ca/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL-Canada 2.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_ca.json is committed. |
 | Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08) | CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20. | processed derivative only — the raw StatBank JSON-stat payload is cached under data/raw/salary_dk/ but that directory is gitignored, so this repo does not redistribute the raw source (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_dk.json is committed. |
 | INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11 | Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES). | processed derivative only — the raw Tempus3 JSON payloads are cached under data/raw/salary_es/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_es.json is committed. |
 | Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) | CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au. | processed derivative only — the raw json-stat2 payload is cached under data/raw/salary_fi/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_fi.json is committed. |
+| CSO Ireland — SES06 earnings, 'Professional' 1-digit SOC major group | CC BY 4.0 (CSO Ireland open data licence, PxStat). Cite: Central Statistics Office (CSO) Ireland, table SES06. | processed derivative only — the raw JSON-stat2 payload is cached under data/raw/salary_ie/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_ie.json is committed. |
+| CBS (Statistics Netherlands) — software/application developer wages (BRC 2014) | CC BY 4.0 (CBS StatLine open data licence). Cite: Statistics Netherlands (CBS), table 85517NED. | processed derivative only — the raw OData JSON payload is cached under data/raw/salary_nl/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_nl.json is committed. |
 | SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08) | CC BY 4.0 (Statistics Norway open data licence, data.norge.no / SSB API terms). Cite: Statistics Norway (SSB), tables 11418 and 11658. | processed derivative only — the raw JSON-stat2 payloads are cached under data/raw/salary_no/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_no.json is committed. |
 | SCB wage structure statistics — ICT occupations (SSYK 2012) | CC0 1.0 Universal (SCB adopted CC0 for all open data 2021-07-01; no attribution required). Cite: Statistics Sweden (SCB), wage and salary structures, private and public sector. | processed derivative only — the raw PxWeb JSON payloads are cached under data/raw/salary_se/ but that directory is gitignored, so this repo does not redistribute the raw source (CC0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_se.json is committed. |
 | ONS ASHE Table 14.7 — Annual pay (Gross), IT occupations, SOC 2020 4-digit | Open Government Licence v3.0. Cite: Office for National Statistics (ONS), Annual Survey of Hours and Earnings (ASHE), Table 14. | processed derivative only — the raw 11 MB ASHE zip is cached under data/raw/salary_uk/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL v3.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_uk.json is committed. |
@@ -483,6 +486,29 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 </details>
 
+### ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation
+
+- **Status** — live
+- **Coverage** — 7/7 6-digit ANZSCO codes, Australia, 2023-24 income year
+- **Rows processed** — 49
+- **Fetched** — 2026-08-11T22:48:35+00:00
+- **Licence** — CC BY 2.5 AU. Cite: Australian Taxation Office (ATO), Taxation statistics 2023-24, Table 15A, via data.gov.au.
+- **Output** — `data/processed/salary_au.json`
+- **Fetch script** — `scripts/src_salary_au.py`
+
+**URLs**
+
+- <https://data.gov.au/data/dataset/faea4485-f407-457d-97f8-3f0822ccd654/resource/3286e287-ee87-4be4-87b2-56c5c6602009/download/ts24individual15occupationsex.xlsx>
+- <https://data.gov.au/data/dataset/taxation-statistics-2023-24>
+
+**What we do to it**
+
+1. Downloaded Table 15A (Average and median taxable income, salary or wages, and total income by occupation and sex) from the 2023-24 Taxation Statistics workbook.
+1. Parsed all 7 6-digit ANZSCO codes under unit group 2613 (Software and applications programmers), Sex='Total' rows only.
+1. Kept N, and mean/median for all three of taxable income, salary-or-wage income and total income, verbatim, under separate never-blended keys. No percentiles exist in this table.
+
+> Mean/median only — no percentile data exists for AU at this occupation depth from any live source (checked: ABS EEH 6306.0 has means at 4-digit and percentiles only at 1-digit, and no EEH dataflow exists on data.api.abs.gov.au to bridge them).
+
 ### Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region
 
 - **Status** — live
@@ -571,6 +597,50 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 1. Occupation titles are the API's own labels, not hand-typed.
 
 > Full-time-only scope is the table's own restriction, not a filter this pipeline chose — see meta.unit.
+
+### CSO Ireland — SES06 earnings, 'Professional' 1-digit SOC major group
+
+- **Status** — live
+- **Coverage** — 1 SOC major group x 2 years, Ireland only
+- **Rows processed** — 8
+- **Fetched** — 2026-08-11T22:49:41+00:00
+- **Licence** — CC BY 4.0 (CSO Ireland open data licence, PxStat). Cite: Central Statistics Office (CSO) Ireland, table SES06.
+- **Output** — `data/processed/salary_ie.json`
+- **Fetch script** — `scripts/src_salary_ie.py`
+
+**URLs**
+
+- <https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/SES06/JSON-stat/2.0/en>
+
+**What we do to it**
+
+1. Fetched table SES06 in full (JSON-stat 2.0) and kept only the 'Professional' (SOC major group 2) rows — the closest, but not ICT-specific, occupation cut this table publishes.
+1. Kept mean/median hourly earnings and mean/median paid weekly hours for every year the table carries (2018, 2022) verbatim.
+
+> 1-digit SOC only — confirmed against the table's own live dimension, not assumed. No ICT-specific series exists in Irish official statistics at any finer depth via this table.
+
+### CBS (Statistics Netherlands) — software/application developer wages (BRC 2014)
+
+- **Status** — live
+- **Coverage** — 1 BRC occupation code x 12 years, Netherlands only
+- **Rows processed** — 48
+- **Fetched** — 2026-08-11T22:44:24+00:00
+- **Licence** — CC BY 4.0 (CBS StatLine open data licence). Cite: Statistics Netherlands (CBS), table 85517NED.
+- **Output** — `data/processed/salary_nl.json`
+- **Fetch script** — `scripts/src_salary_nl.py`
+
+**URLs**
+
+- <https://opendata.cbs.nl/ODataApi/OData/85517NED/TypedDataSet?$filter=Beroep eq 'A000275'>
+- <https://opendata.cbs.nl/ODataApi/OData/85517NED/DataProperties>
+- <https://opendata.cbs.nl/ODataApi/OData/85517NED/Beroep>
+
+**What we do to it**
+
+1. Queried BRC 2014 code A000275 (0811, software and application developers) from table 85517NED's TypedDataSet, filtered server-side via OData $filter.
+1. Kept employee count (thousands), P25, median and P75 gross hourly wage for every annual period (JJ00) verbatim; non-annual (quarterly) periods, if any, are excluded.
+
+> BRC 2014 has no ISCO-08 correspondence — see meta.crosswalk_hazard.
 
 ### SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08)
 

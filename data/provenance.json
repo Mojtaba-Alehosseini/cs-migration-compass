@@ -395,6 +395,27 @@
       "notes": "Years that failed to download are omitted, never interpolated."
     },
     {
+      "source_id": "salary_au",
+      "name": "ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation",
+      "urls": [
+        "https://data.gov.au/data/dataset/faea4485-f407-457d-97f8-3f0822ccd654/resource/3286e287-ee87-4be4-87b2-56c5c6602009/download/ts24individual15occupationsex.xlsx",
+        "https://data.gov.au/data/dataset/taxation-statistics-2023-24"
+      ],
+      "fetched_at": "2026-08-11T22:48:35+00:00",
+      "license": "CC BY 2.5 AU. Cite: Australian Taxation Office (ATO), Taxation statistics 2023-24, Table 15A, via data.gov.au.",
+      "redistribution": "processed derivative only — the raw 700 KB ATO workbook is cached under data/raw/salary_au/ but that directory is gitignored, so this repo does not redistribute the raw download (CC BY 2.5 AU would permit it; the repo simply doesn't). Only the derived data/processed/salary_au.json is committed.",
+      "transforms": [
+        "Downloaded Table 15A (Average and median taxable income, salary or wages, and total income by occupation and sex) from the 2023-24 Taxation Statistics workbook.",
+        "Parsed all 7 6-digit ANZSCO codes under unit group 2613 (Software and applications programmers), Sex='Total' rows only.",
+        "Kept N, and mean/median for all three of taxable income, salary-or-wage income and total income, verbatim, under separate never-blended keys. No percentiles exist in this table."
+      ],
+      "output": "data/processed/salary_au.json",
+      "status": "ok",
+      "rows": 49,
+      "coverage": "7/7 6-digit ANZSCO codes, Australia, 2023-24 income year",
+      "notes": "Mean/median only — no percentile data exists for AU at this occupation depth from any live source (checked: ABS EEH 6306.0 has means at 4-digit and percentiles only at 1-digit, and no EEH dataflow exists on data.api.abs.gov.au to bridge them)."
+    },
+    {
       "source_id": "salary_ca",
       "name": "Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region",
       "urls": [
@@ -476,6 +497,46 @@
       "rows": 25,
       "coverage": "5 AL2010 occupations, single year (2024), Finland only, full-time earners only",
       "notes": "Full-time-only scope is the table's own restriction, not a filter this pipeline chose — see meta.unit."
+    },
+    {
+      "source_id": "salary_ie",
+      "name": "CSO Ireland — SES06 earnings, 'Professional' 1-digit SOC major group",
+      "urls": [
+        "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/SES06/JSON-stat/2.0/en"
+      ],
+      "fetched_at": "2026-08-11T22:49:41+00:00",
+      "license": "CC BY 4.0 (CSO Ireland open data licence, PxStat). Cite: Central Statistics Office (CSO) Ireland, table SES06.",
+      "redistribution": "processed derivative only — the raw JSON-stat2 payload is cached under data/raw/salary_ie/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_ie.json is committed.",
+      "transforms": [
+        "Fetched table SES06 in full (JSON-stat 2.0) and kept only the 'Professional' (SOC major group 2) rows — the closest, but not ICT-specific, occupation cut this table publishes.",
+        "Kept mean/median hourly earnings and mean/median paid weekly hours for every year the table carries (2018, 2022) verbatim."
+      ],
+      "output": "data/processed/salary_ie.json",
+      "status": "ok",
+      "rows": 8,
+      "coverage": "1 SOC major group x 2 years, Ireland only",
+      "notes": "1-digit SOC only — confirmed against the table's own live dimension, not assumed. No ICT-specific series exists in Irish official statistics at any finer depth via this table."
+    },
+    {
+      "source_id": "salary_nl",
+      "name": "CBS (Statistics Netherlands) — software/application developer wages (BRC 2014)",
+      "urls": [
+        "https://opendata.cbs.nl/ODataApi/OData/85517NED/TypedDataSet?$filter=Beroep eq 'A000275'",
+        "https://opendata.cbs.nl/ODataApi/OData/85517NED/DataProperties",
+        "https://opendata.cbs.nl/ODataApi/OData/85517NED/Beroep"
+      ],
+      "fetched_at": "2026-08-11T22:44:24+00:00",
+      "license": "CC BY 4.0 (CBS StatLine open data licence). Cite: Statistics Netherlands (CBS), table 85517NED.",
+      "redistribution": "processed derivative only — the raw OData JSON payload is cached under data/raw/salary_nl/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_nl.json is committed.",
+      "transforms": [
+        "Queried BRC 2014 code A000275 (0811, software and application developers) from table 85517NED's TypedDataSet, filtered server-side via OData $filter.",
+        "Kept employee count (thousands), P25, median and P75 gross hourly wage for every annual period (JJ00) verbatim; non-annual (quarterly) periods, if any, are excluded."
+      ],
+      "output": "data/processed/salary_nl.json",
+      "status": "ok",
+      "rows": 48,
+      "coverage": "1 BRC occupation code x 12 years, Netherlands only",
+      "notes": "BRC 2014 has no ISCO-08 correspondence — see meta.crosswalk_hazard."
     },
     {
       "source_id": "salary_no",
@@ -766,5 +827,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-11T22:39:10+00:00"
+  "updated_at": "2026-08-11T22:49:41+00:00"
 }

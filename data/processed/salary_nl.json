@@ -1,0 +1,110 @@
+{
+ "source_id": "salary_nl",
+ "generated_at": "2026-08-11T22:44:24+00:00",
+ "meta": {
+  "occupation_family": "BRC 2014 (Beroepenclassificatie) — no ISCO-08 correspondence",
+  "primary_code": "0811",
+  "classification": "BRC 2014 — Statistics Netherlands' own occupational classification, independently structured from ISCO-08 (not a national adaptation of it, unlike SSYK/DISCO-08/STYRK-08/AL2010). See module docstring.",
+  "unit": "EUR per hour, gross (n_employees_thousands is a headcount in THOUSANDS, CBS's own unit — 316 means 316,000 — kept as published rather than multiplied out, the same convention this project already uses for the UK's jobs_thousand field).",
+  "confidence": "official",
+  "level": "country (Netherlands)",
+  "years": [
+   "2013",
+   "2014",
+   "2015",
+   "2016",
+   "2017",
+   "2018",
+   "2019",
+   "2020",
+   "2021",
+   "2022",
+   "2023",
+   "2024"
+  ],
+  "crosswalk_hazard": "BRC 2014 code 0811 does NOT map to ISCO-08 at any digit depth — this is not a 4-digit-vs-2-digit granularity question the way Sweden's SSYK 2514 was, it is a genuinely different, non-corresponding classification system. data/occupations.json must not force a 2-digit isco08:25 fallback here as if BRC merely lacked precision; Tier 4 adds a distinct 'no ISCO correspondence' confidence level for exactly this case.",
+  "why_it_matters": "One of nine countries with genuine occupation-level dispersion data (median + quartiles + employee count), and the clearest real-world example of why the crosswalk needs a confidence level below '2-digit-only'."
+ },
+ "data": {
+  "occupations": {
+   "0811": {
+    "title": "Software- en applicatieontwikkelaars (software and application developers)",
+    "brc_code": "0811",
+    "dispersion_by_year": {
+     "2013": {
+      "n_employees_thousands": 145,
+      "p25_eur_hour": 19.4,
+      "median_eur_hour": 25.6,
+      "p75_eur_hour": 32.1
+     },
+     "2014": {
+      "n_employees_thousands": 155,
+      "p25_eur_hour": 20.0,
+      "median_eur_hour": 26.4,
+      "p75_eur_hour": 32.6
+     },
+     "2015": {
+      "n_employees_thousands": 168,
+      "p25_eur_hour": 21.1,
+      "median_eur_hour": 26.6,
+      "p75_eur_hour": 33.5
+     },
+     "2016": {
+      "n_employees_thousands": 180,
+      "p25_eur_hour": 20.4,
+      "median_eur_hour": 27.1,
+      "p75_eur_hour": 34.2
+     },
+     "2017": {
+      "n_employees_thousands": 177,
+      "p25_eur_hour": 20.7,
+      "median_eur_hour": 27.4,
+      "p75_eur_hour": 34.5
+     },
+     "2018": {
+      "n_employees_thousands": 195,
+      "p25_eur_hour": 21.0,
+      "median_eur_hour": 27.7,
+      "p75_eur_hour": 34.9
+     },
+     "2019": {
+      "n_employees_thousands": 222,
+      "p25_eur_hour": 21.8,
+      "median_eur_hour": 28.6,
+      "p75_eur_hour": 35.9
+     },
+     "2020": {
+      "n_employees_thousands": 230,
+      "p25_eur_hour": 22.1,
+      "median_eur_hour": 29.2,
+      "p75_eur_hour": 36.4
+     },
+     "2021": {
+      "n_employees_thousands": 288,
+      "p25_eur_hour": 22.6,
+      "median_eur_hour": 29.8,
+      "p75_eur_hour": 38.1
+     },
+     "2022": {
+      "n_employees_thousands": 320,
+      "p25_eur_hour": 23.2,
+      "median_eur_hour": 30.4,
+      "p75_eur_hour": 38.2
+     },
+     "2023": {
+      "n_employees_thousands": 319,
+      "p25_eur_hour": 25.1,
+      "median_eur_hour": 32.5,
+      "p75_eur_hour": 40.5
+     },
+     "2024": {
+      "n_employees_thousands": 316,
+      "p25_eur_hour": 27.0,
+      "median_eur_hour": 34.8,
+      "p75_eur_hour": 43.4
+     }
+    }
+   }
+  }
+ }
+}

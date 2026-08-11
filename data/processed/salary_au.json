@@ -1,0 +1,146 @@
+{
+ "source_id": "salary_au",
+ "generated_at": "2026-08-11T22:48:35+00:00",
+ "meta": {
+  "occupation_family": "ANZSCO unit group 2613 — Software and applications programmers",
+  "primary_code": "261313",
+  "classification": "ANZSCO 2021, 6-digit occupation — the deepest granularity in this salary spine",
+  "unit": "AUD per year (annual income, 2023-24 income year)",
+  "measures": "Three DIFFERENT income concepts per occupation, never to be blended: salary_or_wage_income (gross employment earnings — the primary, cross-country-comparable figure), taxable_income (assessable income after deductions, across all income sources, not wages alone — this is what the work order's own reference figures cite), and total_income (before deductions, all sources). Mean and median only for each; no percentiles exist at this occupation depth from any live AU source — see module docstring. distribution is explicitly 'central-tendency-only' on every record.",
+  "confidence": "official",
+  "level": "country (Australia)",
+  "year": "2023-24 income year",
+  "crosswalk_hazard": "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 — ANZSCO's own divergence from ISCO-08, if any, is unverified here. ANZSCO reaches 6 digits, one finer than ISCO-08's 4, so any mapping is necessarily many-to-one or requires picking a specific 6-digit code as 'the' ISCO-08 unit's representative.",
+  "why_it_matters": "The deepest occupation granularity of the fifteen countries (6-digit ANZSCO splits 'software developer' into engineer/programmer/tester/security/devops/pentester), but with no percentile spread at all — the clearest real example of why package 9's estimator needs a distribution-quality flag, not just a distribution."
+ },
+ "data": {
+  "occupations": {
+   "261311": {
+    "title": "Computing professional - analyst programmer",
+    "anzsco_unit_group": "2613 Software and applications programmer",
+    "n_individuals": 8581,
+    "distribution": "central-tendency-only",
+    "taxable_income": {
+     "mean_aud_year": 131497.25,
+     "median_aud_year": 123030
+    },
+    "salary_or_wage_income": {
+     "mean_aud_year": 126060.27,
+     "median_aud_year": 122234
+    },
+    "total_income": {
+     "mean_aud_year": 135249.19,
+     "median_aud_year": 126660
+    }
+   },
+   "261312": {
+    "title": "Applications programmer",
+    "anzsco_unit_group": "2613 Software and applications programmer",
+    "n_individuals": 47545,
+    "distribution": "central-tendency-only",
+    "taxable_income": {
+     "mean_aud_year": 130622.74,
+     "median_aud_year": 119893
+    },
+    "salary_or_wage_income": {
+     "mean_aud_year": 122257.78,
+     "median_aud_year": 117992
+    },
+    "total_income": {
+     "mean_aud_year": 134335.42,
+     "median_aud_year": 123170
+    }
+   },
+   "261313": {
+    "title": "Computing professional - software engineer",
+    "anzsco_unit_group": "2613 Software and applications programmer",
+    "n_individuals": 84585,
+    "distribution": "central-tendency-only",
+    "taxable_income": {
+     "mean_aud_year": 148516.13,
+     "median_aud_year": 134370
+    },
+    "salary_or_wage_income": {
+     "mean_aud_year": 135788.25,
+     "median_aud_year": 132758
+    },
+    "total_income": {
+     "mean_aud_year": 152103.52,
+     "median_aud_year": 137846
+    }
+   },
+   "261314": {
+    "title": "Computing professional - software tester",
+    "anzsco_unit_group": "2613 Software and applications programmer",
+    "n_individuals": 7771,
+    "distribution": "central-tendency-only",
+    "taxable_income": {
+     "mean_aud_year": 108020.69,
+     "median_aud_year": 105729
+    },
+    "salary_or_wage_income": {
+     "mean_aud_year": 107316.88,
+     "median_aud_year": 106142
+    },
+    "total_income": {
+     "mean_aud_year": 110904.41,
+     "median_aud_year": 108699
+    }
+   },
+   "261315": {
+    "title": "Cyber security engineer",
+    "anzsco_unit_group": "2613 Software and applications programmer",
+    "n_individuals": 2003,
+    "distribution": "central-tendency-only",
+    "taxable_income": {
+     "mean_aud_year": 145753.33,
+     "median_aud_year": 132485
+    },
+    "salary_or_wage_income": {
+     "mean_aud_year": 135653.06,
+     "median_aud_year": 133128
+    },
+    "total_income": {
+     "mean_aud_year": 150066.2,
+     "median_aud_year": 136560
+    }
+   },
+   "261316": {
+    "title": "Devops engineer",
+    "anzsco_unit_group": "2613 Software and applications programmer",
+    "n_individuals": 666,
+    "distribution": "central-tendency-only",
+    "taxable_income": {
+     "mean_aud_year": 110170.39,
+     "median_aud_year": 108541
+    },
+    "salary_or_wage_income": {
+     "mean_aud_year": 108033.54,
+     "median_aud_year": 109093
+    },
+    "total_income": {
+     "mean_aud_year": 113327.08,
+     "median_aud_year": 112022.5
+    }
+   },
+   "261317": {
+    "title": "Penetration tester",
+    "anzsco_unit_group": "2613 Software and applications programmer",
+    "n_individuals": 121,
+    "distribution": "central-tendency-only",
+    "taxable_income": {
+     "mean_aud_year": 104473.46,
+     "median_aud_year": 95756
+    },
+    "salary_or_wage_income": {
+     "mean_aud_year": 104205.17,
+     "median_aud_year": 99238.5
+    },
+    "total_income": {
+     "mean_aud_year": 107763.67,
+     "median_aud_year": 102607
+    }
+   }
+  }
+ }
+}

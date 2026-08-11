@@ -217,3 +217,42 @@ requests), or (b) registering a free BLS API key (raises the cap to
 is outside what an unattended run should do on its own. Either way, the very
 next successful run of this exact script produces the full percentile output;
 nothing further needs to change in the code for that to happen.
+
+---
+
+# Package 8 — Salary breadth
+
+## 14. Germany has no salary source in this package — GENESIS could not be reached
+
+The work order named Destatis GENESIS (tables 62361-0030/-0034, KldB 2010,
+mean and median) as Germany's source, and explicitly pre-authorised skipping
+it if "no credential is available": *"If no credential is available, record
+it in NEEDS-DECISION.md and skip the country cleanly — do not scrape a
+workaround."*
+
+**What was tried.** GENESIS documents a published, non-personal guest
+credential (username/password both `GAST`) specifically for anonymous access
+— using it is not "creating an account" in the sense the standing rules
+prohibit; it is a shared demo credential Destatis itself publishes. Two
+endpoints were attempted against the documented REST base
+(`www-genesis.destatis.de/genesisWS/rest/2020`) with those credentials, per a
+maintained community API wrapper's documentation: `data/table` (fetch a
+specific table) and `catalogue/tables` (search, to sanity-check the
+credential independently of any one table ID). Both returned HTTP 200 with
+the site's React frontend HTML shell, not JSON, regardless of `Accept`
+headers — consistent with the API having moved to a newer version since that
+wrapper's documentation was written (a GENESIS "Webservice/API" manual dated
+May 2025 references version 5.0, while the wrapper and the URL itself are
+pinned to "2020").
+
+**Shipped:** no `salary_de` source this package. Germany is absent from the
+salary spine's data layer; the crosswalk and the comparison rule (Tier 4)
+both need to treat Germany as having zero coverage, not 2-digit or "no
+series" coverage — those are different data states from "not attempted".
+
+**Decide:** finding the current GENESIS REST API path (the version-5.0
+manual linked above is the place to start) and confirming the GAST/GAST
+guest credential still works against it would close this in a follow-up
+package. If Destatis has retired guest access entirely, a registered GENESIS
+account is the only remaining path, and that registration is the owner's
+call, not this session's.
