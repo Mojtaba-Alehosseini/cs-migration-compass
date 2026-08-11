@@ -1,0 +1,309 @@
+{
+ "source_id": "salary_no",
+ "generated_at": "2026-08-11T22:37:06+00:00",
+ "meta": {
+  "occupation_family": "STYRK-08 group 251 — Software and applications developers and analysts",
+  "occupation_codes": {
+   "2511": "Systems analysts",
+   "2512": "Software developers",
+   "2513": "Web and multimedia developers",
+   "2514": "Applications programmers",
+   "2519": "Software and applications developers and analysts not elsewhere classified"
+  },
+  "primary_code": "2512",
+  "classification": "STYRK-08 (Norway's national adaptation of ISCO-08)",
+  "unit": "NOK per month, all sectors, all employees, both sexes",
+  "measures": {
+   "dispersion_by_year": "mean, median, P25/P75 and employee count (N) — table 11418",
+   "age_at_quarter": "median and mean monthly salary by 3 age bands (0-39/40-54/55+), latest available quarter (2026K1) — table 11658. Coarser than Sweden's 7 bands, and quarterly rather than annual, but a genuine occupation x age cross."
+  },
+  "confidence": "official",
+  "level": "country (Norway, all sectors combined)",
+  "years": [
+   "2021",
+   "2022",
+   "2023",
+   "2024",
+   "2025"
+  ],
+  "crosswalk_hazard": "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 — STYRK-08's own divergence from ISCO-08, if any, is unverified here.",
+  "why_it_matters": "One of the few countries with a genuine occupation x age cross (with Sweden and Spain), which package 9's experience gradient needs."
+ },
+ "data": {
+  "occupations": {
+   "2511": {
+    "title": "Systems analysts",
+    "dispersion_by_year": {
+     "2021": {
+      "mean_nok_month": 67530,
+      "median_nok_month": 63840,
+      "p25_nok_month": 53330,
+      "p75_nok_month": 76290,
+      "n_employees": 27185
+     },
+     "2022": {
+      "mean_nok_month": 69940,
+      "median_nok_month": 66670,
+      "p25_nok_month": 55810,
+      "p75_nok_month": 79540,
+      "n_employees": 29790
+     },
+     "2023": {
+      "mean_nok_month": 73590,
+      "median_nok_month": 70290,
+      "p25_nok_month": 58890,
+      "p75_nok_month": 83960,
+      "n_employees": 32001
+     },
+     "2024": {
+      "mean_nok_month": 77040,
+      "median_nok_month": 73340,
+      "p25_nok_month": 61680,
+      "p75_nok_month": 87870,
+      "n_employees": 33028
+     },
+     "2025": {
+      "mean_nok_month": 80120,
+      "median_nok_month": 76330,
+      "p25_nok_month": 64230,
+      "p75_nok_month": 91390,
+      "n_employees": 33567
+     }
+    },
+    "age_at_quarter": {
+     "quarter": "2026K1",
+     "bands": {
+      "0-39": {
+       "mean_nok_month": 72100,
+       "median_nok_month": 68240
+      },
+      "40-54": {
+       "mean_nok_month": 88070,
+       "median_nok_month": 82770
+      },
+      "55+": {
+       "mean_nok_month": 87800,
+       "median_nok_month": 83130
+      }
+     }
+    }
+   },
+   "2512": {
+    "title": "Software developers",
+    "dispersion_by_year": {
+     "2021": {
+      "mean_nok_month": 65100,
+      "median_nok_month": 61300,
+      "p25_nok_month": 50000,
+      "p75_nok_month": 75000,
+      "n_employees": 6367
+     },
+     "2022": {
+      "mean_nok_month": 68380,
+      "median_nok_month": 65000,
+      "p25_nok_month": 52920,
+      "p75_nok_month": 79170,
+      "n_employees": 7301
+     },
+     "2023": {
+      "mean_nok_month": 72370,
+      "median_nok_month": 68800,
+      "p25_nok_month": 56000,
+      "p75_nok_month": 83330,
+      "n_employees": 7641
+     },
+     "2024": {
+      "mean_nok_month": 76180,
+      "median_nok_month": 72500,
+      "p25_nok_month": 59580,
+      "p75_nok_month": 87750,
+      "n_employees": 7781
+     },
+     "2025": {
+      "mean_nok_month": 81050,
+      "median_nok_month": 77420,
+      "p25_nok_month": 63330,
+      "p75_nok_month": 93820,
+      "n_employees": 8281
+     }
+    },
+    "age_at_quarter": {
+     "quarter": "2026K1",
+     "bands": {
+      "0-39": {
+       "mean_nok_month": 74390,
+       "median_nok_month": 70830
+      },
+      "40-54": {
+       "mean_nok_month": 92810,
+       "median_nok_month": 87500
+      },
+      "55+": {
+       "mean_nok_month": 92510,
+       "median_nok_month": 88380
+      }
+     }
+    }
+   },
+   "2513": {
+    "title": "Web and multimedia developers",
+    "dispersion_by_year": {
+     "2021": {
+      "mean_nok_month": 52720,
+      "median_nok_month": 49580,
+      "p25_nok_month": 40000,
+      "p75_nok_month": 62350,
+      "n_employees": 578
+     },
+     "2022": {
+      "mean_nok_month": 56510,
+      "median_nok_month": 52780,
+      "p25_nok_month": 42700,
+      "p75_nok_month": 65000,
+      "n_employees": 681
+     },
+     "2023": {
+      "mean_nok_month": 61520,
+      "median_nok_month": 57290,
+      "p25_nok_month": 46030,
+      "p75_nok_month": 72500,
+      "n_employees": 759
+     },
+     "2024": {
+      "mean_nok_month": 63190,
+      "median_nok_month": 58330,
+      "p25_nok_month": 48180,
+      "p75_nok_month": 74700,
+      "n_employees": 767
+     },
+     "2025": {
+      "mean_nok_month": 66690,
+      "median_nok_month": 62500,
+      "p25_nok_month": 50830,
+      "p75_nok_month": 78130,
+      "n_employees": 770
+     }
+    },
+    "age_at_quarter": {
+     "quarter": "2026K1",
+     "bands": {
+      "0-39": {
+       "mean_nok_month": 62540,
+       "median_nok_month": 58330
+      },
+      "40-54": {
+       "mean_nok_month": 77980,
+       "median_nok_month": 75000
+      }
+     }
+    }
+   },
+   "2514": {
+    "title": "Applications programmers",
+    "dispersion_by_year": {
+     "2021": {
+      "mean_nok_month": 62120,
+      "median_nok_month": 59790,
+      "p25_nok_month": 50000,
+      "p75_nok_month": 70800,
+      "n_employees": 235
+     },
+     "2022": {
+      "mean_nok_month": 65470,
+      "median_nok_month": 62500,
+      "p25_nok_month": 52500,
+      "p75_nok_month": 74710,
+      "n_employees": 290
+     },
+     "2023": {
+      "mean_nok_month": 69110,
+      "median_nok_month": 66670,
+      "p25_nok_month": 56330,
+      "p75_nok_month": 76980,
+      "n_employees": 301
+     },
+     "2024": {
+      "mean_nok_month": 71300,
+      "median_nok_month": 68330,
+      "p25_nok_month": 59000,
+      "p75_nok_month": 78910,
+      "n_employees": 327
+     },
+     "2025": {
+      "mean_nok_month": 73640,
+      "median_nok_month": 70700,
+      "p25_nok_month": 61170,
+      "p75_nok_month": 83920,
+      "n_employees": 351
+     }
+    },
+    "age_at_quarter": {
+     "quarter": "2026K1",
+     "bands": {
+      "0-39": {
+       "mean_nok_month": 68880,
+       "median_nok_month": 66670
+      }
+     }
+    }
+   },
+   "2519": {
+    "title": "Software and applications developers and analysts not elsewhere classified",
+    "dispersion_by_year": {
+     "2021": {
+      "mean_nok_month": 65100,
+      "median_nok_month": 61050,
+      "p25_nok_month": 49250,
+      "p75_nok_month": 76600,
+      "n_employees": 19507
+     },
+     "2022": {
+      "mean_nok_month": 67840,
+      "median_nok_month": 63810,
+      "p25_nok_month": 51250,
+      "p75_nok_month": 79630,
+      "n_employees": 21408
+     },
+     "2023": {
+      "mean_nok_month": 70840,
+      "median_nok_month": 66670,
+      "p25_nok_month": 54090,
+      "p75_nok_month": 82720,
+      "n_employees": 22218
+     },
+     "2024": {
+      "mean_nok_month": 74960,
+      "median_nok_month": 70690,
+      "p25_nok_month": 57380,
+      "p75_nok_month": 87500,
+      "n_employees": 22283
+     },
+     "2025": {
+      "mean_nok_month": 78430,
+      "median_nok_month": 74170,
+      "p25_nok_month": 60000,
+      "p75_nok_month": 91670,
+      "n_employees": 22085
+     }
+    },
+    "age_at_quarter": {
+     "quarter": "2026K1",
+     "bands": {
+      "0-39": {
+       "mean_nok_month": 71260,
+       "median_nok_month": 66500
+      },
+      "40-54": {
+       "mean_nok_month": 91360,
+       "median_nok_month": 83090
+      },
+      "55+": {
+       "mean_nok_month": 90380,
+       "median_nok_month": 80890
+      }
+     }
+    }
+   }
+  }
+ }
+}

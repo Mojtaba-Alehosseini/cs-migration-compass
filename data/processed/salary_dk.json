@@ -1,0 +1,305 @@
+{
+ "source_id": "salary_dk",
+ "generated_at": "2026-08-11T22:36:14+00:00",
+ "meta": {
+  "occupation_family": "DISCO-08 group 251 — Software and applications developers and analysts",
+  "occupation_codes": {
+   "2511": "Systems analysts",
+   "2512": "Software developers",
+   "2513": "Web and multimedia developers",
+   "2514": "Applications programmers",
+   "2519": "Software and applications developers and analysts not elsewhere classified"
+  },
+  "primary_code": "2512",
+  "classification": "DISCO-08 (Denmark's national adaptation of ISCO-08)",
+  "unit": "DKK per hour worked, non-managerial employees, all sectors, all forms of pay, both sexes",
+  "filter_note": "LONGRP=MED (non-managerial employees), AFLOEN=TIFA (all forms of pay), SEKTOR=1000 (all sectors). See module docstring for why MED was chosen over the total-employee-group cut, and the small residual gap from the work order's cited reference N.",
+  "confidence": "official",
+  "level": "country (Denmark, all sectors combined)",
+  "years": [
+   "2018",
+   "2019",
+   "2020",
+   "2021",
+   "2022",
+   "2023",
+   "2024"
+  ],
+  "crosswalk_hazard": "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 — DISCO-08's own 4-digit divergence from ISCO-08, if any, is unverified here. Treat 2511-2519 sibling codes as unverified until data/occupations.json records a checked note.",
+  "why_it_matters": "One of nine countries with genuine occupation-level percentile-family wage data; DISCO-08 mirrors SSYK's ISCO-08-based structure closely enough that the same crosswalk family (isco08:2512) very likely applies, pending the same definition check package 7 did for Sweden."
+ },
+ "data": {
+  "occupations": {
+   "2511": {
+    "title": "Systems analysts",
+    "dispersion_by_year": {
+     "2018": {
+      "mean_dkk_hour": 449.29,
+      "p25_dkk_hour": 351.57,
+      "median_dkk_hour": 437.75,
+      "p75_dkk_hour": 526.94,
+      "n_employees": 11321
+     },
+     "2019": {
+      "mean_dkk_hour": 448.81,
+      "p25_dkk_hour": 343.32,
+      "median_dkk_hour": 434.27,
+      "p75_dkk_hour": 529.42,
+      "n_employees": 12032
+     },
+     "2020": {
+      "mean_dkk_hour": 447.79,
+      "p25_dkk_hour": 345.56,
+      "median_dkk_hour": 435.98,
+      "p75_dkk_hour": 528.01,
+      "n_employees": 12695
+     },
+     "2021": {
+      "mean_dkk_hour": 460.88,
+      "p25_dkk_hour": 355.69,
+      "median_dkk_hour": 446.16,
+      "p75_dkk_hour": 542.28,
+      "n_employees": 13511
+     },
+     "2022": {
+      "mean_dkk_hour": 473.58,
+      "p25_dkk_hour": 367.07,
+      "median_dkk_hour": 458.04,
+      "p75_dkk_hour": 554.55,
+      "n_employees": 14274
+     },
+     "2023": {
+      "mean_dkk_hour": 493.81,
+      "p25_dkk_hour": 385.24,
+      "median_dkk_hour": 479.14,
+      "p75_dkk_hour": 578.19,
+      "n_employees": 15443
+     },
+     "2024": {
+      "mean_dkk_hour": 514.77,
+      "p25_dkk_hour": 402.91,
+      "median_dkk_hour": 501.1,
+      "p75_dkk_hour": 604.53,
+      "n_employees": 16800
+     }
+    }
+   },
+   "2512": {
+    "title": "Software developers",
+    "dispersion_by_year": {
+     "2018": {
+      "mean_dkk_hour": 421.83,
+      "p25_dkk_hour": 333.6,
+      "median_dkk_hour": 407.18,
+      "p75_dkk_hour": 491.72,
+      "n_employees": 19966
+     },
+     "2019": {
+      "mean_dkk_hour": 427.47,
+      "p25_dkk_hour": 337.44,
+      "median_dkk_hour": 414.33,
+      "p75_dkk_hour": 500.12,
+      "n_employees": 20870
+     },
+     "2020": {
+      "mean_dkk_hour": 430.94,
+      "p25_dkk_hour": 339.89,
+      "median_dkk_hour": 414.82,
+      "p75_dkk_hour": 501.26,
+      "n_employees": 21995
+     },
+     "2021": {
+      "mean_dkk_hour": 435.04,
+      "p25_dkk_hour": 342.66,
+      "median_dkk_hour": 420.21,
+      "p75_dkk_hour": 508.29,
+      "n_employees": 22744
+     },
+     "2022": {
+      "mean_dkk_hour": 449.64,
+      "p25_dkk_hour": 351.72,
+      "median_dkk_hour": 433.33,
+      "p75_dkk_hour": 525.17,
+      "n_employees": 25788
+     },
+     "2023": {
+      "mean_dkk_hour": 469.62,
+      "p25_dkk_hour": 369.07,
+      "median_dkk_hour": 451.43,
+      "p75_dkk_hour": 548.02,
+      "n_employees": 28141
+     },
+     "2024": {
+      "mean_dkk_hour": 489.26,
+      "p25_dkk_hour": 386.1,
+      "median_dkk_hour": 470.53,
+      "p75_dkk_hour": 568.64,
+      "n_employees": 29096
+     }
+    }
+   },
+   "2513": {
+    "title": "Web and multimedia developers",
+    "dispersion_by_year": {
+     "2018": {
+      "mean_dkk_hour": 339.74,
+      "p25_dkk_hour": 268.12,
+      "median_dkk_hour": 325.8,
+      "p75_dkk_hour": 392.1,
+      "n_employees": 2443
+     },
+     "2019": {
+      "mean_dkk_hour": 352.08,
+      "p25_dkk_hour": 273.72,
+      "median_dkk_hour": 337.93,
+      "p75_dkk_hour": 408.24,
+      "n_employees": 2560
+     },
+     "2020": {
+      "mean_dkk_hour": 358.27,
+      "p25_dkk_hour": 275.09,
+      "median_dkk_hour": 343.75,
+      "p75_dkk_hour": 414.92,
+      "n_employees": 2570
+     },
+     "2021": {
+      "mean_dkk_hour": 362.98,
+      "p25_dkk_hour": 281.03,
+      "median_dkk_hour": 346.22,
+      "p75_dkk_hour": 418.94,
+      "n_employees": 2787
+     },
+     "2022": {
+      "mean_dkk_hour": 367.97,
+      "p25_dkk_hour": 284.58,
+      "median_dkk_hour": 351.63,
+      "p75_dkk_hour": 429.13,
+      "n_employees": 3172
+     },
+     "2023": {
+      "mean_dkk_hour": 389.29,
+      "p25_dkk_hour": 300.17,
+      "median_dkk_hour": 371.59,
+      "p75_dkk_hour": 456.46,
+      "n_employees": 3369
+     },
+     "2024": {
+      "mean_dkk_hour": 402.82,
+      "p25_dkk_hour": 314.28,
+      "median_dkk_hour": 385.34,
+      "p75_dkk_hour": 466.21,
+      "n_employees": 3143
+     }
+    }
+   },
+   "2514": {
+    "title": "Applications programmers",
+    "dispersion_by_year": {
+     "2018": {
+      "mean_dkk_hour": 441.58,
+      "p25_dkk_hour": 355.26,
+      "median_dkk_hour": 435.54,
+      "p75_dkk_hour": 513.89,
+      "n_employees": 1870
+     },
+     "2019": {
+      "mean_dkk_hour": 450.51,
+      "p25_dkk_hour": 361.45,
+      "median_dkk_hour": 444.74,
+      "p75_dkk_hour": 526.04,
+      "n_employees": 2040
+     },
+     "2020": {
+      "mean_dkk_hour": 455.41,
+      "p25_dkk_hour": 368.58,
+      "median_dkk_hour": 451.01,
+      "p75_dkk_hour": 530.38,
+      "n_employees": 2103
+     },
+     "2021": {
+      "mean_dkk_hour": 463.51,
+      "p25_dkk_hour": 369.25,
+      "median_dkk_hour": 456.37,
+      "p75_dkk_hour": 546.92,
+      "n_employees": 2013
+     },
+     "2022": {
+      "mean_dkk_hour": 467.89,
+      "p25_dkk_hour": 370.07,
+      "median_dkk_hour": 460.06,
+      "p75_dkk_hour": 552.22,
+      "n_employees": 2215
+     },
+     "2023": {
+      "mean_dkk_hour": 487.78,
+      "p25_dkk_hour": 386.22,
+      "median_dkk_hour": 482.04,
+      "p75_dkk_hour": 577.62,
+      "n_employees": 2204
+     },
+     "2024": {
+      "mean_dkk_hour": 511.14,
+      "p25_dkk_hour": 401,
+      "median_dkk_hour": 502.63,
+      "p75_dkk_hour": 607.98,
+      "n_employees": 2370
+     }
+    }
+   },
+   "2519": {
+    "title": "Software and applications developers and analysts not elsewhere classified",
+    "dispersion_by_year": {
+     "2018": {
+      "mean_dkk_hour": 409.9,
+      "p25_dkk_hour": 328.39,
+      "median_dkk_hour": 396.63,
+      "p75_dkk_hour": 474.58,
+      "n_employees": 3731
+     },
+     "2019": {
+      "mean_dkk_hour": 416.82,
+      "p25_dkk_hour": 332.67,
+      "median_dkk_hour": 407.51,
+      "p75_dkk_hour": 484.99,
+      "n_employees": 3749
+     },
+     "2020": {
+      "mean_dkk_hour": 419.23,
+      "p25_dkk_hour": 330.32,
+      "median_dkk_hour": 406.09,
+      "p75_dkk_hour": 491.04,
+      "n_employees": 3779
+     },
+     "2021": {
+      "mean_dkk_hour": 425.18,
+      "p25_dkk_hour": 336.22,
+      "median_dkk_hour": 411,
+      "p75_dkk_hour": 498,
+      "n_employees": 3827
+     },
+     "2022": {
+      "mean_dkk_hour": 428.28,
+      "p25_dkk_hour": 336.53,
+      "median_dkk_hour": 414.77,
+      "p75_dkk_hour": 503.42,
+      "n_employees": 4364
+     },
+     "2023": {
+      "mean_dkk_hour": 445.97,
+      "p25_dkk_hour": 347.99,
+      "median_dkk_hour": 430.09,
+      "p75_dkk_hour": 522.67,
+      "n_employees": 4714
+     },
+     "2024": {
+      "mean_dkk_hour": 463.65,
+      "p25_dkk_hour": 364.6,
+      "median_dkk_hour": 448.74,
+      "p75_dkk_hour": 543.8,
+      "n_employees": 4882
+     }
+    }
+   }
+  }
+ }
+}

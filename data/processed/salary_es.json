@@ -1,0 +1,67 @@
+{
+ "source_id": "salary_es",
+ "generated_at": "2026-08-11T22:39:10+00:00",
+ "meta": {
+  "occupation_family": "CNO-11 (Clasificacion Nacional de Ocupaciones 2011)",
+  "primary_code": "cno11:27",
+  "primary_label": "Information technology professionals",
+  "classification": "CNO-11 subgroup 27 (no direct code exposed by this API — matched by INE's own English label text, not a numeric code; see crosswalk note)",
+  "unit": "EUR per year, gross salary, national total, both sexes (dispersion table); average only for the age/tenure context, broader occupation category",
+  "confidence": "official",
+  "level": "country (Spain)",
+  "vintage_note": "Table 70672 (dispersion) is 2018-vintage, NOT 2022 as this package's work order assumed — checked live: every series in the table, not just these two, returns no data for an explicit 2022 query. See module docstring.",
+  "crosswalk_hazard": "'Information technology professionals' is INE's own English label for a CNO-11 subgroup, not a code this API exposes numerically — data/occupations.json's mapping note must record that the correspondence rests on label text and INE's classification documentation, not a code-to-code lookup the way SE/UK/CA/US's mappings do. The age and tenure crosses do NOT reach this subgroup at all — they stop at CNO-11 major group 2, 'Scientific and intellectual technicians and professionals', which is not an ICT occupation family (it bundles medicine, law, engineering, teaching and science with IT). Do not treat broader_category_context as an IT-specific age or tenure gradient.",
+  "why_it_matters": "One of nine countries with genuine occupation-level percentile wage data, and the only source with both a P10-P90 percentile spread AND a (broad-category) tenure cross — the only official occupation x tenure cross in this project."
+ },
+ "data": {
+  "occupations": {
+   "it_professionals": {
+    "cno11_label": "Information technology professionals",
+    "year": 2018,
+    "dispersion": {
+     "mean_eur_year": 39318.16,
+     "p10_eur_year": 19313.74,
+     "p25_eur_year": 27000.0,
+     "median_eur_year": 36000.0,
+     "p75_eur_year": 49608.76,
+     "p90_eur_year": 63061.11
+    }
+   },
+   "ict_specialists_broad": {
+    "cno11_label": "Information and communications technologies (ICT) specialists",
+    "year": 2018,
+    "dispersion": {
+     "mean_eur_year": 28349.09,
+     "p10_eur_year": 13250.01,
+     "p25_eur_year": 18252.93,
+     "median_eur_year": 26101.8,
+     "p75_eur_year": 36491.19,
+     "p90_eur_year": 45999.96
+    }
+   }
+  },
+  "broader_category_context": {
+   "cno11_label": "Scientific and intellectual technicians and professionals",
+   "note": "NOT IT-specific — see module docstring. Included because it is the finest occupation grain at which INE crosses age or tenure at all.",
+   "age_bands_eur_year": {
+    "All ages. Average gross salary.": 34505.8,
+    "Under 25 years. Average gross salary.": 15803.06,
+    "From 25 to 34 years. Average gross salary.": 26147.3,
+    "From 35 to 44 years. Average gross salary.": 33808.13,
+    "From 45 to 54 years. Average gross salary.": 39294.81,
+    "55 and above. Average gross salary.": 41942.43
+   },
+   "age_year": 2018,
+   "tenure_bands_eur_year": {
+    "Total. Average gross salary.": 34505.8,
+    "Less than 1 year. Average gross salary.": 22665.74,
+    "From 1 to 3 years. Average gross salary.": 27305.8,
+    "From 4 to 10 years. Average gross salary.": 33984.95,
+    "From 11 to 20 years. Average gross salary.": 39387.58,
+    "From 21 to 29 years. Average gross salary.": 45656.52,
+    "30 and above. Average gross salary.": 46937.42
+   },
+   "tenure_year": 2018
+  }
+ }
+}

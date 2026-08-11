@@ -4,9 +4,9 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-11T22:19:16+00:00**
+Last pipeline run: **2026-08-11T22:39:10+00:00**
 
-28 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+32 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
 Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
 
@@ -32,6 +32,10 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | OECD Data Explorer (SDMX) — house prices, wages, hours, tax wedge | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Data Explorer, dataflow IDs listed per block. | raw committed |
 | Reporters Without Borders — World Press Freedom Index | RSF publishes the index openly; cite Reporters Without Borders (RSF), World Press Freedom Index. | raw committed |
 | Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region | Open Government Licence - Canada 2.0. Cite: Employment and Social Development Canada (ESDC) / Job Bank, Wages. | processed derivative only — the raw 18 MB wages CSV is cached under data/raw/salary_ca/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL-Canada 2.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_ca.json is committed. |
+| Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08) | CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20. | processed derivative only — the raw StatBank JSON-stat payload is cached under data/raw/salary_dk/ but that directory is gitignored, so this repo does not redistribute the raw source (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_dk.json is committed. |
+| INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11 | Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES). | processed derivative only — the raw Tempus3 JSON payloads are cached under data/raw/salary_es/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_es.json is committed. |
+| Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) | CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au. | processed derivative only — the raw json-stat2 payload is cached under data/raw/salary_fi/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_fi.json is committed. |
+| SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08) | CC BY 4.0 (Statistics Norway open data licence, data.norge.no / SSB API terms). Cite: Statistics Norway (SSB), tables 11418 and 11658. | processed derivative only — the raw JSON-stat2 payloads are cached under data/raw/salary_no/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_no.json is committed. |
 | SCB wage structure statistics — ICT occupations (SSYK 2012) | CC0 1.0 Universal (SCB adopted CC0 for all open data 2021-07-01; no attribution required). Cite: Statistics Sweden (SCB), wage and salary structures, private and public sector. | processed derivative only — the raw PxWeb JSON payloads are cached under data/raw/salary_se/ but that directory is gitignored, so this repo does not redistribute the raw source (CC0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_se.json is committed. |
 | ONS ASHE Table 14.7 — Annual pay (Gross), IT occupations, SOC 2020 4-digit | Open Government Licence v3.0. Cite: Office for National Statistics (ONS), Annual Survey of Hours and Earnings (ASHE), Table 14. | processed derivative only — the raw 11 MB ASHE zip is cached under data/raw/salary_uk/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL v3.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_uk.json is committed. |
 | Stack Overflow Annual Developer Survey — salaries by country | Stack Overflow releases survey results under the Open Database License (ODbL). Cite: Stack Overflow Annual Developer Survey. | aggregates committed; raw survey CSVs not committed (size) |
@@ -499,6 +503,96 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 1. Downloaded the 2025 wages CSV (44,376 rows, all NOC 2021 occupations, all geographies) and filtered to 4 target NOC codes.
 1. Kept every geography row for each target NOC verbatim, including rows where the wage fields are null because Job Bank suppressed them for small-area reliability — the geography is kept, not dropped, with the null and Job Bank's own comment intact.
 1. Confirmed via the file's own Annual_Wage_Flag that all four target occupations are published hourly, not annual; no unit conversion performed.
+
+### Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08)
+
+- **Status** — live
+- **Coverage** — 5 DISCO-08 occupations x 7 years, Denmark only (no sub-national breakdown in this table)
+- **Rows processed** — 175
+- **Fetched** — 2026-08-11T22:36:14+00:00
+- **Licence** — CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20.
+- **Output** — `data/processed/salary_dk.json`
+- **Fetch script** — `scripts/src_salary_dk.py`
+
+**URLs**
+
+- <https://api.statbank.dk/v1/data (table=LONS20)>
+
+**What we do to it**
+
+1. Queried DISCO-08 codes 2511, 2512, 2513, 2514, 2519 (group 251) x all sectors x all forms of pay x non-managerial employees x both sexes x 2018-2024 from table LONS20 via POST, format JSONSTAT.
+1. Kept mean-equivalent, lower quartile, median, upper quartile (each _dkk_hour) and employee count verbatim.
+1. Occupation titles are the API's own labels, not hand-typed.
+
+> Uses the non-managerial-employees, all-forms-of-pay cut (LONGRP=MED, AFLOEN=TIFA) — see module docstring for why, and for the residual gap from an external cited reference figure.
+
+### INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11
+
+- **Status** — live
+- **Coverage** — 2 occupation labels (IT professionals + broader ICT specialists) with percentile dispersion, plus 1 broader-category age cross and 1 broader-category tenure cross, Spain only
+- **Rows processed** — 25
+- **Fetched** — 2026-08-11T22:39:10+00:00
+- **Licence** — Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES).
+- **Output** — `data/processed/salary_es.json`
+- **Fetch script** — `scripts/src_salary_es.py`
+
+**URLs**
+
+- <https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70672>
+- <https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70706>
+- <https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70707>
+
+**What we do to it**
+
+1. Fetched tables 70672 (dispersion by CNO-11 occupation), 70706 (age) and 70707 (tenure) in full from INE's Tempus3 DATOS_TABLA endpoint, then filtered by matching each series' own English name text (INE's Tempus3 API is flat: series are self-describing by name, not selected via PxWeb-style dimension codes).
+1. Kept the latest available data point per matched series verbatim, with its own year — 70672's occupation series are 2018; 70706/70707's are checked and recorded per-series.
+1. 70706/70707 only reach CNO-11 major group 2 ('Scientific and intellectual technicians and professionals'), not subgroup 27 specifically — stored separately as broader_category_context, not merged into occupations.
+
+> Vintage is 2018 for the dispersion table, not 2022 as assumed by the work order that commissioned this harvester — verified live, not a fetch error.
+
+### Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010)
+
+- **Status** — live
+- **Coverage** — 5 AL2010 occupations, single year (2024), Finland only, full-time earners only
+- **Rows processed** — 25
+- **Fetched** — 2026-08-11T22:37:44+00:00
+- **Licence** — CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au.
+- **Output** — `data/processed/salary_fi.json`
+- **Fetch script** — `scripts/src_salary_fi.py`
+
+**URLs**
+
+- <https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/pra/15au.px>
+
+**What we do to it**
+
+1. Queried AL2010 codes 2511, 2512, 2513, 2514, 2519 (group 251) x all sectors x both sexes x 2024 (the table's sole exposed year) from StatFin/pra/15au via POST, format json-stat2.
+1. Kept N, mean, P10, median, P90 (each for TOTAL earnings, not the narrower 'regular hours' variant the table also publishes) verbatim.
+1. Occupation titles are the API's own labels, not hand-typed.
+
+> Full-time-only scope is the table's own restriction, not a filter this pipeline chose — see meta.unit.
+
+### SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08)
+
+- **Status** — live
+- **Coverage** — 5 STYRK-08 occupations x 5 years + age cross, Norway only
+- **Rows processed** — 149
+- **Fetched** — 2026-08-11T22:37:06+00:00
+- **Licence** — CC BY 4.0 (Statistics Norway open data licence, data.norge.no / SSB API terms). Cite: Statistics Norway (SSB), tables 11418 and 11658.
+- **Output** — `data/processed/salary_no.json`
+- **Fetch script** — `scripts/src_salary_no.py`
+
+**URLs**
+
+- <https://data.ssb.no/api/v0/en/table/11418>
+- <https://data.ssb.no/api/v0/en/table/11658>
+
+**What we do to it**
+
+1. Queried STYRK-08 codes 2511, 2512, 2513, 2514, 2519 (group 251) x all sectors x both sexes x all employees x 2021-2025 from table 11418.
+1. Queried the same codes x 3 age bands x the latest available quarter (2026K1) from table 11658.
+1. Kept mean, median, quartiles, N (11418) and age-banded median/mean (11658) verbatim.
+1. Occupation titles are the API's own labels, not hand-typed.
 
 ### SCB wage structure statistics — ICT occupations (SSYK 2012)
 

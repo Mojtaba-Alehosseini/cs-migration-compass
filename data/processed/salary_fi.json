@@ -1,0 +1,84 @@
+{
+ "source_id": "salary_fi",
+ "generated_at": "2026-08-11T22:37:44+00:00",
+ "meta": {
+  "occupation_family": "AL2010 group 251 — Software and applications developers and analysts",
+  "occupation_codes": {
+   "2511": "2511 Systems analysts",
+   "2512": "2512 Software developers",
+   "2513": "2513 Web and multimedia developers",
+   "2514": "2514 Applications programmers",
+   "2519": "2519 Software and applications developers and analysts not elsewhere classified"
+  },
+  "primary_code": "2512",
+  "classification": "AL2010 / Classification of Occupations 2010 (Finland's national adaptation of ISCO-08)",
+  "unit": "EUR per month, FULL-TIME wage and salary earners only, all sectors, both sexes. Scoped to full-time at the source — the other Nordic sources in this package are not.",
+  "confidence": "official",
+  "level": "country (Finland, all sectors combined)",
+  "years": [
+   "2024"
+  ],
+  "history_caveat": "This table (StatFin/pra/15au) exposes a single reference year (2024) via the live API; earlier years live in the StatFin_Passiivi archive under separate, per-year table IDs and were not pulled into this harvester — a single current year is what the work order accepted as sufficient for this source.",
+  "crosswalk_hazard": "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 — AL2010's own divergence from ISCO-08, if any, is unverified here.",
+  "why_it_matters": "One of nine countries with genuine occupation-level percentile-family wage data (N, mean, P10, median, P90)."
+ },
+ "data": {
+  "occupations": {
+   "2511": {
+    "title": "2511 Systems analysts",
+    "year": "2024",
+    "dispersion": {
+     "n_employees": 20722,
+     "mean_eur_month": 5750,
+     "p10_eur_month": 4070,
+     "median_eur_month": 5596,
+     "p90_eur_month": 7540
+    }
+   },
+   "2512": {
+    "title": "2512 Software developers",
+    "year": "2024",
+    "dispersion": {
+     "n_employees": 30334,
+     "mean_eur_month": 5211,
+     "p10_eur_month": 3485,
+     "median_eur_month": 5020,
+     "p90_eur_month": 7108
+    }
+   },
+   "2513": {
+    "title": "2513 Web and multimedia developers",
+    "year": "2024",
+    "dispersion": {
+     "n_employees": 1597,
+     "mean_eur_month": 5239,
+     "p10_eur_month": 3200,
+     "median_eur_month": 5000,
+     "p90_eur_month": 7400
+    }
+   },
+   "2514": {
+    "title": "2514 Applications programmers",
+    "year": "2024",
+    "dispersion": {
+     "n_employees": 2244,
+     "mean_eur_month": 4730,
+     "p10_eur_month": 3055,
+     "median_eur_month": 4571,
+     "p90_eur_month": 6526
+    }
+   },
+   "2519": {
+    "title": "2519 Software and applications developers and analysts not elsewhere classified",
+    "year": "2024",
+    "dispersion": {
+     "n_employees": 6128,
+     "mean_eur_month": 5533,
+     "p10_eur_month": 3501,
+     "median_eur_month": 5200,
+     "p90_eur_month": 7990
+    }
+   }
+  }
+ }
+}
