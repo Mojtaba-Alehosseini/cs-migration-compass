@@ -1,20 +1,28 @@
 {
  "source_id": "bls_oews",
- "generated_at": "2026-08-04T19:40:16+00:00",
+ "generated_at": "2026-08-11T22:19:16+00:00",
  "meta": {
   "occupation": "Software Developers (SOC 15-1252), all industries",
   "datatypes": {
    "01": "employment",
-   "04": "hourly_mean_usd",
-   "13": "annual_median_usd"
+   "03": "hourly_mean_usd",
+   "04": "annual_mean_usd",
+   "11": "annual_p10_usd",
+   "12": "annual_p25_usd",
+   "13": "annual_median_usd",
+   "14": "annual_p75_usd",
+   "15": "annual_p90_usd"
   },
   "confidence": "official",
   "level": "US metro (plus a national benchmark under '_national')",
   "years_returned": [
    "2025"
   ],
+  "unit": "USD per year, except employment (headcount) and hourly_mean_usd (USD per hour — the one hourly figure BLS publishes; every other wage field is annual).",
   "history_caveat": "VERIFIED LIMITATION: the public OEWS API returns the current reference year only. Identical series IDs for earlier years return 'No Data Available', and pre-2018-SOC codes return 'Series does not exist'. This is therefore a SNAPSHOT, not a history. The site must not draw a BLS trend line. Older years exist only in archived OEWS releases, which are a documented manual drop-in.",
-  "why_it_matters": "This is the official counterweight to crowd-sourced salary data, and the only source of a real 'how many dev jobs exist here' count for US metros."
+  "relabel_note": "Prior to this package, datatype 04 was fetched and stored as 'hourly_mean_usd'. It is actually the ANNUAL mean (verified against the live API three independent ways — see module docstring). Nothing on the site read the old key. Relabelled to 'annual_mean_usd'; the underlying number is unchanged. Datatype 03, the true hourly mean, is now fetched separately and stored under 'hourly_mean_usd' instead — so that key means what it always claimed to, sourced from the correct series.",
+  "top_code_note": "BLS's May 2025 OEWS release began publishing specific high-percentile values instead of the old '>= $239,200' top-code. Verified live: national P90 for this occupation is 214,670 and San Jose-Sunnyvale-Santa Clara's is 289,150 — both specific numbers, the second one above the old top-code ceiling, confirming this pipeline is receiving real uncapped percentiles, not a suppressed cap.",
+  "why_it_matters": "This is the official counterweight to crowd-sourced salary data, and the only source of a real 'how many dev jobs exist here' count for US metros. The percentile set brings it to the same shape as the Sweden/UK/Canada salary sources added alongside it."
  },
  "data": {
   "new_york": {
@@ -26,19 +34,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003562000000015125201",
-    "hourly_mean_usd": "OEUM003562000000015125204",
-    "annual_median_usd": "OEUM003562000000015125213"
+    "hourly_mean_usd": "OEUM003562000000015125203",
+    "annual_mean_usd": "OEUM003562000000015125204",
+    "annual_p10_usd": "OEUM003562000000015125211",
+    "annual_p25_usd": "OEUM003562000000015125212",
+    "annual_median_usd": "OEUM003562000000015125213",
+    "annual_p75_usd": "OEUM003562000000015125214",
+    "annual_p90_usd": "OEUM003562000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 79.75
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 165870.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 101690.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 130650.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 166830.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 205970.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 224590.0
     }
    ]
   },
@@ -51,19 +94,54 @@
    ],
    "series_ids": {
     "employment": "OEUM001446000000015125201",
-    "hourly_mean_usd": "OEUM001446000000015125204",
-    "annual_median_usd": "OEUM001446000000015125213"
+    "hourly_mean_usd": "OEUM001446000000015125203",
+    "annual_mean_usd": "OEUM001446000000015125204",
+    "annual_p10_usd": "OEUM001446000000015125211",
+    "annual_p25_usd": "OEUM001446000000015125212",
+    "annual_median_usd": "OEUM001446000000015125213",
+    "annual_p75_usd": "OEUM001446000000015125214",
+    "annual_p90_usd": "OEUM001446000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 78.1
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 162440.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 102950.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 131880.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 166090.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 183740.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 214100.0
     }
    ]
   },
@@ -76,19 +154,54 @@
    ],
    "series_ids": {
     "employment": "OEUM001698000000015125201",
-    "hourly_mean_usd": "OEUM001698000000015125204",
-    "annual_median_usd": "OEUM001698000000015125213"
+    "hourly_mean_usd": "OEUM001698000000015125203",
+    "annual_mean_usd": "OEUM001698000000015125204",
+    "annual_p10_usd": "OEUM001698000000015125211",
+    "annual_p25_usd": "OEUM001698000000015125212",
+    "annual_median_usd": "OEUM001698000000015125213",
+    "annual_p75_usd": "OEUM001698000000015125214",
+    "annual_p90_usd": "OEUM001698000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 68.1
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 141640.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 83820.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 104530.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 134380.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 167650.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 203410.0
     }
    ]
   },
@@ -101,19 +214,54 @@
    ],
    "series_ids": {
     "employment": "OEUM001206000000015125201",
-    "hourly_mean_usd": "OEUM001206000000015125204",
-    "annual_median_usd": "OEUM001206000000015125213"
+    "hourly_mean_usd": "OEUM001206000000015125203",
+    "annual_mean_usd": "OEUM001206000000015125204",
+    "annual_p10_usd": "OEUM001206000000015125211",
+    "annual_p25_usd": "OEUM001206000000015125212",
+    "annual_median_usd": "OEUM001206000000015125213",
+    "annual_p75_usd": "OEUM001206000000015125214",
+    "annual_p90_usd": "OEUM001206000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 65.32
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 135870.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 83400.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 104640.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 132960.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 164200.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 178330.0
     }
    ]
   },
@@ -126,19 +274,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003958000000015125201",
-    "hourly_mean_usd": "OEUM003958000000015125204",
-    "annual_median_usd": "OEUM003958000000015125213"
+    "hourly_mean_usd": "OEUM003958000000015125203",
+    "annual_mean_usd": "OEUM003958000000015125204",
+    "annual_p10_usd": "OEUM003958000000015125211",
+    "annual_p25_usd": "OEUM003958000000015125212",
+    "annual_median_usd": "OEUM003958000000015125213",
+    "annual_p75_usd": "OEUM003958000000015125214",
+    "annual_p90_usd": "OEUM003958000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 65.69
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 136640.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 80080.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 103480.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 132770.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 166650.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 185110.0
     }
    ]
   },
@@ -151,19 +334,54 @@
    ],
    "series_ids": {
     "employment": "OEUM001910000000015125201",
-    "hourly_mean_usd": "OEUM001910000000015125204",
-    "annual_median_usd": "OEUM001910000000015125213"
+    "hourly_mean_usd": "OEUM001910000000015125203",
+    "annual_mean_usd": "OEUM001910000000015125204",
+    "annual_p10_usd": "OEUM001910000000015125211",
+    "annual_p25_usd": "OEUM001910000000015125212",
+    "annual_median_usd": "OEUM001910000000015125213",
+    "annual_p75_usd": "OEUM001910000000015125214",
+    "annual_p90_usd": "OEUM001910000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 66.74
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 138810.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 85920.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 105660.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 133290.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 164100.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 179400.0
     }
    ]
   },
@@ -176,19 +394,54 @@
    ],
    "series_ids": {
     "employment": "OEUM002642000000015125201",
-    "hourly_mean_usd": "OEUM002642000000015125204",
-    "annual_median_usd": "OEUM002642000000015125213"
+    "hourly_mean_usd": "OEUM002642000000015125203",
+    "annual_mean_usd": "OEUM002642000000015125204",
+    "annual_p10_usd": "OEUM002642000000015125211",
+    "annual_p25_usd": "OEUM002642000000015125212",
+    "annual_median_usd": "OEUM002642000000015125213",
+    "annual_p75_usd": "OEUM002642000000015125214",
+    "annual_p90_usd": "OEUM002642000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 64.01
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 133130.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 80400.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 101190.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 129440.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 159450.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 181770.0
     }
    ]
   },
@@ -201,19 +454,54 @@
    ],
    "series_ids": {
     "employment": "OEUM004170000000015125201",
-    "hourly_mean_usd": "OEUM004170000000015125204",
-    "annual_median_usd": "OEUM004170000000015125213"
+    "hourly_mean_usd": "OEUM004170000000015125203",
+    "annual_mean_usd": "OEUM004170000000015125204",
+    "annual_p10_usd": "OEUM004170000000015125211",
+    "annual_p25_usd": "OEUM004170000000015125212",
+    "annual_median_usd": "OEUM004170000000015125213",
+    "annual_p75_usd": "OEUM004170000000015125214",
+    "annual_p90_usd": "OEUM004170000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 62.54
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 130080.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 80560.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 101000.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 128430.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 154790.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 165870.0
     }
    ]
   },
@@ -226,19 +514,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003310000000015125201",
-    "hourly_mean_usd": "OEUM003310000000015125204",
-    "annual_median_usd": "OEUM003310000000015125213"
+    "hourly_mean_usd": "OEUM003310000000015125203",
+    "annual_mean_usd": "OEUM003310000000015125204",
+    "annual_p10_usd": "OEUM003310000000015125211",
+    "annual_p25_usd": "OEUM003310000000015125212",
+    "annual_median_usd": "OEUM003310000000015125213",
+    "annual_p75_usd": "OEUM003310000000015125214",
+    "annual_p90_usd": "OEUM003310000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 69.58
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 144730.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 80440.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 102710.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 132650.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 165710.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 199280.0
     }
    ]
   },
@@ -251,19 +574,54 @@
    ],
    "series_ids": {
     "employment": "OEUM004530000000015125201",
-    "hourly_mean_usd": "OEUM004530000000015125204",
-    "annual_median_usd": "OEUM004530000000015125213"
+    "hourly_mean_usd": "OEUM004530000000015125203",
+    "annual_mean_usd": "OEUM004530000000015125204",
+    "annual_p10_usd": "OEUM004530000000015125211",
+    "annual_p25_usd": "OEUM004530000000015125212",
+    "annual_median_usd": "OEUM004530000000015125213",
+    "annual_p75_usd": "OEUM004530000000015125214",
+    "annual_p90_usd": "OEUM004530000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 64.24
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 133630.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 78480.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 100450.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 130450.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 165430.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 207330.0
     }
    ]
   },
@@ -276,19 +634,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003674000000015125201",
-    "hourly_mean_usd": "OEUM003674000000015125204",
-    "annual_median_usd": "OEUM003674000000015125213"
+    "hourly_mean_usd": "OEUM003674000000015125203",
+    "annual_mean_usd": "OEUM003674000000015125204",
+    "annual_p10_usd": "OEUM003674000000015125211",
+    "annual_p25_usd": "OEUM003674000000015125212",
+    "annual_median_usd": "OEUM003674000000015125213",
+    "annual_p75_usd": "OEUM003674000000015125214",
+    "annual_p90_usd": "OEUM003674000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 63.63
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 132350.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 80170.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 103360.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 129620.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 162860.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 176800.0
     }
    ]
   },
@@ -301,19 +694,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003498000000015125201",
-    "hourly_mean_usd": "OEUM003498000000015125204",
-    "annual_median_usd": "OEUM003498000000015125213"
+    "hourly_mean_usd": "OEUM003498000000015125203",
+    "annual_mean_usd": "OEUM003498000000015125204",
+    "annual_p10_usd": "OEUM003498000000015125211",
+    "annual_p25_usd": "OEUM003498000000015125212",
+    "annual_median_usd": "OEUM003498000000015125213",
+    "annual_p75_usd": "OEUM003498000000015125214",
+    "annual_p90_usd": "OEUM003498000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 59.9
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 124600.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 78410.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 99030.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 126610.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 140170.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 169070.0
     }
    ]
   },
@@ -326,19 +754,54 @@
    ],
    "series_ids": {
     "employment": "OEUM001674000000015125201",
-    "hourly_mean_usd": "OEUM001674000000015125204",
-    "annual_median_usd": "OEUM001674000000015125213"
+    "hourly_mean_usd": "OEUM001674000000015125203",
+    "annual_mean_usd": "OEUM001674000000015125204",
+    "annual_p10_usd": "OEUM001674000000015125211",
+    "annual_p25_usd": "OEUM001674000000015125212",
+    "annual_median_usd": "OEUM001674000000015125213",
+    "annual_p75_usd": "OEUM001674000000015125214",
+    "annual_p90_usd": "OEUM001674000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 66.84
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 139030.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 93690.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 107680.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 135920.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 165050.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 172360.0
     }
    ]
   },
@@ -351,19 +814,54 @@
    ],
    "series_ids": {
     "employment": "OEUM004790000000015125201",
-    "hourly_mean_usd": "OEUM004790000000015125204",
-    "annual_median_usd": "OEUM004790000000015125213"
+    "hourly_mean_usd": "OEUM004790000000015125203",
+    "annual_mean_usd": "OEUM004790000000015125204",
+    "annual_p10_usd": "OEUM004790000000015125211",
+    "annual_p25_usd": "OEUM004790000000015125212",
+    "annual_median_usd": "OEUM004790000000015125213",
+    "annual_p75_usd": "OEUM004790000000015125214",
+    "annual_p90_usd": "OEUM004790000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 73.61
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 153100.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 96450.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 123720.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 154930.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 176230.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 213660.0
     }
    ]
   },
@@ -376,19 +874,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003798000000015125201",
-    "hourly_mean_usd": "OEUM003798000000015125204",
-    "annual_median_usd": "OEUM003798000000015125213"
+    "hourly_mean_usd": "OEUM003798000000015125203",
+    "annual_mean_usd": "OEUM003798000000015125204",
+    "annual_p10_usd": "OEUM003798000000015125211",
+    "annual_p25_usd": "OEUM003798000000015125212",
+    "annual_median_usd": "OEUM003798000000015125213",
+    "annual_p75_usd": "OEUM003798000000015125214",
+    "annual_p90_usd": "OEUM003798000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 65.41
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 136050.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 82960.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 103920.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 133040.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 165140.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 190180.0
     }
    ]
   },
@@ -401,19 +934,54 @@
    ],
    "series_ids": {
     "employment": "OEUM004186000000015125201",
-    "hourly_mean_usd": "OEUM004186000000015125204",
-    "annual_median_usd": "OEUM004186000000015125213"
+    "hourly_mean_usd": "OEUM004186000000015125203",
+    "annual_mean_usd": "OEUM004186000000015125204",
+    "annual_p10_usd": "OEUM004186000000015125211",
+    "annual_p25_usd": "OEUM004186000000015125212",
+    "annual_median_usd": "OEUM004186000000015125213",
+    "annual_p75_usd": "OEUM004186000000015125214",
+    "annual_p90_usd": "OEUM004186000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 93.0
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 193430.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 128090.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 163500.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 186640.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 219670.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 273400.0
     }
    ],
    "secondary": {
@@ -425,19 +993,54 @@
     ],
     "series_ids": {
      "employment": "OEUM004194000000015125201",
-     "hourly_mean_usd": "OEUM004194000000015125204",
-     "annual_median_usd": "OEUM004194000000015125213"
+     "hourly_mean_usd": "OEUM004194000000015125203",
+     "annual_mean_usd": "OEUM004194000000015125204",
+     "annual_p10_usd": "OEUM004194000000015125211",
+     "annual_p25_usd": "OEUM004194000000015125212",
+     "annual_median_usd": "OEUM004194000000015125213",
+     "annual_p75_usd": "OEUM004194000000015125214",
+     "annual_p90_usd": "OEUM004194000000015125215"
     },
     "hourly_mean_usd": [
      {
       "year": 2025,
+      "value": 106.59
+     }
+    ],
+    "annual_mean_usd": [
+     {
+      "year": 2025,
       "value": 221710.0
+     }
+    ],
+    "annual_p10_usd": [
+     {
+      "year": 2025,
+      "value": 138420.0
+     }
+    ],
+    "annual_p25_usd": [
+     {
+      "year": 2025,
+      "value": 173650.0
      }
     ],
     "annual_median_usd": [
      {
       "year": 2025,
       "value": 213110.0
+     }
+    ],
+    "annual_p75_usd": [
+     {
+      "year": 2025,
+      "value": 226080.0
+     }
+    ],
+    "annual_p90_usd": [
+     {
+      "year": 2025,
+      "value": 289150.0
      }
     ]
    }
@@ -451,19 +1054,54 @@
    ],
    "series_ids": {
     "employment": "OEUM004266000000015125201",
-    "hourly_mean_usd": "OEUM004266000000015125204",
-    "annual_median_usd": "OEUM004266000000015125213"
+    "hourly_mean_usd": "OEUM004266000000015125203",
+    "annual_mean_usd": "OEUM004266000000015125204",
+    "annual_p10_usd": "OEUM004266000000015125211",
+    "annual_p25_usd": "OEUM004266000000015125212",
+    "annual_median_usd": "OEUM004266000000015125213",
+    "annual_p75_usd": "OEUM004266000000015125214",
+    "annual_p90_usd": "OEUM004266000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 84.09
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 174920.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 99190.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 132800.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 167280.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 211860.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 257960.0
     }
    ]
   },
@@ -476,19 +1114,54 @@
    ],
    "series_ids": {
     "employment": "OEUM001242000000015125201",
-    "hourly_mean_usd": "OEUM001242000000015125204",
-    "annual_median_usd": "OEUM001242000000015125213"
+    "hourly_mean_usd": "OEUM001242000000015125203",
+    "annual_mean_usd": "OEUM001242000000015125204",
+    "annual_p10_usd": "OEUM001242000000015125211",
+    "annual_p25_usd": "OEUM001242000000015125212",
+    "annual_median_usd": "OEUM001242000000015125213",
+    "annual_p75_usd": "OEUM001242000000015125214",
+    "annual_p90_usd": "OEUM001242000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 69.05
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 143630.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 96110.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 104000.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 134120.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 168730.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 209890.0
     }
    ]
   },
@@ -501,19 +1174,54 @@
    ],
    "series_ids": {
     "employment": "OEUM001974000000015125201",
-    "hourly_mean_usd": "OEUM001974000000015125204",
-    "annual_median_usd": "OEUM001974000000015125213"
+    "hourly_mean_usd": "OEUM001974000000015125203",
+    "annual_mean_usd": "OEUM001974000000015125204",
+    "annual_p10_usd": "OEUM001974000000015125211",
+    "annual_p25_usd": "OEUM001974000000015125212",
+    "annual_median_usd": "OEUM001974000000015125213",
+    "annual_p75_usd": "OEUM001974000000015125214",
+    "annual_p90_usd": "OEUM001974000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 71.83
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 149400.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 99700.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 123640.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 137610.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 171350.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 209300.0
     }
    ]
   },
@@ -526,19 +1234,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003108000000015125201",
-    "hourly_mean_usd": "OEUM003108000000015125204",
-    "annual_median_usd": "OEUM003108000000015125213"
+    "hourly_mean_usd": "OEUM003108000000015125203",
+    "annual_mean_usd": "OEUM003108000000015125204",
+    "annual_p10_usd": "OEUM003108000000015125211",
+    "annual_p25_usd": "OEUM003108000000015125212",
+    "annual_median_usd": "OEUM003108000000015125213",
+    "annual_p75_usd": "OEUM003108000000015125214",
+    "annual_p90_usd": "OEUM003108000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 77.84
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 161900.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 98270.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 127530.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 160920.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 191540.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 223150.0
     }
    ]
   },
@@ -551,19 +1294,54 @@
    ],
    "series_ids": {
     "employment": "OEUM004174000000015125201",
-    "hourly_mean_usd": "OEUM004174000000015125204",
-    "annual_median_usd": "OEUM004174000000015125213"
+    "hourly_mean_usd": "OEUM004174000000015125203",
+    "annual_mean_usd": "OEUM004174000000015125204",
+    "annual_p10_usd": "OEUM004174000000015125211",
+    "annual_p25_usd": "OEUM004174000000015125212",
+    "annual_median_usd": "OEUM004174000000015125213",
+    "annual_p75_usd": "OEUM004174000000015125214",
+    "annual_p90_usd": "OEUM004174000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 78.51
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 163300.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 95420.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 128590.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 163270.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 193980.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 223260.0
     }
    ]
   },
@@ -576,19 +1354,54 @@
    ],
    "series_ids": {
     "employment": "OEUM004090000000015125201",
-    "hourly_mean_usd": "OEUM004090000000015125204",
-    "annual_median_usd": "OEUM004090000000015125213"
+    "hourly_mean_usd": "OEUM004090000000015125203",
+    "annual_mean_usd": "OEUM004090000000015125204",
+    "annual_p10_usd": "OEUM004090000000015125211",
+    "annual_p25_usd": "OEUM004090000000015125212",
+    "annual_median_usd": "OEUM004090000000015125213",
+    "annual_p75_usd": "OEUM004090000000015125214",
+    "annual_p90_usd": "OEUM004090000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 73.53
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 152930.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 100040.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 126650.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 139640.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 170240.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 209140.0
     }
    ]
   },
@@ -601,19 +1414,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003890000000015125201",
-    "hourly_mean_usd": "OEUM003890000000015125204",
-    "annual_median_usd": "OEUM003890000000015125213"
+    "hourly_mean_usd": "OEUM003890000000015125203",
+    "annual_mean_usd": "OEUM003890000000015125204",
+    "annual_p10_usd": "OEUM003890000000015125211",
+    "annual_p25_usd": "OEUM003890000000015125212",
+    "annual_median_usd": "OEUM003890000000015125213",
+    "annual_p75_usd": "OEUM003890000000015125214",
+    "annual_p90_usd": "OEUM003890000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 74.14
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 154200.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 94040.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 126220.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 156000.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 174050.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 213540.0
     }
    ]
   },
@@ -626,19 +1474,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003806000000015125201",
-    "hourly_mean_usd": "OEUM003806000000015125204",
-    "annual_median_usd": "OEUM003806000000015125213"
+    "hourly_mean_usd": "OEUM003806000000015125203",
+    "annual_mean_usd": "OEUM003806000000015125204",
+    "annual_p10_usd": "OEUM003806000000015125211",
+    "annual_p25_usd": "OEUM003806000000015125212",
+    "annual_median_usd": "OEUM003806000000015125213",
+    "annual_p75_usd": "OEUM003806000000015125214",
+    "annual_p90_usd": "OEUM003806000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 65.15
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 135520.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 82500.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 104230.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 131750.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 163370.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 180460.0
     }
    ]
   },
@@ -651,19 +1534,54 @@
    ],
    "series_ids": {
     "employment": "OEUM004162000000015125201",
-    "hourly_mean_usd": "OEUM004162000000015125204",
-    "annual_median_usd": "OEUM004162000000015125213"
+    "hourly_mean_usd": "OEUM004162000000015125203",
+    "annual_mean_usd": "OEUM004162000000015125204",
+    "annual_p10_usd": "OEUM004162000000015125211",
+    "annual_p25_usd": "OEUM004162000000015125212",
+    "annual_median_usd": "OEUM004162000000015125213",
+    "annual_p75_usd": "OEUM004162000000015125214",
+    "annual_p90_usd": "OEUM004162000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 63.17
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 131400.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 79610.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 102560.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 129600.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 160740.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 177090.0
     }
    ]
   },
@@ -676,19 +1594,54 @@
    ],
    "series_ids": {
     "employment": "OEUM002982000000015125201",
-    "hourly_mean_usd": "OEUM002982000000015125204",
-    "annual_median_usd": "OEUM002982000000015125213"
+    "hourly_mean_usd": "OEUM002982000000015125203",
+    "annual_mean_usd": "OEUM002982000000015125204",
+    "annual_p10_usd": "OEUM002982000000015125211",
+    "annual_p25_usd": "OEUM002982000000015125212",
+    "annual_median_usd": "OEUM002982000000015125213",
+    "annual_p75_usd": "OEUM002982000000015125214",
+    "annual_p90_usd": "OEUM002982000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 66.83
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 139010.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 75530.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 99250.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 129940.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 169000.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 198610.0
     }
    ]
   },
@@ -701,19 +1654,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003830000000015125201",
-    "hourly_mean_usd": "OEUM003830000000015125204",
-    "annual_median_usd": "OEUM003830000000015125213"
+    "hourly_mean_usd": "OEUM003830000000015125203",
+    "annual_mean_usd": "OEUM003830000000015125204",
+    "annual_p10_usd": "OEUM003830000000015125211",
+    "annual_p25_usd": "OEUM003830000000015125212",
+    "annual_median_usd": "OEUM003830000000015125213",
+    "annual_p75_usd": "OEUM003830000000015125214",
+    "annual_p90_usd": "OEUM003830000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 60.78
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 126430.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 76030.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 95560.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 124500.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 155770.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 191710.0
     }
    ]
   },
@@ -726,19 +1714,54 @@
    ],
    "series_ids": {
     "employment": "OEUM003346000000015125201",
-    "hourly_mean_usd": "OEUM003346000000015125204",
-    "annual_median_usd": "OEUM003346000000015125213"
+    "hourly_mean_usd": "OEUM003346000000015125203",
+    "annual_mean_usd": "OEUM003346000000015125204",
+    "annual_p10_usd": "OEUM003346000000015125211",
+    "annual_p25_usd": "OEUM003346000000015125212",
+    "annual_median_usd": "OEUM003346000000015125213",
+    "annual_p75_usd": "OEUM003346000000015125214",
+    "annual_p90_usd": "OEUM003346000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 62.7
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 130410.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 83020.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 103040.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 130920.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 161610.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 170060.0
     }
    ]
   },
@@ -751,19 +1774,54 @@
    ],
    "series_ids": {
     "employment": "OEUM001814000000015125201",
-    "hourly_mean_usd": "OEUM001814000000015125204",
-    "annual_median_usd": "OEUM001814000000015125213"
+    "hourly_mean_usd": "OEUM001814000000015125203",
+    "annual_mean_usd": "OEUM001814000000015125204",
+    "annual_p10_usd": "OEUM001814000000015125211",
+    "annual_p25_usd": "OEUM001814000000015125212",
+    "annual_median_usd": "OEUM001814000000015125213",
+    "annual_p75_usd": "OEUM001814000000015125214",
+    "annual_p90_usd": "OEUM001814000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 59.44
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 123630.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 80130.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 100010.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 122340.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 140260.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 170000.0
     }
    ]
   },
@@ -776,19 +1834,54 @@
    ],
    "series_ids": {
     "employment": "OEUM001982000000015125201",
-    "hourly_mean_usd": "OEUM001982000000015125204",
-    "annual_median_usd": "OEUM001982000000015125213"
+    "hourly_mean_usd": "OEUM001982000000015125203",
+    "annual_mean_usd": "OEUM001982000000015125204",
+    "annual_p10_usd": "OEUM001982000000015125211",
+    "annual_p25_usd": "OEUM001982000000015125212",
+    "annual_median_usd": "OEUM001982000000015125213",
+    "annual_p75_usd": "OEUM001982000000015125214",
+    "annual_p90_usd": "OEUM001982000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 61.63
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 128200.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 82720.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 101850.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 130760.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 153270.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 167490.0
     }
    ]
   },
@@ -801,19 +1894,54 @@
    ],
    "series_ids": {
     "employment": "OEUN000000000000015125201",
-    "hourly_mean_usd": "OEUN000000000000015125204",
-    "annual_median_usd": "OEUN000000000000015125213"
+    "hourly_mean_usd": "OEUN000000000000015125203",
+    "annual_mean_usd": "OEUN000000000000015125204",
+    "annual_p10_usd": "OEUN000000000000015125211",
+    "annual_p25_usd": "OEUN000000000000015125212",
+    "annual_median_usd": "OEUN000000000000015125213",
+    "annual_p75_usd": "OEUN000000000000015125214",
+    "annual_p90_usd": "OEUN000000000000015125215"
    },
    "hourly_mean_usd": [
     {
      "year": 2025,
+     "value": 71.2
+    }
+   ],
+   "annual_mean_usd": [
+    {
+     "year": 2025,
      "value": 148100.0
+    }
+   ],
+   "annual_p10_usd": [
+    {
+     "year": 2025,
+     "value": 82460.0
+    }
+   ],
+   "annual_p25_usd": [
+    {
+     "year": 2025,
+     "value": 105210.0
     }
    ],
    "annual_median_usd": [
     {
      "year": 2025,
      "value": 135980.0
+    }
+   ],
+   "annual_p75_usd": [
+    {
+     "year": 2025,
+     "value": 171980.0
+    }
+   ],
+   "annual_p90_usd": [
+    {
+     "year": 2025,
+     "value": 214670.0
     }
    ]
   }

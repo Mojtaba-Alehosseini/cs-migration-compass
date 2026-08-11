@@ -33,18 +33,31 @@ median for this occupation. 04 relabelled to "annual_mean_usd" (no value
 changed, only the key); 03 added as the new, correctly-sourced
 "hourly_mean_usd".
 
-STATUS AS COMMITTED: datatype 03 is in DATATYPES below, ready to fetch, but
-this package's own repeated development testing exhausted BLS's unregistered-
-API daily cap (25 requests/day; this script alone uses 9-11 per run; see
-data/data-pipeline-sources.json) twice over — the second time immediately
-after what looked like a reset, so the cap or its reset schedule is stricter
-than a simple midnight boundary. data/processed/bls_oews.json therefore ships
-this package UNCHANGED from its pre-package-7 state (three datatypes, the
-'04' relabel not yet applied to committed data) rather than with a broken or
-partial fetch — see NEEDS-DECISION.md. The next successful
-`python scripts/pipeline.py bls_oews`, whenever quota allows, will pick up
-this code as written and produce the full eight-datatype output; nothing
-further needs to change in this file for that to happen.
+PACKAGE 8, TIER 0: closes the gap package 7 left open. Package 7's own repeated
+development testing exhausted BLS's unregistered-API daily cap (25
+requests/day; this script uses 9-11 per run) twice in one session, so
+data/processed/bls_oews.json shipped that package unchanged from its
+pre-package-7 state — see NEEDS-DECISION.md #13. Package 8's work order
+prescribed switching to BLS's bulk special-request zips
+(bls.gov/oes/special-requests/oesm25nat.zip, oesm25ma.zip), on the premise
+that they sit outside the timeseries API's rate limit. Tried first, as
+instructed: bls.gov is blocked wholesale from this environment (verified via
+three independent methods — a full browser header set, a cookied session that
+first visited the human landing page, and a second, differently-implemented
+fetcher — all three return HTTP 403 "Access Denied" on every bls.gov and
+download.bls.gov path tried, including the plain tables.htm landing page, not
+just the special-requests zips). This is a site-wide edge block, not a
+User-Agent nuance, and it matches a finding already on record in
+data/data-pipeline-sources.json from earlier research. The bulk-file rework
+was not carried out because there is nothing to fetch it from here.
+
+What actually closed the gap: this exact script, unchanged from how package 7
+left it, run once while the timeseries API's daily quota happened to be
+available. The API path was always correct; it only ever needed one clean
+window. NEEDS-DECISION #13 is closed on that basis, not on the bulk-file path
+the work order specified — recorded plainly here and in REPORT-P8.md so a
+future session does not re-attempt the same blocked URLs expecting a
+different result.
 """
 from __future__ import annotations
 

@@ -4,7 +4,7 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-11T19:32:46+00:00**
+Last pipeline run: **2026-08-11T22:19:16+00:00**
 
 28 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
@@ -17,7 +17,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | Dataset | Licence / terms | What this repo redistributes |
 | --- | --- | --- |
 | BIS — Selected residential property prices (quarterly) | BIS statistics are free to use with attribution for non-commercial purposes. Cite: Bank for International Settlements, Selected residential property prices. | raw committed |
-| BLS Occupational Employment and Wage Statistics (OEWS) — software developers | US federal government work — public domain. Cite: U.S. Bureau of Labor Statistics, OEWS. | raw committed |
+| BLS Occupational Employment and Wage Statistics (OEWS) — software developers | US federal government work — public domain. Cite: U.S. Bureau of Labor Statistics, OEWS. | processed derivative only — the raw batch responses are cached under data/raw/bls_oews/ but that directory is gitignored, so this repo does not redistribute the raw API responses. Only the derived data/processed/bls_oews.json is committed (US government data is public domain, so this is a choice, not a licence requirement). |
 | Open-Meteo geocoding (GeoNames) — city coordinates | Open-Meteo's geocoding API serves GeoNames data — GeoNames is CC BY 4.0, Open-Meteo's own API terms are CC BY 4.0. Cite: GeoNames / Open-Meteo. | lat/lon per city committed in data/cities.json |
 | EF English Proficiency Index 2025 | EF publishes the EPI report freely; cite EF Education First, EF English Proficiency Index 2025. | raw committed |
 | Eurostat — Employed ICT specialists (isoc_sks_itspt) | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, isoc_sks_itspt. | raw committed |
@@ -84,8 +84,8 @@ Human page https://www.bis.org/statistics/pp.htm 302-redirects to a JS-heavy das
 
 - **Status** — live
 - **Coverage** — 30/30 US cities, current reference year only
-- **Rows processed** — 96
-- **Fetched** — 2026-08-04T19:40:17+00:00
+- **Rows processed** — 256
+- **Fetched** — 2026-08-11T22:19:16+00:00
 - **Licence** — US federal government work — public domain. Cite: U.S. Bureau of Labor Statistics, OEWS.
 - **Output** — `data/processed/bls_oews.json`
 - **Fetch script** — `scripts/src_bls_oews.py`
@@ -95,14 +95,18 @@ Human page https://www.bis.org/statistics/pp.htm 302-redirects to a JS-heavy das
 - `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)`
 - `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)`
 - `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)`
-- `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (21 series)`
+- `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)`
+- `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)`
+- `POST https://api.bls.gov/publicAPI/v2/timeseries/data/ (25 series)`
+- …and 5 more of the same shape
 
 **What we do to it**
 
-1. Constructed OEWS series IDs for 30 metros (+ San Jose, + national) x 3 datatypes.
+1. Constructed OEWS series IDs for 30 metros (+ San Jose, + national) x 8 datatypes (employment, hourly mean, annual mean, annual P10/P25/median/P75/P90).
 1. Requested them from the v2 API in batches of 25 (the keyless per-request limit).
-1. Kept employment counts, hourly mean and annual median wages where the API returned data.
+1. Kept employment counts and all seven wage measures where the API returned data.
 1. Series returning 'No Data Available' are counted and omitted — never back-filled or estimated.
+1. Relabelled datatype 04 from 'hourly_mean_usd' to 'annual_mean_usd', and added datatype 03 as the new 'hourly_mean_usd' (see module docstring) — 04's stored number is unchanged, only its key; 03 is a genuinely new field sourced from the correct series.
 
 > Snapshot only — the API exposes no OEWS history. Stated on the page, not hidden.
 

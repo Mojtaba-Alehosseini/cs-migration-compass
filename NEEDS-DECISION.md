@@ -167,7 +167,7 @@ just 21232 alone (the closer semantic match to "developer" as opposed to
 "engineer")? Whichever is picked changes where Canada lands relative to the
 other three on that chart.
 
-## 13. BLS OEWS's percentile extension is written and verified, but not committed as data
+## 13. BLS OEWS's percentile extension is written and verified, but not committed as data — RESOLVED in package 8, tier 0
 
 `scripts/src_bls_oews.py` now requests 8 datatypes (employment, hourly mean,
 annual mean, annual P10/P25/median/P75/P90) instead of the old 3, and fixes a
@@ -191,6 +191,23 @@ real regression, so the processed file and its provenance entry were both
 reverted to their exact pre-package-7 state instead. `salary_se`/`salary_uk`/
 `salary_ca` are unaffected — they hit no such limit and are fully committed
 with fresh, verified data.
+
+**Resolved 2026-08-11 (package 8, tier 0):** the work order's prescribed fix —
+switch to BLS's bulk special-request zips, which sit outside the timeseries
+API's rate limit — turned out not to be reachable: `bls.gov` and
+`download.bls.gov` are blocked wholesale from this environment (verified via
+three independent request methods, all returning HTTP 403 "Access Denied" on
+every path tried, including the plain human-facing landing page, not just the
+data files). This is a site-wide edge block, matching an existing finding in
+`data/data-pipeline-sources.json`, not a header or rate-limit problem, so
+switching endpoints could not have helped. What actually closed the gap was
+running the exact code above, unchanged, during a window when the timeseries
+API's daily quota was available — it succeeded cleanly (256/256 series,
+32 areas x 8 datatypes, 0 failures) and every figure matches the numbers
+quoted above exactly, including the corrected `hourly_mean_usd` (71.20
+USD/hr) now sourced from its own datatype rather than aliased from the
+annual figure. `data/processed/bls_oews.json` is committed with the full
+extension as of package 8. No further action needed on this item.
 
 **Decide:** nothing about the design — the code is ready as written. What's
 needed is either (a) running `python scripts/pipeline.py bls_oews` once on a
