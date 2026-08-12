@@ -12,10 +12,20 @@ mean and a median; every AU occupation record below carries
 estimator, specifically) degrade instead of guessing a spread that was
 never measured.
 
-Two measures exist per occupation, and they are NOT the same thing —
-recorded separately, matching this project's existing rule that survey
-earnings and advertised pay (and, here, taxable income and wage income)
-never share a field:
+Classification vintage: the workbook's own Notes sheet (note 1) says
+occupation codes "are classified based on ANZSCO ... 2024" — corrected here
+after an adversarial review caught this file first claiming "ANZSCO 2021"
+without checking the workbook's own footnote.
+
+Measurement basis, absent from every other source in this spine and
+recorded here because it changes what the figures mean: occupation is
+self-reported on the individual's 2023-24 tax return (note 1), not drawn
+from an employer survey or a labour-force register the way DK/NO/FI/ES/NL/
+IE/QA/SE/UK/CA/US all are.
+
+THREE measures exist per occupation, not two — and they are NOT the same
+thing, recorded separately, matching this project's existing rule that
+survey earnings and advertised pay never share a field:
 
   - "Average/median salary or wage income" — gross employment earnings,
     the directly comparable figure to what every other country in this
@@ -24,9 +34,31 @@ never share a field:
     deductions, across ALL income sources (not just wages: investment
     income, etc., minus deductions). This package's work order quotes
     148,516/134,370 for 261313, which is the TAXABLE income pair, not the
-    salary-or-wage pair (135,788/132,758) — both are kept, both labelled by
-    their real ATO column name, and the wage-income figure is the one
-    treated as primary for cross-country comparison.
+    salary-or-wage pair (135,788/132,758).
+  - "Average/median total income" — before deductions, all sources.
+  All three are kept, each labelled by its real ATO column name, never
+  blended into one another; the wage-income figure is the one treated as
+  primary for cross-country comparison.
+
+`n_individuals` is the table's ONLY published headcount column — there is
+no separate N per income concept to capture. The workbook's own note 5 is
+explicit that this single number means a DIFFERENT population depending on
+which of the three measures it is read alongside: for taxable/total income
+it counts "all individuals who reported at the label, whether the value was
+zero or not"; for salary-or-wage income it counts only individuals "where
+the value was not zero." Recorded here, and in meta.measures below, so a
+reader does not assume one clean N applies uniformly to all three blocks —
+it does not, and the source does not offer a way to split it.
+
+The 261312 -> isco08:2514 crosswalk note in data/occupations.json cites a
+title match against "Applications programmer" — this workbook's own label
+for that code, not ANZSCO's official title (which is "Developer Programmer",
+alternatives "Applications Developer" / "ICT Developer" / "ICT Programmer" —
+verified against ABS's ANZSCO classification browser). The ATO's own
+Salary and wage occupation codes spreadsheet evidently relabels some
+ANZSCO titles; downstream crosswalk evidence should cite ANZSCO's real
+title, not this table's convenience label. See that mapping's note for the
+corrected reasoning.
 
 data.gov.au migrated its dataset platform since this project's earlier
 sources were catalogued; the old CKAN `/api/3/action/package_show` endpoint
@@ -98,8 +130,10 @@ def run() -> None:
         meta={
             "occupation_family": "ANZSCO unit group 2613 — Software and applications programmers",
             "primary_code": PRIMARY_CODE,
-            "classification": "ANZSCO 2021, 6-digit occupation — the deepest granularity in this "
-                "salary spine",
+            "classification": "ANZSCO 2024, 6-digit occupation — the deepest granularity in this "
+                "salary spine. The workbook's own Notes sheet (note 1) states the 2024 vintage; an "
+                "earlier draft of this file claimed 2021 without checking that footnote — corrected "
+                "after an adversarial review caught it.",
             "unit": "AUD per year (annual income, 2023-24 income year)",
             "measures": "Three DIFFERENT income concepts per occupation, never to be blended: "
                 "salary_or_wage_income (gross employment earnings — the primary, cross-country-"
@@ -108,14 +142,26 @@ def run() -> None:
                 "cite), and total_income (before deductions, all sources). Mean and median only for "
                 "each; no percentiles exist at this occupation depth from any live AU source — see "
                 "module docstring. distribution is explicitly 'central-tendency-only' on every record.",
+            "n_individuals_caveat": "The workbook publishes ONE headcount column, not one per income "
+                "concept. Per the source's own note 5: for taxable_income/total_income it counts all "
+                "individuals who reported at the label, zero or not; for salary_or_wage_income it "
+                "counts only individuals whose reported value was not zero. n_individuals is that one "
+                "published number, read alongside whichever block is in view — it is not a single "
+                "denominator that applies uniformly to all three.",
+            "measurement_basis": "Self-reported on the 2023-24 individual tax return (note 1) — not an "
+                "employer survey or labour-force register, unlike every other source in this spine.",
             "confidence": "official",
             "level": "country (Australia)",
             "year": "2023-24 income year",
             "crosswalk_hazard": (
-                "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package "
-                "7 — ANZSCO's own divergence from ISCO-08, if any, is unverified here. ANZSCO reaches "
-                "6 digits, one finer than ISCO-08's 4, so any mapping is necessarily many-to-one or "
-                "requires picking a specific 6-digit code as 'the' ISCO-08 unit's representative."
+                "Checked against ISCO-08 4-digit definitions in data/occupations.json (Tier 4): six of "
+                "the seven codes fall back to 2-digit (isco08:25) for lack of a defensible 4-digit "
+                "correspondence; 261313 reaches isco08:2512 at 'moderate' and 261312 reaches isco08:2514 "
+                "at 'moderate'. ANZSCO reaches 6 digits, one finer than ISCO-08's 4, so every mapping "
+                "here is necessarily many-to-one. The 261312 mapping's title-match evidence originally "
+                "cited this table's own 'Applications programmer' label, not ANZSCO's real official "
+                "title ('Developer Programmer') — see module docstring; the crosswalk note now cites "
+                "the correct title."
             ),
             "why_it_matters": "The deepest occupation granularity of the fifteen countries (6-digit "
                 "ANZSCO splits 'software developer' into engineer/programmer/tester/security/devops/"

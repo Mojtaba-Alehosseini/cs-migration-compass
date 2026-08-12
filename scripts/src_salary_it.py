@@ -11,21 +11,33 @@ occupation code alongside earnings is a school-leaver cohort outcomes survey
 occupation), which is a different measurement entirely and not comparable to
 the other fourteen countries' occupation-wage tables in this spine.
 
-This finding is inherited from this package's own research, which scanned
-ISTAT's full SDMX dataflow catalogue (4,896 flows) before writing this file.
-That scan is not repeated here — re-scanning nearly five thousand dataflows
-on every pipeline run would be expensive and pointless unless ISTAT's
-catalogue itself is suspected to have changed, which is not the case. If a
-future session has reason to believe ISTAT has since published a CP2011
-earnings flow, that is worth a fresh targeted check; blind re-scanning is
-not.
+This finding is inherited from the work order that commissioned this
+package, which reports having scanned ISTAT's full SDMX dataflow catalogue
+(4,896 flows) — not independently re-verified by re-scanning the catalogue
+this run. An earlier draft of this docstring claimed the scan as "this
+package's own research"; corrected after an adversarial review asked
+whether that scan actually happened this session (it did not — this file
+records the work order's claim, honestly attributed, the same caution this
+package's own harvesters apply to every other work-order-cited figure).
+Re-scanning nearly five thousand dataflows on every pipeline run would be
+expensive regardless of provenance; if a future session has reason to
+believe ISTAT has since published a CP2011 earnings flow, that is worth a
+fresh targeted check.
 
 The NACE J (information and communication) sector route exists as an
 alternative and is named here as exactly that — a SECTOR figure, not an
-occupation one, and not fetched by this script (Eurostat's earn_ses_pub2n,
-already in this pipeline's remit for other countries, covers NACE J but is
-empty for Italy specifically per this package's work order — also not
-re-verified here for the same reason).
+occupation one, and not fetched by this script or any other harvester in
+this pipeline (grepped: no `scripts/src_*.py` file touches either Eurostat
+flow named below). Two different Eurostat NACE-J earnings flows are named
+in `phase-4-salary-and-cv-plan.md`, and an earlier draft of this docstring
+conflated them — corrected after an adversarial review caught the error:
+`earn_ses22_49` (Professionals x NACE J) is the flow the plan doc says is
+"empty for DK, SE, FI, IT"; `earn_ses_pub2n` (median hourly, NACE J) is the
+flow the plan doc says is "populated for all nine EU countries" — i.e. NOT
+described as empty for Italy. Neither flow is implemented here, so this
+file makes no claim about either one's actual Italy coverage — only that
+neither is fetched, and NACE J would be a sector figure either way, not an
+occupation one.
 """
 from __future__ import annotations
 
@@ -42,8 +54,8 @@ NAME = "Italy — no occupation-level wage earnings flow exists (ISTAT)"
 def run() -> None:
     banner(SOURCE_ID, NAME)
     log("    NO LIVE FETCH — there is nothing to fetch. See module docstring: ISTAT publishes no "
-        "occupation-level (CP2011) earnings flow, confirmed by this package's own scan of its full "
-        "SDMX dataflow catalogue.")
+        "occupation-level (CP2011) earnings flow, per the work order's own reported scan of its full "
+        "SDMX dataflow catalogue — not independently re-verified this run.")
 
     out = {
         "occupations": {},
@@ -52,9 +64,11 @@ def run() -> None:
             "route": "NACE J (information and communication) sector earnings",
             "scope": "SECTOR, not occupation — includes every job in the ICT sector (support staff, "
                      "sales, management), not software developers specifically",
-            "note": "Not fetched by this script. Eurostat earn_ses_pub2n covers NACE J for other "
-                    "countries in this spine but is empty for Italy specifically, per this package's "
-                    "own prior research.",
+            "note": "Not fetched by this script or any other harvester in this pipeline. Two Eurostat "
+                    "NACE-J flows are named in phase-4-salary-and-cv-plan.md (earn_ses22_49, said there "
+                    "to be empty for DK/SE/FI/IT; earn_ses_pub2n, said there to be populated for all "
+                    "nine EU countries) — neither is implemented here, and this file makes no claim "
+                    "about either one's Italy coverage specifically. See module docstring.",
         },
     }
 
@@ -83,8 +97,9 @@ def run() -> None:
                       "flow, record its actual licence then.",
         redistribution="N/A — no raw data fetched or cached.",
         transforms=[
-            "No transform — this file records the absence of a source, inherited from this package's "
-            "own prior scan of ISTAT's full SDMX dataflow catalogue (4,896 flows), not re-scanned here.",
+            "No transform — this file records the absence of a source, per the work order's own "
+            "reported scan of ISTAT's full SDMX dataflow catalogue (4,896 flows), not independently "
+            "re-verified or re-scanned here.",
         ],
         output=f"data/processed/{SOURCE_ID}.json",
         rows=0,

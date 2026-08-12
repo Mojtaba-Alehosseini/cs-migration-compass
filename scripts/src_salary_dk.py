@@ -5,13 +5,34 @@ DISCO-08 is Denmark's national adaptation of ISCO-08 and, like Sweden's SSYK,
 keeps ISCO's numbering at the 4-digit level for this occupation (verified
 against the table's own live label, not assumed).
 
-Two things this pipeline has to get right that a naive read would miss:
+Three things this pipeline has to get right that a naive read would miss:
 
 1. UNIT: earnings here are DKK per HOUR WORKED, not annual and not monthly —
-   the third distinct pay period this salary spine carries (Sweden: monthly,
-   UK: annual, Canada: hourly, US: annual). Field names carry their own unit
-   (see src_salary_se.py's note on the same discipline).
-2. EMPLOYEE-GROUP FILTER: LONS20 crosses earnings by LONGRP (employee group:
+   the same pay period as Canada's figures (hourly), just a different
+   currency. Field names carry their own unit (see src_salary_se.py's note
+   on the same discipline).
+2. WHAT "mean_dkk_hour" ACTUALLY IS: fetched via DST's tableinfo API
+   (`/v1/tableinfo/LONS20`), the LØNMÅL code FORINKL is labelled only
+   "EARNINGS IN DKK PER HOUR WORKED" — an aggregate-earnings header, the
+   same way "STANDARDIZED HOURLY EARNINGS" headers a different group of
+   codes in the same variable. DST does not itself call FORINKL a mean or
+   an average (no "gennemsnit"/"average" word in its label). It is used
+   here as this table's mean because it sits alongside three explicit
+   dispersion measures in the SAME cross-tabulated cell — NEDRE (lower
+   quartile), MEDIAN (median), OVRE (upper quartile) — and a fourth,
+   unlabelled "headline earnings" figure reported per hour for a group of
+   many employees functions as that group's average by construction. This
+   is this pipeline's own reasonable inference from the table's structure,
+   not a literal DST label — recorded explicitly after an adversarial
+   review asked whether "mean_dkk_hour" asserts more than DST's own text
+   confirms.
+3. N SCOPE: ANTAL is labelled "Number of FULLTIME employees in the earnings
+   statistics" — `n_employees` in this file counts full-time employees only,
+   the same scoping restriction src_salary_fi.py documents for Finland (an
+   earlier draft of this file's docstring implied full-time scoping was
+   Finland-specific; it is not — Denmark's ANTAL carries the identical
+   restriction).
+4. EMPLOYEE-GROUP FILTER: LONS20 crosses earnings by LONGRP (employee group:
    total / general managers / excl. young+trainees / non-managerial / young
    people / trainees). The work order's cited reference figure for 2512 was
    N=29,710; querying every LONGRP value against the live API, only
@@ -46,11 +67,14 @@ YEARS = [str(y) for y in range(2018, 2025)]
 
 # ContentsCode ("LØNMÅL") values used, each -> its own unit-qualified field name.
 CONTENTS = {
-    "FORINKL": "mean_dkk_hour",     # "EARNINGS IN DKK PER HOUR WORKED" — the aggregate total
-    "NEDRE": "p25_dkk_hour",        # lower quartile
-    "MEDIAN": "median_dkk_hour",
-    "OVRE": "p75_dkk_hour",         # upper quartile
-    "ANTAL": "n_employees",         # count, no unit needed
+    "FORINKL": "mean_dkk_hour",     # DST labels this "EARNINGS IN DKK PER HOUR WORKED" — not
+                                     # itself "mean"/"average"; used as the mean here because it
+                                     # sits opposite NEDRE/MEDIAN/OVRE in the same cell — see
+                                     # module docstring point 2 for the full reasoning.
+    "NEDRE": "p25_dkk_hour",        # "Lower quartile, earnings in DKK per hour worked"
+    "MEDIAN": "median_dkk_hour",    # "Median, earnings in DKK per hour worked"
+    "OVRE": "p75_dkk_hour",         # "upper quartile, earnings in DKK per hour worked"
+    "ANTAL": "n_employees",         # "Number of fulltime employees in the earnings statistics"
 }
 
 
@@ -123,7 +147,10 @@ def run() -> None:
             "occupation_codes": {c: occ_titles.get(c, c) for c in DISCO_CODES},
             "primary_code": "2512",
             "classification": "DISCO-08 (Denmark's national adaptation of ISCO-08)",
-            "unit": "DKK per hour worked, non-managerial employees, all sectors, all forms of pay, both sexes",
+            "unit": "DKK per hour worked, full-time non-managerial employees (ANTAL's own label — "
+                "'Number of fulltime employees'), all sectors, all forms of pay, both sexes. "
+                "mean_dkk_hour is this pipeline's inference from FORINKL, not DST's own stated 'mean' "
+                "— see module docstring point 2.",
             "filter_note": (
                 "LONGRP=MED (non-managerial employees), AFLOEN=TIFA (all forms of pay), SEKTOR=1000 "
                 "(all sectors). See module docstring for why MED was chosen over the total-employee-group "
@@ -133,15 +160,14 @@ def run() -> None:
             "level": "country (Denmark, all sectors combined)",
             "years": YEARS,
             "crosswalk_hazard": (
-                "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 "
-                "— DISCO-08's own 4-digit divergence from ISCO-08, if any, is unverified here. Treat "
-                "2511-2519 sibling codes as unverified until data/occupations.json records a checked note."
+                "Checked against ISCO-08 4-digit definitions in data/occupations.json (Tier 4): all "
+                "five DISCO-08 251x codes map to their matching isco08:251x at 'high' confidence, "
+                "verified directly against this table's own live occupation labels."
             ),
             "why_it_matters": (
                 "One of nine countries with genuine occupation-level percentile-family wage data; "
-                "DISCO-08 mirrors SSYK's ISCO-08-based structure closely enough that the same crosswalk "
-                "family (isco08:2512) very likely applies, pending the same definition check package 7 "
-                "did for Sweden."
+                "DISCO-08 tracks SSYK's ISCO-08-based structure exactly at this depth, confirmed by "
+                "the same live-label check package 7 did for Sweden — see crosswalk_hazard above."
             ),
         },
     )

@@ -16,10 +16,13 @@ this a 4-digit ISCO-08 key. data/occupations.json records this as the
 vocabulary, not merely "2-digit-only" — see Tier 4.
 
 Unit: EUR per HOUR (CBS's own "Bruto uurloon" / gross hourly wage topic
-group) — a fifth distinct pay period in this salary spine (Sweden/Norway
-monthly, Denmark/Canada hourly, UK/US/Finland's siblings annual or monthly,
-each tracked separately; see src_salary_se.py's note on why every field
-name carries its own unit rather than relying on a sibling meta string).
+group) — the same pay period as Denmark's and Canada's figures (hourly),
+just a different currency, not a new period this spine hasn't seen before.
+See src_salary_se.py's note on why every field name carries its own unit
+rather than relying on a sibling meta string (an earlier draft of this
+docstring called this "a fifth distinct pay period" — miscounted, the same
+error an adversarial review caught in src_salary_dk.py and
+src_salary_no.py's docstrings; corrected here too).
 """
 from __future__ import annotations
 

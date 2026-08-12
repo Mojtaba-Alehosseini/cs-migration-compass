@@ -16,6 +16,7 @@ sourced, dated, and never updated to look more current than it is.
 """
 from __future__ import annotations
 
+import datetime as dt
 import sys
 from pathlib import Path
 
@@ -48,11 +49,14 @@ def run() -> None:
     log("    NO LIVE FETCH — see module docstring. Recording the last known (2009) figures as a "
         "dated, sourced 'no current series' record.")
 
+    last_known_year = 2009
+    run_year = dt.datetime.now(dt.timezone.utc).year
     out = {
         "occupations": LAST_KNOWN_2009,
         "status": "no-series",
-        "last_known_year": 2009,
-        "years_stale": "package build year minus 2009 — 17 years as of this run (2026)",
+        "last_known_year": last_known_year,
+        "years_stale": f"{run_year - last_known_year} years as of this run ({run_year}) — computed "
+                       "at run time, not a hardcoded string, so this does not silently go stale itself.",
     }
 
     write_processed(

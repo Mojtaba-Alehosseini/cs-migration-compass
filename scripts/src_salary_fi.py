@@ -106,8 +106,11 @@ def run() -> None:
                 "per-year table IDs and were not pulled into this harvester — a single current year is "
                 "what the work order accepted as sufficient for this source.",
             "crosswalk_hazard": (
-                "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 "
-                "— AL2010's own divergence from ISCO-08, if any, is unverified here."
+                "Checked against ISCO-08 4-digit definitions in data/occupations.json (Tier 4): all "
+                "five AL2010 251x codes map to their matching isco08:251x at 'high' confidence, "
+                "verified directly against this table's own live occupation labels (which include the "
+                "numeric prefix, e.g. '2511 Systems analysts' — national_title in occupations.json "
+                "must be copied verbatim including that prefix)."
             ),
             "why_it_matters": "One of nine countries with genuine occupation-level percentile-family "
                 "wage data (N, mean, P10, median, P90).",

@@ -4,7 +4,7 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-11T23:06:39+00:00**
+Last pipeline run: **2026-08-12T00:46:25+00:00**
 
 38 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
@@ -494,7 +494,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - **Status** — live
 - **Coverage** — 4 ISCO-08 major groups, single year (2009), UAE only
 - **Rows processed** — 4
-- **Fetched** — 2026-08-11T23:06:39+00:00
+- **Fetched** — 2026-08-12T00:46:25+00:00
 - **Licence** — ILOSTAT open data terms (ILO). Cite: International Labour Organization (ILO), ILOSTAT, flow DF_EAR_EMTA_SEX_OCU_NB. Underlying national source: UAE Federal Competitiveness and Statistics Centre (FCSC), 2009 Labour Force Survey.
 - **Output** — `data/processed/salary_ae.json`
 - **Fetch script** — `scripts/src_salary_ae.py`
@@ -514,7 +514,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - **Status** — live
 - **Coverage** — 7/7 6-digit ANZSCO codes, Australia, 2023-24 income year
 - **Rows processed** — 49
-- **Fetched** — 2026-08-11T22:48:35+00:00
+- **Fetched** — 2026-08-12T00:46:01+00:00
 - **Licence** — CC BY 2.5 AU. Cite: Australian Taxation Office (ATO), Taxation statistics 2023-24, Table 15A, via data.gov.au.
 - **Output** — `data/processed/salary_au.json`
 - **Fetch script** — `scripts/src_salary_au.py`
@@ -558,7 +558,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - **Status** — live
 - **Coverage** — 5 DISCO-08 occupations x 7 years, Denmark only (no sub-national breakdown in this table)
 - **Rows processed** — 175
-- **Fetched** — 2026-08-11T22:36:14+00:00
+- **Fetched** — 2026-08-12T00:46:02+00:00
 - **Licence** — CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20.
 - **Output** — `data/processed/salary_dk.json`
 - **Fetch script** — `scripts/src_salary_dk.py`
@@ -604,7 +604,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - **Status** — live
 - **Coverage** — 5 AL2010 occupations, single year (2024), Finland only, full-time earners only
 - **Rows processed** — 25
-- **Fetched** — 2026-08-11T22:37:44+00:00
+- **Fetched** — 2026-08-12T00:46:23+00:00
 - **Licence** — CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au.
 - **Output** — `data/processed/salary_fi.json`
 - **Fetch script** — `scripts/src_salary_fi.py`
@@ -647,7 +647,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - **Status** — live
 - **Coverage** — no occupation-level coverage exists for Italy in this pipeline
 - **Rows processed** — 0
-- **Fetched** — 2026-08-11T22:56:08+00:00
+- **Fetched** — 2026-08-12T00:46:24+00:00
 - **Licence** — N/A — no data fetched. If a future session locates a genuine CP2011 earnings flow, record its actual licence then.
 - **Output** — `data/processed/salary_it.json`
 - **Fetch script** — `scripts/src_salary_it.py`
@@ -658,7 +658,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 **What we do to it**
 
-1. No transform — this file records the absence of a source, inherited from this package's own prior scan of ISTAT's full SDMX dataflow catalogue (4,896 flows), not re-scanned here.
+1. No transform — this file records the absence of a source, per the work order's own reported scan of ISTAT's full SDMX dataflow catalogue (4,896 flows), not independently re-verified or re-scanned here.
 
 > ISTAT publishes no occupation-level (CP2011) earnings flow. Its CONTRACTUAL_OCCUPATION dimension is contract grade (operaio/impiegato/quadro/dirigente), not occupation. The only CP2011-crossed earnings flow is a school-leaver cohort survey, not a general wage structure and not comparable to this spine's other sources. NACE J sector earnings are the named alternative, not substituted here because a sector figure is not an occupation figure.
 
@@ -690,7 +690,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - **Status** — live
 - **Coverage** — 5 STYRK-08 occupations x 5 years + age cross, Norway only
 - **Rows processed** — 149
-- **Fetched** — 2026-08-11T22:37:06+00:00
+- **Fetched** — 2026-08-12T00:46:05+00:00
 - **Licence** — CC BY 4.0 (Statistics Norway open data licence, data.norge.no / SSB API terms). Cite: Statistics Norway (SSB), tables 11418 and 11658.
 - **Output** — `data/processed/salary_no.json`
 - **Fetch script** — `scripts/src_salary_no.py`

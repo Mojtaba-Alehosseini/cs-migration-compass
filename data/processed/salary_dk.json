@@ -1,6 +1,6 @@
 {
  "source_id": "salary_dk",
- "generated_at": "2026-08-11T22:36:14+00:00",
+ "generated_at": "2026-08-12T00:46:02+00:00",
  "meta": {
   "occupation_family": "DISCO-08 group 251 — Software and applications developers and analysts",
   "occupation_codes": {
@@ -12,7 +12,7 @@
   },
   "primary_code": "2512",
   "classification": "DISCO-08 (Denmark's national adaptation of ISCO-08)",
-  "unit": "DKK per hour worked, non-managerial employees, all sectors, all forms of pay, both sexes",
+  "unit": "DKK per hour worked, full-time non-managerial employees (ANTAL's own label — 'Number of fulltime employees'), all sectors, all forms of pay, both sexes. mean_dkk_hour is this pipeline's inference from FORINKL, not DST's own stated 'mean' — see module docstring point 2.",
   "filter_note": "LONGRP=MED (non-managerial employees), AFLOEN=TIFA (all forms of pay), SEKTOR=1000 (all sectors). See module docstring for why MED was chosen over the total-employee-group cut, and the small residual gap from the work order's cited reference N.",
   "confidence": "official",
   "level": "country (Denmark, all sectors combined)",
@@ -25,8 +25,8 @@
    "2023",
    "2024"
   ],
-  "crosswalk_hazard": "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 — DISCO-08's own 4-digit divergence from ISCO-08, if any, is unverified here. Treat 2511-2519 sibling codes as unverified until data/occupations.json records a checked note.",
-  "why_it_matters": "One of nine countries with genuine occupation-level percentile-family wage data; DISCO-08 mirrors SSYK's ISCO-08-based structure closely enough that the same crosswalk family (isco08:2512) very likely applies, pending the same definition check package 7 did for Sweden."
+  "crosswalk_hazard": "Checked against ISCO-08 4-digit definitions in data/occupations.json (Tier 4): all five DISCO-08 251x codes map to their matching isco08:251x at 'high' confidence, verified directly against this table's own live occupation labels.",
+  "why_it_matters": "One of nine countries with genuine occupation-level percentile-family wage data; DISCO-08 tracks SSYK's ISCO-08-based structure exactly at this depth, confirmed by the same live-label check package 7 did for Sweden — see crosswalk_hazard above."
  },
  "data": {
   "occupations": {

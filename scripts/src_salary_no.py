@@ -9,10 +9,10 @@ STYRK-08 is Norway's national adaptation of ISCO-08; occupation 2512
 "Software developers" is confirmed against the table's own live label.
 
 Unit: NOK per MONTH — table 11418's ContentsCode is literally "Monthly
-earnings (NOK)" ("Manedslonn"), a fourth distinct pay period alongside
-Denmark's hourly, Sweden's monthly (same period, different currency), the
-UK's annual, Canada's hourly and the US's annual. Every field name here
-carries its own unit for exactly the reason src_salary_se.py documents.
+earnings (NOK)" ("Manedslonn"), the same PAY PERIOD as Sweden's figures
+(monthly), just a different currency — not a new period this spine hasn't
+seen before. Every field name here carries its own unit for exactly the
+reason src_salary_se.py documents.
 
 11658's age bands are coarse (0-39 / 40-54 / 55+, plus an "unspecified"
 code) compared to Sweden's seven bands, and its time dimension is quarterly,
@@ -142,12 +142,15 @@ def run() -> None:
             "level": "country (Norway, all sectors combined)",
             "years": YEARS_11418,
             "crosswalk_hazard": (
-                "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 "
-                "— STYRK-08's own divergence from ISCO-08, if any, is unverified here."
+                "Checked against ISCO-08 4-digit definitions in data/occupations.json (Tier 4): all "
+                "five STYRK-08 251x codes map to their matching isco08:251x at 'high' confidence, "
+                "verified directly against this table's own live occupation labels."
             ),
             "why_it_matters": (
-                "One of the few countries with a genuine occupation x age cross (with Sweden and Spain), "
-                "which package 9's experience gradient needs."
+                "One of the few countries with a genuine occupation x age cross (with Sweden) — Spain's "
+                "age/tenure cross exists too, but only at the broader CNO-11 major-group depth, not "
+                "occupation-specific (see src_salary_es.py); Norway's, like Sweden's, is IT-specific. "
+                "package 9's experience gradient needs occupation-specific crosses like this one."
             ),
         },
     )

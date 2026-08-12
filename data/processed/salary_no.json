@@ -1,6 +1,6 @@
 {
  "source_id": "salary_no",
- "generated_at": "2026-08-11T22:37:06+00:00",
+ "generated_at": "2026-08-12T00:46:05+00:00",
  "meta": {
   "occupation_family": "STYRK-08 group 251 — Software and applications developers and analysts",
   "occupation_codes": {
@@ -26,8 +26,8 @@
    "2024",
    "2025"
   ],
-  "crosswalk_hazard": "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 — STYRK-08's own divergence from ISCO-08, if any, is unverified here.",
-  "why_it_matters": "One of the few countries with a genuine occupation x age cross (with Sweden and Spain), which package 9's experience gradient needs."
+  "crosswalk_hazard": "Checked against ISCO-08 4-digit definitions in data/occupations.json (Tier 4): all five STYRK-08 251x codes map to their matching isco08:251x at 'high' confidence, verified directly against this table's own live occupation labels.",
+  "why_it_matters": "One of the few countries with a genuine occupation x age cross (with Sweden) — Spain's age/tenure cross exists too, but only at the broader CNO-11 major-group depth, not occupation-specific (see src_salary_es.py); Norway's, like Sweden's, is IT-specific. package 9's experience gradient needs occupation-specific crosses like this one."
  },
  "data": {
   "occupations": {

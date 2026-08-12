@@ -180,17 +180,18 @@ numbers exactly (employment 1,687,890; P10 82,460; median 135,980; P90
 214,670; San Jose P90 289,150, confirming BLS's May 2025 release now publishes
 real uncapped high percentiles instead of the old ">=$239,200" top-code).
 
-**Not shipped:** `data/processed/bls_oews.json` as committed by this package
-is UNCHANGED from its pre-package-7 state. BLS's unregistered API caps at 25
-requests/day; this session's own repeated development and verification runs
-exhausted it, twice — the second time immediately after a request that had
-briefly succeeded, suggesting the cap or its reset window is stricter than a
-simple daily boundary. Committing a broken/empty fetch in place of the
-working file that existed before this package touched it would have been a
-real regression, so the processed file and its provenance entry were both
+**Not shipped as of package 7** (historical — see "Resolved" below):
+`data/processed/bls_oews.json` as committed by package 7 was UNCHANGED from
+its pre-package-7 state. BLS's unregistered API caps at 25 requests/day;
+that session's own repeated development and verification runs exhausted it,
+twice — the second time immediately after a request that had briefly
+succeeded, suggesting the cap or its reset window is stricter than a simple
+daily boundary. Committing a broken/empty fetch in place of the working file
+that existed before that package touched it would have been a real
+regression, so the processed file and its provenance entry were both
 reverted to their exact pre-package-7 state instead. `salary_se`/`salary_uk`/
-`salary_ca` are unaffected — they hit no such limit and are fully committed
-with fresh, verified data.
+`salary_ca` were unaffected — they hit no such limit and shipped fully
+committed with fresh, verified data in package 7.
 
 **Resolved 2026-08-11 (package 8, tier 0):** the work order's prescribed fix —
 switch to BLS's bulk special-request zips, which sit outside the timeseries
@@ -209,14 +210,10 @@ USD/hr) now sourced from its own datatype rather than aliased from the
 annual figure. `data/processed/bls_oews.json` is committed with the full
 extension as of package 8. No further action needed on this item.
 
-**Decide:** nothing about the design — the code is ready as written. What's
-needed is either (a) running `python scripts/pipeline.py bls_oews` once on a
-day/window where the unregistered quota is available (it takes one run, 9-11
-requests), or (b) registering a free BLS API key (raises the cap to
-500/day) and adding it to the request — registering a new external account
-is outside what an unattended run should do on its own. Either way, the very
-next successful run of this exact script produces the full percentile output;
-nothing further needs to change in the code for that to happen.
+**Decide:** nothing — this was the open decision as of package 7 (run the
+pipeline again when quota allows, or register a free BLS API key). Package 8
+resolved it by the first route; both options are recorded here only as
+history of what was considered, not as outstanding work.
 
 ---
 
@@ -250,9 +247,20 @@ salary spine's data layer; the crosswalk and the comparison rule (Tier 4)
 both need to treat Germany as having zero coverage, not 2-digit or "no
 series" coverage — those are different data states from "not attempted".
 
-**Decide:** finding the current GENESIS REST API path (the version-5.0
-manual linked above is the place to start) and confirming the GAST/GAST
-guest credential still works against it would close this in a follow-up
-package. If Destatis has retired guest access entirely, a registered GENESIS
-account is the only remaining path, and that registration is the owner's
-call, not this session's.
+**Follow-up attempt (2026-08-12, prompted by an adversarial review asking whether the
+domain-move theory was ever actually tested):** `www-genesis.destatis.de` now redirects
+(307) to `genesis.destatis.de` — the whole subdomain has moved, not just the API
+version. Re-tried the same `helloworld/logincheck` endpoint with the GAST/GAST
+credential on the NEW domain
+(`genesis.destatis.de/genesisWS/rest/2020/helloworld/logincheck`): still returns the
+"GENESIS-Online" React shell, not JSON — confirming the failure is not simply a stale
+domain either. The REST API's actual current path was not found. This narrows the
+question (it is not "which domain" but genuinely "which path/version") without
+answering it.
+
+**Decide:** finding the current GENESIS REST API path (the version-5.0 manual linked
+above is the place to start; `genesis.destatis.de/datenbank/online/` — the new database
+UI's own root — is worth exploring for a linked API reference) and confirming the
+GAST/GAST guest credential still works against it would close this in a follow-up
+package. If Destatis has retired guest access entirely, a registered GENESIS account is
+the only remaining path, and that registration is the owner's call, not this session's.

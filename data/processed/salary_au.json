@@ -1,16 +1,18 @@
 {
  "source_id": "salary_au",
- "generated_at": "2026-08-11T22:48:35+00:00",
+ "generated_at": "2026-08-12T00:46:01+00:00",
  "meta": {
   "occupation_family": "ANZSCO unit group 2613 — Software and applications programmers",
   "primary_code": "261313",
-  "classification": "ANZSCO 2021, 6-digit occupation — the deepest granularity in this salary spine",
+  "classification": "ANZSCO 2024, 6-digit occupation — the deepest granularity in this salary spine. The workbook's own Notes sheet (note 1) states the 2024 vintage; an earlier draft of this file claimed 2021 without checking that footnote — corrected after an adversarial review caught it.",
   "unit": "AUD per year (annual income, 2023-24 income year)",
   "measures": "Three DIFFERENT income concepts per occupation, never to be blended: salary_or_wage_income (gross employment earnings — the primary, cross-country-comparable figure), taxable_income (assessable income after deductions, across all income sources, not wages alone — this is what the work order's own reference figures cite), and total_income (before deductions, all sources). Mean and median only for each; no percentiles exist at this occupation depth from any live AU source — see module docstring. distribution is explicitly 'central-tendency-only' on every record.",
+  "n_individuals_caveat": "The workbook publishes ONE headcount column, not one per income concept. Per the source's own note 5: for taxable_income/total_income it counts all individuals who reported at the label, zero or not; for salary_or_wage_income it counts only individuals whose reported value was not zero. n_individuals is that one published number, read alongside whichever block is in view — it is not a single denominator that applies uniformly to all three.",
+  "measurement_basis": "Self-reported on the 2023-24 individual tax return (note 1) — not an employer survey or labour-force register, unlike every other source in this spine.",
   "confidence": "official",
   "level": "country (Australia)",
   "year": "2023-24 income year",
-  "crosswalk_hazard": "Not yet checked against ISCO-08 4-digit definitions the way SSYK 2514 was in package 7 — ANZSCO's own divergence from ISCO-08, if any, is unverified here. ANZSCO reaches 6 digits, one finer than ISCO-08's 4, so any mapping is necessarily many-to-one or requires picking a specific 6-digit code as 'the' ISCO-08 unit's representative.",
+  "crosswalk_hazard": "Checked against ISCO-08 4-digit definitions in data/occupations.json (Tier 4): six of the seven codes fall back to 2-digit (isco08:25) for lack of a defensible 4-digit correspondence; 261313 reaches isco08:2512 at 'moderate' and 261312 reaches isco08:2514 at 'moderate'. ANZSCO reaches 6 digits, one finer than ISCO-08's 4, so every mapping here is necessarily many-to-one. The 261312 mapping's title-match evidence originally cited this table's own 'Applications programmer' label, not ANZSCO's real official title ('Developer Programmer') — see module docstring; the crosswalk note now cites the correct title.",
   "why_it_matters": "The deepest occupation granularity of the fifteen countries (6-digit ANZSCO splits 'software developer' into engineer/programmer/tester/security/devops/pentester), but with no percentile spread at all — the clearest real example of why package 9's estimator needs a distribution-quality flag, not just a distribution."
  },
  "data": {

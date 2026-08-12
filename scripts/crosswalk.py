@@ -21,9 +21,14 @@ derived. What this script checks is that the table is internally honest:
 
 `python scripts/crosswalk.py` prints the full table plus a sample of resolved
 country-pair comparisons (gate 8's evidence) and exits non-zero on any
-structural problem. `make validate` does not currently call this — it is a
-standalone audit, run and its output pasted into the package report, the
-same way the chart-integrity audits were in package 6.
+structural problem. `make validate` does not run this file's own `main()` —
+the full printed audit (confidence/note/title cross-checks bundled together)
+is still a standalone, manually-run report, pasted into the package report
+the same way the chart-integrity audits were in package 6. As of package 8,
+though, `validate_data.py` DOES `import crosswalk` and call `compare()` and
+`depth_of()` directly (its own `check_crosswalk_comparison_depth` and
+`check_crosswalk_notes` checks) — so those two functions are no longer
+purely standalone, even though this file's `main()` audit as a whole is.
 
 THE COMPARISON RULE (package 8, "meet in the middle"): a cross-country
 comparison happens at the DEEPEST level BOTH sides support. If one side is

@@ -2,11 +2,14 @@
 
 Table SES06. Confirmed directly against the live table's own dimension
 labels, not assumed from the work order's summary: the occupation dimension
-(C03288V03961) has EXACTLY EIGHT values — "All occupational groups" plus the
-eight 1-digit SOC major groups (Managers, Professional, Associate
-professional and technical, Administrative and secretarial, Skilled trades,
-Caring/leisure/other services, Sales and customer service, and — per the
-category list — a further two not printed in the harvest log). There is no
+(C03288V03961) has ELEVEN values — "All occupational groups" ("-"), the
+NINE 1-digit SOC major groups (codes "1"-"9": Managers; Professional;
+Associate professional and technical; Administrative and secretarial;
+Skilled trades; Caring, leisure and other services; Sales and customer
+service; Process, plant and machine operatives; Elementary), and "Other/Not
+stated" ("X1"). An earlier draft of this docstring said "EXACTLY EIGHT" —
+an arithmetic error caught by an adversarial review (the sentence as
+originally written did not even add up on its own terms). There is no
 finer occupation breakdown anywhere in this table. "Professional" (code "2")
 is the closest available group to software development, and it is not an
 ICT-specific figure: it covers every professional occupation Ireland's SOC
