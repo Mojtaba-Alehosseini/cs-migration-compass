@@ -67,6 +67,16 @@ AGE_BANDS = ["18-24", "25-34", "35-44", "45-54", "55-64", "65-66", "65-68", "tot
 
 
 def _query(table: str, occupations: list[str], contents: dict[str, str], extra: list[dict] | None = None) -> dict:
+    # Sektor="0" is "all sectors" (whole economy) — verified live against
+    # this table's own dimension metadata (package 9 check): codes 1-3 are
+    # public sector (1 central government, 2 primary municipalities, 3
+    # county council), 4-5 are private sector (4 manual workers, 5
+    # non-manual workers). This was already the intended scope — package 9's
+    # work order confirmed table AM0110A is correct (it already was) and
+    # clarified that "private sector" is this Sektor dimension, not a
+    # different table; it did not instruct switching to the private-only
+    # codes, unlike its explicit instruction for Finland (see
+    # src_salary_fi.py) — kept as "0" here, deliberately, not silently.
     body = {
         "query": [
             {"code": "Sektor", "selection": {"filter": "item", "values": ["0"]}},

@@ -460,17 +460,18 @@
       "urls": [
         "https://api.statbank.dk/v1/data (table=LONS20)"
       ],
-      "fetched_at": "2026-08-12T00:46:02+00:00",
+      "fetched_at": "2026-08-12T15:01:46+00:00",
       "license": "CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20.",
       "redistribution": "processed derivative only — the raw StatBank JSON-stat payload is cached under data/raw/salary_dk/ but that directory is gitignored, so this repo does not redistribute the raw source (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_dk.json is committed.",
       "transforms": [
         "Queried DISCO-08 codes 2511, 2512, 2513, 2514, 2519 (group 251) x all sectors x all forms of pay x non-managerial employees x both sexes x 2018-2024 from table LONS20 via POST, format JSONSTAT.",
         "Kept mean-equivalent, lower quartile, median, upper quartile (each _dkk_hour) and employee count verbatim.",
+        "Package 9: also kept PENS (employer_pension_dkk_hour) and UREGEL (irregular_dkk_hour) — real published components of the same cell — and MDRSNIT (standardized_monthly_dkk_by_year per occupation/year), DST's own monthly headline figure, stored separately from the hourly dispersion data since it is not hourly and its exact composition is not confirmed.",
         "Occupation titles are the API's own labels, not hand-typed."
       ],
       "output": "data/processed/salary_dk.json",
       "status": "ok",
-      "rows": 175,
+      "rows": 280,
       "coverage": "5 DISCO-08 occupations x 7 years, Denmark only (no sub-national breakdown in this table)",
       "notes": "Uses the non-managerial-employees, all-forms-of-pay cut (LONGRP=MED, AFLOEN=TIFA) — see module docstring for why, and for the residual gap from an external cited reference figure."
     },
@@ -480,20 +481,22 @@
       "urls": [
         "https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70672",
         "https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70706",
-        "https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70707"
+        "https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70707",
+        "https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/28186"
       ],
-      "fetched_at": "2026-08-11T22:39:10+00:00",
-      "license": "Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES).",
+      "fetched_at": "2026-08-12T15:02:49+00:00",
+      "license": "Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES) for 70672/70706/70707, Encuesta Anual de Estructura Salarial (EAES) for 28186.",
       "redistribution": "processed derivative only — the raw Tempus3 JSON payloads are cached under data/raw/salary_es/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_es.json is committed.",
       "transforms": [
         "Fetched tables 70672 (dispersion by CNO-11 occupation), 70706 (age) and 70707 (tenure) in full from INE's Tempus3 DATOS_TABLA endpoint, then filtered by matching each series' own English name text (INE's Tempus3 API is flat: series are self-describing by name, not selected via PxWeb-style dimension codes).",
         "Kept the latest available data point per matched series verbatim, with its own year — 70672's occupation series are 2018; 70706/70707's are checked and recorded per-series.",
-        "70706/70707 only reach CNO-11 major group 2 ('Scientific and intellectual technicians and professionals'), not subgroup 27 specifically — stored separately as broader_category_context, not merged into occupations."
+        "70706/70707 only reach CNO-11 major group 2 ('Scientific and intellectual technicians and professionals'), not subgroup 27 specifically — stored separately as broader_category_context, not merged into occupations.",
+        "Fetched table 28186 (a different survey, EAES operation 140) and kept series EAES2556 ('All occupations. Both genders. Average gross salary. National Total. Base data.') in full, all 17 years (2008-2024) — added this package for a currently-updated national reference point. Package 8's own adversarial review lesson applied here too: this table's series share the same 'EAES' code prefix as 70672's, so it was matched by table ID (28186) and the series' own full name text, not by prefix alone."
       ],
       "output": "data/processed/salary_es.json",
       "status": "ok",
-      "rows": 25,
-      "coverage": "2 occupation labels (IT professionals + broader ICT specialists) with percentile dispersion, plus 1 broader-category age cross and 1 broader-category tenure cross, Spain only",
+      "rows": 42,
+      "coverage": "2 occupation labels (IT professionals + broader ICT specialists) with percentile dispersion, plus 1 broader-category age cross and 1 broader-category tenure cross, plus a 17-year all-occupations national reference series, Spain only",
       "notes": "Vintage is 2018 for the dispersion table, not 2022 as assumed by the work order that commissioned this harvester — verified live, not a fetch error."
     },
     {
@@ -502,19 +505,19 @@
       "urls": [
         "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/pra/15au.px"
       ],
-      "fetched_at": "2026-08-12T00:46:23+00:00",
+      "fetched_at": "2026-08-12T15:01:59+00:00",
       "license": "CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au.",
       "redistribution": "processed derivative only — the raw json-stat2 payload is cached under data/raw/salary_fi/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_fi.json is committed.",
       "transforms": [
-        "Queried AL2010 codes 2511, 2512, 2513, 2514, 2519 (group 251) x all sectors x both sexes x 2024 (the table's sole exposed year) from StatFin/pra/15au via POST, format json-stat2.",
-        "Kept N, mean, P10, median, P90 (each for TOTAL earnings, not the narrower 'regular hours' variant the table also publishes) verbatim.",
+        "Queried AL2010 codes 2511, 2512, 2513, 2514, 2519 (group 251) x sector S11_S12_S15 (private sector — package 9 fix, was 'S0'/whole economy) x both sexes x 2024 (the table's sole exposed year) from StatFin/pra/15au via POST, format json-stat2.",
+        "Kept N, and BOTH earnings bases the table publishes — total_* (koko_psaaja_kans_*) and regular_* (koko_psaaja_sans_*, 'earnings for regular working hours') — under separate, never-blended field names. Package 8 fetched total_* only; package 9 added regular_*.",
         "Occupation titles are the API's own labels, not hand-typed."
       ],
       "output": "data/processed/salary_fi.json",
       "status": "ok",
-      "rows": 25,
-      "coverage": "5 AL2010 occupations, single year (2024), Finland only, full-time earners only",
-      "notes": "Full-time-only scope is the table's own restriction, not a filter this pipeline chose — see meta.unit."
+      "rows": 45,
+      "coverage": "5 AL2010 occupations, single year (2024), Finland private sector only, full-time earners only",
+      "notes": "Full-time-only scope is the table's own restriction, not a filter this pipeline chose — see meta.unit. Sector switched from 'S0' (whole economy) to 'S11_S12_S15' (private sector) in package 9, per that package's work order, checked against the table's own live sector-dimension metadata."
     },
     {
       "source_id": "salary_ie",
@@ -522,7 +525,7 @@
       "urls": [
         "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/SES06/JSON-stat/2.0/en"
       ],
-      "fetched_at": "2026-08-11T23:06:35+00:00",
+      "fetched_at": "2026-08-12T15:02:15+00:00",
       "license": "CC BY 4.0 (CSO Ireland open data licence, PxStat). Cite: Central Statistics Office (CSO) Ireland, table SES06.",
       "redistribution": "processed derivative only — the raw JSON-stat2 payload is cached under data/raw/salary_ie/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_ie.json is committed.",
       "transforms": [
@@ -884,5 +887,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-12T00:46:25+00:00"
+  "updated_at": "2026-08-12T15:02:49+00:00"
 }

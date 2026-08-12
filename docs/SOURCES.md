@@ -4,7 +4,7 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-12T00:46:25+00:00**
+Last pipeline run: **2026-08-12T15:02:49+00:00**
 
 38 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
@@ -35,7 +35,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation | CC BY 2.5 AU. Cite: Australian Taxation Office (ATO), Taxation statistics 2023-24, Table 15A, via data.gov.au. | processed derivative only — the raw 700 KB ATO workbook is cached under data/raw/salary_au/ but that directory is gitignored, so this repo does not redistribute the raw download (CC BY 2.5 AU would permit it; the repo simply doesn't). Only the derived data/processed/salary_au.json is committed. |
 | Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region | Open Government Licence - Canada 2.0. Cite: Employment and Social Development Canada (ESDC) / Job Bank, Wages. | processed derivative only — the raw 18 MB wages CSV is cached under data/raw/salary_ca/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL-Canada 2.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_ca.json is committed. |
 | Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08) | CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20. | processed derivative only — the raw StatBank JSON-stat payload is cached under data/raw/salary_dk/ but that directory is gitignored, so this repo does not redistribute the raw source (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_dk.json is committed. |
-| INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11 | Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES). | processed derivative only — the raw Tempus3 JSON payloads are cached under data/raw/salary_es/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_es.json is committed. |
+| INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11 | Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES) for 70672/70706/70707, Encuesta Anual de Estructura Salarial (EAES) for 28186. | processed derivative only — the raw Tempus3 JSON payloads are cached under data/raw/salary_es/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_es.json is committed. |
 | Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) | CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au. | processed derivative only — the raw json-stat2 payload is cached under data/raw/salary_fi/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_fi.json is committed. |
 | CSO Ireland — SES06 earnings, 'Professional' 1-digit SOC major group | CC BY 4.0 (CSO Ireland open data licence, PxStat). Cite: Central Statistics Office (CSO) Ireland, table SES06. | processed derivative only — the raw JSON-stat2 payload is cached under data/raw/salary_ie/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_ie.json is committed. |
 | Italy — no occupation-level wage earnings flow exists (ISTAT) | N/A — no data fetched. If a future session locates a genuine CP2011 earnings flow, record its actual licence then. | N/A — no raw data fetched or cached. |
@@ -557,8 +557,8 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 - **Status** — live
 - **Coverage** — 5 DISCO-08 occupations x 7 years, Denmark only (no sub-national breakdown in this table)
-- **Rows processed** — 175
-- **Fetched** — 2026-08-12T00:46:02+00:00
+- **Rows processed** — 280
+- **Fetched** — 2026-08-12T15:01:46+00:00
 - **Licence** — CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20.
 - **Output** — `data/processed/salary_dk.json`
 - **Fetch script** — `scripts/src_salary_dk.py`
@@ -571,6 +571,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 1. Queried DISCO-08 codes 2511, 2512, 2513, 2514, 2519 (group 251) x all sectors x all forms of pay x non-managerial employees x both sexes x 2018-2024 from table LONS20 via POST, format JSONSTAT.
 1. Kept mean-equivalent, lower quartile, median, upper quartile (each _dkk_hour) and employee count verbatim.
+1. Package 9: also kept PENS (employer_pension_dkk_hour) and UREGEL (irregular_dkk_hour) — real published components of the same cell — and MDRSNIT (standardized_monthly_dkk_by_year per occupation/year), DST's own monthly headline figure, stored separately from the hourly dispersion data since it is not hourly and its exact composition is not confirmed.
 1. Occupation titles are the API's own labels, not hand-typed.
 
 > Uses the non-managerial-employees, all-forms-of-pay cut (LONGRP=MED, AFLOEN=TIFA) — see module docstring for why, and for the residual gap from an external cited reference figure.
@@ -578,10 +579,10 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 ### INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11
 
 - **Status** — live
-- **Coverage** — 2 occupation labels (IT professionals + broader ICT specialists) with percentile dispersion, plus 1 broader-category age cross and 1 broader-category tenure cross, Spain only
-- **Rows processed** — 25
-- **Fetched** — 2026-08-11T22:39:10+00:00
-- **Licence** — Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES).
+- **Coverage** — 2 occupation labels (IT professionals + broader ICT specialists) with percentile dispersion, plus 1 broader-category age cross and 1 broader-category tenure cross, plus a 17-year all-occupations national reference series, Spain only
+- **Rows processed** — 42
+- **Fetched** — 2026-08-12T15:02:49+00:00
+- **Licence** — Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES) for 70672/70706/70707, Encuesta Anual de Estructura Salarial (EAES) for 28186.
 - **Output** — `data/processed/salary_es.json`
 - **Fetch script** — `scripts/src_salary_es.py`
 
@@ -590,21 +591,23 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 - <https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70672>
 - <https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70706>
 - <https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/70707>
+- <https://servicios.ine.es/wstempus/js/EN/DATOS_TABLA/28186>
 
 **What we do to it**
 
 1. Fetched tables 70672 (dispersion by CNO-11 occupation), 70706 (age) and 70707 (tenure) in full from INE's Tempus3 DATOS_TABLA endpoint, then filtered by matching each series' own English name text (INE's Tempus3 API is flat: series are self-describing by name, not selected via PxWeb-style dimension codes).
 1. Kept the latest available data point per matched series verbatim, with its own year — 70672's occupation series are 2018; 70706/70707's are checked and recorded per-series.
 1. 70706/70707 only reach CNO-11 major group 2 ('Scientific and intellectual technicians and professionals'), not subgroup 27 specifically — stored separately as broader_category_context, not merged into occupations.
+1. Fetched table 28186 (a different survey, EAES operation 140) and kept series EAES2556 ('All occupations. Both genders. Average gross salary. National Total. Base data.') in full, all 17 years (2008-2024) — added this package for a currently-updated national reference point. Package 8's own adversarial review lesson applied here too: this table's series share the same 'EAES' code prefix as 70672's, so it was matched by table ID (28186) and the series' own full name text, not by prefix alone.
 
 > Vintage is 2018 for the dispersion table, not 2022 as assumed by the work order that commissioned this harvester — verified live, not a fetch error.
 
 ### Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010)
 
 - **Status** — live
-- **Coverage** — 5 AL2010 occupations, single year (2024), Finland only, full-time earners only
-- **Rows processed** — 25
-- **Fetched** — 2026-08-12T00:46:23+00:00
+- **Coverage** — 5 AL2010 occupations, single year (2024), Finland private sector only, full-time earners only
+- **Rows processed** — 45
+- **Fetched** — 2026-08-12T15:01:59+00:00
 - **Licence** — CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au.
 - **Output** — `data/processed/salary_fi.json`
 - **Fetch script** — `scripts/src_salary_fi.py`
@@ -615,18 +618,18 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 **What we do to it**
 
-1. Queried AL2010 codes 2511, 2512, 2513, 2514, 2519 (group 251) x all sectors x both sexes x 2024 (the table's sole exposed year) from StatFin/pra/15au via POST, format json-stat2.
-1. Kept N, mean, P10, median, P90 (each for TOTAL earnings, not the narrower 'regular hours' variant the table also publishes) verbatim.
+1. Queried AL2010 codes 2511, 2512, 2513, 2514, 2519 (group 251) x sector S11_S12_S15 (private sector — package 9 fix, was 'S0'/whole economy) x both sexes x 2024 (the table's sole exposed year) from StatFin/pra/15au via POST, format json-stat2.
+1. Kept N, and BOTH earnings bases the table publishes — total_* (koko_psaaja_kans_*) and regular_* (koko_psaaja_sans_*, 'earnings for regular working hours') — under separate, never-blended field names. Package 8 fetched total_* only; package 9 added regular_*.
 1. Occupation titles are the API's own labels, not hand-typed.
 
-> Full-time-only scope is the table's own restriction, not a filter this pipeline chose — see meta.unit.
+> Full-time-only scope is the table's own restriction, not a filter this pipeline chose — see meta.unit. Sector switched from 'S0' (whole economy) to 'S11_S12_S15' (private sector) in package 9, per that package's work order, checked against the table's own live sector-dimension metadata.
 
 ### CSO Ireland — SES06 earnings, 'Professional' 1-digit SOC major group
 
 - **Status** — live
 - **Coverage** — 1 SOC major group x 2 years, Ireland only
 - **Rows processed** — 8
-- **Fetched** — 2026-08-11T23:06:35+00:00
+- **Fetched** — 2026-08-12T15:02:15+00:00
 - **Licence** — CC BY 4.0 (CSO Ireland open data licence, PxStat). Cite: Central Statistics Office (CSO) Ireland, table SES06.
 - **Output** — `data/processed/salary_ie.json`
 - **Fetch script** — `scripts/src_salary_ie.py`

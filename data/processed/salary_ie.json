@@ -1,6 +1,6 @@
 {
  "source_id": "salary_ie",
- "generated_at": "2026-08-11T23:06:35+00:00",
+ "generated_at": "2026-08-12T15:02:15+00:00",
  "meta": {
   "occupation_family": "SOC, 1-digit major groups only — the coarsest occupation depth in this salary spine",
   "primary_code": "soc1:2",
@@ -14,7 +14,8 @@
    "2022"
   ],
   "crosswalk_hazard": "'Professional' (SOC major group 2) is not an ICT occupation — it is every professional occupation Ireland's SOC recognises, medicine/law/engineering/teaching/science bundled with IT. This cannot honestly reach even the 2-digit isco08:25 fallback the way most other 2-digit-only entries in this crosswalk can; it needs its own coarser confidence tier or an explicit 1-digit anchor — see Tier 4.",
-  "why_it_matters": "Ireland's actual best available official occupation-level earnings figure. The honest answer for this country is '1-digit, not IT-specific', which is what this file records rather than omitting the country entirely."
+  "why_it_matters": "Ireland's actual best available official occupation-level earnings figure. The honest answer for this country is '1-digit, not IT-specific', which is what this file records rather than omitting the country entirely.",
+  "staleness_flag": "table last updated 2023-10-18T11:00:00.000Z, no data newer than 2022 — package 9 confirmed this is the stalest source in the fifteen-country spine."
  },
  "data": {
   "occupations": {
@@ -37,6 +38,11 @@
      }
     }
    }
+  },
+  "staleness": {
+   "table_last_updated": "2023-10-18T11:00:00.000Z",
+   "latest_data_year": "2022",
+   "note": "The stalest source in this fifteen-country salary spine — checked against every other source's own latest year during package 9. table_last_updated is this table's own live 'updated' field, fetched fresh each run, not a hardcoded date."
   }
  }
 }

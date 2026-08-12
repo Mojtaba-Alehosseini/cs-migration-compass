@@ -1,6 +1,6 @@
 {
  "source_id": "salary_es",
- "generated_at": "2026-08-11T22:39:10+00:00",
+ "generated_at": "2026-08-12T15:02:49+00:00",
  "meta": {
   "occupation_family": "CNO-11 (Clasificacion Nacional de Ocupaciones 2011)",
   "primary_code": "cno11:27",
@@ -9,7 +9,7 @@
   "unit": "EUR per year, gross salary, national total, both sexes (dispersion table); average only for the age/tenure context, broader occupation category",
   "confidence": "official",
   "level": "country (Spain)",
-  "vintage_note": "Table 70672 (dispersion) is 2018-vintage, NOT 2022 as this package's work order assumed — checked live: every series in the table, not just these two, returns no data for an explicit 2022 query. See module docstring.",
+  "vintage_note": "Table 70672 (dispersion) is 2018-vintage, NOT 2022 as this package's work order assumed — checked live: every series in the table, not just these two, returns no data for an explicit 2022 query. See module docstring. national_reference (table 28186, a different survey) reaches 2024 — added in package 9 specifically to give a currently-updated Spain reference point alongside the stale IT-specific figures.",
   "crosswalk_hazard": "'Information technology professionals' is INE's own English label for a CNO-11 subgroup, not a code this API exposes numerically — data/occupations.json's mapping note must record that the correspondence rests on label text and INE's classification documentation, not a code-to-code lookup the way SE/UK/CA/US's mappings do. The age and tenure crosses do NOT reach this subgroup at all — they stop at CNO-11 major group 2, 'Scientific and intellectual technicians and professionals', which is not an ICT occupation family (it bundles medicine, law, engineering, teaching and science with IT). Do not treat broader_category_context as an IT-specific age or tenure gradient.",
   "why_it_matters": "One of nine countries with genuine occupation-level percentile wage data, and the only source with both a P10-P90 percentile spread AND a (broad-category) tenure cross — the only official occupation x tenure cross in this project."
  },
@@ -62,6 +62,31 @@
     "30 and above. Average gross salary.": 46937.42
    },
    "tenure_year": 2018
+  },
+  "national_reference": {
+   "label": "All occupations. Both genders. Average gross salary. National Total. Base data.",
+   "scope": "ALL occupations, both sexes — NOT IT-specific at any depth. Added for currency: the EES dispersion table above (70672) is 2018-vintage; this EAES annual series reaches 2024. Use only as a general economy-wide reference point.",
+   "mean_eur_year": 29540.26,
+   "year": 2024,
+   "history_eur_year": {
+    "2024": 29540.26,
+    "2023": 28049.94,
+    "2022": 26948.87,
+    "2021": 25896.82,
+    "2020": 25165.51,
+    "2019": 24395.98,
+    "2018": 24009.12,
+    "2017": 23646.5,
+    "2016": 23156.34,
+    "2015": 23106.3,
+    "2014": 22858.17,
+    "2013": 22697.86,
+    "2012": 22726.44,
+    "2011": 22899.35,
+    "2010": 22790.2,
+    "2009": 22511.47,
+    "2008": 21883.42
+   }
   }
  }
 }

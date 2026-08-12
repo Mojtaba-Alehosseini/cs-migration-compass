@@ -1,6 +1,6 @@
 {
  "source_id": "salary_fi",
- "generated_at": "2026-08-12T00:46:23+00:00",
+ "generated_at": "2026-08-12T15:01:59+00:00",
  "meta": {
   "occupation_family": "AL2010 group 251 — Software and applications developers and analysts",
   "occupation_codes": {
@@ -12,15 +12,15 @@
   },
   "primary_code": "2512",
   "classification": "AL2010 / Classification of Occupations 2010 (Finland's national adaptation of ISCO-08)",
-  "unit": "EUR per month, FULL-TIME wage and salary earners only, all sectors, both sexes. Scoped to full-time at the source — the other Nordic sources in this package are not.",
+  "unit": "EUR per month, FULL-TIME wage and salary earners only, private sector (S11_S12_S15 — non-financial/financial/insurance corporations and NPISH), both sexes. Scoped to full-time at the source — the other Nordic sources in this package are not. Two parallel bases: total_* (total earnings) and regular_* (earnings for regular working hours) — see module docstring, not a subtraction this pipeline computed.",
   "confidence": "official",
-  "level": "country (Finland, all sectors combined)",
+  "level": "country (Finland, private sector)",
   "years": [
    "2024"
   ],
   "history_caveat": "This table (StatFin/pra/15au) exposes a single reference year (2024) via the live API; earlier years live in the StatFin_Passiivi archive under separate, per-year table IDs and were not pulled into this harvester — a single current year is what the work order accepted as sufficient for this source.",
   "crosswalk_hazard": "Checked against ISCO-08 4-digit definitions in data/occupations.json (Tier 4): all five AL2010 251x codes map to their matching isco08:251x at 'high' confidence, verified directly against this table's own live occupation labels (which include the numeric prefix, e.g. '2511 Systems analysts' — national_title in occupations.json must be copied verbatim including that prefix).",
-  "why_it_matters": "One of nine countries with genuine occupation-level percentile-family wage data (N, mean, P10, median, P90)."
+  "why_it_matters": "One of nine countries with genuine occupation-level percentile-family wage data (N, mean, P10, median, P90), and — uniquely in this spine — one that publishes both a total-earnings and a regular-hours-earnings basis natively, needing no component subtracted to get a 'regular pay' figure."
  },
  "data": {
   "occupations": {
@@ -28,55 +28,75 @@
     "title": "2511 Systems analysts",
     "year": "2024",
     "dispersion": {
-     "n_employees": 20722,
-     "mean_eur_month": 5750,
-     "p10_eur_month": 4070,
-     "median_eur_month": 5596,
-     "p90_eur_month": 7540
+     "n_employees": 17945,
+     "total_mean_eur_month": 5833,
+     "total_p10_eur_month": 4099,
+     "total_median_eur_month": 5698,
+     "total_p90_eur_month": 7667,
+     "regular_mean_eur_month": 5762,
+     "regular_p10_eur_month": 4070,
+     "regular_median_eur_month": 5635,
+     "regular_p90_eur_month": 7520
     }
    },
    "2512": {
     "title": "2512 Software developers",
     "year": "2024",
     "dispersion": {
-     "n_employees": 30334,
-     "mean_eur_month": 5211,
-     "p10_eur_month": 3485,
-     "median_eur_month": 5020,
-     "p90_eur_month": 7108
+     "n_employees": 27074,
+     "total_mean_eur_month": 5316,
+     "total_p10_eur_month": 3521,
+     "total_median_eur_month": 5138,
+     "total_p90_eur_month": 7231,
+     "regular_mean_eur_month": 5253,
+     "regular_p10_eur_month": 3519,
+     "regular_median_eur_month": 5100,
+     "regular_p90_eur_month": 7092
     }
    },
    "2513": {
     "title": "2513 Web and multimedia developers",
     "year": "2024",
     "dispersion": {
-     "n_employees": 1597,
-     "mean_eur_month": 5239,
-     "p10_eur_month": 3200,
-     "median_eur_month": 5000,
-     "p90_eur_month": 7400
+     "n_employees": 1589,
+     "total_mean_eur_month": 5242,
+     "total_p10_eur_month": 3200,
+     "total_median_eur_month": 5000,
+     "total_p90_eur_month": 7400,
+     "regular_mean_eur_month": 5211,
+     "regular_p10_eur_month": 3200,
+     "regular_median_eur_month": 5000,
+     "regular_p90_eur_month": 7320
     }
    },
    "2514": {
     "title": "2514 Applications programmers",
     "year": "2024",
     "dispersion": {
-     "n_employees": 2244,
-     "mean_eur_month": 4730,
-     "p10_eur_month": 3055,
-     "median_eur_month": 4571,
-     "p90_eur_month": 6526
+     "n_employees": 2233,
+     "total_mean_eur_month": 4736,
+     "total_p10_eur_month": 3064,
+     "total_median_eur_month": 4577,
+     "total_p90_eur_month": 6540,
+     "regular_mean_eur_month": 4689,
+     "regular_p10_eur_month": 3058,
+     "regular_median_eur_month": 4555,
+     "regular_p90_eur_month": 6492
     }
    },
    "2519": {
     "title": "2519 Software and applications developers and analysts not elsewhere classified",
     "year": "2024",
     "dispersion": {
-     "n_employees": 6128,
-     "mean_eur_month": 5533,
-     "p10_eur_month": 3501,
-     "median_eur_month": 5200,
-     "p90_eur_month": 7990
+     "n_employees": 5979,
+     "total_mean_eur_month": 5557,
+     "total_p10_eur_month": 3503,
+     "total_median_eur_month": 5220,
+     "total_p90_eur_month": 8000,
+     "regular_mean_eur_month": 5497,
+     "regular_p10_eur_month": 3500,
+     "regular_median_eur_month": 5185,
+     "regular_p90_eur_month": 7920
     }
    }
   }

@@ -11,6 +11,30 @@ the source (its own title says "full-time wage and salary earners"), unlike
 Sweden/Denmark/Norway/UK/Canada/US which are not restricted to full-time. That
 scope difference is real and is recorded in meta rather than smoothed over.
 
+SECTOR (package 9 fix): the table's sector dimension is not binary. Verified
+live against the table's own dimension metadata: `S0` (this package's
+previous choice, "Total") is the WHOLE economy, including all three
+government tiers (`S13111` central, `S13131` local, `S13132` wellbeing
+services county); `S11_S12_S15` is specifically "Non-financial corporations,
+financial and insurance corporations and non-profit institutions serving
+households" — the actual private sector. Switched to `S11_S12_S15` this
+package for cross-country comparability with sources that are private-sector
+by construction (or close to it), and because package 9's own work order
+named this code explicitly, having checked it against the table's live
+metadata rather than assuming a binary public/private split existed.
+
+TWO EARNINGS BASES, both published by this same table (package 9 finding):
+`koko_psaaja_kans_*` ("total earnings") and `koko_psaaja_sans_*` ("earnings
+for regular working hours") are separate, parallel content codes — not a
+derived difference this pipeline computes. `sans` excludes whatever `kans`
+includes beyond regular-hours pay (overtime, at minimum); Statistics
+Finland's own methodology page is the source for exactly what separates
+them, not assumed here. Both are now fetched, under separate never-blended
+field names, matching this package's regular_pay vs total_earnings design
+(see scripts/normalise.py) — Finland is one of the few sources that
+publishes this distinction natively rather than needing a component
+subtracted out.
+
 No age or tenure cross exists for Finland in this package: the "pra" table
 family's occupation-bearing tables (15au/15ax/15ay/15az) do not cross with
 age, and 15aw/15av (which do cross with age) do not carry an occupation
@@ -34,12 +58,18 @@ TABLE_URL = "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/pra/15au.px"
 # AL2010 "251 Software and applications developers and analysts".
 AL2010_CODES = ["2511", "2512", "2513", "2514", "2519"]
 
+SECTOR = "S11_S12_S15"  # private sector — see docstring; was "S0" (whole economy) before package 9
+
 CONTENTS = {
     "koko_psaaja_lkm": "n_employees",
-    "koko_psaaja_kans_ka": "mean_eur_month",
-    "koko_psaaja_kans_p10": "p10_eur_month",
-    "koko_psaaja_kans_med": "median_eur_month",
-    "koko_psaaja_kans_p90": "p90_eur_month",
+    "koko_psaaja_kans_ka": "total_mean_eur_month",
+    "koko_psaaja_kans_p10": "total_p10_eur_month",
+    "koko_psaaja_kans_med": "total_median_eur_month",
+    "koko_psaaja_kans_p90": "total_p90_eur_month",
+    "koko_psaaja_sans_ka": "regular_mean_eur_month",
+    "koko_psaaja_sans_p10": "regular_p10_eur_month",
+    "koko_psaaja_sans_med": "regular_median_eur_month",
+    "koko_psaaja_sans_p90": "regular_p90_eur_month",
 }
 
 
@@ -49,7 +79,7 @@ def run() -> None:
     body = {
         "query": [
             {"code": "timeperiod_y", "selection": {"filter": "item", "values": ["2024"]}},
-            {"code": "sektoriluokitus_7_20230101", "selection": {"filter": "item", "values": ["S0"]}},
+            {"code": "sektoriluokitus_7_20230101", "selection": {"filter": "item", "values": [SECTOR]}},
             {"code": "ammatti_19_20180101", "selection": {"filter": "item", "values": AL2010_CODES}},
             {"code": "sukupuoli_9_20180101", "selection": {"filter": "item", "values": ["SSS"]}},
             {"code": "contentscode", "selection": {"filter": "item", "values": list(CONTENTS)}},
@@ -96,10 +126,13 @@ def run() -> None:
             "primary_code": "2512",
             "classification": "AL2010 / Classification of Occupations 2010 (Finland's national "
                 "adaptation of ISCO-08)",
-            "unit": "EUR per month, FULL-TIME wage and salary earners only, all sectors, both sexes. "
-                "Scoped to full-time at the source — the other Nordic sources in this package are not.",
+            "unit": "EUR per month, FULL-TIME wage and salary earners only, private sector "
+                "(S11_S12_S15 — non-financial/financial/insurance corporations and NPISH), both sexes. "
+                "Scoped to full-time at the source — the other Nordic sources in this package are not. "
+                "Two parallel bases: total_* (total earnings) and regular_* (earnings for regular "
+                "working hours) — see module docstring, not a subtraction this pipeline computed.",
             "confidence": "official",
-            "level": "country (Finland, all sectors combined)",
+            "level": "country (Finland, private sector)",
             "years": ["2024"],
             "history_caveat": "This table (StatFin/pra/15au) exposes a single reference year (2024) "
                 "via the live API; earlier years live in the StatFin_Passiivi archive under separate, "
@@ -113,7 +146,9 @@ def run() -> None:
                 "must be copied verbatim including that prefix)."
             ),
             "why_it_matters": "One of nine countries with genuine occupation-level percentile-family "
-                "wage data (N, mean, P10, median, P90).",
+                "wage data (N, mean, P10, median, P90), and — uniquely in this spine — one that "
+                "publishes both a total-earnings and a regular-hours-earnings basis natively, needing "
+                "no component subtracted to get a 'regular pay' figure.",
         },
     )
     record_provenance(
@@ -127,18 +162,22 @@ def run() -> None:
                         "redistribute the raw source. Only the derived data/processed/salary_fi.json "
                         "is committed.",
         transforms=[
-            f"Queried AL2010 codes {', '.join(AL2010_CODES)} (group 251) x all sectors x both sexes x "
-            "2024 (the table's sole exposed year) from StatFin/pra/15au via POST, format json-stat2.",
-            "Kept N, mean, P10, median, P90 (each for TOTAL earnings, not the narrower 'regular hours' "
-            "variant the table also publishes) verbatim.",
+            f"Queried AL2010 codes {', '.join(AL2010_CODES)} (group 251) x sector {SECTOR} (private "
+            "sector — package 9 fix, was 'S0'/whole economy) x both sexes x 2024 (the table's sole "
+            "exposed year) from StatFin/pra/15au via POST, format json-stat2.",
+            "Kept N, and BOTH earnings bases the table publishes — total_* (koko_psaaja_kans_*) and "
+            "regular_* (koko_psaaja_sans_*, 'earnings for regular working hours') — under separate, "
+            "never-blended field names. Package 8 fetched total_* only; package 9 added regular_*.",
             "Occupation titles are the API's own labels, not hand-typed.",
         ],
         output=f"data/processed/{SOURCE_ID}.json",
         rows=rows,
-        coverage=f"{len(AL2010_CODES)} AL2010 occupations, single year (2024), Finland only, "
-                 "full-time earners only",
+        coverage=f"{len(AL2010_CODES)} AL2010 occupations, single year (2024), Finland private sector "
+                 "only, full-time earners only",
         notes="Full-time-only scope is the table's own restriction, not a filter this pipeline chose — "
-              "see meta.unit.",
+              "see meta.unit. Sector switched from 'S0' (whole economy) to 'S11_S12_S15' (private "
+              "sector) in package 9, per that package's work order, checked against the table's own "
+              "live sector-dimension metadata.",
     )
 
 

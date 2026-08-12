@@ -1,5 +1,14 @@
 """CSO (Central Statistics Office Ireland) PxStat API -> Irish earnings, 1-digit SOC only.
 
+PACKAGE 9: SES06 carries only two years, 2018 and 2022, and the table's own
+`updated` timestamp (fetched fresh, not hardcoded) confirms the last actual
+refresh was 2023-10-18 — over two years before this package's own run.
+Checked against every other source in this fifteen-country spine: Ireland is
+the stalest. `data.staleness` below records this explicitly (table's own
+`updated` date, latest data year, and the stale-relative-to-others claim) so
+a future UI (package 9 Tier 6, or later) can render a staleness warning from
+sourced data rather than a hardcoded string that would itself go stale.
+
 Table SES06. Confirmed directly against the live table's own dimension
 labels, not assumed from the work order's summary: the occupation dimension
 (C03288V03961) has ELEVEN values — "All occupational groups" ("-"), the
@@ -55,6 +64,7 @@ def run() -> None:
 
     occ_label = doc["dimension"]["C03288V03961"]["category"]["label"][PROFESSIONAL_CODE]
     year_labels = doc["dimension"]["TLIST(A1)"]["category"]["label"]
+    table_updated = doc.get("updated")
 
     by_year: dict[str, dict] = {}
     rows = 0
@@ -66,6 +76,7 @@ def run() -> None:
         by_year.setdefault(year, {})[field] = row["_value"]
         rows += 1
 
+    years = sorted(by_year)
     out = {
         "occupations": {
             "soc1:2": {
@@ -75,11 +86,18 @@ def run() -> None:
                 "by_year": by_year,
             },
         },
+        "staleness": {
+            "table_last_updated": table_updated,
+            "latest_data_year": years[-1] if years else None,
+            "note": "The stalest source in this fifteen-country salary spine — checked against every "
+                    "other source's own latest year during package 9. table_last_updated is this "
+                    "table's own live 'updated' field, fetched fresh each run, not a hardcoded date.",
+        },
     }
 
-    years = sorted(by_year)
     log(f"    {rows} cells across {len(years)} years: {years}")
     log(f"    '{occ_label}' {years[-1] if years else '?'}: {by_year.get(years[-1]) if years else None}")
+    log(f"    table last updated: {table_updated}")
 
     write_processed(
         SOURCE_ID,
@@ -107,6 +125,8 @@ def run() -> None:
             "why_it_matters": "Ireland's actual best available official occupation-level earnings "
                 "figure. The honest answer for this country is '1-digit, not IT-specific', which is "
                 "what this file records rather than omitting the country entirely.",
+            "staleness_flag": f"table last updated {table_updated}, no data newer than {years[-1] if years else '?'}"
+                " — package 9 confirmed this is the stalest source in the fifteen-country spine.",
         },
     )
     record_provenance(

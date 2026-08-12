@@ -45,6 +45,49 @@ Three things this pipeline has to get right that a naive read would miss:
    work order's research and this harvest (DST's own `updated` timestamp on
    this table postdates typical work-order research windows) rather than a
    wrong filter. Recorded here rather than silently matched.
+
+PACKAGE 9 ADDITIONS. Two LØNMÅL codes package 8 did not fetch, added for
+package 9's pay-composition work:
+
+  PENS_dkk_hour    "Pension including ATP in DKK per hour worked" — an
+                   employer-plus-employee pension contribution component.
+                   Verified live (2512, 2024): PENS=59.35, alongside
+                   FORINKL=489.26, BASIS=403.50, UREGEL=9.06 — consistent
+                   with PENS being one of several components that sum
+                   toward FORINKL's total (403.50+59.35+9.06=471.91,
+                   the ~17.35 DKK/hr gap to 489.26 plausibly covered by
+                   the other, smaller, not-fetched components: overtime,
+                   sick pay, nuisance bonus, fringe benefits, holiday
+                   allowances). Fetched specifically so scripts/normalise.py
+                   can subtract a real, sourced employer-pension figure from
+                   FORINKL rather than needing DST to publish that
+                   subtraction directly — this table lets it be sourced.
+  UREGEL_dkk_hour  "Irregular payments in DKK per hour worked" — fetched for
+                   the same reason, alongside PENS.
+
+MDRSNIT ("STANDARDIZED MONTHLY EARNINGS", Danish "standardberegnet
+månedsfortjeneste") is DST's own headline MONTHLY figure — a section header
+in the same LØNMÅL variable, not a simple multiple of FORINKL. Verified live
+(2512, 2024): MDRSNIT=65,504.17 DKK/month, while FORINKL x DK's own standard
+160.33 h/month (1,924 h/yr / 12, per this package's own Tier 5 hours
+convention) gives ≈78,451 — NOT close to MDRSNIT. BASIS (the "basic
+earnings" component alone) x the same 160.33 gives ≈64,693 — much closer
+(~1.2% gap). DST's own documentation for exactly what MDRSNIT includes could
+not be retrieved this session (the published methodology is a PDF, not a
+web page a fetch could parse) — this pipeline does NOT claim to know
+MDRSNIT's precise composition, only its sourced value, stored separately
+from the hourly dispersion data and explicitly flagged as unconfirmed
+composition rather than guessed at. NOT used as this pipeline's primary DK
+figure — FORINKL-derived dispersion remains that — but available as DST's
+own monthly-native reference point.
+
+An earlier package-8 predecessor work order named "smalfortjeneste" and
+"bredfortjeneste" as Danish LONS20 concepts. Checked: neither term appears
+anywhere in this table's own live dimension metadata (fetched via DST's
+`/v1/tableinfo/LONS20` endpoint) — smalfortjeneste was retired with the 2010
+statistic and bredfortjeneste is not a Lønstruktur term at all. Confirmed
+this file never used either term (grepped this repo's own history); nothing
+to fix here beyond recording that the check was made.
 """
 from __future__ import annotations
 
@@ -75,7 +118,13 @@ CONTENTS = {
     "MEDIAN": "median_dkk_hour",    # "Median, earnings in DKK per hour worked"
     "OVRE": "p75_dkk_hour",         # "upper quartile, earnings in DKK per hour worked"
     "ANTAL": "n_employees",         # "Number of fulltime employees in the earnings statistics"
+    "PENS": "employer_pension_dkk_hour",   # "Pension including ATP in DKK per hour worked" — package 9
+    "UREGEL": "irregular_dkk_hour",        # "Irregular payments in DKK per hour worked" — package 9
 }
+
+# Fetched in the same query as CONTENTS but NOT hourly and NOT part of
+# dispersion_by_year — see module docstring's MDRSNIT section.
+MONTHLY_CODE = "MDRSNIT"
 
 
 def _query() -> dict:
@@ -88,7 +137,7 @@ def _query() -> dict:
             {"code": "SEKTOR", "values": ["1000"]},       # All sectors
             {"code": "AFLOEN", "values": ["TIFA"]},        # All forms of pay
             {"code": "LONGRP", "values": ["MED"]},         # Non-managerial employees — see docstring
-            {"code": "LØNMÅL", "values": list(CONTENTS)},
+            {"code": "LØNMÅL", "values": [*CONTENTS, MONTHLY_CODE]},
             {"code": "KØN", "values": ["MOK"]},       # Men and women, total
             {"code": "Tid", "values": YEARS},
         ],
@@ -120,24 +169,32 @@ def run() -> None:
     occ_titles = ds["dimension"]["ARBF"]["category"]["label"]
 
     dispersion: dict[str, dict[str, dict]] = {c: {} for c in DISCO_CODES}
+    monthly: dict[str, dict[str, float]] = {c: {} for c in DISCO_CODES}
     rows = 0
     for row in jsonstat_rows(ds):
-        code, year = row["ARBF"], row["Tid"]
-        field = CONTENTS[row["LØNMÅL"]]
-        dispersion.setdefault(code, {}).setdefault(year, {})[field] = row["_value"]
+        code, year, lm = row["ARBF"], row["Tid"], row["LØNMÅL"]
+        if lm == MONTHLY_CODE:
+            monthly.setdefault(code, {})[year] = row["_value"]
+        else:
+            dispersion.setdefault(code, {}).setdefault(year, {})[CONTENTS[lm]] = row["_value"]
         rows += 1
 
     out = {
         "occupations": {
-            code: {"title": occ_titles.get(code, code), "dispersion_by_year": dispersion.get(code, {})}
+            code: {
+                "title": occ_titles.get(code, code),
+                "dispersion_by_year": dispersion.get(code, {}),
+                "standardized_monthly_dkk_by_year": monthly.get(code, {}),
+            }
             for code in DISCO_CODES
         },
     }
 
     latest = YEARS[-1]
     t2512 = dispersion.get("2512", {}).get(latest, {})
+    m2512 = monthly.get("2512", {}).get(latest)
     log(f"    {rows} dispersion cells across {len(DISCO_CODES)} occupations x {len(YEARS)} years")
-    log(f"    2512 ({occ_titles.get('2512')}) {latest}: {t2512}")
+    log(f"    2512 ({occ_titles.get('2512')}) {latest}: {t2512}, MDRSNIT={m2512}")
 
     write_processed(
         SOURCE_ID,
@@ -150,7 +207,11 @@ def run() -> None:
             "unit": "DKK per hour worked, full-time non-managerial employees (ANTAL's own label — "
                 "'Number of fulltime employees'), all sectors, all forms of pay, both sexes. "
                 "mean_dkk_hour is this pipeline's inference from FORINKL, not DST's own stated 'mean' "
-                "— see module docstring point 2.",
+                "— see module docstring point 2. employer_pension_dkk_hour and irregular_dkk_hour "
+                "(package 9) are real published components of the same cell, sourced for "
+                "scripts/normalise.py's PENS-subtraction demonstration — not inferred or estimated. "
+                "standardized_monthly_dkk_by_year (package 9) is DST's own MDRSNIT headline monthly "
+                "figure; its precise composition is not confirmed — see module docstring.",
             "filter_note": (
                 "LONGRP=MED (non-managerial employees), AFLOEN=TIFA (all forms of pay), SEKTOR=1000 "
                 "(all sectors). See module docstring for why MED was chosen over the total-employee-group "
@@ -187,6 +248,10 @@ def run() -> None:
             "POST, format JSONSTAT.",
             "Kept mean-equivalent, lower quartile, median, upper quartile (each _dkk_hour) and employee "
             "count verbatim.",
+            "Package 9: also kept PENS (employer_pension_dkk_hour) and UREGEL (irregular_dkk_hour) — "
+            "real published components of the same cell — and MDRSNIT (standardized_monthly_dkk_by_year "
+            "per occupation/year), DST's own monthly headline figure, stored separately from the hourly "
+            "dispersion data since it is not hourly and its exact composition is not confirmed.",
             "Occupation titles are the API's own labels, not hand-typed.",
         ],
         output=f"data/processed/{SOURCE_ID}.json",
