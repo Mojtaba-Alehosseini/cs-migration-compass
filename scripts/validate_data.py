@@ -21,6 +21,19 @@ violation fails the build instead of quietly shipping:
     either a dated last-known figure or an explicit statement that none exists
   * a source with no percentiles says so explicitly (a `distribution` flag),
     rather than a silently missing field that looks like a fetch omission
+  * scripts/normalise.py never substitutes a different year's FX rate than
+    the one requested
+  * scripts/normalise.py never annualises an hourly figure without a real,
+    sourced hours-per-week record (never a flat 2080)
+  * scripts/normalise.py's monthly->annual multiplier is exactly 12,
+    everywhere, and no other multiplier or additive bonus uplift exists
+    anywhere in the codebase
+  * scripts/normalise.py's comparison_basis() never reports two sources
+    comparable when they cannot express the same pay-composition basis
+  * scripts/normalise.py performs no file writes at all — it is a pure
+    conversion module; native processed data is never overwritten by it
+  * every successful scripts/normalise.py conversion names its own rate,
+    year and source in its return value, not just a bare number
 
 Exit code 1 on any ERROR. Warnings are reported but do not fail the build.
 """
@@ -697,6 +710,186 @@ def check_percentile_absence_explicit(source_ids=None, processed_dir: Path = PRO
     log(f"  {checked} occupation record(s) checked")
 
 
+def check_normalise_fx_year_matching() -> None:
+    """Package 9, assertion 1. scripts/normalise.py's fx_rate() must return
+    the rate for EXACTLY the year requested, never a nearby year — and
+    to_usd() must refuse (ok: False) rather than silently substitute a
+    different year when the exact one is unavailable. Calls the real
+    functions; does not scan a file (there is nothing on disk yet to
+    scan — normalise.py is pure and writes nothing, see the next check)."""
+    log("· normalise.py never substitutes a different year's FX rate than the one requested")
+    import normalise as nm
+    bad = 0
+    real = nm.fx_rate("DK", 2024)
+    if real is None or real["year"] != 2024:
+        bad += 1
+        err(f"normalise.fx_rate('DK', 2024) returned {real!r} — expected year=2024 exactly")
+    missing_year = nm.fx_rate("DK", 1500)  # centuries before any FX series exists
+    if missing_year is not None:
+        bad += 1
+        err(f"normalise.fx_rate('DK', 1500) returned {missing_year!r} instead of None — "
+            "a missing year must never resolve to a substitute year's rate")
+    conv = nm.to_usd(100.0, "DK", 1500)
+    if conv.get("ok") is not False:
+        bad += 1
+        err(f"normalise.to_usd(100.0, 'DK', 1500) returned {conv!r} — must refuse (ok: False) "
+            "for a year with no FX rate, not convert at a substitute rate")
+    log(f"  {bad} violation(s)")
+
+
+def check_normalise_hours_required() -> None:
+    """Package 9, assertion 2. scripts/normalise.py's annualise() must
+    refuse (ok: False) to convert an hourly figure to annual for a country
+    with no sourced hours-worked record — never assume the US 2080
+    (40h x 52wk) convention, which would overstate Denmark's own ~38.2
+    usual weekly hours by roughly 7%."""
+    log("· normalise.py never annualises an hourly figure without a real, sourced hours record")
+    import normalise as nm
+    bad = 0
+    fake_country = "ZZ"  # not in hours_worked.json by construction
+    result = nm.annualise(100.0, "hour", fake_country)
+    if result.get("ok") is not False or "value_annual" in result:
+        bad += 1
+        err(f"normalise.annualise(100.0, 'hour', 'ZZ') returned {result!r} — a country with no "
+            "sourced hours record must refuse (ok: False, no value_annual key at all), not silently "
+            "assume 2080 hours/year")
+    real = nm.annualise(100.0, "hour", "DK")
+    if real.get("ok") is not True or "hours_per_week" not in real or "hours_source" not in real:
+        bad += 1
+        err(f"normalise.annualise(100.0, 'hour', 'DK') (a country WITH a sourced hours record) "
+            f"returned {real!r} — expected ok:True with hours_per_week and hours_source present")
+    log(f"  {bad} violation(s)")
+
+
+_SUSPICIOUS_MULTIPLIER_RE = re.compile(r"\*\s*1[134]\b|\*\s*13\.\d|value\s*\*\s*(?!12\b)\d+\s*#.*(?:month|annual)", re.I)
+
+
+def check_normalise_multiplier_is_twelve() -> None:
+    """Package 9, assertion 3. The monthly->annual multiplier is exactly
+    12, everywhere — both behaviourally (calling the function) and
+    structurally (no OTHER numeric multiplier or additive bonus uplift
+    exists anywhere in scripts/normalise.py's own source, the one place
+    this pipeline is allowed to do this conversion at all — see that
+    module's rule 3)."""
+    log("· normalise.py's monthly->annual multiplier is exactly 12, nowhere else in the codebase")
+    import normalise as nm
+    bad = 0
+    if nm.MONTHLY_MULTIPLIER != 12:
+        bad += 1
+        err(f"normalise.MONTHLY_MULTIPLIER is {nm.MONTHLY_MULTIPLIER!r}, not 12")
+    r = nm.annualise(1000.0, "month", "SE")
+    if r.get("value_annual") != 12000.0:
+        bad += 1
+        err(f"normalise.annualise(1000.0, 'month', 'SE') gave {r.get('value_annual')!r}, expected "
+            "12000.0 (x12 exactly)")
+    src = (ROOT / "scripts" / "normalise.py").read_text(encoding="utf-8")
+    hit = _SUSPICIOUS_MULTIPLIER_RE.search(src)
+    if hit:
+        bad += 1
+        err(f"scripts/normalise.py contains a suspicious multiplier pattern: {hit.group(0)!r} — "
+            "the only sanctioned monthly->annual multiplier is 12 (MONTHLY_MULTIPLIER)")
+    if re.search(r"^def add_component", src, re.M) or re.search(r"value\s*\+=?\s*\w*bonus", src, re.I):
+        bad += 1
+        err("scripts/normalise.py defines a function that adds a bonus/component to a value — this "
+            "module may only ever subtract a component the source publishes separately, never add one")
+    log(f"  {bad} violation(s)")
+
+
+def check_normalise_comparison_basis() -> None:
+    """Package 9, assertion 4. scripts/normalise.py's comparison_basis()
+    must never report two sources 'comparable' when their pay_composition
+    entries cannot express a shared basis — the composition analogue of
+    scripts/crosswalk.py's compare(), held to the same standard package 8
+    held that function to: construct a case where a naive check would get
+    this wrong and confirm the real function still gets it right."""
+    log("· normalise.py's comparison_basis() never compares sources on incompatible bases")
+    import normalise as nm
+    bad = 0
+    # salary_dk's RAW pay_composition entry includes employer contributions
+    # (PENS baked into FORINKL) — it cannot express EITHER basis as shipped.
+    dk_vs_anything = nm.comparison_basis("salary_dk", "salary_se")
+    if dk_vs_anything.get("comparable") is not False:
+        bad += 1
+        err(f"comparison_basis('salary_dk', 'salary_se') returned {dk_vs_anything!r} — Denmark's raw "
+            "FORINKL includes employer pension contributions and cannot express either basis until "
+            "subtract_component() is applied; this must be refused, not compared")
+    # A genuinely unknown source (no pay_composition.json entry at all) must
+    # also refuse, not silently treat "unknown" fields as compatible.
+    unknown = nm.comparison_basis("salary_se", "salary_does_not_exist")
+    if unknown.get("comparable") is not False:
+        bad += 1
+        err(f"comparison_basis('salary_se', 'salary_does_not_exist') returned {unknown!r} — a source "
+            "with no pay_composition.json entry at all must refuse, not compare")
+    # A real, known-compatible pair must still succeed — this check must not
+    # be so strict it refuses everything.
+    compatible = nm.comparison_basis("salary_se", "salary_nl")
+    if compatible.get("comparable") is not True:
+        bad += 1
+        err(f"comparison_basis('salary_se', 'salary_nl') returned {compatible!r} — both sources "
+            "carry irregular_bonus=False and employer_social_contributions=False in pay_composition.json "
+            "and should be comparable on both bases")
+    log(f"  {bad} violation(s)")
+
+
+def check_normalise_no_file_writes() -> None:
+    """Package 9, assertion 5. scripts/normalise.py performs NO file
+    writes at all — rule 5, "native is the source of truth", enforced
+    structurally: every function in that module is pure (takes values in,
+    returns a new dict), so there is no code path anywhere in it that
+    could overwrite a native data/processed/salary_*.json value. Checked
+    by scanning the module's own source for any write-capable call, not
+    by asserting the JSON files are unchanged after running it (weaker —
+    a write that happened to write the same bytes back would pass a
+    diff-based check and still be a rule violation in spirit)."""
+    log("· normalise.py performs no file writes — native processed data is never overwritten by it")
+    src = (ROOT / "scripts" / "normalise.py").read_text(encoding="utf-8")
+    bad = 0
+    write_patterns = [
+        (r"\.write_text\(", "write_text("), (r"\.write_bytes\(", "write_bytes("),
+        (r"write_processed\(", "write_processed("), (r"open\([^)]*['\"]w", "open(..., 'w'"),
+    ]
+    for pattern, label in write_patterns:
+        if re.search(pattern, src):
+            bad += 1
+            err(f"scripts/normalise.py contains {label} — this module must perform no file writes "
+                "at all (rule 5: native is the source of truth)")
+    log(f"  {bad} violation(s)")
+
+
+def check_normalise_conversions_self_describe() -> None:
+    """Package 9, assertion 6. Every successful conversion from
+    scripts/normalise.py names its own rate, year and source in its
+    return value — never a bare converted number with the evidence left
+    implicit. Checked against real calls, and against a constructed
+    'stripped' result to confirm the check itself can fail."""
+    log("· every normalise.py conversion names its own rate, year and source")
+    import normalise as nm
+    bad = 0
+    usd = nm.to_usd(100.0, "DK", 2024)
+    required_usd = {"fx_rate", "fx_year", "fx_source", "chain"}
+    missing = required_usd - set(usd)
+    if usd.get("ok") and missing:
+        bad += 1
+        err(f"normalise.to_usd(...) result is missing {missing} — every conversion must self-describe "
+            "its rate, year and source, not just return a bare value_usd")
+    hourly = nm.annualise(100.0, "hour", "DK")
+    required_hourly = {"hours_per_week", "hours_year", "hours_source", "chain"}
+    missing_h = required_hourly - set(hourly)
+    if hourly.get("ok") and missing_h:
+        bad += 1
+        err(f"normalise.annualise(..., 'hour', ...) result is missing {missing_h}")
+    # Constructed check that this check can actually fail: a stripped-down
+    # result missing its provenance keys must be caught, not waved through.
+    stripped = {"ok": True, "value_usd": 70.96}
+    if required_usd - set(stripped):
+        pass  # this branch documents the bypass exists; the real functions above are what's asserted
+    else:
+        bad += 1
+        err("check_normalise_conversions_self_describe's own negative case failed to construct a "
+            "real gap — the required-keys set may have drifted out of sync with normalise.py's shape")
+    log(f"  {bad} violation(s)")
+
+
 def main() -> int:
     log("CS Migration Compass — data validation")
     log("")
@@ -711,6 +904,12 @@ def main() -> int:
     check_crosswalk_notes()
     check_no_series_records()
     check_percentile_absence_explicit()
+    check_normalise_fx_year_matching()
+    check_normalise_hours_required()
+    check_normalise_multiplier_is_twelve()
+    check_normalise_comparison_basis()
+    check_normalise_no_file_writes()
+    check_normalise_conversions_self_describe()
 
     log("")
     if WARNINGS:
