@@ -1,6 +1,6 @@
 {
  "source_id": "salary_no",
- "generated_at": "2026-08-12T00:46:05+00:00",
+ "generated_at": "2026-08-12T20:51:30+00:00",
  "meta": {
   "occupation_family": "STYRK-08 group 251 — Software and applications developers and analysts",
   "occupation_codes": {
@@ -14,7 +14,7 @@
   "classification": "STYRK-08 (Norway's national adaptation of ISCO-08)",
   "unit": "NOK per month, all sectors, all employees, both sexes",
   "measures": {
-   "dispersion_by_year": "mean, median, P25/P75 and employee count (N) — table 11418",
+   "dispersion_by_year": "mean, median, P25/P75 and employee count (N), both Manedslonn (total monthly earnings — bare field names) and AvtaltManedslonn (basic salary before bonus/overtime/irregular allowances — avtalt_-prefixed field names, package 10 tier 0.3) — table 11418. Both published at the same measuring-method granularity; AvtaltManedslonn is Norway's own regular_pay-basis figure, not a subtraction this pipeline performs — see module docstring.",
    "age_at_quarter": "median and mean monthly salary by 3 age bands (0-39/40-54/55+), latest available quarter (2026K1) — table 11658. Coarser than Sweden's 7 bands, and quarterly rather than annual, but a genuine occupation x age cross."
   },
   "confidence": "official",
@@ -36,38 +36,63 @@
     "dispersion_by_year": {
      "2021": {
       "mean_nok_month": 67530,
+      "avtalt_mean_nok_month": 64090,
       "median_nok_month": 63840,
+      "avtalt_median_nok_month": 62160,
       "p25_nok_month": 53330,
+      "avtalt_p25_nok_month": 52330,
       "p75_nok_month": 76290,
-      "n_employees": 27185
+      "avtalt_p75_nok_month": 73250,
+      "n_employees": 27185,
+      "avtalt_n_employees": 27185
      },
      "2022": {
       "mean_nok_month": 69940,
+      "avtalt_mean_nok_month": 67010,
       "median_nok_month": 66670,
+      "avtalt_median_nok_month": 64710,
       "p25_nok_month": 55810,
+      "avtalt_p25_nok_month": 54650,
       "p75_nok_month": 79540,
-      "n_employees": 29790
+      "avtalt_p75_nok_month": 76440,
+      "n_employees": 29790,
+      "avtalt_n_employees": 29790
      },
      "2023": {
       "mean_nok_month": 73590,
+      "avtalt_mean_nok_month": 70770,
       "median_nok_month": 70290,
+      "avtalt_median_nok_month": 68330,
       "p25_nok_month": 58890,
+      "avtalt_p25_nok_month": 58000,
       "p75_nok_month": 83960,
-      "n_employees": 32001
+      "avtalt_p75_nok_month": 80710,
+      "n_employees": 32001,
+      "avtalt_n_employees": 32001
      },
      "2024": {
       "mean_nok_month": 77040,
+      "avtalt_mean_nok_month": 74070,
       "median_nok_month": 73340,
+      "avtalt_median_nok_month": 71280,
       "p25_nok_month": 61680,
+      "avtalt_p25_nok_month": 60560,
       "p75_nok_month": 87870,
-      "n_employees": 33028
+      "avtalt_p75_nok_month": 84360,
+      "n_employees": 33028,
+      "avtalt_n_employees": 33028
      },
      "2025": {
       "mean_nok_month": 80120,
+      "avtalt_mean_nok_month": 77200,
       "median_nok_month": 76330,
+      "avtalt_median_nok_month": 74580,
       "p25_nok_month": 64230,
+      "avtalt_p25_nok_month": 62950,
       "p75_nok_month": 91390,
-      "n_employees": 33567
+      "avtalt_p75_nok_month": 87880,
+      "n_employees": 33567,
+      "avtalt_n_employees": 33567
      }
     },
     "age_at_quarter": {
@@ -93,38 +118,63 @@
     "dispersion_by_year": {
      "2021": {
       "mean_nok_month": 65100,
+      "avtalt_mean_nok_month": 61970,
       "median_nok_month": 61300,
+      "avtalt_median_nok_month": 59990,
       "p25_nok_month": 50000,
+      "avtalt_p25_nok_month": 50000,
       "p75_nok_month": 75000,
-      "n_employees": 6367
+      "avtalt_p75_nok_month": 72000,
+      "n_employees": 6367,
+      "avtalt_n_employees": 6367
      },
      "2022": {
       "mean_nok_month": 68380,
+      "avtalt_mean_nok_month": 65840,
       "median_nok_month": 65000,
+      "avtalt_median_nok_month": 62950,
       "p25_nok_month": 52920,
+      "avtalt_p25_nok_month": 51860,
       "p75_nok_month": 79170,
-      "n_employees": 7301
+      "avtalt_p75_nok_month": 75830,
+      "n_employees": 7301,
+      "avtalt_n_employees": 7301
      },
      "2023": {
       "mean_nok_month": 72370,
+      "avtalt_mean_nok_month": 69910,
       "median_nok_month": 68800,
+      "avtalt_median_nok_month": 67000,
       "p25_nok_month": 56000,
+      "avtalt_p25_nok_month": 55000,
       "p75_nok_month": 83330,
-      "n_employees": 7641
+      "avtalt_p75_nok_month": 80340,
+      "n_employees": 7641,
+      "avtalt_n_employees": 7641
      },
      "2024": {
       "mean_nok_month": 76180,
+      "avtalt_mean_nok_month": 73640,
       "median_nok_month": 72500,
+      "avtalt_median_nok_month": 70830,
       "p25_nok_month": 59580,
+      "avtalt_p25_nok_month": 58330,
       "p75_nok_month": 87750,
-      "n_employees": 7781
+      "avtalt_p75_nok_month": 84580,
+      "n_employees": 7781,
+      "avtalt_n_employees": 7781
      },
      "2025": {
       "mean_nok_month": 81050,
+      "avtalt_mean_nok_month": 78230,
       "median_nok_month": 77420,
+      "avtalt_median_nok_month": 75500,
       "p25_nok_month": 63330,
+      "avtalt_p25_nok_month": 62500,
       "p75_nok_month": 93820,
-      "n_employees": 8281
+      "avtalt_p75_nok_month": 90170,
+      "n_employees": 8281,
+      "avtalt_n_employees": 8281
      }
     },
     "age_at_quarter": {
@@ -150,38 +200,63 @@
     "dispersion_by_year": {
      "2021": {
       "mean_nok_month": 52720,
+      "avtalt_mean_nok_month": 51900,
       "median_nok_month": 49580,
+      "avtalt_median_nok_month": 49480,
       "p25_nok_month": 40000,
+      "avtalt_p25_nok_month": 39940,
       "p75_nok_month": 62350,
-      "n_employees": 578
+      "avtalt_p75_nok_month": 60590,
+      "n_employees": 578,
+      "avtalt_n_employees": 578
      },
      "2022": {
       "mean_nok_month": 56510,
+      "avtalt_mean_nok_month": 55460,
       "median_nok_month": 52780,
+      "avtalt_median_nok_month": 52000,
       "p25_nok_month": 42700,
+      "avtalt_p25_nok_month": 42000,
       "p75_nok_month": 65000,
-      "n_employees": 681
+      "avtalt_p75_nok_month": 64340,
+      "n_employees": 681,
+      "avtalt_n_employees": 681
      },
      "2023": {
       "mean_nok_month": 61520,
+      "avtalt_mean_nok_month": 60180,
       "median_nok_month": 57290,
+      "avtalt_median_nok_month": 56500,
       "p25_nok_month": 46030,
+      "avtalt_p25_nok_month": 45930,
       "p75_nok_month": 72500,
-      "n_employees": 759
+      "avtalt_p75_nok_month": 70130,
+      "n_employees": 759,
+      "avtalt_n_employees": 759
      },
      "2024": {
       "mean_nok_month": 63190,
+      "avtalt_mean_nok_month": 61680,
       "median_nok_month": 58330,
+      "avtalt_median_nok_month": 58330,
       "p25_nok_month": 48180,
+      "avtalt_p25_nok_month": 48020,
       "p75_nok_month": 74700,
-      "n_employees": 767
+      "avtalt_p75_nok_month": 72190,
+      "n_employees": 767,
+      "avtalt_n_employees": 767
      },
      "2025": {
       "mean_nok_month": 66690,
+      "avtalt_mean_nok_month": 65420,
       "median_nok_month": 62500,
+      "avtalt_median_nok_month": 62190,
       "p25_nok_month": 50830,
+      "avtalt_p25_nok_month": 50100,
       "p75_nok_month": 78130,
-      "n_employees": 770
+      "avtalt_p75_nok_month": 76670,
+      "n_employees": 770,
+      "avtalt_n_employees": 770
      }
     },
     "age_at_quarter": {
@@ -203,38 +278,63 @@
     "dispersion_by_year": {
      "2021": {
       "mean_nok_month": 62120,
+      "avtalt_mean_nok_month": 60840,
       "median_nok_month": 59790,
+      "avtalt_median_nok_month": 58330,
       "p25_nok_month": 50000,
+      "avtalt_p25_nok_month": 49880,
       "p75_nok_month": 70800,
-      "n_employees": 235
+      "avtalt_p75_nok_month": 68830,
+      "n_employees": 235,
+      "avtalt_n_employees": 235
      },
      "2022": {
       "mean_nok_month": 65470,
+      "avtalt_mean_nok_month": 63700,
       "median_nok_month": 62500,
+      "avtalt_median_nok_month": 62290,
       "p25_nok_month": 52500,
+      "avtalt_p25_nok_month": 52280,
       "p75_nok_month": 74710,
-      "n_employees": 290
+      "avtalt_p75_nok_month": 71250,
+      "n_employees": 290,
+      "avtalt_n_employees": 290
      },
      "2023": {
       "mean_nok_month": 69110,
+      "avtalt_mean_nok_month": 67920,
       "median_nok_month": 66670,
+      "avtalt_median_nok_month": 65440,
       "p25_nok_month": 56330,
+      "avtalt_p25_nok_month": 56000,
       "p75_nok_month": 76980,
-      "n_employees": 301
+      "avtalt_p75_nok_month": 76570,
+      "n_employees": 301,
+      "avtalt_n_employees": 301
      },
      "2024": {
       "mean_nok_month": 71300,
+      "avtalt_mean_nok_month": 69480,
       "median_nok_month": 68330,
+      "avtalt_median_nok_month": 66670,
       "p25_nok_month": 59000,
+      "avtalt_p25_nok_month": 58330,
       "p75_nok_month": 78910,
-      "n_employees": 327
+      "avtalt_p75_nok_month": 76720,
+      "n_employees": 327,
+      "avtalt_n_employees": 327
      },
      "2025": {
       "mean_nok_month": 73640,
+      "avtalt_mean_nok_month": 72440,
       "median_nok_month": 70700,
+      "avtalt_median_nok_month": 70380,
       "p25_nok_month": 61170,
+      "avtalt_p25_nok_month": 60400,
       "p75_nok_month": 83920,
-      "n_employees": 351
+      "avtalt_p75_nok_month": 81120,
+      "n_employees": 351,
+      "avtalt_n_employees": 351
      }
     },
     "age_at_quarter": {
@@ -252,38 +352,63 @@
     "dispersion_by_year": {
      "2021": {
       "mean_nok_month": 65100,
+      "avtalt_mean_nok_month": 61690,
       "median_nok_month": 61050,
+      "avtalt_median_nok_month": 58460,
       "p25_nok_month": 49250,
+      "avtalt_p25_nok_month": 48090,
       "p75_nok_month": 76600,
-      "n_employees": 19507
+      "avtalt_p75_nok_month": 72260,
+      "n_employees": 19507,
+      "avtalt_n_employees": 19507
      },
      "2022": {
       "mean_nok_month": 67840,
+      "avtalt_mean_nok_month": 64330,
       "median_nok_month": 63810,
+      "avtalt_median_nok_month": 61000,
       "p25_nok_month": 51250,
+      "avtalt_p25_nok_month": 50000,
       "p75_nok_month": 79630,
-      "n_employees": 21408
+      "avtalt_p75_nok_month": 75000,
+      "n_employees": 21408,
+      "avtalt_n_employees": 21408
      },
      "2023": {
       "mean_nok_month": 70840,
+      "avtalt_mean_nok_month": 67640,
       "median_nok_month": 66670,
+      "avtalt_median_nok_month": 64170,
       "p25_nok_month": 54090,
+      "avtalt_p25_nok_month": 52500,
       "p75_nok_month": 82720,
-      "n_employees": 22218
+      "avtalt_p75_nok_month": 78660,
+      "n_employees": 22218,
+      "avtalt_n_employees": 22218
      },
      "2024": {
       "mean_nok_month": 74960,
+      "avtalt_mean_nok_month": 71530,
       "median_nok_month": 70690,
+      "avtalt_median_nok_month": 67920,
       "p25_nok_month": 57380,
+      "avtalt_p25_nok_month": 55420,
       "p75_nok_month": 87500,
-      "n_employees": 22283
+      "avtalt_p75_nok_month": 83190,
+      "n_employees": 22283,
+      "avtalt_n_employees": 22283
      },
      "2025": {
       "mean_nok_month": 78430,
+      "avtalt_mean_nok_month": 74890,
       "median_nok_month": 74170,
+      "avtalt_median_nok_month": 70960,
       "p25_nok_month": 60000,
+      "avtalt_p25_nok_month": 58330,
       "p75_nok_month": 91670,
-      "n_employees": 22085
+      "avtalt_p75_nok_month": 86690,
+      "n_employees": 22085,
+      "avtalt_n_employees": 22085
      }
     },
     "age_at_quarter": {

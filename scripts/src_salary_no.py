@@ -18,7 +18,37 @@ reason src_salary_se.py documents.
 code) compared to Sweden's seven bands, and its time dimension is quarterly,
 not annual — the latest quarter is used. It is still a genuine occupation x
 age cross, one of the few in this project.
-"""
+
+PACKAGE 10 (tier 0.3, NEEDS-DECISION #18) ADDITION: table 11418's
+ContentsCode carries seven values, not the one (Manedslonn) fetched through
+package 9 — verified live against the table's own metadata (GET, no query):
+Manedslonn (total monthly earnings), AvtaltManedslonn (basic salary — pay
+BEFORE bonus/overtime/irregular allowances), Uregtil (irregular allowances),
+Bonus, Overtid (overtime), plus AlderLA/AvtArbTid (age/contractual hours,
+unrelated to composition). pay_composition.json's salary_no note previously
+said this pipeline fetched only mean/median/p25/p75/n and had "nothing
+subtractable... not because none exists at SSB" — checked properly this
+package: a bonus/allowance breakdown DOES exist, and better than that,
+AvtaltManedslonn is published at the SAME measuring-method granularity as
+the total (median, average, P25, P75 — verified live, 2023-2025), not
+merely as a mean. That makes it a strictly better fit than a Denmark-style
+subtraction: rather than removing one flat mean-derived scalar from every
+percentile of the total (distorting the spread — see NEEDS-DECISION #17's
+Denmark discussion of exactly that problem), Norway's regular_pay basis
+uses AvtaltManedslonn AS PUBLISHED, at every percentile SSB itself reports
+it at. Bonus/Uregtil/Overtid themselves are published ONLY as a mean
+(median and P25 are 0 in every year checked — most employees receive
+neither in a given period, so SSB evidently doesn't publish their own
+percentile spread) and are NOT fetched or used: this pipeline does not need
+them, since it is not deriving regular_pay by subtraction here at all.
+
+Manedslonn (still fetched, still "native"/total_earnings) and
+AvtaltManedslonn do not sum-and-subtract to each other exactly against
+Bonus+Uregtil+Overtid's own means (a ~530 NOK/~0.7%-of-salary residual in
+2025, smaller in other years) — expected, not a bug: independent SSB
+series, not one computed from the other, the same relationship FORINKL/
+PENS/UREGEL/BASIS have to each other in Denmark's LONS20 (see
+src_salary_dk.py). Not used as a subtraction input either way."""
 from __future__ import annotations
 
 import sys
@@ -39,6 +69,11 @@ CONTENTS_11418 = {
     "02": "mean_nok_month", "01": "median_nok_month",
     "051": "p25_nok_month", "061": "p75_nok_month", "10": "n_employees",
 }
+# ContentsCode values queried alongside Manedslonn (the default/implicit content
+# above) — package 10, tier 0.3. AvtaltManedslonn is Norway's own regular_pay-
+# basis figure (bonus/overtime/irregular allowances OUT), published at the same
+# measuring-method granularity as Manedslonn — see module docstring.
+CONTENTS_CODES = ["Manedslonn", "AvtaltManedslonn"]
 
 # 11658 is quarterly; take the most recent quarter available at run time.
 AGE_BANDS = ["0-39", "40-54", "55+"]
@@ -66,7 +101,7 @@ def _latest_quarter() -> str:
 def run() -> None:
     banner(SOURCE_ID, NAME)
 
-    # --- 11418: dispersion by occupation and year ---
+    # --- 11418: dispersion by occupation and year, both ContentsCode values ---
     body = {
         "query": [
             {"code": "MaaleMetode", "selection": {"filter": "item", "values": list(CONTENTS_11418)}},
@@ -74,18 +109,23 @@ def run() -> None:
             {"code": "Sektor", "selection": {"filter": "item", "values": ["ALLE"]}},
             {"code": "Kjonn", "selection": {"filter": "item", "values": ["0"]}},
             {"code": "AvtaltVanlig", "selection": {"filter": "item", "values": ["0"]}},
-            {"code": "ContentsCode", "selection": {"filter": "item", "values": ["Manedslonn"]}},
+            {"code": "ContentsCode", "selection": {"filter": "item", "values": CONTENTS_CODES}},
             {"code": "Tid", "selection": {"filter": "item", "values": YEARS_11418}},
         ],
         "response": {"format": "json-stat2"},
     }
     doc = _query("11418", body)
     occ_titles = doc["dimension"]["Yrke"]["category"]["label"]
+    # Manedslonn (total) keeps the existing bare field names (mean_nok_month etc.)
+    # for backward compatibility with every already-committed consumer.
+    # AvtaltManedslonn (regular_pay basis — package 10, tier 0.3) gets an
+    # "avtalt_" prefix on the same field names.
     dispersion: dict[str, dict[str, dict]] = {c: {} for c in STYRK_CODES}
     disp_rows = 0
     for row in jsonstat_rows(doc):
         code, year, field = row["Yrke"], row["Tid"], CONTENTS_11418[row["MaaleMetode"]]
-        dispersion.setdefault(code, {}).setdefault(year, {})[field] = row["_value"]
+        prefix = "" if row["ContentsCode"] == "Manedslonn" else "avtalt_"
+        dispersion.setdefault(code, {}).setdefault(year, {})[f"{prefix}{field}"] = row["_value"]
         disp_rows += 1
 
     # --- 11658: median/mean monthly salary by occupation x age band, latest quarter ---
@@ -133,7 +173,12 @@ def run() -> None:
             "classification": "STYRK-08 (Norway's national adaptation of ISCO-08)",
             "unit": "NOK per month, all sectors, all employees, both sexes",
             "measures": {
-                "dispersion_by_year": "mean, median, P25/P75 and employee count (N) — table 11418",
+                "dispersion_by_year": "mean, median, P25/P75 and employee count (N), both Manedslonn "
+                    "(total monthly earnings — bare field names) and AvtaltManedslonn (basic salary "
+                    "before bonus/overtime/irregular allowances — avtalt_-prefixed field names, "
+                    "package 10 tier 0.3) — table 11418. Both published at the same measuring-method "
+                    "granularity; AvtaltManedslonn is Norway's own regular_pay-basis figure, not a "
+                    "subtraction this pipeline performs — see module docstring.",
                 "age_at_quarter": f"median and mean monthly salary by 3 age bands (0-39/40-54/55+), "
                     f"latest available quarter ({latest_q}) — table 11658. Coarser than Sweden's 7 "
                     "bands, and quarterly rather than annual, but a genuine occupation x age cross.",
@@ -170,6 +215,12 @@ def run() -> None:
             f"Queried the same codes x 3 age bands x the latest available quarter ({latest_q}) from "
             "table 11658.",
             "Kept mean, median, quartiles, N (11418) and age-banded median/mean (11658) verbatim.",
+            "Package 10 (tier 0.3): also queried ContentsCode=AvtaltManedslonn (basic salary, same "
+            "measuring methods as Manedslonn) after checking table 11418's own metadata found it, "
+            "Bonus, Uregtil and Overtid all published as separate components — resolving NEEDS-"
+            "DECISION #18. Bonus/Uregtil/Overtid checked but not fetched: published as a mean only "
+            "(median and P25 are 0 in every year checked), not needed since regular_pay uses "
+            "AvtaltManedslonn directly rather than by subtraction.",
             "Occupation titles are the API's own labels, not hand-typed.",
         ],
         output=f"data/processed/{SOURCE_ID}.json",

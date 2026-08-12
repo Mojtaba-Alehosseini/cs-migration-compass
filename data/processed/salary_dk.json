@@ -1,6 +1,6 @@
 {
  "source_id": "salary_dk",
- "generated_at": "2026-08-12T15:01:45+00:00",
+ "generated_at": "2026-08-12T20:48:12+00:00",
  "meta": {
   "occupation_family": "DISCO-08 group 251 — Software and applications developers and analysts",
   "occupation_codes": {
@@ -12,7 +12,7 @@
   },
   "primary_code": "2512",
   "classification": "DISCO-08 (Denmark's national adaptation of ISCO-08)",
-  "unit": "DKK per hour worked, full-time non-managerial employees (ANTAL's own label — 'Number of fulltime employees'), all sectors, all forms of pay, both sexes. mean_dkk_hour is this pipeline's inference from FORINKL, not DST's own stated 'mean' — see module docstring point 2. employer_pension_dkk_hour and irregular_dkk_hour (package 9) are real published components of the same cell, sourced for scripts/normalise.py's PENS-subtraction demonstration — not inferred or estimated. standardized_monthly_dkk_by_year (package 9) is DST's own MDRSNIT headline monthly figure; its precise composition is not confirmed — see module docstring.",
+  "unit": "Two parallel families, full-time non-managerial employees (ANTAL's own label — 'Number of fulltime employees'), all sectors, all forms of pay, both sexes — see module docstring. mean_dkk_hour/p25_dkk_hour/median_dkk_hour/p75_dkk_hour: DKK per hour ACTUALLY WORKED (FORINKL family); mean_dkk_hour is this pipeline's inference from FORINKL, not DST's own stated 'mean' — see module docstring point 2. Kept for context; no longer this pipeline's primary DK figure as of package 10. mean_std_dkk_hour/p25_std_dkk_hour/median_std_dkk_hour/p75_std_dkk_hour: DKK per STANDARDISED hour (STAND family) — package 10's primary DK figure, chosen because it reconciles with MDRSNIT (see mdrsnit_reconciliation below and the module docstring); annualises via STANDARDISED_HOURS_PER_WEEK (37h), not the generic cross-country hours_worked.json. employer_pension_dkk_hour/irregular_dkk_hour (package 9) and their _std_ counterparts (package 10) are real published components of the same cell, sourced for scripts/normalise.py's subtraction — not inferred or estimated. standardized_monthly_dkk_by_year is DST's own MDRSNIT headline monthly figure — as of package 10, its relationship to STAND is proven (mdrsnit_reconciliation), not merely carried as an unconfirmed reference point.",
   "filter_note": "LONGRP=MED (non-managerial employees), AFLOEN=TIFA (all forms of pay), SEKTOR=1000 (all sectors). See module docstring for why MED was chosen over the total-employee-group cut, and the small residual gap from the work order's cited reference N.",
   "confidence": "official",
   "level": "country (Denmark, all sectors combined)",
@@ -40,7 +40,13 @@
       "p75_dkk_hour": 526.94,
       "n_employees": 11321,
       "employer_pension_dkk_hour": 53.11,
-      "irregular_dkk_hour": 9.58
+      "irregular_dkk_hour": 9.58,
+      "mean_std_dkk_hour": 370.96,
+      "p25_std_dkk_hour": 292.44,
+      "median_std_dkk_hour": 362.42,
+      "p75_std_dkk_hour": 433.01,
+      "employer_pension_std_dkk_hour": 43.76,
+      "irregular_std_dkk_hour": 8.03
      },
      "2019": {
       "mean_dkk_hour": 448.81,
@@ -49,7 +55,13 @@
       "p75_dkk_hour": 529.42,
       "n_employees": 12032,
       "employer_pension_dkk_hour": 51.62,
-      "irregular_dkk_hour": 9.24
+      "irregular_dkk_hour": 9.24,
+      "mean_std_dkk_hour": 371.16,
+      "p25_std_dkk_hour": 285.94,
+      "median_std_dkk_hour": 360.02,
+      "p75_std_dkk_hour": 436.74,
+      "employer_pension_std_dkk_hour": 42.6,
+      "irregular_std_dkk_hour": 7.72
      },
      "2020": {
       "mean_dkk_hour": 447.79,
@@ -58,7 +70,13 @@
       "p75_dkk_hour": 528.01,
       "n_employees": 12695,
       "employer_pension_dkk_hour": 52.24,
-      "irregular_dkk_hour": 8.12
+      "irregular_dkk_hour": 8.12,
+      "mean_std_dkk_hour": 373.83,
+      "p25_std_dkk_hour": 290.11,
+      "median_std_dkk_hour": 364.42,
+      "p75_std_dkk_hour": 439.63,
+      "employer_pension_std_dkk_hour": 43.54,
+      "irregular_std_dkk_hour": 6.84
      },
      "2021": {
       "mean_dkk_hour": 460.88,
@@ -67,7 +85,13 @@
       "p75_dkk_hour": 542.28,
       "n_employees": 13511,
       "employer_pension_dkk_hour": 54.81,
-      "irregular_dkk_hour": 9.77
+      "irregular_dkk_hour": 9.77,
+      "mean_std_dkk_hour": 388.81,
+      "p25_std_dkk_hour": 301.72,
+      "median_std_dkk_hour": 376.9,
+      "p75_std_dkk_hour": 455.16,
+      "employer_pension_std_dkk_hour": 46.13,
+      "irregular_std_dkk_hour": 8.3
      },
      "2022": {
       "mean_dkk_hour": 473.58,
@@ -76,7 +100,13 @@
       "p75_dkk_hour": 554.55,
       "n_employees": 14274,
       "employer_pension_dkk_hour": 57.37,
-      "irregular_dkk_hour": 10.95
+      "irregular_dkk_hour": 10.95,
+      "mean_std_dkk_hour": 398.38,
+      "p25_std_dkk_hour": 309.99,
+      "median_std_dkk_hour": 385.29,
+      "p75_std_dkk_hour": 465.39,
+      "employer_pension_std_dkk_hour": 48.21,
+      "irregular_std_dkk_hour": 9.28
      },
      "2023": {
       "mean_dkk_hour": 493.81,
@@ -85,7 +115,13 @@
       "p75_dkk_hour": 578.19,
       "n_employees": 15443,
       "employer_pension_dkk_hour": 60.26,
-      "irregular_dkk_hour": 10.99
+      "irregular_dkk_hour": 10.99,
+      "mean_std_dkk_hour": 411.58,
+      "p25_std_dkk_hour": 321.33,
+      "median_std_dkk_hour": 399.7,
+      "p75_std_dkk_hour": 481.59,
+      "employer_pension_std_dkk_hour": 50.18,
+      "irregular_std_dkk_hour": 9.22
      },
      "2024": {
       "mean_dkk_hour": 514.77,
@@ -94,7 +130,13 @@
       "p75_dkk_hour": 604.53,
       "n_employees": 16800,
       "employer_pension_dkk_hour": 63.58,
-      "irregular_dkk_hour": 13.17
+      "irregular_dkk_hour": 13.17,
+      "mean_std_dkk_hour": 429.65,
+      "p25_std_dkk_hour": 336.37,
+      "median_std_dkk_hour": 418.86,
+      "p75_std_dkk_hour": 503.3,
+      "employer_pension_std_dkk_hour": 52.68,
+      "irregular_std_dkk_hour": 11.01
      }
     },
     "standardized_monthly_dkk_by_year": {
@@ -105,6 +147,64 @@
      "2022": 63872.71,
      "2023": 65988.2,
      "2024": 68886.34
+    },
+    "mdrsnit_reconciliation_by_year": {
+     "2018": {
+      "occupation": "2511",
+      "year": "2018",
+      "stand_dkk_hour": 370.96,
+      "computed_monthly": 59477.25,
+      "published_mdrsnit": 59475.56,
+      "residual_pct": 0.0028
+     },
+     "2019": {
+      "occupation": "2511",
+      "year": "2019",
+      "stand_dkk_hour": 371.16,
+      "computed_monthly": 59509.32,
+      "published_mdrsnit": 59507.78,
+      "residual_pct": 0.0026
+     },
+     "2020": {
+      "occupation": "2511",
+      "year": "2020",
+      "stand_dkk_hour": 373.83,
+      "computed_monthly": 59937.41,
+      "published_mdrsnit": 59935.52,
+      "residual_pct": 0.0032
+     },
+     "2021": {
+      "occupation": "2511",
+      "year": "2021",
+      "stand_dkk_hour": 388.81,
+      "computed_monthly": 62339.2,
+      "published_mdrsnit": 62337.68,
+      "residual_pct": 0.0024
+     },
+     "2022": {
+      "occupation": "2511",
+      "year": "2022",
+      "stand_dkk_hour": 398.38,
+      "computed_monthly": 63873.59,
+      "published_mdrsnit": 63872.71,
+      "residual_pct": 0.0014
+     },
+     "2023": {
+      "occupation": "2511",
+      "year": "2023",
+      "stand_dkk_hour": 411.58,
+      "computed_monthly": 65989.99,
+      "published_mdrsnit": 65988.2,
+      "residual_pct": 0.0027
+     },
+     "2024": {
+      "occupation": "2511",
+      "year": "2024",
+      "stand_dkk_hour": 429.65,
+      "computed_monthly": 68887.22,
+      "published_mdrsnit": 68886.34,
+      "residual_pct": 0.0013
+     }
     }
    },
    "2512": {
@@ -117,7 +217,13 @@
       "p75_dkk_hour": 491.72,
       "n_employees": 19966,
       "employer_pension_dkk_hour": 49.96,
-      "irregular_dkk_hour": 8.47
+      "irregular_dkk_hour": 8.47,
+      "mean_std_dkk_hour": 348.88,
+      "p25_std_dkk_hour": 276.95,
+      "median_std_dkk_hour": 336.96,
+      "p75_std_dkk_hour": 405.66,
+      "employer_pension_std_dkk_hour": 41.28,
+      "irregular_std_dkk_hour": 7.08
      },
      "2019": {
       "mean_dkk_hour": 427.47,
@@ -126,7 +232,13 @@
       "p75_dkk_hour": 500.12,
       "n_employees": 20870,
       "employer_pension_dkk_hour": 51.13,
-      "irregular_dkk_hour": 7.98
+      "irregular_dkk_hour": 7.98,
+      "mean_std_dkk_hour": 353.53,
+      "p25_std_dkk_hour": 280.18,
+      "median_std_dkk_hour": 342.82,
+      "p75_std_dkk_hour": 412.67,
+      "employer_pension_std_dkk_hour": 42.24,
+      "irregular_std_dkk_hour": 6.66
      },
      "2020": {
       "mean_dkk_hour": 430.94,
@@ -135,7 +247,13 @@
       "p75_dkk_hour": 501.26,
       "n_employees": 21995,
       "employer_pension_dkk_hour": 51.42,
-      "irregular_dkk_hour": 8.11
+      "irregular_dkk_hour": 8.11,
+      "mean_std_dkk_hour": 359.13,
+      "p25_std_dkk_hour": 284.53,
+      "median_std_dkk_hour": 346.34,
+      "p75_std_dkk_hour": 417.02,
+      "employer_pension_std_dkk_hour": 42.84,
+      "irregular_std_dkk_hour": 6.81
      },
      "2021": {
       "mean_dkk_hour": 435.04,
@@ -144,7 +262,13 @@
       "p75_dkk_hour": 508.29,
       "n_employees": 22744,
       "employer_pension_dkk_hour": 52.47,
-      "irregular_dkk_hour": 8.54
+      "irregular_dkk_hour": 8.54,
+      "mean_std_dkk_hour": 366.59,
+      "p25_std_dkk_hour": 290.12,
+      "median_std_dkk_hour": 354.33,
+      "p75_std_dkk_hour": 427.81,
+      "employer_pension_std_dkk_hour": 44.14,
+      "irregular_std_dkk_hour": 7.23
      },
      "2022": {
       "mean_dkk_hour": 449.64,
@@ -153,7 +277,13 @@
       "p75_dkk_hour": 525.17,
       "n_employees": 25788,
       "employer_pension_dkk_hour": 53.56,
-      "irregular_dkk_hour": 9.55
+      "irregular_dkk_hour": 9.55,
+      "mean_std_dkk_hour": 379.19,
+      "p25_std_dkk_hour": 298,
+      "median_std_dkk_hour": 364.9,
+      "p75_std_dkk_hour": 441.56,
+      "employer_pension_std_dkk_hour": 45.1,
+      "irregular_std_dkk_hour": 8.09
      },
      "2023": {
       "mean_dkk_hour": 469.62,
@@ -162,7 +292,13 @@
       "p75_dkk_hour": 548.02,
       "n_employees": 28141,
       "employer_pension_dkk_hour": 56.46,
-      "irregular_dkk_hour": 9.18
+      "irregular_dkk_hour": 9.18,
+      "mean_std_dkk_hour": 392.13,
+      "p25_std_dkk_hour": 309.78,
+      "median_std_dkk_hour": 376.9,
+      "p75_std_dkk_hour": 456.46,
+      "employer_pension_std_dkk_hour": 47.08,
+      "irregular_std_dkk_hour": 7.69
      },
      "2024": {
       "mean_dkk_hour": 489.26,
@@ -171,7 +307,13 @@
       "p75_dkk_hour": 568.64,
       "n_employees": 29096,
       "employer_pension_dkk_hour": 59.35,
-      "irregular_dkk_hour": 9.06
+      "irregular_dkk_hour": 9.06,
+      "mean_std_dkk_hour": 408.56,
+      "p25_std_dkk_hour": 323.45,
+      "median_std_dkk_hour": 393.81,
+      "p75_std_dkk_hour": 474.35,
+      "employer_pension_std_dkk_hour": 49.23,
+      "irregular_std_dkk_hour": 7.55
      }
     },
     "standardized_monthly_dkk_by_year": {
@@ -182,6 +324,64 @@
      "2022": 60796.13,
      "2023": 62869.98,
      "2024": 65504.17
+    },
+    "mdrsnit_reconciliation_by_year": {
+     "2018": {
+      "occupation": "2512",
+      "year": "2018",
+      "stand_dkk_hour": 348.88,
+      "computed_monthly": 55937.09,
+      "published_mdrsnit": 55935.77,
+      "residual_pct": 0.0024
+     },
+     "2019": {
+      "occupation": "2512",
+      "year": "2019",
+      "stand_dkk_hour": 353.53,
+      "computed_monthly": 56682.64,
+      "published_mdrsnit": 56681.65,
+      "residual_pct": 0.0018
+     },
+     "2020": {
+      "occupation": "2512",
+      "year": "2020",
+      "stand_dkk_hour": 359.13,
+      "computed_monthly": 57580.51,
+      "published_mdrsnit": 57579.64,
+      "residual_pct": 0.0015
+     },
+     "2021": {
+      "occupation": "2512",
+      "year": "2021",
+      "stand_dkk_hour": 366.59,
+      "computed_monthly": 58776.6,
+      "published_mdrsnit": 58775.62,
+      "residual_pct": 0.0017
+     },
+     "2022": {
+      "occupation": "2512",
+      "year": "2022",
+      "stand_dkk_hour": 379.19,
+      "computed_monthly": 60796.8,
+      "published_mdrsnit": 60796.13,
+      "residual_pct": 0.0011
+     },
+     "2023": {
+      "occupation": "2512",
+      "year": "2023",
+      "stand_dkk_hour": 392.13,
+      "computed_monthly": 62871.51,
+      "published_mdrsnit": 62869.98,
+      "residual_pct": 0.0024
+     },
+     "2024": {
+      "occupation": "2512",
+      "year": "2024",
+      "stand_dkk_hour": 408.56,
+      "computed_monthly": 65505.79,
+      "published_mdrsnit": 65504.17,
+      "residual_pct": 0.0025
+     }
     }
    },
    "2513": {
@@ -194,7 +394,13 @@
       "p75_dkk_hour": 392.1,
       "n_employees": 2443,
       "employer_pension_dkk_hour": 37.58,
-      "irregular_dkk_hour": 3.62
+      "irregular_dkk_hour": 3.62,
+      "mean_std_dkk_hour": 281.82,
+      "p25_std_dkk_hour": 223.72,
+      "median_std_dkk_hour": 271.85,
+      "p75_std_dkk_hour": 323.39,
+      "employer_pension_std_dkk_hour": 31.11,
+      "irregular_std_dkk_hour": 3.01
      },
      "2019": {
       "mean_dkk_hour": 352.08,
@@ -203,7 +409,13 @@
       "p75_dkk_hour": 408.24,
       "n_employees": 2560,
       "employer_pension_dkk_hour": 40.2,
-      "irregular_dkk_hour": 3.5
+      "irregular_dkk_hour": 3.5,
+      "mean_std_dkk_hour": 291.22,
+      "p25_std_dkk_hour": 227.69,
+      "median_std_dkk_hour": 280.22,
+      "p75_std_dkk_hour": 337.04,
+      "employer_pension_std_dkk_hour": 33.19,
+      "irregular_std_dkk_hour": 2.91
      },
      "2020": {
       "mean_dkk_hour": 358.27,
@@ -212,7 +424,13 @@
       "p75_dkk_hour": 414.92,
       "n_employees": 2570,
       "employer_pension_dkk_hour": 40.48,
-      "irregular_dkk_hour": 3.19
+      "irregular_dkk_hour": 3.19,
+      "mean_std_dkk_hour": 297.81,
+      "p25_std_dkk_hour": 230.43,
+      "median_std_dkk_hour": 286.16,
+      "p75_std_dkk_hour": 344.18,
+      "employer_pension_std_dkk_hour": 33.58,
+      "irregular_std_dkk_hour": 2.65
      },
      "2021": {
       "mean_dkk_hour": 362.98,
@@ -221,7 +439,13 @@
       "p75_dkk_hour": 418.94,
       "n_employees": 2787,
       "employer_pension_dkk_hour": 41.5,
-      "irregular_dkk_hour": 3.56
+      "irregular_dkk_hour": 3.56,
+      "mean_std_dkk_hour": 305.27,
+      "p25_std_dkk_hour": 239.06,
+      "median_std_dkk_hour": 291.93,
+      "p75_std_dkk_hour": 350.49,
+      "employer_pension_std_dkk_hour": 34.83,
+      "irregular_std_dkk_hour": 3.01
      },
      "2022": {
       "mean_dkk_hour": 367.97,
@@ -230,7 +454,13 @@
       "p75_dkk_hour": 429.13,
       "n_employees": 3172,
       "employer_pension_dkk_hour": 41.22,
-      "irregular_dkk_hour": 2.93
+      "irregular_dkk_hour": 2.93,
+      "mean_std_dkk_hour": 310.6,
+      "p25_std_dkk_hour": 242.72,
+      "median_std_dkk_hour": 297.61,
+      "p75_std_dkk_hour": 359.61,
+      "employer_pension_std_dkk_hour": 34.72,
+      "irregular_std_dkk_hour": 2.47
      },
      "2023": {
       "mean_dkk_hour": 389.29,
@@ -239,7 +469,13 @@
       "p75_dkk_hour": 456.46,
       "n_employees": 3369,
       "employer_pension_dkk_hour": 43.02,
-      "irregular_dkk_hour": 2.96
+      "irregular_dkk_hour": 2.96,
+      "mean_std_dkk_hour": 325.03,
+      "p25_std_dkk_hour": 252.79,
+      "median_std_dkk_hour": 311.85,
+      "p75_std_dkk_hour": 378.92,
+      "employer_pension_std_dkk_hour": 35.96,
+      "irregular_std_dkk_hour": 2.48
      },
      "2024": {
       "mean_dkk_hour": 402.82,
@@ -248,7 +484,13 @@
       "p75_dkk_hour": 466.21,
       "n_employees": 3143,
       "employer_pension_dkk_hour": 45.33,
-      "irregular_dkk_hour": 3.1
+      "irregular_dkk_hour": 3.1,
+      "mean_std_dkk_hour": 335.17,
+      "p25_std_dkk_hour": 265.01,
+      "median_std_dkk_hour": 322.81,
+      "p75_std_dkk_hour": 388.09,
+      "employer_pension_std_dkk_hour": 37.46,
+      "irregular_std_dkk_hour": 2.54
      }
     },
     "standardized_monthly_dkk_by_year": {
@@ -259,6 +501,64 @@
      "2022": 49799.29,
      "2023": 52112.01,
      "2024": 53737.16
+    },
+    "mdrsnit_reconciliation_by_year": {
+     "2018": {
+      "occupation": "2513",
+      "year": "2018",
+      "stand_dkk_hour": 281.82,
+      "computed_monthly": 45185.14,
+      "published_mdrsnit": 45184.99,
+      "residual_pct": 0.0003
+     },
+     "2019": {
+      "occupation": "2513",
+      "year": "2019",
+      "stand_dkk_hour": 291.22,
+      "computed_monthly": 46692.27,
+      "published_mdrsnit": 46691.19,
+      "residual_pct": 0.0023
+     },
+     "2020": {
+      "occupation": "2513",
+      "year": "2020",
+      "stand_dkk_hour": 297.81,
+      "computed_monthly": 47748.87,
+      "published_mdrsnit": 47748.36,
+      "residual_pct": 0.0011
+     },
+     "2021": {
+      "occupation": "2513",
+      "year": "2021",
+      "stand_dkk_hour": 305.27,
+      "computed_monthly": 48944.96,
+      "published_mdrsnit": 48944.61,
+      "residual_pct": 0.0007
+     },
+     "2022": {
+      "occupation": "2513",
+      "year": "2022",
+      "stand_dkk_hour": 310.6,
+      "computed_monthly": 49799.53,
+      "published_mdrsnit": 49799.29,
+      "residual_pct": 0.0005
+     },
+     "2023": {
+      "occupation": "2513",
+      "year": "2023",
+      "stand_dkk_hour": 325.03,
+      "computed_monthly": 52113.14,
+      "published_mdrsnit": 52112.01,
+      "residual_pct": 0.0022
+     },
+     "2024": {
+      "occupation": "2513",
+      "year": "2024",
+      "stand_dkk_hour": 335.17,
+      "computed_monthly": 53738.92,
+      "published_mdrsnit": 53737.16,
+      "residual_pct": 0.0033
+     }
     }
    },
    "2514": {
@@ -271,7 +571,13 @@
       "p75_dkk_hour": 513.89,
       "n_employees": 1870,
       "employer_pension_dkk_hour": 59.45,
-      "irregular_dkk_hour": 7.91
+      "irregular_dkk_hour": 7.91,
+      "mean_std_dkk_hour": 358.29,
+      "p25_std_dkk_hour": 291.22,
+      "median_std_dkk_hour": 353.15,
+      "p75_std_dkk_hour": 412.39,
+      "employer_pension_std_dkk_hour": 48.2,
+      "irregular_std_dkk_hour": 6.59
      },
      "2019": {
       "mean_dkk_hour": 450.51,
@@ -280,7 +586,13 @@
       "p75_dkk_hour": 526.04,
       "n_employees": 2040,
       "employer_pension_dkk_hour": 62.11,
-      "irregular_dkk_hour": 7.19
+      "irregular_dkk_hour": 7.19,
+      "mean_std_dkk_hour": 366.52,
+      "p25_std_dkk_hour": 296.39,
+      "median_std_dkk_hour": 362.3,
+      "p75_std_dkk_hour": 424.65,
+      "employer_pension_std_dkk_hour": 50.52,
+      "irregular_std_dkk_hour": 6.05
      },
      "2020": {
       "mean_dkk_hour": 455.41,
@@ -289,7 +601,13 @@
       "p75_dkk_hour": 530.38,
       "n_employees": 2103,
       "employer_pension_dkk_hour": 63.5,
-      "irregular_dkk_hour": 7.15
+      "irregular_dkk_hour": 7.15,
+      "mean_std_dkk_hour": 374.76,
+      "p25_std_dkk_hour": 306.84,
+      "median_std_dkk_hour": 370.57,
+      "p75_std_dkk_hour": 433.19,
+      "employer_pension_std_dkk_hour": 52.3,
+      "irregular_std_dkk_hour": 6.04
      },
      "2021": {
       "mean_dkk_hour": 463.51,
@@ -298,7 +616,13 @@
       "p75_dkk_hour": 546.92,
       "n_employees": 2013,
       "employer_pension_dkk_hour": 65.45,
-      "irregular_dkk_hour": 8.52
+      "irregular_dkk_hour": 8.52,
+      "mean_std_dkk_hour": 385.74,
+      "p25_std_dkk_hour": 311.63,
+      "median_std_dkk_hour": 379.49,
+      "p75_std_dkk_hour": 452.74,
+      "employer_pension_std_dkk_hour": 54.47,
+      "irregular_std_dkk_hour": 7.26
      },
      "2022": {
       "mean_dkk_hour": 467.89,
@@ -307,7 +631,13 @@
       "p75_dkk_hour": 552.22,
       "n_employees": 2215,
       "employer_pension_dkk_hour": 64.86,
-      "irregular_dkk_hour": 9.41
+      "irregular_dkk_hour": 9.41,
+      "mean_std_dkk_hour": 390.47,
+      "p25_std_dkk_hour": 314.03,
+      "median_std_dkk_hour": 383.94,
+      "p75_std_dkk_hour": 459.42,
+      "employer_pension_std_dkk_hour": 54.04,
+      "irregular_std_dkk_hour": 7.93
      },
      "2023": {
       "mean_dkk_hour": 487.78,
@@ -316,7 +646,13 @@
       "p75_dkk_hour": 577.62,
       "n_employees": 2204,
       "employer_pension_dkk_hour": 67.43,
-      "irregular_dkk_hour": 9.91
+      "irregular_dkk_hour": 9.91,
+      "mean_std_dkk_hour": 404.47,
+      "p25_std_dkk_hour": 323.32,
+      "median_std_dkk_hour": 402.2,
+      "p75_std_dkk_hour": 477.33,
+      "employer_pension_std_dkk_hour": 55.86,
+      "irregular_std_dkk_hour": 8.29
      },
      "2024": {
       "mean_dkk_hour": 511.14,
@@ -325,7 +661,13 @@
       "p75_dkk_hour": 607.98,
       "n_employees": 2370,
       "employer_pension_dkk_hour": 71.13,
-      "irregular_dkk_hour": 11.14
+      "irregular_dkk_hour": 11.14,
+      "mean_std_dkk_hour": 422.84,
+      "p25_std_dkk_hour": 335.1,
+      "median_std_dkk_hour": 419.52,
+      "p75_std_dkk_hour": 498.16,
+      "employer_pension_std_dkk_hour": 58.49,
+      "irregular_std_dkk_hour": 9.24
      }
     },
     "standardized_monthly_dkk_by_year": {
@@ -336,6 +678,64 @@
      "2022": 62604.52,
      "2023": 64848.48,
      "2024": 67793.72
+    },
+    "mdrsnit_reconciliation_by_year": {
+     "2018": {
+      "occupation": "2514",
+      "year": "2018",
+      "stand_dkk_hour": 358.29,
+      "computed_monthly": 57445.83,
+      "published_mdrsnit": 57444.56,
+      "residual_pct": 0.0022
+     },
+     "2019": {
+      "occupation": "2514",
+      "year": "2019",
+      "stand_dkk_hour": 366.52,
+      "computed_monthly": 58765.37,
+      "published_mdrsnit": 58764.33,
+      "residual_pct": 0.0018
+     },
+     "2020": {
+      "occupation": "2514",
+      "year": "2020",
+      "stand_dkk_hour": 374.76,
+      "computed_monthly": 60086.52,
+      "published_mdrsnit": 60085.15,
+      "residual_pct": 0.0023
+     },
+     "2021": {
+      "occupation": "2514",
+      "year": "2021",
+      "stand_dkk_hour": 385.74,
+      "computed_monthly": 61846.98,
+      "published_mdrsnit": 61844.94,
+      "residual_pct": 0.0033
+     },
+     "2022": {
+      "occupation": "2514",
+      "year": "2022",
+      "stand_dkk_hour": 390.47,
+      "computed_monthly": 62605.36,
+      "published_mdrsnit": 62604.52,
+      "residual_pct": 0.0013
+     },
+     "2023": {
+      "occupation": "2514",
+      "year": "2023",
+      "stand_dkk_hour": 404.47,
+      "computed_monthly": 64850.02,
+      "published_mdrsnit": 64848.48,
+      "residual_pct": 0.0024
+     },
+     "2024": {
+      "occupation": "2514",
+      "year": "2024",
+      "stand_dkk_hour": 422.84,
+      "computed_monthly": 67795.35,
+      "published_mdrsnit": 67793.72,
+      "residual_pct": 0.0024
+     }
     }
    },
    "2519": {
@@ -348,7 +748,13 @@
       "p75_dkk_hour": 474.58,
       "n_employees": 3731,
       "employer_pension_dkk_hour": 50.7,
-      "irregular_dkk_hour": 9.32
+      "irregular_dkk_hour": 9.32,
+      "mean_std_dkk_hour": 336.71,
+      "p25_std_dkk_hour": 272.15,
+      "median_std_dkk_hour": 326.89,
+      "p75_std_dkk_hour": 388.37,
+      "employer_pension_std_dkk_hour": 41.61,
+      "irregular_std_dkk_hour": 7.73
      },
      "2019": {
       "mean_dkk_hour": 416.82,
@@ -357,7 +763,13 @@
       "p75_dkk_hour": 484.99,
       "n_employees": 3749,
       "employer_pension_dkk_hour": 51.38,
-      "irregular_dkk_hour": 7.61
+      "irregular_dkk_hour": 7.61,
+      "mean_std_dkk_hour": 343.14,
+      "p25_std_dkk_hour": 275.27,
+      "median_std_dkk_hour": 335.68,
+      "p75_std_dkk_hour": 399.15,
+      "employer_pension_std_dkk_hour": 42.22,
+      "irregular_std_dkk_hour": 6.32
      },
      "2020": {
       "mean_dkk_hour": 419.23,
@@ -366,7 +778,13 @@
       "p75_dkk_hour": 491.04,
       "n_employees": 3779,
       "employer_pension_dkk_hour": 52.04,
-      "irregular_dkk_hour": 7.68
+      "irregular_dkk_hour": 7.68,
+      "mean_std_dkk_hour": 349.17,
+      "p25_std_dkk_hour": 277.09,
+      "median_std_dkk_hour": 338.55,
+      "p75_std_dkk_hour": 407.61,
+      "employer_pension_std_dkk_hour": 43.32,
+      "irregular_std_dkk_hour": 6.46
      },
      "2021": {
       "mean_dkk_hour": 425.18,
@@ -375,7 +793,13 @@
       "p75_dkk_hour": 498,
       "n_employees": 3827,
       "employer_pension_dkk_hour": 53.07,
-      "irregular_dkk_hour": 7.33
+      "irregular_dkk_hour": 7.33,
+      "mean_std_dkk_hour": 357.75,
+      "p25_std_dkk_hour": 285.4,
+      "median_std_dkk_hour": 346.44,
+      "p75_std_dkk_hour": 418.88,
+      "employer_pension_std_dkk_hour": 44.63,
+      "irregular_std_dkk_hour": 6.21
      },
      "2022": {
       "mean_dkk_hour": 428.28,
@@ -384,7 +808,13 @@
       "p75_dkk_hour": 503.42,
       "n_employees": 4364,
       "employer_pension_dkk_hour": 52.34,
-      "irregular_dkk_hour": 7.7
+      "irregular_dkk_hour": 7.7,
+      "mean_std_dkk_hour": 359.96,
+      "p25_std_dkk_hour": 284.18,
+      "median_std_dkk_hour": 349.48,
+      "p75_std_dkk_hour": 421.75,
+      "employer_pension_std_dkk_hour": 43.93,
+      "irregular_std_dkk_hour": 6.51
      },
      "2023": {
       "mean_dkk_hour": 445.97,
@@ -393,7 +823,13 @@
       "p75_dkk_hour": 522.67,
       "n_employees": 4714,
       "employer_pension_dkk_hour": 54.57,
-      "irregular_dkk_hour": 7.59
+      "irregular_dkk_hour": 7.59,
+      "mean_std_dkk_hour": 371.19,
+      "p25_std_dkk_hour": 291.68,
+      "median_std_dkk_hour": 359.17,
+      "p75_std_dkk_hour": 434.07,
+      "employer_pension_std_dkk_hour": 45.38,
+      "irregular_std_dkk_hour": 6.33
      },
      "2024": {
       "mean_dkk_hour": 463.65,
@@ -402,7 +838,13 @@
       "p75_dkk_hour": 543.8,
       "n_employees": 4882,
       "employer_pension_dkk_hour": 57.13,
-      "irregular_dkk_hour": 9.79
+      "irregular_dkk_hour": 9.79,
+      "mean_std_dkk_hour": 386.54,
+      "p25_std_dkk_hour": 305.92,
+      "median_std_dkk_hour": 375.59,
+      "p75_std_dkk_hour": 453.04,
+      "employer_pension_std_dkk_hour": 47.28,
+      "irregular_std_dkk_hour": 8.13
      }
     },
     "standardized_monthly_dkk_by_year": {
@@ -413,8 +855,72 @@
      "2022": 57712.66,
      "2023": 59512.71,
      "2024": 61973.35
+    },
+    "mdrsnit_reconciliation_by_year": {
+     "2018": {
+      "occupation": "2519",
+      "year": "2018",
+      "stand_dkk_hour": 336.71,
+      "computed_monthly": 53985.84,
+      "published_mdrsnit": 53983.93,
+      "residual_pct": 0.0035
+     },
+     "2019": {
+      "occupation": "2519",
+      "year": "2019",
+      "stand_dkk_hour": 343.14,
+      "computed_monthly": 55016.78,
+      "published_mdrsnit": 55015.1,
+      "residual_pct": 0.0031
+     },
+     "2020": {
+      "occupation": "2519",
+      "year": "2020",
+      "stand_dkk_hour": 349.17,
+      "computed_monthly": 55983.59,
+      "published_mdrsnit": 55981.75,
+      "residual_pct": 0.0033
+     },
+     "2021": {
+      "occupation": "2519",
+      "year": "2021",
+      "stand_dkk_hour": 357.75,
+      "computed_monthly": 57359.25,
+      "published_mdrsnit": 57358.29,
+      "residual_pct": 0.0017
+     },
+     "2022": {
+      "occupation": "2519",
+      "year": "2022",
+      "stand_dkk_hour": 359.96,
+      "computed_monthly": 57713.59,
+      "published_mdrsnit": 57712.66,
+      "residual_pct": 0.0016
+     },
+     "2023": {
+      "occupation": "2519",
+      "year": "2023",
+      "stand_dkk_hour": 371.19,
+      "computed_monthly": 59514.13,
+      "published_mdrsnit": 59512.71,
+      "residual_pct": 0.0024
+     },
+     "2024": {
+      "occupation": "2519",
+      "year": "2024",
+      "stand_dkk_hour": 386.54,
+      "computed_monthly": 61975.25,
+      "published_mdrsnit": 61973.35,
+      "residual_pct": 0.0031
+     }
     }
    }
+  },
+  "mdrsnit_reconciliation": {
+   "formula": "STAND (DKK/standardised hour) x 160.33 (= 37h/week x 52 / 12) = MDRSNIT (DKK/month)",
+   "tolerance_pct": 0.5,
+   "worst_residual_pct": 0.0035,
+   "worst_residual_at": "2519/2018"
   }
  }
 }

@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-08-12T19:55:51+00:00",
+ "generated_at": "2026-08-12T20:54:14+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -32,7 +32,8 @@
      },
      "n_employees": null,
      "distribution": "full",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -119,7 +120,8 @@
      },
      "n_employees": null,
      "distribution": "full",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -206,7 +208,8 @@
      },
      "n_employees": 1687890.0,
      "distribution": "full",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -284,16 +287,24 @@
      "period": "hour",
      "year": 2024,
      "value": {
-      "mean": 489.26,
-      "median": 470.53,
+      "mean": 408.56,
+      "median": 393.81,
       "p10": null,
-      "p25": 386.1,
-      "p75": 568.64,
+      "p25": 323.45,
+      "p75": 474.35,
       "p90": null
      },
      "n_employees": 29096,
      "distribution": "quartile-only",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": {
+      "occupation": "2512",
+      "year": "2024",
+      "stand_dkk_hour": 408.56,
+      "computed_monthly": 65505.79,
+      "published_mdrsnit": 65504.17,
+      "residual_pct": 0.0025
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -305,25 +316,33 @@
      "native_regular_pay": {
       "ok": true,
       "value": {
-       "mean": 840353.2799999999,
-       "median": 802953.2159999999,
+       "mean": 676824.72,
+       "median": 648445.72,
        "p10": null,
-       "p25": 634363.392,
-       "p75": 998859.264,
+       "p25": 513073.07999999996,
+       "p75": 803404.68,
        "p90": null
       },
       "chain": [
        {
-        "op": "subtract",
-        "detail": "470.53 - 59.35 (employer_social_contributions, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+        "op": "concept_note",
+        "detail": "published as DKK per DK's own standardised hour (STAND, table LONS20) — verified against Danmarks Statistik's own separately-published monthly headline (MDRSNIT): 408.56 x 160.33h/month = 65,505.79, DST publishes 65,504.17 (+0.003% residual)"
        },
        {
         "op": "subtract",
-        "detail": "411.17999999999995 - 9.06 (irregular_bonus, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+        "detail": "393.81 - 49.23 (employer_social_contributions, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+       },
+       {
+        "op": "subtract",
+        "detail": "344.58 - 7.55 (irregular_bonus, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+       },
+       {
+        "op": "assumption",
+        "detail": "the same PENSST/UREGELST rate is subtracted at every percentile shown — Danmarks Statistik does not publish either component broken out by percentile, only once for the whole occupation. This assumes a flat per-hour krone amount rather than a constant share of pay; if employer pension is negotiated as a percentage of salary (common under Danish overenskomster), the true gap is understated at the top of the distribution and overstated at the bottom. Unresolved — see NEEDS-DECISION.md."
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "402.11999999999995 x 38.4 hours/week (DK 2024, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
+        "detail": "337.03 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
        },
        {
         "op": "weekly_to_annual",
@@ -336,21 +355,29 @@
      "native_total_earnings": {
       "ok": true,
       "value": {
-       "mean": 858444.288,
-       "median": 821044.2239999999,
+       "mean": 691350.9199999999,
+       "median": 662971.9199999999,
        "p10": null,
-       "p25": 652454.3999999999,
-       "p75": 1016950.2719999999,
+       "p25": 527599.28,
+       "p75": 817930.88,
        "p90": null
       },
       "chain": [
        {
+        "op": "concept_note",
+        "detail": "published as DKK per DK's own standardised hour (STAND, table LONS20) — verified against Danmarks Statistik's own separately-published monthly headline (MDRSNIT): 408.56 x 160.33h/month = 65,505.79, DST publishes 65,504.17 (+0.003% residual)"
+       },
+       {
         "op": "subtract",
-        "detail": "470.53 - 59.35 (employer_social_contributions, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+        "detail": "393.81 - 49.23 (employer_social_contributions, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+       },
+       {
+        "op": "assumption",
+        "detail": "the same PENSST/UREGELST rate is subtracted at every percentile shown — Danmarks Statistik does not publish either component broken out by percentile, only once for the whole occupation. This assumes a flat per-hour krone amount rather than a constant share of pay; if employer pension is negotiated as a percentage of salary (common under Danish overenskomster), the true gap is understated at the top of the distribution and overstated at the bottom. Unresolved — see NEEDS-DECISION.md."
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "411.17999999999995 x 38.4 hours/week (DK 2024, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
+        "detail": "344.58 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
        },
        {
         "op": "weekly_to_annual",
@@ -363,25 +390,33 @@
      "usd_regular_pay": {
       "ok": true,
       "value": {
-       "mean": 121887.81566203618,
-       "median": 116463.17793517403,
+       "mean": 98169.0542183274,
+       "median": 94052.86356018785,
        "p10": null,
-       "p25": 92010.31283752472,
-       "p75": 144878.0848963297,
+       "p25": 74417.93646142863,
+       "p75": 116528.65987249694,
        "p90": null
       },
       "chain": [
        {
-        "op": "subtract",
-        "detail": "470.53 - 59.35 (employer_social_contributions, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+        "op": "concept_note",
+        "detail": "published as DKK per DK's own standardised hour (STAND, table LONS20) — verified against Danmarks Statistik's own separately-published monthly headline (MDRSNIT): 408.56 x 160.33h/month = 65,505.79, DST publishes 65,504.17 (+0.003% residual)"
        },
        {
         "op": "subtract",
-        "detail": "411.17999999999995 - 9.06 (irregular_bonus, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+        "detail": "393.81 - 49.23 (employer_social_contributions, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+       },
+       {
+        "op": "subtract",
+        "detail": "344.58 - 7.55 (irregular_bonus, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+       },
+       {
+        "op": "assumption",
+        "detail": "the same PENSST/UREGELST rate is subtracted at every percentile shown — Danmarks Statistik does not publish either component broken out by percentile, only once for the whole occupation. This assumes a flat per-hour krone amount rather than a constant share of pay; if employer pension is negotiated as a percentage of salary (common under Danish overenskomster), the true gap is understated at the top of the distribution and overstated at the bottom. Unresolved — see NEEDS-DECISION.md."
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "402.11999999999995 x 38.4 hours/week (DK 2024, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
+        "detail": "337.03 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
        },
        {
         "op": "weekly_to_annual",
@@ -389,7 +424,7 @@
        },
        {
         "op": "fx_convert",
-        "detail": "802953.2159999999 / 6.89448141666666 (DK 2024 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
+        "detail": "648445.72 / 6.89448141666666 (DK 2024 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
        }
       ],
       "currency": "USD",
@@ -398,21 +433,29 @@
      "usd_total_earnings": {
       "ok": true,
       "value": {
-       "mean": 124511.79952777944,
-       "median": 119087.16180091728,
+       "mean": 100275.98570774795,
+       "median": 96159.79504960842,
        "p10": null,
-       "p25": 94634.29670326796,
-       "p75": 147502.06876207294,
+       "p25": 76524.86795084922,
+       "p75": 118635.59136191751,
        "p90": null
       },
       "chain": [
        {
+        "op": "concept_note",
+        "detail": "published as DKK per DK's own standardised hour (STAND, table LONS20) — verified against Danmarks Statistik's own separately-published monthly headline (MDRSNIT): 408.56 x 160.33h/month = 65,505.79, DST publishes 65,504.17 (+0.003% residual)"
+       },
+       {
         "op": "subtract",
-        "detail": "470.53 - 59.35 (employer_social_contributions, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+        "detail": "393.81 - 49.23 (employer_social_contributions, sourced from salary_dk's own separately-published figure — pay_composition.json entry cites the evidence)"
+       },
+       {
+        "op": "assumption",
+        "detail": "the same PENSST/UREGELST rate is subtracted at every percentile shown — Danmarks Statistik does not publish either component broken out by percentile, only once for the whole occupation. This assumes a flat per-hour krone amount rather than a constant share of pay; if employer pension is negotiated as a percentage of salary (common under Danish overenskomster), the true gap is understated at the top of the distribution and overstated at the bottom. Unresolved — see NEEDS-DECISION.md."
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "411.17999999999995 x 38.4 hours/week (DK 2024, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
+        "detail": "344.58 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
        },
        {
         "op": "weekly_to_annual",
@@ -420,7 +463,7 @@
        },
        {
         "op": "fx_convert",
-        "detail": "821044.2239999999 / 6.89448141666666 (DK 2024 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
+        "detail": "662971.9199999999 / 6.89448141666666 (DK 2024 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
        }
       ],
       "currency": "USD",
@@ -437,16 +480,17 @@
      "period": "month",
      "year": 2025,
      "value": {
-      "mean": 81050.0,
-      "median": 77420.0,
+      "mean": 81050,
+      "median": 77420,
       "p10": null,
-      "p25": 63330.0,
-      "p75": 93820.0,
+      "p25": 63330,
+      "p75": 93820,
       "p90": null
      },
      "n_employees": 8281,
      "distribution": "quartile-only",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -456,35 +500,77 @@
     },
     "combos": {
      "native_regular_pay": {
-      "ok": false,
-      "reason": "salary_no does not publish enough to express regular_pay and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
-     },
-     "native_total_earnings": {
       "ok": true,
       "value": {
-       "mean": 972600.0,
-       "median": 929040.0,
+       "mean": 938760,
+       "median": 906000,
        "p10": null,
-       "p25": 759960.0,
-       "p75": 1125840.0,
+       "p25": 750000,
+       "p75": 1082040,
        "p90": null
       },
       "chain": [
        {
-        "op": "native",
-        "detail": "published as-is; salary_no's composition already excludes what total_earnings requires excluded"
+        "op": "native_basis_select",
+        "detail": "salary_no publishes regular_pay as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
-        "detail": "77420.0 x 12 (fixed, never any other multiplier — see module docstring rule 3)"
+        "detail": "75500 x 12 (fixed, never any other multiplier — see module docstring rule 3)"
+       }
+      ],
+      "currency": "NOK",
+      "chain_field": "median"
+     },
+     "native_total_earnings": {
+      "ok": true,
+      "value": {
+       "mean": 972600,
+       "median": 929040,
+       "p10": null,
+       "p25": 759960,
+       "p75": 1125840,
+       "p90": null
+      },
+      "chain": [
+       {
+        "op": "native_basis_select",
+        "detail": "salary_no publishes total_earnings as its own separate field — no subtraction needed"
+       },
+       {
+        "op": "monthly_to_annual",
+        "detail": "77420 x 12 (fixed, never any other multiplier — see module docstring rule 3)"
        }
       ],
       "currency": "NOK",
       "chain_field": "median"
      },
      "usd_regular_pay": {
-      "ok": false,
-      "reason": "salary_no does not publish enough to express regular_pay and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
+      "ok": true,
+      "value": {
+       "mean": 90301.56312625279,
+       "median": 87150.30060120269,
+       "p10": null,
+       "p25": 72144.28857715454,
+       "p75": 104084.0080160324,
+       "p90": null
+      },
+      "chain": [
+       {
+        "op": "native_basis_select",
+        "detail": "salary_no publishes regular_pay as its own separate field — no subtraction needed"
+       },
+       {
+        "op": "monthly_to_annual",
+        "detail": "75500 x 12 (fixed, never any other multiplier — see module docstring rule 3)"
+       },
+       {
+        "op": "fx_convert",
+        "detail": "906000 / 10.3958333333333 (NO 2025 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
+       }
+      ],
+      "currency": "USD",
+      "chain_field": "median"
      },
      "usd_total_earnings": {
       "ok": true,
@@ -498,16 +584,16 @@
       },
       "chain": [
        {
-        "op": "native",
-        "detail": "published as-is; salary_no's composition already excludes what total_earnings requires excluded"
+        "op": "native_basis_select",
+        "detail": "salary_no publishes total_earnings as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
-        "detail": "77420.0 x 12 (fixed, never any other multiplier — see module docstring rule 3)"
+        "detail": "77420 x 12 (fixed, never any other multiplier — see module docstring rule 3)"
        },
        {
         "op": "fx_convert",
-        "detail": "929040.0 / 10.3958333333333 (NO 2025 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
+        "detail": "929040 / 10.3958333333333 (NO 2025 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
        }
       ],
       "currency": "USD",
@@ -533,7 +619,8 @@
      },
      "n_employees": 27074,
      "distribution": "full",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -662,7 +749,8 @@
      },
      "n_employees": 84585,
      "distribution": "central-tendency-only",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -749,7 +837,8 @@
      },
      "n_employees": null,
      "distribution": "full",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -836,7 +925,8 @@
      },
      "n_employees": null,
      "distribution": "central-tendency-only",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -931,7 +1021,8 @@
      },
      "n_employees": 331815,
      "distribution": "mean-only",
-     "weighting_note": "mean weighted by Qatar PSA's own published Male (n=209114, 28941 QAR/mo) and Female (n=122701, 23536 QAR/mo) counts — not a native combined figure"
+     "weighting_note": "mean weighted by Qatar PSA's own published Male (n=209114, 28941 QAR/mo) and Female (n=122701, 23536 QAR/mo) counts — not a native combined figure",
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -976,7 +1067,8 @@
      },
      "n_employees": null,
      "distribution": "mean-only",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -1021,7 +1113,8 @@
      },
      "n_employees": 316000,
      "distribution": "quartile-only",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": false,
@@ -1114,7 +1207,8 @@
      },
      "n_employees": null,
      "distribution": "full",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,
@@ -1159,7 +1253,8 @@
      },
      "n_employees": null,
      "distribution": "full",
-     "weighting_note": null
+     "weighting_note": null,
+     "mdrsnit_check": null
     },
     "crosswalk": {
      "comparable": true,

@@ -155,6 +155,13 @@ export interface WageCountry {
      *  separately-published Male/Female series — a real derivation, not a
      *  value the source itself published. null for every other country. */
     weighting_note: string | null
+    /** Set only for Denmark (package 10, tier 0.2): proof this native figure
+     *  (DST's STAND concept) reconciles with DST's own separately-published
+     *  MDRSNIT monthly headline. null for every other country. */
+    mdrsnit_check: {
+      stand_dkk_hour: number; computed_monthly: number
+      published_mdrsnit: number; residual_pct: number
+    } | null
   }
   crosswalk: CrosswalkVerdict
   combos: Record<string, Combo>  // keyed by comboKey()

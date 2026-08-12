@@ -25,17 +25,24 @@ honest than a generic parser that would silently misread the one shape it
 wasn't built for.
 
 BASIS AVAILABILITY, verified against data/pay_composition.json's actual
-booleans this session (not assumed from the work order's own summary table):
-Sweden/Netherlands/Ireland/Finland (bonus=False, contrib=False) express BOTH
-regular_pay and total_earnings natively. UK/US/Norway/Spain/Australia
-(contrib=False, bonus=True or a non-boolean caveat string) express only
-total_earnings. Canada/Qatar/UAE (both fields "unknown") express NEITHER —
-an honest gap, not a bug: this pipeline does not guess a boolean it hasn't
-verified. Denmark (bonus=True, contrib=True, BOTH separately published as
-PENS/UREGEL) is the one source that needs subtract_component() calls to
-reach either basis at all — matching the smoke-test finding recorded in
-normalise.py's own commit history: Denmark's raw FORINKL expresses neither
-basis unmodified.
+booleans (updated package 10, tier 0.3 — Norway moved buckets, see below):
+Sweden/Netherlands/Ireland/Finland/Norway (bonus=False, contrib=False, or a
+genuine dual-basis native split) express BOTH regular_pay and total_earnings
+natively. UK/US/Spain/Australia (contrib=False, bonus=True or a non-boolean
+caveat string) express only total_earnings. Canada/Qatar/UAE (both fields
+"unknown") express NEITHER — an honest gap, not a bug: this pipeline does
+not guess a boolean it hasn't verified. Denmark (bonus=True, contrib=True,
+BOTH separately published as PENSST/UREGELST — package 10, tier 0.2,
+switched from PENS/UREGEL, see _extract_dk) is the one source that needs
+subtract_component() calls to reach either basis at all — matching the
+smoke-test finding recorded in normalise.py's own commit history: Denmark's
+raw STAND expresses neither basis unmodified. Norway (NEEDS-DECISION #18,
+resolved) turned out to have the Finland shape, not the "flat-scalar
+subtraction" shape a first read of the work order suggested: SSB's table
+11418 publishes AvtaltManedslonn (regular_pay basis) at the same
+measuring-method granularity as the total, so _extract_no() selects between
+two real native fields exactly like _extract_fi() does — no subtraction,
+no flat scalar, no distribution-distorting assumption to disclose.
 """
 from __future__ import annotations
 
@@ -104,17 +111,85 @@ def _extract_se(occ: dict) -> dict:
     return _base_obs("month", "SEK", year, row, "sek_month")
 
 
+DK_STANDARDISED_HOURS_PER_WEEK = 37.0  # matches src_salary_dk.py's own constant — see that module's
+                                        # docstring for the empirical STAND<->MDRSNIT proof this rests on
+
+
 def _extract_dk(occ: dict) -> dict:
+    """Package 10, tier 0.2 (NEEDS-DECISION #17): switched from the FORINKL
+    family (DKK per hour ACTUALLY WORKED) to the STAND family (DKK per DK's
+    own STANDARDISED hour) as the primary DK figure. FORINKL x Eurostat's
+    measured hours overstated DST's own MDRSNIT monthly headline by 23-25%
+    every year checked — not a real disagreement between two DST statistics,
+    but this pipeline comparing two different LØNMÅL concepts as if they were
+    one. STAND x DK's own 160.33h/month standardisation constant reproduces
+    MDRSNIT to <0.002% (src_salary_dk.py's mdrsnit_reconciliation, re-proven
+    on every harvester run, not asserted once and trusted forever).
+
+    explicit_hours_by_field carries DK_STANDARDISED_HOURS_PER_WEEK (37h) for
+    every field STAND publishes — a fixed constant, not hours_worked.json's
+    generic Eurostat lookup, because STAND is already expressed per
+    standardised hour: annualising it with Eurostat's *measured* hours would
+    reintroduce the exact mismatch this fix removes. Same explicit_hours
+    mechanism as Ireland's F2 fix (package 9) — a source's own matched hours
+    figure beats the generic cross-country lookup — just a fixed constant
+    here rather than a per-year measurement, because DK's standardisation
+    convention does not itself vary year to year the way measured hours do."""
     year, row = _latest_year_row(occ["dispersion_by_year"])
-    obs = _base_obs("hour", "DKK", year, row, "dkk_hour")
-    obs["employer_pension_dkk_hour"] = row.get("employer_pension_dkk_hour")
-    obs["irregular_dkk_hour"] = row.get("irregular_dkk_hour")
+    obs = _base_obs("hour", "DKK", year, row, "std_dkk_hour")
+    obs["employer_pension_dkk_hour"] = row.get("employer_pension_std_dkk_hour")
+    obs["irregular_dkk_hour"] = row.get("irregular_std_dkk_hour")
+    obs["also_published"] = {
+        "concept": "FORINKL — DKK per hour actually worked (not standardised)",
+        "mean": row.get("mean_dkk_hour"), "median": row.get("median_dkk_hour"),
+        "p25": row.get("p25_dkk_hour"), "p75": row.get("p75_dkk_hour"),
+        "note": "DST publishes this alongside STAND; kept for context, not used for any figure this "
+                "site computes — it does not reconcile with DST's own MDRSNIT monthly headline the way "
+                "STAND does. See scripts/src_salary_dk.py's module docstring.",
+    }
+    hours_note = {
+        "hours_per_week": DK_STANDARDISED_HOURS_PER_WEEK, "year": int(year),
+        "source": "Danmarks Statistik's own standardised full-time week (37h) — empirically verified "
+                   "via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all "
+                   "years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not "
+                   "the generic cross-country hours_worked.json Eurostat figure",
+    }
+    obs["explicit_hours_by_field"] = {f: hours_note for f in ("mean", "median", "p25", "p75")}
+    row_check = occ.get("mdrsnit_reconciliation_by_year", {}).get(year)
+    if row_check:
+        obs["mdrsnit_check"] = row_check
     return obs
 
 
 def _extract_no(occ: dict) -> dict:
+    """Package 10, tier 0.3 (NEEDS-DECISION #18, resolved): SSB's table 11418
+    publishes AvtaltManedslonn (basic salary, bonus/overtime/irregular
+    allowances OUT) at the same measuring-method granularity as Manedslonn
+    (total, bonus IN) — a genuine dual-basis native source, the same shape
+    as Finland's total_*/regular_* split (_extract_fi), not a subtraction
+    this pipeline performs. See src_salary_no.py's module docstring.
+
+    Generic mean/median/p25/p75 keys are set explicitly from the UNPREFIXED
+    (Manedslonn/total) fields here, NOT via _base_obs's suffix match — both
+    "mean_nok_month" and "avtalt_mean_nok_month" end with "nok_month", so a
+    generic suffix match would silently pick whichever key happens to
+    iterate first in the source dict. This is the exact bug package 9 found
+    and fixed for Finland's total_/regular_ split (adversarial review,
+    tier 6) — the same fix, applied here before it could ship broken."""
     year, row = _latest_year_row(occ["dispersion_by_year"])
-    return _base_obs("month", "NOK", year, row, "nok_month")
+    obs = {
+        "year": int(year), "period": "month", "currency": "NOK",
+        "mean": row.get("mean_nok_month"), "median": row.get("median_nok_month"),
+        "p10": None, "p25": row.get("p25_nok_month"), "p75": row.get("p75_nok_month"), "p90": None,
+        "n_employees": row.get("n_employees"),
+    }
+    for basis, prefix in (("total_earnings", ""), ("regular_pay", "avtalt_")):
+        obs[f"basis_{basis}"] = {
+            "mean": row.get(f"{prefix}mean_nok_month"), "median": row.get(f"{prefix}median_nok_month"),
+            "p10": None, "p25": row.get(f"{prefix}p25_nok_month"),
+            "p75": row.get(f"{prefix}p75_nok_month"), "p90": None,
+        }
+    return obs
 
 
 def _extract_fi(occ: dict) -> dict:
@@ -340,12 +415,22 @@ def _figure_for_basis(source_id: str, obs: dict, basis: str, repr_field: str) ->
                  f"{source_id}'s composition already excludes what {basis} requires excluded"}]}
 
     if source_id == "salary_dk":
-        # Denmark: raw FORINKL = base + PENS (employer_social_contributions) + UREGEL
-        # (irregular_bonus). regular_pay needs both subtracted; total_earnings needs
-        # only PENS subtracted (total_earnings still includes the irregular bonus).
+        # Denmark: raw STAND (standardised-hour earnings, package 10 tier 0.2 — see
+        # src_salary_dk.py's module docstring) = base + PENSST (employer_social_contributions)
+        # + UREGELST (irregular_bonus). regular_pay needs both subtracted; total_earnings needs
+        # only PENSST subtracted (total_earnings still includes the irregular bonus).
         to_subtract = ["employer_social_contributions"] if basis == "total_earnings" \
             else ["employer_social_contributions", "irregular_bonus"]
         value, chain = {}, []
+        mdrsnit_check = obs.get("mdrsnit_check")
+        if mdrsnit_check:
+            chain.append({"op": "concept_note", "detail": "published as DKK per DK's own standardised "
+                          f"hour (STAND, table LONS20) — verified against Danmarks Statistik's own "
+                          f"separately-published monthly headline (MDRSNIT): "
+                          f"{mdrsnit_check['stand_dkk_hour']} x 160.33h/month = "
+                          f"{mdrsnit_check['computed_monthly']:,.2f}, DST publishes "
+                          f"{mdrsnit_check['published_mdrsnit']:,.2f} "
+                          f"({mdrsnit_check['residual_pct']:+.3f}% residual)"})
         ok_all = True
         for field in _FIELDS:
             v = obs.get(field)
@@ -366,6 +451,19 @@ def _figure_for_basis(source_id: str, obs: dict, basis: str, repr_field: str) ->
             else:
                 value[field] = v
         if ok_all:
+            # Package 10, tier 0.2: state the flat-scalar assumption as its own
+            # visible step, rather than let a mean-derived scalar silently reshape
+            # a distribution (the work order's own words). DST publishes PENSST/
+            # UREGELST only as one figure per occupation, not broken out by
+            # percentile, so the SAME subtracted amount was just applied to every
+            # one of p25/median/p75 above — this line is that assumption, named.
+            chain.append({"op": "assumption", "detail": "the same PENSST/UREGELST rate is subtracted "
+                          "at every percentile shown — Danmarks Statistik does not publish either "
+                          "component broken out by percentile, only once for the whole occupation. "
+                          "This assumes a flat per-hour krone amount rather than a constant share of "
+                          "pay; if employer pension is negotiated as a percentage of salary (common "
+                          "under Danish overenskomster), the true gap is understated at the top of the "
+                          "distribution and overstated at the bottom. Unresolved — see NEEDS-DECISION.md."})
             return {"ok": True, "value": value, "chain": chain}
         return {"ok": False, "reason": f"{source_id}: subtract_component() refused one of {to_subtract}"}
 
@@ -485,7 +583,12 @@ def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapp
                    # every other country (nothing else in this file
                    # computes a native-currency value; conversions are a
                    # separate, already-disclosed step in combos.*.chain).
-                   "weighting_note": obs.get("weighting_note")},
+                   "weighting_note": obs.get("weighting_note"),
+                   # Set only for Denmark (package 10, tier 0.2): proof that this
+                   # native figure (DST's STAND concept) reconciles with DST's own
+                   # separately-published monthly headline (MDRSNIT). None for
+                   # every other country — see _extract_dk() and NEEDS-DECISION #17.
+                   "mdrsnit_check": obs.get("mdrsnit_check")},
         "crosswalk": cw,
         "combos": combos,
     }

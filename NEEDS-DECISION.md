@@ -538,6 +538,51 @@ closer to correct — answering that needs either a human reading DST's own PENS
 documentation, or contacting DST directly; this pipeline should not guess and present the guess as
 sourced.
 
+---
+
+**RESOLVED, package 10, tier 0.2 — F3 reconciled exactly; F4 addressed by disclosure (item (2)
+above), items (1) and (3) still stand.**
+
+**F3 is not a real disagreement between two DST statistics.** It was this pipeline comparing two
+different LØNMÅL concepts as if they were the same one. DST's LONS20 table carries not two but
+**three** relevant series, verified live this package by querying every LØNMÅL code the table
+defines (25 codes total, not the 7 this pipeline had been fetching): FORINKL and its siblings
+measure earnings per hour **actually worked**; a second, parallel family — **STAND** ("STANDARDIZED
+HOURLY EARNINGS") and its own siblings (BASISST, PENSST, UREGELST, NEDREST/MEDIANST/OVREST) —
+measures earnings per DK's own **standardised** hour, which nets out paid-but-not-worked time
+(holiday, sick leave) the way FORINKL's denominator does not. MDRSNIT is built from STAND, not
+FORINKL: `STAND × 160.33 (= 37h/week standardised full-time week × 52 / 12)` reproduces MDRSNIT to
+**under 0.002%**, checked across all 7 years (2018-2024) and all 5 DISCO-08 251x occupations this
+table publishes — 35 (occupation, year) pairs, worst residual 0.0035%. By contrast FORINKL × 38.4h
+(Eurostat's measured hours) overstates MDRSNIT by 23-25% in *every* year — the exact ~24% originally
+flagged, now understood as two compounded mismatches (wrong earnings concept, wrong hours figure),
+not one unexplained gap.
+
+**Shipped:** `scripts/src_salary_dk.py` now fetches the STAND family alongside FORINKL (kept for
+context, no longer used for any figure this site computes) and re-proves the STAND↔MDRSNIT identity
+on every harvester run (`_verify_mdrsnit_reconciliation()`, raises if the worst residual across all
+years/occupations ever exceeds 0.5% — a live regression guard, not a one-time claim).
+`scripts/build_wage_distribution.py`'s `_extract_dk()` switched the primary DK figure from FORINKL
+to STAND, with `explicit_hours_by_field` set to DK's own 37h/week standardisation constant (not the
+generic Eurostat lookup, which would reintroduce the exact mismatch this fix removes) — the same
+`explicit_hours` mechanism package 9 built for Ireland's F2 fix. Denmark's country page and every
+wage-panel row now show STAND-derived figures, resolving item (1) above concretely: the native
+block no longer disagrees with MDRSNIT, so there is no separate note needed pointing at a
+discrepancy that no longer exists — the reconciliation itself (the STAND/MDRSNIT arithmetic and its
+residual) is now a real, computed, visible step in Denmark's own `<Derived>` method card, and
+`CountryProfile.tsx`'s `<Figure>` for Denmark states the match in its `what` text.
+
+**F4, item (2), addressed:** the DK subtraction chain in `_figure_for_basis` now appends an explicit
+`"assumption"` step naming the flat-scalar caveat in full (same wording as this item's own F4
+description above), visible in every regular_pay/total_earnings method card, not left implicit.
+
+**Items (1) [now resolved by F3's fix, see above] and (3) still open** — whether a flat-DKK or
+flat-percentage assumption is closer to correct for PENS/UREGEL's true shape across the
+distribution remains unanswered; DST's methodology page for this is a JS-rendered shell this
+pipeline's fetch cannot parse (the same limitation package 9 hit on GENESIS's PDF-only docs), so
+this still needs either a human reading DST's own documentation or contacting DST directly. Not
+blocking: the assumption is now named, not hidden.
+
 ## 18. Norway's bonus was named as available and capturable; what this pipeline actually fetched has no such field
 
 The work order's own §5.1.2 names "Norway's Bonus" as an example of a separately-published,
@@ -569,3 +614,65 @@ anything — and if SSB genuinely does not publish one at the same granularity a
 figure, that itself is worth recording as a checked negative, the same way Canada's and Qatar's
 `"unknown"` composition fields are (gate 3) rather than left as a bare empty array with no
 account of whether it was checked.
+
+---
+
+**RESOLVED, package 10, tier 0.3 — better than a subtraction: SSB publishes the regular_pay figure
+directly.**
+
+Checked table 11418's own metadata live (a plain GET, no query — the same check style package 9
+used on DST's LØNMÅL): its `ContentsCode` variable carries **seven** values, not the one
+(`Manedslonn`) this pipeline had been fetching — `Manedslonn` (total), `AvtaltManedslonn` (basic
+salary — bonus, overtime and irregular allowances all OUT), `Uregtil` (irregular allowances),
+`Bonus`, `Overtid` (overtime), plus two unrelated age/hours fields. Better than a Denmark-style
+subtraction target: `AvtaltManedslonn` is published at the **same measuring-method granularity** as
+the total — median, mean, P25, P75, verified live for 2023-2025 — not merely as a mean. Norway
+never had Denmark's problem (a flat scalar distorting the spread); its actual gap was under-
+fetching, not under-publishing. `Bonus`/`Uregtil`/`Overtid` themselves are checked but genuinely
+mean-only (median and P25 are 0 in every year checked — most employees receive none of these in a
+given period) — not fetched, and not needed, since regular_pay here is a real published field, not
+a subtraction.
+
+**Shipped:** `scripts/src_salary_no.py` now queries both `ContentsCode` values across the same
+measuring methods; `scripts/build_wage_distribution.py`'s `_extract_no()` selects between them the
+same way `_extract_fi()` already does (Finland's `total_*`/`regular_*` split, package 9) — a native
+dual-basis field, not `subtract_component()`. One bug caught and fixed before shipping: both
+`mean_nok_month` and `avtalt_mean_nok_month` end in `"nok_month"`, so the generic `_base_obs()`
+suffix-matcher would have silently picked whichever key happened to iterate first — the exact bug
+package 9 found and fixed for Finland's own total_/regular_ split. Fixed the same way: the generic
+native fields are set explicitly from the unprefixed (total) keys, not via suffix match.
+`data/pay_composition.json`'s `salary_no` entry rewritten to describe both concepts and the
+resolution; the stale note promising this NEEDS-DECISION item (written mid-package-9 remediation,
+before the item existed at its current number) now points here correctly.
+
+Norway now expresses `regular_pay` in every wage-panel comparison — six more rows join that basis
+than before (Denmark, Finland, Ireland, Sweden were already there; the panel's own gap-card count is
+evidence, not asserted here — see `REPORT-P10.md`), exactly the outcome this item's own "Decide"
+predicted a real fetch would produce.
+
+---
+
+# Package 10 — Profile, position, estimate
+
+## 19. Germany — `DESTATIS_TOKEN` still absent this session; the registered-account path remains untested
+
+Package 10's work order (tier 0.1) named the same rule package 9's resumed work order established:
+this package must be launched through `prompts/run-package-10.cmd`, which sets `DESTATIS_TOKEN` in
+the environment. Checked in both the Bash and PowerShell environments this session uses — the
+variable is unset in both, confirmed via the environment only (`printf`/`$env:DESTATIS_TOKEN`),
+never read from the gitignored runner script that sets it. This session received the work order
+pasted directly into chat, the same harness circumstance package 9's resume hit, not a new finding.
+
+Per the work order's own explicit instruction ("do not infer anything about the API or the account
+from its absence"), nothing about GENESIS's state is concluded from this. GAST/GAST was not
+re-tried either — package 9's resume already tested it exhaustively (3 tables × 4 `area` values, all
+denied `Code:15`) and the work order does not ask for a repeat here; re-running it would reconfirm
+an already-documented finding, not produce a new one. `scripts/src_salary_de.py` (package 9) is
+real, tested and ready — a working personal token only needs to clear the same `data/table` call
+GAST was denied on.
+
+**Shipped:** nothing new — Germany stays at zero coverage, same state package 9 left it in.
+
+**Decide:** run this package (or just `scripts/src_salary_de.py`) via `prompts/run-package-10.cmd`
+directly so `DESTATIS_TOKEN` is actually present — unchanged from item #15's own still-open
+"Decide," now carried forward a second package.

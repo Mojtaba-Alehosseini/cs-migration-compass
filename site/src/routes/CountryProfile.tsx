@@ -65,11 +65,24 @@ function WageRowFigure({ row }: { row: WageCountry }) {
       </div>
     )
   }
+  // Denmark only (package 10, tier 0.2): this native figure is DST's own
+  // STANDARDIZED HOURLY EARNINGS concept (STAND), not the more commonly
+  // reached-for FORINKL — named here because DST's own separately-published
+  // monthly headline (MDRSNIT) confirms STAND, not FORINKL, is what
+  // reconciles. See NEEDS-DECISION #17 and scripts/src_salary_dk.py.
+  const mdrsnitNote = n.mdrsnit_check
+    ? ` Matches Danmarks Statistik's own monthly headline (MDRSNIT): `
+      + `${n.mdrsnit_check.stand_dkk_hour} DKK/standardised hour × 160.33h/month = `
+      + `${Math.round(n.mdrsnit_check.computed_monthly).toLocaleString()} DKK, DST publishes `
+      + `${Math.round(n.mdrsnit_check.published_mdrsnit).toLocaleString()} DKK `
+      + `(${n.mdrsnit_check.residual_pct > 0 ? '+' : ''}${n.mdrsnit_check.residual_pct.toFixed(3)}%).`
+    : ''
   return (
     <div style={{ marginTop: 10 }}>
       <Figure source={{
         name: row.source_id, what: `${distributionNote} `
-          + (row.crosswalk.comparable && row.crosswalk.degraded_by ? row.crosswalk.degraded_by : ''),
+          + (row.crosswalk.comparable && row.crosswalk.degraded_by ? row.crosswalk.degraded_by : '')
+          + mdrsnitNote,
         asOf: String(n.year), confidence: 'official',
       }}>
         <span className="big" style={{ fontSize: 'var(--text-xl)' }}>
