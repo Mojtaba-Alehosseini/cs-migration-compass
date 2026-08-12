@@ -142,6 +142,17 @@
   "status": "ok",
   "empty": false
  },
+ "experience_gradient": {
+  "theme": "money",
+  "file": "history/experience_gradient.json",
+  "kb": 3.1,
+  "kind": null,
+  "confidence": "derived",
+  "institution": null,
+  "attribution_chip": null,
+  "status": "ok",
+  "empty": false
+ },
  "world_happiness_report": {
   "theme": "life",
   "file": "history/world_happiness_report.json",

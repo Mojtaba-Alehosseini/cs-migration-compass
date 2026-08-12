@@ -1,6 +1,6 @@
 {
  "source_id": "salary_no",
- "generated_at": "2026-08-12T20:51:30+00:00",
+ "generated_at": "2026-08-12T21:05:34+00:00",
  "meta": {
   "occupation_family": "STYRK-08 group 251 — Software and applications developers and analysts",
   "occupation_codes": {
@@ -98,6 +98,10 @@
     "age_at_quarter": {
      "quarter": "2026K1",
      "bands": {
+      "999D": {
+       "mean_nok_month": 81140,
+       "median_nok_month": 76170
+      },
       "0-39": {
        "mean_nok_month": 72100,
        "median_nok_month": 68240
@@ -180,6 +184,10 @@
     "age_at_quarter": {
      "quarter": "2026K1",
      "bands": {
+      "999D": {
+       "mean_nok_month": 81890,
+       "median_nok_month": 77250
+      },
       "0-39": {
        "mean_nok_month": 74390,
        "median_nok_month": 70830
@@ -262,6 +270,10 @@
     "age_at_quarter": {
      "quarter": "2026K1",
      "bands": {
+      "999D": {
+       "mean_nok_month": 67250,
+       "median_nok_month": 62500
+      },
       "0-39": {
        "mean_nok_month": 62540,
        "median_nok_month": 58330
@@ -340,6 +352,10 @@
     "age_at_quarter": {
      "quarter": "2026K1",
      "bands": {
+      "999D": {
+       "mean_nok_month": 72770,
+       "median_nok_month": 70180
+      },
       "0-39": {
        "mean_nok_month": 68880,
        "median_nok_month": 66670
@@ -414,6 +430,10 @@
     "age_at_quarter": {
      "quarter": "2026K1",
      "bands": {
+      "999D": {
+       "mean_nok_month": 80590,
+       "median_nok_month": 73670
+      },
       "0-39": {
        "mean_nok_month": 71260,
        "median_nok_month": 66500

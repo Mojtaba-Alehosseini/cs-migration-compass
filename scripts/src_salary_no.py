@@ -76,7 +76,10 @@ CONTENTS_11418 = {
 CONTENTS_CODES = ["Manedslonn", "AvtaltManedslonn"]
 
 # 11658 is quarterly; take the most recent quarter available at run time.
-AGE_BANDS = ["0-39", "40-54", "55+"]
+# "999D" (All ages) added package 10, tier 1 — a same-quarter, same-table total
+# to divide the age bands by, rather than the annual 11418 table's own total
+# (a different table, a different period — the quarterly 11658 has its own).
+AGE_BANDS = ["0-39", "40-54", "55+", "999D"]
 CONTENTS_11658 = {"MedianMndLonn": "median_nok_month", "GjMdTotal": "mean_nok_month"}
 
 
@@ -179,9 +182,12 @@ def run() -> None:
                     "package 10 tier 0.3) — table 11418. Both published at the same measuring-method "
                     "granularity; AvtaltManedslonn is Norway's own regular_pay-basis figure, not a "
                     "subtraction this pipeline performs — see module docstring.",
-                "age_at_quarter": f"median and mean monthly salary by 3 age bands (0-39/40-54/55+), "
-                    f"latest available quarter ({latest_q}) — table 11658. Coarser than Sweden's 7 "
-                    "bands, and quarterly rather than annual, but a genuine occupation x age cross.",
+                "age_at_quarter": f"median and mean monthly salary by 3 age bands (0-39/40-54/55+) "
+                    f"plus '999D' (all ages, same table/quarter — package 10 tier 1, a same-period "
+                    f"total to compute age-band premiums against, rather than borrowing the annual "
+                    f"11418 table's own total from a different period), latest available quarter "
+                    f"({latest_q}) — table 11658. Coarser than Sweden's 7 bands, and quarterly rather "
+                    "than annual, but a genuine occupation x age cross.",
             },
             "confidence": "official",
             "level": "country (Norway, all sectors combined)",

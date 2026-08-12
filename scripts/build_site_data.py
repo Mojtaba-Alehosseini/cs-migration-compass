@@ -44,6 +44,7 @@ HISTORY_SETS = {
     "bls_oews": "jobs",
     "stackoverflow_survey": "jobs",
     "wage_distribution": "money",
+    "experience_gradient": "money",
     "world_happiness_report": "life",
     "rsf_press_freedom": "life",
     "wipo_gii": "jobs",
@@ -296,7 +297,7 @@ def main() -> int:
     # loadPayComposition(), not explore.ts's loadWages() — corrected, tier 7,
     # finding F21) — it is fetched by the app itself, not just downloadable.
     for name in ("countries.json", "cities.json", "metrics.json", "data-pipeline-sources.json",
-                 "pay_composition.json"):
+                 "pay_composition.json", "occupations.json"):
         src = DATA / name
         if src.exists():
             shutil.copyfile(src, SITE_DATA / name)

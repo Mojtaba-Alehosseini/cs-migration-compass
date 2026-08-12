@@ -164,6 +164,24 @@
       "notes": "Pairs with eurostat_ict_specialists to give IT jobs as a share of a real total."
     },
     {
+      "source_id": "experience_gradient",
+      "name": "Experience-pay gradient — INE tenure cross (primary), SCB/SSB age crosses (context)",
+      "urls": [],
+      "fetched_at": "2026-08-12T21:14:20+00:00",
+      "license": "Inherits salary_es.json / salary_se.json / salary_no.json's own licences — this file adds no new licensing terms, only computation over already-committed data.",
+      "redistribution": "derived — nothing fetched; every input file's own provenance entry already covers redistribution terms for the raw figures this derives from.",
+      "transforms": [
+        "Computed each of Spain's 6 tenure bands' own average salary as a % premium/discount against that same table's own 'Total' average (INE tables 70706/70707, CNO-11 broader category) — the ONE curve package 10's estimate actually uses.",
+        "Computed the same relative-premium transform for Sweden's 6 age bands (SCB LonYrkeAlder4AN, occupation 2512) and Norway's 3 age bands (SSB 11658, occupation 2512, plus a same-quarter 'all ages' total added this package specifically for this computation) — kept as disclosed context, never blended into the gradient itself.",
+        "Verified the primary (ES) curve is monotonically non-decreasing in years before shipping — a real build-time check, not just a claim."
+      ],
+      "output": "data/processed/experience_gradient.json",
+      "status": "ok",
+      "rows": 15,
+      "coverage": "1 universal gradient curve (6 points, Spain) + 2 context curves (Sweden 6, Norway 3)",
+      "notes": "Every premium is a relative %, computed within one internally consistent source table — applying it to a different country's own median is this pipeline's own disclosed assumption (see module docstring), not a claim the source itself makes."
+    },
+    {
       "source_id": "fhfa_hpi_metro",
       "name": "FHFA House Price Index — All-Transactions, Metropolitan Areas (quarterly)",
       "urls": [
@@ -651,7 +669,7 @@
         "https://data.ssb.no/api/v0/en/table/11418",
         "https://data.ssb.no/api/v0/en/table/11658"
       ],
-      "fetched_at": "2026-08-12T20:51:31+00:00",
+      "fetched_at": "2026-08-12T21:05:34+00:00",
       "license": "CC BY 4.0 (Statistics Norway open data licence, data.norge.no / SSB API terms). Cite: Statistics Norway (SSB), tables 11418 and 11658.",
       "redistribution": "processed derivative only — the raw JSON-stat2 payloads are cached under data/raw/salary_no/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_no.json is committed.",
       "transforms": [
@@ -663,7 +681,7 @@
       ],
       "output": "data/processed/salary_no.json",
       "status": "ok",
-      "rows": 274,
+      "rows": 284,
       "coverage": "5 STYRK-08 occupations x 5 years + age cross, Norway only",
       "notes": null
     },
@@ -974,5 +992,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-12T20:54:14+00:00"
+  "updated_at": "2026-08-12T21:14:20+00:00"
 }

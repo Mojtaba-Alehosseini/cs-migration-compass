@@ -676,3 +676,51 @@ GAST was denied on.
 **Decide:** run this package (or just `scripts/src_salary_de.py`) via `prompts/run-package-10.cmd`
 directly so `DESTATIS_TOKEN` is actually present — unchanged from item #15's own still-open
 "Decide," now carried forward a second package.
+
+## 20. How "the position" can be both experience-linked and `<Figure>`-sourced — the reading this package committed to
+
+Tier 2's text names a worked example ("P60 of DISCO-08 2512 in Denmark") that implies the position
+is personalised to the profile's `yearsProfessional`, then states flatly "the position is sourced,
+so it is a `<Figure>`" — while Tier 3's estimate, built from the SAME kind of experience-gradient
+math, is explicitly "a `<Derived>`, never a `<Figure>`." Read together with "experience maps to a
+position only through a source that actually measures experience," these two rules only both hold
+if the position's own experience-personalisation is restricted to arithmetic on two REAL published
+numbers from the SAME country's own tables — never the modelled, cross-country gradient Tier 3
+uses.
+
+**Shipped, this reading:** the position is the occupation's own published percentile table
+(P10/P25/median/P75/P90, `n`, table, year — a real `<Figure>`), with the highlighted percentile
+resolved two ways depending on what that specific country publishes:
+- **Spain only.** Of the three sources that cross occupation pay with anything experience-related,
+  only INE's crosses TENURE — years actually worked, the exact variable Tier 1's form collects as
+  `yearsProfessional`. SCB `LonYrkeAlder4AN` and SSB `11658` cross by AGE instead, and the form
+  never collects age (deliberately, matching Tier 3's own "age is a weak proxy for experience in
+  software" caveat) — so there is no input to bucket Sweden's or Norway's own age bands against at
+  all, not just a weaker signal. Spain's profile-personalised position: `yearsProfessional` selects
+  a band from INE's own tenure cross, that band's own published wage figure is looked up against
+  Spain's OWN percentile table via linear interpolation, and the resulting percentile is the
+  position — two real numbers from one office, one arithmetic rank-finding step, no model, no
+  cross-country borrowing.
+- **Every other country with a distribution** (Sweden and Norway included, despite each having its
+  own age cross — see above): the position defaults to the published median (P50) — real, sourced,
+  true by definition, not personalised. This is why the worked "P60 in Denmark" example does not
+  literally occur under this reading: Denmark has no experience cross of its own, so Denmark's
+  position defaults to P50 like every non-Spain country with a distribution — the example is read
+  as illustrating the position's citation FORMAT, not a literal claim about what Denmark
+  specifically returns. Sweden's and Norway's own age crosses are not wasted: both feed
+  `experience_gradient.json`'s context curves (package 10, tier 3) as a same-shape corroborating
+  check on the universal gradient, just never as a position input.
+
+The universal, Spain-tenure-anchored gradient (item 19's sibling artifact,
+`data/processed/experience_gradient.json`) drives Tier 3's estimate for every country and is never
+consulted by the position at all — keeping the `<Figure>`/`<Derived>` boundary exactly where
+packages 9's own design put it: a position never carries the authority of a measurement for a
+number this pipeline modelled.
+
+**Decide:** whether this reading matches intent, or whether "the position" was meant to be
+personalised everywhere via the universal gradient (making it depend on `<Derived>`-class
+reasoning) and "sourced" was meant more loosely (citing the underlying published TABLE the
+percentile-rank was read against, not asserting the specific percentile itself was unmodelled).
+Both readings are defensible from the text; this package chose the one that keeps every existing
+component boundary intact without stretching either `<Figure>` or `<Derived>`'s established
+contract.

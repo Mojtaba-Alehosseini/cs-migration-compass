@@ -16,6 +16,15 @@ export interface Budget {
   /** Global multipliers, applied when no absolute override is set. */
   rentFactor?: number
   livingFactor?: number
+  /** Package 10, tier 4: a user-chosen annual USD salary (e.g. a profile's
+   *  own percentile position or estimate), overriding the city's own
+   *  published salary_usd_year[band]. Everything downstream — net, savings,
+   *  years-to-home, and the stability guard — has to move with it exactly
+   *  the way it already moves with a rent/living edit, because a
+   *  user-picked percentile in an expensive city is precisely the small-
+   *  denominator case the guard exists for, and the numerator is now a
+   *  number the user picked rather than one this site vetted. */
+  salaryUsdYearOverride?: number
 }
 
 export const HOME_M2 = 90
@@ -34,18 +43,18 @@ export function effectiveLiving(city: City, b: Budget = {}): number | null {
   return base * (b.livingFactor ?? 1)
 }
 
-export function grossFor(city: City, band: Band): number | null {
-  return city.salary_usd_year[band] ?? null
+export function grossFor(city: City, band: Band, b: Budget = {}): number | null {
+  return b.salaryUsdYearOverride ?? city.salary_usd_year[band] ?? null
 }
 
-export function netFor(city: City, band: Band): number | null {
-  const gross = grossFor(city, band)
+export function netFor(city: City, band: Band, b: Budget = {}): number | null {
+  const gross = grossFor(city, band, b)
   if (gross == null || city.net_pct == null) return null
   return gross * (city.net_pct / 100)
 }
 
 export function savingsPerYear(city: City, band: Band, b: Budget = {}): number | null {
-  const net = netFor(city, band)
+  const net = netFor(city, band, b)
   const rent = effectiveRent(city, b)
   const living = effectiveLiving(city, b)
   if (net == null || rent == null || living == null) return null
@@ -137,6 +146,7 @@ export const UNSTABLE_METRIC_KEYS = new Set(['years_to_home', 'm2_per_year', 'sa
 export function stabilityOf(city: City, band: Band, b: Budget = {}): Stability | null {
   const hasEdits =
     b.rentUsd != null || b.livingUsd != null || b.rentFactor != null || b.livingFactor != null
+    || b.salaryUsdYearOverride != null
   if (!hasEdits) {
     const shipped = city.computed?.[band]?.years_to_home_stability
     if (shipped) return shipped
@@ -155,10 +165,13 @@ export function instabilityNote(city: City, band: Band, b: Budget = {}): string 
     + 'entirely. Read it as “effectively out of reach”, not as a count of years.'
 }
 
-/** Which inputs are missing, for the "no data, and here's why" copy. */
-export function missingInputs(city: City, band: Band): string[] {
+/** Which inputs are missing, for the "no data, and here's why" copy.
+ *  Takes an optional Budget (package 10, tier 4) so a salary override can
+ *  supply the one input a city itself lacks for this band — "salary" is
+ *  never reported missing when the caller handed one in directly. */
+export function missingInputs(city: City, band: Band, b: Budget = {}): string[] {
   const missing: string[] = []
-  if (grossFor(city, band) == null) missing.push('salary')
+  if (grossFor(city, band, b) == null) missing.push('salary')
   if (city.net_pct == null) missing.push('tax rate')
   if (city.rent_1br_outside_usd_month == null) missing.push('rent')
   if (city.col_single_no_rent_usd_month == null) missing.push('living costs')
@@ -168,8 +181,8 @@ export function missingInputs(city: City, band: Band): string[] {
 
 /** The salary lens: gross -> net -> what's actually left after living. */
 export function salaryByLens(city: City, band: Band, lens: Lens, b: Budget = {}): number | null {
-  if (lens === 'gross') return grossFor(city, band)
-  if (lens === 'net') return netFor(city, band)
+  if (lens === 'gross') return grossFor(city, band, b)
+  if (lens === 'net') return netFor(city, band, b)
   return savingsPerYear(city, band, b)
 }
 
@@ -308,10 +321,11 @@ export function applyCountryTrend(
 export function computedOrLive(city: City, band: Band, b: Budget): Computed {
   const hasEdits =
     b.rentUsd != null || b.livingUsd != null || b.rentFactor != null || b.livingFactor != null
+    || b.salaryUsdYearOverride != null
   if (!hasEdits) return city.computed[band]
   return {
-    gross_usd: grossFor(city, band),
-    net_usd: netFor(city, band),
+    gross_usd: grossFor(city, band, b),
+    net_usd: netFor(city, band, b),
     monthly_rent_usd: effectiveRent(city, b),
     monthly_living_usd: effectiveLiving(city, b),
     savings_usd_year: savingsPerYear(city, band, b),

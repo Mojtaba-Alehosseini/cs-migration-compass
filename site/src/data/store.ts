@@ -32,6 +32,36 @@ export function loadPayComposition(): Promise<PayComposition> {
   return payCompositionCache
 }
 
+let occupationsCache: Promise<Occupations> | null = null
+
+/** data/occupations.json, copied verbatim — package 10's profile form reads
+ *  shared_keys directly, so the occupations it offers are exactly the ones
+ *  scripts/crosswalk.py can actually resolve, never a hand-typed list that
+ *  could drift from the real mapping table. */
+export function loadOccupations(): Promise<Occupations> {
+  if (!occupationsCache) occupationsCache = getJson<Occupations>('occupations.json')
+  return occupationsCache
+}
+
+export type Confidence = 'high' | 'moderate' | '2-digit-only' | 'major-group-only' | 'no-isco-correspondence'
+
+export interface Occupations {
+  schema: string
+  purpose: string
+  shared_key_scheme: string
+  confidence_levels: Record<Confidence, string>
+  /** e.g. "isco08:2512" -> { title: "Software developers", level: 4 } */
+  shared_keys: Record<string, { title: string; level: 1 | 2 | 4 }>
+  primary_target_note: string
+  known_hazards_checked: string[]
+  mappings: {
+    country: string; source_id: string; classification: string
+    national_code: string; national_title: string
+    shared_key: string; is_primary_target: boolean
+    confidence: Confidence; note: string
+  }[]
+}
+
 export interface PayComposition {
   sources: {
     source_id: string

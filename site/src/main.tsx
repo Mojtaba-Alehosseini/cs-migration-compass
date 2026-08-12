@@ -17,6 +17,7 @@ const Explore = lazy(() => import('./routes/Explore').then((m) => ({ default: m.
 const CityProfile = lazy(() => import('./routes/CityProfile').then((m) => ({ default: m.CityProfile })))
 const CountryProfile = lazy(() => import('./routes/CountryProfile').then((m) => ({ default: m.CountryProfile })))
 const DataMethods = lazy(() => import('./routes/DataMethods').then((m) => ({ default: m.DataMethods })))
+const Position = lazy(() => import('./routes/Position').then((m) => ({ default: m.Position })))
 
 /* A fixed-height placeholder, not a spinner: it reserves the space the page is
    about to occupy so the swap does not shove the layout around.
@@ -43,6 +44,7 @@ const router = createHashRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'compare', element: lazyRoute(<Compare />) },
+      { path: 'position', element: lazyRoute(<Position />) },
       { path: 'explore', element: lazyRoute(<Explore />) },
       { path: 'explore/:theme', element: lazyRoute(<Explore />) },
       { path: 'city/:id', element: lazyRoute(<CityProfile />) },
