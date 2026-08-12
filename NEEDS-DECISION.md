@@ -717,10 +717,132 @@ consulted by the position at all — keeping the `<Figure>`/`<Derived>` boundary
 packages 9's own design put it: a position never carries the authority of a measurement for a
 number this pipeline modelled.
 
-**Decide:** whether this reading matches intent, or whether "the position" was meant to be
-personalised everywhere via the universal gradient (making it depend on `<Derived>`-class
-reasoning) and "sourced" was meant more loosely (citing the underlying published TABLE the
-percentile-rank was read against, not asserting the specific percentile itself was unmodelled).
-Both readings are defensible from the text; this package chose the one that keeps every existing
-component boundary intact without stretching either `<Figure>` or `<Derived>`'s established
-contract.
+**Decide (superseded by the update immediately below — kept for history):** whether this reading
+matches intent, or whether "the position" was meant to be personalised everywhere via the universal
+gradient (making it depend on `<Derived>`-class reasoning) and "sourced" was meant more loosely
+(citing the underlying published TABLE the percentile-rank was read against, not asserting the
+specific percentile itself was unmodelled). Both readings are defensible from the text; this
+package chose the one that keeps every existing component boundary intact without stretching
+either `<Figure>` or `<Derived>`'s established contract.
+
+---
+
+**Update, same package, tier 7 — the Spain-only personalisation above was itself unsound, and has
+been removed. The position is now the published median (P50) for every country, with no exception.**
+
+An independent adversarial review (this package's own gate 14, findings F2/F2b/F3) found that the
+"two real numbers from one office" claim above does not hold. INE's tenure cross
+(`data/processed/salary_es.json`'s `broader_category_context`) is for CNO-11 **"Scientific and
+intellectual technicians and professionals"** — doctors, lawyers, teachers, engineers, a population
+whose mean gross salary (€34,505.80) sits ~13.95% BELOW the IT-specific occupation
+(`it_professionals`, mean €39,318.16) the resulting band figure was being ranked against. This is
+not "one office, one population, two figures" as originally shipped and originally justified here —
+it is one office, TWO populations, with the relative-premium-transfers-but-absolute-level-doesn't
+assumption (already disclosed honestly in `experience_gradient.json`'s own `meta.source` field: *"NOT
+IT-specific, the finest grain INE crosses tenure at"*) silently doing more work than the `<Figure>`
+component's "official" confidence level accounts for.
+
+**The consequence was concrete, not theoretical.** Because the position (a step function over 6
+discrete INE bands) and the estimate (a continuous shift of the SAME gradient) both fed from the
+same tenure cross but combined it differently, the two numbers shown side by side for a Spanish
+profile could — and did — disagree about the same person in the same table: at 3 years, the shipped
+position read "P26" while the shipped estimate, ranked against its own distribution, actually sat
+at P33; at 20 years, "P56" beside an estimate sitting at P65. A reader comparing the two columns had
+no way to know they could contradict each other, and no disclosure said so.
+
+**Shipped:** `computePosition()` (`site/src/data/profile.ts`) no longer branches on
+`row.country === 'ES'` at all — it always returns the published median, for every country the
+crosswalk accepts. There is no IT-specific tenure cross to rank against instead (INE does not
+publish one), so the honest fix is not-personalising rather than personalising with a caveat this
+component's own contract has no room to carry. The `<Figure>`/`<Derived>` boundary point from the
+superseded reading above still holds — it now holds trivially, because the position never touches
+the gradient at all. Spain's ESTIMATE (`computeEstimate()`) still uses the same tenure-anchored
+gradient — appropriate there, since a `<Derived>` already discloses "this is a method, not a
+source" — and its own chain step now states the population mismatch explicitly rather than only in
+`experience_gradient.json`'s own metadata: *"Spain's own INE tenure cross... 'Scientific and
+intellectual technicians and professionals' — a broader population than this occupation; the SHAPE
+of the tenure-pay relationship is assumed to transfer, the absolute wage level is not."*
+
+**Decide:** whether a genuinely IT-specific experience signal is worth pursuing for a future
+package (INE does not publish tenure crossed with IT-specific CNO-11 codes at any depth this
+pipeline has found; a different source might), or whether "position is always the published
+median, full stop" should stand as this feature's permanent design — it is, after this fix, the
+simpler and more defensible of the two, and matches every other component's own discipline of
+never rendering a modelled number through `<Figure>`.
+
+## 21. Norway's and Finland's own "native" wage figures use opposite conventions for which basis they represent
+
+Package 10's adversarial review (finding F12) found that `_extract_no()` (Denmark's own tier-0.3
+fix, this package) sets the generic native `mean`/`median`/`p25`/`p75` fields from the UNPREFIXED
+Manedslønn keys — SSB's own total-earnings figure, bonus included — while `_extract_fi()` (package
+9) sets the same generic fields from the `regular_` prefix — Tilastokeskus's bonus-EXCLUDED figure,
+specifically because package 9's own docstring reasoned that regular_pay matches "the panel's own
+stated default." Both choices are individually documented and individually defensible; the two
+together mean the Explore·Money wage panel's "native currency" column — and now this package's own
+Estimate column — silently mixes bases across countries: Finland's native figure excludes the
+bonus, Norway's includes it, Denmark's STAND figure includes employer pension and irregular pay
+(package 10, tier 0.2), Spain's is total_earnings. A reader comparing native-currency figures
+across the panel has no on-page signal that "native" does not mean the same thing in every row.
+
+**Not resolved this package** — picking ONE convention (e.g., always regular_pay when a source can
+express it) would mean revisiting Denmark's, Finland's and Norway's own `_extract_*()` functions
+under the same time pressure this project's protocol exists to protect against, and Denmark's own
+figure (STAND) cannot cleanly express regular_pay as its NATIVE default at all (it is derived via
+subtraction, not a native field — see item #17). **Shipped instead:** the Estimate column's method
+card (`site/src/data/profile.ts`) already names which basis a USD figure resolved to when it falls
+back from regular_pay to total_earnings (see item #17's tier-0.2 discussion); native-currency
+figures do not yet carry an equivalent per-row basis label.
+
+**Decide:** whether the panel needs a per-row basis chip (matching the site's existing confidence-chip
+vocabulary) making explicit which of regular_pay/total_earnings/"includes employer contributions"
+each native figure actually represents, or whether unifying every source onto one convention (at
+the cost of some sources no longer showing their own most naturally "native" figure) is the better
+fix.
+
+## 22. A flat net-take-home percentage is applied to a salary that can range 2.5x under a user-chosen percentile
+
+`compute.ts`'s `netFor()` applies one `net_pct` scalar per city (e.g. Valencia 72%, Copenhagen 64%)
+regardless of the salary passed through it — a pre-existing simplification for every city-published
+figure on this site (new_grad/mid/senior bands already share one `net_pct` each), which package
+10's `Budget.salaryUsdYearOverride` (tier 4) makes more consequential: a profile's own estimate can
+range from a P25-adjacent floor to a +36% ceiling for the same country, a wider spread than the
+three fixed bands a city's own `net_pct` was calibrated against. Real income tax in every one of
+these fifteen countries is progressive — the true net percentage is lower at the top of that range
+than at the bottom — so `stabilityOf()`'s own gate-9 demonstration (Valencia, $56,247 "stable") is
+itself understating the true net figure by an unknown, unmeasured amount. Found by the adversarial
+review (finding F13), not by this package's own testing.
+
+**Not shipped as a fix** — modelling progressive tax brackets for fifteen countries is a real,
+substantial undertaking (bracket schedules, allowances, regional variation within some of these
+countries) and out of scope for a package whose own stated bar is "no AI, no network, three fields."
+`net_pct` staying a flat-per-city scalar is an existing site-wide limitation this package inherited
+and made more visible, not one it introduced.
+
+**Decide:** whether a progressive-tax model belongs in a future package (the data — bracket
+schedules per country — is itself a real harvesting effort, not a quick lookup), or whether a
+disclosure note on `Budget.salaryUsdYearOverride`-driven figures ("net percentage calibrated
+against this city's own published salary, not yours") is the more proportionate fix in the
+meantime.
+
+## 23. `_verify_mdrsnit_reconciliation()` re-proves the STAND/MDRSNIT identity against whatever data the harvester actually used this run — cached bytes included
+
+Item #17's tier-0.2 resolution says `scripts/src_salary_dk.py` "re-proves the reconciliation on
+every harvester run... a live regression guard, not a one-time claim." That is true of the
+CHECK — it runs unconditionally, against real data, every time `run()` executes, and genuinely
+raises if the worst residual ever exceeds 0.5% (constructed and confirmed live this package,
+before this item existed: a fabricated MDRSNIT mismatch raised correctly, a genuine match stayed
+silent). What the adversarial review's finding F20 correctly narrows is which DATA it checks:
+`_query()` returns the cached `data/raw/salary_dk/LONS20.json` whenever that file already exists,
+so a run against a warm cache re-verifies the PIPELINE's own parsing and arithmetic, not whether
+DST has revised its own published figures since the cache was last cleared.
+
+**Not a flaw specific to this check** — every assertion in this pipeline verifies whatever data is
+currently fetched-or-cached, never "the live internet, always, regardless of cache state"; that is
+true of every `validate_data.py` assertion back to package 7. Recorded here only because item #17's
+own wording ("every harvester run") could be read as a stronger claim than the check actually
+makes.
+
+**Decide:** nothing required — this is a documentation-precision note, not an open question. Worth
+remembering if `data/raw/salary_dk/` is ever cleared as part of a scheduled re-verification: that is
+the specific circumstance under which this check would catch a genuine DST revision, not merely a
+pipeline regression.

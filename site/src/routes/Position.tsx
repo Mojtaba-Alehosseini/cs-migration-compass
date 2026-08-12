@@ -47,23 +47,37 @@ function ordinal(pct: number): string {
 
 /** Tier 5: what this feature can do for a country, cross-checked against
  *  what the resolver actually returned — not asserted separately from it
- *  (gate 11's own requirement). Four tiers, matching the site's existing
- *  "distribution shape" vocabulary rather than inventing a parallel one. */
+ *  (gate 11's own requirement).
+ *
+ *  Position and estimate both need exactly two things to work at all:
+ *  scripts/crosswalk.py's own comparability verdict, AND a real percentile
+ *  spread (>=2 of p10/p25/median/p75/p90) to place a rank within or clamp
+ *  an estimate against. Those are two INDEPENDENT reasons a country can be
+ *  excluded — an earlier version of this function collapsed them into one
+ *  three-tier scheme labelled by distribution shape ("4-digit match" /
+ *  "quartile-only match"), which meant a country refused by the crosswalk
+ *  at 2-digit depth but still publishing a full percentile spread (Spain)
+ *  rendered the self-contradictory "4-digit match, ES forced 4-digit down
+ *  to 2-digit" — the tier name and the reason it was demoted described two
+ *  different things. Finding F6, adversarial review. Reporting both
+ *  verdicts separately removes the contradiction structurally rather than
+ *  wording around it. */
 function coverageFor(row: WageCountry | undefined, absentReason: string | undefined): {
-  tier: 'full' | 'degraded' | 'none'; detail: string
+  works: boolean; crosswalkOk: boolean; crosswalkDetail: string; distributionDetail: string
 } {
-  if (!row) return { tier: 'none', detail: absentReason ?? 'no wage distribution at all' }
-  if (!row.crosswalk.comparable) {
-    return { tier: 'degraded', detail: `occupation match: ${row.crosswalk.reason ?? 'not comparable'}` }
+  if (!row) {
+    return { works: false, crosswalkOk: false, crosswalkDetail: absentReason ?? 'no wage source at all', distributionDetail: '—' }
   }
+  const crosswalkOk = row.crosswalk.comparable
+  const crosswalkDetail = crosswalkOk
+    ? `${row.crosswalk.depth}-digit match${row.crosswalk.degraded_by ? ` (${row.crosswalk.degraded_by})` : ''}`
+    : row.crosswalk.reason
   const d = row.native.distribution
-  if (d === 'mean-only' || d === 'central-tendency-only') {
-    return { tier: 'none', detail: `${row.source_id} publishes only a ${d.replace('-', ' ')} — `
-      + 'no spread to place a position within or shift an estimate against' }
-  }
-  const depth = row.crosswalk.degraded_by ? `, ${row.crosswalk.degraded_by}` : ''
-  return { tier: d === 'full' ? 'full' : 'degraded',
-    detail: `${d === 'full' ? '4-digit' : 'quartile-only'} match${depth}` }
+  const hasSpread = d === 'full' || d === 'quartile-only'
+  const distributionDetail = hasSpread
+    ? d.replace(/-/g, ' ')
+    : `${row.source_id} publishes only a ${d.replace(/-/g, ' ')} — no spread to rank or shift against`
+  return { works: crosswalkOk && hasSpread, crosswalkOk, crosswalkDetail, distributionDetail }
 }
 
 /* --------------------------------------------------------------- form --- */
@@ -79,7 +93,7 @@ function ProfileForm({ profile, occupations, onChange }: {
   return (
     <div className="panel">
       <h2>Where do you sit?</h2>
-      <div className="sub">Four fields, no network beyond this site's own data, updates as you type.</div>
+      <div className="sub">Three fields, no network beyond this site's own data, updates as you type.</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginTop: 12 }}>
         <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
           Occupation
@@ -140,6 +154,9 @@ function ProfileForm({ profile, occupations, onChange }: {
               <option key={cc} value={cc}>{cc}</option>
             ))}
           </select>
+          <span style={{ display: 'block', marginTop: 4, color: 'var(--ink-3)', fontSize: 'var(--text-2xs)' }}>
+            Highlights that row below. Not joined into "pay against cost" — pick actual cities there.
+          </span>
         </label>
       </div>
       <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 10 }}>
@@ -152,8 +169,10 @@ function ProfileForm({ profile, occupations, onChange }: {
 
 /* ---------------------------------------------------------- one row --- */
 
-function CountryRow({ row, profile, gradient }: {
-  row: WageCountry; profile: Profile; gradient: NonNullable<ReturnType<typeof useAsync<Awaited<ReturnType<typeof loadExperienceGradient>>>>['data']>
+function CountryRow({ row, profile, gradient, highlighted }: {
+  row: WageCountry; profile: Profile
+  gradient: NonNullable<ReturnType<typeof useAsync<Awaited<ReturnType<typeof loadExperienceGradient>>>>['data']>
+  highlighted: boolean
 }) {
   const position = computePosition(profile, row, gradient)
   const estimate = computeEstimate(profile, row, gradient)
@@ -161,7 +180,8 @@ function CountryRow({ row, profile, gradient }: {
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr 1fr', gap: 12, alignItems: 'baseline',
-      padding: '10px 0', borderTop: '1px solid var(--line)' }}>
+      padding: '10px 0', borderTop: '1px solid var(--line)',
+      background: highlighted ? 'var(--surface-raised)' : undefined }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-xs)', fontWeight: 600 }}>
         <Flag cc={iso!} size={14} /> {row.country}
       </div>
@@ -169,10 +189,8 @@ function CountryRow({ row, profile, gradient }: {
         {position.ok ? (
           <Figure source={{
             name: position.sourceLabel, asOf: String(position.year), confidence: 'official',
-            what: position.personalised
-              ? `Your years selected a real INE tenure band, ranked against ${row.country}'s own published percentile table.`
-              : `${row.country} has no experience cross of its own — this is the published median (P50), not personalised.`
-              + (position.clamped ? ` Clamped to this country's own published ${position.clamped === 'low' ? 'lowest' : 'highest'} percentile.` : ''),
+            what: `${row.country} has no experience cross of its own — this is the published median `
+              + '(P50), not personalised to your years of experience.',
           }}>
             <span className="big" style={{ fontSize: 'var(--text-md)' }}>
               {ordinal(position.pct)} of {row.national_code}
@@ -191,7 +209,7 @@ function CountryRow({ row, profile, gradient }: {
         {estimate.ok ? (
           <Derived chain={estimate.chain} result={{ value: estimate.value, currency: estimate.currency }}>
             <span className="big" style={{ fontSize: 'var(--text-md)' }}>
-              ≈ {fmtNative(estimate.value, estimate.currency)}{PERIOD_LABEL[row.native.period]}
+              {fmtNative(estimate.value, estimate.currency)}{PERIOD_LABEL[row.native.period]}
             </span>
           </Derived>
         ) : (
@@ -239,9 +257,11 @@ function PayVsCost({ profile, wageByCountry, gradient }: {
             // or distribution-depth exclusion (each has its own real cause).
             const reason = !row
               ? `no wage distribution at all for ${city.country}`
-              : knownPercentilePoints(row.native.value).length < 2
-                ? `${row.source_id} publishes only a ${row.native.distribution.replace('-', ' ')} — no spread to shift an estimate against`
-                : `${city.country}'s pay composition is unverified (neither regular_pay nor total_earnings — see pay_composition.json), so no USD figure can be run through cost-of-living`
+              : !row.crosswalk.comparable
+                ? row.crosswalk.reason
+                : knownPercentilePoints(row.native.value).length < 2
+                  ? `${row.source_id} publishes only a ${row.native.distribution.replace(/-/g, ' ')} — no spread to shift an estimate against`
+                  : `${city.country}'s pay composition is unverified (neither regular_pay nor total_earnings — see pay_composition.json), so no USD figure can be run through cost-of-living`
             return (
               <div key={city.id} style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-3)' }}>
                 <Flag cc={city.country} size={12} /> {city.name}: {reason}.
@@ -257,7 +277,16 @@ function PayVsCost({ profile, wageByCountry, gradient }: {
             <div key={city.id} style={{ display: 'flex', alignItems: 'baseline', gap: 8, fontSize: 'var(--text-xs)', flexWrap: 'wrap' }}>
               <Flag cc={city.country} size={14} /><b>{city.name}</b>
               <span style={{ color: 'var(--ink-2)' }}>
-                ≈{fmtNative(est.value, est.currency)}/yr →{' '}
+                {/* Wraps the whole chain (clamp, basis-fallback disclosure) in a
+                    real method card instead of discarding it — an earlier version
+                    rendered this as plain text, so Denmark's own clamp and Spain's
+                    own total_earnings-basis substitution were computed but never
+                    shown, contradicting computeEstimateUsdYear's own "never
+                    silent" doc comment. Finding F4, adversarial review. */}
+                <Derived chain={est.chain} result={{ value: est.value, currency: est.currency }}>
+                  {fmtNative(est.value, est.currency)}/yr ({row!.native.year})
+                </Derived>
+                {' → '}
                 {savings != null ? `${fmtNative(Math.round(savings), 'USD')} saved/yr` : NO_DATA} →{' '}
                 {fmtYearsToHome(y, never)}
               </span>
@@ -289,28 +318,44 @@ function CoverageMap({ wages }: { wages: Awaited<ReturnType<typeof loadWages>> }
   const absentByCountry = new Map(wages.absent.map((a) => [a.country, a.reason]))
   const ALL_15 = ['AE', 'AU', 'CA', 'DE', 'DK', 'ES', 'FI', 'GB', 'IE', 'IT', 'NL', 'NO', 'QA', 'SE', 'US']
   const rows = ALL_15.map((cc) => ({ cc, ...coverageFor(byCountry.get(cc), absentByCountry.get(cc)) }))
-  const byTier = { full: rows.filter((r) => r.tier === 'full'), degraded: rows.filter((r) => r.tier === 'degraded'), none: rows.filter((r) => r.tier === 'none') }
+  const works = rows.filter((r) => r.works)
+  const blocked = rows.filter((r) => !r.works)
 
   return (
     <div className="panel" style={{ gridColumn: '1 / -1' }}>
       <h2>Where this feature actually works</h2>
-      <div className="sub">Everything packages 7–9 learned about occupation and pay-composition depth, applied to this one feature.</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginTop: 10 }}>
-        {(['full', 'degraded', 'none'] as const).map((tier) => (
-          <div key={tier}>
-            <h3 style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)' }}>
-              {tier === 'full' ? '4-digit position + estimate' : tier === 'degraded' ? 'Degraded match' : 'Not available'}
-              {' '}({byTier[tier].length})
-            </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0' }}>
-              {byTier[tier].map((r) => (
-                <li key={r.cc} style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>
-                  <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> — {r.detail}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+      <div className="sub">
+        Everything packages 7–9 learned about occupation and distribution depth, applied to this one
+        feature. This map describes Software developers (isco08:2512) specifically — the only
+        occupation with resolved wage data — regardless of which occupation is currently selected
+        above, since every other selection has no coverage to describe yet (see the panel above).
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14, marginTop: 10 }}>
+        <div>
+          <h3 style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)' }}>
+            Position + estimate work ({works.length})
+          </h3>
+          <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0' }}>
+            {works.map((r) => (
+              <li key={r.cc} style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>
+                <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> — {r.crosswalkDetail}, {r.distributionDetail}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h3 style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)' }}>
+            Neither works ({blocked.length})
+          </h3>
+          <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0' }}>
+            {blocked.map((r) => (
+              <li key={r.cc} style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>
+                <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> —{' '}
+                {r.crosswalkOk ? r.distributionDetail : r.crosswalkDetail}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )
@@ -334,9 +379,15 @@ export function Position() {
     update(profileToParams({ ...profile, ...patch }))
   }, [profile, update])
 
-  const { data: wages } = useAsync(loadWages, 'wages')
-  const { data: gradient } = useAsync(loadExperienceGradient, 'gradient')
-  const { data: occupations } = useAsync(loadOccupations, 'occupations')
+  // useAsync's own contract: "say so honestly when it fails... silence would
+  // read as empty" (site/src/components/explore/useAsync.ts). An earlier
+  // version of this page destructured only `data`, so a failed fetch left a
+  // permanent skeleton or an empty <select> with no explanation — finding
+  // F16, adversarial review.
+  const { data: wages, error: wagesError } = useAsync(loadWages, 'wages')
+  const { data: gradient, error: gradientError } = useAsync(loadExperienceGradient, 'gradient')
+  const { data: occupations, error: occupationsError } = useAsync(loadOccupations, 'occupations')
+  const loadError = wagesError ?? gradientError ?? occupationsError
 
   // Keyed by ISO prefix so Canada's two NOC-code rows (CA-21231, CA-21232 —
   // NEEDS-DECISION #12, still open) resolve to a real row instead of
@@ -363,6 +414,13 @@ export function Position() {
         measurement.
       </p>
 
+      {loadError && (
+        <div className="panel" style={{ borderColor: 'var(--warn)' }}>
+          <h2>The data didn't load</h2>
+          <p style={{ color: 'var(--ink-2)', marginTop: 8 }}>{loadError}</p>
+        </div>
+      )}
+
       <ProfileForm profile={profile} occupations={occupations} onChange={onProfileChange} />
 
       <div className="panel" style={{ marginTop: 12 }}>
@@ -385,7 +443,8 @@ export function Position() {
               <span /><span>Position</span><span>Estimate</span>
             </div>
             {wages.countries.map((row) => (
-              <CountryRow key={row.country} row={row} profile={profile} gradient={gradient} />
+              <CountryRow key={row.country} row={row} profile={profile} gradient={gradient}
+                highlighted={profile.country != null && row.country.split('-')[0] === profile.country} />
             ))}
             {wages.absent.length > 0 && (
               <Gap title={`${wages.absent.length} countries don't appear above`} span="s6"
