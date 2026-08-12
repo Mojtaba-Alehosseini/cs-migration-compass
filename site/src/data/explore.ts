@@ -119,7 +119,11 @@ export async function loadMoney(): Promise<MoneyData> {
  *  crosswalk.py:33-38 ("package 9 must call this function rather than
  *  re-deriving the rule in the UI"). */
 
-export type Distribution = 'full' | 'central-tendency-only' | 'mean-only'
+// 'quartile-only' added tier 7 (adversarial review finding F14): Denmark/
+// Norway/Netherlands publish p25/median/p75 but not p10/p90 — a real
+// spread, genuinely different from 'central-tendency-only' (Australia/
+// Ireland: a median with no spread published at all).
+export type Distribution = 'full' | 'quartile-only' | 'central-tendency-only' | 'mean-only'
 
 export interface WageStats {
   mean: number | null; median: number | null
@@ -147,6 +151,10 @@ export interface WageCountry {
   native: {
     currency: string; period: 'hour' | 'month' | 'year'; year: number
     value: WageStats; n_employees: number | null; distribution: Distribution
+    /** Set only for Qatar: this pipeline's own weighted average of PSA's
+     *  separately-published Male/Female series — a real derivation, not a
+     *  value the source itself published. null for every other country. */
+    weighting_note: string | null
   }
   crosswalk: CrosswalkVerdict
   combos: Record<string, Combo>  // keyed by comboKey()

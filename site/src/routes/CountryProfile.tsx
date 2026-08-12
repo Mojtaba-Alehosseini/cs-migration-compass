@@ -6,6 +6,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { Flag } from '../components/Flag'
 import { Figure } from '../components/Figure'
+import { Derived } from '../components/Derived'
 import { useAsync } from '../components/explore/useAsync'
 import { useData } from '../data/store'
 import { asOfLabel, money, num, pct, rankOf, sourceName, NO_DATA } from '../data/format'
@@ -23,9 +24,13 @@ function fmtNative(v: number | null, currency: string): string {
   }
 }
 
-/** One country's native wage distribution — always the SOURCE figure, never a
- *  conversion, so it renders through <Figure> (the site's one way to render a
- *  sourced number), not <Derived>. See docs/DESIGN.md. */
+/** One country's native wage distribution — the SOURCE figure, rendered
+ *  through <Figure>, EXCEPT Qatar: its "native" mean is this pipeline's own
+ *  weighted average of PSA's separately-published Male/Female series (see
+ *  build_wage_distribution.py's _extract_qa), a real derivation despite
+ *  being in "native currency" — <Figure> claiming it as "as published"
+ *  was adversarial review finding F15. Qatar renders through <Derived>
+ *  instead, with the weighting made explicit as its own chain step. */
 function WageRowFigure({ row }: { row: WageCountry }) {
   const n = row.native
   const spread = n.value.p10 != null && n.value.p90 != null
@@ -33,11 +38,37 @@ function WageRowFigure({ row }: { row: WageCountry }) {
     : n.value.p25 != null && n.value.p75 != null
       ? `${fmtNative(n.value.p25, n.currency)} – ${fmtNative(n.value.p75, n.currency)} (p25–p75)`
       : null
+  // FIXED (tier 7, adversarial review finding F14): a binary ternary treated
+  // every distribution value that wasn't literally 'central-tendency-only'
+  // as "Full distribution as published" — including 'mean-only' (Qatar,
+  // UAE), which have neither a median nor any spread at all. Now names all
+  // four shapes correctly.
+  const distributionNote = {
+    full: 'Full P10–P90 distribution as published.',
+    'quartile-only': 'P25–P75 spread published; P10/P90 are not.',
+    'central-tendency-only': 'Mean/median only, no percentile spread published.',
+    'mean-only': 'A single mean only — no median, no spread published.',
+  }[n.distribution]
+
+  if (n.weighting_note) {
+    return (
+      <div style={{ marginTop: 10 }}>
+        <Derived chain={[{ op: 'weighted_mean', detail: n.weighting_note }]}
+          result={{ value: n.value.mean ?? 0, currency: n.currency }}>
+          <span className="big" style={{ fontSize: 'var(--text-xl)' }}>
+            {fmtNative(n.value.mean, n.currency)}{PERIOD_LABEL[n.period]}
+          </span>
+        </Derived>
+        <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
+          {n.n_employees != null ? `n = ${num(n.n_employees)} · ` : ''}{n.year}
+        </div>
+      </div>
+    )
+  }
   return (
     <div style={{ marginTop: 10 }}>
       <Figure source={{
-        name: row.source_id, what: `${row.native.distribution === 'central-tendency-only'
-          ? 'Mean/median only, no percentile spread published.' : 'Full distribution as published.'} `
+        name: row.source_id, what: `${distributionNote} `
           + (row.crosswalk.comparable && row.crosswalk.degraded_by ? row.crosswalk.degraded_by : ''),
         asOf: String(n.year), confidence: 'official',
       }}>

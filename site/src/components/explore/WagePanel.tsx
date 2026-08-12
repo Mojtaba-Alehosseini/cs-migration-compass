@@ -56,7 +56,14 @@ function splitRow(country: string): { iso: string; suffix: string | null } {
   return { iso: iso!, suffix: suffix ?? null }
 }
 
-const ROW_LABEL: Record<string, string> = {
+// Full occupation titles ("Software engineers & designers") overflowed the
+// SVG's left edge at PL=190 — caught by reading an actual rendered
+// screenshot, not by eyeballing the code (the string is well under any
+// character-count limit that looks safe in isolation; it only overflows in
+// context, against this specific label column width). The NOC code is short
+// and unambiguous on its own; the full title moves to a <title> tooltip.
+const ROW_LABEL: Record<string, string> = { 'CA-21231': '21231', 'CA-21232': '21232' }
+const ROW_LABEL_FULL: Record<string, string> = {
   'CA-21231': 'Software engineers & designers', 'CA-21232': 'Software developers & programmers',
 }
 
@@ -72,11 +79,21 @@ function shortAbsence(basis: Basis, reason: string): string {
   return 'not available on this basis'
 }
 
+/** Short enough to fit beside a bar at the chart's own right edge — the full
+ *  sentence ("IE forced 4-digit down to 1-digit") overflowed the SVG's right
+ *  edge and was rendered clipped mid-word, caught the same way as the CA
+ *  label overflow: by reading a real screenshot, not by inspecting the
+ *  string in isolation. Full sentence still lives in the <title> tooltip. */
 function degradationNote(row: WageCountry): string | null {
   const cw = row.crosswalk
-  if (!cw.comparable) return `not compared — ${cw.reason}`
+  if (!cw.comparable) return 'not comparable'
   if (!cw.degraded_by) return null
-  return `${cw.depth}-digit match only (${cw.degraded_by})`
+  return `${cw.depth}-digit match`
+}
+
+function degradationNoteFull(row: WageCountry): string {
+  const cw = row.crosswalk
+  return cw.comparable ? (cw.degraded_by ?? '') : cw.reason
 }
 
 export function WagePanel({ wages }: { wages: WageDistribution }) {
@@ -93,13 +110,26 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
   // wages.countries directly, unfiltered).
   const uncomparable = useMemo(() => wages.countries.filter((c) => !c.crosswalk.comparable), [wages])
   const rows = useMemo(() => {
-    return wages.countries.filter((c) => c.crosswalk.comparable).sort((a, b) => {
+    const comparable = wages.countries.filter((c) => c.crosswalk.comparable)
+    // FIXED (tier 7, adversarial review finding F17): native mode draws no
+    // shared axis because different currencies aren't positionally
+    // comparable (see canCompare below) — but this sort still ranked rows
+    // by raw magnitude across those same different currencies, so the
+    // ordering itself was the same false comparison the axis fix removed,
+    // just moved from geometry into row order. Native mode sorts by
+    // country code instead — a neutral order that doesn't imply anything
+    // about relative pay. USD mode, where magnitude really is comparable,
+    // keeps the ranked "who pays the most" order.
+    if (currency !== 'usd') {
+      return comparable.sort((a, b) => a.country.localeCompare(b.country))
+    }
+    return comparable.sort((a, b) => {
       const av = a.combos[key], bv = b.combos[key]
       const am = av?.ok ? (av.value.median ?? av.value.mean ?? -1) : -1
       const bm = bv?.ok ? (bv.value.median ?? bv.value.mean ?? -1) : -1
       return bm - am
     })
-  }, [wages, key])
+  }, [wages, key, currency])
 
   const W = 700, ROW = 40, PL = 190, PR = 60, TOP = 34
   const H = TOP + rows.length * ROW + 30
@@ -202,6 +232,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                 <text x={PL - 10} y={y0 + 4} fontSize="10.5" fontWeight={suffix ? 400 : 600}
                   fill={col} textAnchor="end">
                   {iso}{suffix ? ` · ${label}` : ''}
+                  {suffix && ROW_LABEL_FULL[r.country] && <title>{ROW_LABEL_FULL[r.country]}</title>}
                 </text>
                 {combo?.ok ? (
                   canCompare ? (
@@ -227,10 +258,14 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                   </>
                 )}
                 {note && canCompare && (
-                  <text x={X(domainMax / 1.08) + 4} y={y0 + 3.5} fontSize="9" fill="var(--ink-3)">{note}</text>
+                  <text x={X(domainMax / 1.08) + 4} y={y0 + 3.5} fontSize="9" fill="var(--ink-3)">
+                    {note}<title>{degradationNoteFull(r)}</title>
+                  </text>
                 )}
                 {note && !canCompare && (
-                  <text x={W - PR} y={y0 + 3.5} fontSize="9" fill="var(--ink-3)" textAnchor="end">{note}</text>
+                  <text x={W - PR} y={y0 + 3.5} fontSize="9" fill="var(--ink-3)" textAnchor="end">
+                    {note}<title>{degradationNoteFull(r)}</title>
+                  </text>
                 )}
               </g>
             )
@@ -239,30 +274,50 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
       </div>
 
       {rows.some((r) => r.combos[key]?.ok) && payComp && (
-        <div style={{ marginTop: 6, fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
-          Tap a row's number for the full method — every figure here is calculated, not published as-is.{' '}
-          {rows
-            .filter((r) => r.combos[key]?.ok)
-            .slice(0, 1)
-            .map((r) => {
+        <details style={{ marginTop: 8 }}>
+          <summary style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', cursor: 'pointer' }}>
+            Every figure here is calculated — open each row's own method
+          </summary>
+          {/* FIXED (tier 7, adversarial review finding F12): a single example row —
+              and that row's card never stated the calculated RESULT, only the steps
+              leading to it — has grown into one real, tappable trigger per comparable
+              row, each showing its own year (finding F13: no figure on the panel
+              named its vintage anywhere outside an opened card). Real DOM list, not
+              SVG — keyboard- and touch-reachable. The chart's own degradation labels
+              are still SVG <title> (hover-only, finding F18) for the full sentence,
+              but the DEPTH itself (the fact a row is degraded, and to what digit) is
+              in the ChartTable's own "Comparable" column below — a real table cell,
+              not a tooltip — so the key fact survives without a mouse even though the
+              longer "who forced it" reasoning doesn't yet. */}
+          <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0', display: 'flex',
+                       flexDirection: 'column', gap: 4, fontSize: 'var(--text-2xs)' }}>
+            {rows.filter((r) => r.combos[key]?.ok).map((r) => {
               const combo = r.combos[key]!
               if (!combo.ok) return null
               const comp = payComp.sources.find((s) => s.source_id === r.source_id)
               return (
-                <Derived key={r.country} chain={combo.chain}
-                  native={{ value: r.native.value.median ?? r.native.value.mean ?? 0,
-                    currency: r.native.currency, period: r.native.period, year: r.native.year }}
-                  concept={comp ? {
-                    name: comp.concept_name, office: comp.office,
-                    includes: typeof comp.irregular_bonus === 'string' ? comp.irregular_bonus
-                      : comp.irregular_bonus ? 'irregular bonus' : undefined,
-                    excludes: comp.employer_social_contributions === false ? 'employer social contributions' : undefined,
-                  } : undefined}>
-                  example: {r.country}'s own chain →
-                </Derived>
+                <li key={r.country} style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
+                  <span style={{ fontWeight: 600, color: cc3(splitRow(r.country).iso), minWidth: 32 }}>
+                    {r.country}
+                  </span>
+                  <Derived chain={combo.chain}
+                    native={{ value: r.native.value.median ?? r.native.value.mean ?? 0,
+                      currency: r.native.currency, period: r.native.period, year: r.native.year }}
+                    result={{ value: combo.value.median ?? combo.value.mean ?? 0, currency: combo.currency }}
+                    concept={comp ? {
+                      name: comp.concept_name, office: comp.office,
+                      includes: typeof comp.irregular_bonus === 'string' ? comp.irregular_bonus
+                        : comp.irregular_bonus ? 'irregular bonus' : undefined,
+                      excludes: comp.employer_social_contributions === false ? 'employer social contributions' : undefined,
+                    } : undefined}
+                    payCycleNote={payComp.pay_cycle_context[splitRow(r.country).iso]}>
+                    {fmtCcy(combo.value.median ?? combo.value.mean, combo.currency)} ({r.native.year})
+                  </Derived>
+                </li>
               )
             })}
-        </div>
+          </ul>
+        </details>
       )}
 
       <ChartFoot csv={{ name: `compass-wages-${currency}-${basis}.csv`, rows: csvRows }}>

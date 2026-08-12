@@ -185,9 +185,15 @@ def main() -> int:
         # bls_oews predates this package and tracks exactly one occupation
         # (SOC 15-1252) keyed by city instead, so both its code and title
         # checks fall back to substring-matching meta.occupation. Sources
-        # with no live occupation data (salary_de does not exist; salary_it
-        # has an empty occupations dict) are skipped rather than failed —
-        # there is nothing for a "no-series" mapping to drift from.
+        # with no live occupation data (salary_de.json exists as of package
+        # 9 but its own occupations dict is empty — blocked, not fetched;
+        # salary_it.json's occupations dict is empty too, by design) are
+        # skipped rather than failed — there is nothing for a "no-series"
+        # mapping to drift from. (This comment said "salary_de does not
+        # exist" until tier 7's adversarial review caught that it now does
+        # — finding F21; harmless today only because occupations.json has
+        # no DE mappings at all yet, so this branch is never exercised for
+        # DE regardless.)
         sid = m.get("source_id")
         national_title = (m.get("national_title") or "").strip()
         if sid:

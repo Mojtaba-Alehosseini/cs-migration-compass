@@ -168,7 +168,9 @@ def run() -> None:
                 "'usual hours, not counting overtime' wage concept.",
             "usage_rule": "Never use a flat 2080 hours/year (the US 40x52 convention) for any other "
                 "country in this spine — Denmark's own usual hours (~38/week) would be overstated by "
-                "roughly 7% under that assumption. See scripts/normalise.py.",
+                "a measured 4.2-4.7% (year-dependent) under that assumption, not the ~7% earlier "
+                "package-9 docstrings claimed before tier 7's adversarial review corrected the figure "
+                "against a real calculation. See scripts/normalise.py.",
         },
     )
     record_provenance(

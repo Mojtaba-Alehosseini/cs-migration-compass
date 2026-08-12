@@ -292,8 +292,9 @@ def main() -> int:
 
     # Raw curated files are offered as downloads on the Data & Methods page.
     # pay_composition.json also feeds the <Derived> method card's concept-name/
-    # includes-excludes/pay-cycle-context content directly (see explore.ts's
-    # loadWages()) — it is fetched by the app itself, not just downloadable.
+    # includes-excludes/pay-cycle-context content directly (see store.ts's
+    # loadPayComposition(), not explore.ts's loadWages() — corrected, tier 7,
+    # finding F21) — it is fetched by the app itself, not just downloadable.
     for name in ("countries.json", "cities.json", "metrics.json", "data-pipeline-sources.json",
                  "pay_composition.json"):
         src = DATA / name

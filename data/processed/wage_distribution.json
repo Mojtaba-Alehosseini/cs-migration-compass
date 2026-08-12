@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-08-12T18:52:58+00:00",
+ "generated_at": "2026-08-12T19:55:51+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -31,7 +31,8 @@
       "p90": 72600.0
      },
      "n_employees": null,
-     "distribution": "full"
+     "distribution": "full",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -64,27 +65,8 @@
       "chain_field": "median"
      },
      "native_total_earnings": {
-      "ok": true,
-      "value": {
-       "mean": 666000.0,
-       "median": 642000.0,
-       "p10": 475200.0,
-       "p25": 554400.0,
-       "p75": 751200.0,
-       "p90": 871200.0
-      },
-      "chain": [
-       {
-        "op": "native",
-        "detail": "published as-is; salary_se's composition already excludes what total_earnings requires excluded"
-       },
-       {
-        "op": "monthly_to_annual",
-        "detail": "53500.0 x 12 (fixed, never any other multiplier — see module docstring rule 3)"
-       }
-      ],
-      "currency": "SEK",
-      "chain_field": "median"
+      "ok": false,
+      "reason": "salary_se does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      },
      "usd_regular_pay": {
       "ok": true,
@@ -114,31 +96,8 @@
       "chain_field": "median"
      },
      "usd_total_earnings": {
-      "ok": true,
-      "value": {
-       "mean": 67815.90037420871,
-       "median": 65372.084144507484,
-       "p10": 48387.56134808405,
-       "p25": 56452.154906098054,
-       "p75": 76491.44798964802,
-       "p90": 88710.52913815409
-      },
-      "chain": [
-       {
-        "op": "native",
-        "detail": "published as-is; salary_se's composition already excludes what total_earnings requires excluded"
-       },
-       {
-        "op": "monthly_to_annual",
-        "detail": "53500.0 x 12 (fixed, never any other multiplier — see module docstring rule 3)"
-       },
-       {
-        "op": "fx_convert",
-        "detail": "642000.0 / 9.82070570950185 (SE 2025 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
-       }
-      ],
-      "currency": "USD",
-      "chain_field": "median"
+      "ok": false,
+      "reason": "salary_se does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      }
     }
    },
@@ -159,7 +118,8 @@
       "p90": 101172.0
      },
      "n_employees": null,
-     "distribution": "full"
+     "distribution": "full",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -245,7 +205,8 @@
       "p90": 214670.0
      },
      "n_employees": 1687890.0,
-     "distribution": "full"
+     "distribution": "full",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -255,10 +216,6 @@
     },
     "combos": {
      "native_regular_pay": {
-      "ok": false,
-      "reason": "bls_oews does not publish enough to express regular_pay and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
-     },
-     "native_total_earnings": {
       "ok": true,
       "value": {
        "mean": 148100.0,
@@ -271,7 +228,7 @@
       "chain": [
        {
         "op": "native",
-        "detail": "published as-is; bls_oews's composition already excludes what total_earnings requires excluded"
+        "detail": "published as-is; bls_oews's composition already excludes what regular_pay requires excluded"
        },
        {
         "op": "identity",
@@ -281,11 +238,11 @@
       "currency": "USD",
       "chain_field": "median"
      },
-     "usd_regular_pay": {
+     "native_total_earnings": {
       "ok": false,
-      "reason": "bls_oews does not publish enough to express regular_pay and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
+      "reason": "bls_oews does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      },
-     "usd_total_earnings": {
+     "usd_regular_pay": {
       "ok": true,
       "value": {
        "mean": 148100.0,
@@ -298,7 +255,7 @@
       "chain": [
        {
         "op": "native",
-        "detail": "published as-is; bls_oews's composition already excludes what total_earnings requires excluded"
+        "detail": "published as-is; bls_oews's composition already excludes what regular_pay requires excluded"
        },
        {
         "op": "identity",
@@ -311,6 +268,10 @@
       ],
       "currency": "USD",
       "chain_field": "median"
+     },
+     "usd_total_earnings": {
+      "ok": false,
+      "reason": "bls_oews does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      }
     }
    },
@@ -331,7 +292,8 @@
       "p90": null
      },
      "n_employees": 29096,
-     "distribution": "central-tendency-only"
+     "distribution": "quartile-only",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -483,7 +445,8 @@
       "p90": null
      },
      "n_employees": 8281,
-     "distribution": "central-tendency-only"
+     "distribution": "quartile-only",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -569,7 +532,8 @@
       "p90": 7092
      },
      "n_employees": 27074,
-     "distribution": "full"
+     "distribution": "full",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -697,7 +661,8 @@
       "p90": null
      },
      "n_employees": 84585,
-     "distribution": "central-tendency-only"
+     "distribution": "central-tendency-only",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -783,7 +748,8 @@
       "p90": 63061.11
      },
      "n_employees": null,
-     "distribution": "full"
+     "distribution": "full",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -869,7 +835,8 @@
       "p90": null
      },
      "n_employees": null,
-     "distribution": "central-tendency-only"
+     "distribution": "central-tendency-only",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -881,8 +848,8 @@
      "native_regular_pay": {
       "ok": true,
       "value": {
-       "mean": 81490.65599999999,
-       "median": 69991.584,
+       "mean": 67109.952,
+       "median": 64330.5,
        "p10": null,
        "p25": null,
        "p75": null,
@@ -895,7 +862,7 @@
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "32.99 x 40.8 hours/week (IE 2022, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
+        "detail": "32.99 x 37.5 hours/week (IE 2022, CSO SES06 (median_paid_weekly_hours — matched to this same cell, not the generic cross-country hours_worked.json))"
        },
        {
         "op": "weekly_to_annual",
@@ -906,37 +873,14 @@
       "chain_field": "median"
      },
      "native_total_earnings": {
-      "ok": true,
-      "value": {
-       "mean": 81490.65599999999,
-       "median": 69991.584,
-       "p10": null,
-       "p25": null,
-       "p75": null,
-       "p90": null
-      },
-      "chain": [
-       {
-        "op": "native",
-        "detail": "published as-is; salary_ie's composition already excludes what total_earnings requires excluded"
-       },
-       {
-        "op": "hourly_to_weekly",
-        "detail": "32.99 x 40.8 hours/week (IE 2022, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
-       },
-       {
-        "op": "weekly_to_annual",
-        "detail": "x 52 weeks/year"
-       }
-      ],
-      "currency": "EUR",
-      "chain_field": "median"
+      "ok": false,
+      "reason": "salary_ie does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      },
      "usd_regular_pay": {
       "ok": true,
       "value": {
-       "mean": 85813.62432130771,
-       "median": 73704.54221192247,
+       "mean": 70670.04355872402,
+       "median": 67743.14541536992,
        "p10": null,
        "p25": null,
        "p75": null,
@@ -949,7 +893,7 @@
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "32.99 x 40.8 hours/week (IE 2022, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
+        "detail": "32.99 x 37.5 hours/week (IE 2022, CSO SES06 (median_paid_weekly_hours — matched to this same cell, not the generic cross-country hours_worked.json))"
        },
        {
         "op": "weekly_to_annual",
@@ -957,42 +901,15 @@
        },
        {
         "op": "fx_convert",
-        "detail": "69991.584 / 0.949623753156941 (IE 2022 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
+        "detail": "64330.5 / 0.949623753156941 (IE 2022 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
        }
       ],
       "currency": "USD",
       "chain_field": "median"
      },
      "usd_total_earnings": {
-      "ok": true,
-      "value": {
-       "mean": 85813.62432130771,
-       "median": 73704.54221192247,
-       "p10": null,
-       "p25": null,
-       "p75": null,
-       "p90": null
-      },
-      "chain": [
-       {
-        "op": "native",
-        "detail": "published as-is; salary_ie's composition already excludes what total_earnings requires excluded"
-       },
-       {
-        "op": "hourly_to_weekly",
-        "detail": "32.99 x 40.8 hours/week (IE 2022, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
-       },
-       {
-        "op": "weekly_to_annual",
-        "detail": "x 52 weeks/year"
-       },
-       {
-        "op": "fx_convert",
-        "detail": "69991.584 / 0.949623753156941 (IE 2022 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
-       }
-      ],
-      "currency": "USD",
-      "chain_field": "median"
+      "ok": false,
+      "reason": "salary_ie does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      }
     }
    },
@@ -1013,7 +930,8 @@
       "p90": null
      },
      "n_employees": 331815,
-     "distribution": "mean-only"
+     "distribution": "mean-only",
+     "weighting_note": "mean weighted by Qatar PSA's own published Male (n=209114, 28941 QAR/mo) and Female (n=122701, 23536 QAR/mo) counts — not a native combined figure"
     },
     "crosswalk": {
      "comparable": true,
@@ -1057,7 +975,8 @@
       "p90": null
      },
      "n_employees": null,
-     "distribution": "mean-only"
+     "distribution": "mean-only",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -1101,7 +1020,8 @@
       "p90": null
      },
      "n_employees": 316000,
-     "distribution": "central-tendency-only"
+     "distribution": "quartile-only",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": false,
@@ -1136,31 +1056,8 @@
       "chain_field": "median"
      },
      "native_total_earnings": {
-      "ok": true,
-      "value": {
-       "mean": null,
-       "median": 70755.35999999999,
-       "p10": null,
-       "p25": 54896.4,
-       "p75": 88240.88,
-       "p90": null
-      },
-      "chain": [
-       {
-        "op": "native",
-        "detail": "published as-is; salary_nl's composition already excludes what total_earnings requires excluded"
-       },
-       {
-        "op": "hourly_to_weekly",
-        "detail": "34.8 x 39.1 hours/week (NL 2024, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
-       },
-       {
-        "op": "weekly_to_annual",
-        "detail": "x 52 weeks/year"
-       }
-      ],
-      "currency": "EUR",
-      "chain_field": "median"
+      "ok": false,
+      "reason": "salary_nl does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      },
      "usd_regular_pay": {
       "ok": true,
@@ -1194,35 +1091,8 @@
       "chain_field": "median"
      },
      "usd_total_earnings": {
-      "ok": true,
-      "value": {
-       "mean": null,
-       "median": 76584.21972337498,
-       "p10": null,
-       "p25": 59418.79116468749,
-       "p75": 95510.20505731249,
-       "p90": null
-      },
-      "chain": [
-       {
-        "op": "native",
-        "detail": "published as-is; salary_nl's composition already excludes what total_earnings requires excluded"
-       },
-       {
-        "op": "hourly_to_weekly",
-        "detail": "34.8 x 39.1 hours/week (NL 2024, hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS))"
-       },
-       {
-        "op": "weekly_to_annual",
-        "detail": "x 52 weeks/year"
-       },
-       {
-        "op": "fx_convert",
-        "detail": "70755.35999999999 / 0.923889546117607 (NL 2024 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
-       }
-      ],
-      "currency": "USD",
-      "chain_field": "median"
+      "ok": false,
+      "reason": "salary_nl does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      }
     }
    },
@@ -1243,7 +1113,8 @@
       "p90": 91.35
      },
      "n_employees": null,
-     "distribution": "full"
+     "distribution": "full",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,
@@ -1287,7 +1158,8 @@
       "p90": 76.92
      },
      "n_employees": null,
-     "distribution": "full"
+     "distribution": "full",
+     "weighting_note": null
     },
     "crosswalk": {
      "comparable": true,

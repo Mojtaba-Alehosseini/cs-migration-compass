@@ -19,6 +19,14 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import type { ChainStep } from '../data/explore'
 
+const fmtResult = (v: number, currency: string): string => {
+  try {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(v)
+  } catch {
+    return `${Math.round(v).toLocaleString()} ${currency}`
+  }
+}
+
 export interface DerivedConcept {
   /** The office's own term, in its own language — e.g. "Standardberegnet månedsfortjeneste". */
   name: string
@@ -41,6 +49,13 @@ interface Props {
   chain: ChainStep[]
   native?: DerivedNative
   concept?: DerivedConcept
+  /** The final calculated number, shown as the chain's own last step — a
+   *  chain that lists every adjustment but never states what they add up
+   *  to stops short of Tier 6's own spec ("published value -> each
+   *  adjustment -> hours -> FX rate -> RESULT"). Optional because a caller
+   *  showing intermediate reasoning without a final figure yet is valid;
+   *  when given, it's currency-formatted the same way the trigger itself is. */
+  result?: { value: number; currency: string }
   /** Sourced background from pay_composition.json's pay_cycle_context — WHY
    *  this source differs from others, kept visually separate from the chain
    *  itself since it explains, it never adjusts a number. */
@@ -50,9 +65,11 @@ interface Props {
 
 const PERIOD_LABEL: Record<DerivedNative['period'], string> = { hour: '/hour', month: '/month', year: '/year' }
 
-export function Derived({ children, chain, native, concept, payCycleNote, className }: Props) {
+export function Derived({ children, chain, native, concept, result, payCycleNote, className }: Props) {
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLSpanElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const id = useId()
 
   useEffect(() => {
@@ -63,15 +80,26 @@ export function Derived({ children, chain, native, concept, payCycleNote, classN
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
     document.addEventListener('click', onDoc)
     document.addEventListener('keydown', onKey)
+    // Minimal focus management (tier 7, adversarial review finding F23): a
+    // keyboard user who opens the card lands inside it, and gets their
+    // focus back on the trigger when it closes, instead of focus silently
+    // staying wherever it was (the trigger) while a card appears elsewhere
+    // on screen. Not a full modal focus trap — this is a disclosure
+    // popover, not a modal (the rest of the page stays interactive on
+    // purpose, matching <Figure>'s own established pattern) — so Tab can
+    // still leave the card, same as <Figure>.
+    cardRef.current?.focus()
     return () => {
       document.removeEventListener('click', onDoc)
       document.removeEventListener('keydown', onKey)
+      triggerRef.current?.focus()
     }
   }, [open])
 
   return (
-    <span ref={ref} className={className} style={{ position: 'relative', display: 'inline-block' }}>
+    <div ref={ref} className={className} style={{ position: 'relative', display: 'inline-block' }}>
       <button
+        ref={triggerRef}
         type="button"
         aria-expanded={open}
         aria-controls={id}
@@ -89,7 +117,9 @@ export function Derived({ children, chain, native, concept, payCycleNote, classN
       </button>
 
       {open && (
-        <span
+        <div
+          ref={cardRef}
+          tabIndex={-1}
           id={id}
           role="dialog"
           aria-label={concept ? `Method: ${concept.name}` : 'Method'}
@@ -126,6 +156,9 @@ export function Derived({ children, chain, native, concept, payCycleNote, classN
             {chain.map((step, i) => (
               <li key={i} style={{ opacity: 0.85 }}>{step.detail}</li>
             ))}
+            {result && (
+              <li style={{ fontWeight: 600, opacity: 1 }}>= {fmtResult(result.value, result.currency)}</li>
+            )}
           </ol>
 
           {payCycleNote && (
@@ -133,8 +166,8 @@ export function Derived({ children, chain, native, concept, payCycleNote, classN
               {payCycleNote}
             </span>
           )}
-        </span>
+        </div>
       )}
-    </span>
+    </div>
   )
 }

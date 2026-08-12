@@ -262,7 +262,7 @@ answering it.
 
 ---
 
-## 15. Germany, package 9 attempt — DESTATIS_TOKEN unavailable this session; the API path is confirmed deprecated, not just stale
+## 15. Germany, package 9 — DESTATIS_TOKEN unavailable; API confirmed ALIVE, blocked by an account-permission wall (superseded within this item — see the 2026-08-12 tier 2b update below; the original heading here claimed the API path was "confirmed deprecated", which the tier 2b update below found was itself too broad a conclusion)
 
 Package 9's work order named an API token, `DESTATIS_TOKEN`, as "set by the runner
 script, which lives in the gitignored `prompts/` directory" — i.e. `prompts/run-
@@ -445,3 +445,127 @@ real but untouched.
 salary-override extension belongs there (matching where Tier 6 places "position/
 estimate" features) — and if so, treat `phase-4-salary-and-cv-plan.md:491-494` as
 already describing the requirement, just under the wrong package number.
+
+---
+
+# Package 9 — Normalisation (Tier 7, adversarial review findings F3/F4)
+
+## 17. Denmark's own two DST concepts don't reconcile, and one subtraction step has to assume a shape the source data doesn't publish
+
+Both findings are about `salary_dk`'s `dispersion_by_year` table (`data/processed/salary_dk.json`,
+occupation 2512) and are specific to Denmark — no other source in the spine has this shape of
+problem, because no other source publishes two independent DST-style concepts for the same job in
+the same file.
+
+**F3 — the country page's native figure and DST's own monthly headline are ~24% apart, for the
+same job, same year, same statistical office.**
+
+`salary_dk.json` carries two genuinely different DST series for occupation 2512, 2024:
+
+- `dispersion_by_year["2024"]` — an **hourly** distribution (`mean_dkk_hour`, `median_dkk_hour`,
+  `p25`/`p75`, plus `employer_pension_dkk_hour` and `irregular_dkk_hour`), DST's `LONS20` table.
+- `standardized_monthly_dkk_by_year["2024"]` — DST's own separately-computed **MDRSNIT**
+  ("standardberegnet månedsfortjeneste" — standardised average monthly earnings), `65,504.17`
+  DKK/month.
+
+`resolve_country()`'s `native.value` block (`scripts/build_wage_distribution.py:474-475`) is `obs.get(k)`
+— the raw hourly figures, unadjusted — because "native" is defined pipeline-wide as "published as
+originally reported," and no subtraction happens before that point. That is correct for every
+other source. For Denmark specifically it produces a number that silently disagrees with DST's
+*own other* headline for the identical occupation and year, once a reader does the annualisation
+DST itself does not publish a formula for. Verified live this session, from the committed file, no
+part of this is a memorised figure:
+
+| Reconstruction | Formula | Result | vs. MDRSNIT (65,504.17) |
+| --- | --- | --- | --- |
+| Country page's own native mean, annualised at this pipeline's own DK hours figure | `489.26 × 38.4h/wk × 52 / 12` | 81,412.86 | **+24.29%** |
+| Country page's own native median, same hours | `470.53 × 38.4 × 52 / 12` | 78,296.19 | +19.53% |
+| Pipeline's `regular_pay` basis (PENS+UREGEL subtracted), median | see F4 for the subtraction | 66,912.77 | +2.15% |
+| Pipeline's `regular_pay` basis, mean | — | 70,029.44 | +6.91% |
+
+The `regular_pay`/`total_earnings` comparison figures (the numbers the Explore·Money panel
+actually charts) land within a few percent of MDRSNIT — reassuring, and not the problem. The
+problem is narrower and easy to miss: **the country page's own native block is the raw,
+un-subtracted FORINKL rate**, and nothing on the country page tells a reader that DST publishes a
+second, materially different "the number Danes actually recognise" figure for the same job that
+doesn't reconcile with it by simple multiplication. A Danish reader who knows MDRSNIT (a commonly
+cited figure) and does napkin-math on the site's own displayed hourly rate lands 24% high and has
+no on-page signal that FORINKL-hourly and MDRSNIT-monthly are two different DST concepts, not one
+figure expressed two ways.
+
+**Not shipped as a fix** — this is a disclosure gap, not a wrong number: every figure the site
+computes is traceable and correct for what it claims to be. Fixing it means either (a) a note on
+Denmark's native block naming MDRSNIT as a second, non-reconciling DST figure and explaining why it
+doesn't match, or (b) switching Denmark's native display to derive from MDRSNIT instead of the
+hourly table — which would lose the percentile spread MDRSNIT doesn't carry (see F4) and change
+what "native" means for this one country relative to every other source.
+
+**F4 — PENS/UREGEL are subtracted as one flat DKK/hour scalar at every percentile, because DST
+does not publish them at any finer grain than a single occupation-wide figure.**
+
+`_figure_for_basis`'s Denmark branch (`scripts/build_wage_distribution.py:342-370`) loops over
+`_FIELDS` (`mean, median, p10, p25, p75, p90`) and subtracts the *same* `employer_pension_dkk_hour`
+(59.35 DKK/hour, 2024) and `irregular_dkk_hour` (9.06 DKK/hour) from every one of them. That is not
+a shortcut this pipeline chose over a better option — `dispersion_by_year["2024"]` has exactly one
+`employer_pension_dkk_hour` value and one `irregular_dkk_hour` value for the whole occupation; DST
+does not publish either broken out by percentile, so there is no percentile-level figure to use
+instead. The pipeline's flat-scalar subtraction is an unstated assumption that PENS/UREGEL are a
+constant *krone amount* per hour across the distribution — plausible for UREGEL (irregular/overtime
+pay can plausibly cluster near a flat rate), but employer pension contributions in Denmark are
+typically a *percentage* of pay under the governing overenskomst, which would make the true PENS
+gap in kroner *larger* at p90 than at p10, not identical. If that is right, this pipeline's p90
+regular_pay figure is subtracting too little and its p10 figure is subtracting too much — narrowing
+the true spread by an unknown, unmeasured amount at both ends.
+
+**Not shipped as a fix** — same reason as package 8's Canada item (12) and this package's own F16
+(Norway): re-deriving a percentile-level split DST itself doesn't publish would mean inventing a
+distributional assumption and presenting it as sourced data, which is exactly what this pipeline's
+own `hours_for()`/`subtract_component()` docstrings say not to do. The method card (`<Derived>`,
+gate 13) shows the subtraction step honestly — "470.53 − 59.35 (employer_social_contributions,
+sourced from salary_dk's own separately-published figure...)" — but does not currently say that the
+*same* 59.35 is being applied at every percentile, which is the part a careful reader would want
+flagged.
+
+**Decide:** (1) whether Denmark's native block needs an on-page note pointing at MDRSNIT — the
+same treatment as Qatar's `weighting_note` (finding F15, this package) or Ireland's
+`explicit_hours` sourcing note, both of which already exist for exactly this "the number needs one
+more sentence of context" situation, so this may just be extending that existing pattern rather
+than a new one; (2) whether the `<Derived>` chain step for Denmark's subtraction should say "same
+rate applied at every percentile — DST does not publish PENS/UREGEL by percentile" explicitly,
+rather than leaving that assumption implicit in the fact that the same number appears in every
+row's own chain; (3) whether a flat-DKK assumption or a flat-*percentage*-of-pay assumption is
+closer to correct — answering that needs either a human reading DST's own PENS/UREGEL methodology
+documentation, or contacting DST directly; this pipeline should not guess and present the guess as
+sourced.
+
+## 18. Norway's bonus was named as available and capturable; what this pipeline actually fetched has no such field
+
+The work order's own §5.1.2 names "Norway's Bonus" as an example of a separately-published,
+subtractable pay component, alongside Denmark's PENS — grouping the two as the same kind of case.
+They are not, in what actually reached this repository: `data/processed/salary_no.json` (via
+`scripts/src_salary_no.py`) carries only `mean`/`median`/`p25`/`p75`/`n_employees` per occupation —
+no bonus figure, separate or otherwise. `data/pay_composition.json`'s `salary_no` entry records
+`irregular_bonus: true` (bonus is genuinely IN Norway's `Månedslønn` concept by SSB's own
+definition — confirmed, not the gap) but `separately_published_components: []`, because there is
+nothing in the fetched file to point at.
+
+This surfaced as adversarial-review finding F16 (this package, Tier 7): Norway's row is correctly
+*excluded* from `regular_pay` comparisons by `comparison_basis()` (bonus-included sources can't
+express bonus-excluded regular_pay without a subtraction this pipeline has no component for) — so
+nothing downstream shows a wrong number. The gap is narrower and specifically about capture: SSB
+may well publish the bonus component separately (the same way DST publishes PENS/UREGEL
+alongside Denmark's FORINKL, in the same source table), and `src_salary_no.py` may simply not have
+requested it.
+
+**Not investigated further this package** — re-scoping a harvester mid-Tier-7-remediation, under
+the same time pressure this protocol exists to protect against, risks exactly the kind of rushed
+change this project's own discipline avoids. `data/pay_composition.json`'s `salary_no.note` records
+the gap in full (added this session) so it is not silently resolved by an empty array reading as
+"nothing to subtract" when the real state is "nothing was asked for."
+
+**Decide:** whether `src_salary_no.py` should be re-run against SSB's `Månedslønn` table looking
+specifically for a bonus breakdown field before package 10 needs a subtracted Norway figure for
+anything — and if SSB genuinely does not publish one at the same granularity as the headline
+figure, that itself is worth recording as a checked negative, the same way Canada's and Qatar's
+`"unknown"` composition fields are (gate 3) rather than left as a bare empty array with no
+account of whether it was checked.

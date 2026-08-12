@@ -27,10 +27,13 @@ below, not by convention alone:
      data/processed/salary_*.json — every function here is pure, taking a
      value in and returning a NEW dict; the caller decides what to do with
      the result.
-  6. Hourly->annual requires a sourced hours figure. annualise() raises
-     rather than falling back to a flat 2080 (the US 40x52 convention) —
-     see hours_for()'s own docstring for why that convention would
-     specifically overstate Denmark.
+  6. Hourly->annual requires a sourced hours figure. annualise() returns
+     {"ok": False, ...} rather than falling back to a flat 2080 (the US
+     40x52 convention) — a refusal the caller must check, not an
+     exception (an earlier version of this line said "raises", which was
+     never what the code below actually does; caught by tier 7's
+     adversarial review, finding F21). See hours_for()'s own docstring
+     for why that convention would specifically overstate Denmark.
   7. The chain is inspectable. Every function here returns the intermediate
      steps (rate, year, source, what was subtracted and why), not just a
      final number — see ConversionChain.
@@ -114,10 +117,17 @@ def hours_for(country: str, year: int | None = None) -> dict | None:
 
     Never returns a flat 2080 (40h x 52wk, the US convention) as a
     fallback for a country with no sourced figure — Denmark's own usual
-    full-time hours (~38.2/week, verified live in scripts/src_hours_worked.py)
-    would be overstated by roughly 7% under that assumption. A country
-    with no entry in hours_worked.json gets None here, and annualise()
-    refuses to guess past that."""
+    full-time hours (~38.2-38.4/week depending on year, verified live in
+    scripts/src_hours_worked.py) would be overstated under that assumption
+    by a measured 4.2-4.7% depending which year's sourced hours the wage
+    figure is matched to (2080/1996.8 = 4.17% at 2024's 38.4h/week;
+    2080/1985.6 = 4.75% at 2025's 38.2h/week) — see
+    .status/evidence/p9-gates.txt gate 6 for the year-matched calculation
+    against a real wage figure; a fixed "~7%" appeared here through
+    package 9's own tier 5 and 6, uncorrected against the actual
+    measurement until tier 7's adversarial review caught it (finding F19).
+    A country with no entry in hours_worked.json gets None here, and
+    annualise() refuses to guess past that."""
     series = _hours_series(country)
     if not series:
         return None
@@ -128,13 +138,31 @@ def hours_for(country: str, year: int | None = None) -> dict | None:
             "source": "hours_worked (Eurostat lfsa_ewhun2 / Statistics Canada WDS)"}
 
 
-def annualise(value: float, period: str, country: str, hours_year: int | None = None) -> dict:
+def annualise(value: float, period: str, country: str, hours_year: int | None = None,
+              explicit_hours: dict | None = None) -> dict:
     """period is 'hour', 'month' or 'year'. 'year' returns the value
     unchanged (already annual). 'month' multiplies by MONTHLY_MULTIPLIER
     (12) — rule 3, the only multiplier this module uses for that
-    conversion, anywhere. 'hour' requires hours_for(country) to return a
-    real, sourced figure; if it does not, this returns {"ok": False, ...}
-    rather than assuming 2080 — rule 6."""
+    conversion, anywhere. 'hour' requires a real, sourced hours figure —
+    by default from hours_for(country), the cross-country Eurostat/StatCan
+    file; if it does not resolve, this returns {"ok": False, ...} rather
+    than assuming 2080 — rule 6.
+
+    `explicit_hours` (package 9, tier 7, adversarial review finding F2):
+    {"hours_per_week": float, "year": int, "source": str}, when given, is
+    used INSTEAD of hours_for(country, hours_year). For sources that
+    publish their OWN matched hours figure for the exact same cell as the
+    wage value — Ireland's CSO SES06 carries mean_paid_weekly_hours /
+    median_paid_weekly_hours alongside mean_eur_hour / median_eur_hour,
+    for the identical population (SOC major group 2, same year) — that
+    matched figure is a strictly better match than the generic
+    cross-country hours_worked.json (Eurostat lfsa_ewhun2, NACE J or
+    TOTAL, ALL full-time employees regardless of occupation), which
+    caused a real, measured 21.4% overstatement of Ireland's mean when
+    used instead (33.6 CSO-matched hours vs 40.8 Eurostat all-employee
+    hours). Still refuses (ok: False) if explicit_hours itself is
+    incomplete — this parameter is an alternative SOURCE for the hours
+    figure, not an exemption from rule 6's "must be real and sourced"."""
     if period == "year":
         return {"ok": True, "value_annual": value, "chain": [{"op": "identity", "detail": "already annual"}]}
     if period == "month":
@@ -145,7 +173,14 @@ def annualise(value: float, period: str, country: str, hours_year: int | None = 
                        "never any other multiplier — see module docstring rule 3)"}],
         }
     if period == "hour":
-        hours = hours_for(country, hours_year)
+        if explicit_hours is not None:
+            if not explicit_hours.get("hours_per_week") or not explicit_hours.get("source"):
+                return {"ok": False, "reason": "explicit_hours given but incomplete (needs a real "
+                         "hours_per_week and source) — not annualised, never assumed 2080"}
+            hours = {**explicit_hours, "country": country,
+                     "reliability_flag": explicit_hours.get("reliability_flag")}
+        else:
+            hours = hours_for(country, hours_year)
         if hours is None:
             return {"ok": False, "reason": f"no sourced usual-weekly-hours figure for {country} — "
                      "not annualised, never assumed 2080 (40h x 52wk)"}
@@ -206,19 +241,58 @@ def comparison_basis(source_id_a: str, source_id_b: str) -> dict:
     into a real total_earnings figure. That subtraction is the caller's
     job (and its own, separate step with its own chain) — this function
     does not track "what basis does the value become after a specific
-    subtraction", only what the source natively supports."""
+    subtraction", only what the source natively supports.
+
+    FIX (package 9, tier 7, adversarial review finding F1): the first
+    version of this function granted total_earnings to any source with
+    employer_social_contributions == False, without checking
+    irregular_bonus at all. total_earnings is DEFINED (work order
+    §5.1.4) as "includes irregular bonuses, excludes employer
+    contributions" — a source whose own figure EXCLUDES the bonus
+    (Sweden, Netherlands, Finland, Ireland — all bonus=False) does not
+    become a total_earnings figure just because it also has no employer
+    contributions to exclude; it is a regular_pay figure, full stop.
+    The old code let comparison_basis('salary_se', 'salary_es') report
+    'total_earnings' as a shared basis — Sweden's bonus-excluded
+    Manadslon compared as equivalent to Spain's bonus-included Ganancia
+    bruta anual, exactly the "two different earnings concepts" mixing
+    rule 4 exists to prevent. Fixed: total_earnings now requires
+    irregular_bonus is True, symmetric with regular_pay's own
+    irregular_bonus is False requirement.
+
+    Two sources — US (bls_oews) and UK (salary_uk) — store irregular_bonus
+    as a descriptive STRING, not a boolean, because their real-world
+    composition doesn't collapse cleanly to one (BLS: "partial —
+    production/incentive pay included, non-production bonuses excluded";
+    ASHE: "true (annual) / false (weekly...)" — this pipeline's own
+    _extract_uk() reads the ANNUAL field specifically). `is True`/`is
+    False` identity checks never match a string, so without a specific
+    rule these two would silently express NEITHER basis — safe (refusal,
+    never a wrong comparison) but not what the work order's own §5.1.4
+    table explicitly assigns: US under regular_pay ("closer to the
+    regular-pay concept... production/incentive pay is closer to base
+    pay than a discretionary bonus is"), UK under total_earnings ("annual
+    ... yes, in full"). Both overrides below cite that table as their
+    authority, not a guess made here."""
     a, b = _composition(source_id_a), _composition(source_id_b)
     if a is None or b is None:
         missing = source_id_a if a is None else source_id_b
         return {"comparable": False, "reason": f"no pay_composition.json entry for {missing!r}"}
+
+    # Work order §5.1.4's own explicit basis table for the two sources whose
+    # irregular_bonus field is prose, not a boolean — see docstring above.
+    _STRING_BONUS_OVERRIDE = {"bls_oews": "regular_pay", "salary_uk": "total_earnings"}
 
     def bases(comp: dict) -> set[str]:
         b_set = set()
         bonus, contrib = comp.get("irregular_bonus"), comp.get("employer_social_contributions")
         if bonus is False and contrib is False:
             b_set.add("regular_pay")
-        if contrib is False:
+        if bonus is True and contrib is False:
             b_set.add("total_earnings")
+        override = _STRING_BONUS_OVERRIDE.get(comp.get("source_id"))
+        if override and contrib is False:
+            b_set.add(override)
         return b_set
 
     common = bases(a) & bases(b)

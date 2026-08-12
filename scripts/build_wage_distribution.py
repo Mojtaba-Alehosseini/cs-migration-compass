@@ -69,6 +69,26 @@ def _latest_year_row(by_year: dict) -> tuple[str, dict]:
     return max(by_year.items(), key=lambda kv: kv[0])
 
 
+def _classify_distribution(obs: dict) -> str:
+    """FIXED (tier 7, adversarial review finding F14): the original
+    two-way check ("full" if p10 present, else "central-tendency-only")
+    conflated two genuinely different shapes — Denmark/Norway/Netherlands
+    publish p25/median/p75 (a real quartile spread) but not p10/p90, and
+    were being labelled "central-tendency-only" (no spread at all), the
+    same label Australia/Ireland correctly get for publishing only a
+    mean/median with NOTHING else. WagePanel.tsx's own chart already drew
+    the quartile box correctly regardless (it checks the actual p25/p75
+    values present, not this label) — only this label, and the country-
+    page prose built from it, were wrong."""
+    if obs.get("p10") is not None and obs.get("p90") is not None:
+        return "full"
+    if obs.get("p25") is not None and obs.get("p75") is not None:
+        return "quartile-only"
+    if obs.get("median") is not None:
+        return "central-tendency-only"
+    return "mean-only"
+
+
 def _base_obs(period: str, currency: str, year, row: dict, unit_suffix: str) -> dict:
     return {
         "year": int(year), "period": period, "currency": currency,
@@ -183,12 +203,30 @@ def _extract_nl(occ: dict) -> dict:
 
 
 def _extract_ie(occ: dict) -> dict:
+    """CSO SES06 publishes mean_paid_weekly_hours / median_paid_weekly_hours
+    ALONGSIDE mean_eur_hour / median_eur_hour, in the same row, for the
+    identical population (SOC major group 2, same year) — a strictly
+    better hours match than the generic cross-country hours_worked.json
+    (Eurostat lfsa_ewhun2), which measures ALL full-time employees
+    regardless of occupation and, used here, overstated Ireland's mean by
+    a measured 21.4% (33.6 CSO-matched hours vs 40.8 Eurostat all-employee
+    hours) — adversarial review finding F2. Carried through per-field
+    (mean's own hours for the mean value, median's own for the median) so
+    resolve_country() can pass them to annualise()'s explicit_hours."""
     year, row = _latest_year_row(occ["by_year"])
     return {
         "year": int(year), "period": "hour", "currency": "EUR",
         "mean": row.get("mean_eur_hour"), "median": row.get("median_eur_hour"),
         "p10": None, "p25": None, "p75": None, "p90": None,
         "n_employees": None, "distribution": occ.get("distribution"),
+        "explicit_hours_by_field": {
+            "mean": {"hours_per_week": row.get("mean_paid_weekly_hours"), "year": int(year),
+                     "source": "CSO SES06 (mean_paid_weekly_hours — matched to this same cell, not "
+                               "the generic cross-country hours_worked.json)"},
+            "median": {"hours_per_week": row.get("median_paid_weekly_hours"), "year": int(year),
+                       "source": "CSO SES06 (median_paid_weekly_hours — matched to this same cell, not "
+                                 "the generic cross-country hours_worked.json)"},
+        },
     }
 
 
@@ -360,16 +398,23 @@ def _to_usd_all(value: dict, country: str, year: int, repr_field: str) -> dict:
             "fx_source": chain["fx_source"], "chain_step": chain["chain"][0]}
 
 
-def _annualise_all(value: dict, period: str, country: str, hours_year: int | None, repr_field: str) -> dict:
+def _annualise_all(value: dict, period: str, country: str, hours_year: int | None, repr_field: str,
+                    explicit_hours_by_field: dict | None = None) -> dict:
+    """explicit_hours_by_field (finding F2): {field: {hours_per_week, year,
+    source}}, when given, overrides hours_for() PER FIELD — Ireland's own
+    mean/median each carry their own CSO-matched hours, not one shared
+    country-level figure, so this cannot just be a single explicit_hours
+    value threaded through every field the way a plain override would be."""
     if period == "year":
         return {"ok": True, "value": value, "chain": [{"op": "identity", "detail": "already annual"}]}
+    ehf = explicit_hours_by_field or {}
     out, meta_chain, ok_any = {}, None, False
     for field in _FIELDS:
         v = value.get(field)
         if v is None:
             out[field] = None
             continue
-        r = nm.annualise(v, period, country, hours_year)
+        r = nm.annualise(v, period, country, hours_year, explicit_hours=ehf.get(field))
         if not r.get("ok"):
             out[field] = None
             continue
@@ -378,10 +423,12 @@ def _annualise_all(value: dict, period: str, country: str, hours_year: int | Non
         if field == repr_field:
             meta_chain = r
     if not ok_any:
-        sample = nm.annualise(next(v for v in value.values() if v is not None), period, country, hours_year)
+        sample_field = next(f for f in _FIELDS if value.get(f) is not None)
+        sample = nm.annualise(value[sample_field], period, country, hours_year, explicit_hours=ehf.get(sample_field))
         return {"ok": False, "reason": sample.get("reason")}
     if meta_chain is None:
-        meta_chain = next(nm.annualise(v, period, country, hours_year) for v in value.values() if v is not None)
+        rf = next(f for f in _FIELDS if value.get(f) is not None)
+        meta_chain = nm.annualise(value[rf], period, country, hours_year, explicit_hours=ehf.get(rf))
     return {"ok": True, "value": out, "chain": meta_chain["chain"]}
 
 
@@ -403,7 +450,8 @@ def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapp
             this_repr_field = repr_field if value.get(repr_field) is not None else \
                 next((f for f in _FIELDS if value.get(f) is not None), repr_field)
 
-            ann = _annualise_all(value, obs["period"], cc, obs["year"], this_repr_field)
+            ann = _annualise_all(value, obs["period"], cc, obs["year"], this_repr_field,
+                                  explicit_hours_by_field=obs.get("explicit_hours_by_field"))
             if not ann["ok"]:
                 combos[combo_key] = {"ok": False, "reason": ann["reason"]}
                 continue
@@ -426,8 +474,18 @@ def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapp
         "native": {"currency": obs["currency"], "period": obs["period"], "year": obs["year"],
                    "value": {k: obs.get(k) for k in ("mean", "median", "p10", "p25", "p75", "p90")},
                    "n_employees": obs.get("n_employees"),
-                   "distribution": obs.get("distribution", "full" if obs.get("p10") is not None
-                                            else ("central-tendency-only" if obs.get("median") else "mean-only"))},
+                   "distribution": obs.get("distribution") or _classify_distribution(obs),
+                   # FIXED (tier 7, adversarial review finding F15): Qatar's
+                   # mean is this pipeline's OWN weighted average of PSA's
+                   # separately-published Male/Female series (see
+                   # _extract_qa's docstring) — a real derivation, not a
+                   # value PSA itself published. weighting_note carries
+                   # exactly how, so the UI can say so rather than
+                   # presenting it as a plain sourced figure. None for
+                   # every other country (nothing else in this file
+                   # computes a native-currency value; conversions are a
+                   # separate, already-disclosed step in combos.*.chain).
+                   "weighting_note": obs.get("weighting_note")},
         "crosswalk": cw,
         "combos": combos,
     }
@@ -448,7 +506,6 @@ def build() -> dict:
             f"median={obs.get('median')}  comparable={results[-1]['crosswalk'].get('comparable')}")
 
     for code in CANADA_CODES:
-        source_id, _, extractor, lookup = SOURCE_TABLE["US"]  # placeholder unused
         doc = __import__("json").loads((PROCESSED / "salary_ca.json").read_text(encoding="utf-8"))
         raw = doc["data"]["occupations"][code]
         obs = _extract_ca(raw)
