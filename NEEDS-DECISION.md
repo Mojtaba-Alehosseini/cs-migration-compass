@@ -258,9 +258,72 @@ domain either. The REST API's actual current path was not found. This narrows th
 question (it is not "which domain" but genuinely "which path/version") without
 answering it.
 
-**Decide:** finding the current GENESIS REST API path (the version-5.0 manual linked
-above is the place to start; `genesis.destatis.de/datenbank/online/` — the new database
-UI's own root — is worth exploring for a linked API reference) and confirming the
-GAST/GAST guest credential still works against it would close this in a follow-up
-package. If Destatis has retired guest access entirely, a registered GENESIS account is
-the only remaining path, and that registration is the owner's call, not this session's.
+**Decide (superseded by package 9 below — kept for history).**
+
+---
+
+## 15. Germany, package 9 attempt — DESTATIS_TOKEN unavailable this session; the API path is confirmed deprecated, not just stale
+
+Package 9's work order named an API token, `DESTATIS_TOKEN`, as "set by the runner
+script, which lives in the gitignored `prompts/` directory" — i.e. `prompts/run-
+package-9.cmd`, which does contain a `set DESTATIS_TOKEN=...` line (confirmed present,
+value not read — see below). That script injects the token when package 9 is launched
+*through* it. This session received the work order pasted directly into chat, not via
+that script, so the environment variable was never set — checked in both the Bash and
+PowerShell environments used this session, neither has it.
+
+Per the work order's own rule ("Read it from the environment only... never reach the
+repository, the report, a log file, a commit message or a data file"), the token was
+**not** extracted from `run-package-9.cmd` directly — doing so would have pulled a live
+secret into this session's own context/transcript, which the "environment only" rule
+exists specifically to prevent, even though the file happened to be locally readable.
+Confirmed only that the file *sets* the variable (`grep -c DESTATIS_TOKEN
+prompts/run-package-9.cmd` → 1 match), never its value.
+
+**Fell back to the work order's own pre-authorised path**: "If the token fails, try the
+documented guest account GAST/GAST, then record precisely what failed." This went
+further than package 8's attempt and got a materially more specific answer:
+
+- `www-genesis.destatis.de` still 307-redirects to `genesis.destatis.de` (confirmed
+  again).
+- Every request to `genesis.destatis.de/genesisWS/rest/2020/*` — tried
+  `helloworld/logincheck` and `data/table` with `name=62361-0030` — now returns an
+  explicit **HTTP 302** (not a silent 200-with-HTML-shell, which is what package 8 saw)
+  redirecting to `https://genesis.destatis.de/datenbank/online/announcement?username=
+  GAST&password=GAST&...`. That target is GENESIS-Online's new human-facing web portal,
+  not an API response — the server is deliberately rerouting the entire old REST
+  namespace into the web UI, not merely serving it stale content.
+- That `/announcement` page is itself a client-rendered React shell — WebFetch (no JS
+  execution) cannot read whatever deprecation notice or migration pointer it actually
+  displays to a browser.
+- Tried five plausible successor version segments in place of "2020" —
+  `genesisWS/rest/{2023,2024,2025,2026,5.1}` — every one returned a genuine **HTTP 404**
+  (the server has no route at all for those paths), a different failure mode from
+  "2020"'s 302. This rules out "just increment the year" as the fix: "2020" is
+  specifically deprecated-and-redirected, not one of a numbered family the API still
+  serves under a sibling path.
+
+**Net finding:** the old REST API namespace is conclusively decommissioned server-side,
+not merely moved or rate-limited. `run-package-9.cmd` itself is just a launcher (sets
+`DESTATIS_TOKEN`, then pipes the work order into an unattended `claude -p` run) — it
+carries no request logic of its own to inspect, so it doesn't reveal the working
+endpoint either. Getting past this needs either (a) `DESTATIS_TOKEN` present in the
+actual run (a genuinely different credential/path than the GAST/GAST guest access tried
+here might behave differently — untested, since the token was never available this
+session), or (b) a human opening
+`https://genesis.destatis.de/datenbank/online/announcement` in a real browser to read
+whatever migration notice it renders client-side, or GENESIS's own current API
+documentation (the version-5.1 manual linked above, June 2026 — a PDF this session
+could fetch but not usefully parse; its actual body text needs a human or a proper PDF
+reader).
+
+**Shipped:** no `salary_de` source this package either. Same downstream consequence as
+package 8: Germany stays at zero coverage in the crosswalk and comparison rule, not
+2-digit or "no series".
+
+**Decide:** run package 9 (or just the Germany tier) via `prompts/run-package-9.cmd`
+directly so `DESTATIS_TOKEN` is actually present and can be tried against the same
+GAST/GAST-tested endpoints — a real, working token might behave differently than a
+guest login even against a namespace that redirects guest requests. If it still fails,
+a human reading the version-5.1 API manual or the announcement page directly is the
+next step, not further automated guessing at URL paths.
