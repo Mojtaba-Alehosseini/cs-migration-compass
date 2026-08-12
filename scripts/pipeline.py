@@ -48,6 +48,8 @@ SOURCES: list[tuple[str, str]] = [
     ("src_salary_qa", "Qatar PSA Professionals wage series"),
     ("src_salary_ae", "UAE last-known (2009) wage figures"),
     ("src_salary_it", "Italy no-occupation-series record"),
+    ("src_fx_rates", "World Bank year-matched FX rates"),
+    ("src_hours_worked", "Eurostat + StatCan usual weekly hours"),
     ("src_stackoverflow_salaries", "Stack Overflow developer salaries"),
     ("src_un_migrant_stock", "UN DESA migrant stock"),
     ("src_world_happiness", "World Happiness Report"),

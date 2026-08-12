@@ -1,0 +1,302 @@
+{
+ "source_id": "hours_worked",
+ "generated_at": "2026-08-12T15:19:32+00:00",
+ "meta": {
+  "unit": "usual hours worked per week, full-time employees",
+  "confidence": "official",
+  "eurostat_countries": [
+   "DK",
+   "NL",
+   "IE"
+  ],
+  "eurostat_scope": "sex=T, wstatus=SAL (employees), worktime=FT, age=Y_GE15 (15+, no upper bound). nace_r2=J (Information and communication) where populated; TOTAL (all activities) where a country has no J-sector series — see each country's own nace_r2_used field, never silently blended.",
+  "reliability_flag_note": "Eurostat's own 'u' (low reliability) or other status flags, carried through per year where present. null means the source published no flag for that cell, not that the flag was checked and found clean.",
+  "canada_note": "No EU cross exists for Canada — sourced separately from Statistics Canada's own Labour Force Survey (table 14-10-0043-01), matched to Job Bank's own 'usual hours, not counting overtime' wage concept.",
+  "usage_rule": "Never use a flat 2080 hours/year (the US 40x52 convention) for any other country in this spine — Denmark's own usual hours (~38/week) would be overstated by roughly 7% under that assumption. See scripts/normalise.py."
+ },
+ "data": {
+  "countries": {
+   "DK": {
+    "by_year": {
+     "2008": {
+      "usual_weekly_hours": 37.9,
+      "reliability_flag": "b"
+     },
+     "2009": {
+      "usual_weekly_hours": 37.8,
+      "reliability_flag": null
+     },
+     "2010": {
+      "usual_weekly_hours": 37.9,
+      "reliability_flag": null
+     },
+     "2011": {
+      "usual_weekly_hours": 37.9,
+      "reliability_flag": null
+     },
+     "2012": {
+      "usual_weekly_hours": 37.8,
+      "reliability_flag": null
+     },
+     "2013": {
+      "usual_weekly_hours": 38.0,
+      "reliability_flag": null
+     },
+     "2014": {
+      "usual_weekly_hours": 38.1,
+      "reliability_flag": null
+     },
+     "2015": {
+      "usual_weekly_hours": 38.0,
+      "reliability_flag": null
+     },
+     "2016": {
+      "usual_weekly_hours": 37.9,
+      "reliability_flag": "b"
+     },
+     "2017": {
+      "usual_weekly_hours": 37.8,
+      "reliability_flag": "b"
+     },
+     "2018": {
+      "usual_weekly_hours": 37.9,
+      "reliability_flag": null
+     },
+     "2019": {
+      "usual_weekly_hours": 37.6,
+      "reliability_flag": null
+     },
+     "2020": {
+      "usual_weekly_hours": 37.8,
+      "reliability_flag": null
+     },
+     "2021": {
+      "usual_weekly_hours": 38.8,
+      "reliability_flag": "b"
+     },
+     "2022": {
+      "usual_weekly_hours": 39.0,
+      "reliability_flag": null
+     },
+     "2023": {
+      "usual_weekly_hours": 38.4,
+      "reliability_flag": "b"
+     },
+     "2024": {
+      "usual_weekly_hours": 38.4,
+      "reliability_flag": null
+     },
+     "2025": {
+      "usual_weekly_hours": 38.2,
+      "reliability_flag": null
+     }
+    },
+    "nace_r2_used": "J",
+    "source": "eurostat_lfsa_ewhun2"
+   },
+   "NL": {
+    "by_year": {
+     "2008": {
+      "usual_weekly_hours": 39.2,
+      "reliability_flag": "b"
+     },
+     "2009": {
+      "usual_weekly_hours": 39.4,
+      "reliability_flag": null
+     },
+     "2010": {
+      "usual_weekly_hours": 39.3,
+      "reliability_flag": null
+     },
+     "2011": {
+      "usual_weekly_hours": 39.4,
+      "reliability_flag": null
+     },
+     "2012": {
+      "usual_weekly_hours": 39.3,
+      "reliability_flag": null
+     },
+     "2013": {
+      "usual_weekly_hours": 39.3,
+      "reliability_flag": "b"
+     },
+     "2014": {
+      "usual_weekly_hours": 39.2,
+      "reliability_flag": null
+     },
+     "2015": {
+      "usual_weekly_hours": 39.3,
+      "reliability_flag": null
+     },
+     "2016": {
+      "usual_weekly_hours": 39.3,
+      "reliability_flag": null
+     },
+     "2017": {
+      "usual_weekly_hours": 39.2,
+      "reliability_flag": null
+     },
+     "2018": {
+      "usual_weekly_hours": 39.2,
+      "reliability_flag": null
+     },
+     "2019": {
+      "usual_weekly_hours": 39.3,
+      "reliability_flag": null
+     },
+     "2020": {
+      "usual_weekly_hours": 39.2,
+      "reliability_flag": null
+     },
+     "2021": {
+      "usual_weekly_hours": 39.4,
+      "reliability_flag": "b"
+     },
+     "2022": {
+      "usual_weekly_hours": 39.2,
+      "reliability_flag": null
+     },
+     "2023": {
+      "usual_weekly_hours": 39.2,
+      "reliability_flag": null
+     },
+     "2024": {
+      "usual_weekly_hours": 39.1,
+      "reliability_flag": null
+     },
+     "2025": {
+      "usual_weekly_hours": 39.1,
+      "reliability_flag": null
+     }
+    },
+    "nace_r2_used": "J",
+    "source": "eurostat_lfsa_ewhun2"
+   },
+   "IE": {
+    "by_year": {
+     "2008": {
+      "usual_weekly_hours": 39.8,
+      "reliability_flag": "b"
+     },
+     "2009": {
+      "usual_weekly_hours": 40.1,
+      "reliability_flag": null
+     },
+     "2010": {
+      "usual_weekly_hours": 40.3,
+      "reliability_flag": null
+     },
+     "2011": {
+      "usual_weekly_hours": 40.3,
+      "reliability_flag": null
+     },
+     "2012": {
+      "usual_weekly_hours": 40.4,
+      "reliability_flag": null
+     },
+     "2013": {
+      "usual_weekly_hours": 40.4,
+      "reliability_flag": null
+     },
+     "2014": {
+      "usual_weekly_hours": 40.6,
+      "reliability_flag": null
+     },
+     "2015": {
+      "usual_weekly_hours": 40.7,
+      "reliability_flag": null
+     },
+     "2016": {
+      "usual_weekly_hours": 40.5,
+      "reliability_flag": null
+     },
+     "2017": {
+      "usual_weekly_hours": 40.5,
+      "reliability_flag": "b"
+     },
+     "2018": {
+      "usual_weekly_hours": 40.5,
+      "reliability_flag": null
+     },
+     "2019": {
+      "usual_weekly_hours": 40.6,
+      "reliability_flag": null
+     },
+     "2020": {
+      "usual_weekly_hours": 40.2,
+      "reliability_flag": null
+     },
+     "2021": {
+      "usual_weekly_hours": 40.5,
+      "reliability_flag": "b"
+     },
+     "2022": {
+      "usual_weekly_hours": 40.8,
+      "reliability_flag": null
+     },
+     "2023": {
+      "usual_weekly_hours": 40.2,
+      "reliability_flag": null
+     },
+     "2024": {
+      "usual_weekly_hours": 40.0,
+      "reliability_flag": null
+     },
+     "2025": {
+      "usual_weekly_hours": 40.2,
+      "reliability_flag": null
+     }
+    },
+    "nace_r2_used": "J",
+    "source": "eurostat_lfsa_ewhun2"
+   },
+   "CA": {
+    "by_year": {
+     "2016": {
+      "usual_weekly_hours": 40.2,
+      "reliability_flag": null
+     },
+     "2017": {
+      "usual_weekly_hours": 40.2,
+      "reliability_flag": null
+     },
+     "2018": {
+      "usual_weekly_hours": 40.2,
+      "reliability_flag": null
+     },
+     "2019": {
+      "usual_weekly_hours": 40.1,
+      "reliability_flag": null
+     },
+     "2020": {
+      "usual_weekly_hours": 39.9,
+      "reliability_flag": null
+     },
+     "2021": {
+      "usual_weekly_hours": 39.9,
+      "reliability_flag": null
+     },
+     "2022": {
+      "usual_weekly_hours": 40.0,
+      "reliability_flag": null
+     },
+     "2023": {
+      "usual_weekly_hours": 39.9,
+      "reliability_flag": null
+     },
+     "2024": {
+      "usual_weekly_hours": 39.8,
+      "reliability_flag": null
+     },
+     "2025": {
+      "usual_weekly_hours": 39.7,
+      "reliability_flag": null
+     }
+    },
+    "source": "statcan_wds_14100043",
+    "vector_id": 2529313,
+    "concept_note": "Average usual hours, main job, full-time employment, both sexes, 15+ — matches Job Bank's own 'usual hours, not counting overtime' basis."
+   }
+  }
+ }
+}

@@ -186,6 +186,49 @@
       "notes": "Real city-level history — not a country trend applied to a city."
     },
     {
+      "source_id": "fx_rates",
+      "name": "World Bank Open Data — Official exchange rate, period average (PA.NUS.FCRF)",
+      "urls": [
+        "https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/PA.NUS.FCRF?format=json&per_page=20000&date=1960:2026"
+      ],
+      "fetched_at": "2026-08-12T15:15:06+00:00",
+      "license": "CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators.",
+      "redistribution": "processed derivative only — the raw API response is cached under data/raw/fx_rates/ but that directory is gitignored, so this repo does not redistribute it (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/fx_rates.json is committed.",
+      "transforms": [
+        "Requested indicator PA.NUS.FCRF for all 15 covered countries in one call (semicolon-joined ISO3), 1960-2026.",
+        "Dropped rows with null values (World Bank returns nulls for unreported years).",
+        "Regrouped from flat rows to {ISO2: [{year, value}]} sorted ascending by year — same shape convention as scripts/src_world_bank.py.",
+        "No smoothing, no interpolation, no imputation, no override of AED/QAR's known peg values — fetched exactly as published."
+      ],
+      "output": "data/processed/fx_rates.json",
+      "status": "ok",
+      "rows": 978,
+      "coverage": "15/15 countries, 1960-2026 (per-country coverage varies; pre-independence or pre-modern-currency years are gaps, not zeros)",
+      "notes": "Period-average, not end-of-period — the correct series for converting an annual wage figure, which is itself an average over the year."
+    },
+    {
+      "source_id": "hours_worked",
+      "name": "Eurostat lfsa_ewhun2 (DK/NL/IE) + Statistics Canada WDS (CA) — usual weekly hours worked",
+      "urls": [
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/lfsa_ewhun2?format=JSON&sex=T&wstatus=SAL&worktime=FT&age=Y_GE15&nace_r2=J&geo=DK&geo=NL&geo=IE",
+        "https://www150.statcan.gc.ca/t1/wds/rest/getDataFromCubePidCoordAndLatestNPeriods"
+      ],
+      "fetched_at": "2026-08-12T15:19:32+00:00",
+      "license": "Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU), for DK/NL/IE. Statistics Canada Open Government Licence - Canada 2.0, for CA. Cite: Eurostat, lfsa_ewhun2; Statistics Canada, table 14-10-0043-01.",
+      "redistribution": "processed derivative only — raw payloads cached under data/raw/hours_worked/ but that directory is gitignored, so this repo does not redistribute them. Only the derived data/processed/hours_worked.json is committed.",
+      "transforms": [
+        "Fetched Eurostat lfsa_ewhun2 (JSON-stat 2.0) for DK/NL/IE, NACE J, falling back to TOTAL per-country where J returned no rows for that country.",
+        "Independently rebuilt the JSON-stat linear-index math (matching _common.jsonstat_rows() internally) to look up each row's reliability flag from doc['status'] — that shared helper does not surface status flags, since most sources using it don't need them.",
+        "Fetched StatCan WDS table 14-10-0043-01 at a specific, hand-identified coordinate (Canada / Average usual hours / Main job / Full-time / Total-Gender / 15+) via getDataFromCubePidCoordAndLatestNPeriods.",
+        "No smoothing, no interpolation. Values kept exactly as published, per year, per country."
+      ],
+      "output": "data/processed/hours_worked.json",
+      "status": "ok",
+      "rows": 64,
+      "coverage": "DK/NL/IE (Eurostat) + CA (StatCan) — 4 of this spine's hourly-wage countries",
+      "notes": "Denmark, Ireland and Canada also have LONGRP/SES06/Job-Bank-employee-group filters of their own (see each salary_*.json's own meta) — this file's hours figures use the closest available full-time, all-industries-or-NACE-J cut, not a filter-matched population identical to each wage source's own. Documented, not silently assumed exact."
+    },
+    {
       "source_id": "imf_weo",
       "name": "IMF World Economic Outlook — country projections",
       "urls": [
@@ -887,5 +930,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-12T15:02:49+00:00"
+  "updated_at": "2026-08-12T15:19:32+00:00"
 }

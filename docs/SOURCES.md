@@ -4,9 +4,9 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-12T15:02:49+00:00**
+Last pipeline run: **2026-08-12T15:19:32+00:00**
 
-38 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+40 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
 Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
 
@@ -23,6 +23,8 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | Eurostat — Employed ICT specialists (isoc_sks_itspt) | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, isoc_sks_itspt. | raw committed |
 | Eurostat — Population and employment, national accounts (nama_10_pe) | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, nama_10_pe. | raw committed |
 | FHFA House Price Index — All-Transactions, Metropolitan Areas (quarterly) | US federal government work — public domain. Cite: FHFA House Price Index. | raw committed |
+| World Bank Open Data — Official exchange rate, period average (PA.NUS.FCRF) | CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators. | processed derivative only — the raw API response is cached under data/raw/fx_rates/ but that directory is gitignored, so this repo does not redistribute it (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/fx_rates.json is committed. |
+| Eurostat lfsa_ewhun2 (DK/NL/IE) + Statistics Canada WDS (CA) — usual weekly hours worked | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU), for DK/NL/IE. Statistics Canada Open Government Licence - Canada 2.0, for CA. Cite: Eurostat, lfsa_ewhun2; Statistics Canada, table 14-10-0043-01. | processed derivative only — raw payloads cached under data/raw/hours_worked/ but that directory is gitignored, so this repo does not redistribute them. Only the derived data/processed/hours_worked.json is committed. |
 | Indeed Hiring Lab — Job Postings Index (US metros) | Indeed Hiring Lab publishes this tracker publicly on GitHub for free use with attribution. Cite: Indeed Hiring Lab Job Postings Index. | monthly aggregate committed; the 61 MB daily raw file is cached locally but not committed |
 | levels.fyi — Software Engineer total compensation by metro | levels.fyi publishes these metro pages publicly and its robots.txt explicitly invites agent access. Data is crowd-sourced and remains theirs; we store derived per-city figures and cite levels.fyi on every one. No bulk redistribution. | derived per-city figures committed; cited on every figure |
 | MIPEX — Migrant Integration Policy Index (EU policy indicators 2020-2024) | MIPEX is published under CC BY-NC-SA. Cite: Solano & Huddleston, Migrant Integration Policy Index. | raw committed |
@@ -265,6 +267,53 @@ Task suggested une_rt_a or lfsi_emp_a as the total-employment dataset; both retu
 Task's guessed URL https://www.fhfa.gov/hpi/download/monthly/hpi_at_metro.csv is WRONG (404) - metro data lives under 'quarterly_datasets', not 'monthly', in the path. The legacy hpi/datasets.aspx page now returns 503, and fhfa.gov/DataTools/Downloads 301-redirects through /data/datasets -> /data/hpi -> /data/hpi/datasets, a modern page listing ~30 dataset files across monthly/quarterly/annual tabs. Verified the correct URL directly: HTTP 200, 4.17MB CSV, no header row (columns: metro name, CBSA code, year, quarter, index value, annual %-change-in-parens), 84,050 rows, 410 distinct metro names, spanning 1975 Q1 to 2026 Q1.
 
 </details>
+
+### World Bank Open Data — Official exchange rate, period average (PA.NUS.FCRF)
+
+- **Status** — live
+- **Coverage** — 15/15 countries, 1960-2026 (per-country coverage varies; pre-independence or pre-modern-currency years are gaps, not zeros)
+- **Rows processed** — 978
+- **Fetched** — 2026-08-12T15:15:06+00:00
+- **Licence** — CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators.
+- **Output** — `data/processed/fx_rates.json`
+- **Fetch script** — `scripts/src_fx_rates.py`
+
+**URLs**
+
+- <https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/PA.NUS.FCRF?format=json&per_page=20000&date=1960:2026>
+
+**What we do to it**
+
+1. Requested indicator PA.NUS.FCRF for all 15 covered countries in one call (semicolon-joined ISO3), 1960-2026.
+1. Dropped rows with null values (World Bank returns nulls for unreported years).
+1. Regrouped from flat rows to {ISO2: [{year, value}]} sorted ascending by year — same shape convention as scripts/src_world_bank.py.
+1. No smoothing, no interpolation, no imputation, no override of AED/QAR's known peg values — fetched exactly as published.
+
+> Period-average, not end-of-period — the correct series for converting an annual wage figure, which is itself an average over the year.
+
+### Eurostat lfsa_ewhun2 (DK/NL/IE) + Statistics Canada WDS (CA) — usual weekly hours worked
+
+- **Status** — live
+- **Coverage** — DK/NL/IE (Eurostat) + CA (StatCan) — 4 of this spine's hourly-wage countries
+- **Rows processed** — 64
+- **Fetched** — 2026-08-12T15:19:32+00:00
+- **Licence** — Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU), for DK/NL/IE. Statistics Canada Open Government Licence - Canada 2.0, for CA. Cite: Eurostat, lfsa_ewhun2; Statistics Canada, table 14-10-0043-01.
+- **Output** — `data/processed/hours_worked.json`
+- **Fetch script** — `scripts/src_hours_worked.py`
+
+**URLs**
+
+- <https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/lfsa_ewhun2?format=JSON&sex=T&wstatus=SAL&worktime=FT&age=Y_GE15&nace_r2=J&geo=DK&geo=NL&geo=IE>
+- <https://www150.statcan.gc.ca/t1/wds/rest/getDataFromCubePidCoordAndLatestNPeriods>
+
+**What we do to it**
+
+1. Fetched Eurostat lfsa_ewhun2 (JSON-stat 2.0) for DK/NL/IE, NACE J, falling back to TOTAL per-country where J returned no rows for that country.
+1. Independently rebuilt the JSON-stat linear-index math (matching _common.jsonstat_rows() internally) to look up each row's reliability flag from doc['status'] — that shared helper does not surface status flags, since most sources using it don't need them.
+1. Fetched StatCan WDS table 14-10-0043-01 at a specific, hand-identified coordinate (Canada / Average usual hours / Main job / Full-time / Total-Gender / 15+) via getDataFromCubePidCoordAndLatestNPeriods.
+1. No smoothing, no interpolation. Values kept exactly as published, per year, per country.
+
+> Denmark, Ireland and Canada also have LONGRP/SES06/Job-Bank-employee-group filters of their own (see each salary_*.json's own meta) — this file's hours figures use the closest available full-time, all-industries-or-NACE-J cut, not a filter-matched population identical to each wage source's own. Documented, not silently assumed exact.
 
 ### Indeed Hiring Lab — Job Postings Index (US metros)
 
