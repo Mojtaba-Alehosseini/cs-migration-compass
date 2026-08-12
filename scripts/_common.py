@@ -87,6 +87,7 @@ def fetch(
     headers: dict[str, str] | None = None,
     method: str = "GET",
     json_body: Any = None,
+    form_data: dict[str, Any] | None = None,
     retries: int = 3,
     backoff: float = 2.0,
     cache: bool = True,
@@ -96,6 +97,12 @@ def fetch(
     Re-uses an existing `dest` when `cache` is True so repeated pipeline runs
     do not hammer the upstream host. `make pipeline-fresh` clears data/raw to
     force a true from-scratch run.
+
+    `form_data`, when given on a POST, is sent as
+    `application/x-www-form-urlencoded` (requests' `data=`) instead of
+    `json_body`'s `application/json` — Destatis GENESIS's REST/JSON API
+    requires the former despite the "JSON" label in its own docs (see
+    src_salary_de.py). Takes precedence over `json_body` if both are given.
     """
     if dest is not None and cache and dest.exists() and dest.stat().st_size > 0:
         log(f"    cached  {dest.relative_to(ROOT)}")
@@ -109,7 +116,10 @@ def fetch(
     for attempt in range(1, retries + 1):
         try:
             if method.upper() == "POST":
-                r = requests.post(url, headers=h, json=json_body, timeout=TIMEOUT)
+                if form_data is not None:
+                    r = requests.post(url, headers=h, data=form_data, timeout=TIMEOUT)
+                else:
+                    r = requests.post(url, headers=h, json=json_body, timeout=TIMEOUT)
             else:
                 r = requests.get(url, headers=h, timeout=TIMEOUT)
             r.raise_for_status()

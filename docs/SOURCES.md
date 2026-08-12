@@ -4,9 +4,9 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-12T15:19:32+00:00**
+Last pipeline run: **2026-08-12T17:29:22+00:00**
 
-40 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+41 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
 Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
 
@@ -36,6 +36,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | UAE — no occupation-level wage series since 2009 (ILOSTAT last known figures) | ILOSTAT open data terms (ILO). Cite: International Labour Organization (ILO), ILOSTAT, flow DF_EAR_EMTA_SEX_OCU_NB. Underlying national source: UAE Federal Competitiveness and Statistics Centre (FCSC), 2009 Labour Force Survey. | the four cited 2009 figures are reproduced directly in data/processed/salary_ae.json (there is no larger raw payload to separately redistribute — see module docstring; this source does not fetch a raw file at run time). |
 | ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation | CC BY 2.5 AU. Cite: Australian Taxation Office (ATO), Taxation statistics 2023-24, Table 15A, via data.gov.au. | processed derivative only — the raw 700 KB ATO workbook is cached under data/raw/salary_au/ but that directory is gitignored, so this repo does not redistribute the raw download (CC BY 2.5 AU would permit it; the repo simply doesn't). Only the derived data/processed/salary_au.json is committed. |
 | Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region | Open Government Licence - Canada 2.0. Cite: Employment and Social Development Canada (ESDC) / Job Bank, Wages. | processed derivative only — the raw 18 MB wages CSV is cached under data/raw/salary_ca/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL-Canada 2.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_ca.json is committed. |
+| Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages) | dl-de/by-2-0 (Datenlizenz Deutschland – Namensnennung – Version 2.0), per the table's own published licence — not yet confirmed against a real fetched response this session; the licence string above is the source's own generic one, printed on every GENESIS table response seen in this session (including the official guide's own worked examples). | N/A this run — no table content was actually retrieved (see status). |
 | Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08) | CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20. | processed derivative only — the raw StatBank JSON-stat payload is cached under data/raw/salary_dk/ but that directory is gitignored, so this repo does not redistribute the raw source (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_dk.json is committed. |
 | INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11 | Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES) for 70672/70706/70707, Encuesta Anual de Estructura Salarial (EAES) for 28186. | processed derivative only — the raw Tempus3 JSON payloads are cached under data/raw/salary_es/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_es.json is committed. |
 | Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) | CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au. | processed derivative only — the raw json-stat2 payload is cached under data/raw/salary_fi/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_fi.json is committed. |
@@ -601,6 +602,31 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 1. Downloaded the 2025 wages CSV (44,376 rows, all NOC 2021 occupations, all geographies) and filtered to 4 target NOC codes.
 1. Kept every geography row for each target NOC verbatim, including rows where the wage fields are null because Job Bank suppressed them for small-area reliability — the geography is kept, not dropped, with the null and Job Bank's own comment intact.
 1. Confirmed via the file's own Annual_Wage_Flag that all four target occupations are published hourly, not annual; no unit conversion performed.
+
+### Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages)
+
+- **Status** — live
+- **Coverage** — blocked — see diagnostic.blocked_at
+- **Rows processed** — 0
+- **Fetched** — 2026-08-12T17:29:22+00:00
+- **Licence** — dl-de/by-2-0 (Datenlizenz Deutschland – Namensnennung – Version 2.0), per the table's own published licence — not yet confirmed against a real fetched response this session; the licence string above is the source's own generic one, printed on every GENESIS table response seen in this session (including the official guide's own worked examples).
+- **Output** — `data/processed/salary_de.json`
+- **Fetch script** — `scripts/src_salary_de.py`
+
+**URLs**
+
+- <https://genesis.destatis.de/genesisWS/rest/2020/helloworld/whoami>
+- <https://genesis.destatis.de/genesisWS/rest/2020/helloworld/logincheck>
+- <https://genesis.destatis.de/genesisWS/rest/2020/data/table (62361-0030, 62361-0034)>
+
+**What we do to it**
+
+1. GET helloworld/whoami (no auth) to confirm the API is reachable.
+1. POST helloworld/logincheck with the available credential (DESTATIS_TOKEN if present in the environment, else GAST/GAST) sent as HTTP request headers per the current official guide's documented convention (POST + header auth replaced GET + query-string auth) — never logged, never written to any file.
+1. If login succeeded: POST data/table for 62361-0030 and 62361-0034 in turn, area=all, stopping at the first non-Code-0 response and recording it verbatim (Code/Content/Type — no credential values appear in any of these fields).
+1. No occupation-row parsing performed — see module docstring for why a KldB 2010 code was not guessed.
+
+> Credential used: GAST/GAST guest login (DESTATIS_TOKEN absent from this session's environment — set only by prompts/run-package-9.cmd). Blocked at: {'table': '62361-0030', 'basis': 'regular_pay', 'http_error': 'https://genesis.destatis.de/genesisWS/rest/2020/data/table failed after 1 attempts: 401 Client Error: Unauthorized for url: https://genesis.destatis.de/genesisWS/rest/2020/data/table'}
 
 ### Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08)
 

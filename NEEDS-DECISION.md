@@ -321,12 +321,105 @@ reader).
 package 8: Germany stays at zero coverage in the crosswalk and comparison rule, not
 2-digit or "no series".
 
-**Decide:** run package 9 (or just the Germany tier) via `prompts/run-package-9.cmd`
-directly so `DESTATIS_TOKEN` is actually present and can be tried against the same
-GAST/GAST-tested endpoints — a real, working token might behave differently than a
-guest login even against a namespace that redirects guest requests. If it still fails,
-a human reading the version-5.1 API manual or the announcement page directly is the
-next step, not further automated guessing at URL paths.
+**Decide (superseded by the 2026-08-12 tier 2b update immediately below — kept for
+history; the "redirect" and "decommissioned" framing in the paragraphs above turned
+out to be too broad a conclusion from too narrow a test).**
+
+---
+
+**Update, 2026-08-12, package 9 resumed, tier 2b — the API was never down; the calling
+convention was wrong, and now the real wall is precisely located.**
+
+Package 9's resumed work order re-opened this item with its own specific hypothesis:
+that the REST API had moved to a new path shape, `genesis.destatis.de/api/rest/2020/`
+(dropping the `genesisWS` segment), citing `destatis.api.bund.dev` and the official
+GENESIS "User Guide Web Services" PDF (version 5.1, 2026-06-01) as evidence.
+
+**That specific hypothesis does not hold up.** Tested live: `.../api/rest/2020/
+helloworld/whoami` returns a genuine HTTP 404 (Destatis's own branded German/English
+error page — "Ups, ein Fehler!" / "Oops, something went wrong!"), under three separate
+auth attempts (no auth, GAST as query parameters, GAST as HTTP Basic auth). It does
+not appear anywhere in either cited source: `destatis.api.bund.dev`'s own rendered
+page declares its Base URL as `www-genesis.destatis.de/genesisWS/rest/2020/` — the
+OLD host and path — because it renders `bundesAPI/destatis-api`'s `openapi.yaml`
+directly from GitHub, and that repository's own commit history shows it was last
+pushed 2023-06-20, more than three years stale. The official PDF (downloaded and read
+in full — 128 pages, via PyMuPDF after the PDF-tools MCP's sandbox rejected the
+scratchpad path and pdftoppm was unavailable for the Read tool's own PDF renderer) was
+searched for the literal string "api/rest": zero matches across every page. Its own
+per-endpoint documentation (`helloworld/whoami`, `helloworld/logincheck`, `data/table`,
+all checked) uses `genesis.destatis.de/genesisWS/rest/2020/...` throughout — the
+SAME path that both package 8's and this package's own tier 2 attempts already tried
+and found redirecting.
+
+**What the PDF's front page actually says changed** is narrower and more mundane: *"The
+SOAP/XML web service interface has been switched off. The RESTful/JSON web service
+interface now completely replaces SOAP/XML services. GET methods with credentials have
+been replaced by the previously parallel offered POST methods of the RESTful/JSON
+interface."* The path never moved. What changed is that credentialed calls must be
+POST requests with `username`/`password` sent as literal HTTP request headers (not
+Basic auth, not query parameters, not a JSON body field) plus a
+`application/x-www-form-urlencoded` body for every other parameter. A GET request with
+credentials in the query string — exactly what package 8's attempt sent, and what a
+"GAST as query parameters" test produces — is the deprecated convention, and reads
+`.../datenbank/online/announcement?username=GAST&password=GAST...` — a redirect that,
+in hindsight, is the deprecated-GET-convention handler forwarding into the human portal
+it now aliases to, not evidence of a dead API.
+
+**Verified live, in order, this session:**
+1. `GET .../helloworld/whoami` (no auth) → HTTP 200, `{"User-Agent": "curl/8.9.0"}` —
+   the original, unchanged path is alive.
+2. `POST .../helloworld/logincheck`, GAST/GAST as HTTP headers, body `language=en`,
+   `Content-Type: application/x-www-form-urlencoded` → HTTP 200,
+   `{"Status":"You have been logged in and out successfully! ...","Username":"GAST"}`.
+   ("GAST" is not named in the current v5.1 guide — a convention carried from the
+   older, stale community wrapper package 8 relied on — but Destatis still honours it.)
+3. `POST .../data/table` (table `62361-0030`, and separately `catalogue/tables` with
+   `selection=62361*`, and the guide's own worked example table `11111-0001`), same
+   auth, across `area` values `all` / `public` / `Katalog/Öffentlich` / `oeffentlich` →
+   **every single combination** returns the identical, specific denial:
+   `{"Code":15,"Content":"You are not allowed to call this service or the header of
+   your request does not contain all the necessary information so that your access
+   data cannot be recognised.","Type":"ERROR"}` — wrapped in a plain HTTP 200 on the
+   first few attempts, then HTTP 401 on later ones against the identical request,
+   suggesting GENESIS applies a defensive throttle after several denied calls in a
+   short window rather than the response itself changing meaning.
+
+**Net finding:** triangulated across 2 services × 3 tables/selections × 4 `area`
+values — GAST authenticates successfully (proves the login mechanism, transport, and
+header-auth convention are all correct) but has zero permission on any data or
+catalogue service. This is a real, specific, well-isolated account-permission wall,
+not a request-shape bug and not evidence the tables are gone. A real `DESTATIS_TOKEN`
+— a personal token tied to a registered account, a materially different credential
+from the guest login — was not testable this session: still absent from this
+interactive session's environment (confirmed via the environment only, exactly as
+before; never read from the gitignored runner script that sets it).
+
+**Shipped:** `scripts/src_salary_de.py` (new) — a real, working harvester implementing
+the verified request sequence above (whoami → logincheck → both tables), using
+`DESTATIS_TOKEN` if present in the environment, GAST/GAST if not, never logging either
+credential's value. Run for real this session: whoami and logincheck both succeed;
+`data/table` is caught and recorded as `status: blocked` with the exact diagnostic
+above, both for the plain-200 and the HTTP-401 response shapes GENESIS returned across
+the session. Deliberately does NOT guess which KldB 2010 row is "software developer" —
+that lookup needs `metadata/table` or `catalogue/variables2statistic`, both behind the
+identical permission wall GAST hit on every other data/catalogue service, so it cannot
+be verified against the live catalogue this session either; occupation-row
+identification is an explicit follow-up, not invented. Wired into `scripts/pipeline.py`.
+`data/pay_composition.json`'s Germany row corrected to say the API is reachable and the
+block is account-permission, not availability. Still no `salary_de.json` with real
+figures — same downstream consequence as packages 8 and 9's first pass: Germany stays
+at zero coverage in the crosswalk and comparison rule, drawn as absent in tier 6.
+
+**Decide:** run this package (or just `scripts/src_salary_de.py`) via
+`prompts/run-package-9.cmd` directly so `DESTATIS_TOKEN` is actually present. The
+request shape is now confirmed correct and the harvester is real and ready — a working
+personal token only needs to clear the same `data/table` call GAST was denied on. If a
+real token is ALSO denied with the identical Code 15, that would newly indicate a
+genuine account/table-entitlement issue on the Destatis side worth Destatis's own
+support contact (`destatis.de/DE/Service/Kontakt/Genesis/Servicekontakt-GENESIS.html`,
+found in the guide's own contact section) — a materially different, better-evidenced
+next step than "try another URL."
 
 ## 16. `phase-4-salary-and-cv-plan.md` assigns package 9 a `stabilityOf()` extension this package's own work order never mentions
 
