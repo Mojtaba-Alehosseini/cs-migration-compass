@@ -327,3 +327,28 @@ GAST/GAST-tested endpoints — a real, working token might behave differently th
 guest login even against a namespace that redirects guest requests. If it still fails,
 a human reading the version-5.1 API manual or the announcement page directly is the
 next step, not further automated guessing at URL paths.
+
+## 16. `phase-4-salary-and-cv-plan.md` assigns package 9 a `stabilityOf()` extension this package's own work order never mentions
+
+The plan document's constraints table says: *"Package 9 must extend `stabilityOf()`
+to accept a salary override. §5's 'pay vs. cost, joined' runs a user-chosen percentile
+through net → savings → years-to-home... The guard is per-city today and will silently
+not apply."* (`phase-4-salary-and-cv-plan.md:491-494`)
+
+The actual "WORK ORDER — PACKAGE 9" text received and executed this session never
+mentions `stabilityOf()`, a salary override, or "pay vs. cost, joined" anywhere across
+its seven tiers — and Tier 6 draws the boundary explicitly: *"No profile form, no
+position, no estimate — those are package 10."* A user-chosen percentile run through
+net → savings → years-to-home is exactly a "position/estimate" feature by that
+description.
+
+**Treated the work order as authoritative over the older plan document** — the plan
+was written before package 9's own scope was finalised, and package numbering/scope
+has already shifted once before in this project (see items above). No `stabilityOf()`
+change was made this package; the small-denominator guard gap the plan describes is
+real but untouched.
+
+**Decide:** when package 10 is scoped, confirm whether the `stabilityOf()`
+salary-override extension belongs there (matching where Tier 6 places "position/
+estimate" features) — and if so, treat `phase-4-salary-and-cv-plan.md:491-494` as
+already describing the requirement, just under the wrong package number.
