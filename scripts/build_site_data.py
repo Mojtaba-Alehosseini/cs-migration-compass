@@ -43,6 +43,7 @@ HISTORY_SETS = {
     "indeed_hiring_lab_job_postings": "jobs",
     "bls_oews": "jobs",
     "stackoverflow_survey": "jobs",
+    "wage_distribution": "money",
     "world_happiness_report": "life",
     "rsf_press_freedom": "life",
     "wipo_gii": "jobs",
@@ -290,7 +291,11 @@ def main() -> int:
         log(f"  provenance.json      {(SITE_DATA / 'provenance.json').stat().st_size/1024:8.1f} KB")
 
     # Raw curated files are offered as downloads on the Data & Methods page.
-    for name in ("countries.json", "cities.json", "metrics.json", "data-pipeline-sources.json"):
+    # pay_composition.json also feeds the <Derived> method card's concept-name/
+    # includes-excludes/pay-cycle-context content directly (see explore.ts's
+    # loadWages()) — it is fetched by the app itself, not just downloadable.
+    for name in ("countries.json", "cities.json", "metrics.json", "data-pipeline-sources.json",
+                 "pay_composition.json"):
         src = DATA / name
         if src.exists():
             shutil.copyfile(src, SITE_DATA / name)

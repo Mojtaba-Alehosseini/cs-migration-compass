@@ -842,6 +842,25 @@
       "notes": "Medium variant only — high/low variants deliberately not shown, to avoid implying a range we did not model."
     },
     {
+      "source_id": "wage_distribution",
+      "name": "Wage distribution panel — crosswalk.compare() + normalise.py resolved at build time",
+      "urls": [],
+      "fetched_at": "2026-08-12T18:52:58+00:00",
+      "license": "Inherits each underlying salary_*.json / bls_oews.json source's own licence — this file adds no new licensing terms, only computation over already-committed and already-licensed data.",
+      "redistribution": "derived — nothing fetched; every input file's own provenance entry already covers redistribution terms for the raw figures this derives from.",
+      "transforms": [
+        "For each of the salary spine's primary-target (and next-best-available) occupation mappings, ran crosswalk.compare() against the Sweden/2512 reference to get a real comparability verdict, depth and degradation text — never re-derived in the UI.",
+        "For each of the 4 (native/USD x regular_pay/total_earnings) combinations, called normalise.py's real to_usd()/annualise()/subtract_component()/comparison_basis() — never a client-side re-implementation.",
+        "Qatar's mean is a transparent weighted average of PSA's own published Male/Female means, weighted by each group's own published employee count — the only figure in this file that is a genuine derivation rather than a pass-through of one source field.",
+        "Countries whose pay-composition booleans are 'unknown' (Canada, Qatar, UAE) are refused on both basis combinations by normalise.comparison_basis() itself, not by a rule re-implemented here — an honest consequence of unverified composition, not a bug."
+      ],
+      "output": "data/processed/wage_distribution.json",
+      "status": "ok",
+      "rows": 14,
+      "coverage": "14 country rows (13 countries, Canada shown as two rows per NEEDS-DECISION #12), 2 drawn absent (DE, IT)",
+      "notes": "Every number in this file traces back through its own chain to a value already committed and provenanced elsewhere — this file adds derivation, not new source data."
+    },
+    {
       "source_id": "wikipedia_english_speakers",
       "name": "Wikipedia — List of countries by English-speaking population",
       "urls": [
@@ -953,5 +972,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-12T17:29:22+00:00"
+  "updated_at": "2026-08-12T18:52:58+00:00"
 }

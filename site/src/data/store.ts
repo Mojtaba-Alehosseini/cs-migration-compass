@@ -20,6 +20,38 @@ export const loadCore = () => getJson<Core>('core.json')
 export const loadProvenance = () => getJson<Provenance>('provenance.json')
 export const loadManifest = () => getJson<Record<string, HistoryManifestEntry>>('history-manifest.json')
 
+let payCompositionCache: Promise<PayComposition> | null = null
+
+/** data/pay_composition.json, copied verbatim (not through the per-theme
+ *  history mechanism — it isn't a time series, it's the <Derived> method
+ *  card's own concept-name/includes-excludes/pay-cycle-context source).
+ *  Memoised the same way loadHistory() is, since every open method card
+ *  fetches it. */
+export function loadPayComposition(): Promise<PayComposition> {
+  if (!payCompositionCache) payCompositionCache = getJson<PayComposition>('pay_composition.json')
+  return payCompositionCache
+}
+
+export interface PayComposition {
+  sources: {
+    source_id: string
+    office: string
+    concept_name: string
+    irregular_bonus: boolean | string
+    overtime: boolean | string
+    employer_social_contributions: boolean | string
+    gross_or_net: string
+    separately_published_components: string[]
+    note: string
+    citation_url: string
+    verified_live_this_session: boolean
+  }[]
+  /** Country/region code -> sourced background prose, e.g. NL/ES/DK/SE/NO/FI/
+   *  DE/AU/IT/AE_QA (the two Gulf countries share one entry). '_note' is the
+   *  file's own preamble, not a country — skip it when iterating keys. */
+  pay_cycle_context: Record<string, string>
+}
+
 const historyCache = new Map<string, Promise<unknown>>()
 
 /** Lazily fetch one processed dataset, memoised for the session. */

@@ -131,6 +131,17 @@
   "status": "ok",
   "empty": false
  },
+ "wage_distribution": {
+  "theme": "money",
+  "file": "history/wage_distribution.json",
+  "kb": 26.8,
+  "kind": null,
+  "confidence": "derived",
+  "institution": null,
+  "attribution_chip": null,
+  "status": "ok",
+  "empty": false
+ },
  "world_happiness_report": {
   "theme": "life",
   "file": "history/world_happiness_report.json",

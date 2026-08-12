@@ -110,6 +110,59 @@ export async function loadMoney(): Promise<MoneyData> {
   }
 }
 
+/* ---------------------------------------------------------------- wages --- */
+
+/** Mirrors scripts/build_wage_distribution.py's output shape exactly — types
+ *  only, no logic. crosswalk.compare() and every normalise.py conversion ran
+ *  at build time, in Python; nothing here re-derives a rate, a subtraction or
+ *  a comparability verdict. See that script's own module docstring and
+ *  crosswalk.py:33-38 ("package 9 must call this function rather than
+ *  re-deriving the rule in the UI"). */
+
+export type Distribution = 'full' | 'central-tendency-only' | 'mean-only'
+
+export interface WageStats {
+  mean: number | null; median: number | null
+  p10: number | null; p25: number | null; p75: number | null; p90: number | null
+}
+
+export interface ChainStep { op: string; detail: string }
+
+export type CrosswalkVerdict =
+  | { comparable: true; depth: number; shared_key: string; degraded_by: string | null }
+  | { comparable: false; reason: string }
+
+export type Combo =
+  | { ok: true; value: WageStats; chain: ChainStep[]; currency: string; chain_field: keyof WageStats }
+  | { ok: false; reason: string }
+
+export type CurrencyMode = 'native' | 'usd'
+export type Basis = 'regular_pay' | 'total_earnings'
+export const comboKey = (currency: CurrencyMode, basis: Basis) => `${currency}_${basis}` as const
+
+export interface WageCountry {
+  country: string          // ISO2, or "CA-21231"/"CA-21232" for Canada's two NOC codes — see NEEDS-DECISION #12
+  source_id: string
+  national_code: string
+  native: {
+    currency: string; period: 'hour' | 'month' | 'year'; year: number
+    value: WageStats; n_employees: number | null; distribution: Distribution
+  }
+  crosswalk: CrosswalkVerdict
+  combos: Record<string, Combo>  // keyed by comboKey()
+}
+
+export interface WageDistribution {
+  reference: { country: string; national_code: string; note: string }
+  countries: WageCountry[]
+  absent: { country: string; reason: string }[]
+}
+
+export async function loadWages(): Promise<WageDistribution> {
+  const wd = await loadHistory<WageDistribution>('wage_distribution')
+  return wd.data
+}
+
 /* ----------------------------------------------------------------- jobs --- */
 
 export interface JobsData {

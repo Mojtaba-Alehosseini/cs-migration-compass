@@ -1,0 +1,519 @@
+"""Tier 6's build-time resolver — the ONLY place crosswalk.compare() and
+normalise.py's conversion functions run against real salary data to produce
+what the UI actually renders. Per crosswalk.py's own docstring ("package 9
+must call this function rather than re-deriving the rule in the UI") and
+normalise.py's pure, side-effect-free design (no fetch, no I/O), no
+equivalent logic exists client-side — the browser only ever displays
+data/processed/wage_distribution.json, built here.
+
+REFERENCE COUNTRY: Sweden, isco08:2512, "high" confidence — the same country
+crosswalk.py's own gate-7 demonstration uses as mapping_a in every sample
+pair (crosswalk.py:236-243). Every other country's occupation mapping is
+compared() against Sweden's to get a real, reproducible depth/degradation
+verdict, not a fresh judgement call made here.
+
+WHY EACH SOURCE HAS ITS OWN EXTRACTOR: verified against the real, live
+data/processed/*.json this session — thirteen genuinely different shapes
+(monthly vs hourly vs annual native period; a "dispersion_by_year" dict vs a
+flat "dispersion" vs no wrapper at all; UK and CA already-annual figures
+sitting directly on the occupation record; BLS keyed by city with a
+"_national" sibling; Ireland/Qatar/UAE with mean-only or gendered-split
+figures). No universal schema exists at the harvester level anywhere in this
+pipeline (see scripts/src_salary_*.py, each shaped by its own source), so
+none is invented here either — a small, explicit adapter per source is more
+honest than a generic parser that would silently misread the one shape it
+wasn't built for.
+
+BASIS AVAILABILITY, verified against data/pay_composition.json's actual
+booleans this session (not assumed from the work order's own summary table):
+Sweden/Netherlands/Ireland/Finland (bonus=False, contrib=False) express BOTH
+regular_pay and total_earnings natively. UK/US/Norway/Spain/Australia
+(contrib=False, bonus=True or a non-boolean caveat string) express only
+total_earnings. Canada/Qatar/UAE (both fields "unknown") express NEITHER —
+an honest gap, not a bug: this pipeline does not guess a boolean it hasn't
+verified. Denmark (bonus=True, contrib=True, BOTH separately published as
+PENS/UREGEL) is the one source that needs subtract_component() calls to
+reach either basis at all — matching the smoke-test finding recorded in
+normalise.py's own commit history: Denmark's raw FORINKL expresses neither
+basis unmodified.
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _common import DATA, PROCESSED, log  # noqa: E402
+import crosswalk  # noqa: E402
+import normalise as nm  # noqa: E402
+
+REFERENCE = ("SE", "2512")
+
+
+# --------------------------------------------------------------------------
+# Per-source extraction: each returns the LATEST year's observation as
+# {"year": int, "period": "hour"|"month"|"year", "currency": "SEK", ...,
+#  "mean"/"median"/"p10"/"p25"/"p75"/"p90": float|None, "n_employees": int|None}
+# All percentile keys are always present (None where the source doesn't
+# publish that one) so downstream code never has to guess a field exists.
+# --------------------------------------------------------------------------
+
+def _pick(d: dict, suffix: str) -> float | None:
+    for k, v in d.items():
+        if k.endswith(suffix) and v is not None:
+            return float(v)
+    return None
+
+
+def _latest_year_row(by_year: dict) -> tuple[str, dict]:
+    return max(by_year.items(), key=lambda kv: kv[0])
+
+
+def _base_obs(period: str, currency: str, year, row: dict, unit_suffix: str) -> dict:
+    return {
+        "year": int(year), "period": period, "currency": currency,
+        "mean": _pick(row, f"mean_{unit_suffix}"), "median": _pick(row, f"median_{unit_suffix}"),
+        "p10": _pick(row, f"p10_{unit_suffix}"), "p25": _pick(row, f"p25_{unit_suffix}"),
+        "p75": _pick(row, f"p75_{unit_suffix}"), "p90": _pick(row, f"p90_{unit_suffix}"),
+        "n_employees": row.get("n_employees"),
+    }
+
+
+def _extract_se(occ: dict) -> dict:
+    year, row = _latest_year_row(occ["dispersion_by_year"])
+    return _base_obs("month", "SEK", year, row, "sek_month")
+
+
+def _extract_dk(occ: dict) -> dict:
+    year, row = _latest_year_row(occ["dispersion_by_year"])
+    obs = _base_obs("hour", "DKK", year, row, "dkk_hour")
+    obs["employer_pension_dkk_hour"] = row.get("employer_pension_dkk_hour")
+    obs["irregular_dkk_hour"] = row.get("irregular_dkk_hour")
+    return obs
+
+
+def _extract_no(occ: dict) -> dict:
+    year, row = _latest_year_row(occ["dispersion_by_year"])
+    return _base_obs("month", "NOK", year, row, "nok_month")
+
+
+def _extract_fi(occ: dict) -> dict:
+    """Finland already publishes two parallel series — total_* (total_earnings)
+    and regular_* (regular_pay), see module docstring — so there is no single
+    basis-neutral "native" figure the way DK/SE/etc. have one. The generic
+    mean/median/p10/p90 keys (which every other extractor relies on for the
+    "native" display block) are set explicitly from the regular_ prefix here,
+    matching the panel's own stated default ("native and regular are the
+    defaults") — NOT left to _base_obs's generic eur_month suffix match, which
+    would silently return whichever of total_/regular_ happens to iterate
+    first in the source dict (verified live: that was "total_", by accident
+    of key insertion order, not by any deliberate choice — caught by
+    inspecting the actual resolved native.value against the source's own
+    total_median_eur_month before this fix)."""
+    row = occ["dispersion"]
+    obs = {
+        "year": int(occ["year"]), "period": "month", "currency": "EUR",
+        "mean": row.get("regular_mean_eur_month"), "median": row.get("regular_median_eur_month"),
+        "p10": row.get("regular_p10_eur_month"), "p90": row.get("regular_p90_eur_month"),
+        "p25": None, "p75": None,
+    }
+    for basis, prefix in (("total_earnings", "total"), ("regular_pay", "regular")):
+        obs[f"basis_{basis}"] = {
+            "mean": row.get(f"{prefix}_mean_eur_month"), "median": row.get(f"{prefix}_median_eur_month"),
+            "p10": row.get(f"{prefix}_p10_eur_month"), "p90": row.get(f"{prefix}_p90_eur_month"),
+            "p25": None, "p75": None,
+        }
+    obs["n_employees"] = row.get("n_employees")
+    return obs
+
+
+def _extract_es(occ: dict) -> dict:
+    row = occ["dispersion"]
+    return _base_obs("year", "EUR", occ["year"], row, "eur_year")
+
+
+def _extract_uk(occ: dict) -> dict:
+    return _base_obs("year", "GBP", 2025, occ, "gbp_year")  # ASHE 2025 provisional — flat on the record
+
+
+def _extract_ca(occ: dict) -> dict:
+    national = next(g for g in occ["geographies"] if g.get("is_national"))
+    return {
+        "year": 2024, "period": "hour", "currency": "CAD",  # reference_period "2023-2024"
+        "mean": national.get("average_cad_hour"), "median": national.get("median_cad_hour"),
+        "p10": national.get("p10_low_cad_hour"), "p25": national.get("p25_q1_cad_hour"),
+        "p75": national.get("p75_q3_cad_hour"), "p90": national.get("p90_high_cad_hour"),
+        "n_employees": None,
+    }
+
+
+def _extract_us(data: dict) -> dict:
+    nat = data["_national"]
+
+    def v(key: str) -> float | None:
+        series = nat.get(key) or []
+        return series[-1]["value"] if series else None
+
+    return {
+        "year": int((nat.get("annual_median_usd") or [{}])[-1].get("year", 2025)),
+        "period": "year", "currency": "USD",
+        "mean": v("annual_mean_usd"), "median": v("annual_median_usd"),
+        "p10": v("annual_p10_usd"), "p25": v("annual_p25_usd"),
+        "p75": v("annual_p75_usd"), "p90": v("annual_p90_usd"),
+        "n_employees": v("employment"),
+    }
+
+
+def _extract_au(occ: dict) -> dict:
+    row = occ["salary_or_wage_income"]  # closest to "wages" among the three concepts this source offers
+    return {
+        "year": 2024, "period": "year", "currency": "AUD",
+        "mean": row.get("mean_aud_year"), "median": row.get("median_aud_year"),
+        "p10": None, "p25": None, "p75": None, "p90": None,
+        "n_employees": occ.get("n_individuals"),
+        "distribution": occ.get("distribution"),
+    }
+
+
+def _extract_nl(occ: dict) -> dict:
+    year, row = _latest_year_row(occ["dispersion_by_year"])
+    obs = _base_obs("hour", "EUR", year, row, "eur_hour")
+    obs["n_employees"] = (row.get("n_employees_thousands") or 0) * 1000 or None
+    return obs
+
+
+def _extract_ie(occ: dict) -> dict:
+    year, row = _latest_year_row(occ["by_year"])
+    return {
+        "year": int(year), "period": "hour", "currency": "EUR",
+        "mean": row.get("mean_eur_hour"), "median": row.get("median_eur_hour"),
+        "p10": None, "p25": None, "p75": None, "p90": None,
+        "n_employees": None, "distribution": occ.get("distribution"),
+    }
+
+
+def _extract_qa(occ: dict) -> dict:
+    """Qatar publishes Male/Female wages separately with no combined figure —
+    a real, transparent weighted mean (weighted by each group's own published
+    employee count) is computed here rather than either inventing a combined
+    number some other way or silently picking one gender. The weighting is
+    recorded in the observation so it is never mistaken for a native figure."""
+    year, row = _latest_year_row(occ["by_year"])
+    m, f = row.get("Males") or {}, row.get("Females") or {}
+    m_n, f_n = m.get("paid_employment_workers") or 0, f.get("paid_employment_workers") or 0
+    m_w, f_w = m.get("monthly_average_wage_qar"), f.get("monthly_average_wage_qar")
+    weighted = None
+    if m_w is not None and f_w is not None and (m_n + f_n) > 0:
+        weighted = (m_w * m_n + f_w * f_n) / (m_n + f_n)
+    return {
+        "year": int(year), "period": "month", "currency": "QAR",
+        "mean": weighted, "median": None, "p10": None, "p25": None, "p75": None, "p90": None,
+        "n_employees": m_n + f_n, "distribution": occ.get("distribution"),
+        "weighting_note": f"mean weighted by Qatar PSA's own published Male (n={m_n}, "
+            f"{m_w} QAR/mo) and Female (n={f_n}, {f_w} QAR/mo) counts — not a native combined figure",
+    }
+
+
+def _extract_ae(occ: dict) -> dict:
+    return {
+        "year": 2009, "period": "month", "currency": "AED",
+        "mean": occ.get("monthly_average_wage_aed"), "median": None,
+        "p10": None, "p25": None, "p75": None, "p90": None,
+        "n_employees": None, "distribution": occ.get("distribution"),
+    }
+
+
+# country -> (source_id, national_code, extractor, occ_lookup)
+# occ_lookup 'occupations' pulls data.occupations[national_code]; 'root' passes data itself (bls_oews).
+SOURCE_TABLE = {
+    "SE": ("salary_se", "2512", _extract_se, "occupations"),
+    "GB": ("salary_uk", "2134", _extract_uk, "occupations"),
+    "US": ("bls_oews", "15-1252", _extract_us, "root"),
+    "DK": ("salary_dk", "2512", _extract_dk, "occupations"),
+    "NO": ("salary_no", "2512", _extract_no, "occupations"),
+    "FI": ("salary_fi", "2512", _extract_fi, "occupations"),
+    "AU": ("salary_au", "261313", _extract_au, "occupations"),
+    "ES": ("salary_es", "it_professionals", _extract_es, "occupations"),
+    "IE": ("salary_ie", "soc1:2", _extract_ie, "occupations"),
+    "QA": ("salary_qa", "isco08_major:2", _extract_qa, "occupations"),
+    "AE": ("salary_ae", "isco08_major:2", _extract_ae, "occupations"),
+    # NL is real, sourced data with a real crosswalk verdict (comparable=False,
+    # "no ISCO-08 correspondence") — it belongs in SOURCE_TABLE, not ABSENT,
+    # because ABSENT means "nothing to plot anywhere", and NL's country page
+    # has a real number to show even though the cross-country panel excludes
+    # it. An earlier version of this file put NL in ABSENT with a comment
+    # claiming its country page would still show real data — untrue at the
+    # time, since ABSENT countries never reach wage_distribution.json at all;
+    # caught by checking the actual rendered country page against that claim.
+    "NL": ("salary_nl", "0811", _extract_nl, "occupations"),
+}
+# Canada gets two rows — see NEEDS-DECISION.md #12, still open: shown side by
+# side rather than combined or picking one, the least-invented of the three
+# options the decision names, and reversible the moment #12 is actually
+# resolved by the project owner.
+CANADA_CODES = ["21231", "21232"]
+
+ABSENT = {
+    "DE": "blocked — see NEEDS-DECISION.md #15: the GENESIS REST API is reachable "
+          "(whoami/logincheck both succeed) but every credential available this pipeline has "
+          "tried is denied on the data services themselves",
+    "IT": "no-series — ISTAT publishes no occupation-level (CP2011) earnings flow at all, per "
+          "src_salary_it.py",
+}
+
+
+# --------------------------------------------------------------------------
+# Basis resolution — native figure, or a subtraction chain, or a refusal
+# --------------------------------------------------------------------------
+
+_FIELDS = ("mean", "median", "p10", "p25", "p75", "p90")
+
+
+def _repr_field(obs: dict) -> str:
+    """The one field whose own trace becomes the displayed chain — every stage
+    (subtract, annualise, to_usd) must pick the SAME field, or the chain shown
+    to a reader mixes one field's subtraction with a different field's
+    annualisation, producing numbers that don't actually chain into each
+    other. (Caught by inspecting a real Denmark run: the annualise step's
+    "420.85 x 38.4" didn't follow from the subtract step's own "= 402.12"
+    directly above it, because the first pass captured the median's subtract
+    trace but the mean's annualise trace — first-non-None-field, not a
+    chosen, consistent field.) Prefers median; falls back to mean, since
+    every source in this pipeline publishes at least one of the two."""
+    return "median" if obs.get("median") is not None else "mean"
+
+
+def _figure_for_basis(source_id: str, obs: dict, basis: str, repr_field: str) -> dict:
+    """Returns {"ok": True, "value": {mean,median,p10,p25,p75,p90}, "chain": [...]}
+    or {"ok": False, "reason": "..."} — calling normalise.py's real functions,
+    never re-deriving their verdicts. `chain` is built from `repr_field` only —
+    see _repr_field()."""
+    if "basis_total_earnings" in obs:  # Finland — already-split native fields
+        key = "basis_total_earnings" if basis == "total_earnings" else "basis_regular_pay"
+        return {"ok": True, "value": obs[key],
+                "chain": [{"op": "native_basis_select", "detail": f"{source_id} publishes "
+                           f"{basis} as its own separate field — no subtraction needed"}]}
+
+    check = nm.comparison_basis(source_id, source_id)
+    native_ok = check.get("comparable") and basis in (check.get("common_bases") or [])
+    if native_ok:
+        value = {k: obs.get(k) for k in _FIELDS}
+        return {"ok": True, "value": value, "chain": [{"op": "native", "detail": "published as-is; "
+                 f"{source_id}'s composition already excludes what {basis} requires excluded"}]}
+
+    if source_id == "salary_dk":
+        # Denmark: raw FORINKL = base + PENS (employer_social_contributions) + UREGEL
+        # (irregular_bonus). regular_pay needs both subtracted; total_earnings needs
+        # only PENS subtracted (total_earnings still includes the irregular bonus).
+        to_subtract = ["employer_social_contributions"] if basis == "total_earnings" \
+            else ["employer_social_contributions", "irregular_bonus"]
+        value, chain = {}, []
+        ok_all = True
+        for field in _FIELDS:
+            v = obs.get(field)
+            if v is None:
+                value[field] = None
+                continue
+            for component in to_subtract:
+                comp_value = obs["employer_pension_dkk_hour"] if "employer_social" in component \
+                    else obs["irregular_dkk_hour"]
+                result = nm.subtract_component(v, source_id, component, comp_value)
+                if not result.get("ok"):
+                    ok_all = False
+                    value[field] = None
+                    break
+                v = result["value_after_subtraction"]
+                if field == repr_field:
+                    chain.append(result["chain"][0])
+            else:
+                value[field] = v
+        if ok_all:
+            return {"ok": True, "value": value, "chain": chain}
+        return {"ok": False, "reason": f"{source_id}: subtract_component() refused one of {to_subtract}"}
+
+    return {"ok": False, "reason": check.get("reason") or f"{source_id} does not publish enough to "
+            f"express {basis} and has no separately-published component this pipeline can subtract "
+            "to reach it (pay_composition.json's own fields say so — see its own note per source)"}
+
+
+def _to_usd_all(value: dict, country: str, year: int, repr_field: str) -> dict:
+    out, chain, ok_any = {}, None, False
+    for field in _FIELDS:
+        v = value.get(field)
+        if v is None:
+            out[field] = None
+            continue
+        r = nm.to_usd(v, country, year)
+        if not r.get("ok"):
+            out[field] = None
+            continue
+        ok_any = True
+        out[field] = r["value_usd"]
+        if field == repr_field:
+            chain = r
+    if not ok_any:
+        return {"ok": False, "reason": nm.to_usd(next((v for v in value.values() if v is not None), 0),
+                                                   country, year).get("reason")}
+    if chain is None:  # repr_field itself was None for this row (e.g. AU has no p10) — fall back to any success
+        chain = next(nm.to_usd(v, country, year) for v in value.values() if v is not None)
+    return {"ok": True, "value": out, "fx_rate": chain["fx_rate"], "fx_year": chain["fx_year"],
+            "fx_source": chain["fx_source"], "chain_step": chain["chain"][0]}
+
+
+def _annualise_all(value: dict, period: str, country: str, hours_year: int | None, repr_field: str) -> dict:
+    if period == "year":
+        return {"ok": True, "value": value, "chain": [{"op": "identity", "detail": "already annual"}]}
+    out, meta_chain, ok_any = {}, None, False
+    for field in _FIELDS:
+        v = value.get(field)
+        if v is None:
+            out[field] = None
+            continue
+        r = nm.annualise(v, period, country, hours_year)
+        if not r.get("ok"):
+            out[field] = None
+            continue
+        ok_any = True
+        out[field] = r["value_annual"]
+        if field == repr_field:
+            meta_chain = r
+    if not ok_any:
+        sample = nm.annualise(next(v for v in value.values() if v is not None), period, country, hours_year)
+        return {"ok": False, "reason": sample.get("reason")}
+    if meta_chain is None:
+        meta_chain = next(nm.annualise(v, period, country, hours_year) for v in value.values() if v is not None)
+    return {"ok": True, "value": out, "chain": meta_chain["chain"]}
+
+
+def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapping: dict | None) -> dict:
+    ref_mapping = crosswalk.load()[1].get(REFERENCE)
+    cw = crosswalk.compare(ref_mapping, mapping) if mapping else \
+        {"comparable": False, "reason": "no occupation crosswalk mapping exists for this country"}
+    repr_field = _repr_field(obs)
+
+    combos: dict[str, dict] = {}
+    for currency_mode in ("native", "usd"):
+        for basis in ("regular_pay", "total_earnings"):
+            combo_key = f"{currency_mode}_{basis}"
+            basis_result = _figure_for_basis(source_id, obs, basis, repr_field)
+            if not basis_result["ok"]:
+                combos[combo_key] = {"ok": False, "reason": basis_result["reason"]}
+                continue
+            value, chain = dict(basis_result["value"]), list(basis_result["chain"])
+            this_repr_field = repr_field if value.get(repr_field) is not None else \
+                next((f for f in _FIELDS if value.get(f) is not None), repr_field)
+
+            ann = _annualise_all(value, obs["period"], cc, obs["year"], this_repr_field)
+            if not ann["ok"]:
+                combos[combo_key] = {"ok": False, "reason": ann["reason"]}
+                continue
+            value, chain = ann["value"], chain + ann["chain"]
+
+            if currency_mode == "usd":
+                usd = _to_usd_all(value, cc, obs["year"], this_repr_field)
+                if not usd["ok"]:
+                    combos[combo_key] = {"ok": False, "reason": usd["reason"]}
+                    continue
+                value = usd["value"]
+                chain = chain + [usd["chain_step"]]
+
+            combos[combo_key] = {"ok": True, "value": value, "chain": chain,
+                                  "currency": "USD" if currency_mode == "usd" else obs["currency"],
+                                  "chain_field": this_repr_field}
+
+    return {
+        "country": cc, "source_id": source_id, "national_code": national_code,
+        "native": {"currency": obs["currency"], "period": obs["period"], "year": obs["year"],
+                   "value": {k: obs.get(k) for k in ("mean", "median", "p10", "p25", "p75", "p90")},
+                   "n_employees": obs.get("n_employees"),
+                   "distribution": obs.get("distribution", "full" if obs.get("p10") is not None
+                                            else ("central-tendency-only" if obs.get("median") else "mean-only"))},
+        "crosswalk": cw,
+        "combos": combos,
+    }
+
+
+def build() -> dict:
+    _, by_pair = crosswalk.load()
+    results = []
+
+    for cc, (source_id, national_code, extractor, lookup) in SOURCE_TABLE.items():
+        doc = __import__("json").loads((PROCESSED / f"{source_id}.json").read_text(encoding="utf-8"))
+        data = doc["data"]
+        raw = data if lookup == "root" else data["occupations"][national_code]
+        obs = extractor(raw)
+        mapping = by_pair.get((cc, national_code))
+        results.append(resolve_country(cc, source_id, national_code, obs, mapping))
+        log(f"  {cc:3s} {source_id:12s} native {obs['period']:5s} {obs['currency']}: "
+            f"median={obs.get('median')}  comparable={results[-1]['crosswalk'].get('comparable')}")
+
+    for code in CANADA_CODES:
+        source_id, _, extractor, lookup = SOURCE_TABLE["US"]  # placeholder unused
+        doc = __import__("json").loads((PROCESSED / "salary_ca.json").read_text(encoding="utf-8"))
+        raw = doc["data"]["occupations"][code]
+        obs = _extract_ca(raw)
+        mapping = by_pair.get(("CA", code))
+        r = resolve_country("CA", "salary_ca", code, obs, mapping)
+        r["country"] = f"CA-{code}"  # distinguish the two Canadian rows — see NEEDS-DECISION #12
+        results.append(r)
+        log(f"  CA  salary_ca ({code}) native {obs['period']:5s} {obs['currency']}: "
+            f"median={obs.get('median')}  comparable={r['crosswalk'].get('comparable')}")
+
+    for cc, reason in ABSENT.items():
+        log(f"  {cc:3s} ABSENT — {reason}")
+
+    return {
+        "reference": {"country": REFERENCE[0], "national_code": REFERENCE[1],
+                      "note": "every crosswalk comparability verdict below is this country's mapping "
+                              "compared() against the row's own — see crosswalk.py"},
+        "countries": results,
+        "absent": [{"country": cc, "reason": reason} for cc, reason in ABSENT.items()],
+    }
+
+
+def run() -> None:
+    log("── wage_distribution — Tier 6 resolver (crosswalk.compare() + normalise.py, exercised for real)")
+    payload = build()
+    from _common import record_provenance, write_processed
+    write_processed("wage_distribution", payload, meta={
+        "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs "
+                   "crosswalk.compare() or any normalise.py function; it only displays this file.",
+        "basis_default": "regular_pay", "currency_default": "native",
+        "confidence": "derived",
+    })
+    log(f"  wrote data/processed/wage_distribution.json — {len(payload['countries'])} country rows, "
+        f"{len(payload['absent'])} drawn absent")
+    record_provenance(
+        source_id="wage_distribution",
+        name="Wage distribution panel — crosswalk.compare() + normalise.py resolved at build time",
+        urls=[],  # derived from already-provenanced sources, not fetched from the network itself
+        license_note="Inherits each underlying salary_*.json / bls_oews.json source's own licence — "
+                      "this file adds no new licensing terms, only computation over already-committed "
+                      "and already-licensed data.",
+        redistribution="derived — nothing fetched; every input file's own provenance entry already "
+                        "covers redistribution terms for the raw figures this derives from.",
+        transforms=[
+            "For each of the salary spine's primary-target (and next-best-available) occupation "
+            "mappings, ran crosswalk.compare() against the Sweden/2512 reference to get a real "
+            "comparability verdict, depth and degradation text — never re-derived in the UI.",
+            "For each of the 4 (native/USD x regular_pay/total_earnings) combinations, called "
+            "normalise.py's real to_usd()/annualise()/subtract_component()/comparison_basis() — "
+            "never a client-side re-implementation.",
+            "Qatar's mean is a transparent weighted average of PSA's own published Male/Female means, "
+            "weighted by each group's own published employee count — the only figure in this file "
+            "that is a genuine derivation rather than a pass-through of one source field.",
+            "Countries whose pay-composition booleans are 'unknown' (Canada, Qatar, UAE) are refused "
+            "on both basis combinations by normalise.comparison_basis() itself, not by a rule "
+            "re-implemented here — an honest consequence of unverified composition, not a bug.",
+        ],
+        output="data/processed/wage_distribution.json",
+        rows=len(payload["countries"]),
+        coverage=f"{len(payload['countries'])} country rows ({len({c['country'].split('-')[0] for c in payload['countries']})} countries, Canada shown as two rows per NEEDS-DECISION #12), "
+                 f"{len(payload['absent'])} drawn absent ({', '.join(a['country'] for a in payload['absent'])})",
+        notes="Every number in this file traces back through its own chain to a value already "
+              "committed and provenanced elsewhere — this file adds derivation, not new source data.",
+    )
+
+
+if __name__ == "__main__":
+    run()

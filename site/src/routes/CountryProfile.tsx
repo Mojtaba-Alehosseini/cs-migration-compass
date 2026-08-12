@@ -6,9 +6,52 @@ import { Link, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { Flag } from '../components/Flag'
 import { Figure } from '../components/Figure'
+import { useAsync } from '../components/explore/useAsync'
 import { useData } from '../data/store'
 import { asOfLabel, money, num, pct, rankOf, sourceName, NO_DATA } from '../data/format'
+import { loadWages, type WageCountry } from '../data/explore'
 import { NotFound } from './NotFound'
+
+const PERIOD_LABEL = { hour: '/hour', month: '/month', year: '/year' } as const
+
+function fmtNative(v: number | null, currency: string): string {
+  if (v == null) return NO_DATA
+  try {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(v)
+  } catch {
+    return `${Math.round(v).toLocaleString()} ${currency}`
+  }
+}
+
+/** One country's native wage distribution — always the SOURCE figure, never a
+ *  conversion, so it renders through <Figure> (the site's one way to render a
+ *  sourced number), not <Derived>. See docs/DESIGN.md. */
+function WageRowFigure({ row }: { row: WageCountry }) {
+  const n = row.native
+  const spread = n.value.p10 != null && n.value.p90 != null
+    ? `${fmtNative(n.value.p10, n.currency)} – ${fmtNative(n.value.p90, n.currency)}`
+    : n.value.p25 != null && n.value.p75 != null
+      ? `${fmtNative(n.value.p25, n.currency)} – ${fmtNative(n.value.p75, n.currency)} (p25–p75)`
+      : null
+  return (
+    <div style={{ marginTop: 10 }}>
+      <Figure source={{
+        name: row.source_id, what: `${row.native.distribution === 'central-tendency-only'
+          ? 'Mean/median only, no percentile spread published.' : 'Full distribution as published.'} `
+          + (row.crosswalk.comparable && row.crosswalk.degraded_by ? row.crosswalk.degraded_by : ''),
+        asOf: String(n.year), confidence: 'official',
+      }}>
+        <span className="big" style={{ fontSize: 'var(--text-xl)' }}>
+          {fmtNative(n.value.median ?? n.value.mean, n.currency)}{PERIOD_LABEL[n.period]}
+        </span>
+      </Figure>
+      {spread && <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>{spread}</div>}
+      <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
+        {n.n_employees != null ? `n = ${num(n.n_employees)} · ` : ''}{n.year}
+      </div>
+    </div>
+  )
+}
 
 export function CountryProfile() {
   const { id } = useParams()
@@ -18,6 +61,9 @@ export function CountryProfile() {
 
   const cities = data.citiesByCountry.get(country.id) ?? []
   const e = country.enriched
+  const { data: wages } = useAsync(loadWages, 'wages')
+  const wageRows = wages?.countries.filter((c) => c.country === country.id || c.country.startsWith(`${country.id}-`))
+  const wageAbsence = wages?.absent.find((a) => a.country === country.id)
 
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
@@ -92,6 +138,33 @@ export function CountryProfile() {
           <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', marginTop: 10 }}>
             {country.job_market.new_grad_reality}
           </p>
+        </div>
+
+        <div className="panel">
+          <h2>What developers earn here</h2>
+          <div className="sub">The primary software-developer occupation, in its own currency, as published.</div>
+          {wageRows === undefined ? (
+            <p className="nodata" style={{ marginTop: 8 }}>Loading…</p>
+          ) : wageRows.length > 0 ? (
+            wageRows.map((row) => (
+              <div key={row.country} style={row.country !== wageRows[0]!.country
+                ? { marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--line)' } : undefined}>
+                {wageRows.length > 1 && (
+                  <div style={{ fontSize: 'var(--text-2xs)', fontWeight: 600, color: 'var(--ink-2)' }}>
+                    {row.national_code}
+                  </div>
+                )}
+                <WageRowFigure row={row} />
+              </div>
+            ))
+          ) : wageAbsence ? (
+            <p className="nodata" style={{ marginTop: 8 }}>{wageAbsence.reason}</p>
+          ) : (
+            <p className="nodata" style={{ marginTop: 8 }}>No developer-wage figure for {country.name}.</p>
+          )}
+          <Link to="/explore/money" style={{ fontSize: 'var(--text-2xs)', display: 'inline-block', marginTop: 8 }}>
+            Compare across countries →
+          </Link>
         </div>
 
         <div className="panel">

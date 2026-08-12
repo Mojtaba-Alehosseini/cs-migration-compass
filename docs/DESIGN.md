@@ -149,13 +149,22 @@ immediately.
 
 ## Components that carry the honesty rules
 
-Three components exist so the data principles hold by construction rather than
+Four components exist so the data principles hold by construction rather than
 by discipline:
 
 - **`<Figure>`** — the only way a sourced number is rendered. It is tappable and
   opens a card with source name, what the figure measures, sample size where
   known, date, and a link. This is why no caption on the site reads
   `○ crowd · talent.com · 2026-08`.
+- **`<Derived>`** (package 9) — the only way a *calculated* number is rendered —
+  one this site converted, annualised, or subtracted a component from, rather
+  than one an office published as-is. Same tappable-card language as
+  `<Figure>` (dashed underline, ink-on-paper popover), but the card holds an
+  ordered method — published value, then every adjustment with its reason, in
+  the order it actually happened — not a single citation. A number with a
+  method is a different kind of claim than a number with a source, and the
+  two components make that difference visible rather than asking the reader
+  to infer it from context.
 - **`format.ts`** — `null` never formats as a number. It formats as "no data".
   There is no code path that turns a missing value into `0`.
 - **`<Flag>`** — real SVG, clipped to a circle, simplified to stay legible at

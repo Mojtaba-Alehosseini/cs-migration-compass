@@ -13,9 +13,10 @@
 import { useMemo, useState } from 'react'
 import { Chart } from '../chart/Chart'
 import type { ChartCfg, Series } from '../chart/engine'
-import { Seg, Picker, ChartFoot, ChartTable, Gap, ThemeSkeleton, type HeroStat } from './Controls'
+import { Seg, Picker, ChartFoot, ChartTable, Gap, ThemeSkeleton, ChartSkeleton, type HeroStat } from './Controls'
+import { WagePanel } from './WagePanel'
 import { useAsync } from './useAsync'
-import { loadMoney, naiveLine, yoy, type MoneyData, type Pair } from '../../data/explore'
+import { loadMoney, loadWages, naiveLine, yoy, type MoneyData, type Pair } from '../../data/explore'
 import { money as fmtMoney, moneyShort } from '../../data/format'
 
 type Lens = 'level' | 'index' | 'yoy'
@@ -39,6 +40,7 @@ export function moneyHero(d: MoneyData): HeroStat[] {
 
 export function MoneyTheme() {
   const { data, error } = useAsync(loadMoney, 'money')
+  const { data: wages, error: wagesError } = useAsync(loadWages, 'wages')
   const [lens, setLens] = useState<Lens>('level')
   const [picks, setPicks] = useState(['DE', 'CA', 'NL'])
 
@@ -111,7 +113,7 @@ export function MoneyTheme() {
       Income history could not be loaded ({error}). Nothing is drawn rather than something approximate.
     </p></div>
   }
-  if (!data || !cfg) return <ThemeSkeleton panels={[['s6', 563], ['s4', 443], ['s2', 443]]} />
+  if (!data || !cfg) return <ThemeSkeleton panels={[['s6', 563], ['s4', 443], ['s2', 443], ['s6', 1159]]} />
 
   const csvRows = picks.flatMap((c) => (data.gdp[c] ?? []).map(([y, v]) => ({ country: c, year: y, gdp_per_person_usd: v })))
 
@@ -167,6 +169,16 @@ export function MoneyTheme() {
           all</b> — an approximation labelled IMF would be worse than the gap.
         </p>
       </Gap>
+
+      {wagesError ? (
+        <div className="panel s6"><p className="nodata">
+          Wage distributions could not be loaded ({wagesError}). Nothing is drawn rather than something approximate.
+        </p></div>
+      ) : !wages ? (
+        <div className="panel s6"><ChartSkeleton height={1159} /></div>
+      ) : (
+        <WagePanel wages={wages} />
+      )}
     </>
   )
 }
