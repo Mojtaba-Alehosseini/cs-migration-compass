@@ -763,12 +763,62 @@ source" — and its own chain step now states the population mismatch explicitly
 intellectual technicians and professionals' — a broader population than this occupation; the SHAPE
 of the tenure-pay relationship is assumed to transfer, the absolute wage level is not."*
 
-**Decide:** whether a genuinely IT-specific experience signal is worth pursuing for a future
-package (INE does not publish tenure crossed with IT-specific CNO-11 codes at any depth this
-pipeline has found; a different source might), or whether "position is always the published
-median, full stop" should stand as this feature's permanent design — it is, after this fix, the
-simpler and more defensible of the two, and matches every other component's own discipline of
-never rendering a modelled number through `<Figure>`.
+**Decide (superseded by the update immediately below):** whether a genuinely IT-specific experience
+signal is worth pursuing for a future package (INE does not publish tenure crossed with IT-specific
+CNO-11 codes at any depth this pipeline has found; a different source might), or whether "position
+is always the published median, full stop" should stand as this feature's permanent design.
+
+---
+
+**Update, package 11 — "always the published median, full stop" was itself an over-correction.
+The position personalises again, but only for Sweden and Norway, and only via each country's own
+same-population cross — never Spain's, never a cross-country curve.**
+
+Package 10's tier-7 fix above was diagnostically correct (Spain's tenure cross IS a different
+population) but drew the remedy too broadly: it removed personalisation for every country, not just
+the one where the premise failed. The result shipped to production: `computePosition()` took a
+`profile` parameter it never read, so the years input moved the estimate while the position sat
+frozen at P50 for all fifteen countries, always — the feature's own primary number stopped
+responding to its only input. Package 11's own work order named this precisely: "the position is
+degenerate."
+
+**Re-examined, country by country, before shipping anything:** Sweden's SCB `LonYrkeAlder4AN`
+(`age_by_year` in `salary_se.json`) and Norway's SSB 11658 (`age_at_quarter` in `salary_no.json`)
+both cross the SAME 4-digit occupation code, at the SAME statistical office, as their own
+`dispersion_by_year` percentile table — verified directly against each file's own `meta` block, not
+assumed. This is the "two real numbers from one office" property the ORIGINAL (Spain) reading above
+argued for, genuinely true here where it was not for Spain. Both now personalise: the position ranks
+a shifted value against the country's own table (still `<Figure>`, extended with a new `steps` field
+so the arithmetic is visible — see `site/src/components/Figure.tsx`), the estimate states it
+(`<Derived>`, unchanged register).
+
+**The universal curve is retired, not fixed.** Package 10's `experience_gradient.json` applied
+Spain's own tenure-cross shape to every comparable country's estimate — the identical
+population-borrowing mistake the position fix above had just been built to prevent, just moved to
+the estimate and never caught until this package's own re-examination. `scripts/
+build_experience_gradient.py` now writes `by_country: {SE: ..., NO: ...}` only; no country's
+estimate or position ever consumes another country's cross. Spain's own tenure data remains real,
+committed, and undisturbed in `salary_es.json` — simply not read by this file anymore. Coherence
+between position and estimate (do they agree about whether a country personalises) is now
+structural: both call the same `_countryGradient()` lookup on the same data, so there is no code
+path where they could disagree — and both derive from the identical shifted value (position ranks
+it, estimate states it), removing the OTHER problem the tier-7 update above found (a discrete
+position and a continuous estimate disagreeing about the same profile even when the population
+matched).
+
+**A new assumption this package adds, disclosed on its own: converting years of experience to an
+assumed age.** SE's and NO's own crosses bucket by AGE, not tenure — the profile form collects
+years of professional experience. These are different axes (a 2-years-experienced developer is not
+2 years old), and an early version of this package's own fix conflated them directly, which meant
+every realistic years value fell below the youngest age band's own midpoint and clamped identically
+regardless of years — caught by running gate 1's own three-year check live, not by inspection. Fixed
+by adding an explicit, disclosed conversion (`ASSUMED_CAREER_START_AGE = 22` in `profile.ts`, the
+standard labour-economics "potential experience" convention: age minus schooling minus six, fixed
+at a bachelor's degree) — see item #24 below for the full account and what would change it.
+
+**Decide:** nothing blocking — this is shipped. Open question for a future package: whether
+`ASSUMED_CAREER_START_AGE` should vary (by country's typical university length, or by an education
+level the profile form doesn't currently collect), covered in #24.
 
 ## 21. Norway's and Finland's own "native" wage figures use opposite conventions for which basis they represent
 
@@ -846,3 +896,39 @@ makes.
 remembering if `data/raw/salary_dk/` is ever cleared as part of a scheduled re-verification: that is
 the specific circumstance under which this check would catch a genuine DST revision, not merely a
 pipeline regression.
+
+## 24. Converting years of professional experience to an assumed age for Sweden's and Norway's own age-banded crosses — `ASSUMED_CAREER_START_AGE`
+
+Package 11's revived personalisation for Sweden and Norway (item #20's own package-11 update, above)
+ranks/shifts using SCB's and SSB's own age bands, but the profile form collects years of
+PROFESSIONAL EXPERIENCE, a different axis SCB/SSB do not publish a cross for at all. Some conversion
+from years to an assumed age is required before either country's curve can be consulted — there is
+no way around picking SOME assumption here, since age and years-of-experience are not the same
+number and this pipeline has no way to ask the user their actual age (the form deliberately doesn't
+collect it, matching the site's own "collect only what's used" discipline).
+
+**A real bug caught before shipping, not a theoretical concern.** An earlier version of this
+package's own fix skipped the conversion entirely — it interpolated `yearsProfessional` (2, 8, 20 in
+gate 1's own test) directly against the age bands' own midpoints (21, 29.5, 39.5...). Every
+realistic years-of-experience value is below the youngest band's own midpoint, so every profile
+clamped to the identical lowest-band premium regardless of years — Sweden showed P10 at 2, 8, AND 20
+years, the exact "position ignores its only input" defect this package exists to fix, just
+reintroduced one level down. Caught by running gate 1's own three-different-percentiles check live
+against the actual page, not by code review.
+
+**Shipped:** `site/src/data/profile.ts`'s `ASSUMED_CAREER_START_AGE = 22` — the standard
+labour-economics convention for "potential experience" (age minus years of schooling minus six),
+fixed at a bachelor's degree finishing at 22. `assumedAge = yearsProfessional + 22`, disclosed as
+its own numbered chain step in both the position's method card (`<Figure>`'s new `steps` field) and
+the estimate's (`<Derived>`'s chain) — "8 years of experience -> assumed age ~30 (career start at
+22, a stated assumption)" — never silently folded into the shift arithmetic.
+
+**Decide:** whether a single constant is the right permanent design, or whether it should vary —
+options, roughly ascending in complexity: (a) leave it, one number, disclosed, the same for every
+profile regardless of country or claimed education level (current state); (b) vary by country
+(Sweden's typical university length differs from Norway's, though not by much); (c) let a future CV
+path (package 12) supply `education_level` from the structured profile schema
+(phase-4-salary-and-cv-plan.md §3.1 already includes this field) and derive career-start-age from it
+(bachelor's ~22, master's ~24, PhD ~28) rather than assuming one universally. Option (c) is the most
+accurate but depends on package 12 shipping first and on OECD/national typical-completion-age data
+this pipeline has not sourced; not attempted here.

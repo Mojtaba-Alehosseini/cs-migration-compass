@@ -155,7 +155,12 @@ by discipline:
 - **`<Figure>`** — the only way a sourced number is rendered. It is tappable and
   opens a card with source name, what the figure measures, sample size where
   known, date, and a link. This is why no caption on the site reads
-  `○ crowd · talent.com · 2026-08`.
+  `○ crowd · talent.com · 2026-08`. Package 11 added an optional ordered
+  `steps` list to the same card — for a figure that involved real arithmetic
+  over ONE source's own real numbers (e.g. an age-banded position ranked
+  against that same country's own percentile table), not a different kind
+  of number: still one source, still `<Figure>`'s own register, just showing
+  its working rather than a bare citation.
 - **`<Derived>`** (package 9) — the only way a *calculated* number is rendered —
   one this site converted, annualised, or subtracted a component from, rather
   than one an office published as-is. Same tappable-card language as

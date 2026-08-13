@@ -15,7 +15,8 @@ import { loadOccupations, type Occupations } from '../data/store'
 import { loadWages, type WageCountry } from '../data/explore'
 import {
   loadExperienceGradient, profileFromParams, profileToParams, computePosition,
-  computeEstimate, computeEstimateUsdYear, knownPercentilePoints, DEFAULT_OCCUPATION, type Profile,
+  computeEstimate, computeEstimateUsdYear, knownPercentilePoints, experienceCoverageFor,
+  DEFAULT_OCCUPATION, type Profile, type ExperienceGradient,
 } from '../data/profile'
 import { useAsync } from '../components/explore/useAsync'
 import { Figure } from '../components/Figure'
@@ -47,26 +48,31 @@ function ordinal(pct: number): string {
 
 /** Tier 5: what this feature can do for a country, cross-checked against
  *  what the resolver actually returned — not asserted separately from it
- *  (gate 11's own requirement).
+ *  (gate 7's own requirement).
  *
- *  Position and estimate both need exactly two things to work at all:
- *  scripts/crosswalk.py's own comparability verdict, AND a real percentile
- *  spread (>=2 of p10/p25/median/p75/p90) to place a rank within or clamp
- *  an estimate against. Those are two INDEPENDENT reasons a country can be
- *  excluded — an earlier version of this function collapsed them into one
- *  three-tier scheme labelled by distribution shape ("4-digit match" /
- *  "quartile-only match"), which meant a country refused by the crosswalk
- *  at 2-digit depth but still publishing a full percentile spread (Spain)
- *  rendered the self-contradictory "4-digit match, ES forced 4-digit down
- *  to 2-digit" — the tier name and the reason it was demoted described two
- *  different things. Finding F6, adversarial review. Reporting both
- *  verdicts separately removes the contradiction structurally rather than
- *  wording around it. */
-function coverageFor(row: WageCountry | undefined, absentReason: string | undefined): {
-  works: boolean; crosswalkOk: boolean; crosswalkDetail: string; distributionDetail: string
+ *  Three INDEPENDENT axes, each named separately rather than collapsed into
+ *  one tier label (finding F6, package 10's adversarial review — a country
+ *  refused by the crosswalk at 2-digit depth but still publishing a full
+ *  percentile spread once rendered the self-contradictory "4-digit match,
+ *  ES forced 4-digit down to 2-digit"; reporting each verdict on its own
+ *  removes that class of contradiction structurally):
+ *   - occupation depth: scripts/crosswalk.py's own comparability verdict
+ *   - pay basis / distribution shape: a real percentile spread (>=2 of
+ *     p10/p25/median/p75/p90) to place a rank within or clamp an estimate
+ *     against
+ *   - experience: whether THIS country has its own same-population
+ *     experience cross (package 11, tier 1) — reuses experienceCoverageFor
+ *     from profile.ts, the SAME lookup computePosition()/computeEstimate()
+ *     use, so this map cannot drift from what they actually do.
+ *  Only the first two gate whether a position/estimate renders AT ALL
+ *  ("works"); experience is a separate, non-gating capability — a country
+ *  can work without personalising. */
+function coverageFor(row: WageCountry | undefined, absentReason: string | undefined, gradient: ExperienceGradient | null): {
+  works: boolean; crosswalkOk: boolean; crosswalkDetail: string; distributionDetail: string; experienceDetail: string
 } {
   if (!row) {
-    return { works: false, crosswalkOk: false, crosswalkDetail: absentReason ?? 'no wage source at all', distributionDetail: '—' }
+    return { works: false, crosswalkOk: false, crosswalkDetail: absentReason ?? 'no wage source at all',
+      distributionDetail: '—', experienceDetail: '—' }
   }
   const crosswalkOk = row.crosswalk.comparable
   const crosswalkDetail = crosswalkOk
@@ -77,7 +83,10 @@ function coverageFor(row: WageCountry | undefined, absentReason: string | undefi
   const distributionDetail = hasSpread
     ? d.replace(/-/g, ' ')
     : `${row.source_id} publishes only a ${d.replace(/-/g, ' ')} — no spread to rank or shift against`
-  return { works: crosswalkOk && hasSpread, crosswalkOk, crosswalkDetail, distributionDetail }
+  const experienceDetail = gradient
+    ? (experienceCoverageFor(row, gradient).personalised ? 'personalised' : 'published median only')
+    : '—'
+  return { works: crosswalkOk && hasSpread, crosswalkOk, crosswalkDetail, distributionDetail, experienceDetail }
 }
 
 /* --------------------------------------------------------------- form --- */
@@ -187,10 +196,14 @@ function CountryRow({ row, profile, gradient, highlighted }: {
       </div>
       <div>
         {position.ok ? (
-          <Figure source={{
+          <Figure source={position.personalised ? {
             name: position.sourceLabel, asOf: String(position.year), confidence: 'official',
-            what: `${row.country} has no experience cross of its own — this is the published median `
-              + '(P50), not personalised to your years of experience.',
+            what: `Personalised to ${profile.yearsProfessional} years of professional experience — `
+              + 'ranked against this country\'s own percentile table, not stated directly.',
+            steps: position.chain.map((s) => s.detail),
+          } : {
+            name: position.sourceLabel, asOf: String(position.year), confidence: 'official',
+            what: position.reason,
           }}>
             <span className="big" style={{ fontSize: 'var(--text-md)' }}>
               {ordinal(position.pct)} of {row.national_code}
@@ -202,6 +215,7 @@ function CountryRow({ row, profile, gradient, highlighted }: {
         {position.ok && (
           <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
             {position.n != null ? `n = ${position.n.toLocaleString()} · ` : ''}{position.year}
+            {position.personalised && ' · personalised'}
           </div>
         )}
       </div>
@@ -214,6 +228,9 @@ function CountryRow({ row, profile, gradient, highlighted }: {
           </Derived>
         ) : (
           <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>{estimate.reason}</span>
+        )}
+        {estimate.ok && !estimate.personalised && (
+          <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>unadjusted — same as the median</div>
         )}
       </div>
     </div>
@@ -301,7 +318,10 @@ function PayVsCost({ profile, wageByCountry, gradient }: {
 
 /* ------------------------------------------------------------- coverage --- */
 
-function CoverageMap({ wages }: { wages: Awaited<ReturnType<typeof loadWages>> }) {
+function CoverageMap({ wages, gradient }: {
+  wages: Awaited<ReturnType<typeof loadWages>>
+  gradient: ExperienceGradient | null
+}) {
   // Canada carries two rows (CA-21231, CA-21232 — NEEDS-DECISION #12, still
   // open) rather than one plain "CA" — coverageFor() needs SOME row to
   // judge, so this takes the first. Not a resolution of #12 (which row
@@ -317,18 +337,20 @@ function CoverageMap({ wages }: { wages: Awaited<ReturnType<typeof loadWages>> }
   }
   const absentByCountry = new Map(wages.absent.map((a) => [a.country, a.reason]))
   const ALL_15 = ['AE', 'AU', 'CA', 'DE', 'DK', 'ES', 'FI', 'GB', 'IE', 'IT', 'NL', 'NO', 'QA', 'SE', 'US']
-  const rows = ALL_15.map((cc) => ({ cc, ...coverageFor(byCountry.get(cc), absentByCountry.get(cc)) }))
+  const rows = ALL_15.map((cc) => ({ cc, ...coverageFor(byCountry.get(cc), absentByCountry.get(cc), gradient) }))
   const works = rows.filter((r) => r.works)
   const blocked = rows.filter((r) => !r.works)
+  const personalise = rows.filter((r) => r.experienceDetail === 'personalised')
 
   return (
     <div className="panel" style={{ gridColumn: '1 / -1' }}>
       <h2>Where this feature actually works</h2>
       <div className="sub">
         Everything packages 7–9 learned about occupation and distribution depth, applied to this one
-        feature. This map describes Software developers (isco08:2512) specifically — the only
-        occupation with resolved wage data — regardless of which occupation is currently selected
-        above, since every other selection has no coverage to describe yet (see the panel above).
+        feature, plus package 11's own third axis: experience. This map describes Software developers
+        (isco08:2512) specifically — the only occupation with resolved wage data — regardless of which
+        occupation is currently selected above, since every other selection has no coverage to
+        describe yet (see the panel above).
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14, marginTop: 10 }}>
         <div>
@@ -338,7 +360,8 @@ function CoverageMap({ wages }: { wages: Awaited<ReturnType<typeof loadWages>> }
           <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0' }}>
             {works.map((r) => (
               <li key={r.cc} style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>
-                <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> — {r.crosswalkDetail}, {r.distributionDetail}
+                <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> — {r.crosswalkDetail}, {r.distributionDetail},{' '}
+                {r.experienceDetail}
               </li>
             ))}
           </ul>
@@ -352,6 +375,22 @@ function CoverageMap({ wages }: { wages: Awaited<ReturnType<typeof loadWages>> }
               <li key={r.cc} style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>
                 <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> —{' '}
                 {r.crosswalkOk ? r.distributionDetail : r.crosswalkDetail}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h3 style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)' }}>
+            Personalise by experience ({personalise.length} of {ALL_15.length})
+          </h3>
+          <div className="sub" style={{ marginTop: 2 }}>
+            The third axis. A country can work (left column) without personalising — most do.
+          </div>
+          <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0' }}>
+            {rows.map((r) => (
+              <li key={r.cc} style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>
+                <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> —{' '}
+                {r.experienceDetail === '—' ? 'n/a (no wage data)' : r.experienceDetail}
               </li>
             ))}
           </ul>
@@ -411,7 +450,9 @@ export function Position() {
         The site does not estimate a person — it locates you in the wage distributions packages 7–9
         already built. A position is a rank within a country's own published table; an estimate is
         this pipeline's own model, always shown beside its distribution, never mistaken for a
-        measurement.
+        measurement. Sweden and Norway personalise the position itself by years of experience, using
+        each country's own age cross ranked against its own table — every other country shows the
+        published median, unpersonalised, and says why.
       </p>
 
       {loadError && (
@@ -425,7 +466,7 @@ export function Position() {
 
       <div className="panel" style={{ marginTop: 12 }}>
         <h2>Position and estimate, country by country</h2>
-        <div className="sub">Position: this country's own published percentile table. Estimate: that table's own median, shifted by the experience gradient — always labelled, never a source citation.</div>
+        <div className="sub">Position: this country's own published percentile table, ranked by its own experience cross where one exists (SE, NO), the published median everywhere else. Estimate: that table's own median, shifted the same way — always labelled, never a source citation.</div>
         {!wages || !gradient ? (
           <ChartSkeleton height={220} />
         ) : !supported ? (
@@ -461,7 +502,7 @@ export function Position() {
       </div>
 
       <div style={{ marginTop: 12 }}>
-        {wages && <CoverageMap wages={wages} />}
+        {wages && <CoverageMap wages={wages} gradient={gradient ?? null} />}
       </div>
     </div>
   )

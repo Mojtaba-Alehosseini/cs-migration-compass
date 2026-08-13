@@ -22,6 +22,15 @@ export interface SourceInfo {
   what?: string
   /** Shown as a warning when the figure is older than its staleness rule. */
   stale?: boolean
+  /** Ordered arithmetic steps, when this figure involved real computation
+   *  over the cited source's own numbers (e.g. package 11's personalised
+   *  position: an age band's own value, ranked against this same source's
+   *  own percentile table) — still ONE source, still <Figure>'s own
+   *  "actual" register, just showing its working rather than a bare
+   *  citation. <Derived>'s own chain is for numbers a METHOD produced, not
+   *  a single source's own real numbers; this is for the latter. Omit for
+   *  a plain citation with nothing to reproduce by hand. */
+  steps?: string[]
 }
 
 interface Props {
@@ -96,7 +105,7 @@ export function Figure({ children, source, missing, missingReason, className }: 
           style={{
             position: 'absolute', left: 0, top: 'calc(100% + 7px)', zIndex: 'var(--z-popover)' as never,
             background: 'var(--ink-1)', color: 'var(--paper)', borderRadius: 'var(--radius-md)',
-            padding: '10px 13px', width: 250, display: 'block', boxShadow: 'var(--shadow-lg)',
+            padding: '10px 13px', width: source.steps ? 300 : 250, display: 'block', boxShadow: 'var(--shadow-lg)',
             fontFamily: 'var(--font-ui)', fontSize: 'var(--text-2xs)', fontWeight: 400,
             lineHeight: 'var(--leading-normal)', letterSpacing: 0, whiteSpace: 'normal',
           }}
@@ -105,6 +114,18 @@ export function Figure({ children, source, missing, missingReason, className }: 
           {source.what && <span style={{ display: 'block', opacity: 0.85 }}>{source.what}</span>}
           {source.sample && (
             <span style={{ display: 'block', opacity: 0.85, marginTop: 3 }}>{source.sample}</span>
+          )}
+          {source.steps && source.steps.length > 0 && (
+            <>
+              <span style={{ display: 'block', marginTop: 6, opacity: 0.6 }}>
+                HOW THIS NUMBER WAS CALCULATED
+              </span>
+              <ol style={{ margin: '4px 0 0', paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {source.steps.map((step, i) => (
+                  <li key={i} style={{ opacity: 0.85 }}>{step}</li>
+                ))}
+              </ol>
+            </>
           )}
           <span style={{ display: 'block', marginTop: 6, opacity: 0.7 }}>
             {source.confidence && (

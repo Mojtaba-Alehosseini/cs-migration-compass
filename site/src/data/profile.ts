@@ -1,4 +1,11 @@
-/* Package 10 — the profile, the position, and the estimate.
+/* Package 10 built the profile, the position, and the estimate. Package 11
+ * fixed the position: package 10's own remediation of finding F2/F3
+ * (Spain's position ranked a broader-population tenure cross against its
+ * own IT-specific table) over-corrected by removing personalisation
+ * EVERYWHERE, not just where it was unsound. The position went from
+ * "wrong for one country" to "ignores its only input for all fifteen" — the
+ * years control moved the estimate while the position sat frozen at P50,
+ * always, for everyone.
  *
  * "The site does not estimate a person. It locates them." Two numbers, two
  * different kinds of claim, enforced by which component renders them:
@@ -6,48 +13,81 @@
  *   POSITION  a rank within a country's own published distribution
  *             (P10/P25/median/P75/P90 from wage_distribution.json, already
  *             resolved by scripts/build_wage_distribution.py — this module
- *             re-derives NOTHING from raw salary_*.json). Sourced, so a
- *             <Figure>, always the published median (P50) — never
- *             personalised by years of experience. An earlier version of
- *             this module personalised Spain's own position by ranking an
- *             INE tenure-band figure against Spain's IT-specific percentile
- *             table; an independent review (finding F2/F3, tier 7 of this
- *             package's own adversarial review) found that INE's tenure
- *             cross is for a BROADER occupational population (CNO-11
- *             "Scientific and intellectual technicians and professionals",
- *             mean ~14% above Spain's own IT-specific median) — ranking a
- *             different population's figure against this one's percentile
- *             table produced a position that could disagree with the
- *             estimate computed from the very same inputs, and dressed a
- *             genuinely modelled number in <Figure>'s "official" confidence.
- *             Removed rather than patched: there is no IT-specific tenure
- *             cross to rank against instead, so the honest fix is to not
- *             personalise the position at all. See NEEDS-DECISION.md #20.
+ *             re-derives NOTHING from raw salary_*.json). Personalised by
+ *             years of experience ONLY where a country's own experience
+ *             cross shares the SAME population as its own distribution —
+ *             same statistical office, same classification, same
+ *             occupation depth. Verified before this module was rewritten,
+ *             not assumed (see build_experience_gradient.py's own module
+ *             docstring for the full account): Sweden (SCB, SSYK 2512) and
+ *             Norway (SSB, STYRK-08 2512) both qualify. Spain does not —
+ *             INE's own tenure cross is for CNO-11's BROADER "Scientific
+ *             and intellectual technicians and professionals" category,
+ *             the exact mismatch finding F2/F3 (package 10) found and
+ *             fixed, just for the position specifically, not for every
+ *             country's estimate. Every other country has no cross at all.
+ *             Where personalised, this is real arithmetic over one
+ *             country's own real numbers — not a citation, so it renders
+ *             through <Figure>'s own extended `steps` disclosure, not
+ *             <Derived>'s naive register (see this module's header comment
+ *             continuation below on why <Figure>, not <Derived>). Where NOT
+ *             personalised, it is the plain published median, same as
+ *             package 10 shipped for every country.
  *
- *   ESTIMATE  a country's own median, shifted by the universal experience
- *             gradient (data/processed/experience_gradient.json, built
- *             from Spain's tenure cross — see that file's own module
- *             docstring for why Spain and not Sweden/Norway's age crosses).
- *             A model, so a <Derived>, never a <Figure> — the SAME
- *             population mismatch above applies here too, but is far less
- *             misleading on a component that already discloses "this is a
- *             method, not a source" and already carries the relative-shift
- *             assumption in its own chain (see _shiftEstimate's own
- *             "not IT-specific" chain step, added alongside this fix).
- *             Available for every country with at least a quartile spread
- *             to clamp against — absent for central-tendency-only/mean-only
- *             countries (nothing to clamp), matching the position's own
- *             absence there.
+ *   ESTIMATE  a country's own median, shifted by THAT COUNTRY'S OWN
+ *             experience cross — never a different country's curve.
+ *             Package 10 shipped one universal curve (Spain's tenure cross)
+ *             applied to all thirteen comparable countries; retired
+ *             entirely (see build_experience_gradient.py). A country with
+ *             no cross of its own gets the published median as its
+ *             "estimate" too — unadjusted, chain-disclosed as such, NEVER
+ *             borrowed from elsewhere. A model, so always a <Derived>,
+ *             never a <Figure> — even the unadjusted-median case, because
+ *             the reason it is unadjusted is itself something to disclose,
+ *             not imply.
  *
- * Both functions also refuse (return not-ok) when scripts/crosswalk.py's own
- * comparability verdict (row.crosswalk.comparable) is false — an earlier
- * version of this module checked only distribution shape, so a country the
- * crosswalk itself had refused (the Netherlands: "no ISCO-08 correspondence
- * at all for this occupation") still rendered a full position and estimate.
- * Caught by the same adversarial review (finding F1) as the population-
- * mismatch above: this module consumes crosswalk.py's verdict, the same
- * "never re-derive the rule, never skip the check" discipline
- * build_wage_distribution.py's own docstring establishes.
+ * WHY THE PERSONALISED POSITION IS STILL <Figure>, NOT <Derived>: the
+ * work order's own plan (phase-4-salary-and-cv-plan.md §3.4) puts the
+ * position in the "actual" register and the estimate in "naive" — "same
+ * grammar, same never-blend contract". A personalised SE/NO position is
+ * built entirely from ONE country's own real, published numbers (an age
+ * band's own salary figure, that same country's own percentile table) —
+ * no cross-country borrowing, no synthesised figure, the same "two real
+ * numbers from one office, one arithmetic rank-finding step" package 10's
+ * FIRST design (before F2/F3) argued for Spain, which held for the
+ * ARCHITECTURE even though Spain's own POPULATION premise was wrong.
+ * Rendering it through <Figure> keeps that argument intact for the two
+ * countries where the premise actually holds. <Figure>'s own `steps` field
+ * (added this package) is what lets it show the arithmetic gate 1 asks
+ * for without borrowing <Derived>'s "this is a model" register for a
+ * number that is not a model — every input is a real, sourced figure.
+ *
+ * YEARS OF EXPERIENCE IS NOT AGE: SE's and NO's own crosses bucket by age,
+ * the profile form collects years of professional experience — genuinely
+ * different axes. _computeShift() converts one to the other via
+ * ASSUMED_CAREER_START_AGE, a real, disclosed, single-constant assumption
+ * (see its own doc comment below for the bug this fixed and NEEDS-DECISION
+ * #24 for the full account) — not a silent step folded into the shift
+ * arithmetic.
+ *
+ * Both functions also refuse (return not-ok) when scripts/crosswalk.py's
+ * own comparability verdict (row.crosswalk.comparable) is false — a
+ * country the crosswalk itself refused (the Netherlands: "no ISCO-08
+ * correspondence at all for this occupation") must never render a position
+ * or an estimate, regardless of whether it happens to publish a real
+ * percentile spread. Finding F1, package 10's adversarial review.
+ *
+ * COHERENCE (this package's own tier 1.4): position and estimate must
+ * agree about WHETHER a country personalises, always — never one moving
+ * while the other sits frozen. Enforced structurally, not by convention:
+ * both computePosition() and computeEstimate() ask the exact same
+ * question (_countryGradient(row, gradient)) of the exact same data, so
+ * there is no code path where they could disagree about eligibility. Where
+ * personalised, both derive from the SAME shifted value (_computeShift) —
+ * the position ranks it, the estimate states it — removing finding F3's
+ * OTHER problem (a discrete-band position and a continuously-interpolated
+ * estimate could each move independently, disagreeing about the same
+ * profile even when the population matched).
  *
  * Both are pure functions over already-resolved data (wage_distribution.json,
  * experience_gradient.json) — no fetch, no re-derivation of crosswalk.py or
@@ -65,35 +105,40 @@ export interface Profile {
   /** Where they are now — optional. Highlights the matching row in the
    *  position/estimate table (site/src/routes/Position.tsx's CountryRow).
    *  NOT joined into Tier 4's pay-vs-cost panel, which reads its own cities
-   *  from the shared Selection instead — an earlier version of this comment
-   *  claimed it fed that join; it never did (finding F17, adversarial
-   *  review). Kept here rather than wiring a real join under review-driven
-   *  time pressure: the two features solve different problems (a profile's
-   *  home country vs. a shortlist of candidate cities to compare), and
-   *  conflating them would need its own design decision, not a quick patch. */
+   *  from the shared Selection instead. */
   country?: string
 }
 
 /* ------------------------------------------------------------ gradient --- */
 
 export interface GradientPoint {
-  years: number; upper_edge_years_exclusive: number | null; band_label: string
-  eur_year: number; premium_pct: number
+  /** An AGE, not years of professional experience — an approximation of
+   *  the band's own centre, not a measurement. See this module's own
+   *  header comment, each curve's own meta.proxy_caveat, and
+   *  ASSUMED_CAREER_START_AGE below for how a years-of-experience value
+   *  gets onto this same axis. */
+  age_midpoint_approx: number
+  band_label: string
+  premium_pct: number
 }
-export interface ContextPoint {
-  years_midpoint_approx: number; band_label: string; premium_pct: number
-  sek_month?: number; nok_month?: number
+export interface CountryGradientMeta {
+  source: string
+  proxy_caveat: string
+  year?: number
+  quarter?: string
+  vintage_note?: string
+}
+export interface CountryGradient {
+  curve: GradientPoint[]
+  meta: CountryGradientMeta
 }
 export interface ExperienceGradient {
-  gradient: {
-    curve: GradientPoint[]
-    meta: { source: string; year: number; total_eur_year: number; measures: string }
-    interpolation: string
-  }
-  context: {
-    se_age: { curve: ContextPoint[]; meta: { source: string; year: number; measures: string } }
-    no_age: { curve: ContextPoint[]; meta: { source: string; quarter: string; measures: string } }
-  }
+  /** Keyed by ISO2 (e.g. "SE", "NO") — a country with no entry here has no
+   *  experience/age/tenure cross this pipeline trusts to personalise from.
+   *  Package 10 shipped one universal curve under a different shape
+   *  entirely (gradient.curve, applied to every country); retired. */
+  by_country: Record<string, CountryGradient>
+  interpolation: string
 }
 
 export async function loadExperienceGradient(): Promise<ExperienceGradient> {
@@ -101,24 +146,130 @@ export async function loadExperienceGradient(): Promise<ExperienceGradient> {
   return h.data
 }
 
-/** Piecewise-linear interpolation between the gradient's own real points,
- *  clamped at both ends — never extrapolated past what Spain's tenure cross
- *  actually measured. Mirrors the SAME clamp discipline distributionPosition()
- *  below applies to percentiles: a number this pipeline did not measure does
- *  not get invented past the edge of what it did measure. */
-export function gradientPremiumPct(years: number, curve: GradientPoint[]): { pct: number; clamped: 'low' | 'high' | null } {
-  const pts = [...curve].sort((a, b) => a.years - b.years)
-  if (years <= pts[0]!.years) return { pct: pts[0]!.premium_pct, clamped: years < pts[0]!.years ? 'low' : null }
+/** scripts/build_experience_gradient.py's own by_country map, keyed by this
+ *  row's ISO2 prefix — the ONE question both computePosition() and
+ *  computeEstimate() ask to decide personalisation, so they can never
+ *  disagree about whether a country qualifies (this module's own header
+ *  comment, "coherence"). Returns null for every country except SE/NO. */
+function _countryGradient(row: WageCountry, gradient: ExperienceGradient): CountryGradient | null {
+  const iso = row.country.split('-')[0]!
+  return gradient.by_country[iso] ?? null
+}
+
+/** Countries with a real occupation-level experience/age/tenure cross that
+ *  does NOT share the same population as their own wage distribution —
+ *  named specifically, not lumped in with the majority that has no cross
+ *  at all. Only Spain currently: NEEDS-DECISION.md #20's own account. */
+const _MISMATCHED_POPULATION_REASON: Record<string, string> = {
+  ES: "Spain's own INE tenure cross exists (broader_category_context in salary_es.json) but measures "
+    + 'a BROADER occupational population (CNO-11 "Scientific and intellectual technicians and '
+    + 'professionals") than this occupation\'s own distribution — not the same population, so not used '
+    + 'to personalise position or estimate. See NEEDS-DECISION.md #20.',
+}
+
+/** The reason shown when a country does not personalise — distinguishes
+ *  "a cross exists but is the wrong population" (Spain) from "no cross
+ *  exists at all" (everyone else), rather than one generic sentence for
+ *  both real, different causes. */
+function _noExperienceCrossReason(row: WageCountry): string {
+  return _MISMATCHED_POPULATION_REASON[row.country.split('-')[0]!]
+    ?? `${row.country} has no occupation x experience/age cross of its own in this pipeline — the `
+      + 'published median is shown, not personalised to your years of experience.'
+}
+
+/** Tier 5 (coverage map) support: the experience axis specifically — does
+ *  `row` personalise, and if not, why. Reuses _countryGradient so the
+ *  coverage map can never drift from what computePosition()/
+ *  computeEstimate() actually do (the SAME discipline that keeps position
+ *  and estimate coherent applies to describing them, not just computing
+ *  them — gate 7, package 11, echoing finding F6 from package 10's own
+ *  coverage map, where the tier label and its own stated reason could
+ *  contradict each other because they were computed two different ways). */
+export function experienceCoverageFor(row: WageCountry, gradient: ExperienceGradient): { personalised: boolean; detail: string } {
+  const cg = _countryGradient(row, gradient)
+  if (cg) return { personalised: true, detail: `personalised via ${cg.meta.source}` }
+  return { personalised: false, detail: _noExperienceCrossReason(row) }
+}
+
+/** Piecewise-linear interpolation between a country's own real points,
+ *  clamped at both ends — never extrapolated past what that country's own
+ *  cross actually measured. Mirrors the SAME clamp discipline
+ *  rankWithinDistribution() below applies to percentiles. Takes an AGE
+ *  (see ASSUMED_CAREER_START_AGE below for how one gets here from years of
+ *  professional experience), not years directly. */
+export function gradientPremiumPct(age: number, curve: GradientPoint[]): { pct: number; clamped: 'low' | 'high' | null } {
+  const pts = [...curve].sort((a, b) => a.age_midpoint_approx - b.age_midpoint_approx)
+  if (age <= pts[0]!.age_midpoint_approx) {
+    return { pct: pts[0]!.premium_pct, clamped: age < pts[0]!.age_midpoint_approx ? 'low' : null }
+  }
   const last = pts[pts.length - 1]!
-  if (years >= last.years) return { pct: last.premium_pct, clamped: years > last.years ? 'high' : null }
+  if (age >= last.age_midpoint_approx) {
+    return { pct: last.premium_pct, clamped: age > last.age_midpoint_approx ? 'high' : null }
+  }
   for (let i = 0; i < pts.length - 1; i++) {
     const a = pts[i]!, b = pts[i + 1]!
-    if (years >= a.years && years <= b.years) {
-      const t = (years - a.years) / (b.years - a.years)
+    if (age >= a.age_midpoint_approx && age <= b.age_midpoint_approx) {
+      const t = (age - a.age_midpoint_approx) / (b.age_midpoint_approx - a.age_midpoint_approx)
       return { pct: a.premium_pct + t * (b.premium_pct - a.premium_pct), clamped: null }
     }
   }
   return { pct: pts[0]!.premium_pct, clamped: null } // unreachable given the bounds checks above
+}
+
+export interface EstimateStep { op: string; detail: string }
+
+/** A real, disclosed assumption, not a measurement: SE's and NO's own
+ *  crosses are bucketed by AGE, but the profile form collects years of
+ *  professional experience — a genuinely different axis (someone with 2
+ *  years of experience is not 2 years old). Converting one to the other
+ *  needs SOME assumption; this pipeline uses the standard labour-economics
+ *  convention for "potential experience" (age minus years of schooling
+ *  minus six), fixed at a bachelor's degree finishing at 22 — the same
+ *  single constant for every profile, not tuned per country or per
+ *  education level this pipeline does not collect. Caught before shipping:
+ *  an earlier version of this file treated years_midpoint_approx (an AGE
+ *  band's own centre, e.g. 21, 29.5, 39.5...) as if it were directly on
+ *  the SAME numeric axis as yearsProfessional (e.g. 2, 8, 20) — every
+ *  realistic years-of-experience value is below the youngest age band's
+ *  own midpoint, so every profile clamped to the identical lowest-band
+ *  premium regardless of years, which is exactly what gate 1 says must not
+ *  happen ("three different percentiles"). Found by running the gate 1
+ *  check live, not by inspection. */
+export const ASSUMED_CAREER_START_AGE = 22
+
+/** The shared arithmetic: convert `years` to an assumed age, shift
+ *  `central` by `cg`'s own premium at that age. Used identically by the
+ *  estimate (which states the shifted value) and the position (which
+ *  ranks it) — the SAME shift, not two independently computed numbers
+ *  that happen to both depend on years. Rounds the premium to the same
+ *  precision it displays, THEN uses that rounded value for the arithmetic
+ *  — not the other way around (finding F15, package 10's adversarial
+ *  review: an earlier version computed the raw value from full-precision
+ *  premium but displayed a rounded multiplier, so hand-multiplying the two
+ *  shown numbers never reproduced the shown result). */
+function _computeShift(central: number, years: number, cg: CountryGradient): { raw: number; chain: EstimateStep[] } {
+  const assumedAge = years + ASSUMED_CAREER_START_AGE
+  const gRaw = gradientPremiumPct(assumedAge, cg.curve)
+  const pct = Math.round(gRaw.pct * 10) / 10
+  const multiplier = 1 + pct / 100
+  const raw = central * multiplier
+
+  const pts = [...cg.curve].sort((a, b) => a.age_midpoint_approx - b.age_midpoint_approx)
+  const edge = gRaw.clamped === 'low' ? pts[0] : pts[pts.length - 1]
+  const chain: EstimateStep[] = [
+    { op: 'age_proxy', detail: `${years} years of experience -> assumed age ~${assumedAge} `
+      + `(career start at ${ASSUMED_CAREER_START_AGE}, a stated assumption — see ASSUMED_CAREER_START_AGE)` },
+    { op: 'gradient', detail: `age ~${assumedAge} -> ${pct >= 0 ? '+' : ''}${pct.toFixed(1)}% (${cg.meta.source}`
+      + (cg.meta.year ? `, ${cg.meta.year}` : cg.meta.quarter ? `, ${cg.meta.quarter}` : '') + ')'
+      + (gRaw.clamped
+        ? ` — held at the ${gRaw.clamped === 'low' ? 'lowest' : 'highest'} band this curve models `
+          + `("${edge?.band_label}", ~${edge?.age_midpoint_approx} years old): not extrapolated further`
+        : '') },
+    { op: 'proxy', detail: cg.meta.proxy_caveat },
+    { op: 'shift', detail: `${central.toLocaleString()} x ${multiplier.toFixed(3)} = ${raw.toLocaleString(undefined, { maximumFractionDigits: 2 })}` },
+  ]
+  if (cg.meta.vintage_note) chain.push({ op: 'vintage', detail: cg.meta.vintage_note })
+  return { raw, chain }
 }
 
 /* --------------------------------------------------------- percentiles --- */
@@ -175,86 +326,64 @@ export function rankWithinDistribution(value: number, points: { pct: number; val
 
 /* ------------------------------------------------------------ estimate --- */
 
-export interface EstimateStep { op: string; detail: string }
 export type EstimateResult =
-  | { ok: true; value: number; currency: string; chain: EstimateStep[]; clamped: 'low' | 'high' | null }
+  | { ok: true; value: number; currency: string; chain: EstimateStep[]; clamped: 'low' | 'high' | null; personalised: boolean }
   | { ok: false; reason: string }
 
-/** The shared core: shift `stats`'s own central figure by the universal
- *  gradient, clamped to `stats`'s own published bounds. Used for both the
- *  native-currency estimate (Tier 3's own displayed number) and the
- *  USD-annual estimate (Tier 4's stabilityOf() override) — same math,
- *  different currency's own percentile table, never a client-side FX
- *  conversion of one into the other (that would re-derive normalise.py's
- *  own job; the USD combo is already resolved by build_wage_distribution.py). */
+/** The shared core: shift `stats`'s own central figure by `row`'s OWN
+ *  experience cross (never another country's), clamped to `stats`'s own
+ *  published bounds. Falls back to the unadjusted published median —
+ *  disclosed as such, its own chain step naming why — when `row` has no
+ *  cross of its own. Used for both the native-currency estimate (Tier 3's
+ *  own displayed number) and the USD-annual estimate (Tier 4's
+ *  stabilityOf() override) — same math, different currency's own
+ *  percentile table, never a client-side FX conversion of one into the
+ *  other (that would re-derive normalise.py's own job). */
 function _shiftEstimate(
-  countryLabel: string, stats: WageStats, currency: string,
-  years: number, gradient: ExperienceGradient,
+  row: WageCountry, stats: WageStats, currency: string,
+  profile: Profile, gradient: ExperienceGradient,
 ): EstimateResult {
   const points = knownPercentilePoints(stats)
   if (points.length < 2) {
-    return { ok: false, reason: `${countryLabel} publishes only a distribution too narrow to shift within or `
+    return { ok: false, reason: `${row.country} publishes only a distribution too narrow to shift within or `
       + 'clamp against (need at least two of p10/p25/median/p75/p90)' }
   }
   const central = stats.median ?? stats.mean
-  if (central == null) return { ok: false, reason: `${countryLabel} has no median or mean to shift` }
+  if (central == null) return { ok: false, reason: `${row.country} has no median or mean to shift` }
 
-  const gRaw = gradientPremiumPct(years, gradient.gradient.curve)
-  // Rounded to the same precision the chain step displays, THEN used for the
-  // actual arithmetic — not the other way around. An earlier version
-  // computed `raw` from the full-precision premium but displayed a
-  // toFixed(3) multiplier, so hand-multiplying the two shown numbers never
-  // reproduced the shown result (5,100 x 0.657 displayed as 3,350.19, but
-  // 5,100 x 0.657 is actually 3,350.70) — on a site whose own stated bar is
-  // "reproducible by hand from the cited tables", the one component built
-  // to show its own working failed that bar. Finding F15, adversarial
-  // review. The rounding this introduces into the estimate itself (at most
-  // a few hundredths of a percent) is immaterial next to a number that is
-  // already a disclosed model, not a measurement.
-  const pct = Math.round(gRaw.pct * 10) / 10
-  const multiplier = 1 + pct / 100
-  const raw = central * multiplier
+  const cg = _countryGradient(row, gradient)
+  if (!cg) {
+    return { ok: true, value: central, currency, personalised: false,
+      chain: [{ op: 'no_experience_cross', detail: _noExperienceCrossReason(row) }], clamped: null }
+  }
 
+  const { raw, chain: shiftChain } = _computeShift(central, profile.yearsProfessional, cg)
   const lo = points[0]!, hi = points[points.length - 1]!
   let value = raw
   let clamped: 'low' | 'high' | null = null
   if (raw < lo.value) { value = lo.value; clamped = 'low' }
   else if (raw > hi.value) { value = hi.value; clamped = 'high' }
 
-  const gradientPts = gradient.gradient.curve
-  const gradientEdge = gRaw.clamped === 'low' ? gradientPts[0] : gradientPts[gradientPts.length - 1]
-  const chain: EstimateStep[] = [
-    { op: 'gradient', detail: `${years} years -> ${pct >= 0 ? '+' : ''}${pct.toFixed(1)}% `
-      + `(Spain's own INE tenure cross, ${gradient.gradient.meta.year}, "Scientific and intellectual `
-      + 'technicians and professionals" — a broader population than this occupation; the SHAPE of the '
-      + 'tenure-pay relationship is assumed to transfer, the absolute wage level is not — see the '
-      + "gradient's own method card)"
-      + (gRaw.clamped
-        ? ` — held at the ${gRaw.clamped === 'low' ? 'lowest' : 'highest'} band this pipeline models `
-          + `("${gradientEdge?.band_label}", ${gradientEdge?.years} years): INE's own tenure bands are `
-          + `modelled at each band's own midpoint, so ${years} years is ${gRaw.clamped === 'low' ? 'below' : 'above'} `
-          + 'that reference point even though it may fall inside the band itself — not extrapolated further'
-        : '') },
-    { op: 'shift', detail: `${central.toLocaleString()} x ${multiplier.toFixed(3)} = ${raw.toLocaleString(undefined, { maximumFractionDigits: 2 })}` },
-  ]
+  const chain = [...shiftChain]
   if (clamped) {
-    chain.push({ op: 'clamp', detail: `clamped to ${countryLabel}'s own published ${clamped === 'low' ? 'P' + lo.pct : 'P' + hi.pct} `
+    chain.push({ op: 'clamp', detail: `clamped to ${row.country}'s own published ${clamped === 'low' ? 'P' + lo.pct : 'P' + hi.pct} `
       + `(${value.toLocaleString()}) — the shifted figure landed outside what this country's own table measures, `
       + 'so this pipeline does not report a number past the edge of real data' })
   }
 
-  return { ok: true, value, currency, chain, clamped }
+  return { ok: true, value, currency, chain, clamped, personalised: true }
 }
 
 /** Tier 3. The occupation's own published central figure (native currency),
- *  shifted by the universal experience gradient. Always a model — this
- *  function's own result must only ever be rendered through <Derived>,
- *  never <Figure>. Refuses first on crosswalk comparability (finding F1) —
- *  before ever looking at the distribution shape. */
+ *  shifted by THIS country's own experience cross when one exists — always
+ *  a model, so this function's own result must only ever be rendered
+ *  through <Derived>, never <Figure>, even in the unpersonalised (median)
+ *  case. Refuses first on crosswalk comparability (finding F1) — before
+ *  ever looking at the distribution shape. */
 export function computeEstimate(profile: Profile, row: WageCountry, gradient: ExperienceGradient): EstimateResult {
   const refused = _notComparable(row)
   if (refused) return { ok: false, reason: refused }
-  return _shiftEstimate(row.country, row.native.value, row.native.currency, profile.yearsProfessional, gradient)
+  return _shiftEstimate(row, row.native.value, row.native.currency, profile, gradient)
 }
 
 /** Tier 4 support: the same shift, in annual USD, reading a USD combo
@@ -267,21 +396,19 @@ export function computeEstimate(profile: Profile, row: WageCountry, gradient: Ex
  *  this case, and Spain contains Valencia, this site's own established
  *  instability canary (compute.ts's own docstring); without the fallback,
  *  Tier 4's own worked example would never be reachable through a real
- *  profile. The fallback is disclosed as its own chain step, never silent —
- *  a total_earnings-based estimate is a real, different number (bonus
- *  included) from what regular_pay would have shown. Returns null only
- *  when NEITHER basis is available (comparison_basis() refused both, or
- *  the country has no distribution at all). */
+ *  profile. The fallback is disclosed as its own chain step, never silent.
+ *  Returns null only when NEITHER basis is available (comparison_basis()
+ *  refused both, or the country has no distribution at all). */
 export function computeEstimateUsdYear(profile: Profile, row: WageCountry, gradient: ExperienceGradient): EstimateResult | null {
   if (_notComparable(row)) return null
   const regular = row.combos['usd_regular_pay']
   if (regular && regular.ok) {
-    const result = _shiftEstimate(row.country, regular.value, regular.currency, profile.yearsProfessional, gradient)
+    const result = _shiftEstimate(row, regular.value, regular.currency, profile, gradient)
     return result.ok ? result : null
   }
   const total = row.combos['usd_total_earnings']
   if (total && total.ok) {
-    const result = _shiftEstimate(row.country, total.value, total.currency, profile.yearsProfessional, gradient)
+    const result = _shiftEstimate(row, total.value, total.currency, profile, gradient)
     if (!result.ok) return null
     return { ...result, chain: [
       { op: 'basis_fallback', detail: `${row.country}'s own composition cannot express regular_pay (see its `
@@ -296,26 +423,20 @@ export function computeEstimateUsdYear(profile: Profile, row: WageCountry, gradi
 /* ------------------------------------------------------------- position --- */
 
 export type PositionResult =
-  | { ok: true; pct: 50; n: number | null; sourceLabel: string; year: number }
+  | { ok: true; pct: number; n: number | null; sourceLabel: string; year: number; personalised: false; reason: string }
+  | { ok: true; pct: number; n: number | null; sourceLabel: string; year: number; personalised: true
+      chain: EstimateStep[]; clamped: 'low' | 'high' | null }
   | { ok: false; reason: string }
 
-/** Tier 2. Always the published median (P50) — real, sourced, genuinely
- *  unmodelled, for every country the crosswalk accepts. `profile` is
- *  accepted for a uniform call signature with computeEstimate() but is
- *  not otherwise consulted.
- *
- *  An earlier version personalised Spain's own position by ranking an INE
- *  tenure-band figure against Spain's IT-specific percentile table. Removed
- *  (adversarial review findings F2/F2b/F3 — see this module's own header
- *  comment for the full reasoning): INE's tenure cross measures a broader
- *  occupational population than the one being ranked against, which could
- *  produce a position that disagreed with the estimate computed from the
- *  same inputs, and rendered a genuinely modelled number through <Figure>'s
- *  "official" confidence rather than <Derived>'s disclosed one. There is no
- *  IT-specific tenure cross to rank against instead — Spain's own estimate
- *  (computeEstimate, always a <Derived>) still uses the gradient; only the
- *  position stopped pretending the gradient could sourced it. */
-export function computePosition(_profile: Profile, row: WageCountry, _gradient: ExperienceGradient): PositionResult {
+/** Tier 2. The published median (P50) for every country with no
+ *  same-population experience cross of its own — real, sourced, genuinely
+ *  unmodelled. For Sweden and Norway specifically (see this module's own
+ *  header comment for why exactly these two), the SAME shift the estimate
+ *  computes (_computeShift) is ranked against this country's own
+ *  percentile table instead of stated directly — real arithmetic over one
+ *  country's own real numbers, disclosed via <Figure>'s own `steps` field
+ *  in Position.tsx, not hidden behind a bare "P50". */
+export function computePosition(profile: Profile, row: WageCountry, gradient: ExperienceGradient): PositionResult {
   const refused = _notComparable(row)
   if (refused) return { ok: false, reason: refused }
   const points = knownPercentilePoints(row.native.value)
@@ -323,8 +444,27 @@ export function computePosition(_profile: Profile, row: WageCountry, _gradient: 
     return { ok: false, reason: `${row.country} publishes only a ${row.native.distribution.replace(/-/g, ' ')} — `
       + 'no spread to place a position within' }
   }
-  return { ok: true, pct: 50, n: row.native.n_employees, sourceLabel: `${row.source_id} published median`,
-    year: row.native.year }
+
+  const cg = _countryGradient(row, gradient)
+  const central = cg ? (row.native.value.median ?? row.native.value.mean) : null
+  if (!cg || central == null) {
+    return { ok: true, pct: 50, n: row.native.n_employees, sourceLabel: `${row.source_id} published median`,
+      year: row.native.year, personalised: false, reason: _noExperienceCrossReason(row) }
+  }
+
+  const { raw, chain: shiftChain } = _computeShift(central, profile.yearsProfessional, cg)
+  const rank = rankWithinDistribution(raw, points)! // points.length >= 2, checked above
+  const chain = [...shiftChain]
+  if (rank.clamped) {
+    const edge = points.find((p) => p.pct === rank.pct)!
+    chain.push({ op: 'clamp', detail: `clamped to ${row.country}'s own published P${edge.pct} `
+      + `(${edge.value.toLocaleString()}) — the shifted figure landed outside what this country's own table `
+      + 'measures, so this pipeline does not report a rank past the edge of real data' })
+  }
+
+  return { ok: true, pct: rank.pct, n: row.native.n_employees,
+    sourceLabel: `${row.source_id} published table, ranked against ${cg.meta.source}`,
+    year: row.native.year, personalised: true, chain, clamped: rank.clamped }
 }
 
 /* --------------------------------------------------------- url mirror --- */
@@ -344,10 +484,7 @@ export function profileFromParams(params: URLSearchParams): Profile {
   // Number(null) is 0, not NaN, and Number('') is ALSO 0, not NaN — reading
   // the raw string first and checking for both absence and emptiness (not
   // just non-finiteness) is what stops a missing or blank ?years param from
-  // silently becoming "0 years experience" instead of DEFAULT_YEARS. The
-  // `== null` check alone (an earlier version of this function) caught a
-  // missing param but not `?years=` (present, empty) — caught by the
-  // adversarial review (finding F21) constructing exactly that URL.
+  // silently becoming "0 years experience" instead of DEFAULT_YEARS.
   const raw = params.get('years')
   const years = raw == null || raw === '' ? DEFAULT_YEARS : Number(raw)
   return {
