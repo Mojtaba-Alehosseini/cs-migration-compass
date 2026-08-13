@@ -10,10 +10,20 @@
  *   - occupation-crosswalk depth (crosswalk.compare(), resolved at build time
  *     in scripts/build_wage_distribution.py — Ireland/Qatar/UAE compare only
  *     at 1-digit ISCO major-group depth, Spain at 2-digit)
- *   - pay-composition basis (normalise.comparison_basis()) — five countries
- *     (US/UK/Norway/Australia/Spain) publish a figure that already includes
- *     bonuses and cannot be split into a bonus-excluded "regular pay" figure,
- *     so they are absent specifically on that toggle state, not always
+ *   - pay-composition basis (normalise.comparison_basis(), re-checked live
+ *     against wage_distribution.json rather than assumed — an earlier
+ *     version of this comment named a stale five-country group that
+ *     predated package 10 tier 0.3's Norway fix and was already wrong about
+ *     which toggle US was absent on even before that). GB, AU, and ES
+ *     publish a figure that already includes bonuses and cannot be split
+ *     into a bonus-excluded "regular pay" figure, so they are absent
+ *     specifically on THAT toggle. SE, US, and IE publish the opposite —
+ *     bonus already excluded, with no source to add one back
+ *     (normalise.py's own rule 2 forbids synthesising a component no source
+ *     measured) — so they are absent specifically on "total earnings"
+ *     instead. DK, NO, and FI publish BOTH bases natively (DK via a real
+ *     subtraction, NO/FI via genuinely separate published fields, see
+ *     _figure_for_basis) and are absent on neither.
  *   - Canada (both NOC codes) and Qatar/UAE have UNVERIFIED composition
  *     (pay_composition.json's own fields say "unknown") and are therefore
  *     absent on EVERY toggle state — an honest consequence of not having
@@ -25,10 +35,10 @@
  */
 
 import { useMemo, useState } from 'react'
-import { Derived } from '../Derived'
+import { Derived, type DerivedConcept } from '../Derived'
 import { Seg, ChartFoot, ChartTable, Gap } from './Controls'
 import { useAsync } from './useAsync'
-import { loadPayComposition } from '../../data/store'
+import { loadPayComposition, type PayComposition } from '../../data/store'
 import { comboKey, type Basis, type CurrencyMode, type WageCountry, type WageDistribution } from '../../data/explore'
 import { NO_DATA } from '../../data/format'
 
@@ -94,6 +104,50 @@ function degradationNote(row: WageCountry): string | null {
 function degradationNoteFull(row: WageCountry): string {
   const cw = row.crosswalk
   return cw.comparable ? (cw.degraded_by ?? '') : cw.reason
+}
+
+/** The composition badge for the basis actually shown in THIS card — not a
+ *  stale echo of the source's raw, pre-basis pay_composition.json entry.
+ *  Safe to derive purely from `basis`: normalise.py's comparison_basis()
+ *  only ever grants a row's combo `ok: true` when its composition already
+ *  matches the basis's own canonical meaning (regular_pay: bonus AND
+ *  employer contributions excluded; total_earnings: bonus included,
+ *  contributions excluded) — whether the combo got there natively, through
+ *  Denmark's subtraction (subtract_component()), or through Finland/
+ *  Norway's own dual-published fields (_figure_for_basis's
+ *  "basis_total_earnings" branch). Employer contributions are excluded on
+ *  EVERY basis this pipeline ever renders (comparison_basis()'s bases()
+ *  requires contrib is False for both regular_pay and total_earnings), so
+ *  that half of the badge never varies by basis.
+ *
+ *  Previously this badge echoed comp.irregular_bonus/employer_social_
+ *  contributions directly regardless of which basis was selected, so
+ *  Denmark's post-subtraction regular_pay card and Norway's AvtaltManedslonn
+ *  (regular_pay) card both still said "Includes: irregular bonus" — true of
+ *  the SOURCE's raw, un-adjusted headline figure, not of the number the
+ *  card was actually showing underneath it. */
+function conceptForBasis(comp: PayComposition['sources'][number], basis: Basis): DerivedConcept {
+  // BLS's and the UK's own irregular_bonus is prose, not a clean boolean,
+  // because their real composition doesn't collapse to a full include/
+  // exclude (BLS: production/incentive pay is in, discretionary bonuses are
+  // out). Each renders under exactly one basis (comparison_basis()'s own
+  // hardcoded override table — bls_oews -> regular_pay, salary_uk ->
+  // total_earnings), so this detail is never shown next to a mismatched
+  // basis; it replaces the generic wording rather than sitting beside a
+  // wrong one.
+  const bonusDetail = typeof comp.irregular_bonus === 'string' ? comp.irregular_bonus : null
+  if (basis === 'regular_pay') {
+    return {
+      name: comp.concept_name, office: comp.office,
+      includes: bonusDetail ?? undefined,
+      excludes: bonusDetail ? 'employer social contributions' : 'irregular bonus, employer social contributions',
+    }
+  }
+  return {
+    name: comp.concept_name, office: comp.office,
+    includes: bonusDetail ?? 'irregular bonus',
+    excludes: 'employer social contributions',
+  }
 }
 
 export function WagePanel({ wages }: { wages: WageDistribution }) {
@@ -304,12 +358,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                     native={{ value: r.native.value.median ?? r.native.value.mean ?? 0,
                       currency: r.native.currency, period: r.native.period, year: r.native.year }}
                     result={{ value: combo.value.median ?? combo.value.mean ?? 0, currency: combo.currency }}
-                    concept={comp ? {
-                      name: comp.concept_name, office: comp.office,
-                      includes: typeof comp.irregular_bonus === 'string' ? comp.irregular_bonus
-                        : comp.irregular_bonus ? 'irregular bonus' : undefined,
-                      excludes: comp.employer_social_contributions === false ? 'employer social contributions' : undefined,
-                    } : undefined}
+                    concept={comp ? conceptForBasis(comp, basis) : undefined}
                     payCycleNote={payComp.pay_cycle_context[splitRow(r.country).iso]}>
                     {fmtCcy(combo.value.median ?? combo.value.mean, combo.currency)} ({r.native.year})
                   </Derived>
