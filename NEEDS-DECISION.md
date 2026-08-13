@@ -34,9 +34,14 @@ palette — eight colours.
 "8 of the 30 metros in the file — the eight the design draws", so the reader
 knows what is not drawn.
 
-**Decide:** whether the other 22 deserve a way in — a picker would fit the
-site's grammar, but it would be a second control on a chart the design gives one,
-which the brief forbids.
+**Decided, package 11 tier 3:** no picker. The design brief's own words forbid a
+second control on this chart ("which the brief forbids" — this item's own original
+text), so adding one to surface the other 22 would violate a binding constraint,
+not just a stylistic preference — the brief itself already answers the "picker or
+not" question. The 8-of-30 disclosure stays as shipped. Left open, narrower and
+genuinely optional: the other 22 metros could still be reachable through the CSV
+export or a future data-browser page without touching this chart's own one-control
+design — not attempted here, not blocking.
 
 ## 3. The mockup's prose says four metros; its data says eight
 
@@ -44,7 +49,11 @@ Recorded as the work order asks. `EX.indeed` in the mockup holds eight metros an
 its palette note says "four US metros cannot borrow other countries' colours".
 The data won; the prose appears to be a leftover from an earlier draft.
 
-**Decide:** nothing, unless the prose was the intent and the data the leftover.
+**Decided, package 11 tier 3:** the data stands. The palette note and the actual
+`EX.indeed` data both independently agree on eight metros; only the prose
+disagrees, which is the signature of a stale draft leftover, not a considered
+choice — two sources agreeing against one is decidable without the owner. No
+change needed; shipped behaviour (eight metros) already matches the evidence.
 
 ## 4. The OECD overlay applies *real* growth to a *nominal* line
 
@@ -56,9 +65,17 @@ mockup's own arithmetic and the pre-existing behaviour of `ExploreCharts`.
 **Shipped:** exactly that, and the chip in the yearly-change lens states the
 mismatch in the design's words.
 
-**Decide:** whether the level and indexed lenses should carry the same caveat.
-They currently do not — the paler line and the "projection →" label are the only
-signal there that it is a different quantity.
+**Decided, package 11 tier 3, not yet implemented:** yes, the level and indexed
+lenses should carry the same caveat — there is no reason the mismatch is worth
+disclosing on one lens and not the others; the paler line and "projection →"
+label are a weaker signal than the yearly-change lens's own explicit chip.
+Deliberately NOT implemented in this package: the change touches
+`ExploreCharts.tsx`'s own lens-rendering logic, which this package has not
+otherwise read or verified, and a same-session change to unfamiliar chart code
+carries real regression risk with no verification budget left to catch it —
+exactly the "leave it for a package" case tier 3's own instructions describe.
+Small, safe, and well-scoped for a future micro-task: add the existing
+yearly-change chip's text to the level/indexed lens branches too.
 
 ## 5. `bls_oews`, `imf_weo`, `worldbank_gep`, Numbeo city rents
 
@@ -100,7 +117,15 @@ that comparison.
 
 **Shipped:** `Link copied — the whole comparison travels in the address`.
 
-**Decide:** accept the new wording, or add per-comparison OG images.
+**Decided, package 11 tier 3:** accept the new wording; per-comparison OG images
+are not a "maybe later" — they are infeasible on this site's own architecture,
+not just undone. `scripts/generate_og_images.py` itself already documents why:
+"arbitrary multi-city comparison URLs fall back to default.png — a static host
+cannot render one image per permutation" (confirmed still true, this session —
+the number of possible city combinations is unbounded, and this site has no
+server to render one on demand). The accurate wording already shipped; no
+further work needed unless the site ever adds a rendering backend, which is a
+much larger architectural change than this one item.
 
 ## 8. Sticky header on phones is a CSS impossibility, not an omission
 
@@ -114,14 +139,28 @@ unreachable.
 table fits; where it must scroll sideways, the metric-label column pins left
 instead.
 
-**Decide:** accept, or spend a JS-synced duplicate header row on the phone case.
+**Decided, package 11 tier 3:** accept the shipped solution. A JS-synced
+duplicate header row is real, non-trivial complexity (a second DOM copy kept in
+scroll-sync with the first, its own edge cases on resize/orientation change) for
+a CSS limitation that already has a working fallback (the label column pinning
+left preserves orientation in the table even without a pinned header row). This
+project's own standing principle — don't add complexity beyond what a change
+actually needs — argues against building the duplicate-row workaround
+speculatively; revisit only if real users report the current fallback is
+actually confusing, not preemptively.
 
 ## 9. `band` and `lens` stay out of the address until they are touched
 
 **Shipped:** existing URL contract kept. A default link reads
 `…/#/compare?places=berlin,toronto` and grows as controls are used.
 
-**Decide:** whether a shared link should spell out its defaults.
+**Decided, package 11 tier 3:** keep omitting defaults from the URL. Every
+package built since this item was raised has independently reached for the same
+convention — Position.tsx's own `profileToParams()` (package 10) omits
+`?years=5` and `?occupation=isco08:2512` for the identical reason, matching
+Compare.tsx's own established `update()` idiom this item already describes. A
+convention four packages have now converged on without coordinating is decidable
+from that evidence alone, not a live open question.
 
 ## 10. Metric rows are the registry's, not the mockup's
 
@@ -138,7 +177,12 @@ wrote `living-costs` and `apartment-price`. The list is used as it comes, with
 one exception: the purchase price is dropped from the "kept after rent and
 living" reasons, because that formula never uses it.
 
-**Decide:** nothing, unless the hyphenated forms were deliberate.
+**Decided, package 11 tier 3:** keep `compute.ts`'s own real return values.
+Displaying the function's actual output rather than a hand-typed hyphenated
+variant is the more correct choice on its own terms — a mismatch between what
+the code returns and what the UI shows would be its own small bug, not a
+faithful rendering of a deliberate design choice. No evidence anywhere that the
+hyphenation was intentional rather than mockup shorthand.
 
 ---
 
@@ -448,6 +492,15 @@ already describing the requirement, just under the wrong package number.
 
 ---
 
+**SUPERSEDED, package 10, tier 4 — built exactly where this item said it belonged.** Package 10's
+own work order assigned `stabilityOf()`'s salary-override extension to Tier 4 ("pay against cost"),
+matching this item's own prediction. `compute.ts`'s `Budget.salaryUsdYearOverride` field now threads
+through `grossFor()`/`netFor()`/`savingsPerYear()`/`yearsToHome()`/`stabilityOf()` — confirmed still
+wired correctly this package (package 11 tier 1's own coherence checks exercise this same path via
+Sweden/Norway's personalised estimates flowing into `PayVsCost`). No further action.
+
+---
+
 # Package 9 — Normalisation (Tier 7, adversarial review findings F3/F4)
 
 ## 17. Denmark's own two DST concepts don't reconcile, and one subtraction step has to assume a shape the source data doesn't publish
@@ -583,6 +636,13 @@ pipeline's fetch cannot parse (the same limitation package 9 hit on GENESIS's PD
 this still needs either a human reading DST's own documentation or contacting DST directly. Not
 blocking: the assumption is now named, not hidden.
 
+**Triaged, package 11 tier 3:** not an owner decision in the usual sense — no preference, cost or
+scope call the owner can make settles which assumption is actually correct; only DST's own
+methodology (or DST directly) can answer that. The current disclosed flat-DKK assumption stands as
+the pipeline's own honest default until someone reads that documentation or contacts DST — a
+research task to flag for whenever there's appetite for it, not a fork this package can close by
+picking an answer.
+
 ## 18. Norway's bonus was named as available and capturable; what this pipeline actually fetched has no such field
 
 The work order's own §5.1.2 names "Norway's Bonus" as an example of a separately-published,
@@ -676,6 +736,43 @@ GAST was denied on.
 **Decide:** run this package (or just `scripts/src_salary_de.py`) via `prompts/run-package-10.cmd`
 directly so `DESTATIS_TOKEN` is actually present — unchanged from item #15's own still-open
 "Decide," now carried forward a second package.
+
+---
+
+**RESOLVED, package 11, tier 2 — run through `prompts/run-package-11.cmd` directly, exactly as
+items #15 and #19 both asked. The token cleared the wall on the first try.**
+
+Four sessions (packages 8, 9 twice, 10) each independently reached the identical
+account-permission wall using GAST/GAST and never got to test a real credential, because each was
+launched with the work order pasted into chat rather than through the runner script that actually
+sets `DESTATIS_TOKEN`. Package 11's own work order changed the rule that caused this: read the
+environment first, and if unset, read `DESTATIS_TOKEN` from `prompts/run-package-11.cmd` directly —
+a narrow, explicit, one-credential exception to the environment-only rule, not a general loosening.
+
+Run this way, `logincheck` succeeded and both `data/table` calls returned real content (Code 0) on
+the first attempt — no retries needed, no further permission wall. KB10-434's own English label
+("Occup. in software development and programming") identified the correct row directly from each
+table's own CSV response — the "cannot verify a KldB code without catalogue access" concern that
+blocked occupation-row identification in item #15's own account did not end up applying, because
+the row didn't need guessing at all once data access worked.
+
+**Shipped:** `scripts/src_salary_de.py` now returns `status: ok` with real KB10-434 figures for both
+bases (regular_pay: median 5,851 EUR/month; total_earnings: median 75,854 EUR/year). Wired into
+`data/occupations.json` (2-digit confidence, isco08:25 — KldB doesn't reuse ISCO-08's own numbering
+the way SE/DK/NO/FI's national codes do, so no numeric concordance exists to claim 4-digit),
+`data/pay_composition.json` (a genuine dual-native-basis source, same shape as Finland/Norway), and
+`scripts/build_wage_distribution.py`. Germany now renders real figures on its country page and in
+the Explore·Money wage panel — it does not unlock position/estimate personalisation on `/position`,
+because 62361-0030/-0034 publish median and mean only, no percentile spread, the same
+central-tendency-only shape as Australia and Ireland.
+
+One real problem surfaced and fixed in the same session, not left for later: GENESIS's own
+`logincheck` response echoes the submitted credential back in its `Username` field, and the first
+live call logged that response before anyone expected it to contain the token — see item #25.
+
+**Decide:** nothing further on Germany's own API access — this closes items #14, #15 and #19.
+Item #21 (Norway/Finland's opposite native-basis convention) now has a genuine third data point to
+consider Germany against, not decided here.
 
 ## 20. How "the position" can be both experience-linked and `<Figure>`-sourced — the reading this package committed to
 
@@ -932,6 +1029,13 @@ path (package 12) supply `education_level` from the structured profile schema
 (bachelor's ~22, master's ~24, PhD ~28) rather than assuming one universally. Option (c) is the most
 accurate but depends on package 12 shipping first and on OECD/national typical-completion-age data
 this pipeline has not sourced; not attempted here.
+
+**Triaged, package 11 tier 3:** option (a) — the current shipped state — stands, no owner input
+needed right now. Options (b) and (c) are genuinely better but not choices available yet: (b) has no
+sourced data behind it (no OECD/national completion-age figures fetched), and (c) depends on package
+12 existing first. This is not a fork in the road today, just a documented, disclosed placeholder
+with a natural, obvious revisit point (whenever package 12's own CV path ships) — closer to a
+tracked TODO than a live decision.
 
 ## 25. `DESTATIS_TOKEN` may have been exposed in this session's own tool-call transcript — consider rotating it
 
