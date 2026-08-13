@@ -1,31 +1,50 @@
 {
  "source_id": "salary_de",
- "generated_at": "2026-08-12T17:29:22+00:00",
+ "generated_at": "2026-08-13T01:51:13+00:00",
  "meta": {
-  "occupation_family": null,
-  "primary_code": null,
+  "occupation_family": "KldB 2010 group 434 — Occup. in software development and programming",
+  "primary_code": "434",
   "classification": "KldB 2010 (Fassung 2020)",
-  "confidence": "blocked",
-  "status": "blocked",
+  "confidence": "official",
+  "status": "ok",
   "level": "country (Germany)",
-  "years": [],
-  "why_it_matters": "The GENESIS REST API is confirmed alive (whoami, logincheck both succeed) — what blocks data access is an account-permission wall on the credential actually available this session, not a decommissioned API. See module docstring and NEEDS-DECISION.md #15 for the full, three-session history."
+  "unit": "EUR per month (regular_pay, excl. special payments) or EUR per year (total_earnings, incl. special payments), gross, both sexes — table 62361-0030/-0034",
+  "years": [
+   "2025"
+  ],
+  "measures": {
+   "dispersion": "median and mean only (both _eur_month for regular_pay, _eur_year for total_earnings) — table 62361-0030/-0034 publishes no percentile spread for this cell, same shape as Australia/Ireland's own central-tendency-only sources."
+  },
+  "crosswalk_hazard": "KldB 2010's own numbering does not reuse ISCO-08's numbers (unlike SE/DK/NO/FI's national codes) — KB10-434's own English title ('Occup. in software development and programming') corresponds to ISCO-08 in scope but no official numeric concordance was checked this session. Marked 2-digit (isco08:25), the same ceiling Spain's own CNO-11 label match sits at for the identical reason. See data/occupations.json.",
+  "why_it_matters": "The GENESIS REST API is confirmed alive AND, with the registered DESTATIS_TOKEN, actually accessible — four sessions (packages 8, 9x2, 10) only ever reached an account-permission wall using the GAST guest login. First real German wage figures in this pipeline. See module docstring and NEEDS-DECISION.md #15 for the full, five-session history."
  },
  "data": {
-  "occupations": {},
-  "status": "blocked",
-  "raw_tables": {},
+  "occupations": {
+   "434": {
+    "title": "Occup. in software development and programming (KB10-434)",
+    "year": 2025,
+    "reference_month": "2025-04",
+    "dispersion": {
+     "regular_median_eur_month": 5851.0,
+     "regular_mean_eur_month": 6138.0,
+     "total_median_eur_year": 75854.0,
+     "total_mean_eur_year": 84131.0
+    },
+    "distribution": "central-tendency-only"
+   }
+  },
+  "status": "ok",
+  "raw_rows": {
+   "regular_pay": "2025-04;KB10-434;  Occup. in software development and programming;34.82;36.55;5900;6198;31.95;33.61;5333;5654;34.52;36.23;5851;6138",
+   "total_earnings": "2025;KB10-434;  Occup. in software development and programming;85130;76874;75979;67887;84131;75854"
+  },
   "diagnostic": {
-   "credential_used": "GAST/GAST guest login (DESTATIS_TOKEN absent from this session's environment — set only by prompts/run-package-9.cmd)",
+   "credential_used": "DESTATIS_TOKEN (from prompts/run-package-11.cmd — package 11's own explicit, one-time exception to the environment-only rule; the token itself is never logged, only this label)",
    "whoami": {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
    },
    "logincheck_ok": true,
-   "blocked_at": {
-    "table": "62361-0030",
-    "basis": "regular_pay",
-    "http_error": "https://genesis.destatis.de/genesisWS/rest/2020/data/table failed after 1 attempts: 401 Client Error: Unauthorized for url: https://genesis.destatis.de/genesisWS/rest/2020/data/table"
-   }
+   "blocked_at": null
   }
  }
 }

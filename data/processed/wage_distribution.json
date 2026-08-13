@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-08-12T20:54:14+00:00",
+ "generated_at": "2026-08-13T01:56:18+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -1190,6 +1190,136 @@
     }
    },
    {
+    "country": "DE",
+    "source_id": "salary_de",
+    "national_code": "434",
+    "native": {
+     "currency": "EUR",
+     "period": "year",
+     "year": 2025,
+     "value": {
+      "mean": 73656.0,
+      "median": 70212.0,
+      "p10": null,
+      "p25": null,
+      "p75": null,
+      "p90": null
+     },
+     "n_employees": null,
+     "distribution": "central-tendency-only",
+     "weighting_note": null,
+     "mdrsnit_check": null
+    },
+    "crosswalk": {
+     "comparable": true,
+     "depth": 2,
+     "shared_key": "isco08:25",
+     "degraded_by": "DE forced 4-digit down to 2-digit"
+    },
+    "combos": {
+     "native_regular_pay": {
+      "ok": true,
+      "value": {
+       "mean": 73656.0,
+       "median": 70212.0,
+       "p10": null,
+       "p25": null,
+       "p75": null,
+       "p90": null
+      },
+      "chain": [
+       {
+        "op": "native_basis_select",
+        "detail": "salary_de publishes regular_pay as its own separate field — no subtraction needed"
+       },
+       {
+        "op": "identity",
+        "detail": "already annual"
+       }
+      ],
+      "currency": "EUR",
+      "chain_field": "median"
+     },
+     "native_total_earnings": {
+      "ok": true,
+      "value": {
+       "mean": 84131.0,
+       "median": 75854.0,
+       "p10": null,
+       "p25": null,
+       "p75": null,
+       "p90": null
+      },
+      "chain": [
+       {
+        "op": "native_basis_select",
+        "detail": "salary_de publishes total_earnings as its own separate field — no subtraction needed"
+       },
+       {
+        "op": "identity",
+        "detail": "already annual"
+       }
+      ],
+      "currency": "EUR",
+      "chain_field": "median"
+     },
+     "usd_regular_pay": {
+      "ok": true,
+      "value": {
+       "mean": 83230.03795764694,
+       "median": 79338.37603294106,
+       "p10": null,
+       "p25": null,
+       "p75": null,
+       "p90": null
+      },
+      "chain": [
+       {
+        "op": "native_basis_select",
+        "detail": "salary_de publishes regular_pay as its own separate field — no subtraction needed"
+       },
+       {
+        "op": "identity",
+        "detail": "already annual"
+       },
+       {
+        "op": "fx_convert",
+        "detail": "70212.0 / 0.88496895841236 (DE 2025 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
+       }
+      ],
+      "currency": "USD",
+      "chain_field": "median"
+     },
+     "usd_total_earnings": {
+      "ok": true,
+      "value": {
+       "mean": 95066.61132039202,
+       "median": 85713.7408933332,
+       "p10": null,
+       "p25": null,
+       "p75": null,
+       "p90": null
+      },
+      "chain": [
+       {
+        "op": "native_basis_select",
+        "detail": "salary_de publishes total_earnings as its own separate field — no subtraction needed"
+       },
+       {
+        "op": "identity",
+        "detail": "already annual"
+       },
+       {
+        "op": "fx_convert",
+        "detail": "75854.0 / 0.88496895841236 (DE 2025 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
+       }
+      ],
+      "currency": "USD",
+      "chain_field": "median"
+     }
+    }
+   },
+   {
     "country": "CA-21231",
     "source_id": "salary_ca",
     "national_code": "21231",
@@ -1283,10 +1413,6 @@
    }
   ],
   "absent": [
-   {
-    "country": "DE",
-    "reason": "blocked — see NEEDS-DECISION.md #15: the GENESIS REST API is reachable (whoami/logincheck both succeed) but every credential available this pipeline has tried is denied on the data services themselves"
-   },
    {
     "country": "IT",
     "reason": "no-series — ISTAT publishes no occupation-level (CP2011) earnings flow at all, per src_salary_it.py"

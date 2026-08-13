@@ -222,6 +222,45 @@ def _extract_fi(occ: dict) -> dict:
     return obs
 
 
+def _extract_de(occ: dict) -> dict:
+    """Package 11, tier 2: Germany's own two GENESIS tables (62361-0030,
+    excl. special payments = regular_pay; 62361-0034, incl. special
+    payments = total_earnings) are a genuine dual-native-basis source, the
+    same shape as Finland's total_*/regular_* split and Norway's
+    Manedslonn/AvtaltManedslonn split above — not a subtraction.
+
+    The one real difference from those two: Destatis publishes -0030
+    monthly and -0034 annually — different NATIVE periods for the same
+    occupation, where _figure_for_basis()'s own dual-basis branch (below)
+    assumes one shared period across both bases (true for FI/NO, both
+    monthly). Rather than extending that mechanism for one source,
+    -0030's own monthly median/mean are annualised HERE (x12, this
+    pipeline's own single fixed multiplier — normalise.py's own
+    annualise() applies the identical x12 everywhere else, just at
+    combo-resolution time instead of extraction time) so both bases share
+    period="year" and the rest of the pipeline never has to know Germany's
+    own tables disagree about period at the source."""
+    row = occ["dispersion"]
+    reg_median = row.get("regular_median_eur_month")
+    reg_mean = row.get("regular_mean_eur_month")
+    reg_median_year = round(reg_median * 12, 2) if reg_median is not None else None
+    reg_mean_year = round(reg_mean * 12, 2) if reg_mean is not None else None
+    return {
+        "year": int(occ["year"]), "period": "year", "currency": "EUR",
+        "mean": reg_mean_year, "median": reg_median_year,
+        "p10": None, "p25": None, "p75": None, "p90": None,
+        "n_employees": None,
+        "basis_regular_pay": {
+            "mean": reg_mean_year, "median": reg_median_year,
+            "p10": None, "p25": None, "p75": None, "p90": None,
+        },
+        "basis_total_earnings": {
+            "mean": row.get("total_mean_eur_year"), "median": row.get("total_median_eur_year"),
+            "p10": None, "p25": None, "p75": None, "p90": None,
+        },
+    }
+
+
 def _extract_es(occ: dict) -> dict:
     row = occ["dispersion"]
     return _base_obs("year", "EUR", occ["year"], row, "eur_year")
@@ -359,6 +398,11 @@ SOURCE_TABLE = {
     # time, since ABSENT countries never reach wage_distribution.json at all;
     # caught by checking the actual rendered country page against that claim.
     "NL": ("salary_nl", "0811", _extract_nl, "occupations"),
+    # Package 11, tier 2: unblocked. KldB 2010 group 434 is Destatis's own
+    # 3-digit rollup ("Occup. in software development and programming") —
+    # see src_salary_de.py's own module docstring for why this specific
+    # code, and data/occupations.json for the crosswalk depth this maps at.
+    "DE": ("salary_de", "434", _extract_de, "occupations"),
 }
 # Canada gets two rows — see NEEDS-DECISION.md #12, still open: shown side by
 # side rather than combined or picking one, the least-invented of the three
@@ -367,9 +411,6 @@ SOURCE_TABLE = {
 CANADA_CODES = ["21231", "21232"]
 
 ABSENT = {
-    "DE": "blocked — see NEEDS-DECISION.md #15: the GENESIS REST API is reachable "
-          "(whoami/logincheck both succeed) but every credential available this pipeline has "
-          "tried is denied on the data services themselves",
     "IT": "no-series — ISTAT publishes no occupation-level (CP2011) earnings flow at all, per "
           "src_salary_it.py",
 }

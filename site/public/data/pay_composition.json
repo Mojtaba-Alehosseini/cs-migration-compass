@@ -187,16 +187,16 @@
     },
     {
       "source_id": "salary_de",
-      "office": "Destatis (GENESIS) — NOT FETCHED (API reachable, data access blocked — see note)",
-      "concept_name": "Bruttomonatsverdienst ohne Sonderzahlungen (-0030) / Bruttojahresverdienst mit Sonderzahlungen (-0034)",
-      "irregular_bonus": "false (-0030) / true (-0034)",
+      "office": "Statistisches Bundesamt (Destatis) — GENESIS-Online",
+      "concept_name": "Bruttomonatsverdienst ohne Sonderzahlungen (62361-0030, regular_pay) / Bruttojahresverdienst mit Sonderzahlungen (62361-0034, total_earnings)",
+      "irregular_bonus": false,
       "overtime": true,
       "employer_social_contributions": false,
       "gross_or_net": "gross",
-      "separately_published_components": ["irregular_bonus (the -0030 vs -0034 split itself)"],
-      "note": "NO LIVE DATA — see NEEDS-DECISION.md #15. Corrected in package 9's resumed tier 2b: the GENESIS REST API is NOT unreachable — whoami and logincheck both succeed live, confirming the API is up at its original, unchanged path. What blocks this row is an account-permission wall: the only credential available this session (the public GAST/GAST guest login; DESTATIS_TOKEN is absent from this interactive session's environment) authenticates successfully but is denied on every data/catalogue service tested (data/table, catalogue/tables), consistently, across multiple tables and parameter combinations — see scripts/src_salary_de.py's docstring for the full verified request sequence. This row is retained because it documents Germany's OWN split concept (the two tables ARE, by construction, the without/with-bonus pair) even though no figures were fetched to populate it — the composition claim rests entirely on the work order's cited table names and figures (EUR 4,851/mo vs EUR 64,441/yr, implied multiplier ~13.3), not on anything this pipeline independently confirmed.",
+      "separately_published_components": ["irregular_bonus (the -0030 vs -0034 split itself — the same dual-native-basis shape as Finland's total_*/regular_* split and Norway's Manedslonn/AvtaltManedslonn split, not a subtraction)"],
+      "note": "RESOLVED, package 11, tier 2: the registered DESTATIS_TOKEN cleared the account-permission wall that blocked GAST/GAST on every prior session (packages 8, 9x2, 10) — logincheck succeeded and both data/table calls returned real content (Code 0) on the first try. irregular_bonus is recorded here as false, describing 62361-0030 (regular_pay), this pipeline's own default native basis — matching the SAME convention Finland's own entry uses (a clean boolean for the native default, the dual-basis nature disclosed via separately_published_components instead of a compound string). 62361-0034 (total_earnings) is the bonus-INCLUDED counterpart, real KB10-434 figures: regular_pay median 5,851 EUR/month (x12 = 70,212 EUR/year), total_earnings median 75,854 EUR/year — total genuinely higher than regular x12, consistent with special payments being included. See scripts/src_salary_de.py's own module docstring for the full request sequence and NEEDS-DECISION.md #15 for the five-session history.",
       "citation_url": "https://www-genesis.destatis.de/genesis/online",
-      "verified_live_this_session": false
+      "verified_live_this_session": true
     }
   ],
   "pay_cycle_context": {

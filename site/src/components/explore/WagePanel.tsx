@@ -14,16 +14,18 @@
  *     against wage_distribution.json rather than assumed — an earlier
  *     version of this comment named a stale five-country group that
  *     predated package 10 tier 0.3's Norway fix and was already wrong about
- *     which toggle US was absent on even before that). GB, AU, and ES
- *     publish a figure that already includes bonuses and cannot be split
- *     into a bonus-excluded "regular pay" figure, so they are absent
- *     specifically on THAT toggle. SE, US, and IE publish the opposite —
- *     bonus already excluded, with no source to add one back
- *     (normalise.py's own rule 2 forbids synthesising a component no source
- *     measured) — so they are absent specifically on "total earnings"
- *     instead. DK, NO, and FI publish BOTH bases natively (DK via a real
- *     subtraction, NO/FI via genuinely separate published fields, see
- *     _figure_for_basis) and are absent on neither.
+ *     which toggle US was absent on even before that; package 11 tier 2
+ *     added Germany as a fourth dual-basis country, re-checked live again
+ *     rather than assumed unaffected). GB, AU, and ES publish a figure that
+ *     already includes bonuses and cannot be split into a bonus-excluded
+ *     "regular pay" figure, so they are absent specifically on THAT toggle.
+ *     SE, US, and IE publish the opposite — bonus already excluded, with no
+ *     source to add one back (normalise.py's own rule 2 forbids
+ *     synthesising a component no source measured) — so they are absent
+ *     specifically on "total earnings" instead. DK, NO, FI, and DE publish
+ *     BOTH bases natively (DK via a real subtraction, NO/FI/DE via
+ *     genuinely separate published fields, see _figure_for_basis) and are
+ *     absent on neither.
  *   - Canada (both NOC codes) and Qatar/UAE have UNVERIFIED composition
  *     (pay_composition.json's own fields say "unknown") and are therefore
  *     absent on EVERY toggle state — an honest consequence of not having

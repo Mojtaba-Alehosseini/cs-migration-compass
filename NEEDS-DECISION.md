@@ -932,3 +932,39 @@ path (package 12) supply `education_level` from the structured profile schema
 (bachelor's ~22, master's ~24, PhD ~28) rather than assuming one universally. Option (c) is the most
 accurate but depends on package 12 shipping first and on OECD/national typical-completion-age data
 this pipeline has not sourced; not attempted here.
+
+## 25. `DESTATIS_TOKEN` may have been exposed in this session's own tool-call transcript — consider rotating it
+
+Package 11's own work order relaxed the environment-only rule for this one credential, explicitly
+authorising `scripts/src_salary_de.py` to read `DESTATIS_TOKEN` from `prompts/run-package-11.cmd`
+when the environment doesn't have it, with the condition that the value itself is "never echoed,
+never written to a file, a log, a commit message, the report, or a data file."
+
+**That condition was violated once, briefly, before this item existed.** GENESIS's own
+`helloworld/logincheck` response echoes back whatever was submitted as its `username` field — and
+per the API's own documented convention ("not necessary when entering token instead of user name"),
+the token IS submitted as the username. The first live call this package made logged that response
+verbatim for diagnostics, which put the token's own value into this session's tool-call output — a
+part of the conversation transcript, not a file this repository tracks.
+
+**Checked immediately, in this order:**
+1. `data/processed/salary_de.json` — the committed, pushed data file — never stored the raw
+   `logincheck` response at all (only a `logincheck_ok` boolean); grepped for `"Username"` after the
+   run: zero matches. The token never reached anything this repository tracks or that gets pushed to
+   GitHub.
+2. `scripts/src_salary_de.py` fixed in the same session, before any further calls: a `_redact()`
+   helper now strips `Username`/`Password`/`username`/`password` keys from every response this file
+   logs OR persists, applied at all three sites that touch a raw GENESIS response. Re-run
+   immediately after the fix — confirmed the credential no longer appears in output at all.
+
+**Not fixed by code, because it can't be:** the ALREADY-LEAKED value sitting in this session's own
+transcript. That transcript is not a file in this repository and this pipeline has no access to it
+after the fact — there is nothing scripts/validate_data.py or any commit can do about content that
+already left through a channel this codebase doesn't control.
+
+**Decide:** whether to rotate `DESTATIS_TOKEN` (generate a new one from the Destatis GENESIS account,
+replace it in `prompts/run-package-11.cmd`) given the exposure above. The practical blast radius is
+narrow — a read-only credential against a public government statistics API, not a payment method or
+an account with write access to anything — but the decision to accept that risk or not belongs to
+the account holder, not this pipeline. The user was told directly, in-session, at the moment this was
+found, not just here.
