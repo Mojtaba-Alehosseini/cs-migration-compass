@@ -103,7 +103,23 @@ SE_AGE_TOTAL_KEY = "tot"
 
 # Norway's age bands (SSB 11658 via salary_no.json's age_at_quarter) — coarser
 # than Sweden's (3 bands, one spanning the entire 0-39 range).
-NO_AGE_BANDS = [(19.5, "0-39", "under 40 (0-39)"), (47, "40-54", "40-54"), (60, "55+", "55+")]
+#
+# The first point is 39, NOT the arithmetic midpoint (19.5) of "0-39" — a
+# deliberate deviation from Sweden's own convention above. This pipeline's
+# youngest possible profile is ASSUMED_CAREER_START_AGE (22, profile.ts),
+# which is already above 19.5, so a 19.5 anchor put every reachable age
+# somewhere in the "interpolate toward the 40-54 band" branch and the real
+# published under-40 figure (-8.31%) could never actually be returned — a
+# 22-year-old and a 39-year-old (both genuinely inside SSB's own "0-39"
+# bucket, which reports ONE number for the whole range) got two different,
+# both-wrong premiums, one of them 20 points off SSB's own published figure
+# for that whole band (finding F2, adversarial review). Anchoring at the
+# band's own real upper edge (39) instead means every age SSB itself would
+# call "under 40" reads that band's own real value via gradientPremiumPct's
+# own clamp-low branch — flat, correct, no invented slope across a 40-year
+# range SSB never measured a slope within. Interpolation only starts at the
+# genuine boundary between this band and the next.
+NO_AGE_BANDS = [(39, "0-39", "under 40 (0-39)"), (47, "40-54", "40-54"), (60, "55+", "55+")]
 NO_AGE_TOTAL_KEY = "999D"
 
 
@@ -130,6 +146,14 @@ def _se_curve() -> tuple[list[dict], dict]:
                    "family as this country's own dispersion_by_year)",
         "year": int(year), "total_sek_month": total, "currency": "SEK", "period": "month",
         "measures": "age", "proxy_caveat": PROXY_CAVEAT,
+        # LonYrkeAlder4AN's own "tot" column is the MEAN across all ages
+        # (confirmed equal to dispersion_by_year's own mean_sek_month for
+        # every year this pipeline has) — SCB does not publish a per-band
+        # median. Consumers must shift this country's own MEAN by this
+        # premium, not the median (finding F1, adversarial review): applying
+        # a mean-relative % to the median assumes the two measures move
+        # together across age bands, an assumption never stated or checked.
+        "premium_basis": "mean",
     }
     return points, meta
 
@@ -153,6 +177,9 @@ def _no_curve() -> tuple[list[dict], dict]:
                    "country's own dispersion_by_year, table 11418)",
         "quarter": aq["quarter"], "total_nok_month": total, "currency": "NOK", "period": "month",
         "measures": "age", "proxy_caveat": PROXY_CAVEAT,
+        # Unlike SE, 11658's own bands and its own "999D" total are BOTH
+        # median_nok_month — genuinely median-relative already, no mismatch.
+        "premium_basis": "median",
         "vintage_note": f"This cross is measured at {aq['quarter']!r}, a single quarter — this "
                          "country's own dispersion_by_year is annual. Both are SSB's own figures, but "
                          "they do not share a reference period exactly; disclosed rather than treated "

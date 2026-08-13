@@ -4,9 +4,9 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-12T17:29:22+00:00**
+Last pipeline run: **2026-08-13T02:54:16+00:00**
 
-41 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+43 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
 
 Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
 
@@ -22,6 +22,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | EF English Proficiency Index 2025 | EF publishes the EPI report freely; cite EF Education First, EF English Proficiency Index 2025. | raw committed |
 | Eurostat — Employed ICT specialists (isoc_sks_itspt) | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, isoc_sks_itspt. | raw committed |
 | Eurostat — Population and employment, national accounts (nama_10_pe) | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU). Cite: Eurostat, nama_10_pe. | raw committed |
+| Experience-pay gradient — SCB (Sweden) and SSB (Norway) age crosses, per-country only | Inherits salary_se.json / salary_no.json's own licences — this file adds no new licensing terms, only computation over already-committed data. | derived — nothing fetched; every input file's own provenance entry already covers redistribution terms for the raw figures this derives from. |
 | FHFA House Price Index — All-Transactions, Metropolitan Areas (quarterly) | US federal government work — public domain. Cite: FHFA House Price Index. | raw committed |
 | World Bank Open Data — Official exchange rate, period average (PA.NUS.FCRF) | CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators. | processed derivative only — the raw API response is cached under data/raw/fx_rates/ but that directory is gitignored, so this repo does not redistribute it (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/fx_rates.json is committed. |
 | Eurostat lfsa_ewhun2 (DK/NL/IE) + Statistics Canada WDS (CA) — usual weekly hours worked | Eurostat re-use policy — free re-use with attribution (Commission Decision 2011/833/EU), for DK/NL/IE. Statistics Canada Open Government Licence - Canada 2.0, for CA. Cite: Eurostat, lfsa_ewhun2; Statistics Canada, table 14-10-0043-01. | processed derivative only — raw payloads cached under data/raw/hours_worked/ but that directory is gitignored, so this repo does not redistribute them. Only the derived data/processed/hours_worked.json is committed. |
@@ -36,7 +37,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | UAE — no occupation-level wage series since 2009 (ILOSTAT last known figures) | ILOSTAT open data terms (ILO). Cite: International Labour Organization (ILO), ILOSTAT, flow DF_EAR_EMTA_SEX_OCU_NB. Underlying national source: UAE Federal Competitiveness and Statistics Centre (FCSC), 2009 Labour Force Survey. | the four cited 2009 figures are reproduced directly in data/processed/salary_ae.json (there is no larger raw payload to separately redistribute — see module docstring; this source does not fetch a raw file at run time). |
 | ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation | CC BY 2.5 AU. Cite: Australian Taxation Office (ATO), Taxation statistics 2023-24, Table 15A, via data.gov.au. | processed derivative only — the raw 700 KB ATO workbook is cached under data/raw/salary_au/ but that directory is gitignored, so this repo does not redistribute the raw download (CC BY 2.5 AU would permit it; the repo simply doesn't). Only the derived data/processed/salary_au.json is committed. |
 | Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region | Open Government Licence - Canada 2.0. Cite: Employment and Social Development Canada (ESDC) / Job Bank, Wages. | processed derivative only — the raw 18 MB wages CSV is cached under data/raw/salary_ca/ but that directory is gitignored, so this repo does not redistribute the raw download (OGL-Canada 2.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_ca.json is committed. |
-| Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages) | dl-de/by-2-0 (Datenlizenz Deutschland – Namensnennung – Version 2.0), per the table's own published licence — not yet confirmed against a real fetched response this session; the licence string above is the source's own generic one, printed on every GENESIS table response seen in this session (including the official guide's own worked examples). | N/A this run — no table content was actually retrieved (see status). |
+| Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages) | dl-de/by-2-0 (Datenlizenz Deutschland – Namensnennung – Version 2.0), per the table's own published licence, printed on every GENESIS table response seen this session (including the official guide's own worked examples). | Only the single matched KB10-434 CSV row per table is redistributed here, not the ~1,500-row full national classification response — matching this pipeline's own practice elsewhere (e.g. Sweden's SCB response, trimmed to codes 2511-2519). |
 | Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08) | CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20. | processed derivative only — the raw StatBank JSON-stat payload is cached under data/raw/salary_dk/ but that directory is gitignored, so this repo does not redistribute the raw source (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/salary_dk.json is committed. |
 | INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11 | Attribution required under Ley 37/2007 (Spain's statistics law) — INE does not publish these tables under a named Creative Commons licence; recorded exactly as that, not labelled CC BY. Cite: Instituto Nacional de Estadistica (INE), Encuesta Cuatrienal de Estructura Salarial (EES) for 70672/70706/70707, Encuesta Anual de Estructura Salarial (EAES) for 28186. | processed derivative only — the raw Tempus3 JSON payloads are cached under data/raw/salary_es/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_es.json is committed. |
 | Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) | CC BY 4.0 (Statistics Finland open data licence). Cite: Statistics Finland (Tilastokeskus), table StatFin/pra/15au. | processed derivative only — the raw json-stat2 payload is cached under data/raw/salary_fi/ but that directory is gitignored, so this repo does not redistribute the raw source. Only the derived data/processed/salary_fi.json is committed. |
@@ -52,6 +53,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | UK House Price Index — full file (HM Land Registry) | Contains HM Land Registry data © Crown copyright and database right. Open Government Licence v3.0. | raw committed |
 | UN DESA — International Migrant Stock 2024 (by destination and origin) | UN public data, free to use with attribution. Cite: United Nations Department of Economic and Social Affairs, Population Division (2024). International Migrant Stock 2024. | raw committed |
 | UN World Population Prospects 2024 — bulk CSV | CC BY 3.0 IGO. Cite: United Nations, Department of Economic and Social Affairs, Population Division (2024). World Population Prospects 2024. | raw committed |
+| Wage distribution panel — crosswalk.compare() + normalise.py resolved at build time | Inherits each underlying salary_*.json / bls_oews.json source's own licence — this file adds no new licensing terms, only computation over already-committed and already-licensed data. | derived — nothing fetched; every input file's own provenance entry already covers redistribution terms for the raw figures this derives from. |
 | Wikipedia — List of countries by English-speaking population | Wikipedia text is CC BY-SA 4.0. Underlying figures belong to the cited national sources. | raw committed |
 | WIPO Global Innovation Index 2024 | WIPO publishes the GII under CC BY 4.0 (some content excepted); cite WIPO, Global Innovation Index 2024. | raw committed |
 | World Bank Open Data — Indicators API | CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators. | raw committed |
@@ -237,6 +239,28 @@ Task's exact sample URL worked as-is (HTTP 200, real data, 30KB) - no variant ne
 Task suggested une_rt_a or lfsi_emp_a as the total-employment dataset; both return HTTP 200 valid JSON, but neither is a clean raw headcount: une_rt_a is an unemployment RATE, and lfsi_emp_a's unit dimension is THS_PER+PC_POP i.e. mixes a real headcount with a %-of-population rate (2003-2025, 38 geos). nama_10_pe is the better match - it has an explicit na_item='Total employment national concept' (EMP_NC) in Thousand persons, covering 44 countries back to 1975 (7 na_item categories total, incl. EMP_DC domestic concept, SAL_NC/SAL_DC employees, SELF_NC/SELF_DC self-employed - useful sub-breakdowns). All three endpoints verified live (200, real JSON) this session; nama_10_pe recommended as the primary 'total employment' series.
 
 </details>
+
+### Experience-pay gradient — SCB (Sweden) and SSB (Norway) age crosses, per-country only
+
+- **Status** — live
+- **Coverage** — 2 country-specific curves (Sweden 6 points, Norway 3 points) — thirteen fewer countries than package 10's own universal curve claimed to cover, deliberately
+- **Rows processed** — 9
+- **Fetched** — 2026-08-13T02:48:54+00:00
+- **Licence** — Inherits salary_se.json / salary_no.json's own licences — this file adds no new licensing terms, only computation over already-committed data.
+- **Output** — `data/processed/experience_gradient.json`
+- **Fetch script** — see `scripts/`
+
+**URLs**
+
+
+**What we do to it**
+
+1. Computed each of Sweden's 6 age bands' own salary as a % premium/discount against that same table's own 'tot' total (SCB LonYrkeAlder4AN, occupation 2512).
+1. Computed the same relative-premium transform for Norway's 3 age bands against the same quarter's own all-ages total (SSB 11658, occupation 2512, band '999D').
+1. Logged (not asserted — see module docstring) whether each curve is monotonically non-decreasing in years.
+1. Retired package 10's universal Spain-tenure-anchored curve entirely — no country other than Spain ever consumed it, and Spain's own case was itself a population mismatch.
+
+> Every premium is a relative %, computed within one internally consistent source table, consumed only by that SAME country's own position and estimate — never applied to a different country the way package 10's universal curve did.
 
 ### FHFA House Price Index — All-Transactions, Metropolitan Areas (quarterly)
 
@@ -606,10 +630,10 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 ### Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages)
 
 - **Status** — live
-- **Coverage** — blocked — see diagnostic.blocked_at
-- **Rows processed** — 0
-- **Fetched** — 2026-08-12T17:29:22+00:00
-- **Licence** — dl-de/by-2-0 (Datenlizenz Deutschland – Namensnennung – Version 2.0), per the table's own published licence — not yet confirmed against a real fetched response this session; the licence string above is the source's own generic one, printed on every GENESIS table response seen in this session (including the official guide's own worked examples).
+- **Coverage** — 1 occupation family (KldB 2010 group 434), 2 bases (regular_pay, total_earnings), median+mean only
+- **Rows processed** — 1
+- **Fetched** — 2026-08-13T01:51:13+00:00
+- **Licence** — dl-de/by-2-0 (Datenlizenz Deutschland – Namensnennung – Version 2.0), per the table's own published licence, printed on every GENESIS table response seen this session (including the official guide's own worked examples).
 - **Output** — `data/processed/salary_de.json`
 - **Fetch script** — `scripts/src_salary_de.py`
 
@@ -622,18 +646,18 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 **What we do to it**
 
 1. GET helloworld/whoami (no auth) to confirm the API is reachable.
-1. POST helloworld/logincheck with the available credential (DESTATIS_TOKEN if present in the environment, else GAST/GAST) sent as HTTP request headers per the current official guide's documented convention (POST + header auth replaced GET + query-string auth) — never logged, never written to any file.
-1. If login succeeded: POST data/table for 62361-0030 and 62361-0034 in turn, area=all, stopping at the first non-Code-0 response and recording it verbatim (Code/Content/Type — no credential values appear in any of these fields).
-1. No occupation-row parsing performed — see module docstring for why a KldB 2010 code was not guessed.
+1. POST helloworld/logincheck with the available credential (DESTATIS_TOKEN from the environment, else prompts/run-package-11.cmd, else GAST/GAST) sent as HTTP request headers per the current official guide's documented convention — never logged, never written to any file; every response this file touches is redacted (_redact()) before logging or persisting, after a real, one-time leak into this session's own tool output — see NEEDS-DECISION.md #25.
+1. POST data/table for 62361-0030 and 62361-0034 in turn, area=all — both returned Code 0 with the registered token, first attempt, no retries needed.
+1. Located the KB10-434 row in each table's own CSV by exact code-column match (not a substring search), parsed the Total-column median/mean figures by this table's own documented field position (verified live against the response's own header row), and kept only that one matched line per table for citation.
 
-> Credential used: GAST/GAST guest login (DESTATIS_TOKEN absent from this session's environment — set only by prompts/run-package-9.cmd). Blocked at: {'table': '62361-0030', 'basis': 'regular_pay', 'http_error': 'https://genesis.destatis.de/genesisWS/rest/2020/data/table failed after 1 attempts: 401 Client Error: Unauthorized for url: https://genesis.destatis.de/genesisWS/rest/2020/data/table'}
+> Credential used: DESTATIS_TOKEN (from prompts/run-package-11.cmd — package 11's own explicit, one-time exception to the environment-only rule; the token itself is never logged, only this label). Both tables fetched and parsed; KB10-434 is a 3-digit-level Destatis rollup (software development + programming + management), not a hand-aggregated figure this pipeline built.
 
 ### Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08)
 
 - **Status** — live
 - **Coverage** — 5 DISCO-08 occupations x 7 years, Denmark only (no sub-national breakdown in this table)
-- **Rows processed** — 280
-- **Fetched** — 2026-08-12T15:01:46+00:00
+- **Rows processed** — 490
+- **Fetched** — 2026-08-12T20:48:12+00:00
 - **Licence** — CC BY 4.0 (Danmarks Statistik open data licence). Cite: Statistics Denmark (DST), table LONS20.
 - **Output** — `data/processed/salary_dk.json`
 - **Fetch script** — `scripts/src_salary_dk.py`
@@ -646,7 +670,8 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 1. Queried DISCO-08 codes 2511, 2512, 2513, 2514, 2519 (group 251) x all sectors x all forms of pay x non-managerial employees x both sexes x 2018-2024 from table LONS20 via POST, format JSONSTAT.
 1. Kept mean-equivalent, lower quartile, median, upper quartile (each _dkk_hour) and employee count verbatim.
-1. Package 9: also kept PENS (employer_pension_dkk_hour) and UREGEL (irregular_dkk_hour) — real published components of the same cell — and MDRSNIT (standardized_monthly_dkk_by_year per occupation/year), DST's own monthly headline figure, stored separately from the hourly dispersion data since it is not hourly and its exact composition is not confirmed.
+1. Package 9: also kept PENS (employer_pension_dkk_hour) and UREGEL (irregular_dkk_hour) — real published components of the same cell — and MDRSNIT (standardized_monthly_dkk_by_year per occupation/year), DST's own monthly headline figure, stored separately from the hourly dispersion data.
+1. Package 10 (tier 0.2): also kept STAND/NEDREST/MEDIANST/OVREST/PENSST/UREGELST — the standardised-hour counterparts to FORINKL/NEDRE/MEDIAN/OVRE/PENS/UREGEL — after proving STAND x 160.33h/month reproduces MDRSNIT to <0.002% across every year/occupation this table publishes (mdrsnit_reconciliation, recomputed and re-verified on every run — see module docstring). This resolved NEEDS-DECISION #17's ~24% disagreement: it was FORINKL (worked-hour) vs MDRSNIT (standardised-hour) being compared as though they were the same concept, not a real gap between two DST statistics.
 1. Occupation titles are the API's own labels, not hand-typed.
 
 > Uses the non-managerial-employees, all-forms-of-pay cut (LONGRP=MED, AFLOEN=TIFA) — see module docstring for why, and for the residual gap from an external cited reference figure.
@@ -767,8 +792,8 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 - **Status** — live
 - **Coverage** — 5 STYRK-08 occupations x 5 years + age cross, Norway only
-- **Rows processed** — 149
-- **Fetched** — 2026-08-12T00:46:05+00:00
+- **Rows processed** — 284
+- **Fetched** — 2026-08-12T21:05:34+00:00
 - **Licence** — CC BY 4.0 (Statistics Norway open data licence, data.norge.no / SSB API terms). Cite: Statistics Norway (SSB), tables 11418 and 11658.
 - **Output** — `data/processed/salary_no.json`
 - **Fetch script** — `scripts/src_salary_no.py`
@@ -783,6 +808,7 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 1. Queried STYRK-08 codes 2511, 2512, 2513, 2514, 2519 (group 251) x all sectors x both sexes x all employees x 2021-2025 from table 11418.
 1. Queried the same codes x 3 age bands x the latest available quarter (2026K1) from table 11658.
 1. Kept mean, median, quartiles, N (11418) and age-banded median/mean (11658) verbatim.
+1. Package 10 (tier 0.3): also queried ContentsCode=AvtaltManedslonn (basic salary, same measuring methods as Manedslonn) after checking table 11418's own metadata found it, Bonus, Uregtil and Overtid all published as separate components — resolving NEEDS-DECISION #18. Bonus/Uregtil/Overtid checked but not fetched: published as a mean only (median and P25 are 0 in every year checked), not needed since regular_pay uses AvtaltManedslonn directly rather than by subtraction.
 1. Occupation titles are the API's own labels, not hand-typed.
 
 ### Qatar Planning and Statistics Authority — wages by ISCO major group, via data.gov.qa
@@ -997,6 +1023,28 @@ Listing page https://www.un.org/development/desa/pd/content/international-migran
 1. Marked years after 2023 as projections; de-duplicated by year.
 
 > Medium variant only — high/low variants deliberately not shown, to avoid implying a range we did not model.
+
+### Wage distribution panel — crosswalk.compare() + normalise.py resolved at build time
+
+- **Status** — live
+- **Coverage** — 15 country rows (14 countries, Canada shown as two rows per NEEDS-DECISION #12), 1 drawn absent (IT)
+- **Rows processed** — 15
+- **Fetched** — 2026-08-13T02:54:16+00:00
+- **Licence** — Inherits each underlying salary_*.json / bls_oews.json source's own licence — this file adds no new licensing terms, only computation over already-committed and already-licensed data.
+- **Output** — `data/processed/wage_distribution.json`
+- **Fetch script** — see `scripts/`
+
+**URLs**
+
+
+**What we do to it**
+
+1. For each of the salary spine's primary-target (and next-best-available) occupation mappings, ran crosswalk.compare() against the Sweden/2512 reference to get a real comparability verdict, depth and degradation text — never re-derived in the UI.
+1. For each of the 4 (native/USD x regular_pay/total_earnings) combinations, called normalise.py's real to_usd()/annualise()/subtract_component()/comparison_basis() — never a client-side re-implementation.
+1. Qatar's mean is a transparent weighted average of PSA's own published Male/Female means, weighted by each group's own published employee count — the only figure in this file that is a genuine derivation rather than a pass-through of one source field.
+1. Countries whose pay-composition booleans are 'unknown' (Canada, Qatar, UAE) are refused on both basis combinations by normalise.comparison_basis() itself, not by a rule re-implemented here — an honest consequence of unverified composition, not a bug.
+
+> Every number in this file traces back through its own chain to a value already committed and provenanced elsewhere — this file adds derivation, not new source data.
 
 ### Wikipedia — List of countries by English-speaking population
 

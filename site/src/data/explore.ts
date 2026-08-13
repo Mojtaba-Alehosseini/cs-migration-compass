@@ -155,6 +155,13 @@ export interface WageCountry {
      *  separately-published Male/Female series — a real derivation, not a
      *  value the source itself published. null for every other country. */
     weighting_note: string | null
+    /** Set only for Germany: this native figure is regular_pay annualised
+     *  at extraction (x12 of Destatis's own real monthly table) — not the
+     *  annual figure Destatis itself publishes. null for every other
+     *  country. Same disclosure class as weighting_note above, under its
+     *  own name (a unit conversion, not a weighting) — finding F6,
+     *  package 11's adversarial review. */
+    annualised_note: string | null
     /** Set only for Denmark (package 10, tier 0.2): proof this native figure
      *  (DST's STAND concept) reconciles with DST's own separately-published
      *  MDRSNIT monthly headline. null for every other country. */

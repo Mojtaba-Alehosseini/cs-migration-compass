@@ -245,11 +245,31 @@ def _extract_de(occ: dict) -> dict:
     reg_mean = row.get("regular_mean_eur_month")
     reg_median_year = round(reg_median * 12, 2) if reg_median is not None else None
     reg_mean_year = round(reg_mean * 12, 2) if reg_mean is not None else None
+    # Named here, not left for a downstream generic step to guess at: the
+    # top-level (and basis_regular_pay) median/mean above are NOT what
+    # Destatis published — they are this pipeline's own x12 of -0030's real
+    # monthly figure. Consumed two ways: _figure_for_basis() turns this into
+    # an honest combos.*.chain step instead of the generic annualiser's
+    # "already annual" (true only from here on, false about what happened
+    # to get here — finding F6, adversarial review); resolve_country()
+    # copies it onto native.annualised_note so the country page's own
+    # top-level figure renders through <Derived>, not <Figure> claiming an
+    # unmodified published number — the same fix package 9 made for Qatar's
+    # weighted mean (native.weighting_note), reused here under its own name
+    # because this is a unit conversion, not a weighting.
+    annualised_note = (
+        f"Destatis publishes regular_pay (table 62361-0030) monthly, not annually — the source this "
+        f"pipeline's own dual-basis split uses for total_earnings (table 62361-0034) is already annual, "
+        f"so regular_pay is annualised here (x12, this pipeline's own fixed multiplier, same one "
+        f"normalise.py's annualise() applies everywhere else) to put both bases on the same period: "
+        f"{reg_median:,.2f} EUR/month" if reg_median is not None else "n/a"
+    ) + (f" x 12 = {reg_median_year:,.2f} EUR/year." if reg_median is not None else "")
     return {
         "year": int(occ["year"]), "period": "year", "currency": "EUR",
         "mean": reg_mean_year, "median": reg_median_year,
         "p10": None, "p25": None, "p75": None, "p90": None,
         "n_employees": None,
+        "annualised_note": annualised_note if reg_median is not None else None,
         "basis_regular_pay": {
             "mean": reg_mean_year, "median": reg_median_year,
             "p10": None, "p25": None, "p75": None, "p90": None,
@@ -442,11 +462,18 @@ def _figure_for_basis(source_id: str, obs: dict, basis: str, repr_field: str) ->
     or {"ok": False, "reason": "..."} — calling normalise.py's real functions,
     never re-deriving their verdicts. `chain` is built from `repr_field` only —
     see _repr_field()."""
-    if "basis_total_earnings" in obs:  # Finland — already-split native fields
+    if "basis_total_earnings" in obs:  # Finland/Germany — already-split native fields
         key = "basis_total_earnings" if basis == "total_earnings" else "basis_regular_pay"
-        return {"ok": True, "value": obs[key],
-                "chain": [{"op": "native_basis_select", "detail": f"{source_id} publishes "
-                           f"{basis} as its own separate field — no subtraction needed"}]}
+        chain = [{"op": "native_basis_select", "detail": f"{source_id} publishes "
+                  f"{basis} as its own separate field — no subtraction needed"}]
+        # Germany only (finding F6, adversarial review): regular_pay was
+        # annualised at extraction, not published annually — say so here,
+        # with the real pre-conversion number, rather than let the generic
+        # annualiser below claim "already annual" with no account of how it
+        # got that way. obs.get() so Finland (no such key) is unaffected.
+        if basis == "regular_pay" and obs.get("annualised_note"):
+            chain.append({"op": "annualise", "detail": obs["annualised_note"]})
+        return {"ok": True, "value": obs[key], "chain": chain}
 
     check = nm.comparison_basis(source_id, source_id)
     native_ok = check.get("comparable") and basis in (check.get("common_bases") or [])
@@ -620,11 +647,20 @@ def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapp
                    # _extract_qa's docstring) — a real derivation, not a
                    # value PSA itself published. weighting_note carries
                    # exactly how, so the UI can say so rather than
-                   # presenting it as a plain sourced figure. None for
-                   # every other country (nothing else in this file
-                   # computes a native-currency value; conversions are a
-                   # separate, already-disclosed step in combos.*.chain).
+                   # presenting it as a plain sourced figure. None for every
+                   # other country except Germany (annualised_note, right
+                   # below, is that same disclosure under its own name —
+                   # a unit conversion, not a weighting).
                    "weighting_note": obs.get("weighting_note"),
+                   # Set only for Germany (package 11, tier 4 remediation —
+                   # finding F6, adversarial review): this native figure is
+                   # regular_pay annualised at extraction (x12 of Destatis's
+                   # own real monthly table), not the annual figure Destatis
+                   # itself publishes. Without this, the country page showed
+                   # it through <Figure> as an unmodified published number —
+                   # the same class of bug package 9 fixed for Qatar's
+                   # weighted mean. None for every other country.
+                   "annualised_note": obs.get("annualised_note"),
                    # Set only for Denmark (package 10, tier 0.2): proof that this
                    # native figure (DST's STAND concept) reconciles with DST's own
                    # separately-published monthly headline (MDRSNIT). None for

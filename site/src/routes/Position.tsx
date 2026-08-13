@@ -68,25 +68,45 @@ function ordinal(pct: number): string {
  *  ("works"); experience is a separate, non-gating capability — a country
  *  can work without personalising. */
 function coverageFor(row: WageCountry | undefined, absentReason: string | undefined, gradient: ExperienceGradient | null): {
-  works: boolean; crosswalkOk: boolean; crosswalkDetail: string; distributionDetail: string; experienceDetail: string
+  works: boolean; crosswalkOk: boolean; crosswalkDetail: string; distributionDetail: string
+  experienceDetail: string; experiencePersonalised: boolean
 } {
   if (!row) {
     return { works: false, crosswalkOk: false, crosswalkDetail: absentReason ?? 'no wage source at all',
-      distributionDetail: '—', experienceDetail: '—' }
+      distributionDetail: '—', experienceDetail: '—', experiencePersonalised: false }
   }
   const crosswalkOk = row.crosswalk.comparable
   const crosswalkDetail = crosswalkOk
     ? `${row.crosswalk.depth}-digit match${row.crosswalk.degraded_by ? ` (${row.crosswalk.degraded_by})` : ''}`
     : row.crosswalk.reason
   const d = row.native.distribution
-  const hasSpread = d === 'full' || d === 'quartile-only'
+  // Gated on the SAME check computePosition()/_shiftEstimate() actually run
+  // (knownPercentilePoints().length >= 2), not the distribution-shape label
+  // — the label and the real point count describe the same thing today but
+  // aren't the same code path, so a future data mismatch between them could
+  // make this map claim a country works when the resolver would refuse it,
+  // or vice versa (finding F8, adversarial review).
+  const hasSpread = knownPercentilePoints(row.native.value).length >= 2
   const distributionDetail = hasSpread
     ? d.replace(/-/g, ' ')
     : `${row.source_id} publishes only a ${d.replace(/-/g, ' ')} — no spread to rank or shift against`
-  const experienceDetail = gradient
-    ? (experienceCoverageFor(row, gradient).personalised ? 'personalised' : 'published median only')
-    : '—'
-  return { works: crosswalkOk && hasSpread, crosswalkOk, crosswalkDetail, distributionDetail, experienceDetail }
+  const works = crosswalkOk && hasSpread
+  // Finding F3, adversarial review: this used to collapse to a hardcoded
+  // 'personalised' / 'published median only' from .personalised alone,
+  // which is literally false for a country where NEITHER works at all
+  // (QA/AE: mean-only, no median — "published median only" claimed a
+  // median that does not exist). Experience is moot when nothing renders,
+  // so say that instead of guessing a label; otherwise use
+  // experienceCoverageFor's own real reason text (also fixes finding F14 —
+  // that field was computed and never read).
+  const experienceCov = works && gradient ? experienceCoverageFor(row, gradient) : null
+  const experienceDetail = !gradient
+    ? '—'
+    : !works
+      ? "n/a — position doesn't render for this country at all (see left)"
+      : experienceCov!.detail
+  return { works, crosswalkOk, crosswalkDetail, distributionDetail, experienceDetail,
+    experiencePersonalised: experienceCov?.personalised ?? false }
 }
 
 /* --------------------------------------------------------------- form --- */
@@ -340,7 +360,7 @@ function CoverageMap({ wages, gradient }: {
   const rows = ALL_15.map((cc) => ({ cc, ...coverageFor(byCountry.get(cc), absentByCountry.get(cc), gradient) }))
   const works = rows.filter((r) => r.works)
   const blocked = rows.filter((r) => !r.works)
-  const personalise = rows.filter((r) => r.experienceDetail === 'personalised')
+  const personalise = rows.filter((r) => r.experiencePersonalised)
 
   return (
     <div className="panel" style={{ gridColumn: '1 / -1' }}>

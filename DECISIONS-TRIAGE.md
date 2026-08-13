@@ -1,9 +1,13 @@
 # Decisions triage
 
 `NEEDS-DECISION.md` reached 25 items across packages 4–11 with none formally answered. This is
-that file sorted into three groups so it can be read in one sitting. Every item appears exactly
-once. Full reasoning for anything below stays in `NEEDS-DECISION.md` at the same number — this
-page is the index, not a replacement.
+that file sorted into three groups so it can be read in one sitting. 24 of the 25 have exactly one
+owning entry below; #17 has two (a historical entry in Superseded, plus one narrow residual
+question still open in Decided — genuinely two different things by now, not a duplicate). #14,
+#15 and #19 are also cross-referenced from each other's entries, since they are the same
+underlying issue at three different stages — mentioned where relevant, but each keeps a single
+owning bullet. Full reasoning for anything below stays in `NEEDS-DECISION.md` at the same number —
+this page is the index, not a replacement.
 
 ---
 
@@ -25,9 +29,10 @@ page is the index, not a replacement.
    different pay (Toronto: CAD 56.49/hr vs 48.08/hr).** Sum them, show both side by side (current
    shipped state), or pick one? Changes where Canada lands in every cross-country comparison —
    still open since package 7.
-6. **#21 — Norway and Finland use opposite conventions for which basis counts as "native"** (Norway:
-   total; Finland: bonus-excluded). Both individually defensible, disagree with each other. Pick
-   one convention site-wide, or accept the inconsistency with a per-row basis label?
+6. **#21 — Norway, Finland, and (as of this package) Germany use inconsistent conventions for which
+   basis counts as "native"** (Norway: total; Finland and Germany: bonus-excluded). Each individually
+   defensible, none agree with each other. Pick one convention site-wide, or accept the inconsistency
+   with a per-row basis label?
 7. **#22 — A flat net-take-home percentage is applied across a salary range that can now span
    2.5x** (package 11's own profile-driven estimates make this more consequential than it was).
    Worth building progressive tax modelling for fifteen countries, or is a disclosure note enough?
@@ -91,5 +96,6 @@ page is the index, not a replacement.
 
 ---
 
-25 items in, 25 items accounted for exactly once. The owner-needed group is 8, at the tier's own
-stated limit — every item above it was tried against the evidence first.
+25 items in, 25 items accounted for, 24 with a single owning entry and #17 with two for the real
+reason given above. The owner-needed group is 8 — every item above it was tried against the
+evidence first.

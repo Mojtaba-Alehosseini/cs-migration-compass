@@ -134,7 +134,7 @@
  "wage_distribution": {
   "theme": "money",
   "file": "history/wage_distribution.json",
-  "kb": 32.3,
+  "kb": 33.9,
   "kind": null,
   "confidence": "derived",
   "institution": null,

@@ -124,6 +124,16 @@ export interface GradientPoint {
 export interface CountryGradientMeta {
   source: string
   proxy_caveat: string
+  /** Which of a country's own central-tendency figures this curve's own
+   *  premiums are relative to — SCB's SE cross publishes band MEANS only
+   *  ("tot", confirmed equal to dispersion_by_year's own mean_sek_month);
+   *  SSB's NO cross is median-relative throughout. Shifting the WRONG
+   *  measure by the OTHER's relative premium is finding F1 (adversarial
+   *  review): SE's own premiums, applied to the median instead of the
+   *  mean, ranked every personalised position about 6 points too low
+   *  against what SCB's own band figures rank to directly. See
+   *  _centralFor() below, the single place this is consulted. */
+  premium_basis: 'mean' | 'median'
   year?: number
   quarter?: string
   vintage_note?: string
@@ -237,6 +247,19 @@ export interface EstimateStep { op: string; detail: string }
  *  check live, not by inspection. */
 export const ASSUMED_CAREER_START_AGE = 22
 
+/** The one figure a country's own gradient premium is relative to — reads
+ *  `cg.meta.premium_basis` rather than defaulting to "median if present",
+ *  because that default is exactly what produced finding F1: SE's own
+ *  premiums are mean-relative, so shifting the median by them compares two
+ *  differently-based numbers. Falls back to the other measure only when
+ *  the matching one is genuinely absent from this table. The single call
+ *  site both computePosition() and _shiftEstimate() go through — same
+ *  coherence discipline as _countryGradient() itself. */
+function _centralFor(stats: WageStats, cg: CountryGradient): number | null {
+  if (cg.meta.premium_basis === 'mean') return stats.mean ?? stats.median ?? null
+  return stats.median ?? stats.mean ?? null
+}
+
 /** The shared arithmetic: convert `years` to an assumed age, shift
  *  `central` by `cg`'s own premium at that age. Used identically by the
  *  estimate (which states the shifted value) and the position (which
@@ -266,8 +289,13 @@ function _computeShift(central: number, years: number, cg: CountryGradient): { r
           + `("${edge?.band_label}", ~${edge?.age_midpoint_approx} years old): not extrapolated further`
         : '') },
     { op: 'proxy', detail: cg.meta.proxy_caveat },
-    { op: 'shift', detail: `${central.toLocaleString()} x ${multiplier.toFixed(3)} = ${raw.toLocaleString(undefined, { maximumFractionDigits: 2 })}` },
   ]
+  if (cg.meta.premium_basis === 'mean') {
+    chain.push({ op: 'basis', detail: `${cg.meta.source.split(',')[0]} publishes each band's own MEAN, not `
+      + `median — the figure being shifted here is this country's own mean (${central.toLocaleString()}), `
+      + 'not the median, so the premium and the figure it applies to are on the same basis' })
+  }
+  chain.push({ op: 'shift', detail: `${central.toLocaleString()} x ${multiplier.toFixed(3)} = ${raw.toLocaleString(undefined, { maximumFractionDigits: 2 })}` })
   if (cg.meta.vintage_note) chain.push({ op: 'vintage', detail: cg.meta.vintage_note })
   return { raw, chain }
 }
@@ -348,14 +376,16 @@ function _shiftEstimate(
     return { ok: false, reason: `${row.country} publishes only a distribution too narrow to shift within or `
       + 'clamp against (need at least two of p10/p25/median/p75/p90)' }
   }
-  const central = stats.median ?? stats.mean
-  if (central == null) return { ok: false, reason: `${row.country} has no median or mean to shift` }
 
   const cg = _countryGradient(row, gradient)
   if (!cg) {
+    const central = stats.median ?? stats.mean
+    if (central == null) return { ok: false, reason: `${row.country} has no median or mean to shift` }
     return { ok: true, value: central, currency, personalised: false,
       chain: [{ op: 'no_experience_cross', detail: _noExperienceCrossReason(row) }], clamped: null }
   }
+  const central = _centralFor(stats, cg)
+  if (central == null) return { ok: false, reason: `${row.country} has no ${cg.meta.premium_basis} to shift` }
 
   const { raw, chain: shiftChain } = _computeShift(central, profile.yearsProfessional, cg)
   const lo = points[0]!, hi = points[points.length - 1]!
@@ -446,10 +476,22 @@ export function computePosition(profile: Profile, row: WageCountry, gradient: Ex
   }
 
   const cg = _countryGradient(row, gradient)
-  const central = cg ? (row.native.value.median ?? row.native.value.mean) : null
-  if (!cg || central == null) {
+  if (!cg) {
     return { ok: true, pct: 50, n: row.native.n_employees, sourceLabel: `${row.source_id} published median`,
       year: row.native.year, personalised: false, reason: _noExperienceCrossReason(row) }
+  }
+  // A gradient exists but has neither of the figures it needs to shift —
+  // an honest failure, not a silent re-interpretation as "not personalised"
+  // (that would misattribute the reason: the cross DOES exist here, unlike
+  // the branch above). Kept symmetric with _shiftEstimate's own identical
+  // check so position and estimate cannot disagree about eligibility even
+  // in this edge case (finding F8, adversarial review) — unreached by any
+  // of today's 15 countries (SE/NO both publish both measures), a
+  // correctness fix for data this pipeline doesn't have yet, not one it does.
+  const central = _centralFor(row.native.value, cg)
+  if (central == null) {
+    return { ok: false, reason: `${row.country} has a ${cg.meta.source} cross but no ${cg.meta.premium_basis} `
+      + 'of its own to shift' }
   }
 
   const { raw, chain: shiftChain } = _computeShift(central, profile.yearsProfessional, cg)
@@ -460,6 +502,20 @@ export function computePosition(profile: Profile, row: WageCountry, gradient: Ex
     chain.push({ op: 'clamp', detail: `clamped to ${row.country}'s own published P${edge.pct} `
       + `(${edge.value.toLocaleString()}) — the shifted figure landed outside what this country's own table `
       + 'measures, so this pipeline does not report a rank past the edge of real data' })
+  } else {
+    // Finding F4, adversarial review: the chain used to stop at the shifted
+    // figure and jump straight to a displayed percentile with no step
+    // showing HOW — the interpolation gate 1's own "how this number was
+    // calculated" popover claims to show, but never actually did.
+    const sorted = [...points].sort((a, b) => a.value - b.value)
+    const lo = [...sorted].reverse().find((p) => p.value <= raw)!
+    const hi = sorted.find((p) => p.value >= raw)!
+    chain.push({ op: 'rank', detail: lo.pct === hi.pct
+      ? `${raw.toLocaleString(undefined, { maximumFractionDigits: 2 })} lands exactly on ${row.country}'s own `
+        + `published P${lo.pct}`
+      : `${raw.toLocaleString(undefined, { maximumFractionDigits: 2 })} falls between ${row.country}'s own `
+        + `published P${lo.pct} (${lo.value.toLocaleString()}) and P${hi.pct} (${hi.value.toLocaleString()}) `
+        + `-> interpolated to P${rank.pct.toFixed(1)}` })
   }
 
   return { ok: true, pct: rank.pct, n: row.native.n_employees,

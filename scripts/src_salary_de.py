@@ -209,11 +209,32 @@ def _post(path: str, username: str, password: str, **body: str) -> dict:
 # before the bug was caught — see REPORT-P11.md gate 6 and NEEDS-DECISION
 # for the full account and the remediation taken. Every response dict this
 # module logs or persists now goes through this first.
-_CREDENTIAL_ECHO_KEYS = ("Username", "username", "Password", "password")
+#
+# Case-insensitive substring match, not an exact-case key list, and
+# recursive into nested dicts/lists — GENESIS's own response shape is not
+# something this file controls, and a shallow, exact-match check could miss
+# a differently-cased key (Destatis returning "USERNAME") or a credential
+# echoed one level deeper inside a nested object (finding F7, adversarial
+# review, which also found the original version of this function never
+# touched whoami's own response at all — fixed below by routing it through
+# here too, even though whoami's specific call in run() sends no
+# credential today and so has nothing to echo; the guarantee this module's
+# own docstring states — "every response... is redacted" — should hold by
+# construction, not by which endpoints currently happen to be safe).
+_CREDENTIAL_ECHO_TERMS = ("username", "password", "token")
 
 
 def _redact(resp: dict) -> dict:
-    return {k: ("<redacted>" if k in _CREDENTIAL_ECHO_KEYS else v) for k, v in resp.items()}
+    def _walk(v):
+        if isinstance(v, dict):
+            return _redact(v)
+        if isinstance(v, list):
+            return [_walk(item) for item in v]
+        return v
+    return {
+        k: ("<redacted>" if any(term in k.lower() for term in _CREDENTIAL_ECHO_TERMS) else _walk(v))
+        for k, v in resp.items()
+    }
 
 
 def _num(cell: str) -> float | None:
@@ -241,7 +262,7 @@ def run() -> None:
     username, password, cred_label = _credentials()
     log(f"    credential: {cred_label}")
 
-    who = fetch_json(f"{BASE}/helloworld/whoami", cache=False)
+    who = _redact(fetch_json(f"{BASE}/helloworld/whoami", cache=False))
     log(f"    whoami: {who}")
 
     login = _post("helloworld/logincheck", username, password)

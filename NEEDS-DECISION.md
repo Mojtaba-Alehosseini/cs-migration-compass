@@ -917,7 +917,7 @@ at a bachelor's degree) — see item #24 below for the full account and what wou
 `ASSUMED_CAREER_START_AGE` should vary (by country's typical university length, or by an education
 level the profile form doesn't currently collect), covered in #24.
 
-## 21. Norway's and Finland's own "native" wage figures use opposite conventions for which basis they represent
+## 21. Norway's, Finland's, and Germany's own "native" wage figures use opposite conventions for which basis they represent
 
 Package 10's adversarial review (finding F12) found that `_extract_no()` (Denmark's own tier-0.3
 fix, this package) sets the generic native `mean`/`median`/`p25`/`p75` fields from the UNPREFIXED
@@ -939,6 +939,32 @@ subtraction, not a native field — see item #17). **Shipped instead:** the Esti
 card (`site/src/data/profile.ts`) already names which basis a USD figure resolved to when it falls
 back from regular_pay to total_earnings (see item #17's tier-0.2 discussion); native-currency
 figures do not yet carry an equivalent per-row basis label.
+
+**PACKAGE 11 UPDATE:** Germany joined as a third dual-basis source this package (`_extract_de()`,
+`scripts/build_wage_distribution.py`) — Destatis's own two tables give it a genuine regular_pay/
+total_earnings split, the same shape as Finland's and Norway's. Its own native `mean`/`median` are
+set from regular_pay (matching Finland's convention, not Norway's — see the module docstring for
+why: `-0030`'s own bonus-excluded figure needed annualising anyway, and the annual `-0034` table was
+the more natural total_earnings partner). This makes the inconsistency a three-way split, not two —
+named here rather than left implicit, since finding F18 (this package's own adversarial review)
+caught the heading above still reading as if only two countries were involved. Still not resolved;
+see item #17's tier-0.2 discussion for Denmark's own reasoning.
+
+**PACKAGE 11 REMEDIATION UPDATE (finding F13):** this same basis inconsistency reaches further than
+the panel's own display — `computeEstimateUsdYear()` (`profile.ts`, Tier 4's own pay-vs-cost path)
+shifts Norway's `usd_regular_pay` combo using a gradient (`experience_gradient.json`) built from
+SSB's own `total`/Manedslønn-basis premiums (the same total-earnings figure this item's own body
+names above). The premium's own basis and the figure it's applied to disagree for Norway
+specifically, the identical shape of problem finding F1 fixed for Sweden's position/estimate — but
+NOT the same fix: F1 was a genuine bug (SE's cross and SE's shifted figure were UNINTENTIONALLY on
+different bases, with no reason given). Norway's case is different in kind — `_extract_no()`
+deliberately sets NATIVE to the total basis (this item's own body, above), so `usd_regular_pay`
+choosing a DIFFERENT basis than NATIVE for the USD path is itself downstream of the very
+inconsistency this item already tracks, not a separate bug with an obvious fix. Escalated here
+rather than fixed unilaterally: resolving it means picking a basis-consistency rule for Norway's USD
+path specifically, which is exactly the kind of site-wide-convention call this item's own "Decide"
+below already asks for — fixing this one instance first would pre-empt that answer rather than wait
+for it.
 
 **Decide:** whether the panel needs a per-row basis chip (matching the site's existing confidence-chip
 vocabulary) making explicit which of regular_pay/total_earnings/"includes employer contributions"

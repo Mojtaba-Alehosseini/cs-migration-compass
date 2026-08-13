@@ -47,6 +47,23 @@ export function Figure({ children, source, missing, missingReason, className }: 
   const ref = useRef<HTMLSpanElement>(null)
   const id = useId()
 
+  // Finding F16, adversarial review: a fixed-width, left-anchored-to-trigger
+  // popover can extend past a narrow viewport's own right edge when its
+  // trigger sits anywhere but the far left of the row — confirmed live at
+  // 390px (a trigger at left:143 + a 300px popover = right:443, 53px past
+  // the 390px viewport), not just the reviewer's own reasoned risk. Below
+  // this width the popover switches from anchored-under-trigger to
+  // centered-on-viewport, which cannot overflow regardless of where the
+  // trigger sits.
+  const [narrow, setNarrow] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 480px)')
+    const update = () => setNarrow(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+
   useEffect(() => {
     if (!open) return
     const onDoc = (e: MouseEvent) => {
@@ -102,7 +119,15 @@ export function Figure({ children, source, missing, missingReason, className }: 
           id={id}
           role="dialog"
           aria-label={`Source: ${label}`}
-          style={{
+          style={narrow ? {
+            position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
+            zIndex: 'var(--z-popover)' as never,
+            background: 'var(--ink-1)', color: 'var(--paper)', borderRadius: 'var(--radius-md)',
+            padding: '10px 13px', width: 'calc(100vw - 32px)', maxHeight: '80vh', overflowY: 'auto',
+            display: 'block', boxShadow: 'var(--shadow-lg)',
+            fontFamily: 'var(--font-ui)', fontSize: 'var(--text-2xs)', fontWeight: 400,
+            lineHeight: 'var(--leading-normal)', letterSpacing: 0, whiteSpace: 'normal',
+          } : {
             position: 'absolute', left: 0, top: 'calc(100% + 7px)', zIndex: 'var(--z-popover)' as never,
             background: 'var(--ink-1)', color: 'var(--paper)', borderRadius: 'var(--radius-md)',
             padding: '10px 13px', width: source.steps ? 300 : 250, display: 'block', boxShadow: 'var(--shadow-lg)',
@@ -120,11 +145,32 @@ export function Figure({ children, source, missing, missingReason, className }: 
               <span style={{ display: 'block', marginTop: 6, opacity: 0.6 }}>
                 HOW THIS NUMBER WAS CALCULATED
               </span>
-              <ol style={{ margin: '4px 0 0', paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {/* <ol>/<li> here used to nest inside this popover's own <span
+                  role="dialog">, which HTML5 does not allow (span is
+                  phrasing content only; ol is flow content) — browsers
+                  render it via error-recovery either way, so this was never
+                  visibly broken, but it is not spec-valid markup (finding
+                  F15, adversarial review). Same visual result, built from
+                  phrasing-content-only spans, ordinal shown as plain text. */}
+              <span style={{ margin: '4px 0 0', display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {source.steps.map((step, i) => (
-                  <li key={i} style={{ opacity: 0.85 }}>{step}</li>
+                  // Leading/trailing spaces are real characters here, not just
+                  // visual gap — sibling spans concatenate with NO inserted
+                  // whitespace in .textContent (flexbox `gap` is paint-only),
+                  // so "...same basis" immediately followed by "5." immediately
+                  // followed by "55,500" read back as one run-on token to
+                  // anything doing plain-text extraction — a screen reader's
+                  // accessible-name computation, copy-paste, or (caught by)
+                  // this package's own gate-1 arithmetic-reproduction check,
+                  // which silently mismatched two adjacent numbers into one
+                  // unparseable string. Found re-verifying this same fix
+                  // (finding F15's remediation), not by the original review.
+                  <span key={i} style={{ display: 'flex', gap: 6, opacity: 0.85 }}>
+                    <span style={{ opacity: 0.6, flexShrink: 0 }}>{` ${i + 1}.`}</span>
+                    <span>{` ${step}`}</span>
+                  </span>
                 ))}
-              </ol>
+              </span>
             </>
           )}
           <span style={{ display: 'block', marginTop: 6, opacity: 0.7 }}>

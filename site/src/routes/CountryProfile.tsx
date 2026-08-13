@@ -65,6 +65,25 @@ function WageRowFigure({ row }: { row: WageCountry }) {
       </div>
     )
   }
+  // Germany only (finding F6, adversarial review): this native figure is
+  // regular_pay annualised at extraction, not Destatis's own published
+  // annual number — <Figure> claiming "as published" would be the same
+  // bug package 9 fixed for Qatar's weighted mean (weighting_note, above).
+  if (n.annualised_note) {
+    return (
+      <div style={{ marginTop: 10 }}>
+        <Derived chain={[{ op: 'annualise', detail: n.annualised_note }]}
+          result={{ value: n.value.median ?? n.value.mean ?? 0, currency: n.currency }}>
+          <span className="big" style={{ fontSize: 'var(--text-xl)' }}>
+            {fmtNative(n.value.median ?? n.value.mean, n.currency)}{PERIOD_LABEL[n.period]}
+          </span>
+        </Derived>
+        <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
+          {n.n_employees != null ? `n = ${num(n.n_employees)} · ` : ''}{n.year}
+        </div>
+      </div>
+    )
+  }
   // Denmark only (package 10, tier 0.2): this native figure is DST's own
   // STANDARDIZED HOURLY EARNINGS concept (STAND), not the more commonly
   // reached-for FORINKL — named here because DST's own separately-published
