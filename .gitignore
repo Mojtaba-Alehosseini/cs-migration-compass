@@ -51,6 +51,19 @@ data/raw/*
 # that step unreproducible.
 !data/raw/levels_fyi/
 
+# EXCEPTION: same reasoning, package 12. The Ashby/Greenhouse/Lever
+# candidate-token lists (data/raw/postings_seed_hints/*.json) are the SEED
+# HINT input the postings harvesters probe live before trusting anything in
+# them — without this exception, a fresh checkout (specifically
+# .github/workflows/postings-refresh.yml's own runner) would start every
+# scheduled run with zero candidates, silently collapsing the postings
+# panel from ~1,200 verified companies down to whatever a handful of
+# hand-seeded boards (Teamtailor) provide, then have its own commit step
+# fail outright trying to `git add` a path this file still ignored. Found
+# live by this package's own adversarial review, not caught before it
+# shipped: the workflow had never actually run.
+!data/raw/postings_seed_hints/
+
 # ---------------------------------------------------------------------------
 # Internal working files — planning notes, drafts and design mockups kept
 # locally, not part of the published project.

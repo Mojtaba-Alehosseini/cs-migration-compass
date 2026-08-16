@@ -384,6 +384,27 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
         </span>
       </ChartFoot>
 
+      {/* Package 12, tier 0 follow-up: Canada's two NOC rows have UNVERIFIED
+       *  composition (see this file's own module docstring), so combos[key]
+       *  is never .ok on ANY toggle and neither row ever enters the "open
+       *  each row's own method" list above — CA_NOC_DISTINCTION's own text
+       *  is otherwise reachable only via the SVG row label's hover-only
+       *  <title>. Verified live (not assumed) before adding this: clicking
+       *  every toggle combination confirmed CA never appears in that list.
+       *  A plain, unconditionally visible line closes the gap for keyboard/
+       *  touch readers on this panel specifically — the country page has
+       *  carried this as visible text since tier 0 shipped; this is the one
+       *  spot on Explore/Money that still needed it. */}
+      {rows.some((r) => CA_NOC_DISTINCTION[r.country]) && (
+        <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 8, maxWidth: '68ch' }}>
+          {rows.filter((r) => CA_NOC_DISTINCTION[r.country]).map((r) => (
+            <span key={r.country} style={{ display: 'block', marginTop: 2 }}>
+              <b>{r.country}</b> — {CA_NOC_DISTINCTION[r.country]}
+            </span>
+          ))}
+        </p>
+      )}
+
       <ChartTable
         caption="Wage distribution by country — the numbers behind this chart"
         head={['Country', 'Currency', 'P10', 'Median', 'P90', 'Comparable']}

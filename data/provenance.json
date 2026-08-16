@@ -431,6 +431,146 @@
       "notes": "Index bases differ by country and block — compare shape, not level."
     },
     {
+      "source_id": "postings",
+      "name": "Postings panel — merged advertised-pay data across all providers",
+      "urls": [],
+      "fetched_at": "2026-08-16T05:39:31+00:00",
+      "license": "Inherits each provider source's own license — this file adds no new terms, only concatenation and summary computation over already-committed, already-licensed data.",
+      "redistribution": "derived — nothing fetched here; every provider's own provenance entry already covers redistribution terms for its own postings.",
+      "transforms": [
+        "Concatenated every provider's own postings array into one list.",
+        "Computed per-provider and per-country summary counts for the seed-list transparency page and the coverage-denominator discipline this site's own other panels already follow.",
+        "Never touched wage_distribution.json or normalise.py — the survey/advertised boundary is enforced structurally by this file's own imports, not just by convention."
+      ],
+      "output": "data/processed/postings.json",
+      "status": "ok",
+      "rows": 43034,
+      "coverage": "1419 companies across 6 providers",
+      "notes": "The site's own postings panel reads ONLY this file, never an individual provider file."
+    },
+    {
+      "source_id": "postings_ashby",
+      "name": "Ashby job-board API — advertised pay, structured compensation",
+      "urls": [
+        "https://api.ashbyhq.com/posting-api/job-board/{token}?includeCompensation=true"
+      ],
+      "fetched_at": "2026-08-16T05:14:43+00:00",
+      "license": "Each company's own postings, published by that company via Ashby's own public, unauthenticated job-board API — no Ashby-specific license terms apply beyond the postings being intentionally public.",
+      "redistribution": "Only postings from companies whose board was verified live are kept; the raw per-company response is cached under data/raw/postings/ashby/ (gitignored, matching this pipeline's existing data/raw/ convention).",
+      "transforms": [
+        "Loaded candidate company tokens from a third-party MIT-licensed aggregator (github.com/Feashliaa/job-board-aggregator) as SEED HINTS ONLY.",
+        "Probed each candidate live against api.ashbyhq.com; kept only tokens that resolved with at least one real posting — a 404, timeout, or zero-postings response drops the candidate, it is never guessed into the output.",
+        "Parsed each posting's own compensationTiers into a common {min,max,currency,period} shape, preferring the first component with a real minValue+currencyCode.",
+        "Resolved each posting's own free-text location to a best-effort ISO2 country code — never invented when the text doesn't resolve."
+      ],
+      "output": "data/processed/postings_ashby.json",
+      "status": "ok",
+      "rows": 16370,
+      "coverage": "862 verified companies, 16370 postings, this run",
+      "notes": "Advertised pay — NEVER merged with survey-earnings data (validate_data.py's own assertion, package 7, guards this). See data/processed/postings.json (build_postings.py) for the merged, cross-provider file the site actually reads."
+    },
+    {
+      "source_id": "postings_greenhouse",
+      "name": "Greenhouse Job Board API — advertised pay, per-job pay_transparency fan-out",
+      "urls": [
+        "https://boards-api.greenhouse.io/v1/boards/{token}/jobs",
+        "https://boards-api.greenhouse.io/v1/boards/{token}/jobs/{id}?pay_transparency=true"
+      ],
+      "fetched_at": "2026-08-16T05:39:21+00:00",
+      "license": "Each company's own postings, published via Greenhouse's own public, unauthenticated Job Board API.",
+      "redistribution": "Only postings from companies whose board was verified live are kept; raw list and per-job detail responses cached under data/raw/postings/greenhouse/.",
+      "transforms": [
+        "Loaded candidate company tokens from a third-party MIT-licensed aggregator (github.com/Feashliaa/job-board-aggregator) as SEED HINTS ONLY.",
+        "Probed each candidate's list endpoint live; kept only tokens with >=1 real job.",
+        "Fetched pay_input_ranges via the detail endpoint's own ?pay_transparency=true flag, one request per job, throttled to 0.4s apart, capped at 40 jobs/company/run — every job still appears in the output with its title/location/url even past that cap, just without a pay attempt that run (grows on the next scheduled run via the same on-disk cache)."
+      ],
+      "output": "data/processed/postings_greenhouse.json",
+      "status": "ok",
+      "rows": 12649,
+      "coverage": "309 verified companies, 12649 postings, this run",
+      "notes": "Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads."
+    },
+    {
+      "source_id": "postings_hn",
+      "name": "Hacker News \"Who is hiring?\" — free-text advertised pay",
+      "urls": [
+        "https://news.ycombinator.com/item?id=49156683"
+      ],
+      "fetched_at": "2026-08-16T05:17:40+00:00",
+      "license": "Public HN API (hacker-news.firebaseio.com) — each comment is the poster's own public submission to a public forum thread; redistributed here as individual job-posting text, matching how HN's own site displays it.",
+      "redistribution": "Comment text stored as posted; no HTML beyond simple <p> paragraph breaks kept.",
+      "transforms": [
+        "Found the current month's 'Who is hiring?' thread from whoishiring's own recent submissions.",
+        "Read every top-level comment via the public Firebase API.",
+        "Parsed a compensation range from comment text ONLY where a clear currency-symbol-plus-two-numbers pattern matched (parse_compensation_text) — most comments carry no parseable range and are kept with compensation: null, not a guess."
+      ],
+      "output": "data/processed/postings_hn.json",
+      "status": "ok",
+      "rows": 240,
+      "coverage": "240 postings from 1 thread (Ask HN: Who is hiring? (August 2026))",
+      "notes": "Advertised pay — NEVER merged with survey-earnings data. Free text, not a structured ATS field; disclosed as such downstream."
+    },
+    {
+      "source_id": "postings_lever",
+      "name": "Lever postings API — advertised pay, optional salaryRange",
+      "urls": [
+        "https://api.lever.co/v0/postings/{token}?mode=json"
+      ],
+      "fetched_at": "2026-08-16T05:24:56+00:00",
+      "license": "Each company's own postings, published via Lever's own public, unauthenticated postings API.",
+      "redistribution": "Only postings from companies whose board was verified live are kept; raw per-company responses cached under data/raw/postings/lever/.",
+      "transforms": [
+        "Loaded candidate company tokens from a third-party MIT-licensed aggregator (github.com/Feashliaa/job-board-aggregator) as SEED HINTS ONLY.",
+        "Probed each candidate live; kept only tokens with >=1 real posting.",
+        "Read salaryRange directly off each posting — no fan-out needed, but the field is optional and populated on a small minority of postings in this pipeline's own sample."
+      ],
+      "output": "data/processed/postings_lever.json",
+      "status": "ok",
+      "rows": 9719,
+      "coverage": "242 verified companies, 9719 postings, this run",
+      "notes": "Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads."
+    },
+    {
+      "source_id": "postings_teamtailor",
+      "name": "Teamtailor public jobs.json feed — advertised pay, Nordic/European coverage",
+      "urls": [
+        "https://{subdomain}.teamtailor.com/jobs.json"
+      ],
+      "fetched_at": "2026-08-16T05:11:07+00:00",
+      "license": "Each company's own postings, published via Teamtailor's own public, unauthenticated JSON Feed — no Teamtailor-specific license terms apply.",
+      "redistribution": "Raw per-company responses cached under data/raw/postings/teamtailor/.",
+      "transforms": [
+        "Hand-seeded candidate list (no third-party aggregator indexes this provider) — every token verified live against the real endpoint; a 404 or connection failure drops it.",
+        "Parsed the embedded schema.org JobPosting per item; baseSalary read when present (observed absent in every sampled posting this session, kept in the parser for the customers who do populate it)."
+      ],
+      "output": "data/processed/postings_teamtailor.json",
+      "status": "ok",
+      "rows": 56,
+      "coverage": "6 verified companies, 56 postings",
+      "notes": "Advertised pay — NEVER merged with survey-earnings data. Salary-free in this session's own sample; kept for volume and Nordic-market coverage per the work order's own explicit instruction for sources like this."
+    },
+    {
+      "source_id": "postings_usajobs",
+      "name": "USAJOBS Historic JOA — U.S. federal job announcements, real numeric pay",
+      "urls": [
+        "https://data.usajobs.gov/api/historicjoa?PositionSeries=2210",
+        "https://data.usajobs.gov/api/historicjoa?PositionSeries=0854"
+      ],
+      "fetched_at": "2026-08-16T05:11:40+00:00",
+      "license": "17 U.S.C. SS 105 (U.S. federal government work — no US copyright attaches). Attribute as \"USAJOBS / U.S. OPM\" — NOT CC0 (a different legal basis: CC0 is a rights-holder's own waiver of rights they hold; SS105 means no US copyright ever existed here). Requires a descriptive, non-generic User-Agent header — a bare default UA is effectively blocked (found live, not assumed).",
+      "redistribution": "Every returned record's own fields are redistributed directly — this endpoint already serves individual, already-public announcement records, not a bulk file this pipeline narrows down.",
+      "transforms": [
+        "Filtered live to PositionSeries 2210 (IT Management) and 0854 (Computer Engineering) — found ResultsPerPage is NOT a valid parameter (400 live), PositionSeries is.",
+        "Paged via the API's own continuationToken, not a page-number parameter.",
+        "Read minimumSalary/maximumSalary directly — real numbers, no parsing needed, unlike every ATS-provider source in this package."
+      ],
+      "output": "data/processed/postings_usajobs.json",
+      "status": "ok",
+      "rows": 4000,
+      "coverage": "4000 announcements across 2 OPM series",
+      "notes": "Advertised pay — NEVER merged with survey-earnings data. Government job announcements, not private-sector, disclosed as such downstream (build_postings.py, the site's own UI)."
+    },
+    {
       "source_id": "rsf_press_freedom",
       "name": "Reporters Without Borders — World Press Freedom Index",
       "urls": [
@@ -993,5 +1133,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-13T02:54:16+00:00"
+  "updated_at": "2026-08-16T05:39:31+00:00"
 }

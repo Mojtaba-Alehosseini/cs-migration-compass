@@ -7,6 +7,7 @@ import { SelectionContext, useSelectionState } from './data/selection'
 const NAV = [
   { to: '/compare', label: 'Compare' },
   { to: '/position', label: 'Your position' },
+  { to: '/postings', label: 'Postings' },
   { to: '/explore', label: 'Explore' },
   { to: '/data', label: 'Data & methods' },
 ]

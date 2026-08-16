@@ -1,0 +1,99 @@
+name: Refresh postings panel
+
+# Package 12, tier 2 — postings go stale in days, unlike the statistics the
+# rest of this pipeline is built on, so this runs far more often than the
+# wage spine's own (manual, work-order-triggered) refresh. Weekly, not
+# daily: each harvester's own MAX_NEW_PER_RUN cap already bounds a single
+# run's work (see scripts/src_postings_*.py), and the raw-response cache
+# under data/raw/postings/ is cleared past a week old so a run actually
+# re-checks postings that might have closed, not just grows the seed list
+# — daily would mean paying that same re-fetch cost seven times a week for
+# a "stale in days, not hours" source. Fails soft, per source: one provider
+# timing out (Lever's own reads are documented as slow under load) does not
+# lose the others' data — see continue-on-error below.
+
+on:
+  schedule:
+    - cron: "17 6 * * 1" # Monday 06:17 UTC — off the hour, avoiding the
+      # documented top-of-hour pile-up on GitHub's own scheduler
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: postings-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Re-run postings harvesters
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: Install pipeline dependencies
+        run: python -m pip install -r scripts/requirements.txt
+
+      # Cached raw responses older than a week are dropped BEFORE the run,
+      # not after — a harvester whose own cache-check sees an existing file
+      # skips it regardless of age (scripts/_common.py's own fetch()), so
+      # "stale in days" only holds if this step actually runs first.
+      - name: Drop postings raw-cache entries older than 7 days
+        run: find data/raw/postings -type f -mtime +7 -delete 2>/dev/null || true
+
+      # Each step is independent and soft-fails — a down or slow provider
+      # (Lever's own reads are documented as slow under real load) costs
+      # that one provider's data for this run, never the other five.
+      - name: Ashby
+        run: python scripts/src_postings_ashby.py
+        continue-on-error: true
+
+      - name: Greenhouse
+        run: python scripts/src_postings_greenhouse.py
+        continue-on-error: true
+
+      - name: Lever
+        run: python scripts/src_postings_lever.py
+        continue-on-error: true
+
+      - name: Teamtailor
+        run: python scripts/src_postings_teamtailor.py
+        continue-on-error: true
+
+      - name: USAJOBS
+        run: python scripts/src_postings_usajobs.py
+        continue-on-error: true
+
+      - name: Hacker News "Who is hiring?"
+        run: python scripts/src_postings_hn.py
+        continue-on-error: true
+
+      - name: Merge into postings.json
+        run: python scripts/build_postings.py
+
+      - name: Classify occupations (Gemini, titles only — skips cleanly if GEMINI_API_KEY is unset)
+        run: python scripts/classify_postings.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        continue-on-error: true
+
+      - name: Rebuild site data bundle
+        run: python scripts/build_site_data.py
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/processed/postings*.json data/provenance.json data/raw/postings_seed_hints \
+            site/public/data/history/postings.json site/public/data/history-manifest.json \
+            site/public/data/provenance.json
+          git diff --staged --quiet && echo "no changes" && exit 0
+          git commit -m "Weekly postings refresh (automated, github-actions[bot])"
+          git push

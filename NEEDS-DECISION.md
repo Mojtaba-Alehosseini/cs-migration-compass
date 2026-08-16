@@ -1100,3 +1100,306 @@ narrow — a read-only credential against a public government statistics API, no
 an account with write access to anything — but the decision to accept that risk or not belongs to
 the account holder, not this pipeline. The user was told directly, in-session, at the moment this was
 found, not just here.
+
+---
+
+# Package 12 — the postings panel
+
+## 26. Four providers probed and confirmed live but not wired into a harvester this package
+
+The work order's own Tier 1.2 named nine platforms to probe. Three are fully wired (Ashby,
+Greenhouse, Lever — the "verified" tier) plus Teamtailor, USAJOBS and Hacker News (added this
+package once probed). Four more were probed and a real verdict recorded, but no company-list
+harvester was built for them this session:
+
+- **Workday** — confirmed genuinely alive, unauthenticated, real structured job data
+  (`{tenant}.wd#.myworkdayjobs.com/wday/cxs/{tenant}/{site}/jobs`). **No structured compensation
+  field exists anywhere in the response** — verified against a real posting — but pay-transparency-
+  state postings (California confirmed live: Qualys, Foster City) carry a real, parseable range as
+  PROSE inside `jobDescription`, the same free-text-extraction shape this package already builds for
+  Hacker News. Not wired because company discovery is qualitatively harder than the other providers:
+  every company has its own `wd#` (1 through 500+) AND its own site name, neither guessable from the
+  company name the way `{company}.domain.com` is for every other provider here — a real engineering
+  cost (search-based discovery, not construction), not a probe-budget shortfall.
+- **SmartRecruiters** — confirmed live, unauthenticated (`api.smartrecruiters.com/v1/companies/
+  {id}/postings`), matches the work order's own prior finding: no compensation field, ever.
+- **Workable** — confirmed live, unauthenticated (`apply.workable.com/api/v1/widget/accounts/
+  {slug}?details=true` — a fake slug 404s, a real one 200s even with zero current postings, which is
+  how "live" was confirmed without a company that happened to have open roles at probe time). No
+  compensation field, matching the work order's own prior finding and one independent source
+  (dev.to's own field-by-field writeup).
+- **BambooHR** — confirmed live and public (`{subdomain}.bamboohr.com/careers/list`, real JSON,
+  `{meta, result}` shape, no auth) — genuinely different from the "internal endpoint, undocumented,
+  changes between releases" characterisation some third-party scraper docs give it. One real
+  customer verified (`zapier.bamboohr.com`, 0 current postings — endpoint confirmed working, job-
+  level schema including compensation NOT independently confirmed against a company with open roles
+  within this session's own probe budget).
+
+Personio and Recruitee: endpoint FORMAT documented from each platform's own support docs
+(`{subdomain}.jobs.personio.com` / `.jobs.personio.de`; `{company}.recruitee.com/api/offers/`), but
+no live customer subdomain confirmed working this session — every guessed slug either redirected to
+the vendor's own marketing site (Personio) or 404'd (Recruitee).
+
+**Decide:** whether a follow-up package should build harvesters for Workday (real engineering cost:
+company discovery, then a Workday-specific text-extraction path mirroring the HN parser but scoped
+to the far narrower "pay range" phrasing pay-transparency postings actually use) and/or SmartRecruiters
+/Workable/BambooHR (lower cost: same shape as the existing harvesters, just no compensation payoff
+for the first two, and BambooHR needs real customer subdomains found first). Jobvite and JazzHR are
+NOT included in this question — see item #27, they are confirmed not usable at scale, not merely
+unbuilt.
+
+## 27. Jobvite and JazzHR — confirmed not usable at scale, not merely unprobed
+
+Distinct from item #26 above: these two were probed and the answer is a real "no," not "not yet."
+**Jobvite**: has a REST API and an optional published-jobs feed, but the feed is off by default per
+customer and most customers never turn it on — there is no guessable public endpoint the way every
+other provider in this package has. **JazzHR**: the public board (`{slug}.applytojob.com`) is
+server-rendered HTML with the job list baked into the page markup; the real API and XML feed both
+require a customer-specific key. Neither has a path to bulk, unauthenticated, cross-company
+harvesting the way Ashby/Greenhouse/Lever/Teamtailor/SmartRecruiters/Workable/BambooHR/Workday all
+do. Not re-probed in a future package unless a company-specific key becomes available through some
+other channel — this is a structural "no," not a session budget limit.
+
+## 28. Greenhouse's own `pay_input_ranges` has no period field — this pipeline infers hourly vs. annual from magnitude
+
+Found live, caught before shipping (not by the adversarial review): the SAME company (10beauty)
+posts ranges shaped like `$100,000-$125,000` (clearly annual) and `$30.00-$35.00` (clearly hourly)
+under the identical `"title": "Salary Range"` label, with nothing else in Greenhouse's own API
+response distinguishing them. `scripts/src_postings_greenhouse.py` now infers hourly when the range's
+own upper bound is under $1,000 (no real full-time annual salary is that low; no real hourly wage is
+higher) — a disclosed, reasoned inference, not a silent guess, and the `raw_text` field says so on
+every affected posting.
+
+**Decide:** whether $1,000 is the right threshold, and whether a role genuinely paid in the
+$1,000-$5,000 (per year OR per hour — both are inside a gap this heuristic cannot resolve either
+way) range is common enough on Greenhouse to be worth a smarter check (e.g. reading the job's own
+`employment_type` field, not yet fetched by this pipeline, which might carry "Part time"/"Contract"
+as an independent signal to combine with magnitude). None observed live in this session's own
+sample; the residual risk is theoretical today, not demonstrated.
+
+## 29. Gig-platform / part-time-freelance postings appear in the panel alongside full-time roles — is that the right scope?
+
+The seed-hint candidate list (github.com/Feashliaa/job-board-aggregator) surfaced at least one
+company (10xteam, Ashby) whose own postings are short-hours freelance "AI Trainer" gigs (8-20
+hrs/week, task-based), not full-time software engineering roles — a meaningfully different labour-
+market segment from the "software developer" scope this whole site is otherwise built around
+(explore/position/compare all key off isco08:2512). Nothing in this package's own harvesters filters
+by employment type or role category (that is what tier 3's classifier is FOR, but tier 3 was not run
+live this session — see item #30) — so gig-economy postings currently sit in the same list as
+Stripe's and Anthropic's own full-time openings, distinguishable today only by reading each
+posting's own title.
+
+**Decide:** once occupation classification is live (item #30), should postings the classifier can't
+place in software/ICT categories be dropped from the panel entirely, kept but visually distinguished,
+or left as-is (the panel's own "Search title" filter already lets a reader exclude them by keyword,
+imperfectly)? A product/scope call, not a data one.
+
+## 30. Occupation classification (tier 3) is built but was not run this session — no `GEMINI_API_KEY` in this environment — RESOLVED, the "no code change needed" claim below was wrong when first written
+
+`scripts/classify_postings.py` and `scripts/postings_classify_config.yaml` exist, follow the
+data-scraper-agent skill's own batching discipline (25 postings/call, a model fallback chain, a
+response schema with no numeric field of any kind — see the script's own module docstring for why
+this is safe: a posting's TITLE is public business information, not personal data, so the paid-tier
+requirement `phase-4-cv-setup-checklist.md` sets for the CV feature does not apply here), and fail
+soft (exit 0, nothing classified, status recorded) when the key is absent — checked, and it was
+absent in this session's own environment, the same "environment-only, no silent skip disguised as
+success" discipline this pipeline already applies to `DESTATIS_TOKEN`. The postings panel's own
+"Category" filter is consequently not yet wired (`Postings.tsx` says so directly under the filter
+row) — level (guessed from title) and country/remote filtering all work today without it.
+
+**This item originally closed with "set `GEMINI_API_KEY` and this runs automatically... no code
+change needed" — found FALSE by this package's own adversarial review.** `classify_postings.py`
+wrote `data/processed/postings_classifications.json` and nothing anywhere ever read that file back
+into `postings.json`'s own per-posting `occupation` field — `grep`ing the whole repo for
+`postings_classifications` outside the writer itself returned nothing. Setting the key alone would
+have produced a classifications file the site never consumed; the Category filter would have stayed
+empty regardless.
+
+**Fixed:** `classify_postings.py` gained `_merge_into_postings()`, called right after a real
+classification run succeeds — reads `postings.json`'s own existing envelope, sets each classified
+posting's own `occupation` field in place, writes the same file back (not a new source_id, an
+enrichment of `build_postings.py`'s own output). Verified against a scratch copy with synthetic
+classifications (two postings updated, a third correctly left untouched, `seed_companies` and every
+other envelope field preserved) — not run against a real Gemini response this session, since the key
+is still absent; the merge logic itself is what needed fixing and is now tested.
+
+**Decide:** set `GEMINI_API_KEY` (as a repository secret, consumed by `.github/workflows/postings-
+refresh.yml`'s own weekly run, which already reads it and no-ops cleanly without it) and this now
+genuinely runs and merges automatically on the next scheduled refresh, matching what this item
+originally (incorrectly) promised. The postings panel's own "Category" filter UI is still not
+built — occupation data merging in is necessary but not sufficient for that; a real follow-up, not
+attempted here since there is no live classified data this session to build or test it against.
+
+## 31. YC's Work at a Startup and Wellfound (tier 1.3) — both probed live, both closed, neither wired
+
+The work order's own §1.3 named these alongside USAJOBS and HN as supplementary sources to probe,
+explicitly authorising "skip if auth-required." Both hit that condition, verified live rather than
+assumed from general knowledge:
+
+- **Wellfound** (`wellfound.com/jobs`) — loads Cloudflare Turnstile on first request
+  (`turnstileLoad = function() {...}` present in the raw HTML before any JS executes). This is an
+  explicit bot-detection gate, not a soft rate-limit — bypassing Turnstile is outside this project's
+  own standing rules regardless of what the work order authorises. `angel.co` (Wellfound's old
+  domain) redirects into the same gated surface. No API path attempted or exists to probe further.
+- **Work at a Startup** (`workatastartup.com`) — `/api/jobs` 404s; no public jobs API exists.
+  The `/companies` page returns HTTP 200 but is a login-gated Rails+Vite app: the raw HTML carries
+  zero embedded job or company JSON (no `__NEXT_DATA__`, no `data-react-class`, no inline job array)
+  and the page's own `paths.login` field points at `account.ycombinator.com/magic?continue=...` — YC's
+  passwordless magic-link account flow. Job content loads client-side after that login, not before.
+  Separately, `api.ycombinator.com/v0.1/companies` IS live and public (verified: real JSON, YC's own
+  funded-company directory — id/name/slug/website/oneLiner/tags) — but it is a company directory,
+  not a jobs endpoint (`/v0.1/jobs` 404s, and there is no per-company detail route either). Real,
+  live, and unauthenticated, but the wrong shape of data for this package's own purpose.
+
+**Not wired** — both hit the work order's own pre-authorised "skip if auth-required" condition
+cleanly. `api.ycombinator.com/v0.1/companies` is a legitimate, separate finding: it could seed
+company slugs to try against Ashby/Greenhouse/Lever (YC-funded companies using those ATSs) the same
+way the third-party aggregator list does for Tier 2 — a real, if minor, incremental idea, not
+attempted here since the existing seed hints already carry the harvest well past the work order's own
+500-board target without it.
+
+**Decide:** whether a future package should use `api.ycombinator.com/v0.1/companies`'s own slug list
+as one more Tier-2 seed-hint source (still re-verified live per-token before counting, same as every
+other seed hint) — low cost, uncertain incremental yield since YC companies large enough to run their
+own ATS board are likely already reachable through the existing aggregator-based hints.
+
+## 32. 16 of 14,813 postings-with-compensation (0.11%) carry an implausible min/max ratio — traced to the SOURCE ATS's own structured field, not this pipeline's parsing
+
+Found while hand-verifying postings against live URLs for gate 11 (`REPORT-P12.md`), not by a
+dedicated check built for this: filtering the final merged `postings.json` for `max/min > 15×`
+surfaces 16 records across three providers (10 Ashby, 5 Lever, 1 HN — re-measured after the
+country-resolver harvester re-runs this package's own adversarial review triggered; the count and mix
+shifted slightly, one new instance surfaced, none of the originally-found ones disappeared). Traced
+each back to its own raw cached API response directly, not assumed:
+
+- **`bfsaulhotels` (Lever), 3 postings** — `min: 1` (e.g. "Breakfast Attendant... 1-15.5 USD hour").
+  The same company's other 100+ postings in this pipeline are clean, sensible, well-formed hourly and
+  annual figures — this looks like a three-keystroke slip on the employer's own end (meant to type a
+  real minimum, typed "1"), not a pattern across their whole board. Deliberately NOT caught by the
+  compensation-guard fix elsewhere in this package (Ashby/Lever's own `$0` guard, see the "Bugs
+  caught and fixed" section) — `min: 1` is a real, non-zero, if implausible, value, a different
+  failure shape from the `$0` figures that guard targets.
+- **`doppel`, `foley` (Ashby), 1 posting each** — minimums three orders of magnitude below their own
+  maximums (`$169`–`$396,360`; `$80`–`$90,000`) in a shape that reads as a missing "000" on the
+  employer's own end.
+- **`amityfdn` (Lever), 1 posting** — `43.36-4336 USD (per-hour-wage)`; no real hourly wage is
+  $4,336/hour.
+- **`cagents` (Lever), 1 posting, new since the original 15** — "Validation Engineer":
+  `400100-17171000 INR`. The same company posts several other "Commissioning (Cx) Engineer" roles
+  with the identical minimum (400100) and a maximum of `1717000` — an order of magnitude smaller and
+  consistent with each other — reading as the same "extra digit typed into the max" shape as
+  `doppel`/`foley` above, on a different company.
+- **HN, 1 posting** — `"$6–$253K"` literally in the source comment's own text (an automated listing
+  bot's own apparent formatting error, not this pipeline's extraction — see gate 11's own account).
+- **`coursecareers` (Ashby), 8 postings** — `"$50 – $1,000 per month, Commission Based"`. Different in
+  kind from the rest of this list: a 20× commission-driven range is a real, plausible shape for
+  commission-based pay, not obviously wrong — included in the raw count above for completeness, not
+  because it looks like an error.
+
+In every non-commission case, the code reads `min`/`max` from the identical single structured API
+field pair every time (confirmed by re-reading the raw cached bytes directly) — there is no code path
+where this pipeline could cross wires between two different fields or two different postings. The
+implausible value is what the ATS itself returned, i.e. what the employer's own posting form
+submitted.
+
+**Not filtered or corrected** — replacing an implausible `min` with a guessed plausible one (e.g.
+assuming a dropped "000") would mean inventing a number and presenting it as sourced, the exact thing
+this pipeline's own design (`normalise.py`'s "never synthesise a component no source measured", the
+Greenhouse magnitude-heuristic disclosure in item #28) already refuses to do elsewhere. At 0.11% of
+postings-with-compensation, this is a real but narrow residual, not a systemic issue.
+`Postings.tsx`'s own compensation cell now renders `raw_text` as its own hover `title` attribute
+(fixed this package — this item's own text originally claimed it was already shown, which this
+package's own adversarial review found was not true; the field existed but was never rendered
+anywhere), so a reader who hovers one of these 16 rows sees the same "$1-$15.50/hour" oddity a human
+reading the original posting would — hover-only, matching this site's own existing pattern for
+secondary detail (SVG `<title>` tooltips elsewhere), not a substitute for a visible flag if one is
+ever built (see the "Decide" below).
+
+**Decide:** whether a lightweight plausibility flag (e.g. `confidence: "implausible"` alongside the
+existing `structured`/`parsed_text` values, surfaced as a visual note rather than hidden) is worth
+adding for future harvester runs — cheap to add, but a genuinely new piece of UI vocabulary this
+package did not scope, and 16 records is too small a sample to design a general threshold from with
+confidence (a $1/hour minimum is obviously wrong; is a 15× ratio the right general cutoff, or would
+it flag legitimate commission-heavy roles like `coursecareers`'s own 8 postings above as false
+positives? Untested at any real scale).
+
+Also add the new `_word_match()`-ordering residual (item #33 below) as a small, related open
+question worth deciding together with this one, since both are "this pipeline's own checking order,
+not a missing signal, occasionally picks the less-likely of two real answers" cases at a similarly
+small scale.
+
+## 33. `country_from_location()` used unanchored substring matching — real postings were misassigned to the wrong country, including onto the new advertised-pay chart's own displayed numbers — RESOLVED, fixed this package
+
+Found by this package's own independent adversarial review, not by any check this pipeline had run
+before shipping: `scripts/postings_common.py`'s own location resolver matched country names as a
+bare substring of the lowercased location text (`if name in low: return iso2`), with no word
+boundary. Verified directly against the real committed dataset, not assumed:
+
+- **"Atlanta, Georgia"** (and 142 other real US-Georgia postings — Athens, Savannah, Fort Benning,
+  Robins AFB, ...) resolved to **GE** (the country Georgia), because "georgia" the country-name-table
+  entry doesn't distinguish itself from "georgia" the US state.
+- **"Milwaukee, Wisconsin"**, **"Fukuoka"**, **"Yokosuka"**, **"Tukwila, WA"**, **"Ukraine"** itself,
+  and **"Mukilteo, Washington"** all resolved to **GB**, because the substring "uk" appears inside
+  each of those words (mil-**wauk**ee, f**uk**uoka, yokos**uk**a, t**uk**wila, **uk**raine,
+  m**uk**ilteo) with nothing checking whether "uk" was actually a standalone word.
+- **"Albuquerque, New Mexico"** and similar resolved to **MX** (Mexico), the same shape of bug —
+  "mexico" is a real substring of "new mexico" even though the two mean different things.
+- **"China Lake, California"** resolved to **CN** (China) — "china" is a real word inside "China
+  Lake", a real place in California with no China-specific meaning at all.
+- **"King of Prussia, PA"** resolved to **RU** (Russia) — "russia" is a literal substring of
+  "prussia".
+
+**The consequence reached further than the raw country field — it was visible on this package's own
+flagship new deliverable.** The "median advertised pay by country" chart (Tier 5.1/5.2, gate 9) built
+its country groupings directly from this field. Before the fix, 5 of the chart's 10 displayed country
+medians were built from majority-contaminated groups: the bar labelled "GE" was 100% misassigned US
+federal postings and disappeared to zero once fixed (there was never a real Georgia-country cohort in
+this dataset); "MX" was 92.5% misassigned New Mexico; "IN" and "CN" and "GB" were each substantially
+diluted the same way. A reader comparing "median advertised pay in Georgia" against the chart's other,
+genuine country medians would have been comparing a real number to a phantom one with identical visual
+confidence.
+
+**Fixed:** `country_from_location()` rewritten with (1) whole-word matching (`_word_match()`, using a
+not-preceded/followed-by-a-letter check rather than plain `\b`, since `\b` itself does not fire around
+punctuation — "u.s." followed by a space has no `\b` between the trailing "." and the space, a second,
+smaller bug caught while building the fix, before it shipped); (2) a full US-state-names table,
+checked before the ambiguous country-name table, since two states' own full names collide with real
+country names in a way no word-boundary fix alone resolves ("Georgia" the state vs. Georgia the
+country are literally the same word; "New Mexico" is a more specific 2-word phrase than the country
+table's own bare "Mexico" entry, so checking state names first — not longer-match-wins — is what
+actually resolves it). Georgia's own collision is irreducible by text alone: checked live, of the 143
+"Georgia"-labelled postings in the real dataset at fix time, zero were Tbilisi, so resolving "Georgia"
+to US is the empirically better default — disclosed here, not silently chosen; a future Tbilisi-based
+posting would need a country name spelled out elsewhere in the same location text to resolve
+correctly, same as any location this table doesn't otherwise recognise.
+
+**Verified against the real, live-harvested dataset, not a synthetic test alone:** simulated the fix
+against the previously-committed `postings.json` before touching any harvester (2,108 of 35,936
+postings' own country field changed), then re-ran all six harvesters for real (raw cache warm, no new
+network calls needed for this specific fix to take effect) and re-merged. Final distribution: GE and
+RU both **0** (were 143 and 6); Georgia-labelled postings resolving to GE: **0**; every sampled
+Ukraine/Milwaukee posting now resolves correctly (UA / US); China Lake correctly splits between US
+("China Lake, California") and one remaining CN case (see item's own residual note below, "China
+Lake, CA" — the abbreviated form). Top country counts after the full re-run: US 26,355, GB 1,891, CA
+1,041, IN 931, DE 619 — GB/IN both genuinely UP despite losing their own contamination, because the
+harvesters' own seed-hint probing found more real companies on this run (738→862 Ashby, 215→242
+Lever, 247→309 Greenhouse) independent of this fix.
+
+**A related, small, disclosed residual — not fixed, the two "correct" answers conflict:** 10 of
+43,034 postings (0.023%) still resolve to a plausible-but-arguably-wrong country because a short,
+genuinely ambiguous token (a bare US state code) is checked at a different priority than a competing
+signal. "CA - Toronto" (9 Ashby postings, an internal office-label prefix) resolves to US (California)
+because the bare-2-letter-code check runs before the city table would see "Toronto"; "China Lake, CA"
+(1 Lever posting — its own sibling record, "China Lake, California," resolves correctly, confirming
+this is specifically about the abbreviation) resolves to CN because the country-name table's own
+"china" is checked before the bare code. Reordering either check fixes its own case and breaks the
+mirror case the other way — "Vancouver, WA" is genuinely the US city, not Vancouver BC, and would
+misresolve if city-table-first became the new default. Fully resolving this needs a real city+state
+co-occurrence check (does "CA" appear directly adjacent to a token this table already knows is a
+Canadian city, vs. adjacent to nothing recognisable) this function does not build.
+
+**Decide:** whether the 10-posting residual above is worth a dedicated co-occurrence check (a real,
+if small, precision improvement) or stays disclosed-and-accepted at this scale — matching item #32's
+own framing of a small residual not being worth new scope on its own. Separately: whether "Georgia
+always resolves to US" should be revisited if this pipeline's own provider mix ever grows real
+Tbilisi-based coverage (none observed as of this package).

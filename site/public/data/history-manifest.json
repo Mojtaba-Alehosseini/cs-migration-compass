@@ -153,6 +153,17 @@
   "status": "ok",
   "empty": false
  },
+ "postings": {
+  "theme": "jobs",
+  "file": "history/postings.json",
+  "kb": 17992.8,
+  "kind": null,
+  "confidence": null,
+  "institution": null,
+  "attribution_chip": null,
+  "status": "ok",
+  "empty": false
+ },
  "world_happiness_report": {
   "theme": "life",
   "file": "history/world_happiness_report.json",

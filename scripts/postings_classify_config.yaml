@@ -1,0 +1,43 @@
+# Package 12, tier 3 — every user-facing filter classify_postings.py itself
+# consumes lives HERE, not hardcoded in the script (the data-scraper-agent
+# skill's own discipline, cited by the work order). Editing what counts as
+# in-scope, or which occupation codes the classifier is allowed to choose
+# from, means editing this file — never a string literal in the .py.
+
+# The occupation vocabulary the classifier may assign — deliberately the
+# SAME shared_keys the wage spine already uses (data/occupations.json), so
+# an eventual side-by-side comparison (never a merge — see build_postings.py's
+# own module docstring) reads against a vocabulary this site already defines
+# and sources, not a second, parallel one invented for postings alone.
+target_occupations:
+  - key: isco08:2512
+    title: Software developers
+  - key: isco08:2511
+    title: Systems analysts
+  - key: isco08:2513
+    title: Web and multimedia developers
+  - key: isco08:2514
+    title: Applications programmers
+  - key: isco08:2519
+    title: Software and applications developers and analysts not elsewhere classified
+  - key: isco08:2522
+    title: Systems administrators
+  - key: isco08:2523
+    title: Computer network professionals
+  - key: isco08:1330
+    title: Information and communications technology service managers
+  - key: isco08:25
+    title: Information and communications technology professionals (2-digit — use when the title is clearly ICT but too senior/broad for a 4-digit code, e.g. "Head of Engineering")
+  - key: none
+    title: Not a software/ICT professional role at all (recruiter screening a non-technical opening, or the title genuinely does not fit any code above)
+
+# Model fallback chain, tried in order on a 429 (rate limit) — matches the
+# work order's own explicit instruction. Every model here must support
+# structured JSON output.
+model_fallback_chain:
+  - gemini-3.1-flash-lite
+  - gemini-3.1-flash
+  - gemini-2.5-flash
+
+batch_size: 25 # postings per API call — never one call per posting
+max_output_tokens: 2048

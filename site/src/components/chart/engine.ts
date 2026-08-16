@@ -28,6 +28,16 @@ export type SeriesMode =
   | 'naive' /** ours — dashed, labelled "not a forecast" */
   | 'benchmark' /** a reference line, never a member — grey dashed */
   | 'lo' /** the lower edge of a band */
+  /** Package 12: what employers ADVERTISE while hiring — a different
+   *  quantity from every mode above, all five of which are some form of
+   *  what people ARE paid (measured, forecast, extrapolated, or a reference
+   *  point drawn from the same kind of survey). Advertised ranges are wide,
+   *  usually exclude equity/bonus, and are selected toward roles currently
+   *  hard to fill — never a restyle of 'actual', never blended with it.
+   *  Drawn as a dotted, thicker, lower-opacity line specifically so it
+   *  reads as "a different KIND of line" at a glance, not just a different
+   *  colour of the same kind (see strokeFor's own comment). */
+  | 'advertised'
 
 export interface Series {
   key: string
@@ -158,6 +168,10 @@ export function makeChart(host: HTMLElement) {
       case 'benchmark': return 'stroke-dasharray="2 4" opacity=".8" stroke-width="1.5"'
       case 'projection': return 'opacity=".72" stroke-width="2.2"'
       case 'lo': return 'stroke-dasharray="3 3" opacity=".75" stroke-width="1.6"'
+      // A dotted (not dashed) 1:2 pattern — every other mode above uses a
+      // dash, so a dot is the one pattern that can't be mistaken for
+      // "actual, but degraded" the way another dashed mode could.
+      case 'advertised': return 'stroke-dasharray="1 3" stroke-linecap="round" opacity=".65" stroke-width="2.4"'
       default: return 'stroke-width="2.2"'
     }
   }

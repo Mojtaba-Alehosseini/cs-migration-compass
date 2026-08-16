@@ -12,4 +12,6 @@ truststore>=0.9         # use the OS certificate store — housepriceindex.ca (T
                         # serves an intermediate that certifi does not carry
 Pillow>=10.0            # renders the Open Graph link-preview images
                         # (scripts/generate_og_images.py, run by `npm run build`)
+PyYAML>=6.0             # scripts/postings_classify_config.yaml (package 12, tier 3) — every
+                        # user-facing classifier filter lives there, never hardcoded in the .py
 

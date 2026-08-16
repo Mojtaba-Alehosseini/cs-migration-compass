@@ -45,6 +45,7 @@ HISTORY_SETS = {
     "stackoverflow_survey": "jobs",
     "wage_distribution": "money",
     "experience_gradient": "money",
+    "postings": "jobs",
     "world_happiness_report": "life",
     "rsf_press_freedom": "life",
     "wipo_gii": "jobs",

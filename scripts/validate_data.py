@@ -346,6 +346,45 @@ def check_survey_vs_advertised_pay(source_ids=None, processed_dir: Path = PROCES
                 f"field name(s) {advertised_hits} — these must never occupy the same field")
 
 
+def check_postings_wage_spine_boundary(processed_dir: Path = PROCESSED) -> None:
+    """Integrity rule (package 12). A genuine, additive cross-FILE check —
+    postings.json literally never carries the wage spine's own distinctive
+    field names, and wage_distribution.json literally never carries
+    postings.json's own. Added alongside check_survey_vs_advertised_pay
+    above, not folded into it: that check scans WITHIN one file for
+    co-occurring hint words, which is a different (and already useful)
+    thing, not a comparison between the two files at all — package 12's own
+    first report claimed this file's existing assertion already covered
+    the cross-file case, which this package's own adversarial review found
+    was not true. Deliberately narrow: `country`/`currency`/`period` are
+    real, ordinary field names both files use for their own unrelated
+    reasons, and are excluded here rather than flagged, so this only fires
+    on a genuine leak, not a coincidental shared word."""
+    log("· postings.json and wage_distribution.json share no distinctive field")
+    postings_path = processed_dir / "postings.json"
+    spine_path = processed_dir / "wage_distribution.json"
+    if not postings_path.exists() or not spine_path.exists():
+        return
+    postings_only = {
+        "raw_text", "confidence", "company_slug", "location_raw", "seed_companies",
+        "provider_summary", "country_counts",
+    }
+    spine_only = {
+        "p10", "p25", "p75", "p90", "combos", "crosswalk", "native_regular_pay",
+        "native_total_earnings", "usd_regular_pay", "usd_total_earnings", "dispersion_by_year",
+    }
+    postings_fields = _field_names(json.loads(postings_path.read_text(encoding="utf-8")).get("data"))
+    spine_fields = _field_names(json.loads(spine_path.read_text(encoding="utf-8")).get("data"))
+    leaked_into_spine = postings_only & spine_fields
+    leaked_into_postings = spine_only & postings_fields
+    if leaked_into_spine:
+        err(f"processed/wage_distribution.json: carries postings-only field name(s) "
+            f"{sorted(leaked_into_spine)} — advertised pay must never reach the survey-wage file")
+    if leaked_into_postings:
+        err(f"processed/postings.json: carries wage-spine-only field name(s) "
+            f"{sorted(leaked_into_postings)} — survey wage data must never reach the postings file")
+
+
 def check_percentiles_not_seniority(source_ids=None, processed_dir: Path = PROCESSED,
                                      docs_dir: Path | None = None) -> None:
     """Integrity rule 4 (package 7). A percentile is total dispersion — it
@@ -1062,6 +1101,7 @@ def main() -> int:
     check_forecast_separation()
     check_odbl_isolation()
     check_survey_vs_advertised_pay()
+    check_postings_wage_spine_boundary()
     check_percentiles_not_seniority()
     check_crosswalk_comparison_depth()
     check_crosswalk_notes()
