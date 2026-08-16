@@ -41,7 +41,7 @@ import { Derived, type DerivedConcept } from '../Derived'
 import { Seg, ChartFoot, ChartTable, Gap } from './Controls'
 import { useAsync } from './useAsync'
 import { loadPayComposition, type PayComposition } from '../../data/store'
-import { comboKey, type Basis, type CurrencyMode, type WageCountry, type WageDistribution } from '../../data/explore'
+import { comboKey, CA_NOC_DISTINCTION, type Basis, type CurrencyMode, type WageCountry, type WageDistribution } from '../../data/explore'
 import { NO_DATA } from '../../data/format'
 
 const cc3 = (c: string) => `var(--c-${c})`
@@ -288,7 +288,12 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                 <text x={PL - 10} y={y0 + 4} fontSize="10.5" fontWeight={suffix ? 400 : 600}
                   fill={col} textAnchor="end">
                   {iso}{suffix ? ` · ${label}` : ''}
-                  {suffix && ROW_LABEL_FULL[r.country] && <title>{ROW_LABEL_FULL[r.country]}</title>}
+                  {suffix && ROW_LABEL_FULL[r.country] && (
+                    <title>
+                      {ROW_LABEL_FULL[r.country]}
+                      {CA_NOC_DISTINCTION[r.country] ? ` — ${CA_NOC_DISTINCTION[r.country]}` : ''}
+                    </title>
+                  )}
                 </text>
                 {combo?.ok ? (
                   canCompare ? (
@@ -361,7 +366,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                       currency: r.native.currency, period: r.native.period, year: r.native.year }}
                     result={{ value: combo.value.median ?? combo.value.mean ?? 0, currency: combo.currency }}
                     concept={comp ? conceptForBasis(comp, basis) : undefined}
-                    payCycleNote={payComp.pay_cycle_context[splitRow(r.country).iso]}>
+                    payCycleNote={CA_NOC_DISTINCTION[r.country] ?? payComp.pay_cycle_context[splitRow(r.country).iso]}>
                     {fmtCcy(combo.value.median ?? combo.value.mean, combo.currency)} ({r.native.year})
                   </Derived>
                 </li>

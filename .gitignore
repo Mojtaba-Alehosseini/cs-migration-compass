@@ -59,6 +59,7 @@ phase-1-data-sources.md
 phase-2-strategy.md
 phase-3-report.md
 phase-4-salary-and-cv-plan.md
+phase-4-cv-setup-checklist.md
 claude-code-prompt.md
 design-mockup.html
 design-mockup-v2.html
@@ -77,6 +78,7 @@ REPORT-P8.md
 REPORT-P9.md
 REPORT-P10.md
 REPORT-P11.md
+REPORT-P12.md
 
 # local tooling config
 .claude/

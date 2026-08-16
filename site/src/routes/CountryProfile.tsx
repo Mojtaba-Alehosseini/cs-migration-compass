@@ -10,7 +10,7 @@ import { Derived } from '../components/Derived'
 import { useAsync } from '../components/explore/useAsync'
 import { useData } from '../data/store'
 import { asOfLabel, money, num, pct, rankOf, sourceName, NO_DATA } from '../data/format'
-import { loadWages, type WageCountry } from '../data/explore'
+import { loadWages, CA_NOC_DISTINCTION, type WageCountry } from '../data/explore'
 import { NotFound } from './NotFound'
 
 const PERIOD_LABEL = { hour: '/hour', month: '/month', year: '/year' } as const
@@ -218,6 +218,11 @@ export function CountryProfile() {
                   </div>
                 )}
                 <WageRowFigure row={row} />
+                {CA_NOC_DISTINCTION[row.country] && (
+                  <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 4, maxWidth: '60ch' }}>
+                    {CA_NOC_DISTINCTION[row.country]}
+                  </div>
+                )}
               </div>
             ))
           ) : wageAbsence ? (

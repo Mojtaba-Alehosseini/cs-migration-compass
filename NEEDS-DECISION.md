@@ -188,7 +188,7 @@ hyphenation was intentional rather than mockup shorthand.
 
 # Package 7 — The salary spine
 
-## 12. Canada's NOC 2021 splits one ISCO-08 job into two codes; nothing sums them
+## 12. Canada's NOC 2021 splits one ISCO-08 job into two codes; nothing sums them — RESOLVED in package 12, tier 0
 
 `data/occupations.json` maps NOC 21231 ("Software engineers and designers")
 **and** NOC 21232 ("Software developers and programmers") to the *same* shared
@@ -202,14 +202,16 @@ CAD 56.49/hr, 21232 CAD 48.08/hr — not close enough to treat as noise).
 `is_primary_target: true` on both and a note on each pointing at the other.
 Nothing sums them, nothing picks one and drops the other.
 
-**Decide:** when package 9 builds the cross-country developer-pay comparison,
-should Canada's figure be 21231+21232 combined (the fuller "everyone who
-codes for a living" population, closer to what Sweden/UK/US each already
-report as one number), 21231 and 21232 shown side by side (preserves the
-signal that Canada's own classification treats these as different jobs), or
-just 21232 alone (the closer semantic match to "developer" as opposed to
-"engineer")? Whichever is picked changes where Canada lands relative to the
-other three on that chart.
+**DECIDED, package 12, tier 0: keep both rows, side by side, and explain each.**
+Owner's own instruction: Statistics Canada publishes two codes because they pay differently
+(Toronto: CAD 56.49/hr vs 48.08/hr, not close enough to treat as noise), so the site shows two,
+each with a short sourced line — not summed, not picked-one, not silently disambiguated. The line
+(`site/src/data/explore.ts`'s `CA_NOC_DISTINCTION`, shared by the Explore·Money panel and the
+country page) is verified directly against noc.esdc.gc.ca's own unit-group profiles, not just
+carried over from the crosswalk's own audit note: 21231's own profile requires licensing "to
+approve engineering drawings and reports and to practise as a Professional Engineer (P.Eng.)";
+21232's profile has no such requirement, only a computer-science-or-equivalent credential — the
+real axis NOC draws that ISCO-08 does not, named in the reader's own words, not the crosswalk's.
 
 ## 13. BLS OEWS's percentile extension is written and verified, but not committed as data — RESOLVED in package 8, tier 0
 

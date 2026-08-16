@@ -180,6 +180,28 @@ export interface WageDistribution {
   absent: { country: string; reason: string }[]
 }
 
+/** Package 12, tier 0 (closes NEEDS-DECISION #12): Canada is the only country
+ *  with two rows for the same shared occupation key — NOC 2021 splits
+ *  isco08:2512 along a professional-engineering-licensure axis ISCO-08 does
+ *  not itself draw (data/occupations.json's own mapping.note is the same
+ *  fact, written for a crosswalk-maintainer audience; this is the
+ *  reader-facing version, shared so every row that renders "21231" or
+ *  "21232" explains itself the same way instead of drifting). Verified
+ *  against noc.esdc.gc.ca's own unit-group profiles, not just carried over
+ *  from the crosswalk note: 21231's own profile states licensing "required
+ *  to approve engineering drawings and reports and to practise as a
+ *  Professional Engineer (P.Eng.)"; 21232's profile states no such
+ *  requirement, only a computer-science-or-equivalent credential. */
+export const CA_NOC_DISTINCTION: Record<string, string> = {
+  'CA-21231': 'NOC 2021’s "engineer" track: covers roles where practising as a licensed '
+    + 'Professional Engineer (P.Eng., provincial/territorial registration) applies to part of the '
+    + 'work — architecture, systems design, drawings and reports a P.Eng. must sign off on. '
+    + 'ISCO-08 does not draw this line at all; one code (2512) covers both.',
+  'CA-21232': 'NOC 2021’s general "developer/programmer" track: a computer science or software '
+    + 'engineering credential, no professional engineering licence required. The closer match for '
+    + 'most "software developer" job titles outside Canada.',
+}
+
 export async function loadWages(): Promise<WageDistribution> {
   const wd = await loadHistory<WageDistribution>('wage_distribution')
   return wd.data
