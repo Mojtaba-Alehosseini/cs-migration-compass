@@ -1,0 +1,11 @@
+{
+ "source_id": "postings_classifications",
+ "generated_at": "2026-08-17T07:43:02+00:00",
+ "meta": {
+  "status": "not_run",
+  "reason": "GEMINI_API_KEY absent from environment"
+ },
+ "data": {
+  "classifications": {}
+ }
+}
