@@ -55,6 +55,21 @@ class TestBuildProbeOrder(unittest.TestCase):
         self.assertEqual(len(order), len(set(order)))
         self.assertEqual(len(order), 20)  # every one of the 20 candidates appears exactly once
 
+    def test_a_previously_verified_token_that_fell_out_of_the_hint_file_is_still_reclaimed(self):
+        # L5, an adversarial review finding: a company this pipeline once
+        # independently verified must keep getting re-checked even after a
+        # THIRD-PARTY aggregator's own hint list stops mentioning its token --
+        # otherwise it stays "verified" in the committed file forever, never
+        # probed again, never given the chance to earn a failure streak and
+        # eventually drop. "orphan" here is deliberately NOT in candidates at
+        # all, unlike every other bucket's own tokens.
+        candidates = ["co1", "co2"]  # orphan's own token, "orphan", is absent
+        previously_verified = {"co1", "orphan"}
+        order = build_probe_order(candidates, already_cached=set(), previously_verified=previously_verified,
+                                   max_new_per_run=0)
+        self.assertIn("orphan", order)
+        self.assertEqual(len(order), len(set(order)))  # still no duplicates once reclaimed
+
 
 class TestMergeVerifiedCompanies(unittest.TestCase):
     def test_a_company_verified_this_run_is_written_fresh_with_streak_reset(self):

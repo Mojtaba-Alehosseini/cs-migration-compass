@@ -33,15 +33,13 @@ import { loadPostings, fmtCompensation, fmtCompany, PROVIDER_LABEL, type Posting
 import { LAND_PATH, LAND_VIEWBOX } from '../data/land'
 import { project } from '../components/CityMap'
 
-const MIN_ADVERTISED_CHART_N = 5
-const MAX_ADVERTISED_CHART_COUNTRIES = 12
-
 /** Package 12, tier 5.1's own `advertised` chart-kit mode needed a real chart
  *  to be visible on — the mode existed in engine.ts but nothing rendered it
  *  anywhere, found while gathering this package's own gate 9 evidence. Median
  *  advertised pay by country, annual-salary postings only, expressed in USD.
- *  Countries below MIN_ADVERTISED_CHART_N are dropped rather than shown on a
- *  sample too thin to mean anything.
+ *  Countries below build_postings.py's own MIN_CHART_N (shipped as
+ *  data.pay_summary_min_n, read where the caption below needs to name it)
+ *  are already dropped server-side, before this file ever sees the array.
  *
  *  Package 14: reads `data.pay_summary_by_country`, pre-computed at build
  *  time (build_postings.py) — this function used to scan the FULL raw
@@ -65,8 +63,12 @@ const MAX_ADVERTISED_CHART_COUNTRIES = 12
  *  posting genuinely is a different quantity and stays excluded on
  *  purpose (disclosed below). */
 function advertisedByCountryCfg(data: PostingsData): ChartCfg | null {
+  // Package 14, adversarial review L11 -- this used to re-slice to a SECOND,
+  // separately-maintained MAX_ADVERTISED_CHART_COUNTRIES copy of Python's
+  // own MAX_CHART_COUNTRIES. build_postings.py already truncates
+  // pay_summary_by_country to its own cap before shipping it; trusting that
+  // directly means one number governs the count, not two that could drift.
   const rows = data.pay_summary_by_country
-    .slice(0, MAX_ADVERTISED_CHART_COUNTRIES)
     .map((r) => ({ cc: r.country, n: r.n, med: r.median_usd_year }))
   if (rows.length < 3) return null
 
@@ -330,7 +332,7 @@ export function Postings() {
             <div className="panel" style={{ marginTop: 12 }}>
               <h2>Median advertised pay by country</h2>
               <div className="sub">
-                Annual-salary postings only ({MIN_ADVERTISED_CHART_N}+ per country to appear),
+                Annual-salary postings only ({data!.pay_summary_min_n}+ per country to appear),
                 converted to USD at each posting's own year — the dotted line is this site's{' '}
                 <b>advertised</b> mode, never restyled from and never blended with the survey-sourced
                 lines on <Link to="/explore/money">Explore · Money</Link>. Hourly and monthly postings

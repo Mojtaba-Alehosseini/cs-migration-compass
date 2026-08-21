@@ -12,9 +12,15 @@ pulled from github.com/Feashliaa/job-board-aggregator — a third-party
 aggregator, explicitly treated as a SEED HINT only, per the work order's own
 instruction: "re-verify every token yourself against the live endpoint before
 it enters the list"). Every token below is hit against the real live
-endpoint; only ones that resolve with >=1 posting enter the seed list this
-pipeline actually ships. A token that 404s, times out, or returns zero
-postings is dropped, not guessed into the output.
+endpoint; only ones that resolve with >=1 posting count as newly verified
+THIS run. A token that 404s, times out, or returns zero postings is never
+guessed into the output — but, since Package 14 Tier 0.2, is not dropped
+from the accumulated seed list on one miss either: merge_verified_companies()
+(postings_common.py) retains an already-verified company through a bounded
+number of consecutive failed probes (a strike, not an eviction), removing it
+only after DEFAULT_MAX_CONSECUTIVE_FAILURES in a row and logging the
+removal — see that function's own docstring for the full rule this replaced
+a from-scratch overwrite with.
 
 RESUMABLE, POLITE: each company's raw response is cached to
 data/raw/postings/ashby/<token>.json via _common.py's own fetch() — a second
@@ -222,9 +228,11 @@ def run() -> None:
         transforms=[
             "Loaded candidate company tokens from a third-party MIT-licensed aggregator "
             "(github.com/Feashliaa/job-board-aggregator) as SEED HINTS ONLY.",
-            "Probed each candidate live against api.ashbyhq.com; kept only tokens that resolved with "
-            "at least one real posting — a 404, timeout, or zero-postings response drops the "
-            "candidate, it is never guessed into the output.",
+            "Probed each candidate live against api.ashbyhq.com; a token is never guessed into the "
+            "output, only counted verified once it resolves with at least one real posting. An "
+            "already-verified company that later 404s, times out, or returns zero postings is kept "
+            "through a bounded number of consecutive failed probes (a strike, not an eviction) and "
+            "removed, with the removal logged, only after repeated consecutive failures.",
             "Parsed each posting's own compensationTiers into a common {min,max,currency,period} shape, "
             "preferring the first component with a real minValue+currencyCode.",
             "Resolved each posting's own free-text location to a best-effort ISO2 country code — never "

@@ -1674,32 +1674,77 @@ dataflow publishes a native-currency (`XDC`) series at all for this specific ind
 it in and switch this check to a same-currency ratio, removing the PPP/FX question entirely; if no:
 this disclosure is the durable answer, not a placeholder for a fix that isn't there to make).
 
-## 40. Position.tsx and CountryProfile.tsx still read the pairwise `crosswalk` verdict, not the set-wide `chart_comparable` one — checked, this is correct by design, not a missed instance of Finding 1
+## 40. Position.tsx still reads the pairwise `crosswalk` verdict — CoverageMap is correct by design, "Pay against cost" is a real, only partly-mitigated gap
 
-An independent adversarial review (M7) flagged that these two files still use `row.crosswalk`
-(`compare()`'s pairwise-against-one-fixed-reference verdict) rather than `row.chart_comparable`
-(`resolve_set()`'s set-wide verdict, this package's own Tier 1 fix for the severe finding) — worth
-checking directly rather than assuming either "obviously fine" or "obviously the same gap," since
-both files DO render more than one country.
+An independent adversarial review (M7) flagged that `Position.tsx`/`CountryProfile.tsx` still use
+`row.crosswalk` (`compare()`'s pairwise-against-one-fixed-reference verdict) rather than
+`row.chart_comparable` (`resolve_set()`'s set-wide verdict, Tier 1's own fix for the severe finding).
+First pass at this entry concluded "correct by design, no gap" for all three surfaces — checked
+again against the review's own specific citations, and that conclusion was too quick for one of them.
 
-**Checked what each actually shows.** `CountryProfile.tsx` renders ONE country's own native wage
-figure on its own page, with `crosswalk.degraded_by` used as a `<Figure>` source-attribution note
-about THAT country's own comparability — never placed next to another country's number on a shared
-scale. `Position.tsx`'s `CoverageMap` lists all 15 countries, but as a per-country CAPABILITY
-table ("does the position/estimate feature work here, and at what crosswalk depth") — each row
-states its own depth as information about that one country, the same way a compatibility matrix
-lists per-row support levels; nothing implies two rows' own figures are being placed on one
-comparable axis. Its own separate "Pay against cost" list shows the same pattern: each city's own
-estimate, independently derived and disclosed via its own `<Derived>` chain, for a user's own
-personal budget planning across cities THEY picked — not a "which country pays more" ranking.
+**CountryProfile.tsx — still correct, unchanged conclusion.** Renders ONE country's own native wage
+figure, `crosswalk.degraded_by` used as a `<Figure>` source-attribution note about THAT country's own
+comparability, never placed next to another country's number.
 
-Finding 1's actual defect was specifically a SHARED-AXIS chart plotting every country's own number as
-though visually comparable regardless of depth. Neither file does that. `data/explore.ts`'s own
-`ChartComparability` type docstring already states this distinction was deliberate, not an oversight:
-"`crosswalk` (above) is pairwise against the single reference occupation and is still correct for a
-country page's own 'how does my code relate to the reference' disclosure... the two can disagree
-(Ireland is `crosswalk.comparable` at 1-digit, but `chart_comparable: false` once the panel's own
-quorum resolves to 4-digit)" — that disagreement is intended, not a drift to fix.
+**Position.tsx's `CoverageMap` — still correct, unchanged conclusion.** A per-country CAPABILITY
+table ("does the position/estimate feature work here, and at what crosswalk depth"), each row stating
+its own depth as a fact about that one country, the same way a compatibility matrix lists per-row
+support levels — nothing implies two rows' own figures sit on one comparable axis.
 
-**No code change made.** Recorded here so a future adversarial review finds this reasoning on file
-rather than re-raising the same question with no answer to check against.
+**Position.tsx's "Pay against cost" — a real gap, only PARTLY fixed.** The review's own words: it
+"renders a per-city estimate row for IE/ES/DE built from those broad distributions, side by side
+with 4-digit countries, gated only on `row.crosswalk.comparable`" — correct, and this one IS closer
+to Finding 1's own shape than first assessed here. A user comparing "Dublin: 5 years to home" against
+"Stockholm: 3 years to home" is implicitly comparing software-developer outcomes, but Dublin's own
+figure is drawn from Ireland's "all professionals" distribution (crosswalk forced to 1-digit) — the
+same kind of scope mismatch Finding 1 named, in a personalised tool instead of a population chart.
+Before this fix, nothing on screen disclosed that outside an SVG hover title elsewhere in the
+codebase — worse coverage than WagePanel had even before ITS OWN fix.
+
+**What was actually done, and what wasn't:** added a plain, always-visible text caveat next to any
+"Pay against cost" row whose `crosswalk.comparable` is true but `degraded_by` is set — the minimum
+honest disclosure, matching the "say so in real text, not a tooltip" standard this package already
+applied to WagePanel's own exclusions. What this does NOT do: decide whether a degraded city belongs
+in this list at all. WagePanel's own answer to that question (Tier 1) was to EXCLUDE a country the
+resolved set can't support; "Pay against cost" cannot cleanly do the same, because the city is one
+the USER explicitly chose (via Compare), not one this site is offering up as "the 15 comparable
+countries" — dropping a user's own selection outright is a different, more disruptive product
+decision than trimming an editorial chart.
+
+**Decide:** whether "Pay against cost" should (a) stay as now — every user-picked city renders with
+a plain-text caveat when degraded, nothing dropped, or (b) actively warn more strongly (e.g. visually
+distinct, not just parenthetical text) for a degraded city's own estimate, or (c) something closer to
+WagePanel's own exclusion model when enough of the user's OWN selected cities share a resolvable
+depth (an open design question — quorum semantics don't obviously translate to an arbitrary,
+often-small, user-chosen set the way they do to a fixed 15-country editorial panel).
+
+## 41. `postings-refresh.yml`'s reclaim bucket is uncapped and grows every run — a workflow timeout was added as a cheap safety net; whether to cap the bucket itself is still open
+
+An independent adversarial review (L3) flagged that `build_probe_order`'s own docstring
+(`postings_common.py`) referenced "See NEEDS-DECISION.md for the runtime tradeoff this creates" —
+no such entry existed anywhere in this file. The underlying tradeoff is real: the "reclaim" bucket
+(every already-committed-verified company, re-probed live and UNCONDITIONALLY on every scheduled
+run — Tier 0.2's own fix for the destructive-refresh finding) has no cap, by design, and only grows
+as more companies become verified over time. `postings-refresh.yml` also set no `timeout-minutes`,
+relying entirely on GitHub Actions' own 360-minute default.
+
+**Checked the actual current scale before deciding what, if anything, to do:** Ashby's own
+`verified_companies` count today is 961 (not the review's own slightly earlier ~1,360 — the count
+moves run to run). Each reclaim probe costs a real HTTP request plus a 0.15s polite-pacing sleep
+(`src_postings_ashby.py`'s own `_fetch_board()`); at that rate, probing the FULL reclaim bucket costs
+roughly 8-12 CPU-minutes today, not hours — nowhere near GitHub's own 360-minute default, and this
+review's own implicit "might silently time out" framing does not hold at today's scale. The real risk
+is a FUTURE one: the bucket has no ceiling, and nothing would visibly warn as it grows.
+
+**Done:** added `timeout-minutes: 120` to the `refresh` job — a generous, low-risk safety net (roughly
+10x today's realistic reclaim-bucket runtime) that fails the job loudly and quickly if a future run
+ever does stall or grow unexpectedly large, rather than silently consuming CI minutes for hours. This
+does not cap the bucket itself or change any harvest behavior.
+
+**Decide:** whether the reclaim bucket should ever be capped or paginated (e.g. probing only the N
+most-recently-unconfirmed companies per run, cycling through the rest over several runs) once it
+grows large enough to matter. Not done here — capping it carelessly risks reintroducing a milder
+version of the exact destructive-refresh problem Tier 0.2 just fixed (a company that never gets its
+turn in a capped rotation is functionally the same as one silently dropped), so this needs real design
+attention when the scale actually warrants it, not a number picked defensively today against a
+problem that is not yet present.

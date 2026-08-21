@@ -63,6 +63,12 @@ export interface PostingsData {
    *  silence. See build_postings.py's own comment at this field's
    *  construction for the full reasoning. */
   pay_summary_by_country: { country: string; n: number; median_usd_year: number }[]
+  /** The N in "n>=N" above — shipped alongside the data itself (adversarial
+   *  review L11) so the on-screen caption naming this threshold reads the
+   *  one number that actually governs the filter, not a second,
+   *  separately-maintained copy that build_postings.py's own MIN_CHART_N
+   *  could drift from silently. */
+  pay_summary_min_n: number
 }
 
 export async function loadPostings(): Promise<PostingsData> {

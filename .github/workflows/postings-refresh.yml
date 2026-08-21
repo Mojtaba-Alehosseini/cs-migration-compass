@@ -29,6 +29,17 @@ jobs:
   refresh:
     name: Re-run postings harvesters
     runs-on: ubuntu-latest
+    # Package 14, adversarial review L3 -- no explicit timeout meant this job
+    # relied entirely on GitHub's own 360-minute default. build_probe_order()'s
+    # own "reclaim" bucket (postings_common.py) probes every already-verified
+    # company UNCONDITIONALLY every run, uncapped, and only grows as more
+    # companies get verified over time -- today that is real but small
+    # (~8-12 CPU-minutes of throttled requests at current company counts, not
+    # remotely close to 360), so this is a safety net against future,
+    # currently-unbounded growth or a genuinely stalled run, not a response
+    # to an active problem. See NEEDS-DECISION #41 for the growth question
+    # itself, which this timeout does not answer on its own.
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 

@@ -859,9 +859,25 @@ def check_oecd_wage_benchmark(processed_dir: Path = PROCESSED) -> None:
         flag("wage_distribution.json or oecd_indicators.json missing — cannot check the OECD wage "
              "benchmark (fine if this environment hasn't built the wage spine yet)")
         return
+    # An adversarial review (L10) found Canada's own two rows produce the
+    # identical "no USD-converted median available on any basis" FLAG every
+    # single run, forever -- pay_composition.json's own salary_ca entry
+    # marks irregular_bonus/employer_social_contributions "unknown", a
+    # genuinely UNVERIFIED (not merely absent) composition that can never
+    # resolve to an .ok combo on any future run without new source
+    # evidence. That is structurally different from every other reason this
+    # branch can fire (a real, possibly-transient FX or data gap worth a
+    # human's attention each time it happens) -- looked up by source_id
+    # against this authoritative field, not hardcoded by country code, so
+    # it also covers Qatar/UAE's own same documented gap without a repeat.
+    pay_comp = _load(DATA / "pay_composition.json") or {}
+    unverified_source_ids = {
+        s["source_id"] for s in pay_comp.get("sources", [])
+        if s.get("irregular_bonus") == "unknown" or s.get("employer_social_contributions") == "unknown"
+    }
     oecd_data = oecd.get("data", {})
     countries = wd.get("data", {}).get("countries", [])
-    checked = exempt = flagged = 0
+    checked = exempt = flagged = uncheckable = 0
     exempt_countries: set[str] = set()
     for row in countries:
         cc = row["country"].split("-")[0]  # "CA-21231"/"CA-21232" -> "CA"
@@ -881,7 +897,12 @@ def check_oecd_wage_benchmark(processed_dir: Path = PROCESSED) -> None:
         if not combo or not combo.get("ok"):
             combo = row["combos"].get("usd_total_earnings")
         if not combo or not combo.get("ok"):
-            flag(f"{row['country']}: no USD-converted median available on any basis — cannot benchmark")
+            if row.get("source_id") in unverified_source_ids:
+                uncheckable += 1
+                log(f"  {row['country']}: UNCHECKABLE — {row['source_id']}'s own pay composition is "
+                    "unverified (pay_composition.json), not a benchmark result")
+            else:
+                flag(f"{row['country']}: no USD-converted median available on any basis — cannot benchmark")
             continue
         median = combo["value"].get("median")
         if median is None:
@@ -897,7 +918,8 @@ def check_oecd_wage_benchmark(processed_dir: Path = PROCESSED) -> None:
                  f"avg_wages (${oecd_row['value']:,.0f}, {year}) — outside the {_OECD_BENCHMARK_LOW}x-"
                  f"{_OECD_BENCHMARK_HIGH}x band a software-occupation premium should plausibly fall in")
     log(f"  {checked} checked, {flagged} outside the {_OECD_BENCHMARK_LOW}x-{_OECD_BENCHMARK_HIGH}x "
-        f"band, {exempt} exempt (no OECD avg_wages series)")
+        f"band, {exempt} exempt (no OECD avg_wages series), {uncheckable} uncheckable "
+        f"(unverified pay composition, not a benchmark result)")
 
     # M5's own hardening: a rename/removal of WG_USD_PPP upstream would
     # otherwise make every country EXEMPT and let this function return

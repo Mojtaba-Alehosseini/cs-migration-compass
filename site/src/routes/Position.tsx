@@ -338,6 +338,24 @@ function PayVsCost({ profile, wageByCountry, gradient }: {
                 {fmtYearsToHome(y, never)}
               </span>
               {stability === 'unstable' && <UnstableMark city={city} band="mid" budget={budget} />}
+              {/* Package 14, adversarial review M7 — real, unresolved gap: this
+                  estimate is built from row.crosswalk (pairwise), and a
+                  DEGRADED crosswalk (Ireland: "all professionals," not
+                  software developer specifically) silently fed a real dollar
+                  figure into this list with no visible caveat at all before
+                  this line — only an SVG hover title existed anywhere else in
+                  this codebase for the same fact. Whether a degraded city
+                  belongs in this list at all (vs. WagePanel's own choice to
+                  exclude outright) is a real product decision the owner
+                  should make (NEEDS-DECISION #40) — this is the minimum
+                  honest middle ground: keep it, since the user chose this
+                  city themselves, but say plainly, in text, why its own
+                  figure may not mean what the others mean. */}
+              {row!.crosswalk.comparable && row!.crosswalk.degraded_by && (
+                <span style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
+                  ({row!.crosswalk.degraded_by})
+                </span>
+              )}
             </div>
           )
         })}

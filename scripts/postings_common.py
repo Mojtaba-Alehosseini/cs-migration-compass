@@ -112,14 +112,38 @@ def build_probe_order(candidates: list[str], already_cached: set[str],
        companies (package 12) to 304 (this package's own preflight
        investigation), while Greenhouse (max_new_per_run 250, closer to its
        own ~300-company baseline) and Lever (max_new_per_run 400, likewise)
-       degraded less severely. See NEEDS-DECISION.md for the runtime
-       tradeoff this creates as the committed list keeps growing.
+       degraded less severely. UNCAPPED and growing every run as more
+       companies become verified over time -- see NEEDS-DECISION #41 for
+       the actual current scale (checked, not guessed at) and the open
+       question of whether/how to cap it once growth actually warrants
+       that.
     3. Genuinely new candidates -- never cached, never verified. Capped at
        max_new_per_run, same cap this pipeline already had; this is what
        still bounds a single run's worst-case new-request volume.
+
+    An adversarial review (L5) found bucket 2 was reclaiming only tokens
+    STILL present in `candidates` (the current hint file) -- a company
+    verified in a past run whose OWN token later fell out of the hint file
+    (a third-party aggregator list this pipeline doesn't control) was then
+    probed by NOTHING, ever again: never re-verified, never given the
+    chance to accumulate a failure streak, so merge_verified_companies()'s
+    own "not probed at all this run: left untouched" case applied to it
+    forever, keeping a possibly long-dead board "verified" in the committed
+    file with no way back out. Checked live before fixing: 0 such orphans
+    for ashby/greenhouse/lever, 1 for teamtailor (a correctly-retained,
+    still-failing company, not an orphan) -- not an active problem today,
+    but a real one waiting to happen the moment a hint list drops a token
+    for a company that then goes on to actually close its board. Fixed by
+    reclaiming every previously-verified token regardless of whether the
+    CURRENT hint file still mentions it -- a company this pipeline once
+    independently verified earns continued re-checking on its own record,
+    not on a third-party list's own, uncontrolled churn.
     """
     cached = [c for c in candidates if c in already_cached]
-    reclaim = [c for c in candidates if c not in already_cached and c in previously_verified]
+    reclaim = (
+        [c for c in candidates if c not in already_cached and c in previously_verified]
+        + [c for c in previously_verified if c not in already_cached and c not in candidates]
+    )
     fresh = [c for c in candidates if c not in already_cached and c not in previously_verified]
     return cached + reclaim + fresh[:max_new_per_run]
 

@@ -128,9 +128,18 @@ class TestConvertCompensationToUsd(unittest.TestCase):
     real reason, not a mock silently hiding it."""
 
     def test_a_real_sgd_posting_converts_at_its_own_years_rate(self):
+        # L9, an adversarial review finding: asserting result["min"] against
+        # 100_000 / result["fx_rate"] only checks the function's own return
+        # is internally consistent with itself -- it would pass even if the
+        # rate itself were wrong. 1.30745 is read directly from the
+        # committed data/processed/fx_rates.json's own SG/2025 entry,
+        # independently of this function, so a real drift in either the
+        # rate or the arithmetic fails this test for the right reason.
         result = convert_compensation_to_usd({"currency": "SGD", "min": 100_000, "max": 150_000}, 2025)
         self.assertIsNotNone(result)
-        self.assertAlmostEqual(result["min"], 100_000 / result["fx_rate"], places=2)
+        self.assertAlmostEqual(result["fx_rate"], 1.30745, places=5)
+        self.assertAlmostEqual(result["min"], 100_000 / 1.30745, places=2)
+        self.assertAlmostEqual(result["max"], 150_000 / 1.30745, places=2)
         self.assertEqual(result["fx_year"], 2025)
         self.assertEqual(result["fx_country_used"], "SG")
 

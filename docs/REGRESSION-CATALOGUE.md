@@ -385,28 +385,59 @@ committed list fails to reprobe in one run) and asserts the whole list survives 
 zero removals; `test_previously_verified_tokens_are_reclaimed_unconditionally_even_with_zero_new_budget`
 reproduces the empty-CI-cache mechanism directly.
 
-### R19. A provider's own compensation period tag disagreed with its own numbers
+**Recovery, for the record:** the same package that fixed the mechanism also re-probed every
+company Ashby's own seed list had recorded as verified before the collapse (package 12's own
+1,419-company list) against the live API, live, with the on-disk cache deliberately deleted
+first so "still responds" meant a genuine fresh answer, not a stale cached one — 554 of 558
+still responded and were restored. An adversarial review (L4) found this recovery left no
+trace in the committed data itself: the recovery run's own `meta.tier_0_3_recovery` block and
+provenance entry were both overwritten by the next regular harvester run roughly 30 minutes
+later, which is expected (`meta` describes the MOST RECENT run, not a history log) but meant
+the 554/558 figure existed nowhere durable. Recorded here instead, since this catalogue — not
+a per-run `meta` block — is this project's own durable home for "a bug happened, here is
+what was found and fixed."
+
+### R19. A provider's own compensation period tag disagreed with its own numbers — and a first fix for it shipped its own version of the same class of bug
 
 **Wrong:** Ashby's own `interval`, Lever's own `interval`, and USAJOBS' own `salaryType`
 are real fields, but not always correct for the SPECIFIC posting they're attached to — an
 employer's own ATS form entry, or a federal listing's default salaryType, not this
 pipeline mis-reading real text. A skilled-trade wage of `$30-$50` tagged "year" rendered
-as a $30-$50/year salary; a bare `$250-$300` OTE figure for an Enterprise Account
-Executive (plainly meant in thousands) rendered as literally $250-$300/year. 64 records
-(an external audit's own count) annualised below $12,000 as a result.
+as a $30-$50/year salary. 64 records (an external audit's own count) annualised below
+$12,000 as a result.
 
-**Correct:** `postings_common.reinterpret_implausible_year()` — a "year"-tagged range
-under 100 (of any currency this pipeline handles) is reinterpreted as hourly, values
-unchanged; a range from 250 up to 12,000 whose own raw text carries no `k`/`K` marker is
-scaled ×1000 (a bare number an employer meant in thousands); a range that already
-carries its own `k`/`K` marker (already correctly scaled) and the genuinely ambiguous
-100-250 gap are left untouched — flagged for review by R21's own plausibility gate
-instead of guessed at.
+**First correction, later found wrong and removed:** a rule scaling any "year"-tagged,
+unmarked bare number from 250 up to 12,000 by ×1000 (an employer presumed to mean
+thousands — the work order's own example, "OTE $250-$300" for an Enterprise Account
+Executive). An independent adversarial review found this rule had already produced real,
+wrong published values: HireHangar's own "Underwriter" and "Underwriting Analyst"
+postings read raw_text "$500 - $700", genuinely $500-$700/MONTH like ~90 sibling postings
+from the same employer at the identical shape and magnitude — turned into a fabricated
+$500,000-$700,000/YEAR that then passed every downstream plausibility check, worse than
+the original visibly-broken reading. The rule could not reliably tell "a bare number
+meant in thousands" apart from "a bare number that is monthly with its own qualifier
+text dropped" — both produce an identical raw shape, and picking between two physically
+different real interpretations by magnitude alone is exactly the class of guess this
+project's own rules forbid. Removed entirely rather than patched with a corroboration
+heuristic (an "OTE" text marker, a same-employer cross-check) — see
+`scripts/postings_common.py`'s own module comment above `_YEAR_LOOKS_HOURLY_THRESHOLD`
+for the full incident.
+
+**Correct, current state:** `postings_common.reinterpret_implausible_year()` — ONE rule
+remains: a "year"-tagged range under 100, in USD only (the threshold was itself found
+currency-blind, applied to raw EUR/INR numbers calibrated only against USD data — a
+second adversarial-review finding, fixed by restricting to `currency == "USD"`), is
+reinterpreted as hourly, values unchanged. Every bare-number-possibly-meant-in-thousands
+case the removed rule used to touch is now left alone, on purpose, the same way the
+100-250 gap always was — flagged for review by R21's own plausibility gate instead of
+guessed at.
 
 **Test:** `test_postings_compensation_fixes.py` — every case is a real record pulled
-live while diagnosing the bug (antares' own hourly-shaped wage, amperos' own OTE figure,
-akur8's own already-`k`-scaled internship stipend, the USAJOBS seasonal Clerk role), not
-a synthetic example.
+live while diagnosing the bug (antares' own hourly-shaped wage, the USAJOBS seasonal
+Clerk role), not a synthetic example; the HireHangar and amperos OTE cases are now
+regression-tested to confirm they are BOTH left untouched, on principle, rather than one
+being "correctly" rescaled and the other not — this function no longer tries to
+distinguish the two by magnitude alone, because it cannot do so reliably.
 
 ### R20. A data-quality report claimed health for a module it never actually ran
 
@@ -443,18 +474,39 @@ Finding 1 (SEVERE): the site's own published Spanish median implied Spanish deve
 earn 0.74x the Spanish national average wage.
 
 **Correct:** `crosswalk.resolve_set()` — given every displayed country's own pairwise
-verdict, resolves the deepest depth reached by a real quorum (>=2) of them, and excludes
-by name, with a reason, any country whose own depth falls short.
-`build_wage_distribution.py` attaches this as each row's own new `chart_comparable`
-field (`crosswalk`, the original pairwise verdict, is untouched — country pages still
-read it); `WagePanel.tsx` filters on `chart_comparable`, not `crosswalk`, and renders
-the resolved depth plus every excluded country's own reason on screen, not just in a
-tooltip.
+verdict, resolves the deepest depth reached by a real quorum (>=2 distinct COUNTRIES) of
+them, and excludes by name, with a reason, any country whose own depth does not EXACTLY
+equal the resolved depth — too shallow to meet it, or (an independent adversarial review's
+own finding, M2) too DEEP: an earlier revision admitted a country deeper than the resolved
+depth as "comparable, degraded" while its underlying VALUE stayed at its own full native
+depth (the code was truncated to the resolved depth; the data underneath it was not) — the
+same class of problem Finding 1 itself was about, mirrored inside its own fix. Exact-match
+inclusion means a country whose own classification is MORE precise than what the rest of
+the displayed set can support leaves the chart too, honestly, rather than showing a
+partially-mismatched value at a truncated label. Quorum counting was also found (M3)
+operating on ROW LABELS, not countries — Canada's own two NOC-code rows (`CA-21231`,
+`CA-21232`) both landing at 4-digit let Canada alone satisfy "2 countries share this
+depth," which the function's own docstring already promised could never happen; fixed by
+collapsing to `label.split('-')[0]` for quorum-counting and "who forced it" disclosure
+purposes only — per-row verdicts are unaffected, each of Canada's rows is still
+individually assessed and rendered. `build_wage_distribution.py` attaches the result as
+each row's own new `chart_comparable` field (`crosswalk`, the original pairwise verdict,
+is untouched — country pages still read it, see NEEDS-DECISION #40 for where that
+remains correct and where it doesn't); `WagePanel.tsx` filters on `chart_comparable`, not
+`crosswalk`, and renders the resolved depth plus every excluded country's own reason on
+screen, not just in a tooltip — with no more "degraded but comparable" middle state to
+disclose, since exact-match inclusion means a comparable row's own depth always equals
+the resolved depth by construction.
 
 **Test:** `test_ui_regressions.mjs` R21 — loads the real, live wage panel and asserts
-Ireland/Spain/Germany (each below the resolved 4-digit depth) render NO bar and DO
-render their own specific reason, while a comparable country (Sweden) still renders a
-bar carrying its own reference year.
+Ireland/Spain/Germany (each excluded from the CHART for their own reason — Germany on
+crosswalk-depth grounds, distinct from and not to be confused with the separate OECD
+wage-benchmark check, which does not flag Germany at all, see NEEDS-DECISION #35) render
+NO bar and DO render their own specific reason, while a comparable country (Sweden)
+still renders a bar carrying its own reference year. `scripts/tests/test_crosswalk_
+resolve_set.py` (added after M4's own finding — this function had no unit test at all
+despite being the severe finding's own fix) covers both exclusion directions and the
+Canada quorum-counting fix directly, at the Python level.
 
 ---
 

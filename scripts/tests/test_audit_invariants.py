@@ -336,6 +336,40 @@ class TestOecdWageBenchmark(AuditInvariantTestCase):
         self.assertTrue(any("missing" in f for f in ad.FLAGS), ad.FLAGS)
         self.assertEqual(ad.ERRORS, [])
 
+    def test_a_row_with_unverified_pay_composition_is_uncheckable_not_flagged(self):
+        # L10, an adversarial review finding: Canada's own two wage-panel
+        # rows (source_id salary_ca) will NEVER have an .ok combo on any
+        # basis, because data/pay_composition.json's own REAL, committed
+        # salary_ca entry marks irregular_bonus "unknown" -- a permanent,
+        # already-disclosed condition, not a fresh finding worth a flag
+        # every single run forever. This reads the REAL pay_composition.json
+        # (not a scratch fixture -- there is no processed_dir-style override
+        # for it), so a future change to salary_ca's own entry would need
+        # this test updated too, the same tradeoff TestConvertCompensationToUsd
+        # already accepts for fx_rates.json.
+        self._write_pair(
+            {"countries": [{"country": "CA-21231", "source_id": "salary_ca", "native": {"year": 2024},
+                             "combos": {"usd_regular_pay": {"ok": False, "reason": "no common basis"},
+                                        "usd_total_earnings": {"ok": False, "reason": "no common basis"}}}]},
+            {"CA": {"avg_wages": {"WG_USD_PPP": [{"period": "2024", "value": 60000}]}}},
+        )
+        ad.check_oecd_wage_benchmark(self.tmp)
+        self.assertFalse(any("CA-21231" in f for f in ad.FLAGS), ad.FLAGS)
+
+    def test_a_row_with_no_combo_and_a_verified_composition_is_still_flagged(self):
+        # The other half of L10's own fix: a country whose composition IS
+        # verified (not in pay_composition.json's own unverified set) but
+        # still has no .ok combo for some OTHER reason must still flag --
+        # this is real, worth-a-look signal, not the permanent Canada case.
+        self._write_pair(
+            {"countries": [{"country": "US", "source_id": "bls_oews", "native": {"year": 2024},
+                             "combos": {"usd_regular_pay": {"ok": False, "reason": "no FX rate for 2024"},
+                                        "usd_total_earnings": {"ok": False, "reason": "no FX rate for 2024"}}}]},
+            {"US": {"avg_wages": {"WG_USD_PPP": [{"period": "2024", "value": 60000}]}}},
+        )
+        ad.check_oecd_wage_benchmark(self.tmp)
+        self.assertTrue(any("US" in f and "no USD-converted median" in f for f in ad.FLAGS), ad.FLAGS)
+
 
 class TestPostingsAnnualisedPlausibility(AuditInvariantTestCase):
     """Package 14, Tier 3.3 (external audit Finding 3) / adversarial review

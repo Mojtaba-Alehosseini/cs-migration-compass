@@ -244,6 +244,14 @@ def run() -> None:
         "seed_companies": seed_companies,
         "country_counts": country_counts,
         "pay_summary_by_country": pay_summary_by_country,
+        # Package 14, adversarial review L11 -- MIN_CHART_N used to also live
+        # as a second, separately-maintained copy in Postings.tsx, read only
+        # by its own on-screen caption text ("5+ per country to appear").
+        # Nothing forced the two to move together; changing this constant
+        # here would have silently made that caption wrong. Shipped instead,
+        # so the caption reads the one number that actually governs
+        # pay_summary_by_country's own filter, not a hopeful duplicate of it.
+        "pay_summary_min_n": MIN_CHART_N,
     }, meta={
         "postings_count": len(all_postings),
         "seed_companies_count": len(seed_companies),

@@ -50,7 +50,10 @@ THROTTLE_SECONDS = 0.3
 # openings, not just ones that happened to have some the day this ran).
 # The rest are well-known Teamtailor customers per the platform's own public
 # case-study pages — each is still independently verified live below before
-# it counts as "verified"; a token that 404s is dropped, not guessed in.
+# it counts as "verified", never guessed in. A token that 404s here on its
+# FIRST-ever probe is never added; one that was already verified in a past
+# run and later 404s is kept through a bounded number of consecutive misses
+# (merge_verified_companies(), postings_common.py) rather than dropped on one.
 CANDIDATES = [
     "nordicknotsab", "ictnordics", "nordtechgroup", "allentenordic",
     "polestar", "hemnet", "tink", "instabox", "budbee", "kry", "epidemicsound",
