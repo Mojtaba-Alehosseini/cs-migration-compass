@@ -1518,3 +1518,75 @@ published (historically, early the following year), with no code change needed.
 currencies' countries (Philippines, Poland, China, Hungary, Thailand, Mexico, Brazil, Czechia, South
 Korea, Romania, Switzerland, Malaysia, Hong Kong, Taiwan, Argentina) is worth a future package's scope,
 given each is a small fraction of total postings today.
+
+## 37. The OECD wage benchmark (item #35) compares whichever pay basis a country happens to publish, not a composition-matched one
+
+OECD's own `avg_wages` series (national-accounts-based, "average annual wages per full-time
+equivalent employee") is compositionally closer to `total_earnings` (bonuses included) than
+`regular_pay` — national accounts' own compensation-of-employees concept includes irregular pay.
+`check_oecd_wage_benchmark()` uses `usd_regular_pay` when a country publishes it, falling back to
+`usd_total_earnings` otherwise — it does not composition-match against OECD's own basis.
+
+**Why this was not treated as a bug to fix:** the resulting bias runs in the SAFE direction for a
+FLAG-only check. A `regular_pay`-based country (Sweden 1.06x, Finland 1.05x — both real,
+depth-4-comparable, both close to the 1.0 floor) is being compared against a bonus-INCLUSIVE
+baseline while excluding its own bonus — if compared on a truly consistent (bonus-included) basis,
+its real ratio would be equal or HIGHER, never lower. The compositional mismatch can only push a
+regular_pay country's reported ratio DOWN, toward more flagging, never up toward a false pass. A
+`total_earnings`-based country (GB, AU, ES) has no such mismatch at all — both sides already include
+bonuses. There is no path from this mismatch to a country that SHOULD fail silently passing.
+
+**Decide:** whether a future package should composition-match this benchmark properly (deriving a
+consistent bonus-inclusive OECD comparator per country, where the data exists to do so) for
+precision, or whether the current, safely-biased-toward-over-flagging version is good enough given
+its role is triggering human review, not an automated correction.
+
+## 38. `/postings` fails the work order's own Lighthouse performance gate — root cause found, not fully fixed
+
+Gate 11 requires Lighthouse performance >=90 on every route. Measured, retried three times (not
+noise — consistently reproduced): `/postings` best of three 0.80. Every other route measured
+(home, compare, position, `/data/postings-seed`, explore/money, explore/jobs, city/milan,
+country/SE, data) scores 0.94-0.98 — `/data/postings-seed` in particular started at 0.84-0.85 and
+now passes at 0.94 after the two fixes below, so they are real, measured improvements, just not
+enough on their own for `/postings` itself, the one route most directly built around the full raw
+postings array.
+
+**Root cause, confirmed via Lighthouse's own trace, not guessed:** `history/postings.json`'s own
+`network-requests` entry shows a 20,523,759-byte (~20MB) resource size — this package's own postings
+recovery (Gate 1: 19,463 -> 46,040 real postings) is directly why. The browser's own JSON.parse() of
+that payload dominates the page's main-thread work (Lighthouse's own `mainthread-work-breakdown`:
+~1.1s in "Other," ~0.9-1.0s in "Script Evaluation," largely attributable to parsing plus the
+subsequent React render of the parsed data) — `total-byte-weight` itself scores a clean 1.0 (the
+gzip-compressed transfer is only ~2.25MB), so this is a CPU-bound parsing/rendering cost, not a
+network one.
+
+**Two real fixes applied and verified, insufficient alone:**
+1. `Postings.tsx`'s own `mapDots` (a per-country map-view aggregate) was being computed on every
+   render regardless of whether the map view was even showing — gated on `view === 'map'` now.
+2. `advertisedByCountryCfg()` used to re-scan the FULL raw `postings` array and sort per-country
+   values in the browser, on every page load, to compute a chart that is IDENTICAL for every visitor
+   until the next rebuild. Moved to `build_postings.py` (`advertised_by_country`, a ~12-row
+   pre-computed field) — a genuine, deterministic build-time aggregate, not a client-side
+   recomputation of the same thing on every visit.
+
+Both are real, disclosed, unconditionally-good changes (they remove genuinely wasted work) — neither
+is a "fake it to pass a check" move, and neither alone nor together brought the score to 90 (0.78-0.83
+after both). The dominant cost — parsing a 20MB JSON payload synchronously on the main thread — needs
+a genuine architecture change to actually fix: paginating or lazy-loading the postings LIST fetch
+itself (rather than shipping all 46,040 records on first load), or moving the parse off the main
+thread (a Web Worker). Both are real engineering efforts with their own risk, on a WORKING,
+user-facing feature, under a package whose own mandate is data integrity, not a page-load redesign —
+attempting one under this package's own time budget risked shipping a rushed, undertested change to
+a feature nothing in `DATA-AUDIT-EXTERNAL.md` asked to be touched at all.
+
+**Also considered and set aside:** displaying the postings.json's own new `compensation.usd` field
+(Tier 3.1) in the UI — currently computed, shipped, and read by nothing in `site/src/**` at all
+(confirmed by search). Wiring it into `PostingRow` would make the shipped data earn its byte cost
+and would be a natural, small completion of Tier 3.1's own intent, but is a new user-facing display,
+not a bug fix, and was set aside for the same reason: not worth rushing under this package's own time
+pressure without room to verify it thoroughly against this project's own real history of shipped
+display bugs (overflow, mismatched rounding, collapsed axes — see `docs/REGRESSION-CATALOGUE.md`).
+
+**Decide:** whether to commission a proper postings-list pagination/lazy-load redesign (the real fix)
+as its own package, and separately, whether the `compensation.usd` field should be wired into the UI
+(a complementary, smaller follow-up) or left as a derived field available for a future package to use.
