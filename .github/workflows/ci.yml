@@ -27,6 +27,20 @@ jobs:
       - name: Validate
         run: python scripts/validate_data.py
 
+      # Package 13, Tier 1 — structural invariants validate_data.py doesn't
+      # already cover (percentile monotonicity, magnitude plausibility,
+      # unit disclosure, ...). Same network-free contract as Validate above.
+      - name: Audit
+        run: python scripts/audit_data.py
+
+      # Package 13, Tier 0 — regression tests for past data/arithmetic bugs
+      # (docs/REGRESSION-CATALOGUE.md). Python half only: the client-side
+      # half (scripts/tests/test_ui_regressions.mjs) needs a served
+      # production build and a real browser, which this job doesn't have —
+      # see that file's own header.
+      - name: Regression tests (Python)
+        run: python -m unittest discover -s scripts/tests -p "test_*.py" -v
+
   build-site:
     name: Type-check + build site
     runs-on: ubuntu-latest

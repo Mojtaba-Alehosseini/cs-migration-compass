@@ -87,6 +87,19 @@ jobs:
       - name: Rebuild site data bundle
         run: python scripts/build_site_data.py
 
+      # Package 13, Tier 4 — this workflow pushes to main UNATTENDED; these
+      # two steps have no continue-on-error, so a broken invariant stops the
+      # job here and the commit below never runs. Deliberately stricter than
+      # the harvester steps above (a slow provider costs its own data, which
+      # is recoverable next Monday; committing a value validate_data.py or
+      # audit_data.py can already prove is wrong is not something a human
+      # reviews before it ships, since nothing here waits for one).
+      - name: Validate (blocks the commit below on failure)
+        run: python scripts/validate_data.py
+
+      - name: Audit (blocks the commit below on failure)
+        run: python scripts/audit_data.py
+
       - name: Commit refreshed data
         run: |
           git config user.name "github-actions[bot]"

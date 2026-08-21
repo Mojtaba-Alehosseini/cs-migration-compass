@@ -15,9 +15,11 @@ help:
 	@echo "  make validate        run the data validation gate (CI runs this)"
 	@echo "  make audit           run Tier-1 structural invariants (scripts/audit_data.py)"
 	@echo "                       — complements validate, see that file's own docstring"
+	@echo "  make reconcile       run Tier-2 live-source reconciliation (hits the network)"
+	@echo "  make snapshot        run Tier-3 drift + coverage snapshot"
 	@echo "  make test            run the regression suite (scripts/tests/) — UI half"
 	@echo "                       needs 'make site-build && make site-preview' running"
-	@echo "  make docs            regenerate docs/SOURCES.md from data/provenance.json"
+	@echo "  make docs            regenerate docs/SOURCES.md and docs/DATA-QUALITY.md"
 	@echo "  make site-dev        start the Vite dev server"
 	@echo "  make site-build      production build of the site"
 	@echo "  make all             pipeline + validate + docs + site-build"
@@ -42,11 +44,18 @@ validate:
 audit:
 	$(PY) scripts/audit_data.py
 
+reconcile:
+	$(PY) scripts/reconcile.py
+
+snapshot:
+	$(PY) scripts/snapshot_stats.py
+
 test:
 	$(PY) scripts/tests/run_all.py
 
 docs:
 	$(PY) scripts/generate_sources_doc.py
+	$(PY) scripts/generate_data_quality_doc.py
 
 site-dev:
 	cd site && $(NPM) run dev
