@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-08-21T04:05:00+00:00",
+ "generated_at": "2026-08-21T14:12:34+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -12,6 +12,37 @@
    "country": "SE",
    "national_code": "2512",
    "note": "every crosswalk comparability verdict below is this country's mapping compared() against the row's own — see crosswalk.py"
+  },
+  "resolved_comparison": {
+   "depth": 4,
+   "shared_key": "isco08:2512",
+   "note": "package 14, tier 1 — the deepest occupation depth a real quorum (>=2) of these countries share; every country below it is excluded from the cross-country comparison chart, by name, with its own reason — see each row's own chart_comparable field and crosswalk.resolve_set()'s own docstring.",
+   "excluded": [
+    {
+     "country": "ES",
+     "reason": "ES's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which ES cannot meet"
+    },
+    {
+     "country": "IE",
+     "reason": "IE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which IE cannot meet"
+    },
+    {
+     "country": "QA",
+     "reason": "QA's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which QA cannot meet"
+    },
+    {
+     "country": "AE",
+     "reason": "AE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which AE cannot meet"
+    },
+    {
+     "country": "NL",
+     "reason": "NL has no ISCO-08 correspondence at all for this occupation"
+    },
+    {
+     "country": "DE",
+     "reason": "DE's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which DE cannot meet"
+    }
+   ]
   },
   "countries": [
    {
@@ -103,6 +134,13 @@
       "ok": false,
       "reason": "salary_se does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      }
+    },
+    "chart_comparable": {
+     "comparable": true,
+     "depth": 4,
+     "own_depth": 4,
+     "degraded": false,
+     "degraded_by": null
     }
    },
    {
@@ -194,6 +232,13 @@
       "period": "year",
       "chain_field": "median"
      }
+    },
+    "chart_comparable": {
+     "comparable": true,
+     "depth": 4,
+     "own_depth": 4,
+     "degraded": false,
+     "degraded_by": null
     }
    },
    {
@@ -285,6 +330,13 @@
       "ok": false,
       "reason": "bls_oews does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      }
+    },
+    "chart_comparable": {
+     "comparable": true,
+     "depth": 4,
+     "own_depth": 4,
+     "degraded": false,
+     "degraded_by": null
     }
    },
    {
@@ -483,6 +535,13 @@
       "period": "year",
       "chain_field": "median"
      }
+    },
+    "chart_comparable": {
+     "comparable": true,
+     "depth": 4,
+     "own_depth": 4,
+     "degraded": false,
+     "degraded_by": null
     }
    },
    {
@@ -618,6 +677,13 @@
       "period": "year",
       "chain_field": "median"
      }
+    },
+    "chart_comparable": {
+     "comparable": true,
+     "depth": 4,
+     "own_depth": 4,
+     "degraded": false,
+     "degraded_by": null
     }
    },
    {
@@ -753,6 +819,13 @@
       "period": "year",
       "chain_field": "median"
      }
+    },
+    "chart_comparable": {
+     "comparable": true,
+     "depth": 4,
+     "own_depth": 4,
+     "degraded": false,
+     "degraded_by": null
     }
    },
    {
@@ -844,6 +917,13 @@
       "period": "year",
       "chain_field": "median"
      }
+    },
+    "chart_comparable": {
+     "comparable": true,
+     "depth": 4,
+     "own_depth": 4,
+     "degraded": false,
+     "degraded_by": null
     }
    },
    {
@@ -935,6 +1015,10 @@
       "period": "year",
       "chain_field": "median"
      }
+    },
+    "chart_comparable": {
+     "comparable": false,
+     "reason": "ES's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which ES cannot meet"
     }
    },
    {
@@ -1034,6 +1118,10 @@
       "ok": false,
       "reason": "salary_ie does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      }
+    },
+    "chart_comparable": {
+     "comparable": false,
+     "reason": "IE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which IE cannot meet"
     }
    },
    {
@@ -1081,6 +1169,10 @@
       "ok": false,
       "reason": "salary_qa and salary_qa share no common basis — salary_qa can express ['neither'], salary_qa can express ['neither']"
      }
+    },
+    "chart_comparable": {
+     "comparable": false,
+     "reason": "QA's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which QA cannot meet"
     }
    },
    {
@@ -1128,6 +1220,10 @@
       "ok": false,
       "reason": "salary_ae and salary_ae share no common basis — salary_ae can express ['neither'], salary_ae can express ['neither']"
      }
+    },
+    "chart_comparable": {
+     "comparable": false,
+     "reason": "AE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which AE cannot meet"
     }
    },
    {
@@ -1225,6 +1321,10 @@
       "ok": false,
       "reason": "salary_nl does not publish enough to express total_earnings and has no separately-published component this pipeline can subtract to reach it (pay_composition.json's own fields say so — see its own note per source)"
      }
+    },
+    "chart_comparable": {
+     "comparable": false,
+     "reason": "NL has no ISCO-08 correspondence at all for this occupation"
     }
    },
    {
@@ -1368,6 +1468,10 @@
       "period": "year",
       "chain_field": "median"
      }
+    },
+    "chart_comparable": {
+     "comparable": false,
+     "reason": "DE's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which DE cannot meet"
     }
    },
    {
@@ -1415,6 +1519,13 @@
       "ok": false,
       "reason": "salary_ca and salary_ca share no common basis — salary_ca can express ['neither'], salary_ca can express ['neither']"
      }
+    },
+    "chart_comparable": {
+     "comparable": true,
+     "depth": 4,
+     "own_depth": 4,
+     "degraded": false,
+     "degraded_by": null
     }
    },
    {
@@ -1462,6 +1573,13 @@
       "ok": false,
       "reason": "salary_ca and salary_ca share no common basis — salary_ca can express ['neither'], salary_ca can express ['neither']"
      }
+    },
+    "chart_comparable": {
+     "comparable": true,
+     "depth": 4,
+     "own_depth": 4,
+     "degraded": false,
+     "degraded_by": null
     }
    }
   ],

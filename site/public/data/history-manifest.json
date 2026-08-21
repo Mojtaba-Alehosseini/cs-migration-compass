@@ -123,7 +123,7 @@
  "stackoverflow_survey": {
   "theme": "jobs",
   "file": "history/stackoverflow_survey.json",
-  "kb": 27.5,
+  "kb": 139.0,
   "kind": null,
   "confidence": "crowd",
   "institution": null,
@@ -134,7 +134,7 @@
  "wage_distribution": {
   "theme": "money",
   "file": "history/wage_distribution.json",
-  "kb": 33.9,
+  "kb": 38.0,
   "kind": null,
   "confidence": "derived",
   "institution": null,
@@ -156,7 +156,7 @@
  "postings": {
   "theme": "jobs",
   "file": "history/postings.json",
-  "kb": 8257.0,
+  "kb": 20042.7,
   "kind": null,
   "confidence": null,
   "institution": null,

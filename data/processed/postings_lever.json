@@ -1,12 +1,14 @@
 {
  "source_id": "postings_lever",
- "generated_at": "2026-08-21T01:25:21+00:00",
+ "generated_at": "2026-08-21T14:54:57+00:00",
  "meta": {
   "candidates_in_hint_file": 4368,
-  "candidates_probed_this_run": 686,
-  "verified_companies": 254,
-  "postings_count": 9928,
-  "compensation_present_count": 3671
+  "candidates_probed_this_run": 317,
+  "verified_companies": 264,
+  "verified_companies_reconfirmed_this_run": 264,
+  "verified_companies_removed_this_run": [],
+  "postings_count": 10176,
+  "compensation_present_count": 3710
  },
  "data": {
   "postings": [
@@ -9699,7 +9701,7 @@
      "min": 1,
      "max": 1,
      "currency": "INR",
-     "period": "year",
+     "period": "hour",
      "raw_text": "1-1 INR (per-year-salary)",
      "confidence": "structured"
     },
@@ -15292,7 +15294,7 @@
      "min": 42,
      "max": 46,
      "currency": "EUR",
-     "period": "year",
+     "period": "hour",
      "raw_text": "42-46 EUR (per-year-salary)",
      "confidence": "structured"
     },
@@ -15369,7 +15371,7 @@
      "min": 38,
      "max": 45,
      "currency": "EUR",
-     "period": "year",
+     "period": "hour",
      "raw_text": "38-45 EUR (per-year-salary)",
      "confidence": "structured"
     },
@@ -50607,7 +50609,7 @@
      "min": 80,
      "max": 80,
      "currency": "USD",
-     "period": "year",
+     "period": "hour",
      "raw_text": "80-80 USD (per-year-salary)",
      "confidence": "structured"
     },
@@ -149531,7 +149533,7 @@
      "min": 1,
      "max": 1,
      "currency": "INR",
-     "period": "year",
+     "period": "hour",
      "raw_text": "1-1 INR (per-year-salary)",
      "confidence": "structured"
     },
@@ -149573,7 +149575,7 @@
      "min": 1,
      "max": 1,
      "currency": "INR",
-     "period": "year",
+     "period": "hour",
      "raw_text": "1-1 INR (per-year-salary)",
      "confidence": "structured"
     },
@@ -153920,7 +153922,7 @@
      "min": 25,
      "max": 30,
      "currency": "USD",
-     "period": "year",
+     "period": "hour",
      "raw_text": "25-30 USD (per-year-salary)",
      "confidence": "structured"
     },
@@ -164698,1278 +164700,5865 @@
      "confidence": "structured"
     },
     "occupation": null
+   },
+   {
+    "id": "lever:carewest:f641969e-cd7d-4f9a-96a4-8412cf63317f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Bus Driver (2025-1206)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/f641969e-cd7d-4f9a-96a4-8412cf63317f",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:7cd1d23d-25c1-4fee-abcf-692710b9b95a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Bus Driver (2026-0402)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/7cd1d23d-25c1-4fee-abcf-692710b9b95a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:f935f5ed-e6da-419d-9750-754f96bb17bd",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Cook I Certified (2026-0537)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/f935f5ed-e6da-419d-9750-754f96bb17bd",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:195e4d81-a3b6-4fed-8ca6-3811a263703c",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Cook I No Cert (2026-0039)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/195e4d81-a3b6-4fed-8ca6-3811a263703c",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:dcec96e7-8a5a-4bb5-87e9-80a61cfd5d42",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Dietitian (2026-0571)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/dcec96e7-8a5a-4bb5-87e9-80a61cfd5d42",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:76b73baf-a0f6-446c-911c-909dc88916dc",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Director of Care | Complex Mental Health (2026-0618)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/76b73baf-a0f6-446c-911c-909dc88916dc",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:1134605a-df12-444c-bc43-26cf98ee8d53",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Director of Care Allied Health | Complex Mental Health (2026-0617)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/1134605a-df12-444c-bc43-26cf98ee8d53",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:2a613ad9-bccd-4118-b147-322221708bff",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Educator - Allied Health (2026-0773)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/2a613ad9-bccd-4118-b147-322221708bff",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:1a506507-0990-47df-806e-8913d0d29e21",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Food Services Assistant (2026-0422)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/1a506507-0990-47df-806e-8913d0d29e21",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:759c668b-fff7-41e2-aae1-15fd4db4513a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Health Care Aide (2026-0611)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/759c668b-fff7-41e2-aae1-15fd4db4513a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:d2560c5c-b8d1-4723-a56e-7c5f16346146",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Health Care Aide (2026-0637)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/d2560c5c-b8d1-4723-a56e-7c5f16346146",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:1958ad40-67f1-42d5-8970-7038648151a5",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Health Care Aide (2026-0671)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/1958ad40-67f1-42d5-8970-7038648151a5",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:6ba0e2c9-f308-4c32-9105-76638c6d4c21",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Health Care Aide (2026-0672)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/6ba0e2c9-f308-4c32-9105-76638c6d4c21",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:a925555d-11ee-40c6-8301-029be3424b13",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Health Care Aide (2026-0800)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/a925555d-11ee-40c6-8301-029be3424b13",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:e128ebe8-ee14-4561-a005-ad7cbb1a36ca",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Nursing Attendant (2026-0069)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/e128ebe8-ee14-4561-a005-ad7cbb1a36ca",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:c2ace94c-984f-425a-abde-670f64f0e521",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Occupational Therapist",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/c2ace94c-984f-425a-abde-670f64f0e521",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:70805602-1374-49da-9199-1aecf6ff5e5d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Occupational Therapist I (2025-0048)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/70805602-1374-49da-9199-1aecf6ff5e5d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:467825b9-ccaf-4c87-afa1-d142d8f858fd",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Occupational Therapist I (2025-0243)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/467825b9-ccaf-4c87-afa1-d142d8f858fd",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:32a96fd1-4900-4316-a7ca-a8e85f48ceda",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Occupational Therapist I (2026-0375)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/32a96fd1-4900-4316-a7ca-a8e85f48ceda",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:f2ed64d9-6604-4e45-9fd1-6342d9760aae",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Occupational Therapist I (2026-0410)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/f2ed64d9-6604-4e45-9fd1-6342d9760aae",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:4c385aba-87bf-4db2-900f-9e9bd4836a4a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Occupational Therapist I (2026-0643)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/4c385aba-87bf-4db2-900f-9e9bd4836a4a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:13d758e6-5b88-4ee1-a291-dad4a05bf9ac",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Occupational Therapist I (2026-0686)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/13d758e6-5b88-4ee1-a291-dad4a05bf9ac",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:0ff18eb2-1f52-4f0e-8c4f-b9b705acb692",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/0ff18eb2-1f52-4f0e-8c4f-b9b705acb692",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:bdd21975-f04e-4709-8245-c7fdc5137271",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2024-1896)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/bdd21975-f04e-4709-8245-c7fdc5137271",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:4a8dfe0e-2fa0-4fc5-8718-48f970c0f84e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2025-0914)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/4a8dfe0e-2fa0-4fc5-8718-48f970c0f84e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:572d781a-add9-4c63-abcb-a03055f8797b",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2025-1586)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/572d781a-add9-4c63-abcb-a03055f8797b",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:17ea655d-81f3-4c4a-8def-b27ef72025d2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2026-0009)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/17ea655d-81f3-4c4a-8def-b27ef72025d2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:994dfea9-4b7e-4701-9503-a684f0c00279",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2026-0079)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/994dfea9-4b7e-4701-9503-a684f0c00279",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:528a81f0-999d-49e2-b6a0-a979eee85515",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2026-0090)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/528a81f0-999d-49e2-b6a0-a979eee85515",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:41d6e1a9-9856-4b46-a015-f99ce89f3689",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2026-0411)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/41d6e1a9-9856-4b46-a015-f99ce89f3689",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:bd0fd3a5-9e6f-413f-a086-10fe03d9ed1a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2026-0669)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/bd0fd3a5-9e6f-413f-a086-10fe03d9ed1a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:f8495a5f-0359-42ab-814b-b6390e28c0f1",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2026-0755)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/f8495a5f-0359-42ab-814b-b6390e28c0f1",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:efb46d5a-1b34-4f92-a0d9-149cd0c1ed69",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Physical Therapist I (2026-0771)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/efb46d5a-1b34-4f92-a0d9-149cd0c1ed69",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:4d9f7ca1-fefb-4839-8509-43acc77c324e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Recreation Therapist I (2026-0687)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/4d9f7ca1-fefb-4839-8509-43acc77c324e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:e632cb1c-91e9-4350-8805-b923b0f27ba0",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Social Worker II (2026-0638)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/e632cb1c-91e9-4350-8805-b923b0f27ba0",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:a4a32adc-d546-44b1-81f4-5b8d35d7c882",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Spiritual Care Coordinator (2025-1548)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/a4a32adc-d546-44b1-81f4-5b8d35d7c882",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:b3f07768-10ab-43cb-913b-b9e04bc2e4e2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Therapy Aide (2026-0779)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/b3f07768-10ab-43cb-913b-b9e04bc2e4e2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:e1d29266-7288-4a3a-ab44-fd1c22938c95",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Therapy Assistant (2026-0010)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/e1d29266-7288-4a3a-ab44-fd1c22938c95",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:bd3bfcc8-8fcc-47d7-a9df-94c157e0505c",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Therapy Assistant (2026-0560)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/bd3bfcc8-8fcc-47d7-a9df-94c157e0505c",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carewest:2dfde4ff-5ec4-48de-9a07-16d759c978fe",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carewest",
+    "title": "Unit Clerk (2026-0088)",
+    "location_raw": "Calgary, AB",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/carewest/2dfde4ff-5ec4-48de-9a07-16d759c978fe",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:62f9bb9e-e07e-4a9f-92c8-fd4bd373222f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "(Key Account) Sales Manager (w/m/d) – Fokus Luft- & Seefracht",
+    "location_raw": "Fischamend, Lower Austria",
+    "country": "AT",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/62f9bb9e-e07e-4a9f-92c8-fd4bd373222f",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:1d78f3c8-78ce-4889-bd7c-9899bf606f14",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Air Cargo / Spedytor ds. Frachtu Lotniczego",
+    "location_raw": "Kraków Lotnisko, Małopolskie",
+    "country": "PL",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/1d78f3c8-78ce-4889-bd7c-9899bf606f14",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:cfcd4064-1ac5-4bad-b41c-aed16ada293d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Air Freight Forwarder",
+    "location_raw": "Dublin, Ireland",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/cfcd4064-1ac5-4bad-b41c-aed16ada293d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:7672c7cd-8e45-437a-a9d6-b200384a50c4",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Area Sales Manager (f/m/d)",
+    "location_raw": "Piraeus, Greece",
+    "country": "GR",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/7672c7cd-8e45-437a-a9d6-b200384a50c4",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:275594b5-eeaa-49ff-812b-784503a35ea6",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Assistant Manager Operations Contract Logistics",
+    "location_raw": "Shanghai, Shanghai",
+    "country": "CN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/275594b5-eeaa-49ff-812b-784503a35ea6",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:6e280acd-aac5-492d-bf7f-bbd058cda45e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Assistant Manager/Deputy Manager Sea Cargo",
+    "location_raw": "Chennai, Tamil Nadu",
+    "country": "IN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/6e280acd-aac5-492d-bf7f-bbd058cda45e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:b2db391e-451a-4af2-a7ec-90202cef1bdb",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Assistant Manager/Deputy Manager-Sales Support",
+    "location_raw": "Mumbai, Maharashtra",
+    "country": "IN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/b2db391e-451a-4af2-a7ec-90202cef1bdb",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:0c582de8-651e-4965-ba8d-0a572730f205",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Asst. Manager / Deputy Manager / Manager Business Development – Sales",
+    "location_raw": "Chennai, Tamil Nadu",
+    "country": "IN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/0c582de8-651e-4965-ba8d-0a572730f205",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:2ad0caf4-0f15-4450-922b-c3c2f2c19b07",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Ausbildung zum Kaufmann für Spedition und Logistikdienstleistungen (m/w/d)",
+    "location_raw": "Düsseldorf, Nordrhein-Westfalen",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/2ad0caf4-0f15-4450-922b-c3c2f2c19b07",
+    "posted_at": null,
+    "compensation": {
+     "min": 900,
+     "max": 1100,
+     "currency": "EUR",
+     "period": "month",
+     "raw_text": "900-1100 EUR (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:2f57800d-fa0b-476c-9f03-0bc2d6460808",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Executive",
+    "location_raw": "Bangkok, Bangkok",
+    "country": "TH",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/2f57800d-fa0b-476c-9f03-0bc2d6460808",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:05416425-c114-4a52-bd25-622a055a6cdd",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Tianjin, Hebei",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/05416425-c114-4a52-bd25-622a055a6cdd",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:0dfbe7a8-9e5f-4f0f-abc8-2a4186a2a717",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Zhengzhou, Henan",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/0dfbe7a8-9e5f-4f0f-abc8-2a4186a2a717",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:1185a370-2d75-495d-9013-b00818a54828",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Qingdao, Shandong",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/1185a370-2d75-495d-9013-b00818a54828",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:17a46293-ad61-4ce9-9847-6c309c9db662",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Sofia, Bulgaria",
+    "country": "BG",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/17a46293-ad61-4ce9-9847-6c309c9db662",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:190d00d3-4d53-43ed-84d8-4fd3f49c61fb",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Ningbo, Zhejiang",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/190d00d3-4d53-43ed-84d8-4fd3f49c61fb",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:1dcf91bb-b304-4693-93c3-a295775855b8",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Gurgaon, Haryana",
+    "country": "IN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/1dcf91bb-b304-4693-93c3-a295775855b8",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:4a05840f-5c23-4a0c-b102-7c04910f86f3",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Zagreb HQ, Zagreb",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/4a05840f-5c23-4a0c-b102-7c04910f86f3",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:7ac6fe0e-cc15-4ca9-be97-c23e371b9d75",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Beijing, Beijing",
+    "country": "CN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/7ac6fe0e-cc15-4ca9-be97-c23e371b9d75",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:7f1dd88d-f699-4486-aa9b-ecf7072917ef",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Nanjing, Jiangsu",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/7f1dd88d-f699-4486-aa9b-ecf7072917ef",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:9e781c6c-dafd-4826-ad28-e14a1fa8a64b",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Ludhiana, Punjab",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/9e781c6c-dafd-4826-ad28-e14a1fa8a64b",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:d0c5ee84-2215-40cf-bbd1-bbc37417ecf6",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Hong Kong",
+    "country": "HK",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/d0c5ee84-2215-40cf-bbd1-bbc37417ecf6",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:d1d75961-d369-43b9-9faa-78e1e4f2aab7",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Xi'an, Shaanxi",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/d1d75961-d369-43b9-9faa-78e1e4f2aab7",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:f8f21f4b-0d29-4491-b071-4a8371f981c4",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Business Development Manager",
+    "location_raw": "Taipei, Taiwan",
+    "country": "TW",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/f8f21f4b-0d29-4491-b071-4a8371f981c4",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:8e0a1111-beeb-48db-8b6a-58cff827bc5f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Colný deklarant/ka",
+    "location_raw": "Zilina, Slovakia",
+    "country": "SK",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/8e0a1111-beeb-48db-8b6a-58cff827bc5f",
+    "posted_at": null,
+    "compensation": {
+     "min": 1300,
+     "max": 1300,
+     "currency": "EUR",
+     "period": "month",
+     "raw_text": "1300-1300 EUR (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:63b6134b-3e8e-425c-80df-ac83b37146a3",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Control Tower Lead",
+    "location_raw": "Taipei, Taiwan",
+    "country": "TW",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/63b6134b-3e8e-425c-80df-ac83b37146a3",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:89f47cd1-229e-4606-9018-a5c4cca9493d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Corporate Business Development Manager Road Transport (all Humans)",
+    "location_raw": "Fischamend HQ, Lower Austria",
+    "country": "AT",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/89f47cd1-229e-4606-9018-a5c4cca9493d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:f4c27c58-1f36-49c4-be03-07b74440d30f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Customs Clearance Clerk - Shift position",
+    "location_raw": "Manchester, United Kingdom",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/f4c27c58-1f36-49c4-be03-07b74440d30f",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:e02183f9-9c66-47bd-a73d-d97300f32206",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Deputy/Assistant Manager Procurement- Sea Cargo",
+    "location_raw": "Ahmehdabad, Gujarat",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/e02183f9-9c66-47bd-a73d-d97300f32206",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:80f64ede-4b8c-4587-8e19-e9df44704052",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Director Business Development",
+    "location_raw": "Budapest, Hungary",
+    "country": "HU",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/80f64ede-4b8c-4587-8e19-e9df44704052",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:487cda47-2f55-418c-9262-e6f5718b2f69",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Disponent:in (m/w/d) - Fokus Land, Luft oder See (Einsteiger:in bis Profi)",
+    "location_raw": "Fischamend, Lower Austria",
+    "country": "AT",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/487cda47-2f55-418c-9262-e6f5718b2f69",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:9cc5b775-969c-41fa-a88d-36c3f1214798",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Field Sales Representative, North-West Hungary",
+    "location_raw": "Budapest, Hungary",
+    "country": "HU",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/9cc5b775-969c-41fa-a88d-36c3f1214798",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:aee60e53-ffb1-411f-8163-6fb1c6f64cd5",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "General Manager West India",
+    "location_raw": "Mumbai, Maharashtra",
+    "country": "IN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/aee60e53-ffb1-411f-8163-6fb1c6f64cd5",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:856d7e2d-bdd4-4a18-885b-d64fe8148824",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Inside Sales",
+    "location_raw": "Beijing, Beijing",
+    "country": "CN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/856d7e2d-bdd4-4a18-885b-d64fe8148824",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:88a00340-f93c-4f93-b02c-6c54373e1ee2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Inside Sales",
+    "location_raw": "Hanoi, Vietnam",
+    "country": "VN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/88a00340-f93c-4f93-b02c-6c54373e1ee2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:d863bc46-de68-4bd1-8074-d15d4f0a8ff9",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Inside Sales / Belső értékesítési munkatárs",
+    "location_raw": "Budapest, Hungary",
+    "country": "HU",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/d863bc46-de68-4bd1-8074-d15d4f0a8ff9",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:94ba8bde-483a-495a-ad79-ba3fcf941c88",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Inside Sales / Sales Support",
+    "location_raw": "Bangkok, Bangkok",
+    "country": "TH",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/94ba8bde-483a-495a-ad79-ba3fcf941c88",
+    "posted_at": null,
+    "compensation": {
+     "min": 28000,
+     "max": 35000,
+     "currency": "THB",
+     "period": "month",
+     "raw_text": "28000-35000 THB (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:ca950349-952c-463c-88dc-896d14d25369",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "IT Application Expert (m/f/d)",
+    "location_raw": "Bratislava, Slovakia",
+    "country": "SK",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/ca950349-952c-463c-88dc-896d14d25369",
+    "posted_at": null,
+    "compensation": {
+     "min": 3250,
+     "max": 3250,
+     "currency": "EUR",
+     "period": "month",
+     "raw_text": "3250-3250 EUR (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:90f7a803-990a-4ac4-abb5-dbbe70d4d060",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Key Account Manager",
+    "location_raw": "Chennai, Tamil Nadu",
+    "country": "IN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/90f7a803-990a-4ac4-abb5-dbbe70d4d060",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:e847dcb5-14e0-4898-8e44-41621bf827fc",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Key Account Manager",
+    "location_raw": "Mumbai, Maharashtra",
+    "country": "IN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/e847dcb5-14e0-4898-8e44-41621bf827fc",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:7777f2e5-d1ea-4e27-b3aa-3d71feb15ba2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Knjigovođa",
+    "location_raw": "Zagreb HQ, Zagreb",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/7777f2e5-d1ea-4e27-b3aa-3d71feb15ba2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:0d020657-4fca-4560-8d36-fe77c008014d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Koordination / Disposition Lagerumschlag (m/w/d)",
+    "location_raw": "Fischamend, Lower Austria",
+    "country": "AT",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/0d020657-4fca-4560-8d36-fe77c008014d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:a3506308-ad4b-404f-a366-809da5783538",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Légi szállítmányozási ügyintéző",
+    "location_raw": "Budapest Airport, Hungary",
+    "country": "HU",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/a3506308-ad4b-404f-a366-809da5783538",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:2c3f1418-5fed-4959-899e-3c7aaed3eaa8",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "MAGACIONER: Plata uvek do 1. u mesecu + Privatno zdravstveno (DOBANOVCI)",
+    "location_raw": "Belgrade, Serbia",
+    "country": "RS",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/2c3f1418-5fed-4959-899e-3c7aaed3eaa8",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:848194d9-9955-4536-9fb9-2c8cdb54f367",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Business Development",
+    "location_raw": "Chongqing, Chongqing",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/848194d9-9955-4536-9fb9-2c8cdb54f367",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:975c60fb-af43-467e-aabd-a9b94b4b26df",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Business Development",
+    "location_raw": "Guangzhou, Guangdong",
+    "country": "CN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/975c60fb-af43-467e-aabd-a9b94b4b26df",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:c77376d0-7f3d-4a22-b996-dddc5e00188f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Business Development",
+    "location_raw": "Gliwice, Śląskie",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/c77376d0-7f3d-4a22-b996-dddc5e00188f",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:7be9353c-f640-4c01-929a-e15f121d8cb9",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Business Development - Baroda, Gujarat",
+    "location_raw": "Baroda, Gujarat",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/7be9353c-f640-4c01-929a-e15f121d8cb9",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:dc50346b-3db0-4c66-ac24-0ae67fe85ddd",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Business Development - Changsha",
+    "location_raw": "Changsha, Hunan",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/dc50346b-3db0-4c66-ac24-0ae67fe85ddd",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:7d345af9-4703-46ce-bf99-6cd7427ad16f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Business Development - Reefer",
+    "location_raw": "Ho Chi Minh City, Vietnam",
+    "country": "VN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/7d345af9-4703-46ce-bf99-6cd7427ad16f",
+    "posted_at": null,
+    "compensation": {
+     "min": 500,
+     "max": 1500,
+     "currency": "USD",
+     "period": "month",
+     "raw_text": "500-1500 USD (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:c6ff8dce-97ec-40e0-834b-121161d2fdc1",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Business Development- Hangzhou",
+    "location_raw": "Hangzhou, Zhejiang",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/c6ff8dce-97ec-40e0-834b-121161d2fdc1",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:44b3d697-5376-498b-9ba3-252e6370ed77",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Key Account Automotive",
+    "location_raw": "Shanghai, Shanghai",
+    "country": "CN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/44b3d697-5376-498b-9ba3-252e6370ed77",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:0d71d2d2-979e-44d3-befb-10d32d7e5e2d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Key Account Pharmaceuticals & Healthcare",
+    "location_raw": "Shanghai, Shanghai",
+    "country": "CN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/0d71d2d2-979e-44d3-befb-10d32d7e5e2d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:e6067c70-9d6b-43f9-96dd-c2edec407a9c",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Manager Sea Cargo Taiwan",
+    "location_raw": "Taipei, Taiwan",
+    "country": "TW",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/e6067c70-9d6b-43f9-96dd-c2edec407a9c",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:d969053e-0ddb-43b0-b12a-b2e935fc9048",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "National Product Manager - Sea Freight (f/m/d)",
+    "location_raw": "Piraeus, Greece",
+    "country": "GR",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/d969053e-0ddb-43b0-b12a-b2e935fc9048",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:ba3a294e-d2aa-41de-9455-6c60861d0b11",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Operations Air Cargo",
+    "location_raw": "Hong Kong",
+    "country": "HK",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/ba3a294e-d2aa-41de-9455-6c60861d0b11",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:bc079794-acba-4f37-a4e2-7c682aae0772",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Operations Air Cargo - Import",
+    "location_raw": "Hong Kong",
+    "country": "HK",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/bc079794-acba-4f37-a4e2-7c682aae0772",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:83ef2468-e4a0-46a8-9552-54dda1467dbc",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Operations Air Cargo (No shift is required.)",
+    "location_raw": "Hong Kong",
+    "country": "HK",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/83ef2468-e4a0-46a8-9552-54dda1467dbc",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:7ab699cb-1d2c-4fe3-9d52-6f4b68ce9f7d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "OTWARTA APLIKACJA",
+    "location_raw": "Pruszków, Mazowieckie",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/7ab699cb-1d2c-4fe3-9d52-6f4b68ce9f7d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:43804ff0-3b03-48ea-bc83-c56afd1a7946",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "PRICING EXECUTIVE - SEA CARGO",
+    "location_raw": "Puebla, Puebla",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/43804ff0-3b03-48ea-bc83-c56afd1a7946",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:57dedca3-595b-4ab4-9661-4633ce127c48",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Receptionist and Administration Assistant (On Third Party Payroll)",
+    "location_raw": "Gurgaon, Haryana",
+    "country": "IN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/57dedca3-595b-4ab4-9661-4633ce127c48",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:e85bb20c-e959-4bca-9df7-3c9326393860",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Regional Coordinator Sales Enablement",
+    "location_raw": "Hong Kong Hub",
+    "country": "HK",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/e85bb20c-e959-4bca-9df7-3c9326393860",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:3cc111ab-d855-4553-932c-683b265633ab",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Sales Manager",
+    "location_raw": "Ho Chi Minh City, Vietnam",
+    "country": "VN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/3cc111ab-d855-4553-932c-683b265633ab",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:344695a5-74ac-4b7d-a4d5-70c80cd4c8ec",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Sales Manager /Key Account Manager",
+    "location_raw": "Żory, Śląskie",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/344695a5-74ac-4b7d-a4d5-70c80cd4c8ec",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:c863ae81-9099-4770-9859-ed545ff0dba1",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Sea Cargo Export Operator",
+    "location_raw": "Piraeus, Greece",
+    "country": "GR",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/c863ae81-9099-4770-9859-ed545ff0dba1",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:fce42fd7-30b3-4daa-b428-3bae8920fe7a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Senior Executive/ Assistant Manager-Sales Support",
+    "location_raw": "Gurgaon, Haryana",
+    "country": "IN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/fce42fd7-30b3-4daa-b428-3bae8920fe7a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:b9a809f1-0e5b-4c8c-bf69-ce98c9ca0123",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Senior Freight Forwarder Road",
+    "location_raw": "Sofia, Bulgaria",
+    "country": "BG",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/b9a809f1-0e5b-4c8c-bf69-ce98c9ca0123",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:108c4045-43c4-4e50-8b07-6c541f538cc8",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Senior Operational Accountant",
+    "location_raw": "Sofia, Bulgaria",
+    "country": "BG",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/108c4045-43c4-4e50-8b07-6c541f538cc8",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:9b0f73d3-2468-41b9-b227-7d7b6e627061",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Skladiščnik-Viličarist (Brnik)",
+    "location_raw": "Ljubljana Airport, Slovenia",
+    "country": "SI",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/9b0f73d3-2468-41b9-b227-7d7b6e627061",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:26859a3e-bfe5-4ddf-bca6-65ca33e06a7f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Skladiščnik-Viličarist (Logatec)",
+    "location_raw": "Ljubljana Airport, Slovenia",
+    "country": "SI",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/26859a3e-bfe5-4ddf-bca6-65ca33e06a7f",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:6812ce1d-a3c9-4028-9743-0c356ba6f883",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Specialista logistiky junior",
+    "location_raw": "Dobroviz, Central Bohemia",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/6812ce1d-a3c9-4028-9743-0c356ba6f883",
+    "posted_at": null,
+    "compensation": {
+     "min": 30000,
+     "max": 38000,
+     "currency": "CZK",
+     "period": "month",
+     "raw_text": "30000-38000 CZK (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:7023bd8c-c7c0-4b1f-a42f-5ae510759a1d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Specjalista ds. ofertowania w exporcie morskim (k/m) /  Pricing Desk Sea Export",
+    "location_raw": "Brwinów, Mazowieckie",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/7023bd8c-c7c0-4b1f-a42f-5ae510759a1d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:a688f0d5-d1d2-4f6e-8cf1-8f49a2d6c317",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Sr. Executive/ Assistant Manager - Sea Cargo Export",
+    "location_raw": "Ludhiana, Punjab",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/a688f0d5-d1d2-4f6e-8cf1-8f49a2d6c317",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:37773253-be08-49fd-986b-8dd9f291bf20",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Student Worker (m/w/d)",
+    "location_raw": "Düsseldorf, Nordrhein-Westfalen",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/37773253-be08-49fd-986b-8dd9f291bf20",
+    "posted_at": null,
+    "compensation": {
+     "min": 1200,
+     "max": 1200,
+     "currency": "EUR",
+     "period": "month",
+     "raw_text": "1200-1200 EUR (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:4be8d681-431f-4e77-940b-7cdbadde2daa",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Tengeri szállítmányozási ügyintéző - Operations Sea Cargo",
+    "location_raw": "Budapest, Hungary",
+    "country": "HU",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/4be8d681-431f-4e77-940b-7cdbadde2daa",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:8d2f326c-f294-4c96-b9c4-801b4ab6c9a5",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Trainee",
+    "location_raw": "Guangzhou, Guangdong",
+    "country": "CN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/8d2f326c-f294-4c96-b9c4-801b4ab6c9a5",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:e07e4919-4513-4b62-98aa-16533696e29a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Trainee",
+    "location_raw": "Chongqing, Chongqing",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/e07e4919-4513-4b62-98aa-16533696e29a",
+    "posted_at": null,
+    "compensation": {
+     "min": 2500,
+     "max": 3500,
+     "currency": "CNY",
+     "period": "month",
+     "raw_text": "2500-3500 CNY (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:f2f3d608-eb6a-4cb1-8808-65a43f54cbd9",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Vietnam, Business Development Manager",
+    "location_raw": "Hanoi, Vietnam",
+    "country": "VN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/f2f3d608-eb6a-4cb1-8808-65a43f54cbd9",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:904e6388-8706-440b-bd28-b5970a06255a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Vietnam, Executive Air Cargo",
+    "location_raw": "Ho Chi Minh City, Vietnam",
+    "country": "VN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/904e6388-8706-440b-bd28-b5970a06255a",
+    "posted_at": null,
+    "compensation": {
+     "min": 500,
+     "max": 800,
+     "currency": "USD",
+     "period": "month",
+     "raw_text": "500-800 USD (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:e46b294a-24f2-46ef-a690-6e17013d9e37",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Vietnam, Inside Sales",
+    "location_raw": "Ho Chi Minh City, Vietnam",
+    "country": "VN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/e46b294a-24f2-46ef-a690-6e17013d9e37",
+    "posted_at": null,
+    "compensation": {
+     "min": 600,
+     "max": 800,
+     "currency": "USD",
+     "period": "month",
+     "raw_text": "600-800 USD (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:97395eeb-e38d-4fa3-adc2-344bff3d55b5",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Vietnam, Manager Business Development",
+    "location_raw": "Hanoi, Vietnam",
+    "country": "VN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/97395eeb-e38d-4fa3-adc2-344bff3d55b5",
+    "posted_at": null,
+    "compensation": {
+     "min": 500,
+     "max": 2000,
+     "currency": "USD",
+     "period": "month",
+     "raw_text": "500-2000 USD (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:a4f1a27e-4f35-48e7-8379-cbeea5126c2e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Vietnam, Manager Business Development",
+    "location_raw": "Ho Chi Minh City, Vietnam",
+    "country": "VN",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/a4f1a27e-4f35-48e7-8379-cbeea5126c2e",
+    "posted_at": null,
+    "compensation": {
+     "min": 1000,
+     "max": 1500,
+     "currency": "USD",
+     "period": "month",
+     "raw_text": "1000-1500 USD (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cargo-partner:93678969-cac8-4b20-a996-42b3c8522607",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cargo-partner",
+    "title": "Warehouse Operative",
+    "location_raw": "Basildon, United Kingdom",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/cargo-partner/93678969-cac8-4b20-a996-42b3c8522607",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:2846a5a5-4c18-4ef3-835e-ece8f09c66f6",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "ABA Clinic Administrator - Pineville, NC",
+    "location_raw": "Pineville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/2846a5a5-4c18-4ef3-835e-ece8f09c66f6",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:a9ff44a0-6df9-4300-b6b3-b60c043b0f90",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Associate ABA Clinic Director - Fayetteville, NC",
+    "location_raw": "Fayetteville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/a9ff44a0-6df9-4300-b6b3-b60c043b0f90",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:ddc5d147-1111-4be1-8d71-dfb8ffe57caf",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Associate ABA Clinic Director - Greensboro, NC",
+    "location_raw": "Greensboro, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/ddc5d147-1111-4be1-8d71-dfb8ffe57caf",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:6fa8962e-b578-4097-a844-d901f7526f71",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Associate ABA Clinic Director - Savannah, GA",
+    "location_raw": "Savannah, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/6fa8962e-b578-4097-a844-d901f7526f71",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:1ffe44a5-6fc4-492d-b9b2-29332e487de4",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "McAdenville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/1ffe44a5-6fc4-492d-b9b2-29332e487de4",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:233cb042-f10b-4e45-b084-2ff71d4e3ba4",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Greenville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/233cb042-f10b-4e45-b084-2ff71d4e3ba4",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:31087e7a-6570-4129-8926-49b261738ea6",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Fayetteville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/31087e7a-6570-4129-8926-49b261738ea6",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:32bcd79f-c8bd-4faa-8a62-1be838d22d19",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Holly Springs, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/32bcd79f-c8bd-4faa-8a62-1be838d22d19",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:4a46a1c1-58ac-4035-989a-33504750b183",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Asheville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/4a46a1c1-58ac-4035-989a-33504750b183",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:58643589-3407-498a-be6a-3ee65e9e8894",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Wilmington, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/58643589-3407-498a-be6a-3ee65e9e8894",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:60f3ea00-eef6-479a-b8df-53077f2b1379",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Charlotte, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/60f3ea00-eef6-479a-b8df-53077f2b1379",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:6676334c-1ec2-49bf-9f30-8c33e119e85a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Huntersville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/6676334c-1ec2-49bf-9f30-8c33e119e85a",
+    "posted_at": null,
+    "compensation": {
+     "min": 18.5,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18.5-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:8800e8c4-b7bf-4468-aef9-19a76df7b548",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Raleigh, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/8800e8c4-b7bf-4468-aef9-19a76df7b548",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:899131f2-a635-46d0-92f7-ef4bf24bf6ba",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Pineville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/899131f2-a635-46d0-92f7-ef4bf24bf6ba",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:a06af751-00c3-4842-a1ad-b3fd3d6c6ad2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Savannah, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/a06af751-00c3-4842-a1ad-b3fd3d6c6ad2",
+    "posted_at": null,
+    "compensation": {
+     "min": 16.5,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "16.5-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:a41f2f19-78ac-42a5-8ea2-9022d81be012",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Matthews, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/a41f2f19-78ac-42a5-8ea2-9022d81be012",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:c18e02f9-22a3-4948-a1e9-52c2ac86d0d3",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Durham, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/c18e02f9-22a3-4948-a1e9-52c2ac86d0d3",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:d54032da-462e-4c42-a530-6f240074f64e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Greensboro, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/d54032da-462e-4c42-a530-6f240074f64e",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:ebee12de-9bc1-4060-ad73-ffe8c1b50266",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Winston-Salem North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/ebee12de-9bc1-4060-ad73-ffe8c1b50266",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:fff1bd5d-dea2-4b4e-bfa6-ee4461efcc27",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Behavior Technician / Registered Behavior Technician (RBT)",
+    "location_raw": "Concord, NC",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/fff1bd5d-dea2-4b4e-bfa6-ee4461efcc27",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 24,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-24 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:718466e0-c57e-4b69-8c58-e79236eaad80",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Billing Specialist - Patient Accounts",
+    "location_raw": "Raleigh, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/718466e0-c57e-4b69-8c58-e79236eaad80",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:d32dc458-c8c4-4c1d-9826-24db295c44c6",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Asheville, NC",
+    "location_raw": "Asheville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/d32dc458-c8c4-4c1d-9826-24db295c44c6",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:d43c0269-9840-4589-ab5e-b63aa5480321",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Concord, NC",
+    "location_raw": "Concord, NC",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/d43c0269-9840-4589-ab5e-b63aa5480321",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:d8c32f1d-87b4-4900-b737-3a791cc8c351",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Durham, NC",
+    "location_raw": "Durham, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/d8c32f1d-87b4-4900-b737-3a791cc8c351",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:9af1b98b-5116-4da1-8504-6b185dca998c",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Fayetteville, NC",
+    "location_raw": "Fayetteville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/9af1b98b-5116-4da1-8504-6b185dca998c",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:01f84dd9-d6de-4c01-8b41-926db39c5678",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Garner, NC",
+    "location_raw": "Garner, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/01f84dd9-d6de-4c01-8b41-926db39c5678",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:933be5be-0eaf-4c28-bb77-2eb901b4f535",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Gastonia, NC",
+    "location_raw": "Gastonia, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/933be5be-0eaf-4c28-bb77-2eb901b4f535",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:00f85c0c-bb65-4f84-9e05-9face4ef6731",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Greensboro, NC",
+    "location_raw": "Greensboro, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/00f85c0c-bb65-4f84-9e05-9face4ef6731",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:40249e55-4937-4d3f-ac58-66da2dbece80",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Greenville, NC",
+    "location_raw": "Macclesfield, NC",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/40249e55-4937-4d3f-ac58-66da2dbece80",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:5e1c6870-e76b-4c6b-92d4-42f70fe501a2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Greenville, NC",
+    "location_raw": "Greenville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/5e1c6870-e76b-4c6b-92d4-42f70fe501a2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:02a03c4a-c9bb-40b9-8387-4741ab9090ee",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Holly Springs, NC",
+    "location_raw": "Holly Springs, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/02a03c4a-c9bb-40b9-8387-4741ab9090ee",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:9e8bc47b-bf41-43ff-83f0-e441f96bc494",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Huntersville, NC",
+    "location_raw": "Huntersville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/9e8bc47b-bf41-43ff-83f0-e441f96bc494",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:17f75c6b-029a-4533-bba0-fbc30bd86f49",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - KIND Behavioral Health",
+    "location_raw": "North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/17f75c6b-029a-4533-bba0-fbc30bd86f49",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:6726c80b-c5df-4a04-af8e-52083fded6b6",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Matthews, NC",
+    "location_raw": "Matthews, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/6726c80b-c5df-4a04-af8e-52083fded6b6",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:657bebf1-97a8-414a-b004-9d89b26679a8",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - McAdenville, NC",
+    "location_raw": "McAdenville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/657bebf1-97a8-414a-b004-9d89b26679a8",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:f821a52c-ea6f-4ef8-81cd-deb495b4ff4f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Midtown Charlotte, NC",
+    "location_raw": "Charlotte, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/f821a52c-ea6f-4ef8-81cd-deb495b4ff4f",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:8798724b-8722-4733-9499-49c35d44de09",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Pineville, NC",
+    "location_raw": "Pineville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/8798724b-8722-4733-9499-49c35d44de09",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:46b710cb-2d25-4c51-afae-941ace0fa980",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Raleigh, NC",
+    "location_raw": "Raleigh, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/46b710cb-2d25-4c51-afae-941ace0fa980",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:8c7e595a-893e-4199-a28d-db2e6fc10553",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Savannah, GA",
+    "location_raw": "Savannah, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/8c7e595a-893e-4199-a28d-db2e6fc10553",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:4258bfb6-38a3-4d37-92d8-65c6847c5771",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Wake Forest, NC",
+    "location_raw": "Wake Forest, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/4258bfb6-38a3-4d37-92d8-65c6847c5771",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:b499233f-6d7b-4da9-836b-6881644a06c1",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Wilmington, NC",
+    "location_raw": "Wilmington, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/b499233f-6d7b-4da9-836b-6881644a06c1",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:d9f5735e-8a7c-44db-b961-f99c5370698e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Board Certified Behavior Analyst (BCBA) - Winston-Salem, NC",
+    "location_raw": "Winston-Salem North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/d9f5735e-8a7c-44db-b961-f99c5370698e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:91c8383a-3250-4e44-96cc-75cc42f1341b",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Clinic Director, Board Certified Behavior Analyst (BCBA) - Augusta, GA",
+    "location_raw": "Augusta, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/91c8383a-3250-4e44-96cc-75cc42f1341b",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:36aaa872-3a40-4961-9d7d-fd6dcb1015bb",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Clinic Director, Board Certified Behavior Analyst (BCBA) - Triangle Metro",
+    "location_raw": "Durham, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/36aaa872-3a40-4961-9d7d-fd6dcb1015bb",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:934d3f3f-94a5-4628-ac63-e35019c3074a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Clinic Director, Board Certified Behavior Analyst (BCBA) - Triangle Metro",
+    "location_raw": "Raleigh, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/934d3f3f-94a5-4628-ac63-e35019c3074a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:fc8de01e-c5b8-4696-bf7f-83139f4b9096",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "HR Coordinator",
+    "location_raw": "Raleigh, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/fc8de01e-c5b8-4696-bf7f-83139f4b9096",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:a0be4cd5-04cd-4967-941a-ad28ace8d222",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Intake Specialist",
+    "location_raw": "North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/a0be4cd5-04cd-4967-941a-ad28ace8d222",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:f4d364ca-2c2c-408c-ac2e-24d7aa4e9f0c",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Licensed Psychologist (LP)",
+    "location_raw": "North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/f4d364ca-2c2c-408c-ac2e-24d7aa4e9f0c",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:792c7e27-dcee-4fcc-b712-d98c56d419fb",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Licensed Psychologist Associate (LPA)",
+    "location_raw": "North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/792c7e27-dcee-4fcc-b712-d98c56d419fb",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:b94b7b57-5531-4db9-b8e6-16c0183b1652",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Registered Behavior Technician (RBT) – DoDEA School-Based Program",
+    "location_raw": "Fayetteville, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/b94b7b57-5531-4db9-b8e6-16c0183b1652",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:388d50fb-1627-44c5-81bf-b5509689f1bf",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Senior Accountant",
+    "location_raw": "Raleigh, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/388d50fb-1627-44c5-81bf-b5509689f1bf",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carolinacenterforaba:0233d549-036d-4bb1-914d-f271210dc8e3",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carolinacenterforaba",
+    "title": "Senior BCBA (Board Certified Behavior Analyst) - Hickory, NC",
+    "location_raw": "Hickory, North Carolina",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/carolinacenterforaba/0233d549-036d-4bb1-914d-f271210dc8e3",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:2347baa3-314a-4cae-87a8-7ea2e31b5253",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "Commercial Analyst",
+    "location_raw": "Dublin",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/2347baa3-314a-4cae-87a8-7ea2e31b5253",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:df569a67-f471-4174-9a20-540e43a64fd2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "Commercial Manager",
+    "location_raw": "Dublin",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/df569a67-f471-4174-9a20-540e43a64fd2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:ba95a662-a058-4a06-a146-5bc56a944d35",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "Commercial Strategy Lead",
+    "location_raw": "London",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/ba95a662-a058-4a06-a146-5bc56a944d35",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:aeb753d4-a0cf-400d-85f0-8a9d3a9c23f8",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "CRM & Loyalty Specialist",
+    "location_raw": "Dublin",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/aeb753d4-a0cf-400d-85f0-8a9d3a9c23f8",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:c849a6e8-5955-49af-8eb7-156ea0c72748",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "CRM Specialist",
+    "location_raw": "Dublin",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/c849a6e8-5955-49af-8eb7-156ea0c72748",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:42ae21a6-3d67-42e1-922c-fcb208bc394e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "Data Scientist",
+    "location_raw": "Dublin",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/42ae21a6-3d67-42e1-922c-fcb208bc394e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:f3b3554a-b956-4bf4-ae72-fc62dd5b6b69",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "Financial Planning & Analysis (FP&A) Manager",
+    "location_raw": "Dublin",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/f3b3554a-b956-4bf4-ae72-fc62dd5b6b69",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:ed7fbc3f-54f4-45c0-9806-a00144f01afa",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "Principal Commercial Analyst",
+    "location_raw": "Dublin",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/ed7fbc3f-54f4-45c0-9806-a00144f01afa",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:755c51b7-4dae-40e7-9b81-f391780eed62",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "Senior Partner Relationship Manager – North America",
+    "location_raw": "New York, United States",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/755c51b7-4dae-40e7-9b81-f391780eed62",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cartrawler:d6370468-a3e2-4afc-8275-2c81b6cbb2cc",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cartrawler",
+    "title": "Senior Software Engineer (Java)",
+    "location_raw": "Dublin",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/cartrawler/d6370468-a3e2-4afc-8275-2c81b6cbb2cc",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:carusoaffiliated:396c1a07-45c6-4faf-8174-9ab8377f8f73",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carusoaffiliated",
+    "title": "Concierge Ambassador",
+    "location_raw": "The Grove",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/carusoaffiliated/396c1a07-45c6-4faf-8174-9ab8377f8f73",
+    "posted_at": null,
+    "compensation": {
+     "min": 21,
+     "max": 22,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "21-22 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carusoaffiliated:42b9781e-376a-4610-96ef-73c906c2cf5b",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carusoaffiliated",
+    "title": "Leasing Associate",
+    "location_raw": "Corporate Headquarters",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/carusoaffiliated/42b9781e-376a-4610-96ef-73c906c2cf5b",
+    "posted_at": null,
+    "compensation": {
+     "min": 85000,
+     "max": 95000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "85000-95000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:carusoaffiliated:70c8b73d-d20a-46b5-bf0a-afbd8b8f695a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "carusoaffiliated",
+    "title": "Property Manager, Residential Operations",
+    "location_raw": "8500",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/carusoaffiliated/70c8b73d-d20a-46b5-bf0a-afbd8b8f695a",
+    "posted_at": null,
+    "compensation": {
+     "min": 110000,
+     "max": 140000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "110000-140000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cascade-climate:37d42043-6c86-4d0d-af18-6db9f01a4052",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cascade-climate",
+    "title": "Pitch a Role / General Opportunities",
+    "location_raw": "Boston, San Francisco, Washington D.C., New York City",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cascade-climate/37d42043-6c86-4d0d-af18-6db9f01a4052",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:0dcbf482-60a0-4fd2-9d8f-9945f18d419d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Account Executive",
+    "location_raw": "Apeldoorn, Netherlands",
+    "country": "NL",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/0dcbf482-60a0-4fd2-9d8f-9945f18d419d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:653a5e2d-1210-4a37-a25c-d3c0256018c6",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Account Executive",
+    "location_raw": "Atlanta, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/653a5e2d-1210-4a37-a25c-d3c0256018c6",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:84a8d75c-e84e-4f5f-9e0e-73a56ab2e819",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Account Executive (m/w/d)",
+    "location_raw": "Düsseldorf, Germany",
+    "country": "DE",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/84a8d75c-e84e-4f5f-9e0e-73a56ab2e819",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:a1821d3e-cc9e-485b-bdad-9d6b5ec7b07d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Administrative Assistant",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/a1821d3e-cc9e-485b-bdad-9d6b5ec7b07d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:e517ed1b-0f42-4cea-8c21-35c78479b7ec",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Assurance Manager – State & Local Government",
+    "location_raw": "Atlanta, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/e517ed1b-0f42-4cea-8c21-35c78479b7ec",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:47e9694e-b3c6-4ade-bacd-2a7b4c606e1b",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Consultant, Professional Services",
+    "location_raw": "Atlanta, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/47e9694e-b3c6-4ade-bacd-2a7b4c606e1b",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:5cb33ada-b0f8-4677-b50f-66da06314189",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Consultant, Professional Services",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/5cb33ada-b0f8-4677-b50f-66da06314189",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:b9b85703-d97a-43eb-ae90-958083780094",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "DevOps Developer",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/b9b85703-d97a-43eb-ae90-958083780094",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:838a01c7-bf83-47af-960c-dd68b64cb9fd",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Director Growth Marketing, North America",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/838a01c7-bf83-47af-960c-dd68b64cb9fd",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:3840825d-d746-407b-9640-f34a22df31b4",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Instructional Designer Manager",
+    "location_raw": "Maidstone, United Kingdom",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/3840825d-d746-407b-9640-f34a22df31b4",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:e904eced-75fa-4fdb-96e0-3587065a5b2e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Instructional Designer Manager",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/e904eced-75fa-4fdb-96e0-3587065a5b2e",
+    "posted_at": null,
+    "compensation": {
+     "min": 100000,
+     "max": 115000,
+     "currency": "CAD",
+     "period": "year",
+     "raw_text": "100000-115000 CAD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:c31b0dc4-1060-47c6-a9d2-afc43ffeed53",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Javascript Engineer",
+    "location_raw": "Melbourne, Australia",
+    "country": "AU",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/c31b0dc4-1060-47c6-a9d2-afc43ffeed53",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:eb303782-1f32-4fee-ab9a-30ad705eb3ea",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Javascript Engineer",
+    "location_raw": "Bucharest,Romania",
+    "country": "RO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/eb303782-1f32-4fee-ab9a-30ad705eb3ea",
+    "posted_at": null,
+    "compensation": {
+     "min": 8000,
+     "max": 9000,
+     "currency": "RON",
+     "period": "month",
+     "raw_text": "8000-9000 RON (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:293c18fd-697d-4c8b-a8f3-69a852fb3601",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Knowledge Base Owner",
+    "location_raw": "Maidstone, United Kingdom",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/293c18fd-697d-4c8b-a8f3-69a852fb3601",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:7cd4aeb4-2038-41b7-a87e-40ab43d7f56e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Manager, Paid Media",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/7cd4aeb4-2038-41b7-a87e-40ab43d7f56e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:2f4fb2ed-57f7-4122-83dc-918b73c3770d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Office Manager / Receptionist (m/f/d)",
+    "location_raw": "Düsseldorf, Germany",
+    "country": "DE",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/2f4fb2ed-57f7-4122-83dc-918b73c3770d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:c5cf6980-4acd-43f6-b382-83ef09df4462",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Product Analyst, Data Platform and Analytics",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/c5cf6980-4acd-43f6-b382-83ef09df4462",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:9b1141ff-549e-41b8-87b3-efe950fcbe11",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Product Manager, Growth",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/9b1141ff-549e-41b8-87b3-efe950fcbe11",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:358cb059-b1c5-4327-8779-76a4c6b8c30d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Product Manager, Office of the CPO",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/358cb059-b1c5-4327-8779-76a4c6b8c30d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:9d91f80b-b545-4a13-8956-8e592c859c29",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Product Support Analyst - Accounting",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/9d91f80b-b545-4a13-8956-8e592c859c29",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:f904bf58-55a7-4243-bfca-2f30b86c305d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "QA Manager",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/f904bf58-55a7-4243-bfca-2f30b86c305d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:782308e3-da6a-453d-9b33-39df92ee7728",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Sales Enablement Leader",
+    "location_raw": "Atlanta, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/782308e3-da6a-453d-9b33-39df92ee7728",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:794a7c33-1687-402f-81b2-db7419129138",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Sales Enablement Leader",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/794a7c33-1687-402f-81b2-db7419129138",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:f962ee15-560e-4bc8-9e0f-bb7223f68e0d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Salesforce Developer",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/f962ee15-560e-4bc8-9e0f-bb7223f68e0d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:938be9b9-be35-4701-96fe-beec0eab8aaa",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "SDET",
+    "location_raw": "Bogotá, Colombia",
+    "country": "CO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/938be9b9-be35-4701-96fe-beec0eab8aaa",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:76d9d7a0-bb5d-463e-998e-3f0198e8cca3",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Senior AI Software Engineer III",
+    "location_raw": "Bogotá, Colombia",
+    "country": "CO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/76d9d7a0-bb5d-463e-998e-3f0198e8cca3",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:c438189f-93af-4b57-901c-e35c87122b04",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Senior AI Software Engineer III -  Colombia",
+    "location_raw": "Bogotá, Colombia",
+    "country": "CO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/c438189f-93af-4b57-901c-e35c87122b04",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:85f8fd61-27cb-4a38-93a4-2808e415791d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Senior Audit Solutions Consultant",
+    "location_raw": "Atlanta, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/85f8fd61-27cb-4a38-93a4-2808e415791d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:87a8ef1a-7137-4cd1-81c5-c27acf84a991",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Senior DotNet Software Developer",
+    "location_raw": "Bogotá, Colombia",
+    "country": "CO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/87a8ef1a-7137-4cd1-81c5-c27acf84a991",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:d59a9355-ca96-46d7-968d-60401531b0dd",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Senior Manager, Product Strategy & Operations",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/d59a9355-ca96-46d7-968d-60401531b0dd",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:9dc5315a-2500-4853-bf92-65925c0cf084",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Senior Software Developer .NET  - Colombia",
+    "location_raw": "Bogotá, Colombia",
+    "country": "CO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/9dc5315a-2500-4853-bf92-65925c0cf084",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:a77413c8-73a6-4eaf-bc96-e14d2342dcdc",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Senior Software Developer, AI Data Engineer",
+    "location_raw": "Bogotá, Colombia",
+    "country": "CO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/a77413c8-73a6-4eaf-bc96-e14d2342dcdc",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:004dc438-7775-4e99-8fcc-6d0bd468d690",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Senior UX Designer",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/004dc438-7775-4e99-8fcc-6d0bd468d690",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:2d502b59-08a8-445a-8aed-23481f56260a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Software Develop in Test",
+    "location_raw": "Bogotá, Colombia",
+    "country": "CO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/2d502b59-08a8-445a-8aed-23481f56260a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:5ee79466-8ad1-4068-8f63-9db0d7a5560b",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Solution Author, Audit Solutions",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/5ee79466-8ad1-4068-8f63-9db0d7a5560b",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:dba5291e-8267-46b8-bad6-83bb71fd1822",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Solution Author, Audit Solutions",
+    "location_raw": "Atlanta, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/dba5291e-8267-46b8-bad6-83bb71fd1822",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:78f4de69-d89e-4c40-a633-1d313c7cebe9",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Solutions Consultant",
+    "location_raw": "Apeldoorn, Netherlands",
+    "country": "NL",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/78f4de69-d89e-4c40-a633-1d313c7cebe9",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:9df37a92-2245-4005-bcb2-ff94d1ab1c59",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Solutions Consultant",
+    "location_raw": "Maidstone, United Kingdom",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/9df37a92-2245-4005-bcb2-ff94d1ab1c59",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:528ac6dc-dd08-4853-adc1-99d8b1776486",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Staff Site Reliability Engineer",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/528ac6dc-dd08-4853-adc1-99d8b1776486",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:e2a14cc5-300c-47ca-8cc3-a27ec9bd85e4",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Staff Software Developer IV",
+    "location_raw": "Bogotá, Colombia",
+    "country": "CO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/e2a14cc5-300c-47ca-8cc3-a27ec9bd85e4",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:06413de7-df78-4573-85b4-80e5749fcc5e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Systems Integration Specialist – NetSuite",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/06413de7-df78-4573-85b4-80e5749fcc5e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:a6647fb9-ea54-4b94-a5ca-22b4b4575534",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Tax Manager, US Tax",
+    "location_raw": "Atlanta, Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/a6647fb9-ea54-4b94-a5ca-22b4b4575534",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:08b12a0c-6915-43f8-919a-31c94405602a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Team Lead Support / Senior Cloud Support Specialist",
+    "location_raw": "Odense, Denmark",
+    "country": "DK",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/08b12a0c-6915-43f8-919a-31c94405602a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:c6f62e68-7717-4449-b765-16451a819b8d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Technical Product Manager, Core Platform",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/c6f62e68-7717-4449-b765-16451a819b8d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:e04d332a-06de-45ee-a52c-4d39af364623",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Technical Product Manager, Core Platform",
+    "location_raw": "Cluj, Romania",
+    "country": "RO",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/e04d332a-06de-45ee-a52c-4d39af364623",
+    "posted_at": null,
+    "compensation": {
+     "min": 16800,
+     "max": 19000,
+     "currency": "RON",
+     "period": "month",
+     "raw_text": "16800-19000 RON (per-month-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:caseware:74ab17ee-70c5-4869-a119-35bf23efcbc3",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caseware",
+    "title": "Technical Talent Acquisition Partner",
+    "location_raw": "Toronto, ON",
+    "country": "CA",
+    "remote": null,
+    "url": "https://jobs.lever.co/caseware/74ab17ee-70c5-4869-a119-35bf23efcbc3",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caslservice:0f31dd36-373d-4189-a60b-f65b9d6da030",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caslservice",
+    "title": "Home Care Aid (HCA) - Chinese Speaking || 家庭护理助理（HCA）- 需会中文",
+    "location_raw": "Chicago, Illinois",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caslservice/0f31dd36-373d-4189-a60b-f65b9d6da030",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caslservice:1e0d323d-e7a9-43d1-aa2a-88402a27d3fe",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caslservice",
+    "title": "Home Care Aide (HCA) - English Speaking",
+    "location_raw": "Chicago, Illinois",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caslservice/1e0d323d-e7a9-43d1-aa2a-88402a27d3fe",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caslservice:574e6bdb-a19d-47de-8ae3-ba568db211ce",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caslservice",
+    "title": "Home Care Aide (HCA) - Spanish Speaking || Asistente de Cuidado en el Hogar (HCA) - Habla Español",
+    "location_raw": "Chicago, Illinois",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caslservice/574e6bdb-a19d-47de-8ae3-ba568db211ce",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caslservice:454602c3-a089-4da7-91fb-ce6bde9ba2b5",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caslservice",
+    "title": "In-Home Care Manager",
+    "location_raw": "Chinatown - Chicago, Illinois",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caslservice/454602c3-a089-4da7-91fb-ce6bde9ba2b5",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caslservice:bc831afb-12b0-4029-8a13-419a0c8e6f75",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caslservice",
+    "title": "Open Application: Future Opportunities",
+    "location_raw": "Chinatown - Chicago, Illinois",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caslservice/bc831afb-12b0-4029-8a13-419a0c8e6f75",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caslservice:e1c5c281-4266-49b6-9e62-1a027c01f722",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caslservice",
+    "title": "Senior Manager of Clinical Services",
+    "location_raw": "Chinatown - Chicago, Illinois",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caslservice/e1c5c281-4266-49b6-9e62-1a027c01f722",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:caslservice:757f0b91-bb03-41ae-bd13-2907225fc4e1",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "caslservice",
+    "title": "Youth Program Tutor - Fall",
+    "location_raw": "Chinatown - Chicago, Illinois",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/caslservice/757f0b91-bb03-41ae-bd13-2907225fc4e1",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:catalist:433d9a4b-482f-4112-8834-b394bcb7eba6",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "catalist",
+    "title": "Absentee & Early Vote Researcher",
+    "location_raw": "Washington, DC",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/catalist/433d9a4b-482f-4112-8834-b394bcb7eba6",
+    "posted_at": null,
+    "compensation": {
+     "min": 20,
+     "max": 20,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "20-20 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:catalist:20b8d282-a781-4f5b-9a39-eca0baee8956",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "catalist",
+    "title": "Absentee & Early Vote Specialist",
+    "location_raw": "Washington, DC",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/catalist/20b8d282-a781-4f5b-9a39-eca0baee8956",
+    "posted_at": null,
+    "compensation": {
+     "min": 20,
+     "max": 20,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "20-20 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:catalist:692b0051-3b95-49ca-971c-0f3242cb4874",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "catalist",
+    "title": "Account Executive",
+    "location_raw": "Washington, DC",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/catalist/692b0051-3b95-49ca-971c-0f3242cb4874",
+    "posted_at": null,
+    "compensation": {
+     "min": 61000,
+     "max": 71000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "61000-71000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:catalist:4300e9ab-5f6f-4b9a-8ad6-8282a34e7dec",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "catalist",
+    "title": "Data Services Intern",
+    "location_raw": "Washington, DC",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/catalist/4300e9ab-5f6f-4b9a-8ad6-8282a34e7dec",
+    "posted_at": null,
+    "compensation": {
+     "min": 20,
+     "max": 20,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "20-20 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:catalist:3fe6dcef-466e-420c-b550-36fbd6174fb4",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "catalist",
+    "title": "Software Quality Assurance Engineer",
+    "location_raw": "Washington, DC",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/catalist/3fe6dcef-466e-420c-b550-36fbd6174fb4",
+    "posted_at": null,
+    "compensation": {
+     "min": 85000,
+     "max": 95000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "85000-95000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cbtnuggets:372b4370-c8db-45cf-b259-defa3806e2e4",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cbtnuggets",
+    "title": "IT Instructor - Online",
+    "location_raw": "Remote - U.S. only",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cbtnuggets/372b4370-c8db-45cf-b259-defa3806e2e4",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cbtnuggets:9b1f4daf-5d65-4249-9f64-dfa1cc50fdbd",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cbtnuggets",
+    "title": "Outside Salesperson",
+    "location_raw": "Remote - United States",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cbtnuggets/9b1f4daf-5d65-4249-9f64-dfa1cc50fdbd",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
    }
   ],
   "verified_companies": {
    "15five": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "1inch": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "21hhs": {
     "company": null,
     "provider": "lever",
-    "job_count": 321
+    "job_count": 321,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "2brains": {
     "company": null,
     "provider": "lever",
-    "job_count": 10
+    "job_count": 10,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "360learning": {
     "company": null,
     "provider": "lever",
-    "job_count": 30
+    "job_count": 30,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "3pillarglobal": {
     "company": null,
     "provider": "lever",
-    "job_count": 58
+    "job_count": 58,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "4front": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "5amventures": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "90seconds": {
     "company": null,
     "provider": "lever",
-    "job_count": 8
+    "job_count": 8,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ableserve": {
     "company": null,
     "provider": "lever",
-    "job_count": 54
+    "job_count": 54,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "abovelending": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "abt": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "acceldata": {
     "company": null,
     "provider": "lever",
-    "job_count": 44
+    "job_count": 44,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "accesssoftek": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "acds": {
     "company": null,
     "provider": "lever",
-    "job_count": 18
+    "job_count": 18,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "achievers": {
     "company": null,
     "provider": "lever",
-    "job_count": 22
+    "job_count": 22,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "acselhealth": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "actian": {
     "company": null,
     "provider": "lever",
-    "job_count": 17
+    "job_count": 17,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "actionlife": {
     "company": null,
     "provider": "lever",
-    "job_count": 48
+    "job_count": 48,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "activecampaign": {
     "company": null,
     "provider": "lever",
-    "job_count": 13
+    "job_count": 13,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "actriv": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "additionwealth": {
     "company": null,
     "provider": "lever",
-    "job_count": 11
+    "job_count": 11,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "adhoclabs": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "adidevelopments": {
     "company": null,
     "provider": "lever",
-    "job_count": 8
+    "job_count": 8,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "adora": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "advancedagrilytics": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "adventus": {
     "company": null,
     "provider": "lever",
-    "job_count": 23
+    "job_count": 23,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "adverum": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "advocate": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ae-2": {
     "company": null,
     "provider": "lever",
-    "job_count": 24
+    "job_count": 24,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aeratechnology": {
     "company": null,
     "provider": "lever",
-    "job_count": 11
+    "job_count": 11,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aero": {
     "company": null,
     "provider": "lever",
-    "job_count": 12
+    "job_count": 12,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aerostrat": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aethoshotels": {
     "company": null,
     "provider": "lever",
-    "job_count": 20
+    "job_count": 20,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aeva": {
     "company": null,
     "provider": "lever",
-    "job_count": 44
+    "job_count": 44,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "afero": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "agatesoftware": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "agicap": {
     "company": null,
     "provider": "lever",
-    "job_count": 34
+    "job_count": 34,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "agile-defense": {
     "company": null,
     "provider": "lever",
-    "job_count": 95
+    "job_count": 95,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "agiloft": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "agtonomy": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ahschc": {
     "company": null,
     "provider": "lever",
-    "job_count": 31
+    "job_count": 31,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aicrete": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aifi": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aipconnect": {
     "company": null,
     "provider": "lever",
-    "job_count": 18
+    "job_count": 18,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "air-tek": {
     "company": null,
     "provider": "lever",
-    "job_count": 12
+    "job_count": 12,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "airalo": {
     "company": null,
     "provider": "lever",
-    "job_count": 14
+    "job_count": 14,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aircall": {
     "company": null,
     "provider": "lever",
-    "job_count": 77
+    "job_count": 77,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "airdna": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "airslate": {
     "company": null,
     "provider": "lever",
-    "job_count": 11
+    "job_count": 11,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "airtm": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aizon": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ajax": {
     "company": null,
     "provider": "lever",
-    "job_count": 209
+    "job_count": 209,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ajccanada": {
     "company": null,
     "provider": "lever",
-    "job_count": 20
+    "job_count": 20,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "akabrands": {
     "company": null,
     "provider": "lever",
-    "job_count": 7
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aldar": {
     "company": null,
     "provider": "lever",
-    "job_count": 43
+    "job_count": 43,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alector": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aledade": {
     "company": null,
     "provider": "lever",
-    "job_count": 38
+    "job_count": 38,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aleph": {
     "company": null,
     "provider": "lever",
-    "job_count": 94
+    "job_count": 94,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alertus": {
     "company": null,
     "provider": "lever",
-    "job_count": 23
+    "job_count": 23,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alice-bob": {
     "company": null,
     "provider": "lever",
-    "job_count": 22
+    "job_count": 22,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alifsemi": {
     "company": null,
     "provider": "lever",
-    "job_count": 11
+    "job_count": 11,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alimentiv-2": {
     "company": null,
     "provider": "lever",
-    "job_count": 34
+    "job_count": 34,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "allears-vet": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "allegiantair": {
     "company": null,
     "provider": "lever",
-    "job_count": 41
+    "job_count": 41,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alliedreit": {
     "company": null,
     "provider": "lever",
-    "job_count": 22
+    "job_count": 22,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alloy": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alltrails": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alluxio": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "allworknow": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "alpinestars": {
     "company": null,
     "provider": "lever",
-    "job_count": 10
+    "job_count": 10,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "altaml": {
     "company": null,
     "provider": "lever",
-    "job_count": 7
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "altarum": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "amanotes": {
     "company": null,
     "provider": "lever",
-    "job_count": 46
+    "job_count": 46,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "amberelectric": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ambergroup": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ambirobotics": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "americantall": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "amityfdn": {
     "company": null,
     "provider": "lever",
-    "job_count": 116
+    "job_count": 116,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ampd-energy": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ampeco-global": {
     "company": null,
     "provider": "lever",
-    "job_count": 7
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "amtengineering": {
     "company": null,
     "provider": "lever",
-    "job_count": 86
+    "job_count": 86,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ana-corp": {
     "company": null,
     "provider": "lever",
-    "job_count": 14
+    "job_count": 14,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "analogfolk": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "analyticpartners": {
     "company": null,
     "provider": "lever",
-    "job_count": 14
+    "job_count": 14,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "anavationllc": {
     "company": null,
     "provider": "lever",
-    "job_count": 59
+    "job_count": 59,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "anchorage": {
     "company": null,
     "provider": "lever",
-    "job_count": 39
+    "job_count": 39,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "andersencorp": {
     "company": null,
     "provider": "lever",
-    "job_count": 125
+    "job_count": 125,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "andersgroup": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "angellist": {
     "company": null,
     "provider": "lever",
-    "job_count": 23
+    "job_count": 23,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "animocabrands": {
     "company": null,
     "provider": "lever",
-    "job_count": 8
+    "job_count": 8,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "anomali": {
     "company": null,
     "provider": "lever",
-    "job_count": 10
+    "job_count": 10,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "anotherco": {
     "company": null,
     "provider": "lever",
-    "job_count": 20
+    "job_count": 20,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ansatzcapital": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "anybotics": {
     "company": null,
     "provider": "lever",
-    "job_count": 22
+    "job_count": 22,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "anyroad": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "anyscale": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "apex-ai": {
     "company": null,
     "provider": "lever",
-    "job_count": 8
+    "job_count": 8,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "apexpi": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "apolloagriculture": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "apolloresearch": {
     "company": null,
     "provider": "lever",
-    "job_count": 11
+    "job_count": 11,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "appcues-2": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "appen": {
     "company": null,
     "provider": "lever",
-    "job_count": 36
+    "job_count": 36,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "appen-2": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "appfollow": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "applydigital": {
     "company": null,
     "provider": "lever",
-    "job_count": 27
+    "job_count": 27,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "appnation": {
     "company": null,
     "provider": "lever",
-    "job_count": 11
+    "job_count": 11,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "appsamurai": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "appzen": {
     "company": null,
     "provider": "lever",
-    "job_count": 20
+    "job_count": 20,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aquabyte": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "arable": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "arbitalhealth": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "arbitrumfoundation": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "arcadia": {
     "company": null,
     "provider": "lever",
-    "job_count": 15
+    "job_count": 15,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "arootah": {
     "company": null,
     "provider": "lever",
-    "job_count": 36
+    "job_count": 36,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "arrivelogistics": {
     "company": null,
     "provider": "lever",
-    "job_count": 87
+    "job_count": 87,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "arsenalbio": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "arsiem": {
     "company": null,
     "provider": "lever",
-    "job_count": 81
+    "job_count": 81,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "artbio": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "artera": {
     "company": null,
     "provider": "lever",
-    "job_count": 10
+    "job_count": 10,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "artera-2": {
     "company": null,
     "provider": "lever",
-    "job_count": 7
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "articulate": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "asapp-2": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ashoka": {
     "company": null,
     "provider": "lever",
-    "job_count": 7
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "askfavor": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "ataccama": {
     "company": null,
     "provider": "lever",
-    "job_count": 15
+    "job_count": 15,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "atavistik-bio": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "athletetoathlete": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "atmosera": {
     "company": null,
     "provider": "lever",
-    "job_count": 10
+    "job_count": 10,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "atomcomputing": {
     "company": null,
     "provider": "lever",
-    "job_count": 23
+    "job_count": 23,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "atomi": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "attovia-therapeutics": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "audinate": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aurora-dev": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "authentic8": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "autofi": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "automatiq": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "autonomous": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "auw": {
     "company": null,
     "provider": "lever",
-    "job_count": 19
+    "job_count": 19,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "avalanchestudios": {
     "company": null,
     "provider": "lever",
-    "job_count": 18
+    "job_count": 18,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "avalerehealth": {
     "company": null,
     "provider": "lever",
-    "job_count": 43
+    "job_count": 43,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "avante": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aventon": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "avertium": {
     "company": null,
     "provider": "lever",
-    "job_count": 7
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aviahealth": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "aviyatech": {
     "company": null,
     "provider": "lever",
-    "job_count": 10
+    "job_count": 10,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "azul": {
     "company": null,
     "provider": "lever",
-    "job_count": 12
+    "job_count": 12,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "balbix": {
     "company": null,
     "provider": "lever",
-    "job_count": 11
+    "job_count": 11,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bamko": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bannerbank": {
     "company": null,
     "provider": "lever",
-    "job_count": 65
+    "job_count": 65,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "baoinc": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "base-flowa": {
     "company": null,
     "provider": "lever",
-    "job_count": 14
+    "job_count": 14,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "baselane": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "basis": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bazaarvoice": {
     "company": null,
     "provider": "lever",
-    "job_count": 24
+    "job_count": 24,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "beautybarrage": {
     "company": null,
     "provider": "lever",
-    "job_count": 149
+    "job_count": 149,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "beaverprocess": {
     "company": null,
     "provider": "lever",
-    "job_count": 12
+    "job_count": 12,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bedrockenergy": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bee-talents": {
     "company": null,
     "provider": "lever",
-    "job_count": 23
+    "job_count": 23,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "beedie": {
     "company": null,
     "provider": "lever",
-    "job_count": 12
+    "job_count": 12,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "beegreen": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "beghouconsulting": {
     "company": null,
     "provider": "lever",
-    "job_count": 72
+    "job_count": 72,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bekk": {
     "company": null,
     "provider": "lever",
-    "job_count": 22
+    "job_count": 22,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "belkins": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bellese": {
     "company": null,
     "provider": "lever",
-    "job_count": 11
+    "job_count": 11,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bellotalabs": {
     "company": null,
     "provider": "lever",
-    "job_count": 11
+    "job_count": 11,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bellwetheram-2": {
     "company": null,
     "provider": "lever",
-    "job_count": 19
+    "job_count": 19,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "belvederetrading": {
     "company": null,
     "provider": "lever",
-    "job_count": 14
+    "job_count": 14,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "benchsci": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bentoboxent": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bespokepost": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "betr": {
     "company": null,
     "provider": "lever",
-    "job_count": 13
+    "job_count": 13,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bfsaul": {
     "company": null,
     "provider": "lever",
-    "job_count": 19
+    "job_count": 19,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bfsaulhotels": {
     "company": null,
     "provider": "lever",
-    "job_count": 120
+    "job_count": 120,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bhg-inc": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bhhc": {
     "company": null,
     "provider": "lever",
-    "job_count": 56
+    "job_count": 56,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bhvr": {
     "company": null,
     "provider": "lever",
-    "job_count": 39
+    "job_count": 39,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bigblue": {
     "company": null,
     "provider": "lever",
-    "job_count": 34
+    "job_count": 34,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "biggie": {
     "company": null,
     "provider": "lever",
-    "job_count": 14
+    "job_count": 14,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bighealth": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "binance": {
     "company": null,
     "provider": "lever",
-    "job_count": 272
+    "job_count": 272,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bioagilytix": {
     "company": null,
     "provider": "lever",
-    "job_count": 8
+    "job_count": 8,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "biodigital": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "biointellisense": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "biorender": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bis": {
     "company": null,
     "provider": "lever",
-    "job_count": 8
+    "job_count": 8,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bisnow": {
     "company": null,
     "provider": "lever",
-    "job_count": 39
+    "job_count": 39,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bkln": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "blablacar": {
     "company": null,
     "provider": "lever",
-    "job_count": 15
+    "job_count": 15,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "blackbirdinteractive": {
     "company": null,
     "provider": "lever",
-    "job_count": 20
+    "job_count": 20,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "blencorp": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "blinkux": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "blinq": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bloom": {
     "company": null,
     "provider": "lever",
-    "job_count": 8
+    "job_count": 8,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bloomon": {
     "company": null,
     "provider": "lever",
-    "job_count": 10
+    "job_count": 10,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bloomwellcare": {
     "company": null,
     "provider": "lever",
-    "job_count": 43
+    "job_count": 43,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "blue": {
     "company": null,
     "provider": "lever",
-    "job_count": 10
+    "job_count": 10,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bluebottlecoffee": {
     "company": null,
     "provider": "lever",
-    "job_count": 64
+    "job_count": 64,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bluecatnetworks": {
     "company": null,
     "provider": "lever",
-    "job_count": 12
+    "job_count": 12,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bluecoding": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "blueengine": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "blueland": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bluelightconsulting": {
     "company": null,
     "provider": "lever",
-    "job_count": 715
+    "job_count": 715,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bluesight": {
     "company": null,
     "provider": "lever",
-    "job_count": 7
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bogaardgroup": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bolster": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "boltjobs": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bonedry": {
     "company": null,
     "provider": "lever",
-    "job_count": 84
+    "job_count": 84,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bosonai": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "boston-materials": {
     "company": null,
     "provider": "lever",
-    "job_count": 9
+    "job_count": 9,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bostonimaging": {
     "company": null,
     "provider": "lever",
-    "job_count": 7
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bounteous": {
     "company": null,
     "provider": "lever",
-    "job_count": 29
+    "job_count": 29,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "boxbot": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "boxlunch": {
     "company": null,
     "provider": "lever",
-    "job_count": 3588
+    "job_count": 3588,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bpmcpa": {
     "company": null,
     "provider": "lever",
-    "job_count": 60
+    "job_count": 60,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brafton": {
     "company": null,
     "provider": "lever",
-    "job_count": 19
+    "job_count": 19,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brainchildbio": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brainstorminc": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "braviantholdings": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brevo": {
     "company": null,
     "provider": "lever",
-    "job_count": 19
+    "job_count": 19,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bricknetworks": {
     "company": null,
     "provider": "lever",
-    "job_count": 22
+    "job_count": 22,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brighte": {
     "company": null,
     "provider": "lever",
-    "job_count": 3
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brightedge": {
     "company": null,
     "provider": "lever",
-    "job_count": 23
+    "job_count": 23,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brightmachines": {
     "company": null,
     "provider": "lever",
-    "job_count": 14
+    "job_count": 14,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brightonjones": {
     "company": null,
     "provider": "lever",
-    "job_count": 36
+    "job_count": 36,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brilliant": {
     "company": null,
     "provider": "lever",
-    "job_count": 4
+    "job_count": 4,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brillio-2": {
     "company": null,
     "provider": "lever",
-    "job_count": 112
+    "job_count": 112,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brindleyengineering": {
     "company": null,
     "provider": "lever",
-    "job_count": 22
+    "job_count": 22,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "britecore": {
     "company": null,
     "provider": "lever",
-    "job_count": 8
+    "job_count": 8,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brooksrunning": {
     "company": null,
     "provider": "lever",
-    "job_count": 56
+    "job_count": 56,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "brotherhoodcrusade": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "buckmason": {
     "company": null,
     "provider": "lever",
-    "job_count": 250
+    "job_count": 250,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bumbleinc": {
     "company": null,
     "provider": "lever",
-    "job_count": 23
+    "job_count": 23,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "burga": {
     "company": null,
     "provider": "lever",
-    "job_count": 34
+    "job_count": 34,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "businesswire": {
     "company": null,
     "provider": "lever",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "bv": {
     "company": null,
     "provider": "lever",
-    "job_count": 24
+    "job_count": 24,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "c12qe": {
     "company": null,
     "provider": "lever",
-    "job_count": 7
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "cabonorte": {
     "company": null,
     "provider": "lever",
-    "job_count": 31
+    "job_count": 31,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "cagents": {
     "company": null,
     "provider": "lever",
-    "job_count": 91
+    "job_count": 91,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "caliza-financial-technologies": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "callan": {
     "company": null,
     "provider": "lever",
-    "job_count": 2
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "calstart": {
     "company": null,
     "provider": "lever",
-    "job_count": 12
+    "job_count": 12,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "cambiumnetworks": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "campusworksinc": {
     "company": null,
     "provider": "lever",
-    "job_count": 20
+    "job_count": 20,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "canarytechnologies": {
     "company": null,
     "provider": "lever",
-    "job_count": 33
+    "job_count": 33,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "candlinspection": {
     "company": null,
     "provider": "lever",
-    "job_count": 37
+    "job_count": 37,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "canopyservicing": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "canvasmedical": {
     "company": null,
     "provider": "lever",
-    "job_count": 6
+    "job_count": 6,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "canvasww": {
     "company": null,
     "provider": "lever",
-    "job_count": 18
+    "job_count": 18,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "capital": {
     "company": null,
     "provider": "lever",
-    "job_count": 41
+    "job_count": 41,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "capitalsolutionsgroup": {
     "company": null,
     "provider": "lever",
-    "job_count": 27
+    "job_count": 27,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "captivateiq": {
     "company": null,
     "provider": "lever",
-    "job_count": 23
+    "job_count": 23,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "cardiologs": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
    "careernowbrands": {
     "company": null,
     "provider": "lever",
-    "job_count": 1
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
+   },
+   "carewest": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 40,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
+   },
+   "cargo-partner": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 82,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
+   },
+   "carolinacenterforaba": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 52,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
+   },
+   "cartrawler": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 10,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
+   },
+   "carusoaffiliated": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 3,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
+   },
+   "cascade-climate": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
+   },
+   "caseware": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 46,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
+   },
+   "caslservice": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 7,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:20:10+00:00"
+   },
+   "catalist": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:47:23+00:00"
+   },
+   "cbtnuggets": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:47:23+00:00"
    }
   }
  }

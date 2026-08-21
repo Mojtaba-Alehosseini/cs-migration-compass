@@ -1,29 +1,17 @@
 {
  "source_id": "postings_teamtailor",
- "generated_at": "2026-08-17T07:40:40+00:00",
+ "generated_at": "2026-08-21T14:36:14+00:00",
  "meta": {
   "candidates_hand_seeded": 17,
   "verified_companies": 6,
-  "postings_count": 55,
+  "verified_companies_reconfirmed_this_run": 6,
+  "verified_companies_removed_this_run": [],
+  "postings_count": 56,
   "compensation_present_count": 0,
   "seeding_method": "hand-curated (no third-party candidate list available for this provider)"
  },
  "data": {
   "postings": [
-   {
-    "id": "teamtailor:nordicknotsab:e890c264-c059-4e15-baa9-27a532bbe88d",
-    "provider": "teamtailor",
-    "company": "Nordic Knots AB",
-    "company_slug": "nordicknotsab",
-    "title": "Studio Director",
-    "location_raw": "Stockholm, SE",
-    "country": "SE",
-    "remote": null,
-    "url": "https://nordicknotsab.teamtailor.com/jobs/8225662-studio-director",
-    "posted_at": "2026-08-16",
-    "compensation": null,
-    "occupation": null
-   },
    {
     "id": "teamtailor:nordicknotsab:9d0eaee8-87c9-4d6d-b4d7-56dea85792d5",
     "provider": "teamtailor",
@@ -585,6 +573,20 @@
     "occupation": null
    },
    {
+    "id": "teamtailor:polestar:8cf0763f-c3fb-4372-b6af-d68030cd39c0",
+    "provider": "teamtailor",
+    "company": "Polestar",
+    "company_slug": "polestar",
+    "title": "Team Lead, Group Consolidation",
+    "location_raw": "Göteborg, Nordics & UK, SE",
+    "country": "GB",
+    "remote": null,
+    "url": "https://polestar.teamtailor.com/jobs/7592571-team-lead-group-consolidation",
+    "posted_at": "2026-06-17",
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "teamtailor:polestar:b4bbb9b2-3f3c-4b90-8e5a-08fa8804eb93",
     "provider": "teamtailor",
     "company": "Polestar",
@@ -779,38 +781,70 @@
     "posted_at": "2026-05-11",
     "compensation": null,
     "occupation": null
+   },
+   {
+    "id": "teamtailor:mathem:b868db5e-0899-4808-9f45-c0026b275a54",
+    "provider": "teamtailor",
+    "company": "Mathem",
+    "company_slug": "mathem",
+    "title": "Business Developer & Strategist",
+    "location_raw": "Farsta, Stockholm, SE",
+    "country": "SE",
+    "remote": null,
+    "url": "https://mathem.teamtailor.com/jobs/8063020-business-developer-strategist",
+    "posted_at": "2026-07-20",
+    "compensation": null,
+    "occupation": null
    }
   ],
   "verified_companies": {
    "nordicknotsab": {
     "company": "Nordic Knots AB",
     "provider": "teamtailor",
-    "job_count": 16
+    "job_count": 15,
+    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
    "ictnordics": {
     "company": "ICT Nordics",
     "provider": "teamtailor",
-    "job_count": 8
+    "job_count": 8,
+    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
    "nordtechgroup": {
     "company": "Nordtech Group",
     "provider": "teamtailor",
-    "job_count": 0
+    "job_count": 0,
+    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
    "polestar": {
     "company": "Polestar",
     "provider": "teamtailor",
-    "job_count": 26
+    "job_count": 27,
+    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
    "hemnet": {
     "company": "Hemnet",
     "provider": "teamtailor",
-    "job_count": 5
+    "job_count": 5,
+    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
    "mathem": {
     "company": "Mathem",
     "provider": "teamtailor",
-    "job_count": 0
+    "job_count": 1,
+    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T14:36:14+00:00"
    }
   }
  }

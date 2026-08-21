@@ -208,21 +208,21 @@
       "source_id": "fx_rates",
       "name": "World Bank Open Data — Official exchange rate, period average (PA.NUS.FCRF)",
       "urls": [
-        "https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/PA.NUS.FCRF?format=json&per_page=20000&date=1960:2026"
+        "https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT;SGP;JPN;KHM;IND;ARM/indicator/PA.NUS.FCRF?format=json&per_page=20000&date=1960:2026"
       ],
-      "fetched_at": "2026-08-12T15:15:06+00:00",
+      "fetched_at": "2026-08-21T14:42:26+00:00",
       "license": "CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators.",
       "redistribution": "processed derivative only — the raw API response is cached under data/raw/fx_rates/ but that directory is gitignored, so this repo does not redistribute it (CC BY 4.0 would permit it; the repo simply doesn't). Only the derived data/processed/fx_rates.json is committed.",
       "transforms": [
-        "Requested indicator PA.NUS.FCRF for all 15 covered countries in one call (semicolon-joined ISO3), 1960-2026.",
+        "Requested indicator PA.NUS.FCRF for all 15 wage-spine countries PLUS 5 postings-only countries (SG, JP, KH, IN, AM — package 14, Tier 3.1, needed to convert postings' own SGD/JPY/KHR/INR/AMD compensation) in one call (semicolon-joined ISO3), 1960-2026.",
         "Dropped rows with null values (World Bank returns nulls for unreported years).",
         "Regrouped from flat rows to {ISO2: [{year, value}]} sorted ascending by year — same shape convention as scripts/src_world_bank.py.",
         "No smoothing, no interpolation, no imputation, no override of AED/QAR's known peg values — fetched exactly as published."
       ],
       "output": "data/processed/fx_rates.json",
       "status": "ok",
-      "rows": 978,
-      "coverage": "15/15 countries, 1960-2026 (per-country coverage varies; pre-independence or pre-modern-currency years are gaps, not zeros)",
+      "rows": 1259,
+      "coverage": "15/15 wage-spine countries + 5/5 postings-only countries (SG, JP, KH, IN, AM), 1960-2026 (per-country coverage varies; pre-independence or pre-modern-currency years are gaps, not zeros)",
       "notes": "Period-average, not end-of-period — the correct series for converting an annual wage figure, which is itself an average over the year."
     },
     {
@@ -302,7 +302,7 @@
         "https://www.levels.fyi/t/software-engineer/locations/manchester-gbr",
         "https://www.levels.fyi/t/software-engineer/locations/<city-slug>"
       ],
-      "fetched_at": "2026-08-04T21:01:37+00:00",
+      "fetched_at": "2026-08-21T04:02:35+00:00",
       "license": "levels.fyi publishes these metro pages publicly and its robots.txt explicitly invites agent access. Data is crowd-sourced and remains theirs; we store derived per-city figures and cite levels.fyi on every one. No bulk redistribution.",
       "redistribution": "derived per-city figures committed; cited on every figure",
       "transforms": [
@@ -434,18 +434,19 @@
       "source_id": "postings",
       "name": "Postings panel — merged advertised-pay data across all providers",
       "urls": [],
-      "fetched_at": "2026-08-17T07:43:02+00:00",
+      "fetched_at": "2026-08-21T14:58:22+00:00",
       "license": "Inherits each provider source's own license — this file adds no new terms, only concatenation and summary computation over already-committed, already-licensed data.",
       "redistribution": "derived — nothing fetched here; every provider's own provenance entry already covers redistribution terms for its own postings.",
       "transforms": [
         "Concatenated every provider's own postings array into one list.",
+        "Converted each posting's own native compensation to USD at its own effective year's year-matched FX rate (Tier 3.1) — normalise.to_usd(), the same machinery the wage spine uses, applied entirely within postings' own data; never reads wage_distribution.json.",
         "Computed per-provider and per-country summary counts for the seed-list transparency page and the coverage-denominator discipline this site's own other panels already follow.",
-        "Never touched wage_distribution.json or normalise.py — the survey/advertised boundary is enforced structurally by this file's own imports, not just by convention."
+        "Never touched wage_distribution.json, crosswalk.compare(), or comparison_basis() — the survey/advertised boundary is enforced structurally by check_postings_wage_spine_boundary, not just by convention."
       ],
       "output": "data/processed/postings.json",
       "status": "ok",
-      "rows": 19463,
-      "coverage": "606 companies across 6 providers",
+      "rows": 46040,
+      "coverage": "1580 companies across 6 providers",
       "notes": "The site's own postings panel reads ONLY this file, never an individual provider file."
     },
     {
@@ -454,7 +455,7 @@
       "urls": [
         "https://api.ashbyhq.com/posting-api/job-board/{token}?includeCompensation=true"
       ],
-      "fetched_at": "2026-08-17T07:16:47+00:00",
+      "fetched_at": "2026-08-21T14:34:37+00:00",
       "license": "Each company's own postings, published by that company via Ashby's own public, unauthenticated job-board API — no Ashby-specific license terms apply beyond the postings being intentionally public.",
       "redistribution": "Only postings from companies whose board was verified live are kept; the raw per-company response is cached under data/raw/postings/ashby/ (gitignored, matching this pipeline's existing data/raw/ convention).",
       "transforms": [
@@ -465,8 +466,8 @@
       ],
       "output": "data/processed/postings_ashby.json",
       "status": "ok",
-      "rows": 6939,
-      "coverage": "304 verified companies, 6939 postings, this run",
+      "rows": 18100,
+      "coverage": "961 verified companies, 18100 postings, this run",
       "notes": "Advertised pay — NEVER merged with survey-earnings data (validate_data.py's own assertion, package 7, guards this). See data/processed/postings.json (build_postings.py) for the merged, cross-provider file the site actually reads."
     },
     {
@@ -494,7 +495,7 @@
         "https://boards-api.greenhouse.io/v1/boards/{token}/jobs",
         "https://boards-api.greenhouse.io/v1/boards/{token}/jobs/{id}?pay_transparency=true"
       ],
-      "fetched_at": "2026-08-17T07:38:10+00:00",
+      "fetched_at": "2026-08-21T01:32:25+00:00",
       "license": "Each company's own postings, published via Greenhouse's own public, unauthenticated Job Board API.",
       "redistribution": "Only postings from companies whose board was verified live are kept; raw list and per-job detail responses cached under data/raw/postings/greenhouse/.",
       "transforms": [
@@ -504,8 +505,8 @@
       ],
       "output": "data/processed/postings_greenhouse.json",
       "status": "ok",
-      "rows": 5172,
-      "coverage": "147 verified companies, 5172 postings, this run",
+      "rows": 13466,
+      "coverage": "349 verified companies, 13466 postings, this run",
       "notes": "Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads."
     },
     {
@@ -534,7 +535,7 @@
       "urls": [
         "https://api.lever.co/v0/postings/{token}?mode=json"
       ],
-      "fetched_at": "2026-08-17T07:40:24+00:00",
+      "fetched_at": "2026-08-21T14:54:57+00:00",
       "license": "Each company's own postings, published via Lever's own public, unauthenticated postings API.",
       "redistribution": "Only postings from companies whose board was verified live are kept; raw per-company responses cached under data/raw/postings/lever/.",
       "transforms": [
@@ -544,8 +545,8 @@
       ],
       "output": "data/processed/postings_lever.json",
       "status": "ok",
-      "rows": 3055,
-      "coverage": "149 verified companies, 3055 postings, this run",
+      "rows": 10176,
+      "coverage": "264 verified companies, 10176 postings, this run",
       "notes": "Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads."
     },
     {
@@ -554,7 +555,7 @@
       "urls": [
         "https://{subdomain}.teamtailor.com/jobs.json"
       ],
-      "fetched_at": "2026-08-17T07:40:40+00:00",
+      "fetched_at": "2026-08-21T14:36:14+00:00",
       "license": "Each company's own postings, published via Teamtailor's own public, unauthenticated JSON Feed — no Teamtailor-specific license terms apply.",
       "redistribution": "Raw per-company responses cached under data/raw/postings/teamtailor/.",
       "transforms": [
@@ -563,8 +564,8 @@
       ],
       "output": "data/processed/postings_teamtailor.json",
       "status": "ok",
-      "rows": 55,
-      "coverage": "6 verified companies, 55 postings",
+      "rows": 56,
+      "coverage": "6 verified companies, 56 postings",
       "notes": "Advertised pay — NEVER merged with survey-earnings data. Salary-free in this session's own sample; kept for volume and Nordic-market coverage per the work order's own explicit instruction for sources like this."
     },
     {
@@ -574,7 +575,7 @@
         "https://data.usajobs.gov/api/historicjoa?PositionSeries=2210",
         "https://data.usajobs.gov/api/historicjoa?PositionSeries=0854"
       ],
-      "fetched_at": "2026-08-16T05:11:40+00:00",
+      "fetched_at": "2026-08-21T14:36:00+00:00",
       "license": "17 U.S.C. SS 105 (U.S. federal government work — no US copyright attaches). Attribute as \"USAJOBS / U.S. OPM\" — NOT CC0 (a different legal basis: CC0 is a rights-holder's own waiver of rights they hold; SS105 means no US copyright ever existed here). Requires a descriptive, non-generic User-Agent header — a bare default UA is effectively blocked (found live, not assumed).",
       "redistribution": "Every returned record's own fields are redistributed directly — this endpoint already serves individual, already-public announcement records, not a bulk file this pipeline narrows down.",
       "transforms": [
@@ -913,13 +914,16 @@
       "source_id": "stackoverflow_survey",
       "name": "Stack Overflow Annual Developer Survey — salaries by country",
       "urls": [
-        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2024/results.csv"
+        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2022/results.csv",
+        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2023/results.csv",
+        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2024/results.csv",
+        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2025/results.csv"
       ],
-      "fetched_at": "2026-08-04T19:44:23+00:00",
+      "fetched_at": "2026-08-21T04:07:40+00:00",
       "license": "Stack Overflow releases survey results under the Open Database License (ODbL). Cite: Stack Overflow Annual Developer Survey.",
       "redistribution": "aggregates committed; raw survey CSVs not committed (size)",
       "transforms": [
-        "Streamed the annual results CSV for waves: 2024 (~150 MB each).",
+        "Streamed the annual results CSV for waves: 2022, 2023, 2024, 2025 (~150 MB each).",
         "Resolved the free-text Country column to our 15 ISO2 codes; all other responses dropped.",
         "Dropped compensation outside $5,000-$1,000,000.",
         "Bucketed by experience (<3 / 3-6 / 6+ professional years) and separately by DevType role.",
@@ -928,8 +932,8 @@
       ],
       "output": "data/processed/stackoverflow_survey.json",
       "status": "ok",
-      "rows": 65437,
-      "coverage": "15/15 countries across 1 wave(s)",
+      "rows": 277080,
+      "coverage": "15/15 countries across 4 wave(s)",
       "notes": "Self-selected sample — comparative signal, not an authoritative wage level."
     },
     {
@@ -1024,7 +1028,7 @@
       "source_id": "wage_distribution",
       "name": "Wage distribution panel — crosswalk.compare() + normalise.py resolved at build time",
       "urls": [],
-      "fetched_at": "2026-08-13T02:54:16+00:00",
+      "fetched_at": "2026-08-21T14:12:34+00:00",
       "license": "Inherits each underlying salary_*.json / bls_oews.json source's own licence — this file adds no new licensing terms, only computation over already-committed and already-licensed data.",
       "redistribution": "derived — nothing fetched; every input file's own provenance entry already covers redistribution terms for the raw figures this derives from.",
       "transforms": [
@@ -1151,5 +1155,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-17T07:43:02+00:00"
+  "updated_at": "2026-08-21T14:58:22+00:00"
 }
