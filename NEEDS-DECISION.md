@@ -1603,9 +1603,30 @@ network one.
    currency contributes. `Postings.tsx`'s own on-page disclosure text was updated to match — it no
    longer claims a USD-native restriction that isn't true any more.
 
-Both are real, disclosed, unconditionally-good changes (they remove genuinely wasted work) — neither
-is a "fake it to pass a check" move, and neither alone nor together brought the score to 90 (0.78-0.83
-after both). The dominant cost — parsing a 20MB JSON payload synchronously on the main thread — needs
+**Update, same package, gathering this same gate's own final evidence:** `/data/postings-seed`
+regressed again (0.71-0.83) under this round's own further data growth (`postings.json` grew again
+through the full re-harvest) — investigated fresh, not assumed to be the same unfixable /postings
+limitation, since this page is a genuinely different case. `PostingsSeed.tsx` was fetching the
+ENTIRE `postings.json` to read three small fields (`provider_summary`, `seed_companies`,
+`country_counts`) it actually uses, never touching the `postings` array itself — unlike `/postings`,
+which genuinely needs that array. Fixed at the source: `build_postings.py` now also writes
+`postings_seed_summary.json` (~190KB, just those three fields), and `PostingsSeed.tsx` reads it
+through its own dedicated loader — `total-byte-weight` dropped over 10x (2,522 KiB -> 216 KiB).
+That fix then exposed a masked cumulative-layout-shift regression (0.244, reproduced 3/3 runs) — a
+slow fetch had been pushing the "Loading…" placeholder's own height mismatch past Lighthouse's
+observation window; a fast one doesn't. Fixed the same way `Postings.tsx` already fixed the
+identical class of bug in an earlier round: `ChartSkeleton` panels reserving each real panel's own
+measured height. Final: 0.94-0.96, CLS 0, confirmed across 3 runs. `/postings` itself: unchanged,
+0.76-0.79 — the architectural limitation below is still real and still not attempted this package.
+Like the original two fixes below, both of this round's own fixes are real, disclosed,
+unconditionally-good changes, not a "fake it to pass a check" move — and, like them, neither touches
+`/postings` itself, whose own root cause is a different, architectural one none of the four address.
+
+The two ORIGINAL fixes (mapDots gating, the build-time aggregate) remain real, disclosed,
+unconditionally-good changes too (they remove genuinely wasted work) — neither is a "fake it to pass
+a check" move, and neither alone nor together brought `/postings` itself to 90 (0.78-0.83 after
+both, at the time). The dominant cost there — parsing a 20MB JSON payload synchronously on the main
+thread — needs
 a genuine architecture change to actually fix: paginating or lazy-loading the postings LIST fetch
 itself (rather than shipping all 46,040 records on first load), or moving the parse off the main
 thread (a Web Worker). Both are real engineering efforts with their own risk, on a WORKING,
