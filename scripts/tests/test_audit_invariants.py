@@ -207,5 +207,196 @@ class TestRefreshIntervals(AuditInvariantTestCase):
         self.assertEqual(ad.FLAGS, [])
 
 
+class TestPostingsMergeIsCurrent(AuditInvariantTestCase):
+    """Package 14, Tier 0.1 / adversarial review M5 — this check had zero
+    test coverage despite being the direct fix for the external audit's own
+    "stale merge" finding (postings.json served 5 days, ~15,000 postings
+    stale, silently)."""
+
+    def test_fails_when_a_provider_file_is_newer_than_the_merge_recorded(self):
+        self._write("postings", "postings", {
+            "provider_summary": {"ashby": {"generated_at": "2026-01-01T00:00:00Z"}},
+        })
+        # Written directly, not via _write()/_envelope(), so its own
+        # generated_at can differ from postings.json's recorded value --
+        # simulating a provider harvested again, later, after the merge ran.
+        (self.tmp / "postings_ashby.json").write_text(json.dumps({
+            "source_id": "postings_ashby", "generated_at": "2026-01-06T00:00:00Z",
+            "meta": {}, "data": {"postings": []},
+        }), encoding="utf-8")
+
+        ad.check_postings_merge_is_current(self.tmp)
+        self.assertTrue(any("STALE" in e and "ashby" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_passes_when_every_built_provider_matches_the_merge(self):
+        self._write("postings", "postings", {
+            "provider_summary": {"ashby": {"generated_at": "2026-01-01T00:00:00Z"}},
+        })
+        self._write("postings_ashby", "postings_ashby", {"postings": []})
+        ad.check_postings_merge_is_current(self.tmp)
+        self.assertEqual(ad.ERRORS, [])
+
+    def test_a_provider_never_built_in_this_environment_is_not_this_checks_concern(self):
+        # No postings_ashby.json at all (never harvested here) -- must not
+        # be treated as "stale", only a genuinely REBUILT-and-mismatched
+        # provider file is an error.
+        self._write("postings", "postings", {"provider_summary": {}})
+        ad.check_postings_merge_is_current(self.tmp)
+        self.assertEqual(ad.ERRORS, [])
+
+
+class TestOecdWageBenchmark(AuditInvariantTestCase):
+    """Package 14, Tier 1 (external audit Finding 1, SEVERE) / adversarial
+    review M5 — the standing invariant meant to have caught Finding 1 "the
+    day it shipped" had no test of its own, and no test at all of the
+    hardening added against the blind spot the review's own M5 finding
+    named (a renamed/missing WG_USD_PPP silently exempting every country
+    and reporting a clean PASS)."""
+
+    def _write_pair(self, wage_data: dict, oecd_data: dict) -> None:
+        (self.tmp / "wage_distribution.json").write_text(
+            json.dumps(_envelope("wage_distribution", wage_data)), encoding="utf-8")
+        (self.tmp / "oecd_indicators.json").write_text(
+            json.dumps(_envelope("oecd_wages", oecd_data)), encoding="utf-8")
+
+    def test_fails_when_published_median_is_below_the_low_band(self):
+        # ES-shaped: median well under 1.0x its own OECD avg_wages.
+        self._write_pair(
+            {"countries": [{"country": "ES", "native": {"year": 2018},
+                             "combos": {"usd_regular_pay": {"ok": True, "value": {"median": 40000}}}}]},
+            {"ES": {"avg_wages": {"WG_USD_PPP": [{"period": "2018", "value": 55000}]}}},
+        )
+        ad.check_oecd_wage_benchmark(self.tmp)
+        self.assertTrue(any("ES" in f and "outside the" in f for f in ad.FLAGS), ad.FLAGS)
+
+    def test_fails_when_published_median_is_above_the_high_band(self):
+        self._write_pair(
+            {"countries": [{"country": "ZZ", "native": {"year": 2024},
+                             "combos": {"usd_regular_pay": {"ok": True, "value": {"median": 500000}}}}]},
+            {"ZZ": {"avg_wages": {"WG_USD_PPP": [{"period": "2024", "value": 50000}]}}},  # 10x
+        )
+        ad.check_oecd_wage_benchmark(self.tmp)
+        self.assertTrue(any("ZZ" in f and "outside the" in f for f in ad.FLAGS), ad.FLAGS)
+
+    def test_passes_when_ratio_is_within_the_plausible_band(self):
+        self._write_pair(
+            {"countries": [{"country": "US", "native": {"year": 2024},
+                             "combos": {"usd_regular_pay": {"ok": True, "value": {"median": 100000}}}}]},
+            {"US": {"avg_wages": {"WG_USD_PPP": [{"period": "2024", "value": 64000}]}}},  # 1.5625x
+        )
+        ad.check_oecd_wage_benchmark(self.tmp)
+        self.assertEqual(ad.FLAGS, [])
+
+    def test_ae_and_qa_exempt_for_lacking_a_series_are_not_flagged_as_unexpected(self):
+        self._write_pair(
+            {"countries": [
+                {"country": "AE", "native": {"year": 2024},
+                 "combos": {"usd_regular_pay": {"ok": True, "value": {"median": 90000}}}},
+                {"country": "US", "native": {"year": 2024},
+                 "combos": {"usd_regular_pay": {"ok": True, "value": {"median": 100000}}}},
+            ]},
+            {"US": {"avg_wages": {"WG_USD_PPP": [{"period": "2024", "value": 64000}]}}},
+            # AE deliberately absent from oecd_data -- the real, known exemption.
+        )
+        ad.check_oecd_wage_benchmark(self.tmp)
+        self.assertFalse(any("beyond the known" in f for f in ad.FLAGS), ad.FLAGS)
+
+    def test_a_country_exempt_beyond_the_known_ae_qa_baseline_is_flagged(self):
+        # M5's own hardening: a THIRD country with no avg_wages series is
+        # far more likely a real break (renamed ISO code, missing pull)
+        # than a genuine new gap, and must not vanish into "exempt" silently.
+        self._write_pair(
+            {"countries": [
+                {"country": "ZZ", "native": {"year": 2024},
+                 "combos": {"usd_regular_pay": {"ok": True, "value": {"median": 90000}}}},
+                {"country": "US", "native": {"year": 2024},
+                 "combos": {"usd_regular_pay": {"ok": True, "value": {"median": 100000}}}},
+            ]},
+            {"US": {"avg_wages": {"WG_USD_PPP": [{"period": "2024", "value": 64000}]}}},
+        )
+        ad.check_oecd_wage_benchmark(self.tmp)
+        self.assertTrue(any("beyond the known" in f and "ZZ" in f for f in ad.FLAGS), ad.FLAGS)
+
+    def test_checked_zero_despite_real_rows_is_an_error_not_a_silent_pass(self):
+        # Simulates exactly the M5 scenario: WG_USD_PPP renamed/missing
+        # upstream. Every country in wage_distribution.json has real rows,
+        # but oecd_indicators.json carries no WG_USD_PPP key for any of
+        # them -- checked must stay 0, and that must be a loud ERROR, not
+        # a quiet "0 checked, 0 flagged, PASS".
+        self._write_pair(
+            {"countries": [{"country": "US", "native": {"year": 2024},
+                             "combos": {"usd_regular_pay": {"ok": True, "value": {"median": 100000}}}}]},
+            {"US": {"avg_wages": {"WG_USD_PPP_RENAMED": [{"period": "2024", "value": 64000}]}}},
+        )
+        ad.check_oecd_wage_benchmark(self.tmp)
+        self.assertTrue(any("checked 0 countries" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_missing_files_flags_rather_than_crashing(self):
+        ad.check_oecd_wage_benchmark(self.tmp)
+        self.assertTrue(any("missing" in f for f in ad.FLAGS), ad.FLAGS)
+        self.assertEqual(ad.ERRORS, [])
+
+
+class TestPostingsAnnualisedPlausibility(AuditInvariantTestCase):
+    """Package 14, Tier 3.3 (external audit Finding 3) / adversarial review
+    M5 — no test previously existed proving this check actually fires, or
+    that the period multiplier (year/month/hour -> annualised) is applied
+    before comparing against the band, rather than to the raw figure."""
+
+    def _write_postings(self, postings: list[dict]) -> None:
+        self._write("postings", "postings", {"postings": postings})
+
+    def test_fails_on_an_implausibly_low_annualised_figure(self):
+        self._write_postings([{
+            "id": "p1", "company": "acme", "title": "Intern",
+            "compensation": {"min": 100, "max": 100, "currency": "USD", "period": "year",
+                              "usd": {"min": 100, "max": 100}},
+        }])
+        ad.check_postings_annualised_plausibility(self.tmp)
+        self.assertTrue(any("outside the" in f for f in ad.FLAGS), ad.FLAGS)
+
+    def test_fails_on_an_implausibly_high_annualised_figure(self):
+        self._write_postings([{
+            "id": "p2", "company": "acme", "title": "CEO",
+            "compensation": {"min": 8_000_000, "max": 9_000_000, "currency": "USD", "period": "year",
+                              "usd": {"min": 8_000_000, "max": 9_000_000}},
+        }])
+        ad.check_postings_annualised_plausibility(self.tmp)
+        self.assertTrue(any("outside the" in f for f in ad.FLAGS), ad.FLAGS)
+
+    def test_passes_on_an_ordinary_annual_figure(self):
+        self._write_postings([{
+            "id": "p3", "company": "acme", "title": "Engineer",
+            "compensation": {"min": 120_000, "max": 150_000, "currency": "USD", "period": "year",
+                              "usd": {"min": 120_000, "max": 150_000}},
+        }])
+        ad.check_postings_annualised_plausibility(self.tmp)
+        self.assertEqual(ad.FLAGS, [])
+
+    def test_hourly_period_is_annualised_before_the_band_check_not_after(self):
+        # $55/hour looks implausibly LOW as a bare annual figure (well
+        # under $500), but x2080 = $114,400/year, comfortably inside the
+        # band -- proving the multiplier runs before the comparison, not
+        # that hourly postings are just being skipped.
+        self._write_postings([{
+            "id": "p4", "company": "acme", "title": "Contractor",
+            "compensation": {"min": 50, "max": 60, "currency": "USD", "period": "hour",
+                              "usd": {"min": 50, "max": 60}},
+        }])
+        ad.check_postings_annualised_plausibility(self.tmp)
+        self.assertEqual(ad.FLAGS, [])
+
+    def test_a_posting_with_no_usd_conversion_is_not_counted_either_way(self):
+        # No "usd" sub-field at all (unmapped currency or no FX rate for
+        # that year) -- must be silently skipped by this check, never
+        # treated as a flaggable $0.
+        self._write_postings([{
+            "id": "p5", "company": "acme", "title": "Engineer",
+            "compensation": {"min": 40000, "max": 50000, "currency": "XYZ", "period": "year"},
+        }])
+        ad.check_postings_annualised_plausibility(self.tmp)
+        self.assertEqual(ad.FLAGS, [])
+
+
 if __name__ == "__main__":
     unittest.main()

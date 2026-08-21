@@ -781,6 +781,18 @@ _OECD_BENCHMARK_LOW, _OECD_BENCHMARK_HIGH = 1.0, 2.5
 # richest, most dispersed case this pipeline has), wide enough that this
 # never fires on a genuinely elevated but real figure.
 
+# An adversarial review's own M5 finding: every EXEMPT country only ever
+# reached a log() line, and a WG_USD_PPP rename/removal upstream would
+# silently turn EVERY country exempt -- checked stays 0, flagged stays 0,
+# the function returns clean, and "0 checked, 0 flagged, PASS" reads
+# exactly like a healthy run. That defeats the whole reason this check
+# exists ("would have caught Finding 1 the day it shipped" -- not if it
+# can go blind and still say PASS). AE and QA are the only two countries
+# this pipeline has ever found with no OECD avg_wages series at all; a
+# third joining that list is far more likely a real break upstream than a
+# new, genuine data gap.
+_OECD_BENCHMARK_EXPECTED_EXEMPT = {"AE", "QA"}
+
 
 def check_oecd_wage_benchmark(processed_dir: Path = PROCESSED) -> None:
     """Package 14, Tier 1 (external audit Finding 1, SEVERE) -- the standing
@@ -828,12 +840,15 @@ def check_oecd_wage_benchmark(processed_dir: Path = PROCESSED) -> None:
              "benchmark (fine if this environment hasn't built the wage spine yet)")
         return
     oecd_data = oecd.get("data", {})
+    countries = wd.get("data", {}).get("countries", [])
     checked = exempt = flagged = 0
-    for row in wd.get("data", {}).get("countries", []):
+    exempt_countries: set[str] = set()
+    for row in countries:
         cc = row["country"].split("-")[0]  # "CA-21231"/"CA-21232" -> "CA"
         avg_wages = (oecd_data.get(cc, {}).get("avg_wages", {}) or {}).get("WG_USD_PPP", [])
         if not avg_wages:
             exempt += 1
+            exempt_countries.add(cc)
             log(f"  {row['country']}: EXEMPT — no OECD avg_wages series for {cc}")
             continue
         year = row["native"]["year"]
@@ -864,6 +879,31 @@ def check_oecd_wage_benchmark(processed_dir: Path = PROCESSED) -> None:
     log(f"  {checked} checked, {flagged} outside the {_OECD_BENCHMARK_LOW}x-{_OECD_BENCHMARK_HIGH}x "
         f"band, {exempt} exempt (no OECD avg_wages series)")
 
+    # M5's own hardening: a rename/removal of WG_USD_PPP upstream would
+    # otherwise make every country EXEMPT and let this function return
+    # having verified nothing, printing a clean "0 checked, 0 flagged" that
+    # reads exactly like a healthy run. checked == 0 here is never a real
+    # data limitation -- every row that reaches the loop already has a
+    # native/combos shape checked() would happily use if avg_wages simply
+    # existed -- so it is always this check itself failing to find data,
+    # not the data legitimately having none. ERROR, not FLAG: unlike a
+    # country's own occupation-scope mismatch (genuinely unfixable by any
+    # future commit, see this function's own docstring), a broken lookup
+    # key is fixable by the very next commit, and silently downgrading the
+    # audit's own headline check to "checks nothing, always passes" is a
+    # regression this project's own no-silent-caps discipline exists to
+    # catch, not wave through as a clean PASS.
+    if checked == 0 and countries:
+        err("check_oecd_wage_benchmark checked 0 countries despite wage_distribution.json "
+            "having rows — WG_USD_PPP (or oecd_indicators.json's own shape) likely renamed or "
+            "missing upstream; this check is currently verifying NOTHING, not passing cleanly")
+    unexpected_exempt = exempt_countries - _OECD_BENCHMARK_EXPECTED_EXEMPT
+    if unexpected_exempt:
+        flag(f"OECD benchmark: {sorted(unexpected_exempt)} exempt for lack of an avg_wages series, "
+             f"beyond the known {sorted(_OECD_BENCHMARK_EXPECTED_EXEMPT)} baseline — a new, genuine "
+             "gap (worth recording) or a country-code mismatch (worth fixing); either way, "
+             "someone should look, this should not stay a silent exemption")
+
 
 _POSTINGS_ANNUAL_USD_LOW, _POSTINGS_ANNUAL_USD_HIGH = 500, 5_000_000
 # Package 14, Tier 3.3 -- matches audit_data.py's own existing
@@ -878,6 +918,37 @@ _POSTINGS_ANNUAL_USD_LOW, _POSTINGS_ANNUAL_USD_HIGH = 500, 5_000_000
 # eyeballed the raw native number against one USD-shaped band would flag
 # all three as extreme outliers purely because of currency, which the work
 # order's own instruction names directly as the failure mode to avoid.
+# An adversarial review flagged the flat 2080 (40h x 52wk, the US
+# convention) below against normalise.py's own hours_for() docstring,
+# which documents a named, tested prohibition on exactly this assumption
+# (see that function's own module comment and
+# test_normalise.py::test_annualise_hour_uses_sourced_hours_not_2080) --
+# a fair challenge to answer explicitly, not silently share a number with
+# and hope it reads as consistent.
+#
+# The two contexts are not the same rule applied inconsistently. normalise.
+# hours_for() feeds a PUBLISHED comparison VALUE for a bounded ~15-country
+# wage spine where a real, sourced hours-per-week record is available for
+# every one of them -- there, "refuse rather than guess" costs nothing
+# (nothing is ever actually missing) and a 2080 assumption would silently
+# change the number a reader sees by the several-percent gap real average
+# workweeks (Denmark ~37h, France ~35h) open up against 40h.
+#
+# This constant instead feeds a FLAG-only plausibility screen (never an
+# auto-correction, see this check's own docstring) against a band spanning
+# _POSTINGS_ANNUAL_USD_LOW to _POSTINGS_ANNUAL_USD_HIGH above -- four
+# orders of magnitude wide. The same several-percent gap a real country's
+# hours would open up against 2080 cannot move a value across either edge
+# of a 10,000x band in any realistic case; if one ever sits close enough
+# to the edge for that gap to matter, this check's own job is only to
+# flag it for a human to look at, not to decide silently either way. And
+# unlike the wage spine's bounded, fully-sourced country set, postings
+# span ~90 countries worldwide -- normalise.hours_for() has no sourced
+# record for most of them, so a "use it when available" version would
+# still need this same fallback for the majority of rows it checks, at
+# the cost of a new dependency between this postings-side gate and the
+# wage-spine's own country coverage. Kept as one flat, disclosed
+# approximation, used the same way for every country on purpose.
 _POSTINGS_ANNUAL_MULT = {"year": 1, "month": 12, "hour": 2080}
 
 
