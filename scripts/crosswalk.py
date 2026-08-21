@@ -127,9 +127,13 @@ def resolve_set(verdicts_by_country: dict[str, dict], *, min_quorum: int = 2) ->
     computed against the single reference occupation; this function does
     not re-derive that, only resolves across it). Returns:
       {"resolved_depth": N | None, "shared_key": "isco08:NNNN" | None,
-       "verdicts": {label: {"comparable": True, "depth": N, "own_depth": N,
-                             "degraded": bool, "degraded_by": str | None}
+       "verdicts": {label: {"comparable": True, "depth": N, "own_depth": N}
                           | {"comparable": False, "reason": "..."}}}
+      own_depth always equals depth when comparable is True (exact-match
+      inclusion, see the Package 14 fix note below) -- kept as a separate
+      field anyway so a caller can confirm the two agree without trusting
+      a boolean flag to say so, the same reasoning explore.ts's own
+      ChartComparability type docstring gives.
 
     ALGORITHM: every already-comparable country carries its own native
     depth (compare()'s own "depth" field). resolved_depth is the DEEPEST
@@ -137,15 +141,27 @@ def resolve_set(verdicts_by_country: dict[str, dict], *, min_quorum: int = 2) ->
     country's own depth (that would drag a 4-digit US down to Ireland's
     1-digit just because Ireland is in the set) and not a lone deepest
     outlier's own depth either (one country being 4-digit is not "a depth
-    the SET shares"). A country whose own depth is BELOW resolved_depth
-    cannot meet it: excluded, naming its own depth as the reason -- the
+    the SET shares"). A country whose own depth does not EXACTLY EQUAL
+    resolved_depth is excluded, naming its own depth as the reason -- the
     same "leaves the chart, says why" grammar this site already uses for
-    no-series and central-tendency-only. A country AT resolved_depth is
-    comparable, undegraded. A country whose own native depth is DEEPER
-    than resolved_depth (impossible today, since 4-digit is ISCO-08's own
-    maximum and the current data's quorum already resolves to 4 -- kept
-    for when it stops being impossible) is comparable but degraded, and
-    the verdict names which countries' own shallower depth forced it.
+    no-series and central-tendency-only.
+
+    Package 14 fix (an independent adversarial review's own finding):
+    earlier revisions of this function ALSO admitted a country whose own
+    depth was DEEPER than resolved_depth, marked "comparable, degraded".
+    That was wrong in a way that mirrors Finding 1 itself -- degrading the
+    CODE (what depth the row claims to compare at) does not degrade the
+    DATA (combos[key].value in build_wage_distribution.py's own output is
+    still that country's full, native, deepest-available wage figure; this
+    function has no broader-scoped figure to substitute for it, and never
+    invents one). A country shown as "2-digit comparable" while quietly
+    still carrying its own 4-digit-scoped VALUE is exactly the "a number
+    computed at one occupation-scope presented as if comparable to numbers
+    at a different scope" problem this whole package exists to fix. Exact-
+    match inclusion means a country whose own classification is DEEPER
+    than what the rest of the displayed set can support is excluded too --
+    honest (nothing hides that its own data is more precise than this
+    comparison can use), not a partial, silently-mismatched inclusion.
 
     Does NOT re-check pairwise code agreement across every combination:
     every country's own depth/shared_key already came from compare()
@@ -154,8 +170,6 @@ def resolve_set(verdicts_by_country: dict[str, dict], *, min_quorum: int = 2) ->
     depths necessarily agree with EACH OTHER too, transitively, at
     whichever is shallower. Re-deriving that here would just be checking
     compare()'s own arithmetic a second time."""
-    from collections import Counter
-
     depths: dict[str, int] = {}
     excluded: dict[str, str] = {}
     for label, v in verdicts_by_country.items():
@@ -168,7 +182,24 @@ def resolve_set(verdicts_by_country: dict[str, dict], *, min_quorum: int = 2) ->
         return {"resolved_depth": None, "shared_key": None,
                 "verdicts": {label: {"comparable": False, "reason": r} for label, r in excluded.items()}}
 
-    counts = Counter(depths.values())
+    # Package 14 -- an adversarial review caught this counting distinct ROW
+    # LABELS per depth, not distinct COUNTRIES: Canada's own two rows
+    # (CA-21231, CA-21232 — one wage panel entry per NOC code, see
+    # build_wage_distribution.py's own CANADA_CODES) both being 4-digit
+    # let Canada alone satisfy "min_quorum countries share this depth" —
+    # exactly the "one country being 4-digit is not 'a depth the SET
+    # shares'" case this function's own docstring already promises never
+    # happens. base_country() collapses a row label to what actually
+    # counts as one country for quorum purposes; the per-ROW verdicts
+    # below are unchanged -- CA-21231 and CA-21232 are still each
+    # assessed and rendered as their own row.
+    def base_country(label: str) -> str:
+        return label.split("-")[0]
+
+    countries_at_depth: dict[int, set[str]] = {}
+    for label, d in depths.items():
+        countries_at_depth.setdefault(d, set()).add(base_country(label))
+    counts = {d: len(countries) for d, countries in countries_at_depth.items()}
     resolved_depth = next((d for d in (4, 2, 1) if counts.get(d, 0) >= min_quorum), None)
 
     verdicts: dict[str, dict] = {label: {"comparable": False, "reason": r} for label, r in excluded.items()}
@@ -181,22 +212,30 @@ def resolve_set(verdicts_by_country: dict[str, dict], *, min_quorum: int = 2) ->
             }
         return {"resolved_depth": None, "shared_key": None, "verdicts": verdicts}
 
-    forcing = sorted(label for label, d in depths.items() if d == resolved_depth)
-    shared_key = verdicts_by_country[forcing[0]]["shared_key"]
+    forcing_labels = sorted(label for label, d in depths.items() if d == resolved_depth)
+    # Deduplicated to one name per COUNTRY for the "who forced it" prose —
+    # the per-row verdicts (forcing_labels) still cover every row.
+    forcing = sorted({base_country(label) for label in forcing_labels})
+    shared_key = verdicts_by_country[forcing_labels[0]]["shared_key"]
     for label, d in depths.items():
-        if d < resolved_depth:
-            verdicts[label] = {
-                "comparable": False,
-                "reason": f"{label}'s own occupation mapping reaches only {d}-digit ISCO-08 depth; the "
-                          f"other countries on this chart ({', '.join(forcing)}) share {resolved_depth}-"
-                          f"digit depth, which {label} cannot meet",
-            }
-        else:
-            verdicts[label] = {
-                "comparable": True, "depth": resolved_depth, "own_depth": d, "degraded": d > resolved_depth,
-                "degraded_by": None if d <= resolved_depth else
-                    f"resolved to {resolved_depth}-digit, shared by {', '.join(forcing)}",
-            }
+        if d == resolved_depth:
+            verdicts[label] = {"comparable": True, "depth": resolved_depth, "own_depth": d}
+            continue
+        too_shallow = d < resolved_depth
+        verdicts[label] = {
+            "comparable": False,
+            "reason": (
+                f"{label}'s own occupation mapping reaches only {d}-digit ISCO-08 depth; the "
+                f"other countries on this chart ({', '.join(forcing)}) share {resolved_depth}-digit "
+                f"depth, which {label} cannot meet"
+            ) if too_shallow else (
+                f"{label}'s own occupation mapping reaches {d}-digit ISCO-08 depth, deeper than the "
+                f"{resolved_depth}-digit this chart's other countries ({', '.join(forcing)}) share — "
+                f"{label}'s own published figure is scoped to its own {d}-digit occupation and this "
+                f"function has no {resolved_depth}-digit-scoped figure to show it at instead, so it "
+                "leaves the chart rather than showing a mismatched value at a truncated label"
+            ),
+        }
 
     return {"resolved_depth": resolved_depth, "shared_key": shared_key, "verdicts": verdicts}
 

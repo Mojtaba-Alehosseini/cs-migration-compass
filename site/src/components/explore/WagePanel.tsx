@@ -41,7 +41,7 @@ import { Derived, type DerivedConcept } from '../Derived'
 import { Seg, ChartFoot, ChartTable, Gap } from './Controls'
 import { useAsync } from './useAsync'
 import { loadPayComposition, type PayComposition } from '../../data/store'
-import { comboKey, computeYearSpread, CA_NOC_DISTINCTION, type Basis, type CurrencyMode, type WageCountry, type WageDistribution } from '../../data/explore'
+import { comboKey, computeYearSpread, CA_NOC_DISTINCTION, type Basis, type CurrencyMode, type WageDistribution } from '../../data/explore'
 import { NO_DATA } from '../../data/format'
 
 const cc3 = (c: string) => `var(--c-${c})`
@@ -91,22 +91,17 @@ function shortAbsence(basis: Basis, reason: string): string {
   return 'not available on this basis'
 }
 
-/** Short enough to fit beside a bar at the chart's own right edge — the full
- *  sentence ("IE forced 4-digit down to 1-digit") overflowed the SVG's right
- *  edge and was rendered clipped mid-word, caught the same way as the CA
- *  label overflow: by reading a real screenshot, not by inspecting the
- *  string in isolation. Full sentence still lives in the <title> tooltip. */
-function degradationNote(row: WageCountry): string | null {
-  const cc = row.chart_comparable
-  if (!cc.comparable) return 'not comparable'
-  if (!cc.degraded) return null
-  return `${cc.depth}-digit match`
-}
-
-function degradationNoteFull(row: WageCountry): string {
-  const cc = row.chart_comparable
-  return cc.comparable ? (cc.degraded_by ?? '') : cc.reason
-}
+/* Package 14 — this file used to carry degradationNote()/degradationNoteFull()
+ * here, an inline "1-digit match" style note beside a row whose own depth
+ * was shallower than the reference's. Removed: resolve_set() (crosswalk.py)
+ * now requires an EXACT depth match for a row to be comparable at all (an
+ * adversarial review's own finding — a "degraded" row still carried its own
+ * un-degraded VALUE underneath, which these notes were papering over, not
+ * disclosing). `rows` below is already filtered to chart_comparable.comparable,
+ * and every comparable row's own depth now equals the resolved depth by
+ * construction, so there is nothing left for a per-row note to say — the
+ * resolved depth is stated once, above the chart, and every EXCLUDED
+ * country's own reason renders in the disclosure section instead. */
 
 /** The composition badge for the basis actually shown in THIS card — not a
  *  stale echo of the source's raw, pre-basis pay_composition.json entry.
@@ -318,7 +313,6 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
             const col = cc3(iso)
             const combo = r.combos[key]
             const label = ROW_LABEL[r.country] ?? iso
-            const note = degradationNote(r)
 
             return (
               <g key={r.country}>
@@ -359,16 +353,6 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                     </text>
                   </>
                 )}
-                {note && canCompare && (
-                  <text x={X(domainMax / 1.08) + 4} y={y0 + 3.5} fontSize="9" fill="var(--ink-3)">
-                    {note}<title>{degradationNoteFull(r)}</title>
-                  </text>
-                )}
-                {note && !canCompare && (
-                  <text x={W - PR} y={y0 + 3.5} fontSize="9" fill="var(--ink-3)" textAnchor="end">
-                    {note}<title>{degradationNoteFull(r)}</title>
-                  </text>
-                )}
               </g>
             )
           })}
@@ -385,12 +369,13 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
               leading to it — has grown into one real, tappable trigger per comparable
               row, each showing its own year (finding F13: no figure on the panel
               named its vintage anywhere outside an opened card). Real DOM list, not
-              SVG — keyboard- and touch-reachable. The chart's own degradation labels
-              are still SVG <title> (hover-only, finding F18) for the full sentence,
-              but the DEPTH itself (the fact a row is degraded, and to what digit) is
-              in the ChartTable's own "Comparable" column below — a real table cell,
-              not a tooltip — so the key fact survives without a mouse even though the
-              longer "who forced it" reasoning doesn't yet. */}
+              SVG — keyboard- and touch-reachable. Package 14: the chart no longer has
+              degradation labels to disclose (SVG <title> or otherwise) — resolve_set()
+              now requires an EXACT depth match to be comparable at all, so every row
+              in the ChartTable's own "Comparable" column below is either the resolved
+              depth or "no"; a row that can't meet it is excluded from the chart
+              entirely and its reason moves to the Gap disclosure section further
+              down, as a real DOM element, not a tooltip. */}
           <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0', display: 'flex',
                        flexDirection: 'column', gap: 4, fontSize: 'var(--text-2xs)' }}>
             {rows.filter((r) => r.combos[key]?.ok).map((r) => {

@@ -144,9 +144,17 @@ export type CrosswalkVerdict =
  *  once, set-wide, in scripts/crosswalk.py's resolve_set(); the two can
  *  disagree (Ireland is crosswalk.comparable at 1-digit, but
  *  chart_comparable: false once the panel's own quorum resolves to
- *  4-digit — see WagePanel.tsx). */
+ *  4-digit — see WagePanel.tsx).
+ *
+ *  own_depth always equals depth when comparable is true — resolve_set()
+ *  requires an EXACT depth match for inclusion (an adversarial review's
+ *  own finding: a country whose own depth was merely marked "degraded"
+ *  still carried its own native, un-degraded VALUE underneath — degrading
+ *  the code without degrading the data). own_depth is kept for the same
+ *  reason crosswalk's own depth is kept elsewhere: a reader who wants to
+ *  confirm the two agree can, without trusting a boolean flag to say so. */
 export type ChartComparability =
-  | { comparable: true; depth: number; own_depth: number; degraded: boolean; degraded_by: string | null }
+  | { comparable: true; depth: number; own_depth: number }
   | { comparable: false; reason: string }
 
 export type Combo =
