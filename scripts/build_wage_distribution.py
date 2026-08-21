@@ -735,9 +735,21 @@ def build() -> dict:
         r["chart_comparable"] = resolved["verdicts"][r["country"]]
     excluded_from_chart = [{"country": r["country"], "reason": r["chart_comparable"]["reason"]}
                             for r in results if not r["chart_comparable"]["comparable"]]
+    # An adversarial review's own R-G finding: len(results) counts ROWS, and
+    # Canada contributes two (CA-21231, CA-21232) for one country -- a build
+    # log saying "9 of 15 COUNTRIES" when 15 is really 14 countries (one
+    # counted twice) is the same conflation M3 already fixed inside
+    # resolve_set()'s own quorum math; fixing the QUORUM without also fixing
+    # what this log line prints would leave the wrong number in every future
+    # report that quotes this output directly. Distinct countries computed
+    # the same way resolve_set() does internally (label.split('-')[0]).
+    all_countries = {r["country"].split("-")[0] for r in results}
+    excluded_countries = {e["country"].split("-")[0] for e in excluded_from_chart}
+    comparable_countries = len(all_countries) - len(excluded_countries)
     log(f"  chart-wide resolved depth: {resolved['resolved_depth']}-digit "
-        f"({resolved['shared_key']}) — {len(results) - len(excluded_from_chart)} of {len(results)} "
-        f"countries meet it, {len(excluded_from_chart)} excluded from the comparison chart")
+        f"({resolved['shared_key']}) — {comparable_countries} of {len(all_countries)} countries "
+        f"meet it ({len(results)} rows total, Canada counted once as a country here), "
+        f"{len(excluded_countries)} excluded from the comparison chart")
     for e in excluded_from_chart:
         log(f"    excluded: {e['country']} — {e['reason']}")
 
