@@ -50,6 +50,16 @@ function ordinal(pct: number): string {
  *  what the resolver actually returned — not asserted separately from it
  *  (gate 7's own requirement).
  *
+ *  Package 14, adversarial review M7 — checked deliberately: this map reads
+ *  row.crosswalk (compare()'s pairwise verdict), not chart_comparable
+ *  (resolve_set()'s set-wide one, Tier 1's own fix for the wage panel's
+ *  severe finding). Confirmed correct, not a missed instance of that same
+ *  bug — every row below states ITS OWN depth as a fact about that one
+ *  country's own coverage, never placed beside another row's number on a
+ *  shared axis the way the wage panel's chart does. See NEEDS-DECISION #40
+ *  and data/explore.ts's own ChartComparability docstring for the full
+ *  reasoning on why the two verdicts are meant to disagree sometimes.
+ *
  *  Three INDEPENDENT axes, each named separately rather than collapsed into
  *  one tier label (finding F6, package 10's adversarial review — a country
  *  refused by the crosswalk at 2-digit depth but still publishing a full

@@ -808,29 +808,49 @@ def check_oecd_wage_benchmark(processed_dir: Path = PROCESSED) -> None:
     FLAG, not ERROR -- deliberately, and disclosed here rather than left
     implicit: this package's own investigation (REPORT-P14.md gate 4, and
     the Tier 1 set-wide chart fix earlier in main()) found the ratio
-    itself is not a bug to fix by changing a number. Spain's, Ireland's
-    and Germany's own published medians are correctly sourced and
-    correctly computed for the occupation THEIR OWN national statistics
-    actually break out, which is broader than "software developer"
-    specifically (Ireland: ISCO major group 2, "all professionals," not
-    software). That is a real, disclosed, structural limit of what their
-    source data can express -- the Tier 1 chart fix already excludes
-    exactly these countries from the cross-country COMPARISON chart, but
-    their own figure is still real, sourced, and correctly worth
-    publishing on their own country page. Making this an ERROR would fail
-    CI permanently for a condition no future commit can fix without either
-    fabricating a narrower Spanish/Irish figure that does not exist
-    (forbidden by this project's own rules) or removing their country page
-    entirely (not asked for) -- exactly the tension the work order's own
-    gate 4 anticipates: "show it passing after Tier 1's fix -- or, if
-    figures still fail, say so plainly rather than loosening the
-    threshold." FLAG keeps the check permanently VISIBLE (satisfying
-    "would have caught Finding 1 the day it shipped") without permanently
-    blocking a build over a condition this package already investigated
-    and disclosed -- not "silencing" the check: the threshold, the
-    comparison, and the visibility are all unchanged; only its power to
-    block a commit forever over an unfixable-by-normal-means condition is.
-    Recorded in NEEDS-DECISION.md too, for the owner's own review."""
+    itself is not a bug to fix by changing a number. Spain, Ireland and the
+    Netherlands currently flag (0.77x, 0.98x, 0.97x) -- each for its own
+    real, disclosed, DIFFERENT reason, not one uniform story (an earlier
+    draft of this docstring wrongly named Germany as the third country and
+    applied Ireland's own "broader occupation" explanation to all three;
+    corrected after re-deriving each ratio directly against live data
+    rather than trusting a stale note -- see NEEDS-DECISION #35):
+      - Spain: crosswalk.compare() forces its own 4-digit ISCO mapping down
+        to 2-digit against the reference -- its own government source
+        genuinely covers a broader occupation band than "software
+        developer" specifically.
+      - Ireland: forced further still, to 1-digit ("all professionals") --
+        the same kind of breadth issue as Spain, more severe.
+      - Netherlands: a DIFFERENT mechanism -- data/occupations.json's own
+        mapping note says its BRC 2014 classification is "not a national
+        adaptation of ISCO-08... no defensible ISCO-08 anchor at any
+        depth," despite its own national_title being software-developer-
+        specific ("Software- en applicatieontwikkelaars"). No breadth
+        issue at all; a crosswalk STRUCTURAL-compatibility gap instead.
+        Its own regular_pay (bonus-excluded) basis is the more likely
+        driver of its near-1.0 ratio -- see NEEDS-DECISION #37's own
+        compositional-basis finding, which this ratio sits close enough to
+        1.0 to plausibly cross under a fully bonus-inclusive comparison.
+    All three published medians remain correctly sourced and correctly
+    computed for what their own national statistics actually measure --
+    the Tier 1 chart fix already excludes exactly these countries from the
+    cross-country COMPARISON chart for their own individually-disclosed
+    reasons, but each one's own figure is still real, sourced, and
+    correctly worth publishing on its own country page. Making this an
+    ERROR would fail CI permanently for conditions no future commit can
+    fix without either fabricating a narrower occupation-specific figure
+    that does not exist (forbidden by this project's own rules) or
+    removing a country page entirely (not asked for) -- exactly the
+    tension the work order's own gate 4 anticipates: "show it passing
+    after Tier 1's fix -- or, if figures still fail, say so plainly rather
+    than loosening the threshold." FLAG keeps the check permanently
+    VISIBLE (satisfying "would have caught Finding 1 the day it shipped")
+    without permanently blocking a build over conditions this package
+    already investigated and disclosed -- not "silencing" the check: the
+    threshold, the comparison, and the visibility are all unchanged; only
+    its power to block a commit forever over an unfixable-by-normal-means
+    condition is. Recorded in NEEDS-DECISION.md too, for the owner's own
+    review."""
     log(f"· every country's published median is checked against its own OECD avg_wages "
         f"({_OECD_BENCHMARK_LOW}x-{_OECD_BENCHMARK_HIGH}x band)")
     wd = _load(processed_dir / "wage_distribution.json")
@@ -966,9 +986,23 @@ def check_postings_annualised_plausibility(processed_dir: Path = PROCESSED) -> N
     FLAG only, per the work order's own explicit instruction ("flagged for
     review, not deleted") -- no ambiguity to resolve the way the OECD wage
     benchmark's own FLAG-vs-ERROR choice needed (see that check's own
-    docstring): this one was never asked to block anything."""
-    log(f"· every posting's own annualised USD compensation is checked against a "
-        f"${_POSTINGS_ANNUAL_USD_LOW:,}-${_POSTINGS_ANNUAL_USD_HIGH:,}/year band")
+    docstring): this one was never asked to block anything.
+
+    COVERAGE, disclosed plainly (an adversarial review's own M10 finding:
+    an earlier version of this docstring and its own log() line both said
+    "every posting" in a way that overstated what actually gets checked):
+    only postings.json rows with a successful compensation.usd conversion
+    reach this check at all -- currently ~29% of compensation-bearing
+    postings (checked directly: 4,578 of 15,708 in the committed data this
+    package regenerated), the rest excluded by an unmapped currency or a
+    year with no FX rate, per convert_compensation_to_usd()'s own "refuse
+    rather than guess" rule. The other ~71% carry no silent pass here --
+    they were never claimed plausible, they were never checked, and the
+    no_usd count logged below says so on every run, not just this
+    docstring."""
+    log(f"· every postings.json row with a successful USD conversion (compensation.usd) is checked "
+        f"against a ${_POSTINGS_ANNUAL_USD_LOW:,}-${_POSTINGS_ANNUAL_USD_HIGH:,}/year band -- see "
+        f"the no_usd count below for how many rows that excludes")
     postings = _load(processed_dir / "postings.json")
     if not postings:
         flag("postings.json missing or unreadable — cannot check annualised plausibility "

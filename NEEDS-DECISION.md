@@ -1469,17 +1469,32 @@ OECD `avg_wages` for the same year fails the audit." `scripts/audit_data.py`'s n
 future commit — but appends to `FLAGS`, not `ERRORS`, so it does not fail `python scripts/audit_data.py`'s
 own exit code (which `.github/workflows/ci.yml` gates every push to `main` on).
 
-**Why:** Spain, Ireland and Germany fail this benchmark today (0.77x, 0.98x, and inside-band respectively
-— see REPORT-P14.md gate 4 for the live numbers) for a real, disclosed, structural reason: their own
-national statistics do not break out a software-developer-specific wage at all — Ireland's own source is
-ISCO major group 2, "all professionals." Their published medians are correctly sourced and correctly
-computed for the occupation their own government actually measures; that occupation is just broader than
-"software developer." Tier 1's own set-wide chart fix already excludes these countries from the
-cross-country COMPARISON chart for exactly this reason (see `crosswalk.resolve_set()`) — but their own
-country PAGE still, correctly, shows their own real figure. Making the benchmark an ERROR would fail CI
-permanently for a condition no future commit can resolve without either fabricating a narrower Spanish/
-Irish occupation-specific figure that does not exist (forbidden by this project's own rules) or removing
-their country page entirely (not asked for, and a real loss of otherwise-good data).
+**Why:** Spain, Ireland and the Netherlands fail this benchmark today (0.77x, 0.98x, 0.97x — see
+REPORT-P14.md gate 4 for the live numbers, re-derived directly against live data for this entry rather
+than trusted from an earlier draft, which wrongly named Germany as the third country and applied one
+uniform explanation to all three) — each for its own real, disclosed, and genuinely DIFFERENT reason:
+
+- **Spain:** `crosswalk.compare()` forces its own 4-digit ISCO mapping down to 2-digit against the
+  reference occupation — a real breadth issue, its own government source covers more than "software
+  developer" specifically.
+- **Ireland:** forced further, to 1-digit ("all professionals") — the same kind of breadth issue as
+  Spain, more severe.
+- **Netherlands:** NOT a breadth issue. `data/occupations.json`'s own mapping note records that its BRC
+  2014 classification is "not a national adaptation of ISCO-08 the way SSYK, DISCO-08, STYRK-08 and
+  AL2010 are... no defensible ISCO-08 anchor at any depth" — a crosswalk STRUCTURAL-compatibility gap,
+  not a scope-breadth one. Its own national occupation title ("Software- en applicatieontwikkelaars") is
+  software-developer-specific. Its near-1.0 ratio more plausibly traces to item #37's own compositional
+  finding instead (`usd_regular_pay`, bonus excluded from a bonus-inclusive OECD baseline) — close
+  enough to 1.0 that a fully bonus-inclusive comparison could plausibly clear it.
+
+All three published medians are correctly sourced and correctly computed for what each country's own
+national statistics actually measure. Tier 1's own set-wide chart fix already excludes these three
+countries from the cross-country COMPARISON chart, each for its own individually-disclosed reason (see
+`crosswalk.resolve_set()`) — but each one's own country PAGE still, correctly, shows its own real
+figure. Making the benchmark an ERROR would fail CI permanently for conditions no future commit can
+resolve without either fabricating a narrower occupation-specific figure that does not exist (forbidden
+by this project's own rules) or removing a country page entirely (not asked for, and a real loss of
+otherwise-good data).
 
 Gate 4's own text anticipates exactly this outcome: "show it passing after Tier 1's fix — or, if figures
 still fail, say so plainly rather than loosening the threshold." FLAG is how "say so plainly" stays
@@ -1488,7 +1503,7 @@ are all unchanged from the work order's own spec — only the check's power to b
 an already-investigated, already-disclosed, structurally-unfixable-by-a-number-change condition is.
 
 **Decide:** whether FLAG is the right permanent severity here, or whether the owner would rather this be
-an ERROR that stays red on `main` until Spain/Ireland/Germany are either dropped from the wage panel
+an ERROR that stays red on `main` until Spain/Ireland/Netherlands are either dropped from the wage panel
 entirely or the benchmark's own threshold is scoped to exclude countries already outside
 `resolved_comparison`'s chart-comparable set (a scoping this package deliberately did NOT do — see this
 check's own docstring — because coupling the benchmark's pass/fail to the chart's own exclusion logic
@@ -1501,8 +1516,10 @@ silencing the check than reporting on it independently).
 3's own named list) plus AUD, SEK, NOK, DKK, AED — the second five added because their own countries
 (AU, SE, NO, DK, AE) were ALREADY in `fx_rates.json` as part of the 15-country wage spine, so covering
 them costs zero new fetching. Real, live postings data also carries PHP, PLN, CNY, HUF, THB, MXN, BRL,
-CZK, KRW, RON, CHF, MYR, HKD, TWD and ARS — each single- to low-double-digit counts (under 45 postings
-combined, out of 46,040 total) — none of whose countries this pipeline has ever fetched FX history for.
+CZK, KRW, RON, CHF, MYR, HKD, TWD and ARS — each single- to low-double-digit counts, 103 postings
+combined (counted directly: PHP 42, PLN 13, CNY 8, HUF 8, THB 6, MXN 5, BRL 3, CZK 3, KRW 3, RON 3,
+CHF 3, MYR 2, HKD 2, TWD 1, ARS 1 — out of 46,040 total) — none of whose countries this pipeline has
+ever fetched FX history for.
 These postings' own native compensation is unchanged and fully disclosed (a null `compensation.usd`
 field, same as any other unconverted currency); they are simply not convertible to USD yet.
 
@@ -1528,13 +1545,21 @@ equivalent employee") is compositionally closer to `total_earnings` (bonuses inc
 `usd_total_earnings` otherwise — it does not composition-match against OECD's own basis.
 
 **Why this was not treated as a bug to fix:** the resulting bias runs in the SAFE direction for a
-FLAG-only check. A `regular_pay`-based country (Sweden 1.06x, Finland 1.05x — both real,
-depth-4-comparable, both close to the 1.0 floor) is being compared against a bonus-INCLUSIVE
+FLAG-only check. A `regular_pay`-based country is being compared against a bonus-INCLUSIVE OECD
 baseline while excluding its own bonus — if compared on a truly consistent (bonus-included) basis,
 its real ratio would be equal or HIGHER, never lower. The compositional mismatch can only push a
-regular_pay country's reported ratio DOWN, toward more flagging, never up toward a false pass. A
-`total_earnings`-based country (GB, AU, ES) has no such mismatch at all — both sides already include
-bonuses. There is no path from this mismatch to a country that SHOULD fail silently passing.
+regular_pay country's reported ratio DOWN, toward more flagging, never up toward a false pass. Real
+numbers make this concrete, not hypothetical: Ireland (`usd_regular_pay`, 0.978x) and the
+Netherlands (`usd_regular_pay`, 0.973x) are two of the three countries item #35's own Tier 1 gate 4
+evidence names as currently flagging — both sit just below the 1.0 floor on this composition-
+inconsistent basis, meaning their real, bonus-included ratio would sit somewhat HIGHER than what
+is shown; whether that shift alone would be enough to clear 1.0 is exactly the "compositionally-
+matched" version below would answer and this one cannot. Spain, the third of that trio, is
+`usd_total_earnings` — no compositional mismatch affects it at all, so its own 0.770x flag is
+unaffected by this finding regardless. A `total_earnings`-based country generally (GB 1.10x, AU
+1.23x, ES 0.77x) has no such mismatch — both sides already include bonuses. There is no path from
+this mismatch to a country that SHOULD fail silently passing — at most, one that currently flags
+(IE, NL) turning out, on a fully composition-matched basis, not to deserve it.
 
 **Decide:** whether a future package should composition-match this benchmark properly (deriving a
 consistent bonus-inclusive OECD comparator per country, where the data exists to do so) for
@@ -1599,3 +1624,82 @@ display bugs (overflow, mismatched rounding, collapsed axes — see `docs/REGRES
 **Decide:** whether to commission a proper postings-list pagination/lazy-load redesign (the real fix)
 as its own package, and separately, whether the `compensation.usd` field should be wired into the UI
 (a complementary, smaller follow-up) or left as a derived field available for a future package to use.
+
+## 39. The OECD wage benchmark (item #35) compares a market-FX-converted published median against a PPP-adjusted OECD figure — two different currency bases, not one
+
+An independent adversarial review (M1) flagged that `check_oecd_wage_benchmark()` divides
+`wage_distribution.json`'s own USD median — converted from native currency at the market exchange
+rate (`normalise.to_usd()`, World Bank `PA.NUS.FCRF`, period-average) — by OECD's own
+`avg_wages.WG_USD_PPP`, which OECD itself computes at a **purchasing-power-parity** conversion
+factor, not a market rate. Confirmed real, and quantifiable: for a ratio `median_usd / oecd_avg_usd`,
+where each side is native-currency-value divided by its own conversion rate, the two rates do not
+cancel — the computed ratio equals the country's TRUE native-currency ratio (`median_native /
+oecd_avg_native`) multiplied by `(ppp_rate / fx_rate)`. Wherever a country's PPP rate and market FX
+rate diverge (routine for any country whose price level differs from the US — larger for emerging
+economies, smaller but non-zero even among rich, similar-cost-of-living OECD members), this
+check's reported ratio is systematically offset from the true within-country ratio by that same
+factor, in whichever direction that country's own PPP-vs-market gap runs.
+
+**Why this was not fixed this package:** the clean fix is not "pick PPP or market rate" — it is to
+avoid a cross-currency conversion for this comparison at all. Both sides are meant to answer a
+WITHIN-COUNTRY question ("does this software wage look plausible next to this country's own average
+worker?"), so comparing `median_native / oecd_avg_native` directly, in the country's own currency,
+would sidestep the PPP-vs-market question entirely — no conversion, no rate-choice, no mismatch.
+Checked whether that data already exists: it does not, in what this pipeline currently fetches.
+`src_oecd_indicators.py`'s own `avg_wages` block already asks OECD's API to keep both `USD_PPP` and
+`XDC` (native-currency) rows (`"keep": lambda r: r.get("UNIT_MEASURE") in ("USD_PPP", "XDC")`), but
+the currently committed `data/processed/oecd_indicators.json` carries `WG_USD_PPP` only — checked
+directly for US, DE, SE, ES, IE, NL, GB, no `WG_XDC` key present for any of them. Whether that is
+because OECD's own `AV_AN_WAGE` dataflow (a curated, comparison-purpose indicator) simply does not
+publish a native-currency variant at all, or because one exists but this pipeline's own fetch/keep
+step is dropping it, was not investigated further this package — either answer needs its own live
+API investigation, not a guess baked into a fix.
+
+Also considered: widening `_OECD_BENCHMARK_LOW`/`_OECD_BENCHMARK_HIGH` to absorb a typical PPP/FX
+gap. Rejected — the gap's size and direction are country-specific (not a constant this pipeline
+could size once and trust), and this check is FLAG-only already; loosening a threshold to
+paper over a basis mismatch, rather than fixing the basis, is exactly the "change a number to make
+a check pass" move the work order's own instruction forbids — even the review-visible threshold
+counts as a published rule, not just a wage figure.
+
+**Practically:** this does not change any published wage figure — only which countries this one
+FLAG-only, human-review-triggering check happens to name. ES, IE, and NL's own flags (Tier 1's gate
+4 evidence) are driven by a real, disclosed occupation-scope difference (item's own text above,
+NEEDS-DECISION #35), large enough that a PPP/FX correction would not plausibly reverse them; this
+finding is about precision and correctness of the check's own arithmetic, not about those three
+specific results being wrong.
+
+**Decide:** whether it's worth a short, live investigation into whether OECD's `AV_AN_WAGE`
+dataflow publishes a native-currency (`XDC`) series at all for this specific indicator (if yes: wire
+it in and switch this check to a same-currency ratio, removing the PPP/FX question entirely; if no:
+this disclosure is the durable answer, not a placeholder for a fix that isn't there to make).
+
+## 40. Position.tsx and CountryProfile.tsx still read the pairwise `crosswalk` verdict, not the set-wide `chart_comparable` one — checked, this is correct by design, not a missed instance of Finding 1
+
+An independent adversarial review (M7) flagged that these two files still use `row.crosswalk`
+(`compare()`'s pairwise-against-one-fixed-reference verdict) rather than `row.chart_comparable`
+(`resolve_set()`'s set-wide verdict, this package's own Tier 1 fix for the severe finding) — worth
+checking directly rather than assuming either "obviously fine" or "obviously the same gap," since
+both files DO render more than one country.
+
+**Checked what each actually shows.** `CountryProfile.tsx` renders ONE country's own native wage
+figure on its own page, with `crosswalk.degraded_by` used as a `<Figure>` source-attribution note
+about THAT country's own comparability — never placed next to another country's number on a shared
+scale. `Position.tsx`'s `CoverageMap` lists all 15 countries, but as a per-country CAPABILITY
+table ("does the position/estimate feature work here, and at what crosswalk depth") — each row
+states its own depth as information about that one country, the same way a compatibility matrix
+lists per-row support levels; nothing implies two rows' own figures are being placed on one
+comparable axis. Its own separate "Pay against cost" list shows the same pattern: each city's own
+estimate, independently derived and disclosed via its own `<Derived>` chain, for a user's own
+personal budget planning across cities THEY picked — not a "which country pays more" ranking.
+
+Finding 1's actual defect was specifically a SHARED-AXIS chart plotting every country's own number as
+though visually comparable regardless of depth. Neither file does that. `data/explore.ts`'s own
+`ChartComparability` type docstring already states this distinction was deliberate, not an oversight:
+"`crosswalk` (above) is pairwise against the single reference occupation and is still correct for a
+country page's own 'how does my code relate to the reference' disclosure... the two can disagree
+(Ireland is `crosswalk.comparable` at 1-digit, but `chart_comparable: false` once the panel's own
+quorum resolves to 4-digit)" — that disagreement is intended, not a drift to fix.
+
+**No code change made.** Recorded here so a future adversarial review finds this reasoning on file
+rather than re-raising the same question with no answer to check against.
