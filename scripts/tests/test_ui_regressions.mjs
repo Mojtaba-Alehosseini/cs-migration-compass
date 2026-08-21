@@ -7,13 +7,20 @@
  * top-level import chain reaches store.ts, which reads import.meta.env.BASE_URL
  * — a Vite-injected global that does not exist under plain Node (confirmed by
  * trying the direct import first, this package). So the same harness every
- * package since 6 has used for UI gates: real headless Chrome via
- * .status/evidence/cdp.mjs, driving a real production build, reading the
+ * package since 6 has used for UI gates: real headless Chrome via cdp.mjs
+ * (this directory's own tracked copy — a dependency-free CDP driver every
+ * prior package's own .status/evidence/ scripts also use, but that directory
+ * is gitignored, and this is a PERMANENT suite that has to survive a fresh
+ * CI checkout, not a one-off verification script; import from that gitignored
+ * path failed exactly this way, ERR_MODULE_NOT_FOUND, the first time this
+ * suite actually ran in CI), driving a real production build, reading the
  * actual rendered numbers.
  *
  * Prerequisite — a served production build:
  *     cd site && npm run build && npm run preview      # http://localhost:4173/
- * Override with BASE=... for another origin.
+ * Override with BASE=... for another origin. In CI, set CHROME_PATH to
+ * wherever the runner's own Chrome lives (ubuntu-latest: google-chrome-stable
+ * is on PATH) — cdp.mjs's own default is a Windows-only path.
  *
  * Every number asserted below is the catalogue's own before/after pair, not a
  * value read off this run. Where the fix produced a specific figure (SE P37 at
@@ -22,7 +29,7 @@
  * change happened to leave the primary assertion true by coincidence.
  */
 
-import { launch, openPage, sleep } from '../../.status/evidence/cdp.mjs'
+import { launch, openPage, sleep } from './cdp.mjs'
 
 const BASE = process.env.BASE ?? 'http://localhost:4173/'
 

@@ -77,16 +77,54 @@ class TestAshbyPeriodMapping(unittest.TestCase):
         out = ashby._normalise("t", _ashby_doc(0, 0, "EUR", "NONE"))
         self.assertIsNone(out[0]["compensation"])
 
-    def test_the_old_assumed_enum_values_would_have_matched_nothing(self):
-        # Documents WHY the bug was silent: "HOURLY" contains none of
-        # "HOUR"/"MONTH"/"YEAR" as the real interval ever presents them
-        # (the real values are "1 HOUR" etc, not "HOURLY") — asserting this
-        # against the real, shipped matching logic rather than just
-        # asserting the fixed behaviour, so a future edit that reintroduces
-        # an enum-shaped assumption is caught by REPLACING the correct
-        # values above with wrong ones, not by this test alone.
-        interval = "HOURLY"
-        self.assertNotIn("HOUR", interval.replace("HOURLY", "X"))
+    def test_the_old_exact_match_assumption_fails_on_the_real_interval_shape(self):
+        # Calls the real shipped matching logic (ashby._normalise(), via
+        # the fixture helper above), not string methods in isolation — an
+        # earlier version of this test asserted a fact about Python's own
+        # str.replace() with no project code involved at all (adversarial
+        # review finding L17). The historical bug assumed an EXACT-match
+        # enum ("HOURLY"/"YEARLY"/"MONTHLY"); the real API returns "1
+        # HOUR" etc — a different string an exact-equality check would
+        # never match (note "HOURLY" itself DOES contain "HOUR" as a
+        # substring, so the bug was exact-match-vs-shape, not a substring
+        # miss the way the R15 catalogue entry's own short summary reads).
+        # Reconstructed here as a real function, monkey-patched in for one
+        # call, not asserted as a string fact.
+        def buggy_normalise(token, doc):
+            out = []
+            for j in doc.get("jobs", []):
+                comp = j.get("compensation") or {}
+                parsed_comp = None
+                for tier in comp.get("compensationTiers") or []:
+                    for c in tier.get("components", []):
+                        if not c.get("minValue") or not c.get("currencyCode"):
+                            continue
+                        interval = (c.get("interval") or "").upper()
+                        if interval == "HOURLY":
+                            period = "hour"
+                        elif interval == "MONTHLY":
+                            period = "month"
+                        elif interval == "YEARLY":
+                            period = "year"
+                        else:
+                            period = "year"  # the bug: silent default, not skip
+                        parsed_comp = {"min": c["minValue"], "max": c.get("maxValue") or c["minValue"],
+                                       "currency": c["currencyCode"], "period": period,
+                                       "raw_text": "", "confidence": "structured"}
+                        break
+                    if parsed_comp:
+                        break
+                out.append({"compensation": parsed_comp})
+            return out
+
+        doc = _ashby_doc(20, 25, "EUR", "1 HOUR", "€20-25 per hour")
+        real_result = ashby._normalise("t", doc)[0]["compensation"]["period"]
+        buggy_result = buggy_normalise("t", doc)[0]["compensation"]["period"]
+        self.assertEqual(real_result, "hour")
+        self.assertEqual(buggy_result, "year",
+                          "the reconstructed exact-match bug must silently default a real hourly "
+                          "rate to 'year' — if this stops failing, the reconstruction no longer "
+                          "matches the historical bug")
 
 
 class TestAshbyZeroGuard(unittest.TestCase):
@@ -125,13 +163,34 @@ class TestLeverPeriodMapping(unittest.TestCase):
         self.assertEqual(result["period"], "month")
 
     def test_the_old_replace_per_prefix_bug_would_have_produced_year_salary(self):
-        # "per-year-salary".replace("per-", "") == "year-salary", which
-        # contains neither "hour" nor exactly "month" cleanly matched
-        # against this function's own elif chain — pinning the string
-        # transform itself so a reintroduction of `.replace('per-', '')`
-        # is visible even if the elif chain also changed.
-        self.assertEqual("per-year-salary".replace("per-", ""), "year-salary")
-        self.assertNotIn("year-salary", ["hour", "year", "month"])
+        # Calls the real lever._parse_salary_range() against a reconstructed
+        # buggy sibling, not a string fact in isolation (adversarial review
+        # finding L17 — an earlier version of this test asserted
+        # "per-year-salary".replace("per-", "") == "year-salary" with no
+        # project code involved at all).
+        def buggy_parse(sr):
+            if not sr or not sr.get("min"):
+                return None
+            interval = (sr.get("interval") or "").lower().replace("per-", "")  # the bug
+            if "hour" in interval:
+                period = "hour"
+            elif "month" in interval and "bi-" not in interval and "semi-" not in interval:
+                period = "month"
+            else:
+                period = None  # "year-salary" matches neither branch above
+            if period is None:
+                return None
+            return {"min": sr["min"], "max": sr.get("max") or sr["min"], "period": period}
+
+        sr = {"min": 55000, "max": 90000, "currency": "USD", "interval": "per-year-salary"}
+        real_result = lever._parse_salary_range(sr)
+        buggy_result = buggy_parse(sr)
+        self.assertEqual(real_result["period"], "year")
+        self.assertIsNone(buggy_result,
+                           "the reconstructed .replace('per-', '') bug must silently drop a real "
+                           "annual salary range (its own 'year-salary' matches neither the hour nor "
+                           "month branch) — if this stops failing, the reconstruction no longer "
+                           "matches the historical bug")
 
     def test_bi_week_interval_has_no_bucket_and_is_skipped(self):
         result = lever._parse_salary_range({"min": 2000, "max": 2500, "currency": "USD", "interval": "per-bi-week-salary"})

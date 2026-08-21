@@ -1177,6 +1177,19 @@ way) range is common enough on Greenhouse to be worth a smarter check (e.g. read
 as an independent signal to combine with magnitude). None observed live in this session's own
 sample; the residual risk is theoretical today, not demonstrated.
 
+**Package 13 update:** an independent adversarial review re-derived this same gap without reading
+this entry first (constructed `$3,000-$4,500`, a plausible real monthly range, and confirmed the
+current heuristic labels it annual — 12x understated) — corroborating evidence the gap is real, not
+new information changing the decision. Also notes there is currently no THIRD bucket at all for
+"month" in Greenhouse's own inference (only hour/year), unlike Lever, which does carry real
+`per-month-salary` postings in this pipeline's own committed data (e.g. PHP 80,000-90,000) — so a
+monthly Greenhouse range is not a hypothetical shape this pipeline has never seen elsewhere, just
+one Greenhouse's own magnitude heuristic cannot currently express even if correctly identified. Not
+fixed this package: this is the exact "escalate methodology trade-offs, don't unilaterally fix
+them" case, and the decision above is still open. `scripts/tests/test_pay_period.py` gained a test
+pinning the CURRENT, disclosed boundary behaviour (so a future change to the $1,000 threshold is a
+deliberate, visible diff, not a silent one) rather than a fix to the heuristic itself.
+
 ## 29. Gig-platform / part-time-freelance postings appear in the panel alongside full-time roles — is that the right scope?
 
 The seed-hint candidate list (github.com/Feashliaa/job-board-aggregator) surfaced at least one

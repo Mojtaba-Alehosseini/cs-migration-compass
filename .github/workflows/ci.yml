@@ -49,7 +49,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # 24, not 20 -- test_ui_regressions.mjs's own cdp.mjs uses Node's
+          # global WebSocket (stable since Node 22; Node 20 does not have
+          # it at all), the only thing its CDP driver needs beyond stdlib.
+          # Found live: Node 20 failed with ReferenceError: WebSocket is
+          # not defined the first time this suite actually ran in CI.
+          node-version: "24"
           cache: npm
           cache-dependency-path: site/package-lock.json
 
@@ -71,6 +76,28 @@ jobs:
 
       - run: npm run build
         working-directory: site
+
+      # Package 13, Tier 0/5 gate 12 — the 9 client-side regressions in
+      # docs/REGRESSION-CATALOGUE.md (R1, R2, R3, R8, R9, R10, R11, R12,
+      # R13) live only in compiled TypeScript; adversarial review finding
+      # M12: more than half the catalogue ran only when a human remembered
+      # to start a preview server by hand. ubuntu-latest ships Chrome, so
+      # this job already has everything test_ui_regressions.mjs needs —
+      # start the build's own preview server, wait for it, run the suite
+      # against it, then stop the server either way.
+      - name: UI regression suite
+        working-directory: site
+        run: |
+          npm run preview -- --port 4173 &
+          PREVIEW_PID=$!
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:4173/ > /dev/null && break
+            sleep 1
+          done
+          CHROME_PATH=google-chrome-stable node ../scripts/tests/test_ui_regressions.mjs
+          TEST_EXIT=$?
+          kill $PREVIEW_PID 2>/dev/null || true
+          exit $TEST_EXIT
 
       - uses: actions/upload-artifact@v4
         with:
