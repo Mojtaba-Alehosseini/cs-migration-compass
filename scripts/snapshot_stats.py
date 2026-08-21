@@ -70,7 +70,18 @@ def _load(path: Path) -> dict | None:
 # Part 1 — snapshot
 # ---------------------------------------------------------------------------
 
-def compute_snapshot() -> dict:
+def compute_snapshot(*, baseline_reset_note: str | None = None) -> dict:
+    """`baseline_reset_note`, when given, is embedded in the snapshot
+    verbatim as its own field — package 14, Tier 4.3: the drift detector
+    reported "no material drift" while sitting on a dataset that had
+    already lost 55% of its records, because its own baseline snapshot was
+    captured AFTER that loss (see docs/REGRESSION-CATALOGUE.md and
+    REPORT-P14.md gate 9). snapshots.jsonl is append-only, deliberately —
+    "store history in the repo" (this module's own docstring) means the
+    OLD, mid-degradation entries are never edited or deleted; this field
+    marks the FIRST entry after recovery as the new, honest reference
+    point, in the history itself, not a comment only a human reading the
+    code would ever see."""
     prov = _load(PROVENANCE) or {"entries": []}
     record_counts = {e["source_id"]: e.get("rows") for e in prov.get("entries", []) if e.get("rows") is not None}
 
@@ -89,6 +100,7 @@ def compute_snapshot() -> dict:
 
     return {
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "baseline_reset_note": baseline_reset_note,
         "record_counts": record_counts,
         "postings_overall": {
             "total": len(postings_list),
@@ -268,24 +280,46 @@ def report_coverage_matrix(matrix: dict[str, dict]) -> None:
 
 # ---------------------------------------------------------------------------
 
-def main() -> int:
+def main(*, append: bool = True, baseline_reset_note: str | None = None) -> int:
+    """`append=False` (generate_data_quality_doc.py's own read-only report
+    path) runs the same drift comparison and coverage build but writes
+    NEITHER data/quality_history/snapshots.jsonl NOR coverage_matrix.json —
+    regenerating the DOC must never itself add a real entry to drift
+    history (package 13 finding L16). Package 14, Tier 4.1 (external audit
+    Finding 4): this parameter was DESCRIBED as already added in package
+    13's own report, but the live file never actually carried it — a real,
+    reproduced TypeError (`main() got an unexpected keyword argument
+    'append'`) when generate_data_quality_doc.py called it, which is
+    exactly why DATA-QUALITY.md was reporting "Overall: PASSING" while its
+    own Snapshot section silently said COULD NOT RUN. Every doc
+    regeneration since (this package's own preflight included) appended a
+    spurious real snapshot entry as a result — see Tier 4.3 for the
+    baseline reset this caused."""
     log("CS Migration Compass — drift and coverage snapshot (Tier 3)")
     log("")
 
     history = load_history()
     previous = history[-1] if history else None
-    current = compute_snapshot()
+    current = compute_snapshot(baseline_reset_note=baseline_reset_note)
     compare_against_previous(current, previous)
-    append_snapshot(current)
-    log(f"  snapshot appended to {HISTORY_FILE.relative_to(ROOT)} ({len(history) + 1} total)")
+    if baseline_reset_note:
+        log(f"  BASELINE RESET: {baseline_reset_note}")
+    if append:
+        append_snapshot(current)
+        log(f"  snapshot appended to {HISTORY_FILE.relative_to(ROOT)} ({len(history) + 1} total)")
+    else:
+        log("  read-only report (append=False) — no snapshot written")
 
     log("")
     matrix = build_coverage_matrix()
     report_coverage_matrix(matrix)
-    (HISTORY_DIR / "coverage_matrix.json").write_text(
-        json.dumps({"generated_at": current["generated_at"], "matrix": matrix}, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8")
-    log(f"  coverage matrix written to {(HISTORY_DIR / 'coverage_matrix.json').relative_to(ROOT)}")
+    if append:
+        (HISTORY_DIR / "coverage_matrix.json").write_text(
+            json.dumps({"generated_at": current["generated_at"], "matrix": matrix}, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8")
+        log(f"  coverage matrix written to {(HISTORY_DIR / 'coverage_matrix.json').relative_to(ROOT)}")
+    else:
+        log("  read-only report (append=False) — coverage_matrix.json not written")
 
     log("")
     if FLAGS:
