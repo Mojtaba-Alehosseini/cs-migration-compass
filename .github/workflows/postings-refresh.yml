@@ -100,11 +100,25 @@ jobs:
       - name: Audit (blocks the commit below on failure)
         run: python scripts/audit_data.py
 
+      # Package 13, Tier 3 — a drift snapshot of THIS run, compared against
+      # last week's. validate/audit above check the data is internally
+      # well-formed; this catches the shape validate/audit cannot by
+      # construction — a harvester silently truncating its own output
+      # (e.g. one continue-on-error step above swallowing a real failure
+      # partway through) still produces well-formed, individually-valid
+      # records, just far fewer of them. A genuine drop (not ordinary
+      # week-to-week growth) fails this step too, adversarial review
+      # finding M6 — an earlier version of this workflow had no drift gate
+      # at all on the one path that pushes to main unattended.
+      - name: Snapshot drift (blocks the commit below on a real drop)
+        run: python scripts/snapshot_stats.py
+
       - name: Commit refreshed data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/processed/postings*.json data/provenance.json data/raw/postings_seed_hints \
+            data/quality_history \
             site/public/data/history/postings.json site/public/data/history-manifest.json \
             site/public/data/provenance.json
           git diff --staged --quiet && echo "no changes" && exit 0

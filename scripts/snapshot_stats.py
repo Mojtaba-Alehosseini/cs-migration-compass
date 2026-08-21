@@ -31,6 +31,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import DATA, PROCESSED, PROVENANCE, ROOT, log  # noqa: E402
 
 FLAGS: list[str] = []
+# A DROP specifically (a source/provider/country materially shrinking) is
+# split into its own list, checked by main()'s own return code -- adversarial
+# review finding M6/M8: this module's main() returned 0 unconditionally, so
+# wiring it into an unattended workflow (as Tier 4 now does) would have
+# printed a warning nobody's automation actually stopped for. A brand-new
+# source appearing, or unexpected growth in a normally-static one, stays a
+# FLAG (worth a human noticing, not worth blocking a commit over); an actual
+# drop is the one signal the work order's own "a source dropping 40% is a
+# finding, not a fact" example is about, and now fails the build.
+DROPS: list[str] = []
 HISTORY_DIR = DATA / "quality_history"
 HISTORY_FILE = HISTORY_DIR / "snapshots.jsonl"
 
@@ -41,6 +51,12 @@ GROWTH_THRESHOLD_PCT = 50.0   # non-postings sources only: growth past this is A
 
 def flag(msg: str) -> None:
     FLAGS.append(msg)
+
+
+def drop(msg: str) -> None:
+    """A genuine drop, not just a movement worth a human's attention --
+    blocks main()'s own return code. See DROPS' own module-level comment."""
+    DROPS.append(msg)
 
 
 def _load(path: Path) -> dict | None:
@@ -121,7 +137,7 @@ def compare_against_previous(current: dict, previous: dict | None) -> None:
             continue
         is_postings_source = bool(_POSTINGS_SOURCE_RE.match(source_id))
         if change < -DROP_THRESHOLD_PCT:
-            flag(f"drift: {source_id} dropped {abs(change):.1f}% ({old_count} -> {new_count} rows) "
+            drop(f"drift: {source_id} dropped {abs(change):.1f}% ({old_count} -> {new_count} rows) "
                  "since the previous snapshot")
         elif not is_postings_source and change > GROWTH_THRESHOLD_PCT:
             flag(f"drift: {source_id} grew {change:.1f}% ({old_count} -> {new_count} rows) since the "
@@ -134,12 +150,56 @@ def compare_against_previous(current: dict, previous: dict | None) -> None:
             old_overall["stated_pay"] / old_overall["total"],
             new_overall["stated_pay"] / new_overall["total"],
         )
-        if rate_change is not None and abs(rate_change) > DROP_THRESHOLD_PCT:
+        if rate_change is not None and rate_change < -DROP_THRESHOLD_PCT:
+            drop(f"drift: overall postings stated-pay rate dropped {abs(rate_change):.1f}% since the "
+                 f"previous snapshot ({old_overall['stated_pay']}/{old_overall['total']} -> "
+                 f"{new_overall['stated_pay']}/{new_overall['total']})")
+        elif rate_change is not None and abs(rate_change) > DROP_THRESHOLD_PCT:
             flag(f"drift: overall postings stated-pay rate moved {rate_change:+.1f}% since the previous "
                  f"snapshot ({old_overall['stated_pay']}/{old_overall['total']} -> "
                  f"{new_overall['stated_pay']}/{new_overall['total']})")
 
-    log(f"  {len(current['record_counts'])} source(s) compared, {len(FLAGS)} material movement(s) flagged so far")
+    # Per-provider and per-country counts were recorded in every snapshot
+    # but never actually compared -- adversarial review finding M7: the
+    # overall total and stated-pay rate can both stay flat while one
+    # provider silently collapses (a partial harvester failure whose OTHER
+    # providers backfill the total) or while a country_from_location()
+    # regression (the exact bug class R14 already fixed once) moves postings
+    # from a real country into "unresolved" with the overall total
+    # unchanged. Same drop-only-for-postings-sources threshold as the
+    # record_counts loop above, since both are postings-shaped counts that
+    # are expected to grow, not shrink, between runs.
+    for provider, new_p in current.get("postings_by_provider", {}).items():
+        old_p = previous.get("postings_by_provider", {}).get(provider)
+        new_count = new_p.get("postings_count")
+        if old_p is None or new_count is None:
+            continue
+        change = _pct_change(old_p.get("postings_count"), new_count)
+        if change is not None and change < -DROP_THRESHOLD_PCT:
+            drop(f"drift: postings provider {provider!r} dropped {abs(change):.1f}% "
+                 f"({old_p['postings_count']} -> {new_count} postings) since the previous snapshot")
+
+    MIN_COUNTRY_COUNT_FOR_DROP = 20  # below this, a 15% swing is sample noise, not signal
+    for country, new_c in current.get("postings_by_country", {}).items():
+        old_c = previous.get("postings_by_country", {}).get(country)
+        if old_c is None:
+            continue
+        change = _pct_change(old_c.get("total"), new_c.get("total"))
+        if change is None or change >= -DROP_THRESHOLD_PCT:
+            continue
+        msg = (f"drift: postings country {country!r} dropped {abs(change):.1f}% "
+               f"({old_c['total']} -> {new_c['total']} postings) since the previous snapshot — "
+               "check for a country-resolution regression (docs/REGRESSION-CATALOGUE.md R14), "
+               "not just a genuine drop in that country's own postings")
+        if old_c["total"] >= MIN_COUNTRY_COUNT_FOR_DROP:
+            drop(msg)
+        else:
+            flag(msg + f" (below the {MIN_COUNTRY_COUNT_FOR_DROP}-count floor for blocking — flagged, not failed)")
+
+    log(f"  {len(current['record_counts'])} source(s), "
+        f"{len(current.get('postings_by_provider', {}))} provider(s), "
+        f"{len(current.get('postings_by_country', {}))} countries compared, "
+        f"{len(FLAGS)} flag(s), {len(DROPS)} drop(s) so far")
 
 
 # ---------------------------------------------------------------------------
@@ -168,11 +228,24 @@ def build_coverage_matrix() -> dict[str, dict]:
     matrix: dict[str, dict] = {}
     for iso, row in countries.items():
         combos = row.get("combos", {})
+        comparable = row.get("crosswalk", {}).get("comparable")
         p_rec = postings_by_country.get(iso.split("-")[0], {"total": 0, "stated_pay": 0})
         matrix[iso] = {
-            "comparable": row.get("crosswalk", {}).get("comparable"),
+            "comparable": comparable,
             "occupation_depth": row.get("crosswalk", {}).get("depth"),
-            "pay_basis": {k: v.get("ok", False) for k, v in combos.items()},
+            # Gated on `comparable`, not just each combo's own `ok` flag --
+            # R8's own finding is that computePosition()/computeEstimate()
+            # check crosswalk.comparable FIRST and render nothing at all
+            # when it's False, regardless of what combos.*.ok says. An
+            # earlier version of this matrix reported the Netherlands'
+            # combos.native_regular_pay.ok=true as though the site would
+            # show a figure for it -- it never does (comparable=false,
+            # "NL has no ISCO-08 correspondence at all for this
+            # occupation"). Named pay_basis_if_comparable so a reader can't
+            # miss the precondition even without reading this comment.
+            # Adversarial review finding H4, reproduced against the real
+            # committed data before this fix, not assumed.
+            "pay_basis_if_comparable": {k: v.get("ok", False) for k, v in combos.items()} if comparable else {},
             "experience_cross": iso in experience_countries,
             "postings_count": country_counts.get(iso, p_rec["total"]),
             "postings_stated_pay_rate_pct": round(p_rec["stated_pay"] / p_rec["total"] * 100, 1) if p_rec["total"] else None,
@@ -187,7 +260,7 @@ def report_coverage_matrix(matrix: dict[str, dict]) -> None:
         f"({sorted(iso for iso, m in matrix.items() if m['experience_cross'])})")
     for iso in sorted(matrix):
         m = matrix[iso]
-        bases = ", ".join(k for k, ok in m["pay_basis"].items() if ok) or "none"
+        bases = ", ".join(k for k, ok in m["pay_basis_if_comparable"].items() if ok) or "none"
         log(f"  {iso:9s} depth={m['occupation_depth']!s:4s} comparable={m['comparable']!s:5s} "
             f"bases=[{bases}] experience={m['experience_cross']} "
             f"postings={m['postings_count']} stated_pay={m['postings_stated_pay_rate_pct']}%")
@@ -219,7 +292,14 @@ def main() -> int:
         log(f"{len(FLAGS)} flag(s):")
         for f in FLAGS:
             log(f"  ! {f}")
-    else:
+    if DROPS:
+        log(f"{len(DROPS)} DROP(s) — a genuine decline, past the point of sample noise:")
+        for d in DROPS:
+            log(f"  x {d}")
+        log("")
+        log("FAILED")
+        return 1
+    if not FLAGS:
         log("no material drift since the previous snapshot.")
     return 0
 

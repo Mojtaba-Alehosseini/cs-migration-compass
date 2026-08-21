@@ -143,10 +143,20 @@ comparable.
 employer_social_contributions is False` for `total_earnings`, not contribution-status
 alone.
 
-**Test:** `test_normalise.py` — asserts Sweden's and Finland's own real
-`pay_composition.json` entries are correctly refused for `total_earnings` (bonus
-excluded, so the concept doesn't apply), and that a source with the DK-shaped
-composition (bonus included, contributions excluded) is correctly granted it.
+**Test:** `test_normalise.py` — asserts Sweden's own real `pay_composition.json` entry
+has `irregular_bonus=False` (this test's own premise) and that `comparison_basis
+('salary_se', 'salary_es')` is unconditionally refused (`comparable=False`), not
+gated behind an `if result["comparable"]:` that never ran on any real pass — an
+earlier version of this test did gate it that way, silently asserting nothing on
+every run since `comparable` is False today; the adversarial review that caught it,
+and this fix, are recorded in REPORT-P13.md. Two genuine POSITIVE controls, both
+against real committed `pay_composition.json` entries, not constructed: Norway and
+Spain (both `irregular_bonus=True, employer_social_contributions=False`) are
+correctly granted `total_earnings`; Sweden and Finland (both flags `False`) are
+correctly granted `regular_pay`. (Denmark, this entry's own earlier draft
+mis-described as "bonus included, contributions excluded" — its real committed
+entry has BOTH `True`, matching neither basis on its own; DK reaches `total_earnings`
+only after Tier 1's own subtraction step, not from its raw composition flags.)
 
 ### R7. Ireland's hours annualisation using the generic cross-country lookup instead of its own sourced figure
 
@@ -359,10 +369,18 @@ entity blocking period detection, not the 1/1000-scale minimum).
   `check_no_series_records`, `check_percentile_absence_explicit`), which Tier 4 folds
   into this package's own single audit command rather than duplicating.
 - **Denmark's STAND/MDRSNIT reconciliation** (packages 9–10) — not a fixed bug with a
-  wrong/right pair to regress; it's a live, self-verifying check
-  (`_verify_mdrsnit_reconciliation()`) that already re-proves itself on every harvester
-  run. Tier 2 generalises it as the reconciliation template rather than re-testing it
-  here.
+  wrong/right pair to regress. `_verify_mdrsnit_reconciliation()` re-proves itself
+  every time `src_salary_dk.py` actually re-fetches live, but package 10's own finding
+  F20 (`NEEDS-DECISION.md` #23) is that a warm cache (`_query()`'s own default) means
+  most runs re-verify this pipeline's own parsing and arithmetic against a file already
+  on disk, not whether DST revised its published figures since — restated accurately
+  here rather than repeating the overclaim that finding corrected. Covered twice over
+  by this package instead: Tier 1's `check_embedded_cross_checks_reconcile()`
+  independently recomputes the residual from the committed artefact (no live fetch,
+  catches a stale/hand-edited number); Tier 2's `reconcile_denmark()` genuinely
+  re-fetches STAND/MDRSNIT live (its own separate cache, not `_query()`'s), so between
+  the two, both the internal-consistency and the against-a-live-source halves are
+  real, not just asserted.
 - **Spain's tenure-cross population mismatch** (package 10, F2) — the fix was removing
   personalisation entirely, later replaced by package 11's own same-population-only
   design (R12/R13 above test that replacement directly). Nothing remains at the

@@ -65,11 +65,21 @@ REFERENCE = ("SE", "2512")
 # publish that one) so downstream code never has to guess a field exists.
 # --------------------------------------------------------------------------
 
-def _pick(d: dict, suffix: str) -> float | None:
-    for k, v in d.items():
-        if k.endswith(suffix) and v is not None:
-            return float(v)
-    return None
+def _pick(d: dict, key: str) -> float | None:
+    """Every real call site (_base_obs, below) builds `key` as the exact
+    field name it wants (e.g. "mean_sek_month") -- none has ever needed
+    "any key ending in this", only exact equality. `k.endswith(suffix)`
+    (an earlier version) matched that unintentionally too: Norway's own
+    `avtalt_mean_nok_month` ends with `mean_nok_month`, so `_pick(row,
+    "mean_nok_month")` could return EITHER field depending on dict
+    iteration order, genuinely ambiguous between two real, different pay
+    bases. _extract_no()/_extract_fi() already worked around this by not
+    calling _base_obs() at all for their own ambiguous fields — this fixes
+    the shared helper itself, adversarial review finding M10, so a FUTURE
+    extractor calling _base_obs() on data shaped like Norway's or
+    Finland's own doesn't inherit the same silent ambiguity."""
+    v = d.get(key)
+    return float(v) if v is not None else None
 
 
 def _latest_year_row(by_year: dict) -> tuple[str, dict]:

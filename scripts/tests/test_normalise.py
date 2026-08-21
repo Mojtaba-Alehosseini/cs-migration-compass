@@ -125,11 +125,35 @@ class TestComparisonBasisBonusCheck(unittest.TestCase):
     total_earnings basis before the fix."""
 
     def test_sweden_and_spain_no_longer_share_total_earnings(self):
+        # UNCONDITIONAL, not gated behind `if result["comparable"]:` -- an
+        # earlier version of this test only ran its own assertion when that
+        # was already True, which today it never is (comparable=False), so
+        # the assertion silently executed zero times on every real run.
+        # Adversarial review finding M11: a test that can pass without its
+        # own assertion ever running is indistinguishable from no test at
+        # all. Asserting the real, current shape directly instead.
         result = normalise.comparison_basis("salary_se", "salary_es")
-        if result["comparable"]:
-            self.assertNotIn("total_earnings", result["common_bases"],
-                              "Sweden's own bonus-excluded figure must never be treated as "
-                              "equivalent to Spain's bonus-included one")
+        self.assertIs(result["comparable"], False,
+                       "Sweden's own bonus-excluded figure and Spain's own bonus-included one share "
+                       "no common basis and must be refused, not silently matched on total_earnings")
+
+    def test_a_genuine_total_earnings_pair_is_still_granted_it(self):
+        # The positive control the negative test above cannot provide on
+        # its own (adversarial review finding M11: a check that only ever
+        # refuses gives no assurance the GRANT path still works at all).
+        # Norway and Spain's own real pay_composition.json entries both
+        # have irregular_bonus=True, employer_social_contributions=False —
+        # a genuine, live-verified matching pair, not constructed.
+        result = normalise.comparison_basis("salary_no", "salary_es")
+        self.assertIs(result["comparable"], True)
+        self.assertIn("total_earnings", result["common_bases"])
+
+    def test_a_genuine_regular_pay_pair_is_still_granted_it(self):
+        # Sweden and Finland: both irregular_bonus=False, employer_social_
+        # contributions=False in the real committed pay_composition.json.
+        result = normalise.comparison_basis("salary_se", "salary_fi")
+        self.assertIs(result["comparable"], True)
+        self.assertIn("regular_pay", result["common_bases"])
 
     def test_a_bonus_excluded_source_cannot_express_total_earnings(self):
         # Reads Sweden's own real pay_composition.json entry directly.
