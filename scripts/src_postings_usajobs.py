@@ -89,7 +89,7 @@ def run() -> None:
                 # applies the same way it does for Ashby's own mistagged
                 # interval, see that function's own docstring.
                 if period == "year":
-                    fix = reinterpret_implausible_year(lo, hi, raw_text)
+                    fix = reinterpret_implausible_year(lo, hi, raw_text, "USD")  # every USAJOBS figure is USD
                     if fix:
                         lo, hi, period = fix
                 comp = {"min": lo, "max": hi, "currency": "USD", "period": period,

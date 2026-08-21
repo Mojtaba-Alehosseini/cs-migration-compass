@@ -91,9 +91,12 @@ def _parse_salary_range(sr: dict | None) -> dict | None:
             # interval tag has the identical failure mode as Ashby's own
             # (see src_postings_ashby.py's own comment at the same point):
             # a "per-year-salary" tag on numbers that are plainly hourly
-            # ($25-30) or plainly a bare thousands shorthand ($220-240).
+            # ($25-30). USD-only, per reinterpret_implausible_year's own
+            # docstring — an adversarial review found this pipeline's own
+            # thresholds were never validated against Lever's own EUR/INR
+            # postings.
             if period == "year":
-                fix = reinterpret_implausible_year(min_v, max_v, raw_text)
+                fix = reinterpret_implausible_year(min_v, max_v, raw_text, sr.get("currency"))
                 if fix:
                     min_v, max_v, period = fix
             comp = {

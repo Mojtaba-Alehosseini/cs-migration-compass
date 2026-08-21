@@ -124,10 +124,10 @@ def _normalise(token: str, doc: dict) -> list[dict]:
                 # own interval tag is real but not always right for the
                 # specific numbers attached to it: an employer's own ATS
                 # form entry, not this pipeline mis-reading real text (see
-                # reinterpret_implausible_year's own docstring for the two
-                # narrow, text-grounded corrections this applies).
+                # reinterpret_implausible_year's own docstring for the one
+                # narrow, text-grounded, USD-only correction this applies).
                 if period == "year":
-                    fix = reinterpret_implausible_year(min_v, max_v, raw_text)
+                    fix = reinterpret_implausible_year(min_v, max_v, raw_text, c["currencyCode"])
                     if fix:
                         min_v, max_v, period = fix
                 parsed_comp = {

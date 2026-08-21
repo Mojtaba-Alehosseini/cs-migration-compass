@@ -496,48 +496,69 @@ def country_from_location(location_raw: str | None) -> str | None:
 # 220k" comment). They were structured, provider-supplied compensation whose
 # OWN period tag (Ashby's own interval, USAJOBS' own salaryType) disagreed
 # with its own numbers: an employer's ATS form entry, or a federal listing's
-# default salaryType, not this pipeline mis-reading real text. Two narrow,
-# magnitude-anchored corrections below, each matching a precedent already
-# shipped in this codebase (src_postings_greenhouse.py's own
-# _parse_pay_input_ranges) rather than inventing a new threshold.
+# default salaryType, not this pipeline mis-reading real text.
+#
+# Package 14 shipped a SECOND rule here (250 <= max < 12,000, no k/K marker
+# -> scaled x1000) that an independent adversarial review caught as WRONG
+# for real, live records, after it had already shipped: HireHangar's own
+# "Underwriter" and "Underwriting Analyst" postings read raw_text "$500 -
+# $700" with NO "per month" suffix -- every one of that employer's own
+# ~90 OTHER postings uses the identical shape ("$500 - $700 per month",
+# etc.), and these two are Ashby's own tierSummary simply DROPPING that
+# suffix, not the employer typing "500" to mean "500,000". The old rule
+# could not tell "a bare number an employer meant in thousands" (the OTE/
+# senior-role cases it was built for) apart from "a bare number that is
+# monthly with its own qualifier text lost" -- both produce the identical
+# raw shape, and picking between two PHYSICALLY DIFFERENT real
+# interpretations on magnitude alone is exactly the kind of guess this
+# project's own rules forbid (the same standard the 100-250 gap below was
+# already held to; this rule was not held to it consistently). Turning
+# "$500 - $700" into "$500,000 - $700,000/year" is not a magnitude
+# correction, in that specific case it manufactured a six-figure salary
+# for an Underwriter role that no other evidence supports, and one that
+# then PASSES every downstream plausibility check -- worse than the
+# original "$500-$700" reading, which at least still LOOKED broken.
+# Removed rather than patched with a corroboration signal (an "OTE" text
+# marker, a same-employer cross-check) that would need real testing this
+# package's own remaining time did not have; every formerly-rescaled
+# record instead falls through untouched, same as the 100-250 gap, and
+# Tier 3.3's own plausibility gate (check_postings_annualised_plausibility
+# in audit_data.py) is what flags it for review now.
 _YEAR_LOOKS_HOURLY_THRESHOLD = 100
 # Ashby's real, live data draws a clean line here: every genuinely
 # hourly-shaped value mistagged 'year' this package found live tops out at
-# 59.6 (a skilled-trade/manufacturing wage); genuinely thousands-shaped
-# values start at 230 and up (a senior-role figure). 100 sits in the real
-# gap between the two clusters with margin on both sides — no observed
-# hourly wage this pipeline has ever seen approaches $100/hour, and no
-# observed "meant thousands" figure comes in under 230. Deliberately NOT
-# src_postings_greenhouse.py's own $1,000 threshold: that source's own
-# min_cents/max_cents never carries this specific "bare number meant in
-# thousands" ambiguity at all (Greenhouse's own employers don't hand-type a
-# number into a "$1-1000" field the way Ashby's compensationTiers form
-# apparently lets some employers do) — so Greenhouse's own 1,000 has never
-# had to separate an hourly cluster from a thousands cluster the way this
-# threshold does, and reusing it here would have swallowed every one of the
-# 4 real "meant thousands" records this package found into "hourly" instead
-# (all sit at 230-500, comfortably under 1,000).
-_BARE_THOUSANDS_LOWER_BOUND, _BARE_THOUSANDS_UPPER_BOUND = 250, 12000
-# The audit's own reporting threshold ("64 records annualise below
-# $12,000") sets the ceiling. The floor (250) is this package's own,
-# chosen the same way as the hourly threshold above: every real "meant
-# thousands" record found live sits at 230+ (a senior-role, sales-OTE, or
-# director-level figure a bare-number reading makes plainly implausible
-# either as an hourly wage or a literal annual one) — work order's own
-# example, "OTE $250 - $300 /year" for an Enterprise Account Executive, is
-# "plainly $250k-$300k". The 100-250 gap between the two thresholds is
-# left DELIBERATELY untouched: real records in it (a $150-155/hour
-# "Physician, Virtual Care" rate; a $135-150 "Associate Software Engineer"
-# figure that could plausibly be EITHER a high hourly contract rate or an
-# abbreviated annual one) do not resolve cleanly by magnitude alone, and
-# guessing between two real, physically different interpretations with no
-# further evidence is exactly what this project's own rules forbid — see
-# Tier 3.3's plausibility gate, which flags these for review instead of
-# silently picking one.
+# 59.6 (a skilled-trade/manufacturing wage). 100 sits well clear of that
+# cluster — no observed hourly wage this pipeline has ever seen approaches
+# $100/hour. Deliberately NOT src_postings_greenhouse.py's own $1,000
+# threshold: that source's own min_cents/max_cents never carries this
+# specific ambiguity at all, so its own threshold was never tuned against
+# it.
+#
+# USD ONLY (added after the same adversarial review, a second real finding:
+# this threshold, like the removed rule 2's, was derived from Ashby's own
+# overwhelmingly-USD live data and applied to every currency's own RAW
+# number regardless of scale). A Lyon-based "Customer Solutions Consultant"
+# reading "42-46 EUR (per-year-salary)" was being reinterpreted as
+# EUR42-46/HOUR under the old currency-blind rule -- not obviously wrong
+# the way the HireHangar case is (EUR42-46/hour annualises to a plausible
+# senior-contractor rate), but the THRESHOLD ITSELF was never validated
+# against EUR, INR, or any other currency this pipeline's postings
+# actually carry, so applying it there is exactly the "comparing two
+# things on different bases without checking they're comparable" class of
+# bug this project has been burned by before (docs/REGRESSION-CATALOGUE.md,
+# repeatedly). Restricting to USD is conservative, not a full fix — a
+# non-USD 'year'-tagged range this implausible is left untouched and,
+# where a USD conversion is available for it, still reaches Tier 3.3's own
+# plausibility gate.
+_HOURLY_REINTERPRET_CURRENCY = "USD"
+# Retained from the removed rule 2 above — not load-bearing for THAT rule any
+# more, but still guards rule 1 below (see the k-marker note in that rule's
+# own inline comment): a k-marked value under the hourly threshold is already
+# correctly scaled and must never be relabelled hourly on top of that.
 _HAS_K_MARKER_RE = re.compile(r"\d\s*[kK]\b")
 
 
-def reinterpret_implausible_year(min_v: float, max_v: float, raw_text: str) -> tuple[float, float, str] | None:
+def reinterpret_implausible_year(min_v: float, max_v: float, raw_text: str, currency: str | None = None) -> tuple[float, float, str] | None:
     """Package 14, Tier 3.2. Given a compensation range ALREADY tagged
     'year' by its own source, returns (new_min, new_max, new_period) if the
     range is implausible as a literal annual figure and a specific,
@@ -546,10 +567,7 @@ def reinterpret_implausible_year(min_v: float, max_v: float, raw_text: str) -> t
     business overriding: Appen's own $2.40/hour Myanmar rate, ansiblehealth's
     own $500-900/month remote-VA rate, a real EU internship's own monthly
     stipend — none of those are 'year'-tagged in the first place, so this
-    function is never even called for them; see this file's own module
-    docstring header for the two rules this applies, in order, and their
-    own thresholds' docstrings for exactly why each number was chosen from
-    this package's own live data, not picked in the abstract.
+    function is never even called for them).
 
     WHY THIS IS A METHOD FIX, NOT A CHANGE TO A PUBLISHED VALUE (the work
     order's own line: "never change a number to make a check pass... every
@@ -558,40 +576,38 @@ def reinterpret_implausible_year(min_v: float, max_v: float, raw_text: str) -> t
     published figure -- there is no evidence it is a transcription error,
     so it is never touched, however implausible the ratio it produces looks
     (see Tier 1's own audit_data.py check, which flags exactly that instead
-    of guessing at a fix). An Ashby posting reading "$250 - $300" for an
-    "Enterprise Account Executive" is different in kind: nothing about that
-    number was ever the EMPLOYER'S own intended figure -- no real
-    salaried role pays $250-$300 for a year of work, and Ashby's own API
-    has no separate "in thousands" flag, so an employer typing "250"
-    meaning "250,000" (a common informal shorthand) and Ashby passing it
-    through literally is a TRANSCRIPTION gap between what was meant and
-    what was stored, the same category of thing as Lever's own historical
-    `.replace('per-', '')` bug (R15) turning "per-year-salary" into
-    "year-salary" -- a real, sourced number, MIS-INTERPRETED on the way
-    into this pipeline. Rule 2 below corrects the interpretation (what the
-    stored number actually means), never invents a number Ashby's own API
-    did not report -- min_v and max_v are the exact same integers the API
-    returned, scaled by a fixed, disclosed, documented factor of 1,000,
-    not replaced by a guess.
+    of guessing at a fix). The one correction left here -- an hourly-shaped
+    USD value mistagged 'year' -- changes only the PERIOD, never the
+    number: min_v/max_v are returned exactly as given, the real hourly
+    figures Ashby's own API reported, just no longer mislabelled.
 
-    1. max < 100 -- clearly hourly-shaped, mistagged 'year' by its own
-       source. Reinterpreted as period='hour', values UNCHANGED (they were
-       already the real hourly numbers, just mislabelled).
-    2. 250 <= max < 12,000 AND raw_text carries no k/K marker -- a bare,
-       unscaled number an employer meant in thousands (raw_text carrying a
-       real 'k'/'K', e.g. Ashby's own '2K-2.5K' tierSummary, means the
-       value is ALREADY correctly scaled -- that case returns None,
-       deliberately not touched here).
+    ONE rule remains, after an independent adversarial review found a
+    second, magnitude-only rule (bare numbers "meant in thousands") had
+    already produced at least one real, wrong published value -- see this
+    file's own module-level comment above _YEAR_LOOKS_HOURLY_THRESHOLD for
+    the full incident and why the rule was removed rather than patched:
 
-    100-250 is left alone on purpose -- see _BARE_THOUSANDS_LOWER_BOUND's
-    own docstring for the real, disclosed residual this leaves (Tier 3.3's
-    plausibility gate flags it instead of this function guessing at it)."""
+    1. currency == 'USD' AND max < 100 -- clearly hourly-shaped, mistagged
+       'year' by its own source. Reinterpreted as period='hour', values
+       UNCHANGED.
+
+    Everything else -- including every bare-number-possibly-meant-in-
+    thousands case the removed rule used to touch -- is left alone on
+    purpose now. Tier 3.3's own plausibility gate
+    (check_postings_annualised_plausibility) flags it for review instead
+    of this function guessing at it."""
     if max_v is None or max_v <= 0:
         return None
-    if max_v < _YEAR_LOOKS_HOURLY_THRESHOLD:
+    if (currency == _HOURLY_REINTERPRET_CURRENCY and max_v < _YEAR_LOOKS_HOURLY_THRESHOLD
+            and not _HAS_K_MARKER_RE.search(raw_text or "")):
+        # The k-marker guard is not currently load-bearing on this pipeline's
+        # own live data (checked: 0 of the hourly rule's real firings carry
+        # one), but a k-marked value under 100 IS theoretically reachable
+        # (a stipend genuinely quoted "$0.5K"), and would be a real
+        # already-correctly-scaled number this rule has no business
+        # relabelling as hourly. Cheap and safe to guard against on general
+        # principle rather than leave implicit.
         return (min_v, max_v, "hour")
-    if _BARE_THOUSANDS_LOWER_BOUND <= max_v < _BARE_THOUSANDS_UPPER_BOUND and not _HAS_K_MARKER_RE.search(raw_text or ""):
-        return (min_v * 1000, max_v * 1000, "year")
     return None
 
 
