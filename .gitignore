@@ -92,6 +92,16 @@ REPORT-P9.md
 REPORT-P10.md
 REPORT-P11.md
 REPORT-P12.md
+REPORT-P13.md
+
+# Pre-existing local design-exploration artifacts (a separate Claude Design
+# tool session's own working directory, and a design brief prepared for a
+# different, future package — the CV reader / "Where would I stand?"
+# feature, per design-brief/PROMPT.md's own text). Not this package's own
+# concern; kept locally, not part of the published project, matching every
+# phase-*.md/REPORT-P*.md entry above.
+claude design/
+design-brief/
 
 # local tooling config
 .claude/
