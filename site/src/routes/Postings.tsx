@@ -36,12 +36,6 @@ import { project } from '../components/CityMap'
 const MIN_ADVERTISED_CHART_N = 5
 const MAX_ADVERTISED_CHART_COUNTRIES = 12
 
-function median(nums: number[]): number {
-  const s = nums.slice().sort((a, b) => a - b)
-  const mid = Math.floor(s.length / 2)
-  return s.length % 2 ? s[mid]! : (s[mid - 1]! + s[mid]!) / 2
-}
-
 /** Package 12, tier 5.1's own `advertised` chart-kit mode needed a real chart
  *  to be visible on — the mode existed in engine.ts but nothing rendered it
  *  anywhere, found while gathering this package's own gate 9 evidence. Median
@@ -50,19 +44,19 @@ function median(nums: number[]): number {
  *  bigger addition than this one chart earns, and the wage-spine's own
  *  normalise.py is off-limits here regardless (this file never imports
  *  data/explore.ts). Countries below MIN_ADVERTISED_CHART_N are dropped
- *  rather than shown on a sample too thin to mean anything. */
+ *  rather than shown on a sample too thin to mean anything.
+ *
+ *  Package 14: reads `data.advertised_by_country`, pre-computed at build
+ *  time (build_postings.py) — this function used to scan the FULL raw
+ *  `postings` array and sort each country's own values itself, which
+ *  became a real, measured Lighthouse performance cost once this
+ *  package's own postings recovery grew that array to 46,040 records.
+ *  Same filter, same thresholds, same result shape; the expensive part
+ *  just doesn't happen in the browser on every page load any more. */
 function advertisedByCountryCfg(data: PostingsData): ChartCfg | null {
-  const byCountry = new Map<string, number[]>()
-  for (const p of data.postings) {
-    const c = p.compensation
-    if (!c || c.currency !== 'USD' || c.period !== 'year' || !p.country) continue
-    ;(byCountry.get(p.country) ?? byCountry.set(p.country, []).get(p.country)!).push((c.min + c.max) / 2)
-  }
-  const rows = [...byCountry.entries()]
-    .filter(([, vals]) => vals.length >= MIN_ADVERTISED_CHART_N)
-    .map(([cc, vals]) => ({ cc, n: vals.length, med: median(vals) }))
-    .sort((a, b) => b.med - a.med)
+  const rows = data.advertised_by_country
     .slice(0, MAX_ADVERTISED_CHART_COUNTRIES)
+    .map((r) => ({ cc: r.country, n: r.n, med: r.median }))
   if (rows.length < 3) return null
 
   const pts: Pt[] = rows.map((r, i) => [i, r.med, false, r.n])
@@ -199,6 +193,17 @@ export function Postings() {
   }, [data])
 
   const mapDots = useMemo(() => {
+    // Package 14 -- gated on view === 'map': this scans every one of
+    // `filtered`'s own rows (up to the full postings count when no filter
+    // is active -- 46,040 after this package's own recovery, package 12's
+    // own 43,034) and runs a lat/lon projection per country. The JSX below
+    // only ever renders these dots when view === 'map' (the SVG isn't in
+    // the DOM otherwise), but this useMemo previously ran unconditionally
+    // on every filter change regardless of which view was showing --
+    // wasted work on the far more common 'list' default, measured live
+    // contributing to a real Lighthouse performance regression this
+    // package's own postings recovery surfaced (more real data to scan).
+    if (view !== 'map') return []
     // Counted from `filtered`, not `data.country_counts` -- an earlier
     // version read the raw, unfiltered totals here, so switching to Map
     // view silently dropped every active filter (found live by this
@@ -218,7 +223,7 @@ export function Postings() {
         const { x, y } = project(lat, lon)
         return { cc, count, x, y }
       })
-  }, [filtered])
+  }, [filtered, view])
   const maxDot = Math.max(1, ...mapDots.map((d) => d.count))
 
   const providersAvailable = data ? Object.entries(data.provider_summary).filter(([, v]) => v.available) : []

@@ -165,11 +165,47 @@ def run() -> None:
         f"({with_comp_total/len(all_postings)*100 if all_postings else 0:.1f}%), {converted_total} converted to USD "
         f"({converted_total/with_comp_total*100 if with_comp_total else 0:.1f}% of those with compensation)")
 
+    # Package 14 -- moved here from the client (site/src/routes/Postings.tsx's
+    # own advertisedByCountryCfg()), a real Lighthouse performance regression
+    # this package's own postings recovery caused: history/postings.json grew
+    # to a ~20MB JSON payload (46,040 real postings, up from 19,463), and the
+    # client was re-scanning the FULL raw array on every page load just to
+    # compute a per-country median that is the same for every visitor until
+    # this file is next rebuilt. This is a deterministic, build-time-only
+    # aggregate -- computing it here means the client ships ~12 small numbers
+    # instead of re-deriving them from 46,040 records in the browser. The
+    # FULL raw postings array is still shipped (the filterable list view
+    # genuinely needs individual records) -- this does not reduce payload
+    # size, only removes one expensive, avoidable re-computation from it.
+    MIN_ADVERTISED_CHART_N, MAX_ADVERTISED_CHART_COUNTRIES = 5, 12
+    by_country_usd_year: dict[str, list[float]] = {}
+    for p in all_postings:
+        c = p.get("compensation")
+        if not c or c.get("currency") != "USD" or c.get("period") != "year" or not p.get("country"):
+            continue
+        by_country_usd_year.setdefault(p["country"], []).append((c["min"] + c["max"]) / 2)
+
+    def _median(nums: list[float]) -> float:
+        s = sorted(nums)
+        mid = len(s) // 2
+        return s[mid] if len(s) % 2 else (s[mid - 1] + s[mid]) / 2
+
+    advertised_by_country = sorted(
+        (
+            {"country": cc, "n": len(vals), "median": round(_median(vals), 2)}
+            for cc, vals in by_country_usd_year.items() if len(vals) >= MIN_ADVERTISED_CHART_N
+        ),
+        key=lambda r: -r["median"],
+    )[:MAX_ADVERTISED_CHART_COUNTRIES]
+    log(f"    advertised-by-country (USD/year, n>={MIN_ADVERTISED_CHART_N}): "
+        f"{len(advertised_by_country)} countries")
+
     write_processed(SOURCE_ID, {
         "postings": all_postings,
         "provider_summary": provider_summary,
         "seed_companies": seed_companies,
         "country_counts": country_counts,
+        "advertised_by_country": advertised_by_country,
     }, meta={
         "postings_count": len(all_postings),
         "seed_companies_count": len(seed_companies),

@@ -47,6 +47,15 @@ export interface PostingsData {
   provider_summary: Record<string, { available: boolean; postings_count?: number; compensation_present_count?: number; generated_at?: string }>
   seed_companies: Record<string, SeedCompany>
   country_counts: Record<string, number>
+  /** Package 14 — median USD/year advertised pay per country (n>=5, top 12,
+   *  sorted descending), computed at build time (build_postings.py) rather
+   *  than re-derived client-side from the full `postings` array on every
+   *  page load — a real Lighthouse performance regression this package's
+   *  own postings recovery caused (history/postings.json's own resource
+   *  size grew to ~20MB). Same USD-denominated-annual-only filter the
+   *  client-side version used, computed identically, just not in the
+   *  browser. */
+  advertised_by_country: { country: string; n: number; median: number }[]
 }
 
 export async function loadPostings(): Promise<PostingsData> {

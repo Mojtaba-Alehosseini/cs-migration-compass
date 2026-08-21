@@ -434,7 +434,7 @@
       "source_id": "postings",
       "name": "Postings panel — merged advertised-pay data across all providers",
       "urls": [],
-      "fetched_at": "2026-08-21T14:58:22+00:00",
+      "fetched_at": "2026-08-21T15:27:54+00:00",
       "license": "Inherits each provider source's own license — this file adds no new terms, only concatenation and summary computation over already-committed, already-licensed data.",
       "redistribution": "derived — nothing fetched here; every provider's own provenance entry already covers redistribution terms for its own postings.",
       "transforms": [
@@ -1155,5 +1155,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-21T14:58:22+00:00"
+  "updated_at": "2026-08-21T15:27:54+00:00"
 }
