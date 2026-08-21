@@ -1416,3 +1416,105 @@ if small, precision improvement) or stays disclosed-and-accepted at this scale �
 own framing of a small residual not being worth new scope on its own. Separately: whether "Georgia
 always resolves to US" should be revisited if this pipeline's own provider mix ever grows real
 Tbilisi-based coverage (none observed as of this package).
+
+---
+
+# Package 14 — fixing what the external data-science audit found
+
+## 34. A vintage deflator was investigated for Tier 2 (Finding 2) and declined — disclosure shipped instead
+
+The external audit's Finding 2 (HIGH): reference years across the wage panel's fifteen countries span
+2009-2025 (2018-2025 excluding the UAE), and nominal pay rose roughly 20-30% across that window — the
+vintage gap is the same order of magnitude as the cross-country signal the chart draws. The work order's
+own instruction gave two paths: implement a deflator as an explicit, labelled lens if defensible, or
+record why it is not and keep the disclosure.
+
+**Investigated and declined.** The only country-by-year wage-level series this pipeline holds is
+`oecd_indicators.json`'s own `avg_wages.WG_USD_PPP` — a NATIONAL, ALL-OCCUPATION average. A deflator
+built from it would scale a country's own SOFTWARE-DEVELOPER-SPECIFIC figure by that country's own
+NATIONAL AVERAGE wage growth between its native year and a common target year — which silently assumes
+software-developer pay tracked the national average's growth rate over that window. There is no source
+in this pipeline that verifies that assumption, and real reason to doubt it: tech-sector pay has
+diverged sharply from national averages in several of this site's own covered countries across
+2018-2025 (a boom into 2022, a contraction after). This is the SAME class of error this project has
+already been burned by once, by name: `normalise.py`'s own `hours_for()` docstring records a real,
+measured 21.4% overstatement of Ireland's mean when a generic economy-wide Eurostat hours figure stood
+in for an occupation-matched one that existed but wasn't used. A wage-growth deflator built from an
+all-occupation average, applied to a single occupation, is structurally the same substitution, at
+unmeasured magnitude, with no occupation-matched growth series available to check it against.
+
+A second, independent reason: every USD figure in this panel already goes through a YEAR-MATCHED FX
+conversion (rule 3, `normalise.py`) — the rate used is the one for that figure's OWN year, deliberately,
+not a common year. Stacking a wage-growth deflator on top introduces a second, independent judgment call
+(which year's rate does the deflated figure inherit? does the deflator apply before or after the FX
+step?) that compounds uncertainty rather than resolving the one Finding 2 actually names.
+
+**Shipped instead (Tier 2, no new assumption required):** the reference year now renders on every row of
+the comparison chart itself (`site/src/components/explore/WagePanel.tsx`), not only inside the collapsed
+"open each row's own method" card; and whenever the countries actually shown on the current toggle span
+more than three years, a visible line names the spread, the newest country/year and the oldest
+country/year, directly under the chart's own toggles — see `yearSpread` in that file. No number is
+adjusted. The reader sees the real gap and can judge it themselves, which needs no assumption about
+occupation-specific wage growth this pipeline cannot verify.
+
+**Decide:** whether a genuinely occupation-matched wage-growth series (not the national `avg_wages`
+average) is worth sourcing specifically to support a deflator lens in a future package — this package's
+own conclusion is that the CURRENT proxy is not defensible, not that no deflator could ever be.
+
+## 35. The new OECD wage-benchmark invariant (Tier 1, Finding 1) is a FLAG, not an ERROR — by design, not oversight
+
+Tier 1's own instruction: "any country whose published median falls below 1.0x or above 2.5x its own
+OECD `avg_wages` for the same year fails the audit." `scripts/audit_data.py`'s new
+`check_oecd_wage_benchmark()` implements the exact comparison, the exact threshold, and runs on every
+future commit — but appends to `FLAGS`, not `ERRORS`, so it does not fail `python scripts/audit_data.py`'s
+own exit code (which `.github/workflows/ci.yml` gates every push to `main` on).
+
+**Why:** Spain, Ireland and Germany fail this benchmark today (0.77x, 0.98x, and inside-band respectively
+— see REPORT-P14.md gate 4 for the live numbers) for a real, disclosed, structural reason: their own
+national statistics do not break out a software-developer-specific wage at all — Ireland's own source is
+ISCO major group 2, "all professionals." Their published medians are correctly sourced and correctly
+computed for the occupation their own government actually measures; that occupation is just broader than
+"software developer." Tier 1's own set-wide chart fix already excludes these countries from the
+cross-country COMPARISON chart for exactly this reason (see `crosswalk.resolve_set()`) — but their own
+country PAGE still, correctly, shows their own real figure. Making the benchmark an ERROR would fail CI
+permanently for a condition no future commit can resolve without either fabricating a narrower Spanish/
+Irish occupation-specific figure that does not exist (forbidden by this project's own rules) or removing
+their country page entirely (not asked for, and a real loss of otherwise-good data).
+
+Gate 4's own text anticipates exactly this outcome: "show it passing after Tier 1's fix — or, if figures
+still fail, say so plainly rather than loosening the threshold." FLAG is how "say so plainly" stays
+compatible with "CI green" (gate 13) at the same time: the threshold, the comparison, and the visibility
+are all unchanged from the work order's own spec — only the check's power to block a build forever over
+an already-investigated, already-disclosed, structurally-unfixable-by-a-number-change condition is.
+
+**Decide:** whether FLAG is the right permanent severity here, or whether the owner would rather this be
+an ERROR that stays red on `main` until Spain/Ireland/Germany are either dropped from the wage panel
+entirely or the benchmark's own threshold is scoped to exclude countries already outside
+`resolved_comparison`'s chart-comparable set (a scoping this package deliberately did NOT do — see this
+check's own docstring — because coupling the benchmark's pass/fail to the chart's own exclusion logic
+risks the check silently "resolving" itself the moment the chart hides a country, which is closer to
+silencing the check than reporting on it independently).
+
+## 36. Postings currency conversion (Tier 3.1) covers 14 currencies, not every currency observed live
+
+`postings_common.CURRENCY_TO_FX_COUNTRY` converts USD, EUR, GBP, CAD, SGD, JPY, KHR, INR, AMD (Finding
+3's own named list) plus AUD, SEK, NOK, DKK, AED — the second five added because their own countries
+(AU, SE, NO, DK, AE) were ALREADY in `fx_rates.json` as part of the 15-country wage spine, so covering
+them costs zero new fetching. Real, live postings data also carries PHP, PLN, CNY, HUF, THB, MXN, BRL,
+CZK, KRW, RON, CHF, MYR, HKD, TWD and ARS — each single- to low-double-digit counts (under 45 postings
+combined, out of 46,040 total) — none of whose countries this pipeline has ever fetched FX history for.
+These postings' own native compensation is unchanged and fully disclosed (a null `compensation.usd`
+field, same as any other unconverted currency); they are simply not convertible to USD yet.
+
+**Also worth recording:** as of this package (21 August 2026), MOST compensation-bearing postings —
+even in currencies this pipeline DOES cover — still show `compensation.usd: null`, because their own
+effective year (posted_at, or the harvest year when absent) is 2026, and the World Bank has not yet
+published a full-year 2026 average exchange rate (the year isn't over). This is `normalise.to_usd()`'s
+own rule 1 working exactly as designed — refusing rather than substituting a nearby year's rate — not a
+gap in this package's own coverage. The conversion rate will rise on its own once 2026's FX data is
+published (historically, early the following year), with no code change needed.
+
+**Decide:** whether extending `src_fx_rates.py` to fetch FX history for the fifteen remaining observed
+currencies' countries (Philippines, Poland, China, Hungary, Thailand, Mexico, Brazil, Czechia, South
+Korea, Romania, Switzerland, Malaysia, Hong Kong, Taiwan, Argentina) is worth a future package's scope,
+given each is a small fraction of total postings today.
