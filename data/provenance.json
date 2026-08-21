@@ -494,7 +494,7 @@
         "https://boards-api.greenhouse.io/v1/boards/{token}/jobs",
         "https://boards-api.greenhouse.io/v1/boards/{token}/jobs/{id}?pay_transparency=true"
       ],
-      "fetched_at": "2026-08-17T07:38:10+00:00",
+      "fetched_at": "2026-08-21T01:32:25+00:00",
       "license": "Each company's own postings, published via Greenhouse's own public, unauthenticated Job Board API.",
       "redistribution": "Only postings from companies whose board was verified live are kept; raw list and per-job detail responses cached under data/raw/postings/greenhouse/.",
       "transforms": [
@@ -504,8 +504,8 @@
       ],
       "output": "data/processed/postings_greenhouse.json",
       "status": "ok",
-      "rows": 5172,
-      "coverage": "147 verified companies, 5172 postings, this run",
+      "rows": 13466,
+      "coverage": "349 verified companies, 13466 postings, this run",
       "notes": "Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads."
     },
     {
@@ -534,7 +534,7 @@
       "urls": [
         "https://api.lever.co/v0/postings/{token}?mode=json"
       ],
-      "fetched_at": "2026-08-17T07:40:24+00:00",
+      "fetched_at": "2026-08-21T01:25:22+00:00",
       "license": "Each company's own postings, published via Lever's own public, unauthenticated postings API.",
       "redistribution": "Only postings from companies whose board was verified live are kept; raw per-company responses cached under data/raw/postings/lever/.",
       "transforms": [
@@ -544,8 +544,8 @@
       ],
       "output": "data/processed/postings_lever.json",
       "status": "ok",
-      "rows": 3055,
-      "coverage": "149 verified companies, 3055 postings, this run",
+      "rows": 9928,
+      "coverage": "254 verified companies, 9928 postings, this run",
       "notes": "Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads."
     },
     {
@@ -1151,5 +1151,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-17T07:43:02+00:00"
+  "updated_at": "2026-08-21T01:32:25+00:00"
 }
