@@ -28,9 +28,12 @@ from _common import ROOT, log  # noqa: E402
 OUT_PATH = ROOT / "docs" / "DATA-QUALITY.md"
 
 
-def _run_module(display_name: str, module_name: str, command_hint: str) -> dict:
+_SEVERITY_LISTS = ("ERRORS", "WARNINGS", "FLAGS", "DROPS")
+
+
+def _run_module(display_name: str, module_name: str, command_hint: str, main_kwargs: dict | None = None) -> dict:
     result = {"name": display_name, "module": module_name, "command": command_hint,
-              "ran": False, "exit_code": None, "log": "", "errors": [], "warnings": [], "flags": [],
+              "ran": False, "exit_code": None, "log": "", "errors": [], "warnings": [], "flags": [], "drops": [],
               "exception": None}
     try:
         module = __import__(module_name)
@@ -38,14 +41,14 @@ def _run_module(display_name: str, module_name: str, command_hint: str) -> dict:
         result["exception"] = traceback.format_exc()
         return result
 
-    for listname in ("ERRORS", "WARNINGS", "FLAGS"):
+    for listname in _SEVERITY_LISTS:
         if hasattr(module, listname):
             getattr(module, listname).clear()
 
     buf = io.StringIO()
     try:
         with contextlib.redirect_stdout(buf):
-            result["exit_code"] = module.main()
+            result["exit_code"] = module.main(**(main_kwargs or {}))
         result["ran"] = True
     except Exception:  # noqa: BLE001 — same: render the failure, don't abort the whole doc
         result["exception"] = traceback.format_exc()
@@ -53,7 +56,8 @@ def _run_module(display_name: str, module_name: str, command_hint: str) -> dict:
     result["errors"] = list(getattr(module, "ERRORS", []))
     result["warnings"] = list(getattr(module, "WARNINGS", []))
     result["flags"] = list(getattr(module, "FLAGS", []))
-    for listname in ("ERRORS", "WARNINGS", "FLAGS"):
+    result["drops"] = list(getattr(module, "DROPS", []))
+    for listname in _SEVERITY_LISTS:
         if hasattr(module, listname):
             getattr(module, listname).clear()
     return result
@@ -64,8 +68,8 @@ def _status_line(r: dict) -> str:
         return "**COULD NOT RUN** — see exception below"
     if not r["ran"]:
         return "**DID NOT RUN**"
-    if r["errors"]:
-        return f"**FAILED** — {len(r['errors'])} error(s)"
+    if r["errors"] or r["drops"]:
+        return f"**FAILED** — {len(r['errors']) + len(r['drops'])} error(s)"
     if r["warnings"] or r["flags"]:
         return f"PASSED, {len(r['warnings']) + len(r['flags'])} item(s) flagged for review"
     return "PASSED, clean"
@@ -79,6 +83,10 @@ def _render_module_section(r: dict) -> list[str]:
     if r["errors"]:
         out.append(f"**{len(r['errors'])} error(s):**")
         out += [f"- {e}" for e in r["errors"]]
+        out.append("")
+    if r["drops"]:
+        out.append(f"**{len(r['drops'])} drop(s) — a genuine decline, past the point of sample noise:**")
+        out += [f"- {d}" for d in r["drops"]]
         out.append("")
     if r["warnings"]:
         out.append(f"**{len(r['warnings'])} warning(s):**")
@@ -95,14 +103,23 @@ def _render_module_section(r: dict) -> list[str]:
 
 def generate() -> str:
     modules = [
-        ("Validate — envelope, provenance, crosswalk, normalise.py rules", "validate_data", "make validate"),
-        ("Audit — Tier 1 structural invariants", "audit_data", "make audit"),
-        ("Reconcile — Tier 2, live sources + independent arithmetic", "reconcile", "python scripts/reconcile.py"),
-        ("Snapshot — Tier 3, drift + coverage", "snapshot_stats", "python scripts/snapshot_stats.py"),
+        ("Validate — envelope, provenance, crosswalk, normalise.py rules", "validate_data", "make validate", None),
+        ("Audit — Tier 1 structural invariants", "audit_data", "make audit", None),
+        ("Reconcile — Tier 2, live sources + independent arithmetic", "reconcile",
+         "python scripts/reconcile.py", None),
+        # append=False -- this doc regeneration must not itself add a real
+        # entry to data/quality_history/snapshots.jsonl (adversarial review
+        # finding L16: an earlier version called this module's main() the
+        # same uniform way as the other three, so regenerating the DOC also
+        # silently appended a SNAPSHOT — "whenever anyone ran the doc
+        # generator", not "whenever the pipeline actually ran"). `make
+        # snapshot` / the CLI entry point still appends normally.
+        ("Snapshot — Tier 3, drift + coverage", "snapshot_stats",
+         "python scripts/snapshot_stats.py", {"append": False}),
     ]
-    results = [_run_module(name, mod, cmd) for name, mod, cmd in modules]
+    results = [_run_module(name, mod, cmd, kwargs) for name, mod, cmd, kwargs in modules]
 
-    total_errors = sum(len(r["errors"]) for r in results)
+    total_errors = sum(len(r["errors"]) + len(r["drops"]) for r in results)
     total_flags = sum(len(r["warnings"]) + len(r["flags"]) for r in results)
     overall = "FAILING" if total_errors else "PASSING"
 

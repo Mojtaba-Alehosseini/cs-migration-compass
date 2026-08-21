@@ -110,6 +110,17 @@ def _committed(source_id: str) -> dict | None:
     return json.loads(path.read_text(encoding="utf-8")).get("data")
 
 
+# Which sources this RUN actually reached live vs. reused a recent cache
+# for — adversarial review finding L15: docs/DATA-QUALITY.md's own headline
+# status line ("PASSED, 2 item(s) flagged") sat above a log where every
+# single source said "reconciliation cache hit", so a reader would have to
+# open the collapsed full log and read every line to notice this run
+# fetched nothing live at all. Tracked here so main() can put an honest
+# count where the headline actually is, not just in the buried log.
+LIVE_FETCHES: list[str] = []
+CACHE_HITS: list[str] = []
+
+
 def _cached_fetch(source_id: str, fetch_fn, max_age_days: int = RECONCILE_CACHE_MAX_AGE_DAYS) -> dict:
     """fetch_fn() -> parsed JSON, called only when this reconciliation's OWN
     cache (not the harvester's) is missing or older than `max_age_days`.
@@ -125,11 +136,13 @@ def _cached_fetch(source_id: str, fetch_fn, max_age_days: int = RECONCILE_CACHE_
     if path.exists() and (time.time() - path.stat().st_mtime) < max_age_days * 86400:
         log(f"    [{source_id}] reconciliation cache hit ({path.relative_to(DATA.parent)}, "
             f"<{max_age_days}d old)")
+        CACHE_HITS.append(source_id)
         return json.loads(path.read_text(encoding="utf-8"))
     log(f"    [{source_id}] fetching live sample...")
     doc = fetch_fn()
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(doc), encoding="utf-8")
+    LIVE_FETCHES.append(source_id)
     return doc
 
 
@@ -985,6 +998,12 @@ def reconcile_live_samples() -> None:
     if SOURCES_NOT_YET_LIVE_RECONCILED:
         flag(f"{len(SOURCES_NOT_YET_LIVE_RECONCILED)} source(s) not yet live-reconciled: "
              f"{', '.join(SOURCES_NOT_YET_LIVE_RECONCILED)} — see this file's own module docstring")
+    log(f"  {len(LIVE_FETCHES)} source(s) fetched LIVE this run ({', '.join(LIVE_FETCHES) or 'none'}), "
+        f"{len(CACHE_HITS)} reused a recent cache ({', '.join(CACHE_HITS) or 'none'})")
+    if not LIVE_FETCHES:
+        flag("0 sources were fetched LIVE this run — every one reused its own reconciliation cache "
+             f"(<{RECONCILE_CACHE_MAX_AGE_DAYS}d old). This run's own PASS reflects the cache's own "
+             "earlier live fetch, not a fresh comparison made just now.")
 
 
 # ---------------------------------------------------------------------------
