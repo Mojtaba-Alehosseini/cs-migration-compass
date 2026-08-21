@@ -1,0 +1,465 @@
+/* Package 13, Tier 0 — regression tests for the NINE client-side defects in
+ * docs/REGRESSION-CATALOGUE.md that live in site/src/**.ts(x): R1, R2, R3
+ * (package 6, chart integrity), R8, R9, R10, R11 (package 10, position and
+ * estimate), R12, R13 (package 11, the position must answer its own question).
+ *
+ * These cannot be unit-tested the way the Python ones are: profile.ts's own
+ * top-level import chain reaches store.ts, which reads import.meta.env.BASE_URL
+ * — a Vite-injected global that does not exist under plain Node (confirmed by
+ * trying the direct import first, this package). So the same harness every
+ * package since 6 has used for UI gates: real headless Chrome via
+ * .status/evidence/cdp.mjs, driving a real production build, reading the
+ * actual rendered numbers.
+ *
+ * Prerequisite — a served production build:
+ *     cd site && npm run build && npm run preview      # http://localhost:4173/
+ * Override with BASE=... for another origin.
+ *
+ * Every number asserted below is the catalogue's own before/after pair, not a
+ * value read off this run. Where the fix produced a specific figure (SE P37 at
+ * 49,673; NO's flat "0-39" band; Milan's 2,314 outside a 150-year domain) the
+ * PRE-FIX answer is pinned too, so a regression fails even if some unrelated
+ * change happened to leave the primary assertion true by coincidence.
+ */
+
+import { launch, openPage, sleep } from '../../.status/evidence/cdp.mjs'
+
+const BASE = process.env.BASE ?? 'http://localhost:4173/'
+
+let fails = 0
+const say = (s = '') => console.log(s)
+const check = (ok, label) => { say(`${ok ? 'PASS' : 'FAIL'}  ${label}`); if (!ok) fails++ }
+
+/* cdp.mjs's launch() attaches to whatever already answers on its port, so a
+ * leftover browser from an earlier run silently hijacks the session (it opens a
+ * tab in a browser whose profile directory has already been deleted, and hangs).
+ * Pick a port nothing is listening on instead. */
+async function freeCdpPort(start = 9350) {
+  for (let p = start; p < start + 40; p++) {
+    try {
+      const r = await fetch(`http://127.0.0.1:${p}/json/version`, { signal: AbortSignal.timeout(500) })
+      if (r.ok) continue
+    } catch { return p }
+  }
+  throw new Error(`no free CDP port in ${start}..${start + 39}`)
+}
+
+const preview = await fetch(BASE).catch(() => null)
+if (!preview?.ok) {
+  console.error(`No site served at ${BASE}.`)
+  console.error('Run:  cd site && npm run build && npm run preview')
+  process.exit(2)
+}
+
+const SCATTER_PANEL = `[...document.querySelectorAll('h2')]
+  .find((h) => h.textContent.includes('Ask your own question')).closest('.panel')`
+
+const { port, close } = await launch({ port: await freeCdpPort() })
+try {
+  const page = await openPage(port)
+  await page.viewport(1280, 2000)
+
+  /* One real load; everything after it is hash routing (cdp.mjs's own goto()
+   * waits for a load event a hash change never fires). That also keeps the
+   * console.error hook installed below alive for the whole run. */
+  await page.goto(`${BASE}#/explore/housing`, { waitMs: 3000 })
+
+  /* assertInjectiveTicks() throws in dev but only console.error()s in a
+   * production build, which is what this suite runs against — so R2 reads the
+   * guard's real shipped output rather than an exception. Hooked here, not read
+   * from CDP's Log domain, so the deliberate trigger in R2 can be told apart
+   * from an incidental error. */
+  await page.eval(`(() => {
+    window.__errs = []
+    const orig = console.error
+    console.error = (...a) => { window.__errs.push(a.map(String).join(' ')); orig.apply(console, a) }
+  })()`)
+
+  /* --- shared helpers ------------------------------------------------- */
+
+  /** A country's own row in the position table, by the key it renders
+   *  (`SE`, `CA-21231`, ...). Same shape p11-visual.mjs verified against the
+   *  real DOM: the row is the 3-column grid whose text starts with the key. */
+  const rowText = (code) => page.eval(`(() => {
+    const rows = [...document.querySelectorAll('div')]
+      .filter((d) => d.children.length === 3 && d.textContent.trim().startsWith(${JSON.stringify(code)}))
+    return rows[0]?.textContent ?? null
+  })()`)
+  const rowCount = (code) => page.eval(`[...document.querySelectorAll('div')]
+    .filter((d) => d.children.length === 3 && d.textContent.trim().startsWith(${JSON.stringify(code)})).length`)
+  const pct = (text) => { const m = text?.match(/P(\d+)/); return m ? Number(m[1]) : null }
+
+  /** How many <Figure>/<Derived> method-card triggers a row renders. Both
+   *  components render their trigger as the row's only <button>s. */
+  const rowTriggers = (code) => page.eval(`(() => {
+    const rows = [...document.querySelectorAll('div')]
+      .filter((d) => d.children.length === 3 && d.textContent.trim().startsWith(${JSON.stringify(code)}))
+    return rows[0] ? rows[0].querySelectorAll('button').length : null
+  })()`)
+
+  /** Open one row's method card and read it back. `which` is 0 for the
+   *  position's <Figure>, 1 for the estimate's <Derived>. */
+  async function openCard(code, which) {
+    const opened = await page.eval(`(() => {
+      const rows = [...document.querySelectorAll('div')]
+        .filter((d) => d.children.length === 3 && d.textContent.trim().startsWith(${JSON.stringify(code)}))
+      const btns = [...(rows[0]?.querySelectorAll('button') ?? [])]
+      if (!btns[${which}]) return false
+      btns[${which}].click()
+      return true
+    })()`)
+    await sleep(350)
+    const text = await page.eval(`(() => {
+      const d = [...document.querySelectorAll('[role="dialog"]')].pop()
+      return d ? d.textContent : null
+    })()`)
+    await page.eval(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`)
+    await sleep(250)
+    return opened ? text : null
+  }
+
+  /** Scroll the scatter into view — Explore defers it until it is near the
+   *  viewport, so it does not exist in the DOM before this. */
+  async function showScatter() {
+    await page.eval('window.scrollTo(0, document.body.scrollHeight)')
+    await sleep(2200)
+  }
+
+  /** The scatter's own rendered y axis: each tick's label and the exact y its
+   *  gridline sits on (the same Y() the points are placed with). The axis
+   *  titles are excluded by their arrow glyphs and by not living in a tick <g>. */
+  const scatterYAxis = () => page.eval(`(() => {
+    const svg = ${SCATTER_PANEL}.querySelector('svg')
+    return [...svg.querySelectorAll('g')]
+      .map((g) => ({
+        label: g.querySelector('text')?.textContent ?? null,
+        anchor: g.querySelector('text')?.getAttribute('text-anchor') ?? null,
+        y: Number(g.querySelector('line')?.getAttribute('y1')),
+      }))
+      .filter((t) => t.anchor === 'end' && t.label != null)
+      .map((t) => ({ label: t.label, y: t.y }))
+  })()`)
+
+  const scatterPoint = (city) => page.eval(`(() => {
+    const c = ${SCATTER_PANEL}.querySelector('circle[data-city=' + JSON.stringify(${JSON.stringify(city)}) + ']')
+    if (!c) return null
+    return {
+      cy: Number(c.getAttribute('cy')),
+      title: c.querySelector('title')?.textContent ?? '',
+      offscale: c.hasAttribute('data-offscale'),
+    }
+  })()`)
+
+  /** Value ↔ pixel from the axis the reader can actually see. */
+  const tickValue = (label) => Number(label.replace(/[^\d.]/g, ''))
+  function pixelFor(axis, value) {
+    const a = axis[0], b = axis[axis.length - 1]
+    return a.y + (value - tickValue(a.label)) * (b.y - a.y) / (tickValue(b.label) - tickValue(a.label))
+  }
+
+  /* ==================================================================== */
+  say('=== R1: years-to-home reported past its own precision (Milan, Valencia) ===')
+
+  await page.hashGo(`${BASE}#/city/milan`, { waitMs: 2200 })
+  const milan = await page.eval(`(() => {
+    const panel = [...document.querySelectorAll('h2')]
+      .find((h) => h.textContent.includes('The path to owning a home')).closest('.panel')
+    const mark = panel.querySelector('.unstable-mark')
+    return {
+      big: panel.querySelector('.big')?.textContent ?? null,
+      mark: mark?.textContent ?? null,
+      markLabel: mark?.getAttribute('aria-label') ?? null,
+      note: panel.querySelector('.unstable-note')?.textContent ?? null,
+    }
+  })()`)
+  say(`  Milan: ${milan.big} · mark=${JSON.stringify(milan.mark)}`)
+  check(milan.mark === '≈', 'R1: Milan years-to-home carries the instability mark (.unstable-mark = "≈")')
+  check(!!milan.big?.startsWith('≈'), `R1: the ≈ prefixes the figure itself, not a footnote (${milan.big})`)
+  check(!!milan.note?.includes('$210'),
+    'R1: Milan\'s note names the real savings figure the rounding swamps ($210/yr)')
+
+  // Rome also reads "100+ yrs" and is NOT flagged: the mark tracks the
+  // inputs' own precision, not the size of the number.
+  await page.hashGo(`${BASE}#/city/rome`, { waitMs: 2000 })
+  const rome = await page.eval(`(() => {
+    const panel = [...document.querySelectorAll('h2')]
+      .find((h) => h.textContent.includes('The path to owning a home')).closest('.panel')
+    return { big: panel.querySelector('.big')?.textContent ?? null, mark: !!panel.querySelector('.unstable-mark') }
+  })()`)
+  say(`  Rome:  ${rome.big} · marked=${rome.mark}`)
+  check(rome.mark === false,
+    `R1: Rome reads "${rome.big}" too and is NOT marked — the flag is precision, not magnitude`)
+
+  await page.hashGo(`${BASE}#/explore/housing`, { waitMs: 2500 })
+  await showScatter()
+  const axis1 = await scatterYAxis()
+  const milanPt = await scatterPoint('Milan')
+  await page.eval(`(() => {
+    const c = ${SCATTER_PANEL}.querySelector('circle[data-city="Milan"]')
+    c.dispatchEvent(new PointerEvent('pointerover', { bubbles: true }))
+  })()`)
+  await sleep(350)
+  const readout = await page.eval(`${SCATTER_PANEL}.querySelector('.readout')?.textContent ?? null`)
+  await page.eval(`(() => {
+    const c = ${SCATTER_PANEL}.querySelector('circle[data-city="Milan"]')
+    c.dispatchEvent(new PointerEvent('pointerout', { bubbles: true }))
+  })()`)
+  await sleep(200)
+  const milanReal = Number(readout?.match(/exactly ([\d,]+) yrs/)?.[1].replace(/,/g, ''))
+  const domainTop = tickValue(axis1[axis1.length - 1].label)
+  say(`  scatter readout: ${readout}`)
+  check(milanPt?.offscale === true, 'R1: Milan draws in the off-scale band, not at a real y position')
+  check(milanReal > 2000, `R1: Milan's real figure is still kept and shown (${milanReal} yrs — never suppressed)`)
+  check(milanReal > domainTop,
+    `R1: that figure is excluded from the scatter's own y-domain (top tick ${domainTop} yrs < Milan's ${milanReal})`)
+
+  // The consequence the catalogue names: a STABLE city's exact pixel would
+  // move if the unstable extreme were back in the domain computation.
+  const sydney = await scatterPoint('Sydney')
+  const sydneyReal = Number(sydney.title.match(/:\s*([\d.]+) yrs/)[1])
+  const sydneyExpected = pixelFor(axis1, sydneyReal)
+  say(`  Sydney: ${sydneyReal} yrs at cy=${sydney.cy.toFixed(2)} (axis predicts ${sydneyExpected.toFixed(2)})`)
+  // Both halves matter and neither is enough alone: the pixel agreeing with
+  // the axis is true whatever the domain is (it is drawn from that same
+  // axis), so the domain bound is what makes this a statement about Milan
+  // being kept out of it.
+  check(domainTop < 200 && Math.abs(sydney.cy - sydneyExpected) < 1.5,
+    `R1: a known-stable city plots where its own real value puts it, on a domain that tops out at ${domainTop} yrs (±1.5px)`)
+
+  /* ==================================================================== */
+  say('')
+  say('=== R2: tick labels that collide ===')
+
+  /* No production build exposes engine.ts's assertInjectiveTicks by name, so
+   * this reaches the real shipped formatters instead: the ExploreCharts chunk
+   * re-exports METRICS unmangled, and an import() of an already-loaded chunk
+   * URL returns the SAME module instance the app is running. Nothing here is
+   * reimplemented — d.format and d.tickFormat are the live functions. */
+  const metricsChunk = await page.eval(`(async () => {
+    const urls = performance.getEntriesByType('resource').map((r) => r.name).filter((n) => n.endsWith('.js'))
+    for (const u of urls) {
+      try { const m = await import(u); if (m.METRICS) { window.__METRICS = m.METRICS; return u.split('/').pop() } } catch {}
+    }
+    return null
+  })()`, { awaitPromise: true })
+  check(metricsChunk != null, `R2: reached the shipped metric registry from the production bundle (${metricsChunk})`)
+
+  // The exact failing axis from the bug report: years_to_home over a 0-2,500
+  // domain, labelled by the CLAMPING display formatter it used to use.
+  const collide = await page.eval(`(() => {
+    const d = window.__METRICS.find((m) => m.key === 'years_to_home')
+    const ticks = [0, 500, 1000, 1500, 2000, 2500]
+    return { display: ticks.map((v) => d.format(v)), tick: ticks.map((v) => d.tickFormat(v, 500)) }
+  })()`)
+  say(`  0-2,500 via display format(): ${JSON.stringify(collide.display)}`)
+  say(`  0-2,500 via tickFormat():     ${JSON.stringify(collide.tick)}`)
+  check(collide.display.length === 6 && new Set(collide.display).size === 2,
+    `R2: the bug report's axis really is non-injective — 6 ticks, ${new Set(collide.display).size} distinct labels`)
+  check(collide.display.filter((l) => l === '100+ yrs').length === 5,
+    'R2: and "100+ yrs" is the label that repeats, five times over')
+  check(new Set(collide.tick).size === 6,
+    'R2: the shipped step-aware tickFormat is injective over that same domain (6 distinct labels)')
+
+  // The real, currently-shipped axis.
+  const shippedLabels = axis1.map((t) => t.label)
+  say(`  shipped years_to_home axis: ${JSON.stringify(shippedLabels)}`)
+  check(shippedLabels.length === 7 && new Set(shippedLabels).size === 7,
+    `R2: the shipped years_to_home axis renders 7 ticks with 7 distinct labels`)
+  check(shippedLabels[0] === '0 yrs' && shippedLabels[6] === '150 yrs',
+    'R2: and they run 0 yrs … 150 yrs, not the clamped set')
+  check(!shippedLabels.includes('100+ yrs'), 'R2: no clamped "100+ yrs" label survives onto an axis')
+
+  /* The guard itself, exercised rather than assumed: put the pre-fix
+   * formatter back on the real shipped metric object, make the real
+   * ScatterBuilder re-render, and read what assertInjectiveTicks actually
+   * does about it in a production build. */
+  const setY = (key) => page.eval(`(() => {
+    const sel = [...${SCATTER_PANEL}.querySelectorAll('select')][1]
+    Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(sel, ${JSON.stringify(key)})
+    sel.dispatchEvent(new Event('change', { bubbles: true }))
+  })()`)
+  await page.eval(`(() => {
+    const d = window.__METRICS.find((m) => m.key === 'years_to_home')
+    window.__realTickFormat = d.tickFormat
+    d.tickFormat = (v) => d.format(v)
+  })()`)
+  await setY('m2_per_year'); await sleep(400)
+  await setY('years_to_home'); await sleep(600)
+  const guardErrs = await page.eval('window.__errs.slice()')
+  const brokenLabels = (await scatterYAxis()).map((t) => t.label)
+  say(`  with the pre-fix formatter: ${JSON.stringify(brokenLabels)}`)
+  say(`  guard said: ${guardErrs[0] ?? '(nothing)'}`)
+  // Counts come out of the guard's own message rather than being pinned to a
+  // literal: how many ticks that axis has is R3's business (the domain), and
+  // hardcoding them here would make this check fail for R3's reasons instead
+  // of its own.
+  const counted = guardErrs[0]?.match(/has (\d+) ticks but (\d+) distinct labels/)
+  check(guardErrs.length === 1 && counted != null && Number(counted[2]) < Number(counted[1]),
+    `R2: assertInjectiveTicks is live on the shipped render path and reports the collision (${counted?.[1]} ticks, ${counted?.[2]} labels)`)
+  check(!!guardErrs[0]?.includes('"100+ yrs"'), 'R2: and its message names the repeated label')
+  check(new Set(brokenLabels).size < brokenLabels.length,
+    'R2: the axis it reported on really did render duplicate labels')
+
+  await page.eval(`(() => {
+    window.__METRICS.find((m) => m.key === 'years_to_home').tickFormat = window.__realTickFormat
+  })()`)
+  await setY('m2_per_year'); await sleep(400)
+  await setY('years_to_home'); await sleep(600)
+  const restored = (await scatterYAxis()).map((t) => t.label)
+  check(JSON.stringify(restored) === JSON.stringify(shippedLabels),
+    'R2: restoring the shipped tickFormat restores the seven distinct labels')
+
+  /* ==================================================================== */
+  say('')
+  say('=== R3: a domain set by an outlier ===')
+
+  const scatter = await page.eval(`(() => {
+    const panel = ${SCATTER_PANEL}
+    const svg = panel.querySelector('svg')
+    const circles = [...svg.querySelectorAll('circle')]
+    return {
+      selects: [...panel.querySelectorAll('select')].map((s) => s.value),
+      plotted: circles.length,
+      offscale: circles.filter((c) => c.hasAttribute('data-offscale')).map((c) => c.getAttribute('data-city')).sort(),
+      aria: svg.getAttribute('aria-label'),
+    }
+  })()`)
+  const axis3 = await scatterYAxis()
+  const yMax = tickValue(axis3[axis3.length - 1].label)
+  say(`  preset: ${scatter.selects.join(' x ')} · ${scatter.plotted} points · off-scale: ${scatter.offscale.join(', ')}`)
+  check(scatter.selects[0] === 'apt_m2' && scatter.selects[1] === 'years_to_home',
+    'R3: the years_to_home x apt_m2 preset is the one under test')
+  check(scatter.plotted === 72, `R3: 72 cities have both values and are placed (got ${scatter.plotted})`)
+  check(JSON.stringify(scatter.offscale) === JSON.stringify(['Milan', 'Valencia']),
+    'R3: exactly Milan and Valencia sit in the overflow band')
+  check(scatter.plotted - scatter.offscale.length === 70,
+    'R3: 70 of 72 cities plot inside the main field')
+  check(yMax < 200, `R3: the y-domain's upper bound is ${yMax}, not the ~2,314 an unguarded Math.max would give`)
+
+  /* ==================================================================== */
+  say('')
+  say('=== R8: a comparability check never consulted (Netherlands) ===')
+
+  await page.hashGo(`${BASE}#/position?years=8`, { waitMs: 2800 })
+  const nl = await rowText('NL')
+  const nlTriggers = await rowTriggers('NL')
+  const seTriggers = await rowTriggers('SE')
+  say(`  NL: ${nl}`)
+  check(nlTriggers === 0, `R8: the Netherlands renders NO method-card trigger (got ${nlTriggers})`)
+  check(!!nl?.includes('NL has no ISCO-08 correspondence at all for this occupation'),
+    'R8: it renders the crosswalk\'s own refusal reason instead')
+  check(nl != null && !/P\d/.test(nl), 'R8: and no position percentile at all')
+  check(seTriggers === 2,
+    `R8: a genuinely comparable country (SE) still renders its Figure and Derived triggers in the same run (${seTriggers})`)
+
+  /* ==================================================================== */
+  say('')
+  say('=== R9: <Derived>\'s displayed arithmetic reproducible by hand ===')
+
+  // The pre-fix failure was displaying a 3-decimal multiplier beside a result
+  // computed from the full-precision premium. Tolerance is the display's own
+  // rounding (2 decimals -> half a cent), nothing looser.
+  for (const [code, y] of [['SE', 8], ['SE', 20], ['NO', 8]]) {
+    await page.hashGo(`${BASE}#/position?years=${y}`, { waitMs: 1800 })
+    const card = await openCard(code, 1)
+    const m = card?.match(/([\d,]+(?:\.\d+)?) x ([\d.]+) = ([\d,]+(?:\.\d+)?)/)
+    if (!m) { check(false, `R9: ${code} @ ${y}y — no "A x B = C" line found in the Derived card`); continue }
+    const a = Number(m[1].replace(/,/g, ''))
+    const b = Number(m[2])
+    const c = Number(m[3].replace(/,/g, ''))
+    check(Math.abs(a * b - c) <= 0.005,
+      `R9: ${code} @ ${y}y — ${m[1]} x ${m[2]} = ${(a * b).toFixed(2)}, card shows ${m[3]}`)
+  }
+
+  /* ==================================================================== */
+  say('')
+  say('=== R10: "?years=" empty string must not become 0 ===')
+
+  const yearsInput = () => page.eval(`document.querySelector('input[type=number]')?.value ?? null`)
+  await page.hashGo(`${BASE}#/position?years=`, { waitMs: 1800 })
+  const empty = await yearsInput()
+  const href = await page.eval('location.href')
+  say(`  ${href} -> years input reads ${JSON.stringify(empty)}`)
+  check(href.endsWith('?years='), 'R10: the param really is present-but-empty, not dropped by the router')
+  check(empty === '5', `R10: an empty years param falls through to DEFAULT_YEARS (5), got ${JSON.stringify(empty)}`)
+  check(empty !== '0' && empty !== '', 'R10: and is neither Number("")\'s 0 nor blank')
+
+  // Controls: a real 0 is still honoured, and a real value still wins — the
+  // fix is a null/empty test, not a floor on small numbers.
+  await page.hashGo(`${BASE}#/position?years=0`, { waitMs: 1600 })
+  check((await yearsInput()) === '0', 'R10: an explicit years=0 is still read as zero experience')
+  await page.hashGo(`${BASE}#/position?years=12`, { waitMs: 1600 })
+  check((await yearsInput()) === '12', 'R10: an ordinary years=12 is still read as itself')
+
+  /* ==================================================================== */
+  say('')
+  say('=== R11: Canada\'s two NOC rows ===')
+
+  await page.hashGo(`${BASE}#/position?years=8`, { waitMs: 2000 })
+  const ca1 = await rowText('CA-21231')
+  const ca2 = await rowText('CA-21232')
+  say(`  ${ca1}`)
+  say(`  ${ca2}`)
+  check(ca1 != null && ca2 != null, 'R11: both CA-21231 and CA-21232 render — not zero, not one')
+  check((await rowCount('CA-21231')) === 1 && (await rowCount('CA-21232')) === 1,
+    'R11: exactly one row each, not a duplicate standing in for the pair')
+  check(pct(ca1) != null && pct(ca2) != null, 'R11: and both rows carry a real position, not a refusal')
+
+  /* ==================================================================== */
+  say('')
+  say('=== R12: Sweden\'s premium computed against the mean, applied to the median ===')
+
+  await page.hashGo(`${BASE}#/position?years=8`, { waitMs: 2000 })
+  const se8 = await rowText('SE')
+  say(`  SE @ 8y: ${se8}`)
+  check(pct(se8) === 37, `R12: Sweden at 8 years ranks P37 (got P${pct(se8)})`)
+  check(pct(se8) !== 31, 'R12: not P31 — the pre-fix answer from shifting the median by a mean-relative premium')
+  check(!!se8?.includes('49,673'), 'R12: the estimate reads 49,673 SEK/month (55,500 mean x 0.895)')
+  check(se8 != null && !se8.includes('47,883'), 'R12: and not 47,883 (53,500 median x 0.895)')
+  const seCard = await openCard('SE', 0)
+  check(!!seCard?.includes("publishes each band's own MEAN"),
+    'R12: the card states which basis is being shifted, so the two can\'t silently disagree')
+  check(!!seCard?.includes('55,500'), 'R12: and the figure it shifts is the mean (55,500), named in the chain')
+
+  /* ==================================================================== */
+  say('')
+  say('=== R13: Norway\'s youngest age band anchored below any reachable age ===')
+
+  await page.hashGo(`${BASE}#/position?years=2`, { waitMs: 2000 })
+  const no2 = await rowText('NO')
+  await page.hashGo(`${BASE}#/position?years=8`, { waitMs: 1800 })
+  const no8 = await rowText('NO')
+  await page.hashGo(`${BASE}#/position?years=30`, { waitMs: 1800 })
+  const no30 = await rowText('NO')
+  say(`  NO @ 2y : ${no2}`)
+  say(`  NO @ 8y : ${no8}`)
+  say(`  NO @ 30y: ${no30}`)
+  check(no2 != null && no2 === no8,
+    'R13: 2 and 8 years read byte-identically — both inside SSB\'s own flat "0-39" band')
+  check(no2 !== no30,
+    `R13: and 30 years does NOT (P${pct(no2)} vs P${pct(no30)}) — the identity above is a flat band, not a dead feature`)
+
+  await page.hashGo(`${BASE}#/position?years=17`, { waitMs: 1800 })
+  const no17 = await openCard('NO', 0)
+  const premium = Number(no17?.match(/assumed age ~39[\s\S]*?age ~39 -> ([-+]?[\d.]+)%/)?.[1])
+  say(`  NO @ 17y premium: ${premium}%`)
+  check(Number.isFinite(premium) && premium < 0,
+    `R13: 17 years (assumed age 39, still "under 40") reads a NEGATIVE premium (${premium}%)`)
+  check(premium === -8.3,
+    'R13: specifically SSB\'s own published -8.31% for that band, not the pre-fix +6.99% interpolation')
+
+  /* ==================================================================== */
+  say('')
+  const stray = (await page.eval('window.__errs.slice()')).filter((e) => !e.includes('distinct labels'))
+  check(stray.length === 0, `no console errors beyond R2's deliberately provoked one (${stray.length})`)
+  stray.forEach((e) => say(`    ${e}`))
+
+  page.close()
+} finally {
+  close()
+}
+
+say('')
+say('-'.repeat(70))
+say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13)' : `${fails} check(s) FAILED`)
+process.exitCode = fails ? 1 : 0

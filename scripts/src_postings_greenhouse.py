@@ -47,6 +47,42 @@ def _load_candidates() -> list[str]:
     return dedupe_seed(json.loads(hint_file.read_text(encoding="utf-8")))
 
 
+def _parse_pay_input_ranges(ranges: list) -> dict | None:
+    """Greenhouse's own `pay_input_ranges` -> this pipeline's Compensation
+    shape, or None. Extracted as its own function (package 13) so the
+    magnitude-based period inference — a real, disclosed heuristic, and the
+    thing an earlier version of this code got wrong by assuming every range
+    was annual — has a real regression test
+    (`scripts/tests/test_pay_period.py`) that calls this function directly.
+    No behaviour change from the inline version this replaced."""
+    if not ranges:
+        return None
+    r = ranges[0]
+    lo, hi = (r.get("min_cents") or 0) / 100, (r.get("max_cents") or 0) / 100
+    # Greenhouse's own pay_input_ranges carries NO period field at
+    # all — found live, not assumed: the SAME company (10beauty)
+    # posts both "$100,000-$125,000" and "$30.00-$35.00" ranges
+    # under the identical "Salary Range" title, with nothing in
+    # the response distinguishing annual from hourly. An earlier
+    # version of this code assumed every range was annual, which
+    # would have shown "$30-35/yr" for what is unmistakably an
+    # hourly rate. No real full-time annual salary is under
+    # $1,000/year and no real hourly wage is over $1,000/hour, so
+    # a magnitude threshold is a genuine, disclosed inference
+    # here, not a guess dressed up as data — see NEEDS-DECISION.md
+    # for the residual ambiguity this doesn't resolve (a role paid
+    # $1,000-$5,000 could misclassify either way; none observed
+    # live in this pipeline's own sample).
+    period = "hour" if 0 < hi < 1000 else "year"
+    return {
+        "min": lo, "max": hi,
+        "currency": r.get("currency_type") or "USD", "period": period,
+        "raw_text": f"{lo:,.0f}-{hi:,.0f} "
+                    f"{r.get('currency_type', '')} (period inferred from magnitude — Greenhouse's own API does not disclose it)",
+        "confidence": "structured",
+    } if r.get("min_cents") else None
+
+
 def run() -> None:
     banner(SOURCE_ID, "Greenhouse Job Board API — postings panel")
     (OUT_DIR / "lists").mkdir(parents=True, exist_ok=True)
@@ -99,32 +135,7 @@ def run() -> None:
                 fanout_requests += 1
                 time.sleep(THROTTLE_SECONDS)
             ranges = (detail or {}).get("pay_input_ranges") or []
-            comp = None
-            if ranges:
-                r = ranges[0]
-                lo, hi = (r.get("min_cents") or 0) / 100, (r.get("max_cents") or 0) / 100
-                # Greenhouse's own pay_input_ranges carries NO period field at
-                # all — found live, not assumed: the SAME company (10beauty)
-                # posts both "$100,000-$125,000" and "$30.00-$35.00" ranges
-                # under the identical "Salary Range" title, with nothing in
-                # the response distinguishing annual from hourly. An earlier
-                # version of this code assumed every range was annual, which
-                # would have shown "$30-35/yr" for what is unmistakably an
-                # hourly rate. No real full-time annual salary is under
-                # $1,000/year and no real hourly wage is over $1,000/hour, so
-                # a magnitude threshold is a genuine, disclosed inference
-                # here, not a guess dressed up as data — see NEEDS-DECISION.md
-                # for the residual ambiguity this doesn't resolve (a role paid
-                # $1,000-$5,000 could misclassify either way; none observed
-                # live in this pipeline's own sample).
-                period = "hour" if 0 < hi < 1000 else "year"
-                comp = {
-                    "min": lo, "max": hi,
-                    "currency": r.get("currency_type") or "USD", "period": period,
-                    "raw_text": f"{lo:,.0f}-{hi:,.0f} "
-                                f"{r.get('currency_type', '')} (period inferred from magnitude — Greenhouse's own API does not disclose it)",
-                    "confidence": "structured",
-                } if r.get("min_cents") else None
+            comp = _parse_pay_input_ranges(ranges)
             loc = j.get("location", {}).get("name") or ""
             company_rows.append({
                 "id": f"greenhouse:{token}:{jid}",

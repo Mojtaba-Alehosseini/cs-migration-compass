@@ -43,6 +43,56 @@ def _load_candidates() -> list[str]:
     return dedupe_seed(json.loads(hint_file.read_text(encoding="utf-8")))
 
 
+def _parse_salary_range(sr: dict | None) -> dict | None:
+    """Lever's own `salaryRange` object -> this pipeline's Compensation shape,
+    or None when nothing usable is published. Extracted as its own function
+    (package 13) so this exact mapping — the site of two real, historical
+    bugs (a `.replace('per-', '')` interval mangler; an `is not None` guard
+    that let a real `$0` range through) — has a real regression test
+    (`scripts/tests/test_pay_period.py`) that calls this function directly,
+    not a re-implementation of it. No behaviour change from the inline
+    version this replaced."""
+    comp = None
+    # `is not None` alone let a real-but-empty $0 range through as a
+    # confident figure (found live by this package's own
+    # adversarial review) -- `min: 0` is not None. Matches
+    # Greenhouse's and USAJOBS's own harvesters, which already
+    # reject a zero figure the same way.
+    if sr and sr.get("min"):
+        # Real values, found live in this pipeline's own cached data
+        # (835 per-year-salary, 250 per-hour-wage, 19 per-month-
+        # salary, plus one-time/bi-week/semi-month/per-day shapes
+        # this Compensation type has no clean bucket for) — an
+        # earlier version of this mapping did `.replace('per-', '')`
+        # on the raw string, which turns "per-year-salary" into
+        # "year-salary", not "year": caught the same way as Ashby's
+        # own interval bug (src_postings_ashby.py), by reading the
+        # real cached values before trusting the assumption, not by
+        # a check that ran before this file first shipped.
+        interval = (sr.get("interval") or "").lower()
+        if "hour" in interval:
+            period = "hour"
+        elif "year" in interval:
+            period = "year"
+        elif "month" in interval and "bi-" not in interval and "semi-" not in interval:
+            period = "month"
+        else:
+            # one-time, bi-week, per-week, bi-month, semi-month,
+            # per-day — no bucket in postings.ts's own Compensation
+            # type maps onto any of these without either inventing a
+            # new period or guessing a conversion factor. Skipped,
+            # not forced into the nearest wrong one.
+            period = None
+        if period:
+            comp = {
+                "min": sr["min"], "max": sr.get("max") or sr["min"],
+                "currency": sr.get("currency") or "USD", "period": period,
+                "raw_text": f"{sr.get('min')}-{sr.get('max')} {sr.get('currency', '')} ({sr.get('interval', '')})",
+                "confidence": "structured",
+            }
+    return comp
+
+
 def run() -> None:
     banner(SOURCE_ID, "Lever postings API — postings panel")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -78,46 +128,9 @@ def run() -> None:
 
         company_rows = []
         for p in docs:
-            sr = p.get("salaryRange")
-            comp = None
-            # `is not None` alone let a real-but-empty $0 range through as a
-            # confident figure (found live by this package's own
-            # adversarial review) -- `min: 0` is not None. Matches
-            # Greenhouse's and USAJOBS's own harvesters, which already
-            # reject a zero figure the same way.
-            if sr and sr.get("min"):
-                # Real values, found live in this pipeline's own cached data
-                # (835 per-year-salary, 250 per-hour-wage, 19 per-month-
-                # salary, plus one-time/bi-week/semi-month/per-day shapes
-                # this Compensation type has no clean bucket for) — an
-                # earlier version of this mapping did `.replace('per-', '')`
-                # on the raw string, which turns "per-year-salary" into
-                # "year-salary", not "year": caught the same way as Ashby's
-                # own interval bug (src_postings_ashby.py), by reading the
-                # real cached values before trusting the assumption, not by
-                # a check that ran before this file first shipped.
-                interval = (sr.get("interval") or "").lower()
-                if "hour" in interval:
-                    period = "hour"
-                elif "year" in interval:
-                    period = "year"
-                elif "month" in interval and "bi-" not in interval and "semi-" not in interval:
-                    period = "month"
-                else:
-                    # one-time, bi-week, per-week, bi-month, semi-month,
-                    # per-day — no bucket in postings.ts's own Compensation
-                    # type maps onto any of these without either inventing a
-                    # new period or guessing a conversion factor. Skipped,
-                    # not forced into the nearest wrong one.
-                    period = None
-                if period:
-                    with_salary_range += 1
-                    comp = {
-                        "min": sr["min"], "max": sr.get("max") or sr["min"],
-                        "currency": sr.get("currency") or "USD", "period": period,
-                        "raw_text": f"{sr.get('min')}-{sr.get('max')} {sr.get('currency', '')} ({sr.get('interval', '')})",
-                        "confidence": "structured",
-                    }
+            comp = _parse_salary_range(p.get("salaryRange"))
+            if comp:
+                with_salary_range += 1
             categories = p.get("categories") or {}
             loc = categories.get("location") or ""
             company_rows.append({
