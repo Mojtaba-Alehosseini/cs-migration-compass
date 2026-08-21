@@ -549,7 +549,30 @@ def reinterpret_implausible_year(min_v: float, max_v: float, raw_text: str) -> t
     function is never even called for them; see this file's own module
     docstring header for the two rules this applies, in order, and their
     own thresholds' docstrings for exactly why each number was chosen from
-    this package's own live data, not picked in the abstract:
+    this package's own live data, not picked in the abstract.
+
+    WHY THIS IS A METHOD FIX, NOT A CHANGE TO A PUBLISHED VALUE (the work
+    order's own line: "never change a number to make a check pass... every
+    correction here is to a method, never to a published value"): a source
+    like Spain's own government wage statistics is a genuine, deliberately
+    published figure -- there is no evidence it is a transcription error,
+    so it is never touched, however implausible the ratio it produces looks
+    (see Tier 1's own audit_data.py check, which flags exactly that instead
+    of guessing at a fix). An Ashby posting reading "$250 - $300" for an
+    "Enterprise Account Executive" is different in kind: nothing about that
+    number was ever the EMPLOYER'S own intended figure -- no real
+    salaried role pays $250-$300 for a year of work, and Ashby's own API
+    has no separate "in thousands" flag, so an employer typing "250"
+    meaning "250,000" (a common informal shorthand) and Ashby passing it
+    through literally is a TRANSCRIPTION gap between what was meant and
+    what was stored, the same category of thing as Lever's own historical
+    `.replace('per-', '')` bug (R15) turning "per-year-salary" into
+    "year-salary" -- a real, sourced number, MIS-INTERPRETED on the way
+    into this pipeline. Rule 2 below corrects the interpretation (what the
+    stored number actually means), never invents a number Ashby's own API
+    did not report -- min_v and max_v are the exact same integers the API
+    returned, scaled by a fixed, disclosed, documented factor of 1,000,
+    not replaced by a guess.
 
     1. max < 100 -- clearly hourly-shaped, mistagged 'year' by its own
        source. Reinterpreted as period='hour', values UNCHANGED (they were

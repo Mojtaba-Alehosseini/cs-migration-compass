@@ -46,7 +46,7 @@ const MAX_ADVERTISED_CHART_COUNTRIES = 12
  *  data/explore.ts). Countries below MIN_ADVERTISED_CHART_N are dropped
  *  rather than shown on a sample too thin to mean anything.
  *
- *  Package 14: reads `data.advertised_by_country`, pre-computed at build
+ *  Package 14: reads `data.pay_summary_by_country`, pre-computed at build
  *  time (build_postings.py) — this function used to scan the FULL raw
  *  `postings` array and sort each country's own values itself, which
  *  became a real, measured Lighthouse performance cost once this
@@ -54,9 +54,9 @@ const MAX_ADVERTISED_CHART_COUNTRIES = 12
  *  Same filter, same thresholds, same result shape; the expensive part
  *  just doesn't happen in the browser on every page load any more. */
 function advertisedByCountryCfg(data: PostingsData): ChartCfg | null {
-  const rows = data.advertised_by_country
+  const rows = data.pay_summary_by_country
     .slice(0, MAX_ADVERTISED_CHART_COUNTRIES)
-    .map((r) => ({ cc: r.country, n: r.n, med: r.median }))
+    .map((r) => ({ cc: r.country, n: r.n, med: r.median_usd_year }))
   if (rows.length < 3) return null
 
   const pts: Pt[] = rows.map((r, i) => [i, r.med, false, r.n])

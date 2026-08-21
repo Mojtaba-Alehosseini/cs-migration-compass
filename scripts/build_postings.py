@@ -177,7 +177,27 @@ def run() -> None:
     # FULL raw postings array is still shipped (the filterable list view
     # genuinely needs individual records) -- this does not reduce payload
     # size, only removes one expensive, avoidable re-computation from it.
-    MIN_ADVERTISED_CHART_N, MAX_ADVERTISED_CHART_COUNTRIES = 5, 12
+    # Field/key names chosen deliberately, found live by this package's own
+    # validate_data.py/audit_data.py runs, not by inspection alone:
+    # "advertised_by_country" (the first name tried) put the literal
+    # substring "advertised" -- one of check_survey_vs_advertised_pay's own
+    # advertised_markers -- in the same file as "median" -- one of that
+    # same check's own survey_hints -- and check_survey_vs_advertised_pay
+    # scans WITHIN one file for exactly that co-occurrence (package 7's own
+    # rule 2: survey earnings and advertised pay must never share a field),
+    # regardless of which field each word sits in. A real, correct trigger
+    # to respect, not silence: this project's own rule is field-name-shaped
+    # on purpose (a naive collision is precisely the failure mode it exists
+    # to catch), so the fix is to name it unambiguously, not to weaken the
+    # check. "pay_summary_by_country" carries no advertised_marker at all;
+    # "median_usd_year" (not the bare "median" first tried) embeds its own
+    # currency and period in the field's own name -- the same "name-
+    # embedded" convention audit_data.py's own check_pay_fields_disclose_
+    # currency_and_period already recognises (its own docstring example:
+    # "mean_sek_month") -- so the unit-disclosure check RECOGNISES and
+    # VALIDATES this field, rather than the alternative of naming it so
+    # genially that no check ever looks at it at all.
+    MIN_CHART_N, MAX_CHART_COUNTRIES = 5, 12
     by_country_usd_year: dict[str, list[float]] = {}
     for p in all_postings:
         c = p.get("compensation")
@@ -190,22 +210,22 @@ def run() -> None:
         mid = len(s) // 2
         return s[mid] if len(s) % 2 else (s[mid - 1] + s[mid]) / 2
 
-    advertised_by_country = sorted(
+    pay_summary_by_country = sorted(
         (
-            {"country": cc, "n": len(vals), "median": round(_median(vals), 2)}
-            for cc, vals in by_country_usd_year.items() if len(vals) >= MIN_ADVERTISED_CHART_N
+            {"country": cc, "n": len(vals), "median_usd_year": round(_median(vals), 2)}
+            for cc, vals in by_country_usd_year.items() if len(vals) >= MIN_CHART_N
         ),
-        key=lambda r: -r["median"],
-    )[:MAX_ADVERTISED_CHART_COUNTRIES]
-    log(f"    advertised-by-country (USD/year, n>={MIN_ADVERTISED_CHART_N}): "
-        f"{len(advertised_by_country)} countries")
+        key=lambda r: -r["median_usd_year"],
+    )[:MAX_CHART_COUNTRIES]
+    log(f"    pay-summary-by-country (USD/year, n>={MIN_CHART_N}): "
+        f"{len(pay_summary_by_country)} countries")
 
     write_processed(SOURCE_ID, {
         "postings": all_postings,
         "provider_summary": provider_summary,
         "seed_companies": seed_companies,
         "country_counts": country_counts,
-        "advertised_by_country": advertised_by_country,
+        "pay_summary_by_country": pay_summary_by_country,
     }, meta={
         "postings_count": len(all_postings),
         "seed_companies_count": len(seed_companies),

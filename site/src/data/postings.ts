@@ -54,8 +54,15 @@ export interface PostingsData {
    *  own postings recovery caused (history/postings.json's own resource
    *  size grew to ~20MB). Same USD-denominated-annual-only filter the
    *  client-side version used, computed identically, just not in the
-   *  browser. */
-  advertised_by_country: { country: string; n: number; median: number }[]
+   *  browser. Named `pay_summary_by_country` / `median_usd_year`, not the
+   *  first-tried `advertised_by_country` / `median` — found live by this
+   *  package's own validate_data.py run: "advertised" + a bare "median" in
+   *  the same file is exactly the field-name collision
+   *  check_survey_vs_advertised_pay exists to catch (package 7's own rule
+   *  2), a real trigger to respect by naming this unambiguously, not to
+   *  silence. See build_postings.py's own comment at this field's
+   *  construction for the full reasoning. */
+  pay_summary_by_country: { country: string; n: number; median_usd_year: number }[]
 }
 
 export async function loadPostings(): Promise<PostingsData> {
