@@ -28,6 +28,25 @@ from _common import (  # noqa: E402
     to_iso2, write_processed,
 )
 
+# Python's own default (131072 bytes) is smaller than a real free-text
+# response field in the 2025 wave -- found live (package 13), not a
+# hypothetical: csv.DictReader raised _csv.Error mid-iteration on that
+# wave's own file. Every wave this pipeline reads is this project's own
+# cached download, never attacker-controlled input, so raising the limit
+# is safe here (the limit exists to bound memory against a maliciously
+# huge single field, not a concern for a file this project fetched and
+# cached itself). sys.maxsize itself overflows csv's internal C `long` on
+# Windows (32-bit long even on 64-bit Python) -- halving down to the
+# largest value the platform's C long actually holds, the standard
+# portable workaround, rather than a guessed-large fixed constant.
+_field_size_limit = sys.maxsize
+while True:
+    try:
+        csv.field_size_limit(_field_size_limit)
+        break
+    except OverflowError:
+        _field_size_limit //= 2
+
 SOURCE_ID = "stackoverflow_survey"
 NAME = "Stack Overflow Annual Developer Survey — salaries by country"
 URL_TMPL = ("https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/"
@@ -94,33 +113,57 @@ def run() -> None:
         buckets: dict[tuple[str, str], list[float]] = defaultdict(list)
         role_buckets: dict[tuple[str, str], list[float]] = defaultdict(list)
         rows = 0
-        for row in csv.DictReader(io.StringIO(text)):
-            rows += 1
-            iso2 = to_iso2(_first(row, COUNTRY_COLS))
-            if iso2 not in COUNTRY_IDS:
-                continue
-            raw_comp = _first(row, COMP_COLS)
-            if raw_comp is None:
-                continue
-            try:
-                comp = float(raw_comp)
-            except ValueError:
-                continue
-            if not (COMP_FLOOR <= comp <= COMP_CEIL):
-                continue
-            band = _exp_band(_first(row, EXP_COLS))
-            buckets[(iso2, band or "all")].append(comp)
-            buckets[(iso2, "all")].append(comp)
-            devtype = _first(row, ROLE_COLS) or ""
-            for role in (r.strip() for r in devtype.split(";")):
-                if role:
-                    role_buckets[(iso2, role)].append(comp)
+        try:
+            # csv.field_size_limit() is set once at module level (below the
+            # imports) -- Python's own default (131072 bytes) is smaller
+            # than a real free-text response field in the 2025 wave, which
+            # raised _csv.Error mid-iteration. That exception, found live,
+            # propagated OUT of this whole function (nothing below the
+            # fetch try/except above was ever guarded) -- aborting the
+            # entire run and losing 2022/2023/2024's own already-aggregated
+            # in-memory results too, not just 2025's, since write_processed()
+            # is only ever reached once at the very end. Guarded per-year
+            # here, matching the fetch step's own already-established
+            # skip-and-log pattern, so one bad wave costs only itself.
+            for row in csv.DictReader(io.StringIO(text)):
+                rows += 1
+                iso2 = to_iso2(_first(row, COUNTRY_COLS))
+                if iso2 not in COUNTRY_IDS:
+                    continue
+                raw_comp = _first(row, COMP_COLS)
+                if raw_comp is None:
+                    continue
+                try:
+                    comp = float(raw_comp)
+                except ValueError:
+                    continue
+                if not (COMP_FLOOR <= comp <= COMP_CEIL):
+                    continue
+                band = _exp_band(_first(row, EXP_COLS))
+                buckets[(iso2, band or "all")].append(comp)
+                buckets[(iso2, "all")].append(comp)
+                devtype = _first(row, ROLE_COLS) or ""
+                for role in (r.strip() for r in devtype.split(";")):
+                    if role:
+                        role_buckets[(iso2, role)].append(comp)
+        except Exception as exc:  # noqa: BLE001
+            failures.append(f"{year}: {type(exc).__name__} while parsing")
+            log(f"    {year}: parse failed ({type(exc).__name__}: {exc}) — skipped, not imputed, "
+                f"other waves unaffected")
+            continue
 
+        # period: "year" on every bucket -- ConvertedCompYearly (COMP_COLS,
+        # above) is Stack Overflow's own already-annualised, already-USD-
+        # converted figure; stated explicitly (package 13) since an audit
+        # checking whether a pay field's own name or container discloses
+        # its period found median_usd/p25_usd/p75_usd's own names carry
+        # currency but not period (same gap, same fix, as levels_fyi.json).
         for (iso2, band), vals in buckets.items():
             by_country[iso2].setdefault(year, {})[band] = {
                 "median_usd": round(statistics.median(vals)),
                 "p25_usd": round(statistics.quantiles(vals, n=4)[0]) if len(vals) >= 4 else None,
                 "p75_usd": round(statistics.quantiles(vals, n=4)[2]) if len(vals) >= 4 else None,
+                "period": "year",
                 "n": len(vals),
                 "thin_sample": len(vals) < MIN_SAMPLE,
             }
@@ -129,6 +172,7 @@ def run() -> None:
                 continue
             by_role[iso2].setdefault(year, {})[role] = {
                 "median_usd": round(statistics.median(vals)),
+                "period": "year",
                 "n": len(vals),
                 "thin_sample": len(vals) < MIN_SAMPLE,
             }

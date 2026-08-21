@@ -74,6 +74,15 @@ def run() -> None:
             "median_original": rec.get("median"),
             "p25_original": rec.get("p25"),
             "p75_original": rec.get("p75"),
+            # levels.fyi's own site terminology is "Total YEARLY
+            # Compensation" -- every figure on the platform, including the
+            # ones captured here, is annual by the site's own convention.
+            # Stated explicitly (package 13) rather than left implicit in
+            # "total compensation" alone: an audit checking whether a pay
+            # field's own name or container discloses its period found
+            # this file's own fields did not (adversarial review finding,
+            # alongside stackoverflow_survey.json's identical gap).
+            "period": "year",
             "as_of": rec.get("updated"),
             "role": "Software Engineer, all levels",
             "basis": "total compensation (base + stock + bonus)",

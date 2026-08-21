@@ -302,7 +302,7 @@
         "https://www.levels.fyi/t/software-engineer/locations/manchester-gbr",
         "https://www.levels.fyi/t/software-engineer/locations/<city-slug>"
       ],
-      "fetched_at": "2026-08-04T21:01:37+00:00",
+      "fetched_at": "2026-08-21T04:02:35+00:00",
       "license": "levels.fyi publishes these metro pages publicly and its robots.txt explicitly invites agent access. Data is crowd-sourced and remains theirs; we store derived per-city figures and cite levels.fyi on every one. No bulk redistribution.",
       "redistribution": "derived per-city figures committed; cited on every figure",
       "transforms": [
@@ -913,13 +913,16 @@
       "source_id": "stackoverflow_survey",
       "name": "Stack Overflow Annual Developer Survey — salaries by country",
       "urls": [
-        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2024/results.csv"
+        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2022/results.csv",
+        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2023/results.csv",
+        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2024/results.csv",
+        "https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2025/results.csv"
       ],
-      "fetched_at": "2026-08-04T19:44:23+00:00",
+      "fetched_at": "2026-08-21T04:07:40+00:00",
       "license": "Stack Overflow releases survey results under the Open Database License (ODbL). Cite: Stack Overflow Annual Developer Survey.",
       "redistribution": "aggregates committed; raw survey CSVs not committed (size)",
       "transforms": [
-        "Streamed the annual results CSV for waves: 2024 (~150 MB each).",
+        "Streamed the annual results CSV for waves: 2022, 2023, 2024, 2025 (~150 MB each).",
         "Resolved the free-text Country column to our 15 ISO2 codes; all other responses dropped.",
         "Dropped compensation outside $5,000-$1,000,000.",
         "Bucketed by experience (<3 / 3-6 / 6+ professional years) and separately by DevType role.",
@@ -928,8 +931,8 @@
       ],
       "output": "data/processed/stackoverflow_survey.json",
       "status": "ok",
-      "rows": 65437,
-      "coverage": "15/15 countries across 1 wave(s)",
+      "rows": 277080,
+      "coverage": "15/15 countries across 4 wave(s)",
       "notes": "Self-selected sample — comparative signal, not an authoritative wage level."
     },
     {
@@ -1024,7 +1027,7 @@
       "source_id": "wage_distribution",
       "name": "Wage distribution panel — crosswalk.compare() + normalise.py resolved at build time",
       "urls": [],
-      "fetched_at": "2026-08-21T02:11:39+00:00",
+      "fetched_at": "2026-08-21T04:05:00+00:00",
       "license": "Inherits each underlying salary_*.json / bls_oews.json source's own licence — this file adds no new licensing terms, only computation over already-committed and already-licensed data.",
       "redistribution": "derived — nothing fetched; every input file's own provenance entry already covers redistribution terms for the raw figures this derives from.",
       "transforms": [
@@ -1151,5 +1154,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-21T02:11:39+00:00"
+  "updated_at": "2026-08-21T04:07:40+00:00"
 }
