@@ -64,6 +64,27 @@ def warn(msg: str) -> None:
     WARNINGS.append(msg)
 
 
+def _is_effectively_empty(obj) -> bool:
+    """True if obj holds no real content anywhere inside it -- None, a bare
+    {}/[], or a dict/list whose every value is ALSO effectively empty
+    (recursively). A plain `if doc.get("data")` truthiness check (this
+    function's own first version) treats {"classifications": {}} as
+    non-empty, because the outer dict has one key -- found live, not
+    theoretical: postings_classifications.json's own blocked/0-rows state
+    (GEMINI_API_KEY absent) is EXACTLY this shape, {"classifications": {}},
+    and failed `make validate` (the gate CI runs on every push) for a
+    correctly-empty result. A scalar (a number, a non-empty string, True/
+    False) is never effectively empty -- only containers can be, and only
+    when every one of their own values is too."""
+    if obj is None:
+        return True
+    if isinstance(obj, dict):
+        return all(_is_effectively_empty(v) for v in obj.values())
+    if isinstance(obj, list):
+        return all(_is_effectively_empty(v) for v in obj)
+    return False
+
+
 def check_curated() -> None:
     log("· curated data")
     countries = load_countries()
@@ -195,11 +216,11 @@ def check_processed() -> None:
             blocked += 1
             if not entry.get("notes"):
                 err(f"provenance[{sid}]: status {status!r} must carry notes explaining why")
-            if doc.get("data"):
+            if not _is_effectively_empty(doc.get("data")):
                 err(f"processed/{path.name}: status is {status!r} but data is non-empty")
         else:
             ok += 1
-            if not doc.get("data"):
+            if _is_effectively_empty(doc.get("data")):
                 warn(f"processed/{path.name}: status ok but data is empty")
 
     # Most sources land in data/processed/. A few do not — a source whose output
