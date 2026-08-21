@@ -717,10 +717,42 @@ def build() -> dict:
     for cc, reason in ABSENT.items():
         log(f"  {cc:3s} ABSENT — {reason}")
 
+    # Package 14, Tier 1 fix — Finding 1 (SEVERE): each row's own `crosswalk`
+    # field above is compare() run PAIRWISE against Sweden, which is correct
+    # but never asks whether the WHOLE displayed set actually shares that
+    # depth. crosswalk.resolve_set() is the set-wide sibling: it resolves
+    # the deepest depth a real quorum of these countries share and excludes
+    # anyone shallower, by name, with a reason — see that function's own
+    # docstring. `crosswalk` (above) is left untouched — it is still the
+    # correct answer to "how does this country's own code relate to the
+    # reference occupation," and country pages still read it directly.
+    # `chart_comparable` is the NEW, separate answer to "does the multi-
+    # country COMPARISON chart show this row" — the two can differ (Ireland
+    # is `crosswalk.comparable: true` at 1-digit, but `chart_comparable.
+    # comparable: false` once the chart's own quorum resolves to 4-digit).
+    resolved = crosswalk.resolve_set({r["country"]: r["crosswalk"] for r in results})
+    for r in results:
+        r["chart_comparable"] = resolved["verdicts"][r["country"]]
+    excluded_from_chart = [{"country": r["country"], "reason": r["chart_comparable"]["reason"]}
+                            for r in results if not r["chart_comparable"]["comparable"]]
+    log(f"  chart-wide resolved depth: {resolved['resolved_depth']}-digit "
+        f"({resolved['shared_key']}) — {len(results) - len(excluded_from_chart)} of {len(results)} "
+        f"countries meet it, {len(excluded_from_chart)} excluded from the comparison chart")
+    for e in excluded_from_chart:
+        log(f"    excluded: {e['country']} — {e['reason']}")
+
     return {
         "reference": {"country": REFERENCE[0], "national_code": REFERENCE[1],
                       "note": "every crosswalk comparability verdict below is this country's mapping "
                               "compared() against the row's own — see crosswalk.py"},
+        "resolved_comparison": {
+            "depth": resolved["resolved_depth"], "shared_key": resolved["shared_key"],
+            "note": "package 14, tier 1 — the deepest occupation depth a real quorum (>=2) of these "
+                    "countries share; every country below it is excluded from the cross-country "
+                    "comparison chart, by name, with its own reason — see each row's own "
+                    "chart_comparable field and crosswalk.resolve_set()'s own docstring.",
+            "excluded": excluded_from_chart,
+        },
         "countries": results,
         "absent": [{"country": cc, "reason": reason} for cc, reason in ABSENT.items()],
     }

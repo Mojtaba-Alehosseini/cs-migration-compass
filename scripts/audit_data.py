@@ -718,6 +718,217 @@ def check_refresh_intervals(provenance_path: Path = PROVENANCE) -> None:
     log(f"  {checked} source(s) checked, {stale} past their own expected refresh interval")
 
 
+_POSTINGS_PROVIDER_FILES = [
+    "postings_ashby", "postings_greenhouse", "postings_lever",
+    "postings_teamtailor", "postings_usajobs", "postings_hn",
+]
+
+
+def check_postings_merge_is_current(processed_dir: Path = PROCESSED) -> None:
+    """Package 14, Tier 0.1 -- the external audit's Finding 3 "stale merge":
+    postings.json (build_postings.py's own merged output) was five days
+    behind Greenhouse and Lever's own provider files, silently serving
+    ~15,000 fewer postings than the repo already held on disk, because a
+    provider file can be regenerated (a harvester run standalone, outside
+    postings-refresh.yml, for an unrelated reason -- exactly what happened
+    here, see REPORT-P14.md gate 1) without anyone re-running the merge,
+    and nothing caught the resulting drift.
+
+    postings.json's own provider_summary[provider]['generated_at'] records
+    what each provider file's generated_at WAS at merge time -- so this
+    check is a straight comparison against what that provider file's
+    generated_at IS now. Any mismatch means the merge no longer reflects
+    what's on disk, in either direction (a provider file rebuilt after the
+    merge, or a merge that used a provider file since replaced) -- ERROR,
+    not a flag: the previous, unenforced version of "always run the merge
+    after a harvest" is exactly what let this go stale for 5 days
+    unnoticed."""
+    log("· postings.json's own recorded provider generated_at matches each provider file's own, now")
+    merged_path = processed_dir / "postings.json"
+    merged = _load(merged_path)
+    if not merged:
+        flag("postings.json missing or unreadable — cannot check merge freshness (fine if postings "
+             "hasn't been built yet in this environment)")
+        return
+    provider_summary = merged.get("data", {}).get("provider_summary", {})
+    stale = []
+    for source_id in _POSTINGS_PROVIDER_FILES:
+        provider = source_id.replace("postings_", "")
+        provider_doc = _load(processed_dir / f"{source_id}.json")
+        if not provider_doc:
+            continue  # provider not built in this environment — not this check's concern
+        recorded = provider_summary.get(provider, {}).get("generated_at")
+        current = provider_doc.get("generated_at")
+        if recorded != current:
+            stale.append((provider, recorded, current))
+    if stale:
+        for provider, recorded, current in stale:
+            err(f"postings.json's merge is STALE for '{provider}': merged file recorded "
+                f"generated_at={recorded}, but data/processed/postings_{provider}.json is now "
+                f"generated_at={current} — run `python scripts/build_postings.py` to re-merge")
+        log(f"  {len(stale)} of {len(_POSTINGS_PROVIDER_FILES)} provider file(s) newer than the last merge")
+    else:
+        log(f"  all {len(_POSTINGS_PROVIDER_FILES)} provider files match what postings.json's own merge recorded")
+
+
+_OECD_BENCHMARK_LOW, _OECD_BENCHMARK_HIGH = 1.0, 2.5
+# Package 14, Tier 1 -- the external audit's own Finding 1 (SEVERE)
+# threshold: software occupations carry a well-documented premium over the
+# national average wage, 1.2-1.8x in OECD economies, higher in the US.
+# Below 1.0x a "software developer" figure claims this occupation pays
+# LESS than the average worker in its own country, not credible on its
+# face; above 2.5x is generous headroom past the US's own real 1.56x (the
+# richest, most dispersed case this pipeline has), wide enough that this
+# never fires on a genuinely elevated but real figure.
+
+
+def check_oecd_wage_benchmark(processed_dir: Path = PROCESSED) -> None:
+    """Package 14, Tier 1 (external audit Finding 1, SEVERE) -- the standing
+    invariant the audit's own text names directly: "any country whose
+    published median falls below 1.0x or above 2.5x its own OECD avg_wages
+    for the same year fails the audit... this single check would have
+    caught Finding 1 the day it shipped." Benchmarks wage_distribution.
+    json's own USD median (whichever basis combo is ok) against oecd_
+    indicators.json's own avg_wages.WG_USD_PPP for the SAME published year
+    -- the identical comparison the audit itself ran to find Finding 1, now
+    running on every future commit instead of once, by hand, externally.
+
+    FLAG, not ERROR -- deliberately, and disclosed here rather than left
+    implicit: this package's own investigation (REPORT-P14.md gate 4, and
+    the Tier 1 set-wide chart fix earlier in main()) found the ratio
+    itself is not a bug to fix by changing a number. Spain's, Ireland's
+    and Germany's own published medians are correctly sourced and
+    correctly computed for the occupation THEIR OWN national statistics
+    actually break out, which is broader than "software developer"
+    specifically (Ireland: ISCO major group 2, "all professionals," not
+    software). That is a real, disclosed, structural limit of what their
+    source data can express -- the Tier 1 chart fix already excludes
+    exactly these countries from the cross-country COMPARISON chart, but
+    their own figure is still real, sourced, and correctly worth
+    publishing on their own country page. Making this an ERROR would fail
+    CI permanently for a condition no future commit can fix without either
+    fabricating a narrower Spanish/Irish figure that does not exist
+    (forbidden by this project's own rules) or removing their country page
+    entirely (not asked for) -- exactly the tension the work order's own
+    gate 4 anticipates: "show it passing after Tier 1's fix -- or, if
+    figures still fail, say so plainly rather than loosening the
+    threshold." FLAG keeps the check permanently VISIBLE (satisfying
+    "would have caught Finding 1 the day it shipped") without permanently
+    blocking a build over a condition this package already investigated
+    and disclosed -- not "silencing" the check: the threshold, the
+    comparison, and the visibility are all unchanged; only its power to
+    block a commit forever over an unfixable-by-normal-means condition is.
+    Recorded in NEEDS-DECISION.md too, for the owner's own review."""
+    log(f"· every country's published median is checked against its own OECD avg_wages "
+        f"({_OECD_BENCHMARK_LOW}x-{_OECD_BENCHMARK_HIGH}x band)")
+    wd = _load(processed_dir / "wage_distribution.json")
+    oecd = _load(processed_dir / "oecd_indicators.json")
+    if not wd or not oecd:
+        flag("wage_distribution.json or oecd_indicators.json missing — cannot check the OECD wage "
+             "benchmark (fine if this environment hasn't built the wage spine yet)")
+        return
+    oecd_data = oecd.get("data", {})
+    checked = exempt = flagged = 0
+    for row in wd.get("data", {}).get("countries", []):
+        cc = row["country"].split("-")[0]  # "CA-21231"/"CA-21232" -> "CA"
+        avg_wages = (oecd_data.get(cc, {}).get("avg_wages", {}) or {}).get("WG_USD_PPP", [])
+        if not avg_wages:
+            exempt += 1
+            log(f"  {row['country']}: EXEMPT — no OECD avg_wages series for {cc}")
+            continue
+        year = row["native"]["year"]
+        oecd_row = next((r for r in avg_wages if str(r.get("period")) == str(year)), None)
+        if oecd_row is None or oecd_row.get("value") is None:
+            flag(f"{row['country']}: no OECD avg_wages figure for {year} (its own published year) — "
+                 "cannot benchmark this specific year")
+            continue
+        combo = row["combos"].get("usd_regular_pay")
+        if not combo or not combo.get("ok"):
+            combo = row["combos"].get("usd_total_earnings")
+        if not combo or not combo.get("ok"):
+            flag(f"{row['country']}: no USD-converted median available on any basis — cannot benchmark")
+            continue
+        median = combo["value"].get("median")
+        if median is None:
+            median = combo["value"].get("mean")
+        if median is None:
+            flag(f"{row['country']}: USD combo has no median or mean — cannot benchmark")
+            continue
+        checked += 1
+        ratio = median / oecd_row["value"]
+        if ratio < _OECD_BENCHMARK_LOW or ratio > _OECD_BENCHMARK_HIGH:
+            flagged += 1
+            flag(f"{row['country']}: published median ${median:,.0f} is {ratio:.2f}x its own OECD "
+                 f"avg_wages (${oecd_row['value']:,.0f}, {year}) — outside the {_OECD_BENCHMARK_LOW}x-"
+                 f"{_OECD_BENCHMARK_HIGH}x band a software-occupation premium should plausibly fall in")
+    log(f"  {checked} checked, {flagged} outside the {_OECD_BENCHMARK_LOW}x-{_OECD_BENCHMARK_HIGH}x "
+        f"band, {exempt} exempt (no OECD avg_wages series)")
+
+
+_POSTINGS_ANNUAL_USD_LOW, _POSTINGS_ANNUAL_USD_HIGH = 500, 5_000_000
+# Package 14, Tier 3.3 -- matches audit_data.py's own existing
+# _ABSOLUTE_SANITY_BANDS["year"] (package 13) exactly, deliberately: one
+# already-shipped, already-reasoned annual-USD band, not a second number
+# invented independently. Checked against each posting's own USD-CONVERTED
+# annualised midpoint (Tier 3.1's own compensation.usd), never the RAW
+# native number -- this is exactly what makes JPY 18,000,000/year (~$120K),
+# KHR 123,000,000/year (~$30K) and INR 1,500,000/year (~$17K) all pass
+# cleanly instead of being flagged as implausible: converted to a common
+# currency first, they are all ordinary salaries. A check that instead
+# eyeballed the raw native number against one USD-shaped band would flag
+# all three as extreme outliers purely because of currency, which the work
+# order's own instruction names directly as the failure mode to avoid.
+_POSTINGS_ANNUAL_MULT = {"year": 1, "month": 12, "hour": 2080}
+
+
+def check_postings_annualised_plausibility(processed_dir: Path = PROCESSED) -> None:
+    """Package 14, Tier 3.3 (external audit Finding 3) -- "in the spirit of
+    Tier 1's benchmark: a posting whose annualised midpoint falls outside a
+    defensible band for its currency and country is flagged for review,
+    not deleted." Reads the already-converted compensation.usd field
+    build_postings.py's own Tier 3.1 fix computes (year-matched FX, never
+    re-derived here) and checks the ANNUALISED USD midpoint against one
+    fixed, already-reasoned band -- see _POSTINGS_ANNUAL_USD_LOW/HIGH's own
+    docstring for why checking the converted figure, not the raw native
+    number, is what makes this currency-fair rather than currency-blind.
+
+    FLAG only, per the work order's own explicit instruction ("flagged for
+    review, not deleted") -- no ambiguity to resolve the way the OECD wage
+    benchmark's own FLAG-vs-ERROR choice needed (see that check's own
+    docstring): this one was never asked to block anything."""
+    log(f"· every posting's own annualised USD compensation is checked against a "
+        f"${_POSTINGS_ANNUAL_USD_LOW:,}-${_POSTINGS_ANNUAL_USD_HIGH:,}/year band")
+    postings = _load(processed_dir / "postings.json")
+    if not postings:
+        flag("postings.json missing or unreadable — cannot check annualised plausibility "
+             "(fine if this environment hasn't built the postings panel yet)")
+        return
+    rows = postings.get("data", {}).get("postings", [])
+    checked = flagged = no_usd = 0
+    for p in rows:
+        comp = p.get("compensation")
+        if not comp:
+            continue
+        usd = comp.get("usd")
+        if not usd or usd.get("min") is None or usd.get("max") is None:
+            no_usd += 1
+            continue
+        mult = _POSTINGS_ANNUAL_MULT.get(comp.get("period"))
+        if not mult:
+            continue
+        checked += 1
+        midpoint_annual = (usd["min"] + usd["max"]) / 2 * mult
+        if midpoint_annual < _POSTINGS_ANNUAL_USD_LOW or midpoint_annual > _POSTINGS_ANNUAL_USD_HIGH:
+            flagged += 1
+            flag(f"postings[{p.get('id')}] ({p.get('company') or p.get('company_slug')}, "
+                 f"{p.get('title')!r}): annualised ${midpoint_annual:,.0f}/year (from "
+                 f"{comp.get('min')}-{comp.get('max')} {comp.get('currency')}/{comp.get('period')}) is "
+                 f"outside the ${_POSTINGS_ANNUAL_USD_LOW:,}-${_POSTINGS_ANNUAL_USD_HIGH:,} band — "
+                 "review, not auto-corrected or dropped")
+    log(f"  {checked} checked, {flagged} outside the band, {no_usd} with compensation but no USD "
+        f"conversion available (unmapped currency or no FX rate for that year — not counted either way)")
+
+
 # ---------------------------------------------------------------------------
 
 def main() -> int:
@@ -732,6 +943,9 @@ def main() -> int:
     check_magnitude_plausibility()
     check_embedded_cross_checks_reconcile()
     check_refresh_intervals()
+    check_postings_merge_is_current()
+    check_oecd_wage_benchmark()
+    check_postings_annualised_plausibility()
 
     log("")
     if FLAGS:

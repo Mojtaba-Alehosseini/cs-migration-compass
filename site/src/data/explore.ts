@@ -136,6 +136,19 @@ export type CrosswalkVerdict =
   | { comparable: true; depth: number; shared_key: string; degraded_by: string | null }
   | { comparable: false; reason: string }
 
+/** Package 14, Tier 1 — the SET-WIDE sibling of CrosswalkVerdict above.
+ *  `crosswalk` (above) is pairwise against the single reference occupation
+ *  and is still correct for a country page's own "how does my code relate
+ *  to the reference" disclosure. `chart_comparable` is the separate answer
+ *  to "does the multi-country COMPARISON chart show this row" — resolved
+ *  once, set-wide, in scripts/crosswalk.py's resolve_set(); the two can
+ *  disagree (Ireland is crosswalk.comparable at 1-digit, but
+ *  chart_comparable: false once the panel's own quorum resolves to
+ *  4-digit — see WagePanel.tsx). */
+export type ChartComparability =
+  | { comparable: true; depth: number; own_depth: number; degraded: boolean; degraded_by: string | null }
+  | { comparable: false; reason: string }
+
 export type Combo =
   | { ok: true; value: WageStats; chain: ChainStep[]; currency: string; chain_field: keyof WageStats }
   | { ok: false; reason: string }
@@ -171,11 +184,19 @@ export interface WageCountry {
     } | null
   }
   crosswalk: CrosswalkVerdict
+  chart_comparable: ChartComparability
   combos: Record<string, Combo>  // keyed by comboKey()
 }
 
 export interface WageDistribution {
   reference: { country: string; national_code: string; note: string }
+  /** Package 14, Tier 1 — the resolved set-wide depth every chart-comparable
+   *  row below shares, and the full, named reason for every row that isn't
+   *  one of them (a superset of the old zero-correspondence-only list). */
+  resolved_comparison: {
+    depth: number | null; shared_key: string | null; note: string
+    excluded: { country: string; reason: string }[]
+  }
   countries: WageCountry[]
   absent: { country: string; reason: string }[]
 }
@@ -205,6 +226,24 @@ export const CA_NOC_DISTINCTION: Record<string, string> = {
 export async function loadWages(): Promise<WageDistribution> {
   const wd = await loadHistory<WageDistribution>('wage_distribution')
   return wd.data
+}
+
+/** Package 14, Tier 2 (external audit Finding 2, HIGH) — the reference-year
+ *  spread across whichever rows a wage-panel toggle actually shows a bar
+ *  for. Pure and exported (not inline in WagePanel.tsx) specifically so
+ *  the >3-year disclosure rule has a real unit test against a synthetic
+ *  spread — Tier 1's own set-wide crosswalk fix (resolve_set()) already
+ *  excludes every country whose vintage gap was the widest (Ireland 2022,
+ *  Spain 2018) from the live chart's own comparable set, so the live site
+ *  currently has nothing wide enough to trigger this on screen; the logic
+ *  itself is still real and still runs every time the toggle changes. */
+export function computeYearSpread(
+  rows: { country: string; year: number }[],
+): { spread: number; oldest: { country: string; year: number }; newest: { country: string; year: number } } | null {
+  if (rows.length < 2) return null
+  const oldest = rows.reduce((a, b) => (b.year < a.year ? b : a))
+  const newest = rows.reduce((a, b) => (b.year > a.year ? b : a))
+  return { spread: newest.year - oldest.year, oldest, newest }
 }
 
 /* ----------------------------------------------------------------- jobs --- */

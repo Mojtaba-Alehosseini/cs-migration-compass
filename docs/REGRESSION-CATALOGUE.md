@@ -356,6 +356,108 @@ entity blocking period detection, not the 1/1000-scale minimum).
 
 ---
 
+## Package 14 — proving the data, and fixing what stayed broken
+
+### R18. A postings harvester's own `verified_companies` was rebuilt from scratch every run
+
+**Wrong:** each provider harvester wrote `verified_companies` fresh every run, with no
+memory of what the immediately previous, COMMITTED run had already confirmed. A
+scheduled run that could only reach a fraction of a large candidate list (an always-empty
+CI cache — `data/raw/` is gitignored, and the workflow persisted nothing between runs —
+meant the "new candidate" bucket, capped per run, was all a run could ever probe)
+overwrote the committed file with that smaller fraction, permanently erasing every
+company it didn't happen to re-verify. Ashby went from 862 verified companies (package
+12) to 304 in one such run — an external audit's own Finding 3.
+
+**Correct:** `postings_common.merge_verified_companies()` — a company verified this run
+is written fresh; a company previously committed but probed-and-failed THIS run is
+retained with an incremented failure streak, dropped only after
+`DEFAULT_MAX_CONSECUTIVE_FAILURES` (3) consecutive misses, and the drop is logged; a
+company not probed at all this run is untouched. `postings_common.build_probe_order()`
+additionally reclaims every previously-committed company UNCONDITIONALLY each run
+(uncapped), not just whatever the "new candidate" cap happened to include — the actual
+mechanism that let the collapse happen in the first place.
+
+**Test:** `test_postings_seed_accumulation.py` —
+`test_the_destructive_bug_itself_a_provider_returning_nothing_no_longer_erases_the_seed_list`
+simulates the exact failure this bug shipped as (every candidate in a 300-company
+committed list fails to reprobe in one run) and asserts the whole list survives with
+zero removals; `test_previously_verified_tokens_are_reclaimed_unconditionally_even_with_zero_new_budget`
+reproduces the empty-CI-cache mechanism directly.
+
+### R19. A provider's own compensation period tag disagreed with its own numbers
+
+**Wrong:** Ashby's own `interval`, Lever's own `interval`, and USAJOBS' own `salaryType`
+are real fields, but not always correct for the SPECIFIC posting they're attached to — an
+employer's own ATS form entry, or a federal listing's default salaryType, not this
+pipeline mis-reading real text. A skilled-trade wage of `$30-$50` tagged "year" rendered
+as a $30-$50/year salary; a bare `$250-$300` OTE figure for an Enterprise Account
+Executive (plainly meant in thousands) rendered as literally $250-$300/year. 64 records
+(an external audit's own count) annualised below $12,000 as a result.
+
+**Correct:** `postings_common.reinterpret_implausible_year()` — a "year"-tagged range
+under 100 (of any currency this pipeline handles) is reinterpreted as hourly, values
+unchanged; a range from 250 up to 12,000 whose own raw text carries no `k`/`K` marker is
+scaled ×1000 (a bare number an employer meant in thousands); a range that already
+carries its own `k`/`K` marker (already correctly scaled) and the genuinely ambiguous
+100-250 gap are left untouched — flagged for review by R21's own plausibility gate
+instead of guessed at.
+
+**Test:** `test_postings_compensation_fixes.py` — every case is a real record pulled
+live while diagnosing the bug (antares' own hourly-shaped wage, amperos' own OTE figure,
+akur8's own already-`k`-scaled internship stipend, the USAJOBS seasonal Clerk role), not
+a synthetic example.
+
+### R20. A data-quality report claimed health for a module it never actually ran
+
+**Wrong, two compounding bugs:** `generate_data_quality_doc.py` called
+`snapshot_stats.main(append=False)` — a keyword argument `main()`'s own live signature
+did not accept (`def main() -> int:`, no `append` parameter at all, despite being
+DESCRIBED as already added in an earlier package's own report — the edit never actually
+landed in the file). The resulting crash was caught and rendered as "COULD NOT RUN," but
+the document's own OVERALL status computation summed only `errors`/`drops` — a crashed
+module's own empty error list contributed zero, so the page still read "Overall:
+PASSING" two lines above a section that said the opposite.
+
+**Correct:** `snapshot_stats.main()` now genuinely accepts `append` (and
+`baseline_reset_note`); `generate_data_quality_doc.py`'s own `overall_status()` counts a
+module that raised or never ran as `unverified` and folds it into the FAILING
+determination directly, separate from (but alongside) real error counts.
+
+**Test:** `test_generate_data_quality_doc.py` — calls the real `snapshot_stats.main
+(append=False)` (the exact call that raised live) and asserts it no longer raises;
+calls `overall_status()` directly with a hand-built crashed-module result shape (the
+work order's own explicit instruction: "add a test that constructs a crashing module and
+asserts the overall status is not PASSING").
+
+### R21. A meet-in-the-middle comparability rule that only ever ran pairwise, never across the set it was rendering
+
+**Wrong:** `crosswalk.compare()` correctly resolves comparability between any TWO
+mappings, and `scripts/build_wage_distribution.py` called it once per country against a
+single fixed reference (Sweden) — but the wage panel then rendered every
+`comparable: true` row regardless of how shallow, with no step that asked whether the
+WHOLE displayed set actually shared that depth. A 1-digit Irish figure (Ireland's own
+source is ISCO major group 2, "all professionals," not software) rendered on the same
+axis as a 4-digit Swedish one, with no visual distinction — an external audit's own
+Finding 1 (SEVERE): the site's own published Spanish median implied Spanish developers
+earn 0.74x the Spanish national average wage.
+
+**Correct:** `crosswalk.resolve_set()` — given every displayed country's own pairwise
+verdict, resolves the deepest depth reached by a real quorum (>=2) of them, and excludes
+by name, with a reason, any country whose own depth falls short.
+`build_wage_distribution.py` attaches this as each row's own new `chart_comparable`
+field (`crosswalk`, the original pairwise verdict, is untouched — country pages still
+read it); `WagePanel.tsx` filters on `chart_comparable`, not `crosswalk`, and renders
+the resolved depth plus every excluded country's own reason on screen, not just in a
+tooltip.
+
+**Test:** `test_ui_regressions.mjs` R21 — loads the real, live wage panel and asserts
+Ireland/Spain/Germany (each below the resolved 4-digit depth) render NO bar and DO
+render their own specific reason, while a comparable country (Sweden) still renders a
+bar carrying its own reference year.
+
+---
+
 ## Findings considered and not made into a Tier-0 test, with the reason
 
 - **BLS `hourly_mean_usd` mislabelled as annual** (package 7) — fixed by re-fetching

@@ -41,7 +41,7 @@ import { Derived, type DerivedConcept } from '../Derived'
 import { Seg, ChartFoot, ChartTable, Gap } from './Controls'
 import { useAsync } from './useAsync'
 import { loadPayComposition, type PayComposition } from '../../data/store'
-import { comboKey, CA_NOC_DISTINCTION, type Basis, type CurrencyMode, type WageCountry, type WageDistribution } from '../../data/explore'
+import { comboKey, computeYearSpread, CA_NOC_DISTINCTION, type Basis, type CurrencyMode, type WageCountry, type WageDistribution } from '../../data/explore'
 import { NO_DATA } from '../../data/format'
 
 const cc3 = (c: string) => `var(--c-${c})`
@@ -97,15 +97,15 @@ function shortAbsence(basis: Basis, reason: string): string {
  *  label overflow: by reading a real screenshot, not by inspecting the
  *  string in isolation. Full sentence still lives in the <title> tooltip. */
 function degradationNote(row: WageCountry): string | null {
-  const cw = row.crosswalk
-  if (!cw.comparable) return 'not comparable'
-  if (!cw.degraded_by) return null
-  return `${cw.depth}-digit match`
+  const cc = row.chart_comparable
+  if (!cc.comparable) return 'not comparable'
+  if (!cc.degraded) return null
+  return `${cc.depth}-digit match`
 }
 
 function degradationNoteFull(row: WageCountry): string {
-  const cw = row.crosswalk
-  return cw.comparable ? (cw.degraded_by ?? '') : cw.reason
+  const cc = row.chart_comparable
+  return cc.comparable ? (cc.degraded_by ?? '') : cc.reason
 }
 
 /** The composition badge for the basis actually shown in THIS card — not a
@@ -158,15 +158,20 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
   const [basis, setBasis] = useState<Basis>('regular_pay')
 
   const key = comboKey(currency, basis)
-  // crosswalk.compare() ruling comparable:false (the Netherlands: zero ISCO-08
-  // correspondence at any depth) means this occupation genuinely cannot be
-  // placed alongside the isco08:2512 reference — excluded from the chart
-  // itself, not just flagged like the 1-/2-digit-degraded rows are. Its real
-  // data still reaches the country page (CountryProfile.tsx reads
-  // wages.countries directly, unfiltered).
-  const uncomparable = useMemo(() => wages.countries.filter((c) => !c.crosswalk.comparable), [wages])
+  // Package 14, Tier 1 (external audit Finding 1, SEVERE): chart_comparable
+  // is resolved SET-WIDE (crosswalk.resolve_set(), at build time) — the
+  // deepest occupation depth a real quorum of these countries actually
+  // share, not each row's own pairwise-against-Sweden depth. A row below
+  // that resolved depth cannot honestly sit on the same axis as one that
+  // meets it (Ireland's own source is ISCO major group 2 — "all
+  // professionals," not software specifically) and is excluded from the
+  // chart itself, by name, with its own reason — never just labelled and
+  // left in. Its real data still reaches the country page (CountryProfile.tsx
+  // reads wages.countries directly, unfiltered, and uses the OTHER verdict,
+  // row.crosswalk, which is still the correct pairwise answer there).
+  const uncomparable = useMemo(() => wages.countries.filter((c) => !c.chart_comparable.comparable), [wages])
   const rows = useMemo(() => {
-    const comparable = wages.countries.filter((c) => c.crosswalk.comparable)
+    const comparable = wages.countries.filter((c) => c.chart_comparable.comparable)
     // FIXED (tier 7, adversarial review finding F17): native mode draws no
     // shared axis because different currencies aren't positionally
     // comparable (see canCompare below) — but this sort still ranked rows
@@ -186,6 +191,24 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
       return bm - am
     })
   }, [wages, key, currency])
+
+  // Package 14, Tier 2 (external audit Finding 2, HIGH) — reference years
+  // across this panel's own countries span 2009-2025 (2018-2025 excluding
+  // the UAE); nominal pay rose ~20-30% across that window, the same order
+  // of magnitude as the cross-country gap the chart draws. Computed over
+  // whichever rows actually SHOW a bar on the current toggle (combo.ok) —
+  // a row absent on this basis isn't part of what the reader is looking
+  // at right now. No deflator is applied (see NEEDS-DECISION.md #34 for
+  // why one was investigated and declined): this is disclosure, not a
+  // correction to any number. computeYearSpread() itself lives in
+  // data/explore.ts, pure and unit-tested — Tier 1's own set-wide
+  // crosswalk fix already excludes this chart's widest-vintage countries
+  // (Ireland, Spain), so this rarely fires on the live chart today; see
+  // that function's own docstring.
+  const yearSpread = useMemo(
+    () => computeYearSpread(rows.filter((r) => r.combos[key]?.ok).map((r) => ({ country: r.country, year: r.native.year }))),
+    [rows, key],
+  )
 
   const W = 700, ROW = 40, PL = 190, PR = 60, TOP = 34
   const H = TOP + rows.length * ROW + 30
@@ -236,7 +259,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
   const csvRows = rows.map((r) => {
     const combo = r.combos[key]
     return {
-      country: r.country, source: r.source_id, comparable: r.crosswalk.comparable,
+      country: r.country, source: r.source_id, comparable: r.chart_comparable.comparable,
       currency: combo?.ok ? combo.currency : null,
       p10: combo?.ok ? combo.value.p10 : null, median: combo?.ok ? combo.value.median : null,
       p90: combo?.ok ? combo.value.p90 : null,
@@ -249,9 +272,12 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
       <h2>What the same job actually pays, country by country</h2>
       <div className="sub">
         The primary software-developer occupation in each country's own classification, matched by{' '}
-        <a href="#/data">crosswalk</a> to the deepest shared ISCO-08 code both sides support. Switch the
-        toggles — a row that disappears is a row that cannot honestly express what you just asked for,
-        named below it, not hidden.
+        <a href="#/data">crosswalk</a> to the deepest ISCO-08 code a real quorum of these countries all
+        share — currently <b>{wages.resolved_comparison.depth ?? '—'}-digit</b>
+        {wages.resolved_comparison.shared_key ? ` (${wages.resolved_comparison.shared_key})` : ''}.
+        A country whose own classification doesn't reach that depth is excluded from this chart, named
+        below, not shown at a shallower depth beside ones that reach it. Switch the toggles — a row that
+        disappears is a row that cannot honestly express what you just asked for, named below it too.
       </div>
       <div className="crail">
         <Seg label="Currency" value={currency}
@@ -259,6 +285,17 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
         <Seg label="Pay basis" value={basis}
           options={[['regular_pay', 'regular pay'], ['total_earnings', 'total earnings']]} onChange={setBasis} />
       </div>
+
+      {yearSpread && yearSpread.spread > 3 && (
+        <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', background: 'var(--surface-sunk)',
+                    borderRadius: 6, padding: '6px 10px', marginTop: 6 }}>
+          <b>{yearSpread.spread}-year spread</b> across the rows shown here — {yearSpread.newest.country}'s
+          figure is {yearSpread.newest.year}, {yearSpread.oldest.country}'s is {yearSpread.oldest.year}.
+          Nominal pay moved materially over that window in every country this panel covers; no adjustment
+          for it is applied below — each figure is shown exactly as its own source published it, for its
+          own year, shown beside every value.
+        </p>
+      )}
 
       {!canCompare && (
         <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 4 }}>
@@ -288,6 +325,10 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                 <text x={PL - 10} y={y0 + 4} fontSize="10.5" fontWeight={suffix ? 400 : 600}
                   fill={col} textAnchor="end">
                   {iso}{suffix ? ` · ${label}` : ''}
+                  {/* Package 14, Tier 2 (Finding 2) — the reference year, on
+                      every row, at first glance, not only inside the
+                      collapsed "open each row's own method" card below. */}
+                  <tspan fontSize="8.5" fontWeight={400} fill="var(--ink-3)"> '{String(r.native.year).slice(2)}</tspan>
                   {suffix && ROW_LABEL_FULL[r.country] && (
                     <title>
                       {ROW_LABEL_FULL[r.country]}
@@ -416,7 +457,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
             combo?.ok ? fmtCcy(combo.value.p10, combo.currency) : NO_DATA,
             combo?.ok ? fmtCcy(combo.value.median, combo.currency) : NO_DATA,
             combo?.ok ? fmtCcy(combo.value.p90, combo.currency) : NO_DATA,
-            r.crosswalk.comparable ? `${r.crosswalk.depth}-digit` : 'no',
+            r.chart_comparable.comparable ? `${r.chart_comparable.depth}-digit` : 'no',
           ]
         })}
       />
@@ -434,7 +475,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
               <span key={c.country}>
                 {(wages.absent.length > 0 || c !== uncomparable[0]) && '; '}
                 <b>{c.country}</b> — has real data (see its <a href={`#/country/${c.country}`}>country page</a>),
-                but no ISCO-08 correspondence at any depth to compare it against
+                but {c.chart_comparable.comparable ? '' : c.chart_comparable.reason}
               </span>
             ))}. Absence drawn, not implied by a missing row.
           </p>

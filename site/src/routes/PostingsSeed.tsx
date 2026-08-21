@@ -190,6 +190,14 @@ export function PostingsSeed() {
               employers) are counted in the provider table above and filterable on the panel itself, just
               not listed row-by-row here alongside an ATS token.
             </p>
+            <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6, maxWidth: '74ch' }}>
+              A token is not always a name. Ashby's and Lever's own public APIs never publish a
+              company DISPLAY NAME at all (checked live, not assumed — see postings_common.py's own
+              record-shape docstring) — every "company" shown for their rows, here and throughout this
+              panel, is this pipeline reading the board TOKEN into a readable label (fmtCompany()), not
+              a name the source itself published. Greenhouse, Teamtailor and USAJOBS all publish a real
+              display name directly; those rows are the company's own name, unmodified.
+            </p>
             <div style={{ maxHeight: 480, overflowY: 'auto', marginTop: 10 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>

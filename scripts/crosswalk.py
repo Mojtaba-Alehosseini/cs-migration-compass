@@ -110,6 +110,97 @@ def compare(mapping_a: dict, mapping_b: dict) -> dict:
     return {"comparable": True, "depth": depth, "shared_key": f"isco08:{truncated_a}", "degraded_by": degraded_by}
 
 
+def resolve_set(verdicts_by_country: dict[str, dict], *, min_quorum: int = 2) -> dict:
+    """Package 14, Tier 1 fix -- the set-wide sibling of compare(). compare()
+    itself is correct and untouched; the bug the external audit's Finding 1
+    describes is that scripts/build_wage_distribution.py called it once per
+    country against a single fixed reference (Sweden) and the wage panel
+    then kept every comparable=True row regardless of how shallow, with no
+    step that ever asked "does the WHOLE displayed set actually share this
+    depth" -- a 1-digit Irish figure (Ireland's own source is ISCO major
+    group 2, "all professionals," not software specifically) rendered
+    beside a 4-digit Swedish one with no degradation ever applied, because
+    the rule only ever fired pairwise, never across the many-country view.
+
+    `verdicts_by_country` is {country_label: compare()'s own return value}
+    -- every wage-panel row's own EXISTING crosswalk verdict (already
+    computed against the single reference occupation; this function does
+    not re-derive that, only resolves across it). Returns:
+      {"resolved_depth": N | None, "shared_key": "isco08:NNNN" | None,
+       "verdicts": {label: {"comparable": True, "depth": N, "own_depth": N,
+                             "degraded": bool, "degraded_by": str | None}
+                          | {"comparable": False, "reason": "..."}}}
+
+    ALGORITHM: every already-comparable country carries its own native
+    depth (compare()'s own "depth" field). resolved_depth is the DEEPEST
+    depth reached by at least `min_quorum` countries -- not the shallowest
+    country's own depth (that would drag a 4-digit US down to Ireland's
+    1-digit just because Ireland is in the set) and not a lone deepest
+    outlier's own depth either (one country being 4-digit is not "a depth
+    the SET shares"). A country whose own depth is BELOW resolved_depth
+    cannot meet it: excluded, naming its own depth as the reason -- the
+    same "leaves the chart, says why" grammar this site already uses for
+    no-series and central-tendency-only. A country AT resolved_depth is
+    comparable, undegraded. A country whose own native depth is DEEPER
+    than resolved_depth (impossible today, since 4-digit is ISCO-08's own
+    maximum and the current data's quorum already resolves to 4 -- kept
+    for when it stops being impossible) is comparable but degraded, and
+    the verdict names which countries' own shallower depth forced it.
+
+    Does NOT re-check pairwise code agreement across every combination:
+    every country's own depth/shared_key already came from compare()
+    against the SAME single reference, so two countries whose truncated
+    codes both equal the reference's own code at their own respective
+    depths necessarily agree with EACH OTHER too, transitively, at
+    whichever is shallower. Re-deriving that here would just be checking
+    compare()'s own arithmetic a second time."""
+    from collections import Counter
+
+    depths: dict[str, int] = {}
+    excluded: dict[str, str] = {}
+    for label, v in verdicts_by_country.items():
+        if not v or not v.get("comparable"):
+            excluded[label] = (v or {}).get("reason", "no occupation crosswalk mapping exists for this country")
+            continue
+        depths[label] = v["depth"]
+
+    if not depths:
+        return {"resolved_depth": None, "shared_key": None,
+                "verdicts": {label: {"comparable": False, "reason": r} for label, r in excluded.items()}}
+
+    counts = Counter(depths.values())
+    resolved_depth = next((d for d in (4, 2, 1) if counts.get(d, 0) >= min_quorum), None)
+
+    verdicts: dict[str, dict] = {label: {"comparable": False, "reason": r} for label, r in excluded.items()}
+    if resolved_depth is None:
+        for label, d in depths.items():
+            verdicts[label] = {
+                "comparable": False,
+                "reason": f"no {min_quorum}+ countries in this set share the same occupation depth as "
+                          f"{label} (its own depth: {d}-digit) — nothing left to compare it against",
+            }
+        return {"resolved_depth": None, "shared_key": None, "verdicts": verdicts}
+
+    forcing = sorted(label for label, d in depths.items() if d == resolved_depth)
+    shared_key = verdicts_by_country[forcing[0]]["shared_key"]
+    for label, d in depths.items():
+        if d < resolved_depth:
+            verdicts[label] = {
+                "comparable": False,
+                "reason": f"{label}'s own occupation mapping reaches only {d}-digit ISCO-08 depth; the "
+                          f"other countries on this chart ({', '.join(forcing)}) share {resolved_depth}-"
+                          f"digit depth, which {label} cannot meet",
+            }
+        else:
+            verdicts[label] = {
+                "comparable": True, "depth": resolved_depth, "own_depth": d, "degraded": d > resolved_depth,
+                "degraded_by": None if d <= resolved_depth else
+                    f"resolved to {resolved_depth}-digit, shared by {', '.join(forcing)}",
+            }
+
+    return {"resolved_depth": resolved_depth, "shared_key": shared_key, "verdicts": verdicts}
+
+
 def load() -> tuple[dict, dict[tuple[str, str], dict]]:
     doc = json.loads(OCC_FILE.read_text(encoding="utf-8"))
     by_pair = {(m["country"], m["national_code"]): m for m in doc.get("mappings", [])}

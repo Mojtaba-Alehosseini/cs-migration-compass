@@ -457,6 +457,58 @@ try {
 
   /* ==================================================================== */
   say('')
+  say('=== R21: crosswalk comparability checked pairwise, never across the displayed set ===')
+
+  const WAGE_PANEL = `[...document.querySelectorAll('h2')]
+    .find((h) => h.textContent.includes('What the same job actually pays')).closest('.panel')`
+
+  /** A wage-panel row's own SVG <text> label, by country code — null if that
+   *  country renders no row at all (package 14's own fix: excluded by
+   *  chart_comparable, not just absent from the data). */
+  const wageRow = (code) => page.eval(`(() => {
+    const svg = ${WAGE_PANEL}.querySelector('svg')
+    const t = [...svg.querySelectorAll('text')].find((t) => t.textContent.trim().startsWith(${JSON.stringify(code)}))
+    return t ? t.textContent.trim() : null
+  })()`)
+
+  const wageGapText = () => page.eval(`(() => {
+    const h = [...document.querySelectorAll('h3, summary, div')]
+      .find((el) => el.textContent.includes("countries don't appear in this chart"))
+    return h ? h.closest('.panel, section, div')?.textContent ?? h.textContent : null
+  })()`)
+
+  await page.hashGo(`${BASE}#/explore/money`, { waitMs: 2500 })
+
+  // Ireland, Spain, Germany: each below the resolved 4-digit depth (own
+  // depth 1, 2, 2 respectively) -- pre-fix, all three rendered a bar right
+  // next to Sweden's, each just carrying a small "1-digit match"/"2-digit
+  // match" note easy to miss. Post-fix: no row at all.
+  for (const code of ['IE', 'ES', 'DE']) {
+    check((await wageRow(code)) === null, `R21: ${code} renders NO row in the comparison chart (below the resolved depth)`)
+  }
+
+  const gap = await wageGapText()
+  say(`  gap text: ${gap?.slice(0, 200)}...`)
+  check(!!gap?.includes("IE's own occupation mapping reaches only 1-digit"),
+    "R21: Ireland's own specific reason (1-digit, not software-specific) renders on screen")
+  check(!!gap?.includes("ES's own occupation mapping reaches only 2-digit"),
+    "R21: Spain's own specific reason renders on screen")
+  check(!!gap?.includes('NL has no ISCO-08 correspondence'),
+    'R21: the Netherlands (zero correspondence, the pre-existing case) still renders its own reason too')
+
+  // A country that DOES meet the resolved depth still renders — the fix
+  // excludes by name, it does not empty the chart.
+  const se = await wageRow('SE')
+  say(`  SE row: ${se}`)
+  check(se !== null, 'R21: a genuinely comparable country (SE) still renders a row')
+  check(/'\d\d/.test(se ?? ''), `R21: and its own reference year renders on the row itself, not only in a collapsed card (${se})`)
+
+  const resolvedDepthText = await page.eval(`${WAGE_PANEL}.textContent`)
+  check(resolvedDepthText.includes('currently') && resolvedDepthText.includes('4-digit') && resolvedDepthText.includes('isco08:2512'),
+    'R21: the resolved depth and shared key render as visible prose above the chart, not just in a tooltip')
+
+  /* ==================================================================== */
+  say('')
   const stray = (await page.eval('window.__errs.slice()')).filter((e) => !e.includes('distinct labels'))
   check(stray.length === 0, `no console errors beyond R2's deliberately provoked one (${stray.length})`)
   stray.forEach((e) => say(`    ${e}`))
@@ -468,5 +520,5 @@ try {
 
 say('')
 say('-'.repeat(70))
-say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13)' : `${fails} check(s) FAILED`)
+say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13, R21)' : `${fails} check(s) FAILED`)
 process.exitCode = fails ? 1 : 0
