@@ -71,6 +71,26 @@ export interface PostingsData {
   pay_summary_min_n: number
 }
 
+/** Package 14 — found gathering this package's own Lighthouse evidence: the
+ *  seed-list transparency page (PostingsSeed.tsx) only ever reads these
+ *  three fields, but was fetching the FULL `postings` array (~20MB, the
+ *  same resource NEEDS-DECISION #38 already names as /postings' own
+ *  dominant CPU cost) to get them — paying that cost a second time on a
+ *  page that never touches the array at all. build_postings.py now writes
+ *  this as its own small, separate file (verbatim copies of the same
+ *  fields, never re-derived) — see that file's own comment at its
+ *  construction. */
+export interface PostingsSeedSummary {
+  provider_summary: PostingsData['provider_summary']
+  seed_companies: Record<string, SeedCompany>
+  country_counts: Record<string, number>
+}
+
+export async function loadPostingsSeedSummary(): Promise<PostingsSeedSummary> {
+  const h = await loadHistory<PostingsSeedSummary>('postings_seed_summary')
+  return h.data
+}
+
 export async function loadPostings(): Promise<PostingsData> {
   const h = await loadHistory<PostingsData>('postings')
   return h.data

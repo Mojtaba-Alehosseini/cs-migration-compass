@@ -46,6 +46,11 @@ HISTORY_SETS = {
     "wage_distribution": "money",
     "experience_gradient": "money",
     "postings": "jobs",
+    # Package 14 — a small, separate slice of postings.json (provider_summary/
+    # seed_companies/country_counts only) for PostingsSeed.tsx, which never
+    # needs the full ~20MB `postings` array. See build_postings.py's own
+    # comment at this file's construction for why.
+    "postings_seed_summary": "jobs",
     "world_happiness_report": "life",
     "rsf_press_freedom": "life",
     "wipo_gii": "jobs",

@@ -297,6 +297,47 @@ def run() -> None:
         notes="The site's own postings panel reads ONLY this file, never an individual provider file.",
     )
 
+    # Package 14 — found gathering this package's own Lighthouse evidence
+    # (a route regressed under natural data growth, not a code change): the
+    # seed-list transparency page (site/src/routes/PostingsSeed.tsx) only
+    # ever reads seed_companies/country_counts/provider_summary, but was
+    # fetching this ENTIRE file to get them — the same ~20MB `postings`
+    # array Gate 11's own Lighthouse investigation already identified as the
+    # dominant CPU cost for /postings itself, paid a second time on a page
+    # that never touches that array at all. A small, separate file with
+    # just what this one page needs, following the exact same
+    # write_processed/record_provenance pattern every other processed
+    # dataset here already uses — not a special case.
+    SEED_SUMMARY_ID = "postings_seed_summary"
+    write_processed(SEED_SUMMARY_ID, {
+        "provider_summary": provider_summary,
+        "seed_companies": seed_companies,
+        "country_counts": country_counts,
+    }, meta={
+        "seed_companies_count": len(seed_companies),
+        "derived_from": f"data/processed/{SOURCE_ID}.json",
+    })
+    record_provenance(
+        source_id=SEED_SUMMARY_ID,
+        name="Postings seed-list summary — the small fields the transparency page actually reads",
+        urls=[],
+        license_note="Inherits each provider source's own license, same as postings.json itself — this "
+                      "file adds no new terms, only a smaller re-shaping of already-committed, "
+                      "already-licensed data.",
+        redistribution="derived — nothing fetched here; a build-time SUBSET of postings.json's own "
+                        "fields, which already carries the real provenance for this same data.",
+        transforms=[
+            "Copied provider_summary, seed_companies and country_counts verbatim from this same run's "
+            "own postings.json — never the raw postings array, which PostingsSeed.tsx never reads.",
+        ],
+        output=f"data/processed/{SEED_SUMMARY_ID}.json",
+        rows=len(seed_companies),
+        coverage=f"{len(seed_companies)} companies across {len([v for v in provider_summary.values() if v.get('available')])} providers",
+        notes="site/src/routes/PostingsSeed.tsx reads ONLY this file now, not postings.json's own full "
+              "~20MB payload — Postings.tsx (the filterable list/map) still reads postings.json itself, "
+              "which it genuinely needs the full array for.",
+    )
+
 
 if __name__ == "__main__":
     main_guard(run)

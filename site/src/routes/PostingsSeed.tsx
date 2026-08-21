@@ -12,7 +12,8 @@
 import { useMemo, useState } from 'react'
 import { useAsync } from '../components/explore/useAsync'
 import { Flag } from '../components/Flag'
-import { loadPostings, fmtCompany, KNOWN_PROVIDERS, PROVIDER_LABEL, PROVIDER_HAS_COMPENSATION_FIELD, PROVIDER_LICENSE } from '../data/postings'
+import { ChartSkeleton } from '../components/explore/Controls'
+import { loadPostingsSeedSummary, fmtCompany, KNOWN_PROVIDERS, PROVIDER_LABEL, PROVIDER_HAS_COMPENSATION_FIELD, PROVIDER_LICENSE } from '../data/postings'
 
 const DENSITY_NOTE: Record<string, string> = {
   US: 'HIGH — expected: California, Colorado, Illinois, Maryland, Massachusetts, Minnesota, New '
@@ -35,7 +36,7 @@ const DENSITY_NOTE: Record<string, string> = {
 }
 
 export function PostingsSeed() {
-  const { data, error } = useAsync(loadPostings, 'postings')
+  const { data, error } = useAsync(loadPostingsSeedSummary, 'postings_seed_summary')
   const [providerFilter, setProviderFilter] = useState('')
 
   const companies = useMemo(() => {
@@ -65,7 +66,22 @@ export function PostingsSeed() {
       {error && <div className="panel" style={{ borderColor: 'var(--warn)' }}><p>{error}</p></div>}
 
       {!data ? (
-        <div className="panel"><p className="nodata">Loading…</p></div>
+        // Reserves the shape of the four panels below, not one small
+        // placeholder swapped for all of them at once — the same class of
+        // real, measured CLS regression Postings.tsx's own gate 14
+        // (Lighthouse) investigation already found and fixed for its own
+        // "Loading…" panel; found here separately, while gathering fresh
+        // evidence for this same gate, once fetching only the small
+        // postings_seed_summary.json (not the full ~20MB postings array)
+        // made this page's own data arrive fast enough to expose a shift
+        // that a slower fetch had been masking. Heights measured against
+        // this page's own real, rendered panels, not guessed.
+        <>
+          <div className="panel"><ChartSkeleton height={3359} /></div>
+          <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={386} /></div>
+          <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={382} /></div>
+          <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={811} /></div>
+        </>
       ) : (
         <>
           <div className="panel">
