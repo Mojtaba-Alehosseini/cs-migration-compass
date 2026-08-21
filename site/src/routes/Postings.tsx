@@ -39,12 +39,9 @@ const MAX_ADVERTISED_CHART_COUNTRIES = 12
 /** Package 12, tier 5.1's own `advertised` chart-kit mode needed a real chart
  *  to be visible on — the mode existed in engine.ts but nothing rendered it
  *  anywhere, found while gathering this package's own gate 9 evidence. Median
- *  advertised USD/year pay by country, restricted to USD-denominated annual
- *  figures only (disclosed below) to avoid pulling in FX conversion — a
- *  bigger addition than this one chart earns, and the wage-spine's own
- *  normalise.py is off-limits here regardless (this file never imports
- *  data/explore.ts). Countries below MIN_ADVERTISED_CHART_N are dropped
- *  rather than shown on a sample too thin to mean anything.
+ *  advertised pay by country, annual-salary postings only, expressed in USD.
+ *  Countries below MIN_ADVERTISED_CHART_N are dropped rather than shown on a
+ *  sample too thin to mean anything.
  *
  *  Package 14: reads `data.pay_summary_by_country`, pre-computed at build
  *  time (build_postings.py) — this function used to scan the FULL raw
@@ -52,7 +49,21 @@ const MAX_ADVERTISED_CHART_COUNTRIES = 12
  *  became a real, measured Lighthouse performance cost once this
  *  package's own postings recovery grew that array to 46,040 records.
  *  Same filter, same thresholds, same result shape; the expensive part
- *  just doesn't happen in the browser on every page load any more. */
+ *  just doesn't happen in the browser on every page load any more.
+ *
+ *  An earlier revision of this aggregate required native currency == USD,
+ *  which meant every non-US country's own entry was quietly built from
+ *  whichever of ITS postings a US-headquartered employer happened to quote
+ *  in USD — a small, systematically biased subsample, not "no data" but
+ *  worse (an independent adversarial review's own M8 finding). Fixed at
+ *  the source (build_postings.py): every convertible currency now
+ *  contributes, through the same year-matched FX conversion Tier 3.1
+ *  already computes for every posting's own compensation.usd field — no
+ *  new plumbing needed here, this file still never imports data/explore.ts
+ *  or normalise.py directly. Only PERIOD is still restricted to annual —
+ *  that conversion touches currency only, never period, so an hourly
+ *  posting genuinely is a different quantity and stays excluded on
+ *  purpose (disclosed below). */
 function advertisedByCountryCfg(data: PostingsData): ChartCfg | null {
   const rows = data.pay_summary_by_country
     .slice(0, MAX_ADVERTISED_CHART_COUNTRIES)
@@ -319,12 +330,12 @@ export function Postings() {
             <div className="panel" style={{ marginTop: 12 }}>
               <h2>Median advertised pay by country</h2>
               <div className="sub">
-                USD-denominated, annual-salary postings only ({MIN_ADVERTISED_CHART_N}+ per country to
-                appear) — the dotted line is this site's <b>advertised</b> mode, never restyled from
-                and never blended with the survey-sourced lines on{' '}
-                <Link to="/explore/money">Explore · Money</Link>. Hourly and non-USD postings (most of
-                this panel's own non-US rows) are excluded from this one chart to avoid mixing pay
-                periods or currencies into a single axis — they still appear in the table and map below.
+                Annual-salary postings only ({MIN_ADVERTISED_CHART_N}+ per country to appear),
+                converted to USD at each posting's own year — the dotted line is this site's{' '}
+                <b>advertised</b> mode, never restyled from and never blended with the survey-sourced
+                lines on <Link to="/explore/money">Explore · Money</Link>. Hourly and monthly postings
+                are excluded from this one chart to avoid mixing pay periods into a single axis — they
+                still appear in the table and map below.
               </div>
               <Chart id="postings-advertised-by-country" cfg={advertisedCfg} transition="fade">
                 <ChartTable

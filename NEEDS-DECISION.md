@@ -1565,9 +1565,18 @@ network one.
    render regardless of whether the map view was even showing — gated on `view === 'map'` now.
 2. `advertisedByCountryCfg()` used to re-scan the FULL raw `postings` array and sort per-country
    values in the browser, on every page load, to compute a chart that is IDENTICAL for every visitor
-   until the next rebuild. Moved to `build_postings.py` (`advertised_by_country`, a ~12-row
-   pre-computed field) — a genuine, deterministic build-time aggregate, not a client-side
-   recomputation of the same thing on every visit.
+   until the next rebuild. Moved to `build_postings.py` (`pay_summary_by_country`, a ~12-row
+   pre-computed field — renamed from the first-tried `advertised_by_country` after it collided with
+   `check_survey_vs_advertised_pay`, see this package's own commit history) — a genuine, deterministic
+   build-time aggregate, not a client-side recomputation of the same thing on every visit.
+
+   **Update, same package, after an independent adversarial review (finding M8):** this aggregate
+   originally required native `currency == USD`, which meant every non-US country's own entry was
+   quietly built from whichever of its postings a US-headquartered employer happened to quote in USD
+   — a small, biased subsample, not "no data" but worse. Fixed: it now reads the same
+   `compensation.usd` field Tier 3.1 already computes for every posting, so every convertible
+   currency contributes. `Postings.tsx`'s own on-page disclosure text was updated to match — it no
+   longer claims a USD-native restriction that isn't true any more.
 
 Both are real, disclosed, unconditionally-good changes (they remove genuinely wasted work) — neither
 is a "fake it to pass a check" move, and neither alone nor together brought the score to 90 (0.78-0.83

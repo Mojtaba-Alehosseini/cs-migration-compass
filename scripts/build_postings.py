@@ -197,13 +197,31 @@ def run() -> None:
     # "mean_sek_month") -- so the unit-disclosure check RECOGNISES and
     # VALIDATES this field, rather than the alternative of naming it so
     # genially that no check ever looks at it at all.
+    # Package 14 -- an adversarial review's own M8 finding: this originally
+    # required c["currency"] == "USD", which meant a non-US country's own
+    # entry was built only from whichever of ITS postings happened to be
+    # quoted in USD by a US-headquartered employer -- a small, systematically
+    # biased subsample of that country's real pay, not "no data" but worse
+    # (looks like a real median, isn't one). Tier 3.1's own per-posting
+    # compensation.usd conversion (convert_compensation_to_usd(), run above
+    # for every provider) already exists for exactly this -- reading it here
+    # costs nothing new and lets every convertible currency contribute, not
+    # just USD's own native postings. period == "year" is still required:
+    # the FX conversion above only ever touches currency, never period (see
+    # that function's own docstring, "native values are UNTOUCHED"), so an
+    # hourly EUR posting is still a real hourly figure and still excluded
+    # here on purpose -- mixing periods into one axis is a different, still-
+    # live problem this fix does not touch.
     MIN_CHART_N, MAX_CHART_COUNTRIES = 5, 12
     by_country_usd_year: dict[str, list[float]] = {}
     for p in all_postings:
         c = p.get("compensation")
-        if not c or c.get("currency") != "USD" or c.get("period") != "year" or not p.get("country"):
+        if not c or c.get("period") != "year" or not p.get("country"):
             continue
-        by_country_usd_year.setdefault(p["country"], []).append((c["min"] + c["max"]) / 2)
+        usd = c.get("usd")
+        if not usd:
+            continue
+        by_country_usd_year.setdefault(p["country"], []).append((usd["min"] + usd["max"]) / 2)
 
     def _median(nums: list[float]) -> float:
         s = sorted(nums)
