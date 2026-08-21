@@ -1,0 +1,200 @@
+{
+  "generated_at": "2026-08-21T02:35:14.943748+00:00",
+  "matrix": {
+    "AE": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 1,
+      "pay_basis": {
+        "native_regular_pay": false,
+        "native_total_earnings": false,
+        "usd_regular_pay": false,
+        "usd_total_earnings": false
+      },
+      "postings_count": 73,
+      "postings_stated_pay_rate_pct": 1.4
+    },
+    "AU": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 4,
+      "pay_basis": {
+        "native_regular_pay": false,
+        "native_total_earnings": true,
+        "usd_regular_pay": false,
+        "usd_total_earnings": true
+      },
+      "postings_count": 141,
+      "postings_stated_pay_rate_pct": 11.3
+    },
+    "CA-21231": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 4,
+      "pay_basis": {
+        "native_regular_pay": false,
+        "native_total_earnings": false,
+        "usd_regular_pay": false,
+        "usd_total_earnings": false
+      },
+      "postings_count": 376,
+      "postings_stated_pay_rate_pct": 19.1
+    },
+    "CA-21232": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 4,
+      "pay_basis": {
+        "native_regular_pay": false,
+        "native_total_earnings": false,
+        "usd_regular_pay": false,
+        "usd_total_earnings": false
+      },
+      "postings_count": 376,
+      "postings_stated_pay_rate_pct": 19.1
+    },
+    "DE": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 2,
+      "pay_basis": {
+        "native_regular_pay": true,
+        "native_total_earnings": true,
+        "usd_regular_pay": true,
+        "usd_total_earnings": true
+      },
+      "postings_count": 298,
+      "postings_stated_pay_rate_pct": 21.1
+    },
+    "DK": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 4,
+      "pay_basis": {
+        "native_regular_pay": true,
+        "native_total_earnings": true,
+        "usd_regular_pay": true,
+        "usd_total_earnings": true
+      },
+      "postings_count": 5,
+      "postings_stated_pay_rate_pct": 0.0
+    },
+    "ES": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 2,
+      "pay_basis": {
+        "native_regular_pay": false,
+        "native_total_earnings": true,
+        "usd_regular_pay": false,
+        "usd_total_earnings": true
+      },
+      "postings_count": 213,
+      "postings_stated_pay_rate_pct": 11.7
+    },
+    "FI": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 4,
+      "pay_basis": {
+        "native_regular_pay": true,
+        "native_total_earnings": true,
+        "usd_regular_pay": true,
+        "usd_total_earnings": true
+      },
+      "postings_count": 7,
+      "postings_stated_pay_rate_pct": 0.0
+    },
+    "GB": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 4,
+      "pay_basis": {
+        "native_regular_pay": false,
+        "native_total_earnings": true,
+        "usd_regular_pay": false,
+        "usd_total_earnings": true
+      },
+      "postings_count": 696,
+      "postings_stated_pay_rate_pct": 20.0
+    },
+    "IE": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 1,
+      "pay_basis": {
+        "native_regular_pay": true,
+        "native_total_earnings": false,
+        "usd_regular_pay": true,
+        "usd_total_earnings": false
+      },
+      "postings_count": 69,
+      "postings_stated_pay_rate_pct": 13.0
+    },
+    "NL": {
+      "comparable": false,
+      "experience_cross": false,
+      "occupation_depth": null,
+      "pay_basis": {
+        "native_regular_pay": true,
+        "native_total_earnings": false,
+        "usd_regular_pay": true,
+        "usd_total_earnings": false
+      },
+      "postings_count": 138,
+      "postings_stated_pay_rate_pct": 12.3
+    },
+    "NO": {
+      "comparable": true,
+      "experience_cross": true,
+      "occupation_depth": 4,
+      "pay_basis": {
+        "native_regular_pay": true,
+        "native_total_earnings": true,
+        "usd_regular_pay": true,
+        "usd_total_earnings": true
+      },
+      "postings_count": 11,
+      "postings_stated_pay_rate_pct": 0.0
+    },
+    "QA": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 1,
+      "pay_basis": {
+        "native_regular_pay": false,
+        "native_total_earnings": false,
+        "usd_regular_pay": false,
+        "usd_total_earnings": false
+      },
+      "postings_count": 5,
+      "postings_stated_pay_rate_pct": 40.0
+    },
+    "SE": {
+      "comparable": true,
+      "experience_cross": true,
+      "occupation_depth": 4,
+      "pay_basis": {
+        "native_regular_pay": true,
+        "native_total_earnings": false,
+        "usd_regular_pay": true,
+        "usd_total_earnings": false
+      },
+      "postings_count": 106,
+      "postings_stated_pay_rate_pct": 3.8
+    },
+    "US": {
+      "comparable": true,
+      "experience_cross": false,
+      "occupation_depth": 4,
+      "pay_basis": {
+        "native_regular_pay": true,
+        "native_total_earnings": false,
+        "usd_regular_pay": true,
+        "usd_total_earnings": false
+      },
+      "postings_count": 11208,
+      "postings_stated_pay_rate_pct": 61.0
+    }
+  }
+}
