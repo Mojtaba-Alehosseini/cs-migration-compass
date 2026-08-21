@@ -236,24 +236,6 @@ export async function loadWages(): Promise<WageDistribution> {
   return wd.data
 }
 
-/** Package 14, Tier 2 (external audit Finding 2, HIGH) — the reference-year
- *  spread across whichever rows a wage-panel toggle actually shows a bar
- *  for. Pure and exported (not inline in WagePanel.tsx) specifically so
- *  the >3-year disclosure rule has a real unit test against a synthetic
- *  spread — Tier 1's own set-wide crosswalk fix (resolve_set()) already
- *  excludes every country whose vintage gap was the widest (Ireland 2022,
- *  Spain 2018) from the live chart's own comparable set, so the live site
- *  currently has nothing wide enough to trigger this on screen; the logic
- *  itself is still real and still runs every time the toggle changes. */
-export function computeYearSpread(
-  rows: { country: string; year: number }[],
-): { spread: number; oldest: { country: string; year: number }; newest: { country: string; year: number } } | null {
-  if (rows.length < 2) return null
-  const oldest = rows.reduce((a, b) => (b.year < a.year ? b : a))
-  const newest = rows.reduce((a, b) => (b.year > a.year ? b : a))
-  return { spread: newest.year - oldest.year, oldest, newest }
-}
-
 /* ----------------------------------------------------------------- jobs --- */
 
 export interface JobsData {

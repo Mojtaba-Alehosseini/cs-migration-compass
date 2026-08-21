@@ -41,7 +41,8 @@ import { Derived, type DerivedConcept } from '../Derived'
 import { Seg, ChartFoot, ChartTable, Gap } from './Controls'
 import { useAsync } from './useAsync'
 import { loadPayComposition, type PayComposition } from '../../data/store'
-import { comboKey, computeYearSpread, CA_NOC_DISTINCTION, type Basis, type CurrencyMode, type WageDistribution } from '../../data/explore'
+import { comboKey, CA_NOC_DISTINCTION, type Basis, type CurrencyMode, type WageDistribution } from '../../data/explore'
+import { computeYearSpread } from '../../data/yearSpread'
 import { NO_DATA } from '../../data/format'
 
 const cc3 = (c: string) => `var(--c-${c})`
@@ -196,10 +197,12 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
   // at right now. No deflator is applied (see NEEDS-DECISION.md #34 for
   // why one was investigated and declined): this is disclosure, not a
   // correction to any number. computeYearSpread() itself lives in
-  // data/explore.ts, pure and unit-tested — Tier 1's own set-wide
-  // crosswalk fix already excludes this chart's widest-vintage countries
-  // (Ireland, Spain), so this rarely fires on the live chart today; see
-  // that function's own docstring.
+  // data/yearSpread.ts, pure, zero-dependency, and unit-tested (a real
+  // gap M6 found: it used to claim "unit-tested" from inside this file's
+  // own store.ts import chain, which plain Node can't load at all) —
+  // Tier 1's own set-wide crosswalk fix already excludes this chart's
+  // widest-vintage countries (Ireland, Spain), so this rarely fires on
+  // the live chart today; see that function's own docstring.
   const yearSpread = useMemo(
     () => computeYearSpread(rows.filter((r) => r.combos[key]?.ok).map((r) => ({ country: r.country, year: r.native.year }))),
     [rows, key],

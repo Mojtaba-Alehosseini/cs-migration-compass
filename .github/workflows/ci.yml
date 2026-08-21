@@ -74,6 +74,13 @@ jobs:
       - run: npm run typecheck
         working-directory: site
 
+      # Package 14 — the site's first real unit-test suite (site/tests/),
+      # added after an adversarial review caught a function's code comment
+      # FALSELY claiming "unit-tested" with no test actually wired anywhere
+      # (finding M6). Node's own --test runner, no new devDependency.
+      - run: npm test
+        working-directory: site
+
       - run: npm run build
         working-directory: site
 
