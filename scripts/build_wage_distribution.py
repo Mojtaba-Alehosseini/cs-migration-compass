@@ -633,6 +633,14 @@ def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapp
 
             combos[combo_key] = {"ok": True, "value": value, "chain": chain,
                                   "currency": "USD" if currency_mode == "usd" else obs["currency"],
+                                  # Every combo's own value is _annualise_all()'s output (line above) --
+                                  # unconditionally annual by construction, for every code path that
+                                  # reaches this line. Stated explicitly (package 13, Tier 1) rather than
+                                  # left implicit: a combo block with a currency but no period was the one
+                                  # real gap scripts/audit_data.py's unit-disclosure check found that
+                                  # wasn't a check bug -- this pipeline knows every combo is annual, but
+                                  # the committed artefact itself didn't say so.
+                                  "period": "year",
                                   "chain_field": this_repr_field}
 
     return {

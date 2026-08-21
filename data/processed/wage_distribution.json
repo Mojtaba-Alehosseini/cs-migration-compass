@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-08-13T02:54:16+00:00",
+ "generated_at": "2026-08-21T02:11:39+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -64,6 +64,7 @@
        }
       ],
       "currency": "SEK",
+      "period": "year",
       "chain_field": "median"
      },
      "native_total_earnings": {
@@ -95,6 +96,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_total_earnings": {
@@ -157,6 +159,7 @@
        }
       ],
       "currency": "GBP",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_regular_pay": {
@@ -188,6 +191,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      }
     }
@@ -242,6 +246,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      },
      "native_total_earnings": {
@@ -273,6 +278,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_total_earnings": {
@@ -354,6 +360,7 @@
        }
       ],
       "currency": "DKK",
+      "period": "year",
       "chain_field": "median"
      },
      "native_total_earnings": {
@@ -389,6 +396,7 @@
        }
       ],
       "currency": "DKK",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_regular_pay": {
@@ -432,6 +440,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_total_earnings": {
@@ -471,6 +480,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      }
     }
@@ -525,6 +535,7 @@
        }
       ],
       "currency": "NOK",
+      "period": "year",
       "chain_field": "median"
      },
      "native_total_earnings": {
@@ -548,6 +559,7 @@
        }
       ],
       "currency": "NOK",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_regular_pay": {
@@ -575,6 +587,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_total_earnings": {
@@ -602,6 +615,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      }
     }
@@ -656,6 +670,7 @@
        }
       ],
       "currency": "EUR",
+      "period": "year",
       "chain_field": "median"
      },
      "native_total_earnings": {
@@ -679,6 +694,7 @@
        }
       ],
       "currency": "EUR",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_regular_pay": {
@@ -706,6 +722,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_total_earnings": {
@@ -733,6 +750,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      }
     }
@@ -791,6 +809,7 @@
        }
       ],
       "currency": "AUD",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_regular_pay": {
@@ -822,6 +841,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      }
     }
@@ -880,6 +900,7 @@
        }
       ],
       "currency": "EUR",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_regular_pay": {
@@ -911,6 +932,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      }
     }
@@ -969,6 +991,7 @@
        }
       ],
       "currency": "EUR",
+      "period": "year",
       "chain_field": "median"
      },
      "native_total_earnings": {
@@ -1004,6 +1027,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_total_earnings": {
@@ -1158,6 +1182,7 @@
        }
       ],
       "currency": "EUR",
+      "period": "year",
       "chain_field": "median"
      },
      "native_total_earnings": {
@@ -1193,6 +1218,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_total_earnings": {
@@ -1255,6 +1281,7 @@
        }
       ],
       "currency": "EUR",
+      "period": "year",
       "chain_field": "median"
      },
      "native_total_earnings": {
@@ -1278,6 +1305,7 @@
        }
       ],
       "currency": "EUR",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_regular_pay": {
@@ -1309,6 +1337,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      },
      "usd_total_earnings": {
@@ -1336,6 +1365,7 @@
        }
       ],
       "currency": "USD",
+      "period": "year",
       "chain_field": "median"
      }
     }

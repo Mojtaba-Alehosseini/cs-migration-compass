@@ -4,7 +4,7 @@
 PY ?= python
 NPM ?= npm
 
-.PHONY: help setup pipeline pipeline-fresh validate test docs site-dev site-build site-preview clean all
+.PHONY: help setup pipeline pipeline-fresh validate audit test docs site-dev site-build site-preview clean all
 
 help:
 	@echo "CS Migration Compass"
@@ -13,6 +13,8 @@ help:
 	@echo "  make pipeline        run every data source (cached downloads reused)"
 	@echo "  make pipeline-fresh  clear data/raw and re-download everything"
 	@echo "  make validate        run the data validation gate (CI runs this)"
+	@echo "  make audit           run Tier-1 structural invariants (scripts/audit_data.py)"
+	@echo "                       — complements validate, see that file's own docstring"
 	@echo "  make test            run the regression suite (scripts/tests/) — UI half"
 	@echo "                       needs 'make site-build && make site-preview' running"
 	@echo "  make docs            regenerate docs/SOURCES.md from data/provenance.json"
@@ -36,6 +38,9 @@ pipeline-fresh:
 
 validate:
 	$(PY) scripts/validate_data.py
+
+audit:
+	$(PY) scripts/audit_data.py
 
 test:
 	$(PY) scripts/tests/run_all.py

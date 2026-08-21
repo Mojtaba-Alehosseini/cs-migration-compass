@@ -1,0 +1,593 @@
+"""Package 13, Tier 1 — structural invariants over every file in
+data/processed/. `make validate` (scripts/validate_data.py) already covers
+a lot of this project's data-integrity rules; this file is deliberately
+scoped to NOT re-check what that one already does well: curated-data
+inversions/nulls, envelope/provenance completeness, ODbL isolation,
+survey-vs-advertised separation, percentile-vs-seniority labelling,
+crosswalk depth, no-series well-formedness, percentile-ABSENCE labelling,
+and all six normalise.py behavioural rules. See that file's own docstring
+for the full list. Tier 4 folds both into one command; until then, run
+both (`make validate && make audit`, or `python scripts/audit_data.py`).
+
+This file adds the checks the work order's own Tier 1 names that validate_data.py
+does not do:
+
+  * a distribution's own percentiles are monotonic (p10<=p25<=median<=p75<=p90)
+    wherever they co-occur, in ANY of this pipeline's three real shapes
+    (salary_*.json's `_sek_month`-suffixed dispersion_by_year, bls_oews.json's
+    `annual_p10_usd`-style series, wage_distribution.json's bare mean/median/p10..p90)
+  * a distribution's own mean sits inside its own [p10, p90]
+  * no pay figure is negative; a real $0/€0/etc. is never presented as a
+    figure (must be null/absent, not a fabricated zero)
+  * every pay figure's unit (currency + period) is recoverable — either from
+    its own field name (salary_*.json's convention) or from currency/period
+    sibling fields in its immediate container (wage_distribution.json's
+    convention) — never neither
+  * order-of-magnitude plausibility per (currency, period), bounds built from
+    this dataset's own committed values (a wide multiple of the observed
+    spread), outliers flagged for review, never silently dropped
+  * a native record's own embedded cross-check against its source's separately
+    published headline (Denmark's mdrsnit_check being the one example that
+    exists today) actually reconciles under independent recomputation, not
+    just an asserted residual_pct nobody re-derives
+  * the OPPOSITE direction from validate_data.py's check_percentile_absence_
+    explicit: a record that DOES carry real percentile fields must not also
+    carry a distribution flag ("central-tendency-only", "mean-only") that
+    claims it doesn't
+  * every data/provenance.json entry is checked against an expected refresh
+    interval and reported (not failed — see check_refresh_intervals's own
+    docstring) if stale
+
+Exit code 1 on any ERROR. Warnings/flags are reported but do not fail the
+build — matching validate_data.py's own severity split.
+"""
+from __future__ import annotations
+
+import datetime as dt
+import json
+import re
+import statistics
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _common import DATA, PROCESSED, PROVENANCE, log  # noqa: E402
+
+ERRORS: list[str] = []
+FLAGS: list[str] = []
+
+
+def err(msg: str) -> None:
+    ERRORS.append(msg)
+
+
+def flag(msg: str) -> None:
+    FLAGS.append(msg)
+
+
+def _load(path: Path) -> dict | None:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+# ---------------------------------------------------------------------------
+# shared: finding every wage-percentile "family" anywhere in a document,
+# regardless of which of this pipeline's three real naming shapes it uses
+# ---------------------------------------------------------------------------
+
+# A percentile/central-tendency token, optionally wrapped in a currency/period
+# prefix ("annual_", "hourly_") and/or a currency/period suffix ("_sek_month",
+# "_usd"). Deliberately excludes "margin"/"ci95" so a confidence-interval
+# half-width (salary_se.json's own median_ci95_margin_sek_month) is never
+# mistaken for the point estimate it accompanies -- found live: without this
+# exclusion, the very first run flagged real, correct CI margins as
+# "non-monotonic" simply because a margin is usually smaller than its own
+# point estimate, which is not what monotonicity means here.
+_TOKEN_RE = re.compile(r"(p10|p25|p50|p75|p90|median|mean)", re.I)
+_EXCLUDE_RE = re.compile(r"margin|ci95|ci_95|confidence|stderr|std_err", re.I)
+_ORDER = ["p10", "p25", "median", "p75", "p90"]  # p50 normalised to "median" below
+
+# A container whose OWN key means its p10/p25/mean/median-shaped children are
+# not pay figures at all. Found live on the first real run against this
+# repo, not guessed in advance: salary_uk.json's own coefficient_of_variation_pct
+# is ONS's published RELIABILITY metric for each corresponding wage estimate
+# (a %, describing how trustworthy that estimate is), reusing the identical
+# p10/p25/mean/median vocabulary for a completely different concept. Its own
+# values have no reason to be monotonic in the wage sense (a smaller sample at
+# an extreme percentile routinely has a HIGHER coefficient of variation than
+# the more densely-populated median, which is the opposite ordering pay
+# itself follows) and no reason to carry a currency (it's a percentage, and
+# its parent key already says so via its own "_pct" suffix).
+_NOT_A_WAGE_CONTAINER_RE = re.compile(r"coefficient_of_variation", re.I)
+
+
+def _family_key(field_name: str) -> tuple[str, str, str] | None:
+    """(prefix, token, suffix) for a recognised wage field name, or None."""
+    if _EXCLUDE_RE.search(field_name):
+        return None
+    m = _TOKEN_RE.search(field_name)
+    if not m:
+        return None
+    token = m.group(1).lower()
+    if token == "p50":
+        token = "median"
+    prefix, suffix = field_name[:m.start()], field_name[m.end():]
+    return (prefix, token, suffix)
+
+
+def _numeric_leaf(v):
+    """A field's own value, unwrapped from bls_oews.json's own [{year,value}]
+    time-series shape or wage_distribution.json's bare-number shape alike --
+    always the MOST RECENT point for a series, since that is what every
+    other shape's own bare number already represents (a single current
+    figure, not a history)."""
+    if isinstance(v, (int, float)):
+        return float(v)
+    if isinstance(v, list) and v and isinstance(v[-1], dict) and "value" in v[-1]:
+        val = v[-1].get("value")
+        return float(val) if isinstance(val, (int, float)) else None
+    return None
+
+
+def _has_unit(obj) -> bool:
+    return isinstance(obj, dict) and isinstance(obj.get("currency"), str) and isinstance(obj.get("period"), str)
+
+
+_CURRENCY_RE = re.compile(r"(?:^|_)(usd|eur|gbp|sek|nok|dkk|cad|aud|qar|aed)(?:_|$)", re.I)
+
+
+def _resolve_unit(prefix: str, suffix: str, container: dict, ancestors: list[dict]) -> tuple[str | None, str | None]:
+    """A family's own (currency, period), from whichever of this pipeline's
+    two real conventions applies: name-embedded (salary_*.json / bls_oews.json)
+    checked first, falling back to container/ancestor sibling fields
+    (wage_distribution.json). Shared by the unit-disclosure check and the
+    magnitude-plausibility bucketer so the two can't silently disagree about
+    which figures have a recoverable unit."""
+    unit_text = (prefix + suffix).lower()
+    period = "hour" if "hour" in unit_text else "month" if "month" in unit_text else \
+        "year" if ("annual" in unit_text or "year" in unit_text) else None
+    m = _CURRENCY_RE.search(unit_text)
+    currency = m.group(1).upper() if m else None
+    if currency and period:
+        return currency, period
+    for ctx in [container, *ancestors[-2:]]:
+        if _has_unit(ctx):
+            return ctx["currency"], ctx["period"]
+    return None, None
+
+
+def _find_families(obj, path: str, out: list[dict], ancestors: list[dict] | None = None) -> None:
+    """Recursively find every dict whose own keys include >=2 members of a
+    single (prefix, suffix) wage family, and record {path, prefix, suffix,
+    values: {token: (field_name, value)}, currency, period} — the last two
+    resolved via _resolve_unit(), None/None if genuinely unrecoverable (that
+    gap is what check_pay_fields_disclose_currency_and_period reports on;
+    here it just means this family is skipped by anything that buckets on
+    currency+period, e.g. check_magnitude_plausibility). Does not descend
+    into a family's OWN matched keys further (they're leaves for this
+    purpose) but does descend into every other key normally, so a nested
+    dispersion_by_year structure is walked into, not just its own top level."""
+    ancestors = ancestors or []
+    if isinstance(obj, dict):
+        groups: dict[tuple[str, str], dict[str, tuple[str, float]]] = {}
+        for k, v in obj.items():
+            fam = _family_key(str(k))
+            leaf = _numeric_leaf(v)
+            if fam and leaf is not None:
+                prefix, token, suffix = fam
+                groups.setdefault((prefix, suffix), {})[token] = (str(k), leaf)
+        is_wage_container = not _NOT_A_WAGE_CONTAINER_RE.search(path.rsplit(".", 1)[-1])
+        if is_wage_container:
+            for (prefix, suffix), members in groups.items():
+                if len(members) >= 2:
+                    currency, period = _resolve_unit(prefix, suffix, obj, ancestors)
+                    out.append({"path": path, "prefix": prefix, "suffix": suffix, "values": members,
+                                "currency": currency, "period": period})
+        for k, v in obj.items():
+            _find_families(v, f"{path}.{k}", out, ancestors + [obj])
+    elif isinstance(obj, list):
+        for i, item in enumerate(obj):
+            _find_families(item, f"{path}[{i}]", out, ancestors)
+
+
+def _all_families(processed_dir: Path = PROCESSED) -> list[tuple[Path, dict]]:
+    out = []
+    for p in sorted(processed_dir.glob("*.json")):
+        doc = _load(p)
+        if doc is None:
+            continue
+        families: list[dict] = []
+        _find_families(doc.get("data"), "data", families)
+        for fam in families:
+            out.append((p, fam))
+    return out
+
+
+# ---------------------------------------------------------------------------
+# distributions
+# ---------------------------------------------------------------------------
+
+def check_percentiles_monotonic(processed_dir: Path = PROCESSED) -> None:
+    log("· percentiles are monotonic (p10<=p25<=median<=p75<=p90) wherever they co-occur")
+    checked = bad = 0
+    for path, fam in _all_families(processed_dir):
+        present = [(tok, fam["values"][tok]) for tok in _ORDER if tok in fam["values"]]
+        if len(present) < 2:
+            continue
+        checked += 1
+        for (tok_a, (name_a, val_a)), (tok_b, (name_b, val_b)) in zip(present, present[1:]):
+            if val_a > val_b:
+                bad += 1
+                err(f"{path.name}:{fam['path']}: {name_a}={val_a:,g} > {name_b}={val_b:,g} "
+                    f"— percentiles must never invert ({tok_a} <= {tok_b})")
+    log(f"  {checked} distribution(s) with >=2 ordered points checked, {bad} inversion(s)")
+
+
+def check_mean_within_percentile_range(processed_dir: Path = PROCESSED) -> None:
+    log("· mean sits inside its own [p10, p90]")
+    checked = bad = 0
+    for path, fam in _all_families(processed_dir):
+        v = fam["values"]
+        if "mean" not in v or "p10" not in v or "p90" not in v:
+            continue
+        checked += 1
+        (mean_name, mean_val), (p10_name, p10_val), (p90_name, p90_val) = v["mean"], v["p10"], v["p90"]
+        if not (p10_val <= mean_val <= p90_val):
+            bad += 1
+            err(f"{path.name}:{fam['path']}: {mean_name}={mean_val:,g} is outside "
+                f"[{p10_name}={p10_val:,g}, {p90_name}={p90_val:,g}]")
+    log(f"  {checked} distribution(s) with mean+p10+p90 checked, {bad} out of range")
+
+
+def check_no_negative_or_zero_pay(processed_dir: Path = PROCESSED) -> None:
+    log("· no negative pay figures; a real $0/€0/etc. is never presented as a figure")
+    checked = bad = 0
+    for path, fam in _all_families(processed_dir):
+        for tok, (name, val) in fam["values"].items():
+            checked += 1
+            if val < 0:
+                bad += 1
+                err(f"{path.name}:{fam['path']}.{name}: negative pay figure ({val:,g})")
+            elif val == 0:
+                bad += 1
+                err(f"{path.name}:{fam['path']}.{name}: pay figure is exactly 0 — a real absence must be "
+                    "null/omitted, never a fabricated zero (see docs/REGRESSION-CATALOGUE.md R14 [Ashby/"
+                    "Lever/Greenhouse's own $0 guards] for the postings-side version of this same rule)")
+    log(f"  {checked} pay figure(s) checked, {bad} negative-or-zero")
+
+
+_KNOWN_DISTRIBUTION_LABELS = {"full", "quartile-only", "central-tendency-only", "mean-only"}
+
+
+def check_distribution_label_matches_percentile_presence(processed_dir: Path = PROCESSED) -> None:
+    """The direction validate_data.py's check_percentile_absence_explicit
+    does NOT check: a record that names itself 'central-tendency-only' or
+    'mean-only' but actually carries real percentile fields is just as
+    misleading as the reverse (percentiles present, label says there are
+    none) that check already covers -- a consumer trusting the label would
+    wrongly believe percentiles are unavailable and skip real data."""
+    log("· a 'central-tendency-only'/'mean-only' distribution label is never contradicted by real percentile fields")
+    checked = bad = 0
+    for path in sorted(processed_dir.glob("*.json")):
+        doc = _load(path)
+        if doc is None:
+            continue
+
+        def walk(obj, ctx_path):
+            nonlocal checked, bad
+            if isinstance(obj, dict):
+                dist = obj.get("distribution")
+                if isinstance(dist, str):
+                    if dist not in _KNOWN_DISTRIBUTION_LABELS:
+                        bad += 1
+                        err(f"{path.name}:{ctx_path}.distribution: unregistered value {dist!r}, "
+                            f"expected one of {sorted(_KNOWN_DISTRIBUTION_LABELS)}")
+                    elif dist in ("central-tendency-only", "mean-only"):
+                        checked += 1
+                        has_pct = any(_family_key(str(k)) and _family_key(str(k))[1] not in ("mean",)
+                                      for k in obj if isinstance(obj.get(k), (int, float)))
+                        if has_pct:
+                            bad += 1
+                            err(f"{path.name}:{ctx_path}: distribution={dist!r} but this record carries a "
+                                "real percentile field alongside it")
+                for k, v in obj.items():
+                    walk(v, f"{ctx_path}.{k}")
+            elif isinstance(obj, list):
+                for i, item in enumerate(obj):
+                    walk(item, f"{ctx_path}[{i}]")
+
+        walk(doc.get("data"), "data")
+    log(f"  {checked} labelled-central-tendency-only record(s) checked, {bad} contradicted by their own data")
+
+
+# ---------------------------------------------------------------------------
+# units / magnitude
+# ---------------------------------------------------------------------------
+
+def check_pay_fields_disclose_currency_and_period(processed_dir: Path = PROCESSED) -> None:
+    """Every pay figure's unit must be recoverable, in EITHER of this
+    pipeline's two real, legitimate conventions: the field NAME embeds it
+    (salary_*.json / bls_oews.json's own `_sek_month` / `_usd` suffixes), or
+    the immediate container carries explicit `currency`/`period` sibling
+    fields (wage_distribution.json's own convention, checked once per
+    combo/native block rather than per bare `mean`/`median` key inside it).
+    A field satisfying NEITHER is the actual failure this rule exists for."""
+    log("· every pay field's unit (currency+period) is recoverable from its name or its container")
+    checked = bad = 0
+    for path in sorted(processed_dir.glob("*.json")):
+        doc = _load(path)
+        if doc is None:
+            continue
+
+        has_unit = _has_unit
+
+        # wage_distribution.json's own convention nests the bare mean/median/
+        # p10.. fields one level under a "value" key that is a SIBLING of
+        # currency/period (native: {currency, period, value: {mean, ...}}),
+        # not their direct container — checking only the immediate parent
+        # (as a first version of this function did) flagged all 15 countries'
+        # worth of correctly-disclosed figures as unit-less. ancestors[-1] is
+        # the immediate parent, ancestors[-2] the grandparent; wage_
+        # distribution.json's shape needs the grandparent, so both are
+        # checked rather than assuming one fixed nesting depth.
+        def walk(obj, ctx_path, ancestors):
+            nonlocal checked, bad
+            if not isinstance(obj, dict):
+                if isinstance(obj, list):
+                    for i, item in enumerate(obj):
+                        walk(item, f"{ctx_path}[{i}]", ancestors)
+                return
+            # Same exclusion _find_families() applies (e.g. salary_uk.json's
+            # coefficient_of_variation_pct) — its own bare mean/p10/etc.
+            # fields are a percentage, not a pay figure, so they need no
+            # currency/period disclosure at all; not just "checked and
+            # passing", genuinely out of scope for this rule.
+            if _NOT_A_WAGE_CONTAINER_RE.search(ctx_path.rsplit(".", 1)[-1]):
+                return
+            container_has_unit = has_unit(obj) or any(has_unit(a) for a in ancestors[-2:])
+            for k, v in obj.items():
+                if isinstance(v, (int, float)):
+                    fam = _family_key(str(k))
+                    if fam is None:
+                        continue
+                    checked += 1
+                    prefix, token, suffix = fam
+                    name_embeds_unit = bool(re.search(r"[a-z]", prefix + suffix, re.I))
+                    if not name_embeds_unit and not container_has_unit:
+                        bad += 1
+                        err(f"{path.name}:{ctx_path}.{k}: bare {token} with no currency/period in its own "
+                            "name and none on its container or grandparent — this figure's unit cannot be recovered")
+                else:
+                    walk(v, f"{ctx_path}.{k}", ancestors + [obj])
+
+        walk(doc.get("data"), "data", [])
+    log(f"  {checked} pay field(s) checked, {bad} with no recoverable unit")
+
+
+def check_magnitude_plausibility(processed_dir: Path = PROCESSED) -> None:
+    """Order-of-magnitude bounds built from this dataset's OWN committed
+    values, not an externally-asserted table -- grouped by (currency,
+    period) where that's recoverable (see the check above), median +/- a
+    wide multiple of the median absolute deviation (robust to a handful of
+    real outliers skewing a plain mean/stdev). Needs >=5 points in a
+    bucket to say anything at all (fewer than that, "the data's own
+    spread" is too thin to define a bound from). Flags for review; never
+    silently dropped, never auto-"fixed"."""
+    log("· order-of-magnitude plausibility per (currency, period), bounds built from this dataset's own spread")
+    buckets: dict[tuple[str, str], list[tuple[str, str, float]]] = {}
+    for path, fam in _all_families(processed_dir):
+        # fam's own currency/period, resolved by _find_families() via
+        # _resolve_unit() -- name-embedded (salary_*.json, bls_oews.json) OR
+        # container/ancestor sibling fields (wage_distribution.json). A first
+        # version of this loop re-derived currency from prefix/suffix TEXT
+        # ALONE and skipped anything without it, which silently excluded
+        # every wage_distribution.json family (its own convention is bare
+        # mean/p10/etc. with currency on an ancestor, not in the name) from
+        # magnitude checking entirely -- 43 families in the one file the
+        # deployed site actually reads, checked by nothing. Reusing the
+        # already-resolved fields here means this bucketer and the
+        # unit-disclosure check above can't silently disagree about which
+        # figures have a recoverable unit.
+        currency, period = fam.get("currency"), fam.get("period")
+        if not currency or not period:
+            continue
+        for tok, (name, val) in fam["values"].items():
+            if tok == "mean":
+                continue  # count each distribution's own spread once via its percentiles, not mean too
+            buckets.setdefault((currency, period), []).append((path.name, name, val))
+
+    flagged = 0
+    for (currency, period), points in buckets.items():
+        if len(points) < 5:
+            continue
+        vals = [v for _, _, v in points]
+        med = statistics.median(vals)
+        mad = statistics.median([abs(v - med) for v in vals]) or (med * 0.05)
+        lo, hi = med - 8 * mad, med + 8 * mad
+        for fname, field, val in points:
+            if val < lo or val > hi:
+                flagged += 1
+                flag(f"{fname}:{field}: {val:,g} {currency}/{period} is outside this dataset's own "
+                     f"plausible range [{lo:,.0f}, {hi:,.0f}] (median {med:,.0f}, {len(points)} points in bucket) "
+                     "— review, not auto-corrected")
+    log(f"  {sum(len(v) for v in buckets.values())} figure(s) across {len(buckets)} (currency, period) bucket(s), "
+        f"{flagged} flagged for review")
+
+
+def check_embedded_cross_checks_reconcile(processed_dir: Path = PROCESSED, *, require_found: bool = True) -> None:
+    """Wherever a native record carries its own embedded cross-check
+    against a source's separately-published headline (Denmark's
+    mdrsnit_check is the one that exists today: stand_dkk_hour x its own
+    hours-per-month = computed_monthly, compared against published_mdrsnit),
+    recompute residual_pct independently rather than trust the stored
+    number -- a stale or hand-edited residual_pct would otherwise pass
+    forever. This is the Tier-1 (purely internal, no live fetch) half of
+    what Tier 2's reconcile.py generalises against LIVE sources.
+
+    require_found=False skips the "0 found is itself a finding" flag --
+    for a scratch directory constructed to test one specific violation
+    shape, 0 embedded cross-checks found is the expected setup, not a gap."""
+    log("· a native record's own embedded cross-check (e.g. Denmark's mdrsnit_check) reconciles under independent recomputation")
+    checked = bad = 0
+    for path in sorted(processed_dir.glob("*.json")):
+        doc = _load(path)
+        if doc is None:
+            continue
+
+        def walk(obj, ctx_path):
+            nonlocal checked, bad
+            if isinstance(obj, dict):
+                mc = obj.get("mdrsnit_check")
+                if isinstance(mc, dict) and all(k in mc for k in
+                        ("stand_dkk_hour", "computed_monthly", "published_mdrsnit", "residual_pct")):
+                    checked += 1
+                    # DK's own 37h/week standardised full-time week (the
+                    # near-universal Danish overenskomst convention;
+                    # src_salary_dk.py's own STANDARDISED_HOURS_PER_WEEK,
+                    # pinned here as the one external fact this check is
+                    # FOR, not re-imported, so a bug in that module can't
+                    # also blind this check to the same bug) x 52/12 =
+                    # 160.333...h/month. NOT the rounded "160.33" the
+                    # chain's own detail STRING displays for humans --
+                    # using that rounded literal here first produced a
+                    # false violation (65,504.42 recomputed vs 65,505.79
+                    # stored): the stored figure is the one that's right,
+                    # confirmed against src_salary_dk.py's own defining
+                    # formula, the same rounded-display-vs-full-precision
+                    # gap this package's own R9 regression test guards
+                    # against elsewhere (docs/REGRESSION-CATALOGUE.md).
+                    hours_per_month = 37.0 * 52 / 12
+                    recomputed = round(mc["stand_dkk_hour"] * hours_per_month, 2)
+                    if abs(recomputed - mc["computed_monthly"]) > 0.02:
+                        bad += 1
+                        err(f"{path.name}:{ctx_path}.mdrsnit_check: stand_dkk_hour ({mc['stand_dkk_hour']}) x "
+                            f"160.33h != computed_monthly — stored {mc['computed_monthly']}, recomputed {recomputed}")
+                    real_residual = round(abs(mc["computed_monthly"] - mc["published_mdrsnit"])
+                                           / mc["published_mdrsnit"] * 100, 4)
+                    if abs(real_residual - mc["residual_pct"]) > 0.001:
+                        bad += 1
+                        err(f"{path.name}:{ctx_path}.mdrsnit_check: stored residual_pct={mc['residual_pct']} "
+                            f"does not match independently recomputed {real_residual}")
+                    if real_residual > 1.0:
+                        bad += 1
+                        err(f"{path.name}:{ctx_path}.mdrsnit_check: residual {real_residual}% against DST's own "
+                            "published MDRSNIT headline exceeds the 1% sanity bound")
+                for k, v in obj.items():
+                    walk(v, f"{ctx_path}.{k}")
+            elif isinstance(obj, list):
+                for i, item in enumerate(obj):
+                    walk(item, f"{ctx_path}[{i}]")
+
+        walk(doc.get("data"), "data")
+    log(f"  {checked} embedded cross-check(s) found and independently recomputed, {bad} violation(s)")
+    if checked == 0 and require_found:
+        flag("no embedded cross-checks (e.g. mdrsnit_check) found anywhere in data/processed/ — if Denmark's "
+             "own check was renamed or removed, this function needs updating, not silently passing 0/0")
+
+
+# ---------------------------------------------------------------------------
+# freshness
+# ---------------------------------------------------------------------------
+
+# Expected refresh interval per source, by source_id pattern -- declared
+# HERE rather than per-harvester (record_provenance()'s own call sites
+# number in the dozens; centralising is the proportionate choice for a
+# metadata EXPECTATION, not a data value, and keeps every source's own
+# declared cadence visible in one place rather than scattered). First
+# matching pattern wins; unmatched sources get DEFAULT_REFRESH_MONTHS.
+_REFRESH_EXPECTATIONS_MONTHS: list[tuple[re.Pattern, int]] = [
+    (re.compile(r"^postings_"), 1),               # live job-board APIs, this project's own weekly refresh workflow targets these
+    (re.compile(r"^postings$"), 1),                # the merged cross-provider postings file
+    (re.compile(r"^fx_rates$"), 3),
+    (re.compile(r"^salary_|^bls_oews$"), 15),      # annual government wage surveys, +3mo grace for the source's own publication lag
+    (re.compile(r"^(experience_gradient|hours_worked|pay_composition)$"), 15),
+    (re.compile(r"^(world_bank|imf_weo|oecd_|un_wpp|un_migrant_stock|worldbank_gep)"), 15),
+    (re.compile(r"^(climate_normals|city_coordinates|mipex|wipo_gii|rsf_press_freedom|"
+                r"wikipedia_english_speakers|world_happiness_report)$"), 24),
+    (re.compile(r"^(bis_property_prices|fhfa_hpi_metro|teranet_national_bank_hpi|uk_hpi|numbeo_history)"), 15),
+    (re.compile(r"^levels_fyi$"), 6),
+    (re.compile(r"^stackoverflow_survey$"), 15),
+]
+DEFAULT_REFRESH_MONTHS = 15
+
+
+def _expected_refresh_months(source_id: str) -> int:
+    for pattern, months in _REFRESH_EXPECTATIONS_MONTHS:
+        if pattern.match(source_id):
+            return months
+    return DEFAULT_REFRESH_MONTHS
+
+
+def check_refresh_intervals(provenance_path: Path = PROVENANCE) -> None:
+    """Reports (does not fail the build -- the work order's own Tier 1
+    wording is explicit: "report, don't delete") any provenance entry
+    whose fetched_at is older than its own expected refresh interval.
+    check_staleness() in validate_data.py already does the curated-data
+    (cities.json/countries.json) version of this against a single blanket
+    rule from metrics.json; this is the processed-source-layer version,
+    per-source, which nothing currently checks."""
+    log("· every source is checked against its own expected refresh interval")
+    if not provenance_path.exists():
+        err("data/provenance.json missing — cannot check refresh intervals")
+        return
+    prov = json.loads(provenance_path.read_text(encoding="utf-8"))
+    today = dt.datetime.now(dt.timezone.utc)
+    stale = checked = 0
+    for entry in prov.get("entries", []):
+        sid = entry.get("source_id", "")
+        fetched = entry.get("fetched_at")
+        if not fetched:
+            continue
+        try:
+            fetched_dt = dt.datetime.fromisoformat(fetched.replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        checked += 1
+        expected = _expected_refresh_months(sid)
+        age_days = (today - fetched_dt).days
+        if age_days > expected * 30:
+            stale += 1
+            flag(f"provenance[{sid}]: fetched_at {fetched} is {age_days}d old, past its own "
+                 f"{expected}-month expected refresh interval")
+    log(f"  {checked} source(s) checked, {stale} past their own expected refresh interval")
+
+
+# ---------------------------------------------------------------------------
+
+def main() -> int:
+    log("CS Migration Compass — data audit (Tier 1 structural invariants)")
+    log("(complements `make validate` — see this file's own docstring for the split)")
+    log("")
+    check_percentiles_monotonic()
+    check_mean_within_percentile_range()
+    check_no_negative_or_zero_pay()
+    check_distribution_label_matches_percentile_presence()
+    check_pay_fields_disclose_currency_and_period()
+    check_magnitude_plausibility()
+    check_embedded_cross_checks_reconcile()
+    check_refresh_intervals()
+
+    log("")
+    if FLAGS:
+        log(f"{len(FLAGS)} flag(s) for review:")
+        for f in FLAGS[:60]:
+            log(f"  ! {f}")
+        if len(FLAGS) > 60:
+            log(f"  ... and {len(FLAGS) - 60} more")
+    if ERRORS:
+        log("")
+        log(f"{len(ERRORS)} ERROR(s):")
+        for e in ERRORS:
+            log(f"  x {e}")
+        log("")
+        log("FAILED")
+        return 1
+    log("")
+    log("PASSED — every processed dataset's own structural invariants hold (or are explicitly flagged for review).")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
