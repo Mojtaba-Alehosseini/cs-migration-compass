@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-08-21T14:12:34+00:00",
+ "generated_at": "2026-08-21T17:05:55+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -20,19 +20,19 @@
    "excluded": [
     {
      "country": "ES",
-     "reason": "ES's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which ES cannot meet"
+     "reason": "ES's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which ES cannot meet"
     },
     {
      "country": "IE",
-     "reason": "IE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which IE cannot meet"
+     "reason": "IE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which IE cannot meet"
     },
     {
      "country": "QA",
-     "reason": "QA's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which QA cannot meet"
+     "reason": "QA's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which QA cannot meet"
     },
     {
      "country": "AE",
-     "reason": "AE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which AE cannot meet"
+     "reason": "AE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which AE cannot meet"
     },
     {
      "country": "NL",
@@ -40,7 +40,7 @@
     },
     {
      "country": "DE",
-     "reason": "DE's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which DE cannot meet"
+     "reason": "DE's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which DE cannot meet"
     }
    ]
   },
@@ -138,9 +138,7 @@
     "chart_comparable": {
      "comparable": true,
      "depth": 4,
-     "own_depth": 4,
-     "degraded": false,
-     "degraded_by": null
+     "own_depth": 4
     }
    },
    {
@@ -236,9 +234,7 @@
     "chart_comparable": {
      "comparable": true,
      "depth": 4,
-     "own_depth": 4,
-     "degraded": false,
-     "degraded_by": null
+     "own_depth": 4
     }
    },
    {
@@ -334,9 +330,7 @@
     "chart_comparable": {
      "comparable": true,
      "depth": 4,
-     "own_depth": 4,
-     "degraded": false,
-     "degraded_by": null
+     "own_depth": 4
     }
    },
    {
@@ -539,9 +533,7 @@
     "chart_comparable": {
      "comparable": true,
      "depth": 4,
-     "own_depth": 4,
-     "degraded": false,
-     "degraded_by": null
+     "own_depth": 4
     }
    },
    {
@@ -681,9 +673,7 @@
     "chart_comparable": {
      "comparable": true,
      "depth": 4,
-     "own_depth": 4,
-     "degraded": false,
-     "degraded_by": null
+     "own_depth": 4
     }
    },
    {
@@ -823,9 +813,7 @@
     "chart_comparable": {
      "comparable": true,
      "depth": 4,
-     "own_depth": 4,
-     "degraded": false,
-     "degraded_by": null
+     "own_depth": 4
     }
    },
    {
@@ -921,9 +909,7 @@
     "chart_comparable": {
      "comparable": true,
      "depth": 4,
-     "own_depth": 4,
-     "degraded": false,
-     "degraded_by": null
+     "own_depth": 4
     }
    },
    {
@@ -1018,7 +1004,7 @@
     },
     "chart_comparable": {
      "comparable": false,
-     "reason": "ES's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which ES cannot meet"
+     "reason": "ES's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which ES cannot meet"
     }
    },
    {
@@ -1121,7 +1107,7 @@
     },
     "chart_comparable": {
      "comparable": false,
-     "reason": "IE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which IE cannot meet"
+     "reason": "IE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which IE cannot meet"
     }
    },
    {
@@ -1172,7 +1158,7 @@
     },
     "chart_comparable": {
      "comparable": false,
-     "reason": "QA's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which QA cannot meet"
+     "reason": "QA's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which QA cannot meet"
     }
    },
    {
@@ -1223,7 +1209,7 @@
     },
     "chart_comparable": {
      "comparable": false,
-     "reason": "AE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which AE cannot meet"
+     "reason": "AE's own occupation mapping reaches only 1-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which AE cannot meet"
     }
    },
    {
@@ -1471,7 +1457,7 @@
     },
     "chart_comparable": {
      "comparable": false,
-     "reason": "DE's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA-21231, CA-21232, DK, FI, GB, NO, SE, US) share 4-digit depth, which DE cannot meet"
+     "reason": "DE's own occupation mapping reaches only 2-digit ISCO-08 depth; the other countries on this chart (AU, CA, DK, FI, GB, NO, SE, US) share 4-digit depth, which DE cannot meet"
     }
    },
    {
@@ -1523,9 +1509,7 @@
     "chart_comparable": {
      "comparable": true,
      "depth": 4,
-     "own_depth": 4,
-     "degraded": false,
-     "degraded_by": null
+     "own_depth": 4
     }
    },
    {
@@ -1577,9 +1561,7 @@
     "chart_comparable": {
      "comparable": true,
      "depth": 4,
-     "own_depth": 4,
-     "degraded": false,
-     "degraded_by": null
+     "own_depth": 4
     }
    }
   ],

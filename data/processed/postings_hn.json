@@ -1,33 +1,54 @@
 {
  "source_id": "postings_hn",
- "generated_at": "2026-08-17T07:43:01+00:00",
+ "generated_at": "2026-08-21T17:52:29+00:00",
  "meta": {
   "thread_found": true,
   "thread_id": 49156683,
-  "postings_count": 242,
-  "compensation_present_count": 73
+  "postings_count": 243,
+  "compensation_present_count": 74
  },
  "data": {
   "postings": [
    {
-    "id": "hn:49322552",
+    "id": "hn:49165394",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Arboreal Management | Principal Software Engineer | Seattle, WA | ONSITE | $160–180k",
-    "location_raw": "Arboreal Management | Principal Software Engineer | Seattle, WA | ONSITE | $160–180k",
-    "country": "US",
+    "title": "Proxima Fusion | Senior Software Engineer (Dev Platform) | Munich, Germany | ONSITE | Full-time",
+    "location_raw": "Proxima Fusion | Senior Software Engineer (Dev Platform) | Munich, Germany | ONSITE | Full-time",
+    "country": "DE",
     "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49322552",
+    "url": "https://news.ycombinator.com/item?id=49165394",
     "posted_at": null,
-    "compensation": {
-     "min": 160000.0,
-     "max": 180000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Arboreal Management | Principal Software Engineer | Seattle, WA | ONSITE | $160–180k",
-     "confidence": "parsed_text"
-    },
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49159312",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "CodeWeavers | St Paul, MN, USA | Full Time | REMOTE | macOS low-level Open Source Developers | C-language systems programming",
+    "location_raw": "CodeWeavers | St Paul, MN, USA | Full Time | REMOTE | macOS low-level Open Source Developers | C-language systems programming",
+    "country": "US",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49159312",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49159002",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Friendly Captcha | Developer Relations | PART-TIME or FULL-TIME | Munich area, Germany | https://friendlycaptcha.com",
+    "location_raw": "Friendly Captcha | Developer Relations | PART-TIME or FULL-TIME | Munich area, Germany | https://friendlycaptcha.com",
+    "country": "DE",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49159002",
+    "posted_at": null,
+    "compensation": null,
     "occupation": null
    },
    {
@@ -52,62 +73,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49159312",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "CodeWeavers | St Paul, MN, USA | Full Time | REMOTE | macOS low-level Open Source Developers | C-language systems programming",
-    "location_raw": "CodeWeavers | St Paul, MN, USA | Full Time | REMOTE | macOS low-level Open Source Developers | C-language systems programming",
-    "country": "US",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49159312",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49165394",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Proxima Fusion | Senior Software Engineer (Dev Platform) | Munich, Germany | ONSITE | Full-time",
-    "location_raw": "Proxima Fusion | Senior Software Engineer (Dev Platform) | Munich, Germany | ONSITE | Full-time",
-    "country": "DE",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49165394",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49159002",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Friendly Captcha | Developer Relations | PART-TIME or FULL-TIME | Munich area, Germany | https://friendlycaptcha.com",
-    "location_raw": "Friendly Captcha | Developer Relations | PART-TIME or FULL-TIME | Munich area, Germany | https://friendlycaptcha.com",
-    "country": "DE",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49159002",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49291876",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Alaffia Health | Principal Engineer (TypeScript) | NYC (Hybrid) | Full-time",
-    "location_raw": "Alaffia Health | Principal Engineer (TypeScript) | NYC (Hybrid) | Full-time",
-    "country": null,
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49291876",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49159996",
     "provider": "hn",
     "company": null,
@@ -122,17 +87,24 @@
     "occupation": null
    },
    {
-    "id": "hn:49296620",
+    "id": "hn:49322552",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Choco | Senior Software Engineer, Platform | Berlin - Hybrid Onsite | Typescript+AWS | Full-time",
-    "location_raw": "Choco | Senior Software Engineer, Platform | Berlin - Hybrid Onsite | Typescript+AWS | Full-time",
-    "country": "DE",
+    "title": "Arboreal Management | Principal Software Engineer | Seattle, WA | ONSITE | $160–180k",
+    "location_raw": "Arboreal Management | Principal Software Engineer | Seattle, WA | ONSITE | $160–180k",
+    "country": "US",
     "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49296620",
+    "url": "https://news.ycombinator.com/item?id=49322552",
     "posted_at": null,
-    "compensation": null,
+    "compensation": {
+     "min": 160000.0,
+     "max": 180000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Arboreal Management | Principal Software Engineer | Seattle, WA | ONSITE | $160–180k",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {
@@ -157,6 +129,55 @@
     "occupation": null
    },
    {
+    "id": "hn:49291876",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Alaffia Health | Principal Engineer (TypeScript) | NYC (Hybrid) | Full-time",
+    "location_raw": "Alaffia Health | Principal Engineer (TypeScript) | NYC (Hybrid) | Full-time",
+    "country": null,
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49291876",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49336502",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Spade | Multiple Engineering + Data Science Roles | ONSITE NYC or REMOTE (US/Can) | $170-240K + equity",
+    "location_raw": "Spade | Multiple Engineering + Data Science Roles | ONSITE NYC or REMOTE (US/Can) | $170-240K + equity",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49336502",
+    "posted_at": null,
+    "compensation": {
+     "min": 170000.0,
+     "max": 240000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Spade | Multiple Engineering + Data Science Roles | ONSITE NYC or REMOTE (US/Can) | $170-240K + equity",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
+    "id": "hn:49163160",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Stellar Science | Hybrid (USA) Albuquerque NM, Washington DC (Tysons VA), Dayton OH | Full time, interns/co-ops | U.S. citizenship required | https://www.stellarscience.com",
+    "location_raw": "Stellar Science | Hybrid (USA) Albuquerque NM, Washington DC (Tysons VA), Dayton OH | Full time, interns/co-ops | U.S. citizenship required | https://",
+    "country": "US",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49163160",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49284614",
     "provider": "hn",
     "company": null,
@@ -171,15 +192,43 @@
     "occupation": null
    },
    {
-    "id": "hn:49313253",
+    "id": "hn:49296620",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Olli Technologies | Founding Engineer & Technical Lead | REMOTE (US) | Fractional / Contract | Equity-only (2–5%)",
-    "location_raw": "Olli Technologies | Founding Engineer & Technical Lead | REMOTE (US) | Fractional / Contract | Equity-only (2–5%)",
+    "title": "Choco | Senior Software Engineer, Platform | Berlin - Hybrid Onsite | Typescript+AWS | Full-time",
+    "location_raw": "Choco | Senior Software Engineer, Platform | Berlin - Hybrid Onsite | Typescript+AWS | Full-time",
+    "country": "DE",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49296620",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49166970",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Spore.Bio | Senior Software Engineer | Paris, France | Hybrid (Flexible)",
+    "location_raw": "Spore.Bio | Senior Software Engineer | Paris, France | Hybrid (Flexible)",
+    "country": "FR",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49166970",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49163576",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Eleos Technologies (https://eleostech.com) | Remote Senior iOS Engineer | Permanently Remote (US-based applicants only) | Full time",
+    "location_raw": "Eleos Technologies (https://eleostech.com) | Remote Senior iOS Engineer | Permanently Remote (US-based applicants only) | Full time",
     "country": null,
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49313253",
+    "url": "https://news.ycombinator.com/item?id=49163576",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -227,111 +276,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49292852",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Orbit Technologies | Fullstack Engineer | Boston | Full-time",
-    "location_raw": "Orbit Technologies | Fullstack Engineer | Boston | Full-time",
-    "country": "US",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49292852",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49163160",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Stellar Science | Hybrid (USA) Albuquerque NM, Washington DC (Tysons VA), Dayton OH | Full time, interns/co-ops | U.S. citizenship required | https://www.stellarscience.com",
-    "location_raw": "Stellar Science | Hybrid (USA) Albuquerque NM, Washington DC (Tysons VA), Dayton OH | Full time, interns/co-ops | U.S. citizenship required | https://",
-    "country": "US",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49163160",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49326458",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "CreativeLens.ai | Founding Growth & Partnerships Lead | REMOTE (Worldwide) | Full-time / Contract-to-hire",
-    "location_raw": "CreativeLens.ai | Founding Growth & Partnerships Lead | REMOTE (Worldwide) | Full-time / Contract-to-hire",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49326458",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49163576",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Eleos Technologies (https://eleostech.com) | Remote Senior iOS Engineer | Permanently Remote (US-based applicants only) | Full time",
-    "location_raw": "Eleos Technologies (https://eleostech.com) | Remote Senior iOS Engineer | Permanently Remote (US-based applicants only) | Full time",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49163576",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49265260",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Silicon45 | kdb+/q Expert | Contract (part-time OK) | Portland, OR (Hybrid) or Remote",
-    "location_raw": "Silicon45 | kdb+/q Expert | Contract (part-time OK) | Portland, OR (Hybrid) or Remote",
-    "country": "US",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49265260",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49244466",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Instinct Science | Senior Full-Stack Engineer (Elixir + React) | REMOTE (US)",
-    "location_raw": "Instinct Science | Senior Full-Stack Engineer (Elixir + React) | REMOTE (US)",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49244466",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49267985",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Ai2 / Allen Institute for AI | Senior Software Engineer | Seattle | Onsite",
-    "location_raw": "Ai2 / Allen Institute for AI | Senior Software Engineer | Seattle | Onsite",
-    "country": "US",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49267985",
-    "posted_at": null,
-    "compensation": {
-     "min": 146000.0,
-     "max": 220000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Comp: $146–220k base + bonus + benefits.",
-     "confidence": "parsed_text"
-    },
-    "occupation": null
-   },
-   {
     "id": "hn:49230580",
     "provider": "hn",
     "company": null,
@@ -353,41 +297,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49280288",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Tessellate | Full Stack Engineer | Hybrid | Nashville, TN | Full-time",
-    "location_raw": "Tessellate | Full Stack Engineer | Hybrid | Nashville, TN | Full-time",
-    "country": "US",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49280288",
-    "posted_at": null,
-    "compensation": {
-     "min": 100000.0,
-     "max": 130000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "$100K - $130K apply at https://jobs.gem.com/tessellate/am9icG9zdDrOWl6wmQoqG4beEY9k...",
-     "confidence": "parsed_text"
-    },
-    "occupation": null
-   },
-   {
-    "id": "hn:49282255",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Location: Charleston SC",
-    "location_raw": "Remote: Yes",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49282255",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49185103",
     "provider": "hn",
     "company": null,
@@ -397,6 +306,34 @@
     "country": "GB",
     "remote": true,
     "url": "https://news.ycombinator.com/item?id=49185103",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49244466",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Instinct Science | Senior Full-Stack Engineer (Elixir + React) | REMOTE (US)",
+    "location_raw": "Instinct Science | Senior Full-Stack Engineer (Elixir + React) | REMOTE (US)",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49244466",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49265260",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Silicon45 | kdb+/q Expert | Contract (part-time OK) | Portland, OR (Hybrid) or Remote",
+    "location_raw": "Silicon45 | kdb+/q Expert | Contract (part-time OK) | Portland, OR (Hybrid) or Remote",
+    "country": "US",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49265260",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -423,6 +360,27 @@
     "occupation": null
    },
    {
+    "id": "hn:49267985",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Ai2 / Allen Institute for AI | Senior Software Engineer | Seattle | Onsite",
+    "location_raw": "Ai2 / Allen Institute for AI | Senior Software Engineer | Seattle | Onsite",
+    "country": "US",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49267985",
+    "posted_at": null,
+    "compensation": {
+     "min": 146000.0,
+     "max": 220000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Comp: $146–220k base + bonus + benefits.",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
     "id": "hn:49213747",
     "provider": "hn",
     "company": null,
@@ -444,15 +402,15 @@
     "occupation": null
    },
    {
-    "id": "hn:49260542",
+    "id": "hn:49292852",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Bactrix | Founding Software Engineer | REMOTE | Equity | AI/Biotech",
-    "location_raw": "Bactrix | Founding Software Engineer | REMOTE | Equity | AI/Biotech",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49260542",
+    "title": "Orbit Technologies | Fullstack Engineer | Boston | Full-time",
+    "location_raw": "Orbit Technologies | Fullstack Engineer | Boston | Full-time",
+    "country": "US",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49292852",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -469,69 +427,6 @@
     "url": "https://news.ycombinator.com/item?id=49212742",
     "posted_at": null,
     "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49278096",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "XP Health | Senior Full Stack Engineer | ONSITE 2-3 days per week — San Carlos, CA | Full-time",
-    "location_raw": "XP Health | Senior Full Stack Engineer | ONSITE 2-3 days per week — San Carlos, CA | Full-time",
-    "country": null,
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49278096",
-    "posted_at": null,
-    "compensation": {
-     "min": 180000.0,
-     "max": 220000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "$180K–$220K base + equity, bonus, and strong benefits.",
-     "confidence": "parsed_text"
-    },
-    "occupation": null
-   },
-   {
-    "id": "hn:49270021",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Evaboot | Agentic Python Engineer | REMOTE | Full-time | $70-120K USD",
-    "location_raw": "Evaboot | Agentic Python Engineer | REMOTE | Full-time | $70-120K USD",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49270021",
-    "posted_at": null,
-    "compensation": {
-     "min": 70000.0,
-     "max": 120000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Evaboot | Agentic Python Engineer | REMOTE | Full-time | $70-120K USD",
-     "confidence": "parsed_text"
-    },
-    "occupation": null
-   },
-   {
-    "id": "hn:49227265",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Dave Evans | Founding Engineer | Remote | Full-time | $170k-$210k + meaningful equity",
-    "location_raw": "Dave Evans | Founding Engineer | Remote | Full-time | $170k-$210k + meaningful equity",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49227265",
-    "posted_at": null,
-    "compensation": {
-     "min": 170000.0,
-     "max": 210000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Dave Evans | Founding Engineer | Remote | Full-time | $170k-$210k + meaningful equity",
-     "confidence": "parsed_text"
-    },
     "occupation": null
    },
    {
@@ -584,50 +479,15 @@
     "occupation": null
    },
    {
-    "id": "hn:49194503",
+    "id": "hn:49282255",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "LAGO - https://getlago.com/hiring#jobs | Hiring GTM / Sales Positions",
-    "location_raw": "LAGO - https://getlago.com/hiring#jobs | Hiring GTM / Sales Positions",
-    "country": null,
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49194503",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49215237",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Deepline | NYC (ONSITE) | Founding Full-stack Engineers and Forward Deployed Engineers | $160k–$230k + meaningful equity",
-    "location_raw": "Deepline | NYC (ONSITE) | Founding Full-stack Engineers and Forward Deployed Engineers | $160k–$230k + meaningful equity",
-    "country": null,
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49215237",
-    "posted_at": null,
-    "compensation": {
-     "min": 160000.0,
-     "max": 230000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Deepline | NYC (ONSITE) | Founding Full-stack Engineers and Forward Deployed Engineers | $160k–$230k + meaningful equity",
-     "confidence": "parsed_text"
-    },
-    "occupation": null
-   },
-   {
-    "id": "hn:49198416",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Estuary | US-Based / Remote | Full-time – https://estuary.dev/ Estuary is a VC-backed, post–Series A startup powering right-time data replication and transform — from sub-second CDC replication to ter",
-    "location_raw": "Estuary | US-Based / Remote | Full-time – https://estuary.dev/ Estuary is a VC-backed, post–Series A startup powering right-time data replication and ",
+    "title": "Location: Charleston SC",
+    "location_raw": "Remote: Yes",
     "country": null,
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49198416",
+    "url": "https://news.ycombinator.com/item?id=49282255",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -642,6 +502,34 @@
     "country": "SE",
     "remote": null,
     "url": "https://news.ycombinator.com/item?id=49171913",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49194503",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "LAGO - https://getlago.com/hiring#jobs | Hiring GTM / Sales Positions",
+    "location_raw": "LAGO - https://getlago.com/hiring#jobs | Hiring GTM / Sales Positions",
+    "country": null,
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49194503",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49260542",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Bactrix | Founding Software Engineer | REMOTE | Equity | AI/Biotech",
+    "location_raw": "Bactrix | Founding Software Engineer | REMOTE | Equity | AI/Biotech",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49260542",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -682,22 +570,36 @@
     "occupation": null
    },
    {
-    "id": "hn:49246737",
+    "id": "hn:49198416",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Chronograph (chronograph.pe) | Platform Engineer | Full-Time | Remote (US) | $175,000 - $215,000 USD + equity",
-    "location_raw": "Chronograph (chronograph.pe) | Platform Engineer | Full-Time | Remote (US) | $175,000 - $215,000 USD + equity",
+    "title": "Estuary | US-Based / Remote | Full-time – https://estuary.dev/ Estuary is a VC-backed, post–Series A startup powering right-time data replication and transform — from sub-second CDC replication to ter",
+    "location_raw": "Estuary | US-Based / Remote | Full-time – https://estuary.dev/ Estuary is a VC-backed, post–Series A startup powering right-time data replication and ",
     "country": null,
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49246737",
+    "url": "https://news.ycombinator.com/item?id=49198416",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49227265",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Dave Evans | Founding Engineer | Remote | Full-time | $170k-$210k + meaningful equity",
+    "location_raw": "Dave Evans | Founding Engineer | Remote | Full-time | $170k-$210k + meaningful equity",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49227265",
     "posted_at": null,
     "compensation": {
-     "min": 175000.0,
-     "max": 215000.0,
+     "min": 170000.0,
+     "max": 210000.0,
      "currency": "USD",
      "period": "year",
-     "raw_text": "Chronograph (chronograph.pe) | Platform Engineer | Full-Time | Remote (US) | $175,000 - $215,000 USD + equity",
+     "raw_text": "Dave Evans | Founding Engineer | Remote | Full-time | $170k-$210k + meaningful equity",
      "confidence": "parsed_text"
     },
     "occupation": null
@@ -738,6 +640,41 @@
     "occupation": null
    },
    {
+    "id": "hn:49215237",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Deepline | NYC (ONSITE) | Founding Full-stack Engineers and Forward Deployed Engineers | $160k–$230k + meaningful equity",
+    "location_raw": "Deepline | NYC (ONSITE) | Founding Full-stack Engineers and Forward Deployed Engineers | $160k–$230k + meaningful equity",
+    "country": null,
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49215237",
+    "posted_at": null,
+    "compensation": {
+     "min": 160000.0,
+     "max": 230000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Deepline | NYC (ONSITE) | Founding Full-stack Engineers and Forward Deployed Engineers | $160k–$230k + meaningful equity",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
+    "id": "hn:49313253",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Olli Technologies | Founding Engineer & Technical Lead | REMOTE (US) | Fractional / Contract | Equity-only (2–5%)",
+    "location_raw": "Olli Technologies | Founding Engineer & Technical Lead | REMOTE (US) | Fractional / Contract | Equity-only (2–5%)",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49313253",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49169663",
     "provider": "hn",
     "company": null,
@@ -749,6 +686,27 @@
     "url": "https://news.ycombinator.com/item?id=49169663",
     "posted_at": null,
     "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49163907",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Detections.ai | Full-Stack Engineer, Detection Platform | REMOTE (US & Canada) | Full-time",
+    "location_raw": "Detections.ai | Full-Stack Engineer, Detection Platform | REMOTE (US & Canada) | Full-time",
+    "country": "CA",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49163907",
+    "posted_at": null,
+    "compensation": {
+     "min": 150000.0,
+     "max": 225000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Expected annual base salary: US$150,000–$225,000, or the Canadian-dollar equivalent, plus equity. The exact offer will depend on experience and role scope.",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {
@@ -777,48 +735,6 @@
     "url": "https://news.ycombinator.com/item?id=49169157",
     "posted_at": null,
     "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49163907",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Detections.ai | Full-Stack Engineer, Detection Platform | REMOTE (US & Canada) | Full-time",
-    "location_raw": "Detections.ai | Full-Stack Engineer, Detection Platform | REMOTE (US & Canada) | Full-time",
-    "country": "CA",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49163907",
-    "posted_at": null,
-    "compensation": {
-     "min": 150000.0,
-     "max": 225000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Expected annual base salary: US$150,000–$225,000, or the Canadian-dollar equivalent, plus equity. The exact offer will depend on experience and role scope.",
-     "confidence": "parsed_text"
-    },
-    "occupation": null
-   },
-   {
-    "id": "hn:49200756",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Aeqium | Product Engineer | San Francisco (SF) | HYBRID | $110k-$170k + Equity | US CITIZEN / GREEN CARD ONLY (NO VISA SPONSORSHIP)",
-    "location_raw": "Aeqium | Product Engineer | San Francisco (SF) | HYBRID | $110k-$170k + Equity | US CITIZEN / GREEN CARD ONLY (NO VISA SPONSORSHIP)",
-    "country": "US",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49200756",
-    "posted_at": null,
-    "compensation": {
-     "min": 110000.0,
-     "max": 170000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Aeqium | Product Engineer | San Francisco (SF) | HYBRID | $110k-$170k + Equity | US CITIZEN / GREEN CARD ONLY (NO VISA SPONSORSHIP)",
-     "confidence": "parsed_text"
-    },
     "occupation": null
    },
    {
@@ -899,6 +815,27 @@
     "occupation": null
    },
    {
+    "id": "hn:49200756",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Aeqium | Product Engineer | San Francisco (SF) | HYBRID | $110k-$170k + Equity | US CITIZEN / GREEN CARD ONLY (NO VISA SPONSORSHIP)",
+    "location_raw": "Aeqium | Product Engineer | San Francisco (SF) | HYBRID | $110k-$170k + Equity | US CITIZEN / GREEN CARD ONLY (NO VISA SPONSORSHIP)",
+    "country": "US",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49200756",
+    "posted_at": null,
+    "compensation": {
+     "min": 110000.0,
+     "max": 170000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Aeqium | Product Engineer | San Francisco (SF) | HYBRID | $110k-$170k + Equity | US CITIZEN / GREEN CARD ONLY (NO VISA SPONSORSHIP)",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
     "id": "hn:49180088",
     "provider": "hn",
     "company": null,
@@ -948,34 +885,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49262437",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "SpendAi | Seattle, WA | ONSITE | Senior Software Engineer | Engineer #4",
-    "location_raw": "SpendAi | Seattle, WA | ONSITE | Senior Software Engineer | Engineer #4",
-    "country": "US",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49262437",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49245007",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Torq Interface | Product Engineer (Early Career) | Ruby / TypeScript | Remote (USA) | $90k",
-    "location_raw": "Torq Interface | Product Engineer (Early Career) | Ruby / TypeScript | Remote (USA) | $90k",
-    "country": "US",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49245007",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49168047",
     "provider": "hn",
     "company": null,
@@ -997,20 +906,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49166970",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Spore.Bio | Senior Software Engineer | Paris, France | Hybrid (Flexible)",
-    "location_raw": "Spore.Bio | Senior Software Engineer | Paris, France | Hybrid (Flexible)",
-    "country": "FR",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49166970",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49162565",
     "provider": "hn",
     "company": null,
@@ -1020,20 +915,6 @@
     "country": "GB",
     "remote": true,
     "url": "https://news.ycombinator.com/item?id=49162565",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49289931",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Data analyst | Chicago, IL or Washington DC only| No visa sponsorship",
-    "location_raw": "Data analyst | Chicago, IL or Washington DC only| No visa sponsorship",
-    "country": "US",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49289931",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -1053,17 +934,24 @@
     "occupation": null
    },
    {
-    "id": "hn:49271778",
+    "id": "hn:49278096",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Odin | Senior Design Engineer, Senior Platform Engineer — Edge Systems | Remote (US) | Full-time",
-    "location_raw": "Odin | Senior Design Engineer, Senior Platform Engineer — Edge Systems | Remote (US) | Full-time",
+    "title": "XP Health | Senior Full Stack Engineer | ONSITE 2-3 days per week — San Carlos, CA | Full-time",
+    "location_raw": "XP Health | Senior Full Stack Engineer | ONSITE 2-3 days per week — San Carlos, CA | Full-time",
     "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49271778",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49278096",
     "posted_at": null,
-    "compensation": null,
+    "compensation": {
+     "min": 180000.0,
+     "max": 220000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "$180K–$220K base + equity, bonus, and strong benefits.",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {
@@ -1116,6 +1004,27 @@
     "occupation": null
    },
    {
+    "id": "hn:49246737",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Chronograph (chronograph.pe) | Platform Engineer | Full-Time | Remote (US) | $175,000 - $215,000 USD + equity",
+    "location_raw": "Chronograph (chronograph.pe) | Platform Engineer | Full-Time | Remote (US) | $175,000 - $215,000 USD + equity",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49246737",
+    "posted_at": null,
+    "compensation": {
+     "min": 175000.0,
+     "max": 215000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Chronograph (chronograph.pe) | Platform Engineer | Full-Time | Remote (US) | $175,000 - $215,000 USD + equity",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
     "id": "hn:49165870",
     "provider": "hn",
     "company": null,
@@ -1127,6 +1036,27 @@
     "url": "https://news.ycombinator.com/item?id=49165870",
     "posted_at": null,
     "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49270021",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Evaboot | Agentic Python Engineer | REMOTE | Full-time | $70-120K USD",
+    "location_raw": "Evaboot | Agentic Python Engineer | REMOTE | Full-time | $70-120K USD",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49270021",
+    "posted_at": null,
+    "compensation": {
+     "min": 70000.0,
+     "max": 120000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Evaboot | Agentic Python Engineer | REMOTE | Full-time | $70-120K USD",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {
@@ -1186,45 +1116,31 @@
     "occupation": null
    },
    {
-    "id": "hn:49295167",
+    "id": "hn:49245007",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Prophet Town LLC | Various Software Engineering Roles | US – Remote and Hybrid | English fluency required | Full-time | $150K-$260K annual total comp (multiple)",
-    "location_raw": "Prophet Town LLC | Various Software Engineering Roles | US – Remote and Hybrid | English fluency required | Full-time | $150K-$260K annual total comp ",
-    "country": null,
+    "title": "Torq Interface | Product Engineer (Early Career) | Ruby / TypeScript | Remote (USA) | $90k",
+    "location_raw": "Torq Interface | Product Engineer (Early Career) | Ruby / TypeScript | Remote (USA) | $90k",
+    "country": "US",
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49295167",
+    "url": "https://news.ycombinator.com/item?id=49245007",
     "posted_at": null,
-    "compensation": {
-     "min": 150000.0,
-     "max": 260000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Prophet Town LLC | Various Software Engineering Roles | US – Remote and Hybrid | English fluency required | Full-time | $150K-$260K annual total comp (multiple)",
-     "confidence": "parsed_text"
-    },
+    "compensation": null,
     "occupation": null
    },
    {
-    "id": "hn:49223303",
+    "id": "hn:49262437",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "ResortPass | Senior Software Engineer, Frontend | New York, NY | Full-time, In-Office | $160K-$180K + equity | resortpass.com",
-    "location_raw": "ResortPass | Senior Software Engineer, Frontend | New York, NY | Full-time, In-Office | $160K-$180K + equity | resortpass.com",
+    "title": "SpendAi | Seattle, WA | ONSITE | Senior Software Engineer | Engineer #4",
+    "location_raw": "SpendAi | Seattle, WA | ONSITE | Senior Software Engineer | Engineer #4",
     "country": "US",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49223303",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49262437",
     "posted_at": null,
-    "compensation": {
-     "min": 160000.0,
-     "max": 180000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "ResortPass | Senior Software Engineer, Frontend | New York, NY | Full-time, In-Office | $160K-$180K + equity | resortpass.com",
-     "confidence": "parsed_text"
-    },
+    "compensation": null,
     "occupation": null
    },
    {
@@ -1239,27 +1155,6 @@
     "url": "https://news.ycombinator.com/item?id=49216288",
     "posted_at": null,
     "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49212807",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Statecraft | Forward Deployed Engineer (Sr/Staff) | REMOTE (US) | $160-220k + equity",
-    "location_raw": "Statecraft | Forward Deployed Engineer (Sr/Staff) | REMOTE (US) | $160-220k + equity",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49212807",
-    "posted_at": null,
-    "compensation": {
-     "min": 160000.0,
-     "max": 220000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Statecraft | Forward Deployed Engineer (Sr/Staff) | REMOTE (US) | $160-220k + equity",
-     "confidence": "parsed_text"
-    },
     "occupation": null
    },
    {
@@ -1298,6 +1193,62 @@
     "occupation": null
    },
    {
+    "id": "hn:49223303",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "ResortPass | Senior Software Engineer, Frontend | New York, NY | Full-time, In-Office | $160K-$180K + equity | resortpass.com",
+    "location_raw": "ResortPass | Senior Software Engineer, Frontend | New York, NY | Full-time, In-Office | $160K-$180K + equity | resortpass.com",
+    "country": "US",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49223303",
+    "posted_at": null,
+    "compensation": {
+     "min": 160000.0,
+     "max": 180000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "ResortPass | Senior Software Engineer, Frontend | New York, NY | Full-time, In-Office | $160K-$180K + equity | resortpass.com",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
+    "id": "hn:49160057",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Brain Corp | Multiple positions engineering/operations/product |  San Diego CA | Most roles ONSITE, some REMOTE",
+    "location_raw": "Brain Corp | Multiple positions engineering/operations/product |  San Diego CA | Most roles ONSITE, some REMOTE",
+    "country": "US",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49160057",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49212807",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Statecraft | Forward Deployed Engineer (Sr/Staff) | REMOTE (US) | $160-220k + equity",
+    "location_raw": "Statecraft | Forward Deployed Engineer (Sr/Staff) | REMOTE (US) | $160-220k + equity",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49212807",
+    "posted_at": null,
+    "compensation": {
+     "min": 160000.0,
+     "max": 220000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Statecraft | Forward Deployed Engineer (Sr/Staff) | REMOTE (US) | $160-220k + equity",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
     "id": "hn:49199157",
     "provider": "hn",
     "company": null,
@@ -1319,57 +1270,36 @@
     "occupation": null
    },
    {
-    "id": "hn:49302719",
+    "id": "hn:49271778",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "DAT | Engineering Manager, Senior Engineering Manager | Seattle, Portland, Denver | Hybrid 2-3 days/week | Full-time | $192k - $261k",
-    "location_raw": "DAT | Engineering Manager, Senior Engineering Manager | Seattle, Portland, Denver | Hybrid 2-3 days/week | Full-time | $192k - $261k",
-    "country": "US",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49302719",
-    "posted_at": null,
-    "compensation": {
-     "min": 192000.0,
-     "max": 261000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "DAT | Engineering Manager, Senior Engineering Manager | Seattle, Portland, Denver | Hybrid 2-3 days/week | Full-time | $192k - $261k",
-     "confidence": "parsed_text"
-    },
-    "occupation": null
-   },
-   {
-    "id": "hn:49160057",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Brain Corp | Multiple positions engineering/operations/product |  San Diego CA | Most roles ONSITE, some REMOTE",
-    "location_raw": "Brain Corp | Multiple positions engineering/operations/product |  San Diego CA | Most roles ONSITE, some REMOTE",
-    "country": "US",
+    "title": "Odin | Senior Design Engineer, Senior Platform Engineer — Edge Systems | Remote (US) | Full-time",
+    "location_raw": "Odin | Senior Design Engineer, Senior Platform Engineer — Edge Systems | Remote (US) | Full-time",
+    "country": null,
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49160057",
+    "url": "https://news.ycombinator.com/item?id=49271778",
     "posted_at": null,
     "compensation": null,
     "occupation": null
    },
    {
-    "id": "hn:49215960",
+    "id": "hn:49164461",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Furtim Modus | Hiring Java Developer (Full-Time) | NYC (HYBRID) | $125K-$250K + equity | https://www.furtimmodus.com/software-engineer",
-    "location_raw": "Furtim Modus | Hiring Java Developer (Full-Time) | NYC (HYBRID) | $125K-$250K + equity | https://www.furtimmodus.com/software-engineer",
+    "title": "Hestus | Machine Learning Engineer (Python, ML) | Peninsula (Onsite) | Full-time | $130k–$200k + equity | YC-funded",
+    "location_raw": "Hestus | Machine Learning Engineer (Python, ML) | Peninsula (Onsite) | Full-time | $130k–$200k + equity | YC-funded",
     "country": null,
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49215960",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49164461",
     "posted_at": null,
     "compensation": {
-     "min": 125000.0,
-     "max": 250000.0,
+     "min": 130000.0,
+     "max": 200000.0,
      "currency": "USD",
      "period": "year",
-     "raw_text": "Furtim Modus | Hiring Java Developer (Full-Time) | NYC (HYBRID) | $125K-$250K + equity | https://www.furtimmodus.com/software-engineer",
+     "raw_text": "Hestus | Machine Learning Engineer (Python, ML) | Peninsula (Onsite) | Full-time | $130k–$200k + equity | YC-funded",
      "confidence": "parsed_text"
     },
     "occupation": null
@@ -1396,24 +1326,17 @@
     "occupation": null
    },
    {
-    "id": "hn:49164461",
+    "id": "hn:49197049",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Hestus | Machine Learning Engineer (Python, ML) | Peninsula (Onsite) | Full-time | $130k–$200k + equity | YC-funded",
-    "location_raw": "Hestus | Machine Learning Engineer (Python, ML) | Peninsula (Onsite) | Full-time | $130k–$200k + equity | YC-funded",
-    "country": null,
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49164461",
+    "title": "Solution Street | Northern Virginia (Washington, DC Metro Area) Remote & Hybrid roles available - USA only.",
+    "location_raw": "Solution Street | Northern Virginia (Washington, DC Metro Area) Remote & Hybrid roles available - USA only.",
+    "country": "US",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49197049",
     "posted_at": null,
-    "compensation": {
-     "min": 130000.0,
-     "max": 200000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Hestus | Machine Learning Engineer (Python, ML) | Peninsula (Onsite) | Full-time | $130k–$200k + equity | YC-funded",
-     "confidence": "parsed_text"
-    },
+    "compensation": null,
     "occupation": null
    },
    {
@@ -1438,6 +1361,90 @@
     "occupation": null
    },
    {
+    "id": "hn:49193298",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "AMD | Rust, Compiler, and Systems Engineer, Senior or Staff | San Jose, CA | ONSITE | Full-time",
+    "location_raw": "AMD | Rust, Compiler, and Systems Engineer, Senior or Staff | San Jose, CA | ONSITE | Full-time",
+    "country": "US",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49193298",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49289931",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Data analyst | Chicago, IL or Washington DC only| No visa sponsorship",
+    "location_raw": "Data analyst | Chicago, IL or Washington DC only| No visa sponsorship",
+    "country": "US",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49289931",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49169577",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Pingintel | Miami or Remote | Full-time | https://www.pingintel.com",
+    "location_raw": "Pingintel | Miami or Remote | Full-time | https://www.pingintel.com",
+    "country": "US",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49169577",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49166092",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Lokker.com | Senior Backend Engineer, Scanning Infrastructure | REMOTE: North America / Europe, UTC-8 to UTC+2 | Full-time",
+    "location_raw": "Lokker.com | Senior Backend Engineer, Scanning Infrastructure | REMOTE: North America / Europe, UTC-8 to UTC+2 | Full-time",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49166092",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49162047",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Hatchet | Product Engineer | NYC or SF or REMOTE (US and EU) | https://hatchet.run",
+    "location_raw": "Hatchet | Product Engineer | NYC or SF or REMOTE (US and EU) | https://hatchet.run",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49162047",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49165031",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Gauss Labs | Senior AI Engineer (ML), AI Scientist (ML) | Palo Alto, CA & Seoul, South Korea | HYBRID | FULL-TIME",
+    "location_raw": "Gauss Labs | Senior AI Engineer (ML), AI Scientist (ML) | Palo Alto, CA & Seoul, South Korea | HYBRID | FULL-TIME",
+    "country": "KR",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49165031",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49227630",
     "provider": "hn",
     "company": null,
@@ -1459,48 +1466,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49193298",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "AMD | Rust, Compiler, and Systems Engineer, Senior or Staff | San Jose, CA | ONSITE | Full-time",
-    "location_raw": "AMD | Rust, Compiler, and Systems Engineer, Senior or Staff | San Jose, CA | ONSITE | Full-time",
-    "country": "US",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49193298",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49283824",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "SpendAi — I ship procurement-grade agents. ReWoo (paying UK client),",
-    "location_raw": null,
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49283824",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49169577",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Pingintel | Miami or Remote | Full-time | https://www.pingintel.com",
-    "location_raw": "Pingintel | Miami or Remote | Full-time | https://www.pingintel.com",
-    "country": "US",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49169577",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49191343",
     "provider": "hn",
     "company": null,
@@ -1510,62 +1475,6 @@
     "country": "US",
     "remote": true,
     "url": "https://news.ycombinator.com/item?id=49191343",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49166092",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Lokker.com | Senior Backend Engineer, Scanning Infrastructure | REMOTE: North America / Europe, UTC-8 to UTC+2 | Full-time",
-    "location_raw": "Lokker.com | Senior Backend Engineer, Scanning Infrastructure | REMOTE: North America / Europe, UTC-8 to UTC+2 | Full-time",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49166092",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49224620",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "There is a massive competitive advantage right now in building 'boring' infrastructure manually instead of rushing to wrap an AI API.",
-    "location_raw": null,
-    "country": null,
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49224620",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49165031",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Gauss Labs | Senior AI Engineer (ML), AI Scientist (ML) | Palo Alto, CA & Seoul, South Korea | HYBRID | FULL-TIME",
-    "location_raw": "Gauss Labs | Senior AI Engineer (ML), AI Scientist (ML) | Palo Alto, CA & Seoul, South Korea | HYBRID | FULL-TIME",
-    "country": "KR",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49165031",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49162047",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Hatchet | Product Engineer | NYC or SF or REMOTE (US and EU) | https://hatchet.run",
-    "location_raw": "Hatchet | Product Engineer | NYC or SF or REMOTE (US and EU) | https://hatchet.run",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49162047",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -1582,41 +1491,6 @@
     "url": "https://news.ycombinator.com/item?id=49174485",
     "posted_at": null,
     "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49196678",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Lite Agent — https://liteagent.cloud | Hiring Sales Agent | REMOTE | Worldwide",
-    "location_raw": "Lite Agent — https://liteagent.cloud | Hiring Sales Agent | REMOTE | Worldwide",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49196678",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49175131",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Brightcore Energy | Senior Embedded Software/Hardware Engineer | Brooklyn, NY (hybrid, 3 days/week onsite) | Full-time | $140k-$170k+ base, flexible for the right experience, plus annual bonus",
-    "location_raw": "Brightcore Energy | Senior Embedded Software/Hardware Engineer | Brooklyn, NY (hybrid, 3 days/week onsite) | Full-time | $140k-$170k+ base, flexible f",
-    "country": "US",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49175131",
-    "posted_at": null,
-    "compensation": {
-     "min": 140000.0,
-     "max": 170000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Brightcore Energy | Senior Embedded Software/Hardware Engineer | Brooklyn, NY (hybrid, 3 days/week onsite) | Full-time | $140k-$170k+ base, flexible for the right experience, plus annual bonus",
-     "confidence": "parsed_text"
-    },
     "occupation": null
    },
    {
@@ -1641,6 +1515,20 @@
     "occupation": null
    },
    {
+    "id": "hn:49162501",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Bucket Robotics (YC S24) | Senior Fullstack Engineer | San Francisco, CA (On-site)",
+    "location_raw": "Bucket Robotics (YC S24) | Senior Fullstack Engineer | San Francisco, CA (On-site)",
+    "country": "US",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49162501",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49169017",
     "provider": "hn",
     "company": null,
@@ -1659,20 +1547,6 @@
      "raw_text": "Portless | AI Engineer | REMOTE (North America only) | Full-time | $180K-$230K + equity",
      "confidence": "parsed_text"
     },
-    "occupation": null
-   },
-   {
-    "id": "hn:49162501",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Bucket Robotics (YC S24) | Senior Fullstack Engineer | San Francisco, CA (On-site)",
-    "location_raw": "Bucket Robotics (YC S24) | Senior Fullstack Engineer | San Francisco, CA (On-site)",
-    "country": "US",
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49162501",
-    "posted_at": null,
-    "compensation": null,
     "occupation": null
    },
    {
@@ -1697,6 +1571,27 @@
     "occupation": null
    },
    {
+    "id": "hn:49175131",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Brightcore Energy | Senior Embedded Software/Hardware Engineer | Brooklyn, NY (hybrid, 3 days/week onsite) | Full-time | $140k-$170k+ base, flexible for the right experience, plus annual bonus",
+    "location_raw": "Brightcore Energy | Senior Embedded Software/Hardware Engineer | Brooklyn, NY (hybrid, 3 days/week onsite) | Full-time | $140k-$170k+ base, flexible f",
+    "country": "US",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49175131",
+    "posted_at": null,
+    "compensation": {
+     "min": 140000.0,
+     "max": 170000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Brightcore Energy | Senior Embedded Software/Hardware Engineer | Brooklyn, NY (hybrid, 3 days/week onsite) | Full-time | $140k-$170k+ base, flexible for the right experience, plus annual bonus",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
     "id": "hn:49165916",
     "provider": "hn",
     "company": null,
@@ -1706,20 +1601,6 @@
     "country": null,
     "remote": true,
     "url": "https://news.ycombinator.com/item?id=49165916",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49184927",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Ojin | Product Engineer | HYBRID (Berlin) or REMOTE (CET ±2h) | Full-time",
-    "location_raw": "Ojin | Product Engineer | HYBRID (Berlin) or REMOTE (CET ±2h) | Full-time",
-    "country": "DE",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49184927",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -1746,34 +1627,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49189557",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "NYC | ONSITE (hybrid) Norm Ai, the agentic law company, has a client base with a combined $30 trillion in assets under management. Norm Ai pioneered Legal Engineering, the process that empowers lawyer",
-    "location_raw": "NYC | ONSITE (hybrid) Norm Ai, the agentic law company, has a client base with a combined $30 trillion in assets under management. Norm Ai pioneered L",
-    "country": null,
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49189557",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49178671",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Fliplet | Hiring: Technical Team Lead (UK/EU) & Outbound SDR (Canada) | Remote",
-    "location_raw": "Fliplet | Hiring: Technical Team Lead (UK/EU) & Outbound SDR (Canada) | Remote",
-    "country": "GB",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49178671",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49163358",
     "provider": "hn",
     "company": null,
@@ -1783,6 +1636,34 @@
     "country": null,
     "remote": false,
     "url": "https://news.ycombinator.com/item?id=49163358",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49184927",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Ojin | Product Engineer | HYBRID (Berlin) or REMOTE (CET ±2h) | Full-time",
+    "location_raw": "Ojin | Product Engineer | HYBRID (Berlin) or REMOTE (CET ±2h) | Full-time",
+    "country": "DE",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49184927",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49196678",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Lite Agent — https://liteagent.cloud | Hiring Sales Agent | REMOTE | Worldwide",
+    "location_raw": "Lite Agent — https://liteagent.cloud | Hiring Sales Agent | REMOTE | Worldwide",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49196678",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -1823,6 +1704,20 @@
     "occupation": null
    },
    {
+    "id": "hn:49178671",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Fliplet | Hiring: Technical Team Lead (UK/EU) & Outbound SDR (Canada) | Remote",
+    "location_raw": "Fliplet | Hiring: Technical Team Lead (UK/EU) & Outbound SDR (Canada) | Remote",
+    "country": "GB",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49178671",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49156737",
     "provider": "hn",
     "company": null,
@@ -1832,6 +1727,20 @@
     "country": "US",
     "remote": true,
     "url": "https://news.ycombinator.com/item?id=49156737",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49189557",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "NYC | ONSITE (hybrid) Norm Ai, the agentic law company, has a client base with a combined $30 trillion in assets under management. Norm Ai pioneered Legal Engineering, the process that empowers lawyer",
+    "location_raw": "NYC | ONSITE (hybrid) Norm Ai, the agentic law company, has a client base with a combined $30 trillion in assets under management. Norm Ai pioneered L",
+    "country": null,
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49189557",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -1886,6 +1795,20 @@
     "occupation": null
    },
    {
+    "id": "hn:49224620",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "There is a massive competitive advantage right now in building 'boring' infrastructure manually instead of rushing to wrap an AI API.",
+    "location_raw": null,
+    "country": null,
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49224620",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49156819",
     "provider": "hn",
     "company": null,
@@ -1897,27 +1820,6 @@
     "url": "https://news.ycombinator.com/item?id=49156819",
     "posted_at": null,
     "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49267747",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Sitewire | Full-Stack Software Engineer | Full-Time | $130-200k USD | 0-0.1% Equity | Remote (US only)",
-    "location_raw": "Sitewire | Full-Stack Software Engineer | Full-Time | $130-200k USD | 0-0.1% Equity | Remote (US only)",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49267747",
-    "posted_at": null,
-    "compensation": {
-     "min": 130000.0,
-     "max": 200000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Sitewire | Full-Stack Software Engineer | Full-Time | $130-200k USD | 0-0.1% Equity | Remote (US only)",
-     "confidence": "parsed_text"
-    },
     "occupation": null
    },
    {
@@ -1956,20 +1858,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49197049",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Solution Street | Northern Virginia (Washington, DC Metro Area) Remote & Hybrid roles available - USA only.",
-    "location_raw": "Solution Street | Northern Virginia (Washington, DC Metro Area) Remote & Hybrid roles available - USA only.",
-    "country": "US",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49197049",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49160993",
     "provider": "hn",
     "company": null,
@@ -1998,20 +1886,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49172407",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Dablam | BDR | NY and London | ONSITE (2 days/week) or REMOTE within NY State or UK | Full-time | Must be US or UK work-authorized (no visa sponsorship)",
-    "location_raw": "Dablam | BDR | NY and London | ONSITE (2 days/week) or REMOTE within NY State or UK | Full-time | Must be US or UK work-authorized (no visa sponsorshi",
-    "country": "GB",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49172407",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49160662",
     "provider": "hn",
     "company": null,
@@ -2021,6 +1895,41 @@
     "country": null,
     "remote": true,
     "url": "https://news.ycombinator.com/item?id=49160662",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49295167",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Prophet Town LLC | Various Software Engineering Roles | US – Remote and Hybrid | English fluency required | Full-time | $150K-$260K annual total comp (multiple)",
+    "location_raw": "Prophet Town LLC | Various Software Engineering Roles | US – Remote and Hybrid | English fluency required | Full-time | $150K-$260K annual total comp ",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49295167",
+    "posted_at": null,
+    "compensation": {
+     "min": 150000.0,
+     "max": 260000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Prophet Town LLC | Various Software Engineering Roles | US – Remote and Hybrid | English fluency required | Full-time | $150K-$260K annual total comp (multiple)",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
+    "id": "hn:49172407",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Dablam | BDR | NY and London | ONSITE (2 days/week) or REMOTE within NY State or UK | Full-time | Must be US or UK work-authorized (no visa sponsorship)",
+    "location_raw": "Dablam | BDR | NY and London | ONSITE (2 days/week) or REMOTE within NY State or UK | Full-time | Must be US or UK work-authorized (no visa sponsorshi",
+    "country": "GB",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49172407",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2040,20 +1949,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49184766",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Launchpad Technologies | https://grnh.se/wqeflx0e6us | Multiple Roles | LATAM/Remote | Full-time",
-    "location_raw": "Launchpad Technologies | https://grnh.se/wqeflx0e6us | Multiple Roles | LATAM/Remote | Full-time",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49184766",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49162608",
     "provider": "hn",
     "company": null,
@@ -2063,34 +1958,6 @@
     "country": "US",
     "remote": false,
     "url": "https://news.ycombinator.com/item?id=49162608",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49168019",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Tuza | Product Engineer & AI Engineer | Shoreditch, London | Onsite 3 days/week | Visa sponsorship available",
-    "location_raw": "Tuza | Product Engineer & AI Engineer | Shoreditch, London | Onsite 3 days/week | Visa sponsorship available",
-    "country": "GB",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49168019",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49174765",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Apex Space | Multiple Roles | Full-Time | Onsite | Los Angeles, CA | apexspace.com",
-    "location_raw": "Apex Space | Multiple Roles | Full-Time | Onsite | Los Angeles, CA | apexspace.com",
-    "country": "US",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49174765",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2131,15 +1998,29 @@
     "occupation": null
    },
    {
-    "id": "hn:49187999",
+    "id": "hn:49174765",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Housecat | Full Stack Engineer | San Francisco but REMOTE (US) based on qualifications.",
-    "location_raw": "Housecat | Full Stack Engineer | San Francisco but REMOTE (US) based on qualifications.",
+    "title": "Apex Space | Multiple Roles | Full-Time | Onsite | Los Angeles, CA | apexspace.com",
+    "location_raw": "Apex Space | Multiple Roles | Full-Time | Onsite | Los Angeles, CA | apexspace.com",
     "country": "US",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49174765",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49184766",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Launchpad Technologies | https://grnh.se/wqeflx0e6us | Multiple Roles | LATAM/Remote | Full-time",
+    "location_raw": "Launchpad Technologies | https://grnh.se/wqeflx0e6us | Multiple Roles | LATAM/Remote | Full-time",
+    "country": null,
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49187999",
+    "url": "https://news.ycombinator.com/item?id=49184766",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2201,6 +2082,20 @@
     "occupation": null
    },
    {
+    "id": "hn:49187999",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Housecat | Full Stack Engineer | San Francisco but REMOTE (US) based on qualifications.",
+    "location_raw": "Housecat | Full Stack Engineer | San Francisco but REMOTE (US) based on qualifications.",
+    "country": "US",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49187999",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49166082",
     "provider": "hn",
     "company": null,
@@ -2243,20 +2138,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49167647",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Netrias | Senior Software Engineer, Software Engineer, Senior AI Researcher, AI Researcher | Cambridge, MA, Bethesda, MD | ONSITE (US, hybrid) | Full-time | www.netrias.com/careers",
-    "location_raw": "Netrias | Senior Software Engineer, Software Engineer, Senior AI Researcher, AI Researcher | Cambridge, MA, Bethesda, MD | ONSITE (US, hybrid) | Full-",
-    "country": null,
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49167647",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49164894",
     "provider": "hn",
     "company": null,
@@ -2278,29 +2159,15 @@
     "occupation": null
    },
    {
-    "id": "hn:49183442",
+    "id": "hn:49167647",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Coder | https://coder.com/ | Multiple roles | Multiple locations | Full-time",
-    "location_raw": "Coder | https://coder.com/ | Multiple roles | Multiple locations | Full-time",
+    "title": "Netrias | Senior Software Engineer, Software Engineer, Senior AI Researcher, AI Researcher | Cambridge, MA, Bethesda, MD | ONSITE (US, hybrid) | Full-time | www.netrias.com/careers",
+    "location_raw": "Netrias | Senior Software Engineer, Software Engineer, Senior AI Researcher, AI Researcher | Cambridge, MA, Bethesda, MD | ONSITE (US, hybrid) | Full-",
     "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49183442",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49170014",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Relevant Healthcare | Lead Software Engineer | Remote (US) | Full-time",
-    "location_raw": "Relevant Healthcare | Lead Software Engineer | Remote (US) | Full-time",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49170014",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49167647",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2341,6 +2208,34 @@
     "occupation": null
    },
    {
+    "id": "hn:49170014",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Relevant Healthcare | Lead Software Engineer | Remote (US) | Full-time",
+    "location_raw": "Relevant Healthcare | Lead Software Engineer | Remote (US) | Full-time",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49170014",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49168019",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Tuza | Product Engineer & AI Engineer | Shoreditch, London | Onsite 3 days/week | Candidates must be based in UK to apply | Visa sponsorship available",
+    "location_raw": "Tuza | Product Engineer & AI Engineer | Shoreditch, London | Onsite 3 days/week | Candidates must be based in UK to apply | Visa sponsorship available",
+    "country": "GB",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49168019",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49162401",
     "provider": "hn",
     "company": null,
@@ -2362,6 +2257,20 @@
     "occupation": null
    },
    {
+    "id": "hn:49183442",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Coder | https://coder.com/ | Multiple roles | Multiple locations | Full-time",
+    "location_raw": "Coder | https://coder.com/ | Multiple roles | Multiple locations | Full-time",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49183442",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49157646",
     "provider": "hn",
     "company": null,
@@ -2371,20 +2280,6 @@
     "country": null,
     "remote": true,
     "url": "https://news.ycombinator.com/item?id=49157646",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49179433",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Maincode | Software Engineers | Seattle, WA | ONSITE | maincode.com",
-    "location_raw": "Maincode | Software Engineers | Seattle, WA | ONSITE | maincode.com",
-    "country": "US",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49179433",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2411,6 +2306,34 @@
     "occupation": null
    },
    {
+    "id": "hn:49283824",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "SpendAi — I ship procurement-grade agents. ReWoo (paying UK client),",
+    "location_raw": null,
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49283824",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49179433",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Maincode | Software Engineers | Seattle, WA | ONSITE | maincode.com",
+    "location_raw": "Maincode | Software Engineers | Seattle, WA | ONSITE | maincode.com",
+    "country": "US",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49179433",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49157827",
     "provider": "hn",
     "company": null,
@@ -2432,20 +2355,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49166000",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Haystack | Value Engineer, Product Engineering Tech Lead, Growth Marketer, Account Director (EU Institutions) | Berlin, Barcelona, London (remote-first) | Full-time",
-    "location_raw": "Haystack | Value Engineer, Product Engineering Tech Lead, Growth Marketer, Account Director (EU Institutions) | Berlin, Barcelona, London (remote-firs",
-    "country": "GB",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49166000",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49158895",
     "provider": "hn",
     "company": null,
@@ -2455,6 +2364,20 @@
     "country": null,
     "remote": true,
     "url": "https://news.ycombinator.com/item?id=49158895",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49166000",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Haystack | Value Engineer, Product Engineering Tech Lead, Growth Marketer, Account Director (EU Institutions) | Berlin, Barcelona, London (remote-first) | Full-time",
+    "location_raw": "Haystack | Value Engineer, Product Engineering Tech Lead, Growth Marketer, Account Director (EU Institutions) | Berlin, Barcelona, London (remote-firs",
+    "country": "GB",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49166000",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2502,6 +2425,27 @@
     "occupation": null
    },
    {
+    "id": "hn:49302719",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "DAT | Engineering Manager, Senior Engineering Manager | Seattle, Portland, Denver | Hybrid 2-3 days/week | Full-time | $192k - $261k",
+    "location_raw": "DAT | Engineering Manager, Senior Engineering Manager | Seattle, Portland, Denver | Hybrid 2-3 days/week | Full-time | $192k - $261k",
+    "country": "US",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49302719",
+    "posted_at": null,
+    "compensation": {
+     "min": 192000.0,
+     "max": 261000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "DAT | Engineering Manager, Senior Engineering Manager | Seattle, Portland, Denver | Hybrid 2-3 days/week | Full-time | $192k - $261k",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
     "id": "hn:49171072",
     "provider": "hn",
     "company": null,
@@ -2544,20 +2488,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49163107",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "exe.dev | SF Bay Area | full time | $200k+, meaningful equity",
-    "location_raw": "exe.dev | SF Bay Area | full time | $200k+, meaningful equity",
-    "country": null,
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49163107",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49157080",
     "provider": "hn",
     "company": null,
@@ -2572,17 +2502,38 @@
     "occupation": null
    },
    {
-    "id": "hn:49217319",
+    "id": "hn:49163107",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "LiveKit|http://livekit.io/| VoiceAI | webRTC | Remote | Full Time LiveKit is building the infrastructure layer for the voice-driven era of computing. Our platform gives developers everything they need",
-    "location_raw": "LiveKit|http://livekit.io/| VoiceAI | webRTC | Remote | Full Time LiveKit is building the infrastructure layer for the voice-driven era of computing. ",
+    "title": "exe.dev | SF Bay Area | full time | $200k+, meaningful equity",
+    "location_raw": "exe.dev | SF Bay Area | full time | $200k+, meaningful equity",
     "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49217319",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49163107",
     "posted_at": null,
     "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49267747",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Sitewire | Full-Stack Software Engineer | Full-Time | $130-200k USD | 0-0.1% Equity | Remote (US only)",
+    "location_raw": "Sitewire | Full-Stack Software Engineer | Full-Time | $130-200k USD | 0-0.1% Equity | Remote (US only)",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49267747",
+    "posted_at": null,
+    "compensation": {
+     "min": 130000.0,
+     "max": 200000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Sitewire | Full-Stack Software Engineer | Full-Time | $130-200k USD | 0-0.1% Equity | Remote (US only)",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {
@@ -2625,27 +2576,6 @@
     "url": "https://news.ycombinator.com/item?id=49174053",
     "posted_at": null,
     "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49212543",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Rhythm | Senior Embedded/Firmware Engineer | Chicago, IL | ONSITE (Hybrid ok) | $180k–$250k + equity",
-    "location_raw": "Rhythm | Senior Embedded/Firmware Engineer | Chicago, IL | ONSITE (Hybrid ok) | $180k–$250k + equity",
-    "country": "US",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49212543",
-    "posted_at": null,
-    "compensation": {
-     "min": 180000.0,
-     "max": 250000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Rhythm | Senior Embedded/Firmware Engineer | Chicago, IL | ONSITE (Hybrid ok) | $180k–$250k + equity",
-     "confidence": "parsed_text"
-    },
     "occupation": null
    },
    {
@@ -2700,6 +2630,20 @@
     "country": null,
     "remote": null,
     "url": "https://news.ycombinator.com/item?id=49158689",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49217319",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "LiveKit|http://livekit.io/| VoiceAI | webRTC | Remote | Full Time LiveKit is building the infrastructure layer for the voice-driven era of computing. Our platform gives developers everything they need",
+    "location_raw": "LiveKit|http://livekit.io/| VoiceAI | webRTC | Remote | Full Time LiveKit is building the infrastructure layer for the voice-driven era of computing. ",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49217319",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2761,17 +2705,24 @@
     "occupation": null
    },
    {
-    "id": "hn:49169841",
+    "id": "hn:49212543",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Mitte (mitte.ai) | Berlin | ONSITE, REMOTE | Full-Time",
-    "location_raw": "Mitte (mitte.ai) | Berlin | ONSITE, REMOTE | Full-Time",
-    "country": "DE",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49169841",
+    "title": "Rhythm | Senior Embedded/Firmware Engineer | Chicago, IL | ONSITE (Hybrid ok) | $180k–$250k + equity",
+    "location_raw": "Rhythm | Senior Embedded/Firmware Engineer | Chicago, IL | ONSITE (Hybrid ok) | $180k–$250k + equity",
+    "country": "US",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49212543",
     "posted_at": null,
-    "compensation": null,
+    "compensation": {
+     "min": 180000.0,
+     "max": 250000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Rhythm | Senior Embedded/Firmware Engineer | Chicago, IL | ONSITE (Hybrid ok) | $180k–$250k + equity",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {
@@ -2784,6 +2735,20 @@
     "country": "US",
     "remote": false,
     "url": "https://news.ycombinator.com/item?id=49160170",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49169841",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Mitte (mitte.ai) | Berlin | ONSITE, REMOTE | Full-Time",
+    "location_raw": "Mitte (mitte.ai) | Berlin | ONSITE, REMOTE | Full-Time",
+    "country": "DE",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49169841",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2812,55 +2777,6 @@
     "country": "US",
     "remote": false,
     "url": "https://news.ycombinator.com/item?id=49164730",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49200866",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "GovStar | https://govstar.us | REMOTE — United States, Eastern or Central Time Zones | Full-time - https://www.govstar.us GovStar builds emerging-technology solutions supporting U.S. national-security",
-    "location_raw": "GovStar | https://govstar.us | REMOTE — United States, Eastern or Central Time Zones | Full-time - https://www.govstar.us GovStar builds emerging-tech",
-    "country": "US",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49200866",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49248055",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Arcforma AI (arcforma.ai) | AI Engineer (Marketing / Construction / Fashion & Luxury) | REMOTE (US only) or ONSITE NYC | Full-Time $80k-$120k + equity, or Contract $50-$150/hr | jobs@arcforma.ai",
-    "location_raw": "Arcforma AI (arcforma.ai) | AI Engineer (Marketing / Construction / Fashion & Luxury) | REMOTE (US only) or ONSITE NYC | Full-Time $80k-$120k + equity",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49248055",
-    "posted_at": null,
-    "compensation": {
-     "min": 80000.0,
-     "max": 120000.0,
-     "currency": "USD",
-     "period": "hour",
-     "raw_text": "Arcforma AI (arcforma.ai) | AI Engineer (Marketing / Construction / Fashion & Luxury) | REMOTE (US only) or ONSITE NYC | Full-Time $80k-$120k + equity, or Contract $50-$150/hr | jobs@arcforma.ai",
-     "confidence": "parsed_text"
-    },
-    "occupation": null
-   },
-   {
-    "id": "hn:49173075",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "forus - founding security engineer | full-time | onsite in NYC!",
-    "location_raw": "forus - founding security engineer | full-time | onsite in NYC!",
-    "country": null,
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49173075",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2901,6 +2817,20 @@
     "occupation": null
    },
    {
+    "id": "hn:49173075",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "forus - founding security engineer | full-time | onsite in NYC!",
+    "location_raw": "forus - founding security engineer | full-time | onsite in NYC!",
+    "country": null,
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49173075",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49158727",
     "provider": "hn",
     "company": null,
@@ -2929,6 +2859,20 @@
     "occupation": null
    },
    {
+    "id": "hn:49200866",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "GovStar | https://govstar.us | REMOTE — United States, Eastern or Central Time Zones | Full-time - https://www.govstar.us GovStar builds emerging-technology solutions supporting U.S. national-security",
+    "location_raw": "GovStar | https://govstar.us | REMOTE — United States, Eastern or Central Time Zones | Full-time - https://www.govstar.us GovStar builds emerging-tech",
+    "country": "US",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49200866",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49156689",
     "provider": "hn",
     "company": null,
@@ -2943,15 +2887,15 @@
     "occupation": null
    },
    {
-    "id": "hn:49202116",
+    "id": "hn:49157505",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "FanPad | https://fanpad.xyz/ | REMOTE | Full-time",
-    "location_raw": "FanPad | https://fanpad.xyz/ | REMOTE | Full-time",
+    "title": "Role: Engineering Manager",
+    "location_raw": null,
     "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49202116",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49157505",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -2971,17 +2915,38 @@
     "occupation": null
    },
    {
-    "id": "hn:49157505",
+    "id": "hn:49202116",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Role: Engineering Manager",
-    "location_raw": null,
+    "title": "FanPad | https://fanpad.xyz/ | REMOTE | Full-time",
+    "location_raw": "FanPad | https://fanpad.xyz/ | REMOTE | Full-time",
     "country": null,
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49157505",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49202116",
     "posted_at": null,
     "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49248055",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Arcforma AI (arcforma.ai) | AI Engineer (Marketing / Construction / Fashion & Luxury) | REMOTE (US only) or ONSITE NYC | Full-Time $80k-$120k + equity, or Contract $50-$150/hr | jobs@arcforma.ai",
+    "location_raw": "Arcforma AI (arcforma.ai) | AI Engineer (Marketing / Construction / Fashion & Luxury) | REMOTE (US only) or ONSITE NYC | Full-Time $80k-$120k + equity",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49248055",
+    "posted_at": null,
+    "compensation": {
+     "min": 80000.0,
+     "max": 120000.0,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "Arcforma AI (arcforma.ai) | AI Engineer (Marketing / Construction / Fashion & Luxury) | REMOTE (US only) or ONSITE NYC | Full-Time $80k-$120k + equity, or Contract $50-$150/hr | jobs@arcforma.ai",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {
@@ -3013,20 +2978,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49192593",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Adalat AI | https://www.adalat.ai | Remote (India) | Go, React, Next.js, k8s",
-    "location_raw": "Adalat AI | https://www.adalat.ai | Remote (India) | Go, React, Next.js, k8s",
-    "country": "IN",
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49192593",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49168356",
     "provider": "hn",
     "company": null,
@@ -3048,20 +2999,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49185343",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Software Engineer with 5+ years of experience building scalable enterprise applications using Java, Spring Boot, Microservices, REST APIs, React, Angular, Oracle, and AWS.",
-    "location_raw": null,
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49185343",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49165024",
     "provider": "hn",
     "company": null,
@@ -3080,6 +3017,20 @@
      "raw_text": "Lopaka | Embedded UI / Graphics Engineer | REMOTE | Contract | Part-time | $80–140/hr | https://lopaka.app/careers",
      "confidence": "parsed_text"
     },
+    "occupation": null
+   },
+   {
+    "id": "hn:49192593",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Adalat AI | https://www.adalat.ai | Remote (India) | Go, React, Next.js, k8s",
+    "location_raw": "Adalat AI | https://www.adalat.ai | Remote (India) | Go, React, Next.js, k8s",
+    "country": "IN",
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49192593",
+    "posted_at": null,
+    "compensation": null,
     "occupation": null
    },
    {
@@ -3111,24 +3062,17 @@
     "occupation": null
    },
    {
-    "id": "hn:49254584",
+    "id": "hn:49185343",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Stealth Startup| Software Engineer | Full-Time | REMOTE (US) | $180,000 - $250,000 USD",
-    "location_raw": "Stealth Startup| Software Engineer | Full-Time | REMOTE (US) | $180,000 - $250,000 USD",
+    "title": "Software Engineer with 5+ years of experience building scalable enterprise applications using Java, Spring Boot, Microservices, REST APIs, React, Angular, Oracle, and AWS.",
+    "location_raw": null,
     "country": null,
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49254584",
+    "url": "https://news.ycombinator.com/item?id=49185343",
     "posted_at": null,
-    "compensation": {
-     "min": 180000.0,
-     "max": 250000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Stealth Startup| Software Engineer | Full-Time | REMOTE (US) | $180,000 - $250,000 USD",
-     "confidence": "parsed_text"
-    },
+    "compensation": null,
     "occupation": null
    },
    {
@@ -3160,6 +3104,55 @@
     "occupation": null
    },
    {
+    "id": "hn:49157178",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Ashby | YC 19 | REMOTE | Hiring Engineering Leaders | $200k–$275k",
+    "location_raw": "Ashby | YC 19 | REMOTE | Hiring Engineering Leaders | $200k–$275k",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49157178",
+    "posted_at": null,
+    "compensation": {
+     "min": 200000.0,
+     "max": 275000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Ashby | YC 19 | REMOTE | Hiring Engineering Leaders | $200k–$275k",
+     "confidence": "parsed_text"
+    },
+    "occupation": null
+   },
+   {
+    "id": "hn:49165309",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Kadoa | Software & Web Scraping Engineers | Remote | Full-Time | https://kadoa.com",
+    "location_raw": "Kadoa | Software & Web Scraping Engineers | Remote | Full-Time | https://kadoa.com",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49165309",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49157182",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Sumble is the newco from the founders of Kaggle. We are hiring full stack engineers, ai/ml engineers and growth/marketing. Can view our roles and apply here: https://sumble-inc.workable.com/",
+    "location_raw": null,
+    "country": null,
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49157182",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49185076",
     "provider": "hn",
     "company": null,
@@ -3174,15 +3167,71 @@
     "occupation": null
    },
    {
-    "id": "hn:49165309",
+    "id": "hn:49165353",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Kadoa | Software & Web Scraping Engineers | Remote | Full-Time | https://kadoa.com",
-    "location_raw": "Kadoa | Software & Web Scraping Engineers | Remote | Full-Time | https://kadoa.com",
+    "title": "Prior Labs | Berlin / Freiburg / NYC | ONSITE | Full-time | Multiple Roles | https://priorlabs.ai",
+    "location_raw": "Prior Labs | Berlin / Freiburg / NYC | ONSITE | Full-time | Multiple Roles | https://priorlabs.ai",
+    "country": "DE",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49165353",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49156724",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "SmarterDx | 150-250k+ + equity + benefits | Remote (US only) | Multiple roles | https://smarterdx.com/careers",
+    "location_raw": "SmarterDx | 150-250k+ + equity + benefits | Remote (US only) | Multiple roles | https://smarterdx.com/careers",
     "country": null,
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49165309",
+    "url": "https://news.ycombinator.com/item?id=49156724",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49162776",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Domino Data Lab | Remote (US) | Multiple Roles",
+    "location_raw": "Domino Data Lab | Remote (US) | Multiple Roles",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49162776",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49157674",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "PlantingSpace | Full-time | Remote (EU time zone) + Quarterly Meet-ups | https://planting.space",
+    "location_raw": "PlantingSpace | Full-time | Remote (EU time zone) + Quarterly Meet-ups | https://planting.space",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49157674",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49184940",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Hi! I am Max. I am a Design Leader with 13+ years of experience and extensive knowledge in several areas: Design, Development, Analytics. Involved in creation of several startups and have previously c",
+    "location_raw": null,
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49184940",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -3209,55 +3258,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49157178",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Ashby | YC 19 | REMOTE | Hiring Engineering Leaders | $200k–$275k",
-    "location_raw": "Ashby | YC 19 | REMOTE | Hiring Engineering Leaders | $200k–$275k",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49157178",
-    "posted_at": null,
-    "compensation": {
-     "min": 200000.0,
-     "max": 275000.0,
-     "currency": "USD",
-     "period": "year",
-     "raw_text": "Ashby | YC 19 | REMOTE | Hiring Engineering Leaders | $200k–$275k",
-     "confidence": "parsed_text"
-    },
-    "occupation": null
-   },
-   {
-    "id": "hn:49157182",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Sumble is the newco from the founders of Kaggle. We are hiring full stack engineers, ai/ml engineers and growth/marketing. Can view our roles and apply here: https://sumble-inc.workable.com/",
-    "location_raw": null,
-    "country": null,
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49157182",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49184940",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Hi! I am Max. I am a Design Leader with 13+ years of experience and extensive knowledge in several areas: Design, Development, Analytics. Involved in creation of several startups and have previously c",
-    "location_raw": null,
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49184940",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49194021",
     "provider": "hn",
     "company": null,
@@ -3272,57 +3272,15 @@
     "occupation": null
    },
    {
-    "id": "hn:49165353",
+    "id": "hn:49164060",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Prior Labs | Berlin / Freiburg / NYC | ONSITE | Full-time | Multiple Roles | https://priorlabs.ai",
-    "location_raw": "Prior Labs | Berlin / Freiburg / NYC | ONSITE | Full-time | Multiple Roles | https://priorlabs.ai",
-    "country": "DE",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49165353",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49162776",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Domino Data Lab | Remote (US) | Multiple Roles",
-    "location_raw": "Domino Data Lab | Remote (US) | Multiple Roles",
+    "title": "Pomelo Care| Remote (US) First with offices in NYC and SF We’re building a healthier future for women and children. We combine clinical excellence, human connection, and proactive technology to ensure",
+    "location_raw": "Pomelo Care| Remote (US) First with offices in NYC and SF We’re building a healthier future for women and children. We combine clinical excellence, hu",
     "country": null,
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49162776",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49156724",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "SmarterDx | 150-250k+ + equity + benefits | Remote (US only) | Multiple roles | https://smarterdx.com/careers",
-    "location_raw": "SmarterDx | 150-250k+ + equity + benefits | Remote (US only) | Multiple roles | https://smarterdx.com/careers",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49156724",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
-    "id": "hn:49157674",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "PlantingSpace | Full-time | Remote (EU time zone) + Quarterly Meet-ups | https://planting.space",
-    "location_raw": "PlantingSpace | Full-time | Remote (EU time zone) + Quarterly Meet-ups | https://planting.space",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49157674",
+    "url": "https://news.ycombinator.com/item?id=49164060",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -3349,17 +3307,24 @@
     "occupation": null
    },
    {
-    "id": "hn:49164060",
+    "id": "hn:49254584",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Pomelo Care| Remote (US) First with offices in NYC and SF We’re building a healthier future for women and children. We combine clinical excellence, human connection, and proactive technology to ensure",
-    "location_raw": "Pomelo Care| Remote (US) First with offices in NYC and SF We’re building a healthier future for women and children. We combine clinical excellence, hu",
+    "title": "Stealth Startup| Software Engineer | Full-Time | REMOTE (US) | $180,000 - $250,000 USD",
+    "location_raw": "Stealth Startup| Software Engineer | Full-Time | REMOTE (US) | $180,000 - $250,000 USD",
     "country": null,
     "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49164060",
+    "url": "https://news.ycombinator.com/item?id=49254584",
     "posted_at": null,
-    "compensation": null,
+    "compensation": {
+     "min": 180000.0,
+     "max": 250000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Stealth Startup| Software Engineer | Full-Time | REMOTE (US) | $180,000 - $250,000 USD",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {
@@ -3384,6 +3349,20 @@
     "occupation": null
    },
    {
+    "id": "hn:49157888",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Cogram | Full-time | Remote (CET ±3) | https://cogram.com | B2B Saas / AI for AEC",
+    "location_raw": "Cogram | Full-time | Remote (CET ±3) | https://cogram.com | B2B Saas / AI for AEC",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49157888",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
     "id": "hn:49169971",
     "provider": "hn",
     "company": null,
@@ -3402,20 +3381,6 @@
      "raw_text": "JotPsych (behavioral-health AI software) | Chief of Staff | New York, ON-SITE (5 days) | Full-time | $130-160K + significant equity",
      "confidence": "parsed_text"
     },
-    "occupation": null
-   },
-   {
-    "id": "hn:49157888",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Cogram | Full-time | Remote (CET ±3) | https://cogram.com | B2B Saas / AI for AEC",
-    "location_raw": "Cogram | Full-time | Remote (CET ±3) | https://cogram.com | B2B Saas / AI for AEC",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49157888",
-    "posted_at": null,
-    "compensation": null,
     "occupation": null
    },
    {
@@ -3447,20 +3412,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49186245",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "I am a recruiter for Turquoise and we are hiring a Senior Performance Engineer for our Data Products team based in the United States.",
-    "location_raw": null,
-    "country": null,
-    "remote": null,
-    "url": "https://news.ycombinator.com/item?id=49186245",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49159519",
     "provider": "hn",
     "company": null,
@@ -3479,6 +3430,48 @@
      "raw_text": "-- Engineering Manager (NY, ONSITE) $200K – $350K + Equity",
      "confidence": "parsed_text"
     },
+    "occupation": null
+   },
+   {
+    "id": "hn:49186245",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "I am a recruiter for Turquoise and we are hiring a Senior Performance Engineer for our Data Products team based in the United States.",
+    "location_raw": null,
+    "country": null,
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49186245",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49157129",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Checkly | Senior Sales Engineer, Sales Engineer | Remote (Europe / US Eastern Time zone) | Full-time | https://checklyhq.com",
+    "location_raw": "Checkly | Senior Sales Engineer, Sales Engineer | Remote (Europe / US Eastern Time zone) | Full-time | https://checklyhq.com",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49157129",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49177149",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "One Way Tech Hubs | Software Engineers | Fully Remote (US-Based Candidates) | Full-Time",
+    "location_raw": "One Way Tech Hubs | Software Engineers | Fully Remote (US-Based Candidates) | Full-Time",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49177149",
+    "posted_at": null,
+    "compensation": null,
     "occupation": null
    },
    {
@@ -3503,20 +3496,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49157129",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "Checkly | Senior Sales Engineer, Sales Engineer | Remote (Europe / US Eastern Time zone) | Full-time | https://checklyhq.com",
-    "location_raw": "Checkly | Senior Sales Engineer, Sales Engineer | Remote (Europe / US Eastern Time zone) | Full-time | https://checklyhq.com",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49157129",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49187963",
     "provider": "hn",
     "company": null,
@@ -3531,20 +3510,6 @@
     "occupation": null
    },
    {
-    "id": "hn:49177149",
-    "provider": "hn",
-    "company": null,
-    "company_slug": "hn",
-    "title": "One Way Tech Hubs | Software Engineers | Fully Remote (US) | Full-Time",
-    "location_raw": "One Way Tech Hubs | Software Engineers | Fully Remote (US) | Full-Time",
-    "country": null,
-    "remote": true,
-    "url": "https://news.ycombinator.com/item?id=49177149",
-    "posted_at": null,
-    "compensation": null,
-    "occupation": null
-   },
-   {
     "id": "hn:49164146",
     "provider": "hn",
     "company": null,
@@ -3554,6 +3519,20 @@
     "country": null,
     "remote": true,
     "url": "https://news.ycombinator.com/item?id=49164146",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49326458",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "CreativeLens.ai | Founding Growth & Partnerships Lead | REMOTE (Worldwide) | Full-time / Contract-to-hire",
+    "location_raw": "CreativeLens.ai | Founding Growth & Partnerships Lead | REMOTE (Worldwide) | Full-time / Contract-to-hire",
+    "country": null,
+    "remote": true,
+    "url": "https://news.ycombinator.com/item?id=49326458",
     "posted_at": null,
     "compensation": null,
     "occupation": null
@@ -3657,17 +3636,24 @@
     "occupation": null
    },
    {
-    "id": "hn:49262026",
+    "id": "hn:49280288",
     "provider": "hn",
     "company": null,
     "company_slug": "hn",
-    "title": "Stpkr Technologies | Noida, India (Delhi NCR) | ONSITE | Multiple roles",
-    "location_raw": "Stpkr Technologies | Noida, India (Delhi NCR) | ONSITE | Multiple roles",
-    "country": "IN",
-    "remote": false,
-    "url": "https://news.ycombinator.com/item?id=49262026",
+    "title": "Tessellate | Full Stack Engineer | Hybrid | Nashville, TN | Full-time",
+    "location_raw": "Tessellate | Full Stack Engineer | Hybrid | Nashville, TN | Full-time",
+    "country": "US",
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49280288",
     "posted_at": null,
-    "compensation": null,
+    "compensation": {
+     "min": 100000.0,
+     "max": 130000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "$100K - $130K apply at https://jobs.gem.com/tessellate/am9icG9zdDrOWl6wmQoqG4beEY9k...",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {
@@ -3682,6 +3668,41 @@
     "url": "https://news.ycombinator.com/item?id=49163927",
     "posted_at": null,
     "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49262026",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Stpkr Technologies | Noida, India (Delhi NCR) | ONSITE | Multiple roles",
+    "location_raw": "Stpkr Technologies | Noida, India (Delhi NCR) | ONSITE | Multiple roles",
+    "country": "IN",
+    "remote": false,
+    "url": "https://news.ycombinator.com/item?id=49262026",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "hn:49215960",
+    "provider": "hn",
+    "company": null,
+    "company_slug": "hn",
+    "title": "Furtim Modus | Hiring Java Developer (Full-Time) | NYC (HYBRID) | $125K-$250K + equity | https://www.furtimmodus.com/software-engineer",
+    "location_raw": "Furtim Modus | Hiring Java Developer (Full-Time) | NYC (HYBRID) | $125K-$250K + equity | https://www.furtimmodus.com/software-engineer",
+    "country": null,
+    "remote": null,
+    "url": "https://news.ycombinator.com/item?id=49215960",
+    "posted_at": null,
+    "compensation": {
+     "min": 125000.0,
+     "max": 250000.0,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "Furtim Modus | Hiring Java Developer (Full-Time) | NYC (HYBRID) | $125K-$250K + equity | https://www.furtimmodus.com/software-engineer",
+     "confidence": "parsed_text"
+    },
     "occupation": null
    },
    {

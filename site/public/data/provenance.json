@@ -434,7 +434,7 @@
       "source_id": "postings",
       "name": "Postings panel — merged advertised-pay data across all providers",
       "urls": [],
-      "fetched_at": "2026-08-21T15:46:28+00:00",
+      "fetched_at": "2026-08-21T18:11:11+00:00",
       "license": "Inherits each provider source's own license — this file adds no new terms, only concatenation and summary computation over already-committed, already-licensed data.",
       "redistribution": "derived — nothing fetched here; every provider's own provenance entry already covers redistribution terms for its own postings.",
       "transforms": [
@@ -445,8 +445,8 @@
       ],
       "output": "data/processed/postings.json",
       "status": "ok",
-      "rows": 46040,
-      "coverage": "1580 companies across 6 providers",
+      "rows": 48267,
+      "coverage": "1723 companies across 6 providers",
       "notes": "The site's own postings panel reads ONLY this file, never an individual provider file."
     },
     {
@@ -455,19 +455,19 @@
       "urls": [
         "https://api.ashbyhq.com/posting-api/job-board/{token}?includeCompensation=true"
       ],
-      "fetched_at": "2026-08-21T14:34:37+00:00",
+      "fetched_at": "2026-08-21T17:18:38+00:00",
       "license": "Each company's own postings, published by that company via Ashby's own public, unauthenticated job-board API — no Ashby-specific license terms apply beyond the postings being intentionally public.",
       "redistribution": "Only postings from companies whose board was verified live are kept; the raw per-company response is cached under data/raw/postings/ashby/ (gitignored, matching this pipeline's existing data/raw/ convention).",
       "transforms": [
         "Loaded candidate company tokens from a third-party MIT-licensed aggregator (github.com/Feashliaa/job-board-aggregator) as SEED HINTS ONLY.",
-        "Probed each candidate live against api.ashbyhq.com; kept only tokens that resolved with at least one real posting — a 404, timeout, or zero-postings response drops the candidate, it is never guessed into the output.",
+        "Probed each candidate live against api.ashbyhq.com; a token is never guessed into the output, only counted verified once it resolves with at least one real posting. An already-verified company that later 404s, times out, or returns zero postings is kept through a bounded number of consecutive failed probes (a strike, not an eviction) and removed, with the removal logged, only after repeated consecutive failures.",
         "Parsed each posting's own compensationTiers into a common {min,max,currency,period} shape, preferring the first component with a real minValue+currencyCode.",
         "Resolved each posting's own free-text location to a best-effort ISO2 country code — never invented when the text doesn't resolve."
       ],
       "output": "data/processed/postings_ashby.json",
       "status": "ok",
-      "rows": 18100,
-      "coverage": "961 verified companies, 18100 postings, this run",
+      "rows": 19715,
+      "coverage": "1078 verified companies, 19715 postings, this run",
       "notes": "Advertised pay — NEVER merged with survey-earnings data (validate_data.py's own assertion, package 7, guards this). See data/processed/postings.json (build_postings.py) for the merged, cross-provider file the site actually reads."
     },
     {
@@ -495,7 +495,7 @@
         "https://boards-api.greenhouse.io/v1/boards/{token}/jobs",
         "https://boards-api.greenhouse.io/v1/boards/{token}/jobs/{id}?pay_transparency=true"
       ],
-      "fetched_at": "2026-08-21T01:32:25+00:00",
+      "fetched_at": "2026-08-21T17:33:58+00:00",
       "license": "Each company's own postings, published via Greenhouse's own public, unauthenticated Job Board API.",
       "redistribution": "Only postings from companies whose board was verified live are kept; raw list and per-job detail responses cached under data/raw/postings/greenhouse/.",
       "transforms": [
@@ -505,8 +505,8 @@
       ],
       "output": "data/processed/postings_greenhouse.json",
       "status": "ok",
-      "rows": 13466,
-      "coverage": "349 verified companies, 13466 postings, this run",
+      "rows": 14015,
+      "coverage": "371 verified companies, 14015 postings, this run",
       "notes": "Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads."
     },
     {
@@ -515,7 +515,7 @@
       "urls": [
         "https://news.ycombinator.com/item?id=49156683"
       ],
-      "fetched_at": "2026-08-17T07:43:01+00:00",
+      "fetched_at": "2026-08-21T17:52:29+00:00",
       "license": "Public HN API (hacker-news.firebaseio.com) — each comment is the poster's own public submission to a public forum thread; redistributed here as individual job-posting text, matching how HN's own site displays it.",
       "redistribution": "Comment text stored as posted; no HTML beyond simple <p> paragraph breaks kept.",
       "transforms": [
@@ -525,8 +525,8 @@
       ],
       "output": "data/processed/postings_hn.json",
       "status": "ok",
-      "rows": 242,
-      "coverage": "242 postings from 1 thread (Ask HN: Who is hiring? (August 2026))",
+      "rows": 243,
+      "coverage": "243 postings from 1 thread (Ask HN: Who is hiring? (August 2026))",
       "notes": "Advertised pay — NEVER merged with survey-earnings data. Free text, not a structured ATS field; disclosed as such downstream."
     },
     {
@@ -535,7 +535,7 @@
       "urls": [
         "https://api.lever.co/v0/postings/{token}?mode=json"
       ],
-      "fetched_at": "2026-08-21T14:54:57+00:00",
+      "fetched_at": "2026-08-21T17:45:14+00:00",
       "license": "Each company's own postings, published via Lever's own public, unauthenticated postings API.",
       "redistribution": "Only postings from companies whose board was verified live are kept; raw per-company responses cached under data/raw/postings/lever/.",
       "transforms": [
@@ -545,9 +545,25 @@
       ],
       "output": "data/processed/postings_lever.json",
       "status": "ok",
-      "rows": 10176,
-      "coverage": "264 verified companies, 10176 postings, this run",
+      "rows": 10238,
+      "coverage": "268 verified companies, 10238 postings, this run",
       "notes": "Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads."
+    },
+    {
+      "source_id": "postings_seed_summary",
+      "name": "Postings seed-list summary — the small fields the transparency page actually reads",
+      "urls": [],
+      "fetched_at": "2026-08-21T18:11:11+00:00",
+      "license": "Inherits each provider source's own license, same as postings.json itself — this file adds no new terms, only a smaller re-shaping of already-committed, already-licensed data.",
+      "redistribution": "derived — nothing fetched here; a build-time SUBSET of postings.json's own fields, which already carries the real provenance for this same data.",
+      "transforms": [
+        "Copied provider_summary, seed_companies and country_counts verbatim from this same run's own postings.json — never the raw postings array, which PostingsSeed.tsx never reads."
+      ],
+      "output": "data/processed/postings_seed_summary.json",
+      "status": "ok",
+      "rows": 1723,
+      "coverage": "1723 companies across 6 providers",
+      "notes": "site/src/routes/PostingsSeed.tsx reads ONLY this file now, not postings.json's own full ~20MB payload — Postings.tsx (the filterable list/map) still reads postings.json itself, which it genuinely needs the full array for."
     },
     {
       "source_id": "postings_teamtailor",
@@ -555,7 +571,7 @@
       "urls": [
         "https://{subdomain}.teamtailor.com/jobs.json"
       ],
-      "fetched_at": "2026-08-21T14:36:14+00:00",
+      "fetched_at": "2026-08-21T17:45:41+00:00",
       "license": "Each company's own postings, published via Teamtailor's own public, unauthenticated JSON Feed — no Teamtailor-specific license terms apply.",
       "redistribution": "Raw per-company responses cached under data/raw/postings/teamtailor/.",
       "transforms": [
@@ -575,7 +591,7 @@
         "https://data.usajobs.gov/api/historicjoa?PositionSeries=2210",
         "https://data.usajobs.gov/api/historicjoa?PositionSeries=0854"
       ],
-      "fetched_at": "2026-08-21T14:36:00+00:00",
+      "fetched_at": "2026-08-21T17:48:02+00:00",
       "license": "17 U.S.C. SS 105 (U.S. federal government work — no US copyright attaches). Attribute as \"USAJOBS / U.S. OPM\" — NOT CC0 (a different legal basis: CC0 is a rights-holder's own waiver of rights they hold; SS105 means no US copyright ever existed here). Requires a descriptive, non-generic User-Agent header — a bare default UA is effectively blocked (found live, not assumed).",
       "redistribution": "Every returned record's own fields are redistributed directly — this endpoint already serves individual, already-public announcement records, not a bulk file this pipeline narrows down.",
       "transforms": [
@@ -1028,7 +1044,7 @@
       "source_id": "wage_distribution",
       "name": "Wage distribution panel — crosswalk.compare() + normalise.py resolved at build time",
       "urls": [],
-      "fetched_at": "2026-08-21T14:12:34+00:00",
+      "fetched_at": "2026-08-21T17:05:55+00:00",
       "license": "Inherits each underlying salary_*.json / bls_oews.json source's own licence — this file adds no new licensing terms, only computation over already-committed and already-licensed data.",
       "redistribution": "derived — nothing fetched; every input file's own provenance entry already covers redistribution terms for the raw figures this derives from.",
       "transforms": [
@@ -1155,5 +1171,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-21T15:46:28+00:00"
+  "updated_at": "2026-08-21T18:11:11+00:00"
 }

@@ -134,7 +134,7 @@
  "wage_distribution": {
   "theme": "money",
   "file": "history/wage_distribution.json",
-  "kb": 38.0,
+  "kb": 37.6,
   "kind": null,
   "confidence": "derived",
   "institution": null,
@@ -156,7 +156,18 @@
  "postings": {
   "theme": "jobs",
   "file": "history/postings.json",
-  "kb": 20043.1,
+  "kb": 21010.8,
+  "kind": null,
+  "confidence": null,
+  "institution": null,
+  "attribution_chip": null,
+  "status": "ok",
+  "empty": false
+ },
+ "postings_seed_summary": {
+  "theme": "jobs",
+  "file": "history/postings_seed_summary.json",
+  "kb": 171.6,
   "kind": null,
   "confidence": null,
   "institution": null,

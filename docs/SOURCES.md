@@ -4,9 +4,9 @@
      Regenerate with `make docs` (scripts/generate_sources_doc.py).
      Content comes from data/provenance.json, written by the pipeline itself. -->
 
-Last pipeline run: **2026-08-13T02:54:16+00:00**
+Last pipeline run: **2026-08-21T17:53:22+00:00**
 
-43 datasets produced data. 2 did not — those are listed too, because a source list that hides its failures is not a source list.
+50 datasets produced data. 3 did not — those are listed too, because a source list that hides its failures is not a source list.
 
 Every figure on the site traces to one of these. Where a source is missing, the site shows “no data” and names the absent figure; it never substitutes an estimate.
 
@@ -33,6 +33,13 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | Numbeo — yearly country indices and per-city cost-of-living history | Numbeo data is crowd-sourced and its terms restrict bulk redistribution. We commit the derived per-year/per-city aggregates and the fetch script, and cite Numbeo on every figure. | derived aggregates committed (Numbeo terms restrict bulk redistribution) |
 | OECD Economic Outlook 119 — projections | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Economic Outlook 119. | raw committed |
 | OECD Data Explorer (SDMX) — house prices, wages, hours, tax wedge | OECD terms and conditions — free re-use with attribution for non-commercial use. Cite: OECD Data Explorer, dataflow IDs listed per block. | raw committed |
+| Postings panel — merged advertised-pay data across all providers | Inherits each provider source's own license — this file adds no new terms, only concatenation and summary computation over already-committed, already-licensed data. | derived — nothing fetched here; every provider's own provenance entry already covers redistribution terms for its own postings. |
+| Ashby job-board API — advertised pay, structured compensation | Each company's own postings, published by that company via Ashby's own public, unauthenticated job-board API — no Ashby-specific license terms apply beyond the postings being intentionally public. | Only postings from companies whose board was verified live are kept; the raw per-company response is cached under data/raw/postings/ashby/ (gitignored, matching this pipeline's existing data/raw/ convention). |
+| Greenhouse Job Board API — advertised pay, per-job pay_transparency fan-out | Each company's own postings, published via Greenhouse's own public, unauthenticated Job Board API. | Only postings from companies whose board was verified live are kept; raw list and per-job detail responses cached under data/raw/postings/greenhouse/. |
+| Hacker News "Who is hiring?" — free-text advertised pay | Public HN API (hacker-news.firebaseio.com) — each comment is the poster's own public submission to a public forum thread; redistributed here as individual job-posting text, matching how HN's own site displays it. | Comment text stored as posted; no HTML beyond simple <p> paragraph breaks kept. |
+| Lever postings API — advertised pay, optional salaryRange | Each company's own postings, published via Lever's own public, unauthenticated postings API. | Only postings from companies whose board was verified live are kept; raw per-company responses cached under data/raw/postings/lever/. |
+| Teamtailor public jobs.json feed — advertised pay, Nordic/European coverage | Each company's own postings, published via Teamtailor's own public, unauthenticated JSON Feed — no Teamtailor-specific license terms apply. | Raw per-company responses cached under data/raw/postings/teamtailor/. |
+| USAJOBS Historic JOA — U.S. federal job announcements, real numeric pay | 17 U.S.C. SS 105 (U.S. federal government work — no US copyright attaches). Attribute as "USAJOBS / U.S. OPM" — NOT CC0 (a different legal basis: CC0 is a rights-holder's own waiver of rights they hold; SS105 means no US copyright ever existed here). Requires a descriptive, non-generic User-Agent header — a bare default UA is effectively blocked (found live, not assumed). | Every returned record's own fields are redistributed directly — this endpoint already serves individual, already-public announcement records, not a bulk file this pipeline narrows down. |
 | Reporters Without Borders — World Press Freedom Index | RSF publishes the index openly; cite Reporters Without Borders (RSF), World Press Freedom Index. | raw committed |
 | UAE — no occupation-level wage series since 2009 (ILOSTAT last known figures) | ILOSTAT open data terms (ILO). Cite: International Labour Organization (ILO), ILOSTAT, flow DF_EAR_EMTA_SEX_OCU_NB. Underlying national source: UAE Federal Competitiveness and Statistics Centre (FCSC), 2009 Labour Force Survey. | the four cited 2009 figures are reproduced directly in data/processed/salary_ae.json (there is no larger raw payload to separately redistribute — see module docstring; this source does not fetch a raw file at run time). |
 | ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation | CC BY 2.5 AU. Cite: Australian Taxation Office (ATO), Taxation statistics 2023-24, Table 15A, via data.gov.au. | processed derivative only — the raw 700 KB ATO workbook is cached under data/raw/salary_au/ but that directory is gitignored, so this repo does not redistribute the raw download (CC BY 2.5 AU would permit it; the repo simply doesn't). Only the derived data/processed/salary_au.json is committed. |
@@ -60,6 +67,7 @@ The MIT licence in `LICENSE` covers the **code** only. Data belongs to the organ
 | World Happiness Report 2026 — Figure 2.1 data panel | World Happiness Report data is free to use with attribution. Cite: Helliwell et al., World Happiness Report 2026. | raw committed |
 | Open-Meteo ERA5 archive — 1991-2020 monthly climate normals | Open-Meteo data is CC BY 4.0; underlying ERA5 is Copernicus Climate Change Service information. Cite: Open-Meteo / Copernicus ERA5. | raw committed |
 | IMF World Economic Outlook — country projections | IMF WEO database is free to download and use with attribution. | raw committed |
+| Postings occupation classifier (Gemini, titles only) | N/A — not run this session. | raw committed |
 | World Bank Global Economic Prospects — growth forecasts | CC BY 4.0 — World Bank. Cite: World Bank, Global Economic Prospects. | raw committed |
 
 ## Live sources
@@ -296,20 +304,20 @@ Task's guessed URL https://www.fhfa.gov/hpi/download/monthly/hpi_at_metro.csv is
 ### World Bank Open Data — Official exchange rate, period average (PA.NUS.FCRF)
 
 - **Status** — live
-- **Coverage** — 15/15 countries, 1960-2026 (per-country coverage varies; pre-independence or pre-modern-currency years are gaps, not zeros)
-- **Rows processed** — 978
-- **Fetched** — 2026-08-12T15:15:06+00:00
+- **Coverage** — 15/15 wage-spine countries + 5/5 postings-only countries (SG, JP, KH, IN, AM), 1960-2026 (per-country coverage varies; pre-independence or pre-modern-currency years are gaps, not zeros)
+- **Rows processed** — 1,259
+- **Fetched** — 2026-08-21T14:42:26+00:00
 - **Licence** — CC BY 4.0 — World Bank Open Data. Cite: World Bank, World Development Indicators.
 - **Output** — `data/processed/fx_rates.json`
 - **Fetch script** — `scripts/src_fx_rates.py`
 
 **URLs**
 
-- <https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT/indicator/PA.NUS.FCRF?format=json&per_page=20000&date=1960:2026>
+- <https://api.worldbank.org/v2/country/AUS;USA;CAN;GBR;IRL;DEU;NLD;ITA;ESP;SWE;DNK;NOR;FIN;ARE;QAT;SGP;JPN;KHM;IND;ARM/indicator/PA.NUS.FCRF?format=json&per_page=20000&date=1960:2026>
 
 **What we do to it**
 
-1. Requested indicator PA.NUS.FCRF for all 15 covered countries in one call (semicolon-joined ISO3), 1960-2026.
+1. Requested indicator PA.NUS.FCRF for all 15 wage-spine countries PLUS 5 postings-only countries (SG, JP, KH, IN, AM — package 14, Tier 3.1, needed to convert postings' own SGD/JPY/KHR/INR/AMD compensation) in one call (semicolon-joined ISO3), 1960-2026.
 1. Dropped rows with null values (World Bank returns nulls for unreported years).
 1. Regrouped from flat rows to {ISO2: [{year, value}]} sorted ascending by year — same shape convention as scripts/src_world_bank.py.
 1. No smoothing, no interpolation, no imputation, no override of AED/QAR's known peg values — fetched exactly as published.
@@ -375,7 +383,7 @@ Task's guessed https://github.com/hiring-lab/data 301-redirects to the real, cur
 - **Status** — live
 - **Coverage** — 63/73 cities (10 explicitly unavailable)
 - **Rows processed** — 63
-- **Fetched** — 2026-08-04T21:01:37+00:00
+- **Fetched** — 2026-08-21T04:02:35+00:00
 - **Licence** — levels.fyi publishes these metro pages publicly and its robots.txt explicitly invites agent access. Data is crowd-sourced and remains theirs; we store derived per-city figures and cite levels.fyi on every one. No bulk redistribution.
 - **Output** — `data/processed/levels_fyi.json`
 - **Fetch script** — `scripts/src_levels_fyi.py`
@@ -527,6 +535,162 @@ mipex.eu/download redirects to /history (an old page); the current data lives be
 1. Grouped into MEASURE_UNITMEASURE series and sorted by period. No rebasing or smoothing.
 
 > Index bases differ by country and block — compare shape, not level.
+
+### Postings panel — merged advertised-pay data across all providers
+
+- **Status** — live
+- **Coverage** — 1723 companies across 6 providers
+- **Rows processed** — 48,267
+- **Fetched** — 2026-08-21T17:53:22+00:00
+- **Licence** — Inherits each provider source's own license — this file adds no new terms, only concatenation and summary computation over already-committed, already-licensed data.
+- **Output** — `data/processed/postings.json`
+- **Fetch script** — see `scripts/`
+
+**URLs**
+
+
+**What we do to it**
+
+1. Concatenated every provider's own postings array into one list.
+1. Converted each posting's own native compensation to USD at its own effective year's year-matched FX rate (Tier 3.1) — normalise.to_usd(), the same machinery the wage spine uses, applied entirely within postings' own data; never reads wage_distribution.json.
+1. Computed per-provider and per-country summary counts for the seed-list transparency page and the coverage-denominator discipline this site's own other panels already follow.
+1. Never touched wage_distribution.json, crosswalk.compare(), or comparison_basis() — the survey/advertised boundary is enforced structurally by check_postings_wage_spine_boundary, not just by convention.
+
+> The site's own postings panel reads ONLY this file, never an individual provider file.
+
+### Ashby job-board API — advertised pay, structured compensation
+
+- **Status** — live
+- **Coverage** — 1078 verified companies, 19715 postings, this run
+- **Rows processed** — 19,715
+- **Fetched** — 2026-08-21T17:18:38+00:00
+- **Licence** — Each company's own postings, published by that company via Ashby's own public, unauthenticated job-board API — no Ashby-specific license terms apply beyond the postings being intentionally public.
+- **Output** — `data/processed/postings_ashby.json`
+- **Fetch script** — `scripts/src_postings_ashby.py`
+
+**URLs**
+
+- <https://api.ashbyhq.com/posting-api/job-board/{token}?includeCompensation=true>
+
+**What we do to it**
+
+1. Loaded candidate company tokens from a third-party MIT-licensed aggregator (github.com/Feashliaa/job-board-aggregator) as SEED HINTS ONLY.
+1. Probed each candidate live against api.ashbyhq.com; a token is never guessed into the output, only counted verified once it resolves with at least one real posting. An already-verified company that later 404s, times out, or returns zero postings is kept through a bounded number of consecutive failed probes (a strike, not an eviction) and removed, with the removal logged, only after repeated consecutive failures.
+1. Parsed each posting's own compensationTiers into a common {min,max,currency,period} shape, preferring the first component with a real minValue+currencyCode.
+1. Resolved each posting's own free-text location to a best-effort ISO2 country code — never invented when the text doesn't resolve.
+
+> Advertised pay — NEVER merged with survey-earnings data (validate_data.py's own assertion, package 7, guards this). See data/processed/postings.json (build_postings.py) for the merged, cross-provider file the site actually reads.
+
+### Greenhouse Job Board API — advertised pay, per-job pay_transparency fan-out
+
+- **Status** — live
+- **Coverage** — 371 verified companies, 14015 postings, this run
+- **Rows processed** — 14,015
+- **Fetched** — 2026-08-21T17:33:58+00:00
+- **Licence** — Each company's own postings, published via Greenhouse's own public, unauthenticated Job Board API.
+- **Output** — `data/processed/postings_greenhouse.json`
+- **Fetch script** — `scripts/src_postings_greenhouse.py`
+
+**URLs**
+
+- <https://boards-api.greenhouse.io/v1/boards/{token}/jobs>
+- <https://boards-api.greenhouse.io/v1/boards/{token}/jobs/{id}?pay_transparency=true>
+
+**What we do to it**
+
+1. Loaded candidate company tokens from a third-party MIT-licensed aggregator (github.com/Feashliaa/job-board-aggregator) as SEED HINTS ONLY.
+1. Probed each candidate's list endpoint live; kept only tokens with >=1 real job.
+1. Fetched pay_input_ranges via the detail endpoint's own ?pay_transparency=true flag, one request per job, throttled to 0.4s apart, capped at 40 jobs/company/run — every job still appears in the output with its title/location/url even past that cap, just without a pay attempt that run (grows on the next scheduled run via the same on-disk cache).
+
+> Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads.
+
+### Hacker News "Who is hiring?" — free-text advertised pay
+
+- **Status** — live
+- **Coverage** — 243 postings from 1 thread (Ask HN: Who is hiring? (August 2026))
+- **Rows processed** — 243
+- **Fetched** — 2026-08-21T17:52:29+00:00
+- **Licence** — Public HN API (hacker-news.firebaseio.com) — each comment is the poster's own public submission to a public forum thread; redistributed here as individual job-posting text, matching how HN's own site displays it.
+- **Output** — `data/processed/postings_hn.json`
+- **Fetch script** — `scripts/src_postings_hn.py`
+
+**URLs**
+
+- <https://news.ycombinator.com/item?id=49156683>
+
+**What we do to it**
+
+1. Found the current month's 'Who is hiring?' thread from whoishiring's own recent submissions.
+1. Read every top-level comment via the public Firebase API.
+1. Parsed a compensation range from comment text ONLY where a clear currency-symbol-plus-two-numbers pattern matched (parse_compensation_text) — most comments carry no parseable range and are kept with compensation: null, not a guess.
+
+> Advertised pay — NEVER merged with survey-earnings data. Free text, not a structured ATS field; disclosed as such downstream.
+
+### Lever postings API — advertised pay, optional salaryRange
+
+- **Status** — live
+- **Coverage** — 268 verified companies, 10238 postings, this run
+- **Rows processed** — 10,238
+- **Fetched** — 2026-08-21T17:45:14+00:00
+- **Licence** — Each company's own postings, published via Lever's own public, unauthenticated postings API.
+- **Output** — `data/processed/postings_lever.json`
+- **Fetch script** — `scripts/src_postings_lever.py`
+
+**URLs**
+
+- <https://api.lever.co/v0/postings/{token}?mode=json>
+
+**What we do to it**
+
+1. Loaded candidate company tokens from a third-party MIT-licensed aggregator (github.com/Feashliaa/job-board-aggregator) as SEED HINTS ONLY.
+1. Probed each candidate live; kept only tokens with >=1 real posting.
+1. Read salaryRange directly off each posting — no fan-out needed, but the field is optional and populated on a small minority of postings in this pipeline's own sample.
+
+> Advertised pay — NEVER merged with survey-earnings data. See build_postings.py for the merged, cross-provider file the site reads.
+
+### Teamtailor public jobs.json feed — advertised pay, Nordic/European coverage
+
+- **Status** — live
+- **Coverage** — 6 verified companies, 56 postings
+- **Rows processed** — 56
+- **Fetched** — 2026-08-21T17:45:41+00:00
+- **Licence** — Each company's own postings, published via Teamtailor's own public, unauthenticated JSON Feed — no Teamtailor-specific license terms apply.
+- **Output** — `data/processed/postings_teamtailor.json`
+- **Fetch script** — `scripts/src_postings_teamtailor.py`
+
+**URLs**
+
+- <https://{subdomain}.teamtailor.com/jobs.json>
+
+**What we do to it**
+
+1. Hand-seeded candidate list (no third-party aggregator indexes this provider) — every token verified live against the real endpoint; a 404 or connection failure drops it.
+1. Parsed the embedded schema.org JobPosting per item; baseSalary read when present (observed absent in every sampled posting this session, kept in the parser for the customers who do populate it).
+
+> Advertised pay — NEVER merged with survey-earnings data. Salary-free in this session's own sample; kept for volume and Nordic-market coverage per the work order's own explicit instruction for sources like this.
+
+### USAJOBS Historic JOA — U.S. federal job announcements, real numeric pay
+
+- **Status** — live
+- **Coverage** — 4000 announcements across 2 OPM series
+- **Rows processed** — 4,000
+- **Fetched** — 2026-08-21T17:48:02+00:00
+- **Licence** — 17 U.S.C. SS 105 (U.S. federal government work — no US copyright attaches). Attribute as "USAJOBS / U.S. OPM" — NOT CC0 (a different legal basis: CC0 is a rights-holder's own waiver of rights they hold; SS105 means no US copyright ever existed here). Requires a descriptive, non-generic User-Agent header — a bare default UA is effectively blocked (found live, not assumed).
+- **Output** — `data/processed/postings_usajobs.json`
+- **Fetch script** — `scripts/src_postings_usajobs.py`
+
+**URLs**
+
+- <https://data.usajobs.gov/api/historicjoa?PositionSeries=2210>
+- <https://data.usajobs.gov/api/historicjoa?PositionSeries=0854>
+
+**What we do to it**
+
+1. Filtered live to PositionSeries 2210 (IT Management) and 0854 (Computer Engineering) — found ResultsPerPage is NOT a valid parameter (400 live), PositionSeries is.
+1. Paged via the API's own continuationToken, not a page-number parameter.
+1. Read minimumSalary/maximumSalary directly — real numbers, no parsing needed, unlike every ATS-provider source in this package.
+
+> Advertised pay — NEVER merged with survey-earnings data. Government job announcements, not private-sector, disclosed as such downstream (build_postings.py, the site's own UI).
 
 ### Reporters Without Borders — World Press Freedom Index
 
@@ -885,9 +1049,9 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 ### Stack Overflow Annual Developer Survey — salaries by country
 
 - **Status** — live
-- **Coverage** — 15/15 countries across 1 wave(s)
-- **Rows processed** — 65,437
-- **Fetched** — 2026-08-04T19:44:23+00:00
+- **Coverage** — 15/15 countries across 4 wave(s)
+- **Rows processed** — 277,080
+- **Fetched** — 2026-08-21T04:07:40+00:00
 - **Licence** — Stack Overflow releases survey results under the Open Database License (ODbL). Cite: Stack Overflow Annual Developer Survey.
 - **Output** — `data/processed/stackoverflow_survey.json`
 - **Fetch script** — see `scripts/`
@@ -895,11 +1059,14 @@ Best surprise of the session - a direct CSV confirmed working (200, text/csv, 26
 
 **URLs**
 
+- <https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2022/results.csv>
+- <https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2023/results.csv>
 - <https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2024/results.csv>
+- <https://github.com/StackExchange/Survey/raw/refs/heads/main/packages/archive/2025/results.csv>
 
 **What we do to it**
 
-1. Streamed the annual results CSV for waves: 2024 (~150 MB each).
+1. Streamed the annual results CSV for waves: 2022, 2023, 2024, 2025 (~150 MB each).
 1. Resolved the free-text Country column to our 15 ISO2 codes; all other responses dropped.
 1. Dropped compensation outside $5,000-$1,000,000.
 1. Bucketed by experience (<3 / 3-6 / 6+ professional years) and separately by DevType role.
@@ -1029,7 +1196,7 @@ Listing page https://www.un.org/development/desa/pd/content/international-migran
 - **Status** — live
 - **Coverage** — 15 country rows (14 countries, Canada shown as two rows per NEEDS-DECISION #12), 1 drawn absent (IT)
 - **Rows processed** — 15
-- **Fetched** — 2026-08-13T02:54:16+00:00
+- **Fetched** — 2026-08-21T17:05:55+00:00
 - **Licence** — Inherits each underlying salary_*.json / bls_oews.json source's own licence — this file adds no new licensing terms, only computation over already-committed and already-licensed data.
 - **Output** — `data/processed/wage_distribution.json`
 - **Fetch script** — see `scripts/`
@@ -1201,6 +1368,12 @@ These are documented at the same level of detail as the working ones. The site r
 - Tried: <https://www.imf.org/-/media/Files/Publications/WEO/WEO-Database/2026/April/WEOApr2026all.ashx>
 - Tried: <https://www.imf.org/-/media/Files/Publications/WEO/WEO-Database/2026/october/WEOOct2026all.ashx>
 - Tried: <https://www.imf.org/external/pubs/ft/weo/2026/01/weodata/WEOApr2026all.xls>
+
+### Postings occupation classifier (Gemini, titles only) — blocked
+
+- **Why** — Run again once GEMINI_API_KEY is set.
+- **Attempted** — 2026-08-17T07:43:02+00:00
+- Tried: <https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent>
 
 ### World Bank Global Economic Prospects — growth forecasts — unavailable
 

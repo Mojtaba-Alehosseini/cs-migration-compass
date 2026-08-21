@@ -1,14 +1,14 @@
 {
  "source_id": "postings_lever",
- "generated_at": "2026-08-21T14:54:57+00:00",
+ "generated_at": "2026-08-21T17:45:14+00:00",
  "meta": {
   "candidates_in_hint_file": 4368,
-  "candidates_probed_this_run": 317,
-  "verified_companies": 264,
-  "verified_companies_reconfirmed_this_run": 264,
+  "candidates_probed_this_run": 717,
+  "verified_companies": 268,
+  "verified_companies_reconfirmed_this_run": 268,
   "verified_companies_removed_this_run": [],
-  "postings_count": 10176,
-  "compensation_present_count": 3710
+  "postings_count": 10238,
+  "compensation_present_count": 3724
  },
  "data": {
   "postings": [
@@ -9701,7 +9701,7 @@
      "min": 1,
      "max": 1,
      "currency": "INR",
-     "period": "hour",
+     "period": "year",
      "raw_text": "1-1 INR (per-year-salary)",
      "confidence": "structured"
     },
@@ -15294,7 +15294,7 @@
      "min": 42,
      "max": 46,
      "currency": "EUR",
-     "period": "hour",
+     "period": "year",
      "raw_text": "42-46 EUR (per-year-salary)",
      "confidence": "structured"
     },
@@ -15371,7 +15371,7 @@
      "min": 38,
      "max": 45,
      "currency": "EUR",
-     "period": "hour",
+     "period": "year",
      "raw_text": "38-45 EUR (per-year-salary)",
      "confidence": "structured"
     },
@@ -149533,7 +149533,7 @@
      "min": 1,
      "max": 1,
      "currency": "INR",
-     "period": "hour",
+     "period": "year",
      "raw_text": "1-1 INR (per-year-salary)",
      "confidence": "structured"
     },
@@ -149575,7 +149575,7 @@
      "min": 1,
      "max": 1,
      "currency": "INR",
-     "period": "hour",
+     "period": "year",
      "raw_text": "1-1 INR (per-year-salary)",
      "confidence": "structured"
     },
@@ -168445,6 +168445,972 @@
     "posted_at": null,
     "compensation": null,
     "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:5fb62804-fc14-4747-80a7-bcaf825861e7",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Budget Analyst (Public Health)",
+    "location_raw": "Oregon",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/5fb62804-fc14-4747-80a7-bcaf825861e7",
+    "posted_at": null,
+    "compensation": {
+     "min": 90000,
+     "max": 90000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "90000-90000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:ca23e608-3058-484f-ad0a-0f96fb83734e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Chronic Disease Epidemiologist",
+    "location_raw": "Massachusetts",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/ca23e608-3058-484f-ad0a-0f96fb83734e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:39bd2f54-cf92-431b-bee5-d8f3952a2c4c",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Epidemiologist",
+    "location_raw": "Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/39bd2f54-cf92-431b-bee5-d8f3952a2c4c",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:32e3d78f-fb7d-41e4-bb2e-d115d79c184c",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Healthcare Compliance Specialist",
+    "location_raw": "New Jersey",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/32e3d78f-fb7d-41e4-bb2e-d115d79c184c",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:925f0f72-09e4-4201-8cc4-e4d47b01d32c",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Linkage to Care Coordinator",
+    "location_raw": "Nevada",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/925f0f72-09e4-4201-8cc4-e4d47b01d32c",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:53bd5a5a-c71e-4196-a3a7-d244820f08cb",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Outreach and Communications Manager for Rural Health Transformation",
+    "location_raw": "Connecticut",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/53bd5a5a-c71e-4196-a3a7-d244820f08cb",
+    "posted_at": null,
+    "compensation": {
+     "min": 105000,
+     "max": 105000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "105000-105000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:6fcbc653-b8e4-4c57-9647-e1767bb7a64d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "PoWER Lead Community Health Worker (CHW)",
+    "location_raw": "Kentucky",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/6fcbc653-b8e4-4c57-9647-e1767bb7a64d",
+    "posted_at": null,
+    "compensation": {
+     "min": 63000,
+     "max": 80000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "63000-80000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:7e18d449-b147-4d90-b2b3-747c425b1ff0",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "PoWER Lead Doula",
+    "location_raw": "Kentucky",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/7e18d449-b147-4d90-b2b3-747c425b1ff0",
+    "posted_at": null,
+    "compensation": {
+     "min": 63000,
+     "max": 80000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "63000-80000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:568ac313-98ed-4e3e-ab46-765dc2f1382d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Power Nurse Manager",
+    "location_raw": "Kentucky",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/568ac313-98ed-4e3e-ab46-765dc2f1382d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:a4203e6e-ad9e-4a43-9713-3fdc17fecbf7",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Program Monitoring and Evaluation Specialist",
+    "location_raw": "Connecticut",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/a4203e6e-ad9e-4a43-9713-3fdc17fecbf7",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:e9e475f9-a2f2-43b9-b0ac-5483943fda9d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Project Implementation Specialist",
+    "location_raw": "Connecticut",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/e9e475f9-a2f2-43b9-b0ac-5483943fda9d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:25a92d48-e7cf-4cdd-862c-2720552ec4f9",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Rapid Response to Recovery Community Paramedicine Implementation Specialist",
+    "location_raw": "Kentucky",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/25a92d48-e7cf-4cdd-862c-2720552ec4f9",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:6194073a-651b-4af7-8dbd-14f63e4a073f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Rooted in Health (RIH) Workforce Specialist",
+    "location_raw": "Kentucky",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/6194073a-651b-4af7-8dbd-14f63e4a073f",
+    "posted_at": null,
+    "compensation": {
+     "min": 80000,
+     "max": 90000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "80000-90000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:b571040a-8f6e-4c88-a738-ffacde35a188",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Senior Project Manager",
+    "location_raw": "Georgia",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/b571040a-8f6e-4c88-a738-ffacde35a188",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cdcfoundation:846319ac-8f31-403d-9c13-864863c28fc2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cdcfoundation",
+    "title": "Strategic Plan to Advance Racial Equity (SP-ARE) Project Manager",
+    "location_raw": "Massachusetts",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cdcfoundation/846319ac-8f31-403d-9c13-864863c28fc2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:4a9b28f6-eea7-488f-a71c-9ac2c806bfc8",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "Application Support Specialist",
+    "location_raw": "Dallas, TX",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/4a9b28f6-eea7-488f-a71c-9ac2c806bfc8",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:2124a6c0-fc8f-42ee-bd33-47048545135d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "Business Analyst",
+    "location_raw": "United Kingdom based",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/2124a6c0-fc8f-42ee-bd33-47048545135d",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:de170c23-dcf5-4cdd-b1ee-6289527f6920",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "Business Analyst",
+    "location_raw": "Dallas, TX",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/de170c23-dcf5-4cdd-b1ee-6289527f6920",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:9b6ddcc0-d32d-4c56-8724-743054f4c2fd",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "Data Administrator",
+    "location_raw": "Durham, UK",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/9b6ddcc0-d32d-4c56-8724-743054f4c2fd",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:0896752d-bd28-4a6e-bcec-b64c163c1042",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "Deskside Support",
+    "location_raw": "Port St. Lucie",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/0896752d-bd28-4a6e-bcec-b64c163c1042",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:1c2ce5d4-c038-4ad9-8297-06ad4bd0d897",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "EDI Technical Analyst",
+    "location_raw": "United Kingdom based",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/1c2ce5d4-c038-4ad9-8297-06ad4bd0d897",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:48d4d418-7206-47d2-a989-06f0e37ed704",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "ERP Project Manager",
+    "location_raw": "United Kingdom based",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/48d4d418-7206-47d2-a989-06f0e37ed704",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:4db1aad5-05fa-420d-9c93-287d7ee750a2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "ERP Project Manager",
+    "location_raw": "Dallas, TX",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/4db1aad5-05fa-420d-9c93-287d7ee750a2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:b7b64f2b-f76c-467c-ac2d-04bf00c38a42",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "IT Fulfillment Associate",
+    "location_raw": "Dallas, TX",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/b7b64f2b-f76c-467c-ac2d-04bf00c38a42",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:64e5722a-479f-45f8-9b5c-50d97ff7cab2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "IT Helpdesk Support",
+    "location_raw": "Dallas, TX",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/64e5722a-479f-45f8-9b5c-50d97ff7cab2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:89fc740a-5a57-479a-ae47-80c38e5948a7",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "IT Service Desk Analyst",
+    "location_raw": "Durham, UK",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/89fc740a-5a57-479a-ae47-80c38e5948a7",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:cef:0405ca4a-8845-40bc-9400-37b81f80953b",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "cef",
+    "title": "Senior AWS Software Engineer (Integrations Team)",
+    "location_raw": "Dallas, TX",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/cef/0405ca4a-8845-40bc-9400-37b81f80953b",
+    "posted_at": null,
+    "compensation": {
+     "min": 123000,
+     "max": 168000,
+     "currency": "USD",
+     "period": "year",
+     "raw_text": "123000-168000 USD (per-year-salary)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:celaralabs:307056c3-3edd-43d6-beed-5cf34b834dc9",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celaralabs",
+    "title": "QA Automation Engineer (QB - QA - 20260617)",
+    "location_raw": "Remote",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/celaralabs/307056c3-3edd-43d6-beed-5cf34b834dc9",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celaralabs:9634d882-b7bd-4911-8829-4fc8da1884f8",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celaralabs",
+    "title": "Software Engineer (QB - .Net - 20260713)",
+    "location_raw": "Remote",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/celaralabs/9634d882-b7bd-4911-8829-4fc8da1884f8",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:4daa3170-60fc-4fd6-a932-11335a05c9f2",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "(Liquid Handling) Automation Specialist (80 – 100 %)",
+    "location_raw": "Fehraltorf (Zurich), Switzerland",
+    "country": "CH",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/4daa3170-60fc-4fd6-a932-11335a05c9f2",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:f0a7ce90-4a6b-402b-af61-8887adeaa5be",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "(Senior) Bioanalytical Principal Investigator LBS / GLP Study Director (100%)",
+    "location_raw": "Fehraltorf (Zurich), Switzerland",
+    "country": "CH",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/f0a7ce90-4a6b-402b-af61-8887adeaa5be",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:c6b8cfa0-64bd-43f7-807e-ddff0806d246",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Bioanalytical Associate / Project Scientist – Molecular and Cellular Biology",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/c6b8cfa0-64bd-43f7-807e-ddff0806d246",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:27555349-a788-4cb0-8347-8554b60f169a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Bioanalytical Fee and Proposal Support",
+    "location_raw": "Remote - US",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/27555349-a788-4cb0-8347-8554b60f169a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:9d79cb5f-7597-4454-92a1-67eae3f714d3",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Bioanalytical Fee and Proposal Support",
+    "location_raw": "Tempe, AZ",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/9d79cb5f-7597-4454-92a1-67eae3f714d3",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:b43ca37d-4a56-4110-88f9-b42aae38fad6",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Bioanalytical Fee and Proposal Support",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/b43ca37d-4a56-4110-88f9-b42aae38fad6",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:52c98195-b960-4570-bc1f-4b38ee7d6c4a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Bioanalytical Laboratory Technician (80 - 100%)",
+    "location_raw": "Fehraltorf (Zurich), Switzerland",
+    "country": "CH",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/52c98195-b960-4570-bc1f-4b38ee7d6c4a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:a8b1690d-a337-45ce-abc7-7d53555139ff",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Bioanalytical Principal Investigator - Small Molecule",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/a8b1690d-a337-45ce-abc7-7d53555139ff",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:40d0a7a0-ead8-408e-9f98-529e820d8743",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Clinical Research Nurse (FT Days)",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/40d0a7a0-ead8-408e-9f98-529e820d8743",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:1ebdc03e-d01e-4392-afe3-a5ea2170b50e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Clinical Research Nurse (FT Evenings)",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/1ebdc03e-d01e-4392-afe3-a5ea2170b50e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:36431cdb-3b2a-4488-ac33-e5ac3b46b51e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Clinical Study Designer - Lincoln, Nebraska",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/36431cdb-3b2a-4488-ac33-e5ac3b46b51e",
+    "posted_at": null,
+    "compensation": {
+     "min": 20,
+     "max": 21,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "20-21 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:a76b0360-15d3-414b-9a38-c62072d69133",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Consumer Study Coordinator (30 hrs/wk) - Richmond, Virginia",
+    "location_raw": "Richmond, VA",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/a76b0360-15d3-414b-9a38-c62072d69133",
+    "posted_at": null,
+    "compensation": {
+     "min": 19,
+     "max": 19,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "19-19 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:6fb342e6-2899-4388-8bd7-e9aa4703844d",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Consumer Study Coordinator (Part-Time - 2nd shift) - Richmond, Virginia",
+    "location_raw": "Richmond, VA",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/6fb342e6-2899-4388-8bd7-e9aa4703844d",
+    "posted_at": null,
+    "compensation": {
+     "min": 19,
+     "max": 19,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "19-19 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:ef541240-2739-4313-bdfd-7d2cb2779309",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Data Programmer (UK - Hybrid)",
+    "location_raw": "Belfast, Northern Ireland",
+    "country": "IE",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/ef541240-2739-4313-bdfd-7d2cb2779309",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:a809b686-be73-4f33-b234-c6079032eda1",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "EDC Developer / Programmer",
+    "location_raw": "Remote - US",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/a809b686-be73-4f33-b234-c6079032eda1",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:c78d3343-c4f7-4262-a8a5-ee402ef42dcc",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "HPLC/LCMS Technician -2nd shift - Lincoln, NE",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/c78d3343-c4f7-4262-a8a5-ee402ef42dcc",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:d94458ff-8192-496f-ac70-2f5cec28a6f9",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Instrument Scientist  - Dose Formulation",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/d94458ff-8192-496f-ac70-2f5cec28a6f9",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:62219a5b-dde9-4309-a057-b86d77e7882e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Laboratory Technician - Full Time",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/62219a5b-dde9-4309-a057-b86d77e7882e",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:2180111c-21b3-4d0e-9b4d-5d6eecc57230",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Laboratory Technician – Molecular and Cell Biology - Part Time",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/2180111c-21b3-4d0e-9b4d-5d6eecc57230",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:e268e711-eda4-4903-815d-66e95d19294f",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Lead, Clinical Research Associate - US",
+    "location_raw": "Remote - US",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/e268e711-eda4-4903-815d-66e95d19294f",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:9ccfd727-f532-461c-8fb2-fd006bafaf94",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Manager/Senior Manager, Quality Assurance, Bioanalytical",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/9ccfd727-f532-461c-8fb2-fd006bafaf94",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:8d15f484-04ed-443b-9e03-86ea9645552e",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Medical Research Assistant (part time weekday mornings)",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/8d15f484-04ed-443b-9e03-86ea9645552e",
+    "posted_at": null,
+    "compensation": {
+     "min": 17.5,
+     "max": 17.5,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "17.5-17.5 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:a1d7ecaa-ae21-413f-82f0-d76619031d7a",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Medical Writer",
+    "location_raw": "Remote - US",
+    "country": null,
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/a1d7ecaa-ae21-413f-82f0-d76619031d7a",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:744737d9-b067-4f82-ac68-0dd345a0e576",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Mitarbeiter/in Quality Control 80-100%",
+    "location_raw": "Fehraltorf (Zurich), Switzerland",
+    "country": "CH",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/744737d9-b067-4f82-ac68-0dd345a0e576",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:fd40152f-09f6-4bd1-9a3f-b1163fb08415",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "On-Site IT Support Specialist",
+    "location_raw": "Fehraltorf (Zurich), Switzerland",
+    "country": "CH",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/fd40152f-09f6-4bd1-9a3f-b1163fb08415",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:df4ab87c-e03b-49a1-a93b-a7e13b48761b",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Phlebotomist/Nursing Assistant (5a-12p)",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/df4ab87c-e03b-49a1-a93b-a7e13b48761b",
+    "posted_at": null,
+    "compensation": {
+     "min": 18,
+     "max": 22,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "18-22 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:bbb6718a-1113-4283-9300-c49a21650d04",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Phlebotomist/Nursing Assistant (Day Shift)",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/bbb6718a-1113-4283-9300-c49a21650d04",
+    "posted_at": null,
+    "compensation": {
+     "min": 19.5,
+     "max": 22.5,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "19.5-22.5 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:d376bf1d-ec02-4bc8-9869-184181b2dbaf",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Principal Investigator",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/d376bf1d-ec02-4bc8-9869-184181b2dbaf",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:80e8d3dd-ee25-4e07-b8f5-4c6485c1c170",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Research Screening Specialist - Lincoln, Nebraska",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/80e8d3dd-ee25-4e07-b8f5-4c6485c1c170",
+    "posted_at": null,
+    "compensation": {
+     "min": 20,
+     "max": 20,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "20-20 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:78a48dd8-6af3-4fb8-961b-7f91d28786a3",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Scientist, Method Development - Ligand Binding Assays",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/78a48dd8-6af3-4fb8-961b-7f91d28786a3",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:3d76728f-76bd-4c3e-8f89-513d67d1ddc4",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Study Participant Call Center Representative - Spanish Bilingual",
+    "location_raw": "Tempe, AZ",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/3d76728f-76bd-4c3e-8f89-513d67d1ddc4",
+    "posted_at": null,
+    "compensation": {
+     "min": 17.5,
+     "max": 17.5,
+     "currency": "USD",
+     "period": "hour",
+     "raw_text": "17.5-17.5 USD (per-hour-wage)",
+     "confidence": "structured"
+    },
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:8de47fa1-5121-457b-a521-5e9ca75f14b3",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Technician – HPLC/LCMS - 2nd shift (part-time)",
+    "location_raw": "Lincoln, NE",
+    "country": "US",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/8de47fa1-5121-457b-a521-5e9ca75f14b3",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
+   },
+   {
+    "id": "lever:celerion:c2fb7a29-083f-4437-8c44-71a6a6518ac8",
+    "provider": "lever",
+    "company": null,
+    "company_slug": "celerion",
+    "title": "Trial Master File Representative (Remote -  UK)",
+    "location_raw": "Remote - UK",
+    "country": "GB",
+    "remote": null,
+    "url": "https://jobs.lever.co/celerion/c2fb7a29-083f-4437-8c44-71a6a6518ac8",
+    "posted_at": null,
+    "compensation": null,
+    "occupation": null
    }
   ],
   "verified_companies": {
@@ -168452,7 +169418,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168460,7 +169426,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168468,7 +169434,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 321,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168476,7 +169442,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 10,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168484,7 +169450,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 30,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168492,7 +169458,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 58,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168500,7 +169466,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168508,7 +169474,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168516,7 +169482,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 8,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168524,7 +169490,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 54,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168532,7 +169498,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168540,7 +169506,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168548,7 +169514,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 44,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168556,7 +169522,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168564,7 +169530,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 18,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168572,7 +169538,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 22,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168580,7 +169546,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168588,7 +169554,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 17,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168596,7 +169562,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 48,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168604,7 +169570,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 13,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168612,7 +169578,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168620,7 +169586,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 11,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168628,7 +169594,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168636,7 +169602,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 8,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168644,7 +169610,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168652,7 +169618,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168660,7 +169626,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 23,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168668,7 +169634,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168676,7 +169642,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168684,7 +169650,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 24,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168692,7 +169658,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 11,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168700,7 +169666,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 12,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168708,7 +169674,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168716,7 +169682,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 20,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168724,7 +169690,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 44,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168732,7 +169698,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168740,7 +169706,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168748,7 +169714,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 34,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168756,7 +169722,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 95,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168764,7 +169730,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168772,7 +169738,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168780,7 +169746,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 31,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168788,7 +169754,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168796,7 +169762,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168804,7 +169770,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 18,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168812,7 +169778,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 12,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168820,7 +169786,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 14,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168828,7 +169794,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 77,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168836,7 +169802,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168844,7 +169810,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 11,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168852,7 +169818,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168860,7 +169826,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168868,7 +169834,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 209,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168876,7 +169842,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 20,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168884,7 +169850,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168892,7 +169858,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 43,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168900,7 +169866,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168908,7 +169874,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 38,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168916,7 +169882,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 94,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168924,7 +169890,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 23,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168932,7 +169898,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 22,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168940,7 +169906,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 11,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168948,7 +169914,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 34,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168956,7 +169922,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168964,7 +169930,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 41,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168972,7 +169938,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 22,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168980,7 +169946,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168988,7 +169954,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -168996,7 +169962,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169004,7 +169970,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169012,7 +169978,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 10,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169020,7 +169986,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169028,7 +169994,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169036,7 +170002,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 46,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169044,7 +170010,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169052,7 +170018,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169060,7 +170026,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169068,7 +170034,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169076,7 +170042,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 116,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169084,7 +170050,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169092,7 +170058,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169100,7 +170066,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 86,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169108,7 +170074,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 14,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169116,7 +170082,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169124,7 +170090,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 14,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169132,7 +170098,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 59,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169140,7 +170106,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 39,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169148,7 +170114,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 125,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169156,7 +170122,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169164,7 +170130,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 23,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169172,7 +170138,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 8,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169180,7 +170146,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 10,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169188,7 +170154,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 20,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169196,7 +170162,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169204,7 +170170,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 22,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169212,7 +170178,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169220,7 +170186,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169228,7 +170194,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 8,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169236,7 +170202,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169244,7 +170210,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169252,7 +170218,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 11,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169260,7 +170226,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169268,7 +170234,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 36,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169276,7 +170242,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169284,7 +170250,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169292,7 +170258,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 27,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169300,7 +170266,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 11,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169308,7 +170274,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169316,7 +170282,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 20,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169324,7 +170290,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169332,7 +170298,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169340,7 +170306,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169348,7 +170314,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169356,7 +170322,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 15,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169364,7 +170330,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 36,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169372,7 +170338,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 87,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169380,7 +170346,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169388,7 +170354,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 81,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169396,7 +170362,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169404,7 +170370,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 10,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169412,7 +170378,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169420,7 +170386,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169428,7 +170394,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169436,7 +170402,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169444,7 +170410,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169452,7 +170418,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 15,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169460,7 +170426,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169468,7 +170434,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169476,7 +170442,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 10,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169484,7 +170450,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 23,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169492,7 +170458,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169500,7 +170466,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169508,7 +170474,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169516,7 +170482,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169524,7 +170490,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169532,7 +170498,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169540,7 +170506,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169548,7 +170514,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169556,7 +170522,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 19,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169564,7 +170530,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 18,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169572,7 +170538,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 43,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169580,7 +170546,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169588,7 +170554,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169596,7 +170562,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169604,7 +170570,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169612,7 +170578,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 10,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169620,7 +170586,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 12,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169628,7 +170594,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 11,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169636,7 +170602,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169644,7 +170610,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 65,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169652,7 +170618,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169660,7 +170626,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 14,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169668,7 +170634,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169676,7 +170642,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169684,7 +170650,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 24,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169692,7 +170658,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 149,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169700,7 +170666,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 12,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169708,7 +170674,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169716,7 +170682,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 23,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169724,7 +170690,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 12,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169732,7 +170698,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169740,7 +170706,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 72,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169748,7 +170714,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 22,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169756,7 +170722,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169764,7 +170730,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 11,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169772,7 +170738,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 11,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169780,7 +170746,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 19,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169788,7 +170754,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 14,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169796,7 +170762,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169804,7 +170770,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169812,7 +170778,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169820,7 +170786,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 13,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169828,7 +170794,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 19,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169836,7 +170802,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 120,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169844,7 +170810,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169852,7 +170818,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 56,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169860,7 +170826,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 39,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169868,7 +170834,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 34,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169876,7 +170842,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 14,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169884,7 +170850,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169892,7 +170858,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 272,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169900,7 +170866,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 8,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169908,7 +170874,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169916,7 +170882,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169924,7 +170890,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169932,7 +170898,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 8,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169940,7 +170906,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 39,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169948,7 +170914,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169956,7 +170922,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 15,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169964,7 +170930,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 20,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169972,7 +170938,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169980,7 +170946,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169988,7 +170954,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -169996,7 +170962,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 8,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170004,7 +170970,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 10,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170012,7 +170978,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 43,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170020,7 +170986,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 10,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170028,7 +170994,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 64,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170036,7 +171002,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 12,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170044,7 +171010,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170052,7 +171018,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170060,7 +171026,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170068,7 +171034,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 715,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170076,7 +171042,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170084,7 +171050,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170092,7 +171058,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170100,7 +171066,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170108,7 +171074,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 84,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170116,7 +171082,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170124,7 +171090,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 9,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170132,7 +171098,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170140,7 +171106,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 29,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170148,7 +171114,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170156,7 +171122,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3588,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170164,7 +171130,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 60,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170172,7 +171138,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 19,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170180,7 +171146,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170188,7 +171154,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170196,7 +171162,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170204,7 +171170,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 19,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170212,7 +171178,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 22,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170220,7 +171186,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170228,7 +171194,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 23,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170236,7 +171202,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 14,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170244,7 +171210,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 36,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170252,7 +171218,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 4,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170260,7 +171226,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 112,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170268,7 +171234,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 22,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170276,7 +171242,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 8,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170284,7 +171250,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 56,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170292,7 +171258,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170300,7 +171266,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 250,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170308,7 +171274,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 23,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170316,7 +171282,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 34,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170324,7 +171290,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170332,7 +171298,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 24,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170340,7 +171306,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170348,7 +171314,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 31,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170356,7 +171322,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 91,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170364,7 +171330,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170372,7 +171338,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170380,7 +171346,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 12,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170388,7 +171354,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170396,7 +171362,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 20,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170404,7 +171370,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 33,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170412,7 +171378,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 37,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170420,7 +171386,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170428,7 +171394,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 6,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170436,7 +171402,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 18,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170444,7 +171410,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 41,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170452,7 +171418,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 27,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170460,7 +171426,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 23,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170468,7 +171434,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170476,7 +171442,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170484,7 +171450,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 40,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170492,7 +171458,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 82,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170500,7 +171466,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 52,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170508,7 +171474,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 10,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170516,7 +171482,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 3,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170524,7 +171490,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170532,7 +171498,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 46,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170540,7 +171506,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 7,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:20:10+00:00"
    },
@@ -170548,7 +171514,7 @@
     "company": null,
     "provider": "lever",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:47:23+00:00"
    },
@@ -170556,9 +171522,41 @@
     "company": null,
     "provider": "lever",
     "job_count": 2,
-    "last_seen_ok": "2026-08-21T14:54:57+00:00",
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:47:23+00:00"
+   },
+   "cdcfoundation": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 15,
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T17:45:14+00:00"
+   },
+   "cef": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 12,
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T17:45:14+00:00"
+   },
+   "celaralabs": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 2,
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T17:45:14+00:00"
+   },
+   "celerion": {
+    "company": null,
+    "provider": "lever",
+    "job_count": 33,
+    "last_seen_ok": "2026-08-21T17:45:14+00:00",
+    "consecutive_failures": 0,
+    "first_verified_at": "2026-08-21T17:45:14+00:00"
    }
   }
  }

@@ -1,6 +1,6 @@
 {
  "source_id": "postings_teamtailor",
- "generated_at": "2026-08-21T14:36:14+00:00",
+ "generated_at": "2026-08-21T17:45:41+00:00",
  "meta": {
   "candidates_hand_seeded": 17,
   "verified_companies": 6,
@@ -802,7 +802,7 @@
     "company": "Nordic Knots AB",
     "provider": "teamtailor",
     "job_count": 15,
-    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "last_seen_ok": "2026-08-21T17:45:41+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
@@ -810,7 +810,7 @@
     "company": "ICT Nordics",
     "provider": "teamtailor",
     "job_count": 8,
-    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "last_seen_ok": "2026-08-21T17:45:41+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
@@ -818,7 +818,7 @@
     "company": "Nordtech Group",
     "provider": "teamtailor",
     "job_count": 0,
-    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "last_seen_ok": "2026-08-21T17:45:41+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
@@ -826,7 +826,7 @@
     "company": "Polestar",
     "provider": "teamtailor",
     "job_count": 27,
-    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "last_seen_ok": "2026-08-21T17:45:41+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
@@ -834,7 +834,7 @@
     "company": "Hemnet",
     "provider": "teamtailor",
     "job_count": 5,
-    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "last_seen_ok": "2026-08-21T17:45:41+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:36:14+00:00"
    },
@@ -842,7 +842,7 @@
     "company": "Mathem",
     "provider": "teamtailor",
     "job_count": 1,
-    "last_seen_ok": "2026-08-21T14:36:14+00:00",
+    "last_seen_ok": "2026-08-21T17:45:41+00:00",
     "consecutive_failures": 0,
     "first_verified_at": "2026-08-21T14:36:14+00:00"
    }
