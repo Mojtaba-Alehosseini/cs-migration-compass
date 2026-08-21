@@ -50,16 +50,140 @@ A POSTING RECORD, THE COMMON SHAPE EVERY PROVIDER HARVESTER PRODUCES:
 """
 from __future__ import annotations
 
+import datetime as dt
+import json
 import re
 import sys
 from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import DATA, log, to_iso2  # noqa: E402
+from _common import DATA, PROCESSED, log, to_iso2  # noqa: E402
+import normalise  # noqa: E402
 
 SEED_HINTS = DATA / "raw" / "postings_seed_hints"
 POSTINGS_RAW = DATA / "raw" / "postings"
+
+# Package 14, Tier 0.2 — three consecutive weekly runs (~3 weeks) unreachable
+# before a board is dropped from the committed verified_companies ledger.
+# Long enough that one bad week (a timeout, a rate-limited run, a transient
+# 5xx) never costs a company its place; short enough that a board that is
+# actually gone does not linger for months. The external audit's Finding 3
+# ("verified companies fell 1,419 -> 606 on one scheduled run") is what a
+# max_consecutive_failures of 1 (the previous, implicit behaviour -- any
+# miss at all meant instant removal, since verified_companies was rebuilt
+# from scratch every run with no memory of the prior commit) looks like.
+DEFAULT_MAX_CONSECUTIVE_FAILURES = 3
+
+
+def _now_iso() -> str:
+    return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
+
+
+def load_previously_verified(source_id: str) -> dict[str, dict]:
+    """The CURRENTLY COMMITTED verified_companies for a postings provider,
+    read straight from data/processed/<source_id>.json -- the durable
+    ledger build_probe_order() and merge_verified_companies() both build
+    on. {} for a provider that has never been built."""
+    p = PROCESSED / f"{source_id}.json"
+    if not p.exists():
+        return {}
+    doc = json.loads(p.read_text(encoding="utf-8"))
+    return doc.get("data", {}).get("verified_companies", {}) or {}
+
+
+def build_probe_order(candidates: list[str], already_cached: set[str],
+                       previously_verified: set[str], max_new_per_run: int) -> list[str]:
+    """Package 14, Tier 0.1/0.2 fix. Three buckets, in priority order, each
+    disjoint by construction (no token appears twice):
+
+    1. Already cached this run -- a real on-disk cache hit, free and
+       instant. Empty at the START of every scheduled GitHub Actions run:
+       data/raw/ is gitignored and this workflow persists nothing between
+       runs (no actions/cache step), so a runner never sees a previous
+       run's cache. This bucket only ever does real work on a repeated
+       LOCAL run within one session.
+    2. Previously COMMITTED as verified, but not currently cached. Probed
+       UNCONDITIONALLY, every run, uncapped. This is the actual fix: WITHOUT
+       this bucket, a board that fell out of an (always-empty-in-CI) cache
+       competed with thousands of never-tried candidates for a few hundred
+       CAPPED "new" slots, and reliably lost -- confirmed live, not just
+       theorised: this is exactly how Ashby went from 862 verified
+       companies (package 12) to 304 (this package's own preflight
+       investigation), while Greenhouse (max_new_per_run 250, closer to its
+       own ~300-company baseline) and Lever (max_new_per_run 400, likewise)
+       degraded less severely. See NEEDS-DECISION.md for the runtime
+       tradeoff this creates as the committed list keeps growing.
+    3. Genuinely new candidates -- never cached, never verified. Capped at
+       max_new_per_run, same cap this pipeline already had; this is what
+       still bounds a single run's worst-case new-request volume.
+    """
+    cached = [c for c in candidates if c in already_cached]
+    reclaim = [c for c in candidates if c not in already_cached and c in previously_verified]
+    fresh = [c for c in candidates if c not in already_cached and c not in previously_verified]
+    return cached + reclaim + fresh[:max_new_per_run]
+
+
+def merge_verified_companies(
+    previous: dict[str, dict], probed_tokens: set[str], this_run_verified: dict[str, dict],
+    *, max_consecutive_failures: int = DEFAULT_MAX_CONSECUTIVE_FAILURES,
+) -> tuple[dict[str, dict], list[dict]]:
+    """Package 14, Tier 0.2 fix -- the additive merge that replaces "write
+    this run's verified_companies straight over the committed file," which
+    is the destructive-refresh bug Finding 3 describes: a single truncated
+    or rate-limited run permanently erased every company it didn't happen
+    to re-verify that run.
+
+    Four cases, and what happens to each:
+    - Verified THIS run (>=1 real posting): written fresh, failure streak
+      reset to 0, last_seen_ok set to now.
+    - Previously committed, PROBED this run, but did not verify (a real
+      404/timeout/empty response): RETAINED with its last-known job data,
+      failure streak incremented by one -- dropped only once that streak
+      reaches max_consecutive_failures, and the drop is returned in
+      `removed` so the caller can log it. This is "a board should leave
+      the list only after repeated failures": one bad week is never
+      enough on its own to erase a company this pipeline has verified.
+    - Previously committed but NOT probed this run at all (no cache slot,
+      lost the "new candidate" lottery, whatever the reason): retained
+      completely unchanged. Not attempting a company is not the same as
+      it failing, and must never cost it a strike.
+    - Brand new (not previously committed, verified this run): added
+      fresh with a 0 failure streak.
+
+    Deliberately a pure function of its three arguments -- no network
+    access, no disk I/O -- so this, the actual destructive-vs-additive
+    logic, is directly unit-testable without mocking an HTTP call."""
+    now = _now_iso()
+    merged: dict[str, dict] = {}
+    removed: list[dict] = []
+
+    for token, prev in previous.items():
+        if token in this_run_verified:
+            merged[token] = {
+                **this_run_verified[token],
+                "last_seen_ok": now,
+                "consecutive_failures": 0,
+                "first_verified_at": prev.get("first_verified_at", now),
+            }
+        elif token in probed_tokens:
+            streak = prev.get("consecutive_failures", 0) + 1
+            if streak >= max_consecutive_failures:
+                removed.append({
+                    "token": token, "company": prev.get("company"), "provider": prev.get("provider"),
+                    "last_seen_ok": prev.get("last_seen_ok"), "consecutive_failures": streak,
+                })
+                continue
+            merged[token] = {**prev, "consecutive_failures": streak}
+        else:
+            merged[token] = prev
+
+    for token, verified in this_run_verified.items():
+        if token not in previous:
+            merged[token] = {**verified, "last_seen_ok": now, "consecutive_failures": 0,
+                              "first_verified_at": now}
+
+    return merged, removed
 
 # The 15 countries this site otherwise covers, PLUS a handful more that show
 # up often enough in postings data to be worth keeping distinct rather than
@@ -363,6 +487,150 @@ def country_from_location(location_raw: str | None) -> str | None:
         if _word_match(city, low):
             return iso2
     return None
+
+
+# Package 14, Tier 3.2 — the external audit's own "thousands-suffix parser"
+# finding, investigated: on inspection, the 64 low-annualised records were
+# NOT this pipeline's own text-parsing regex dropping a "K" (parse_compensation_
+# text, above, already handles that shorthand correctly — see its own "$146-
+# 220k" comment). They were structured, provider-supplied compensation whose
+# OWN period tag (Ashby's own interval, USAJOBS' own salaryType) disagreed
+# with its own numbers: an employer's ATS form entry, or a federal listing's
+# default salaryType, not this pipeline mis-reading real text. Two narrow,
+# magnitude-anchored corrections below, each matching a precedent already
+# shipped in this codebase (src_postings_greenhouse.py's own
+# _parse_pay_input_ranges) rather than inventing a new threshold.
+_YEAR_LOOKS_HOURLY_THRESHOLD = 100
+# Ashby's real, live data draws a clean line here: every genuinely
+# hourly-shaped value mistagged 'year' this package found live tops out at
+# 59.6 (a skilled-trade/manufacturing wage); genuinely thousands-shaped
+# values start at 230 and up (a senior-role figure). 100 sits in the real
+# gap between the two clusters with margin on both sides — no observed
+# hourly wage this pipeline has ever seen approaches $100/hour, and no
+# observed "meant thousands" figure comes in under 230. Deliberately NOT
+# src_postings_greenhouse.py's own $1,000 threshold: that source's own
+# min_cents/max_cents never carries this specific "bare number meant in
+# thousands" ambiguity at all (Greenhouse's own employers don't hand-type a
+# number into a "$1-1000" field the way Ashby's compensationTiers form
+# apparently lets some employers do) — so Greenhouse's own 1,000 has never
+# had to separate an hourly cluster from a thousands cluster the way this
+# threshold does, and reusing it here would have swallowed every one of the
+# 4 real "meant thousands" records this package found into "hourly" instead
+# (all sit at 230-500, comfortably under 1,000).
+_BARE_THOUSANDS_LOWER_BOUND, _BARE_THOUSANDS_UPPER_BOUND = 250, 12000
+# The audit's own reporting threshold ("64 records annualise below
+# $12,000") sets the ceiling. The floor (250) is this package's own,
+# chosen the same way as the hourly threshold above: every real "meant
+# thousands" record found live sits at 230+ (a senior-role, sales-OTE, or
+# director-level figure a bare-number reading makes plainly implausible
+# either as an hourly wage or a literal annual one) — work order's own
+# example, "OTE $250 - $300 /year" for an Enterprise Account Executive, is
+# "plainly $250k-$300k". The 100-250 gap between the two thresholds is
+# left DELIBERATELY untouched: real records in it (a $150-155/hour
+# "Physician, Virtual Care" rate; a $135-150 "Associate Software Engineer"
+# figure that could plausibly be EITHER a high hourly contract rate or an
+# abbreviated annual one) do not resolve cleanly by magnitude alone, and
+# guessing between two real, physically different interpretations with no
+# further evidence is exactly what this project's own rules forbid — see
+# Tier 3.3's plausibility gate, which flags these for review instead of
+# silently picking one.
+_HAS_K_MARKER_RE = re.compile(r"\d\s*[kK]\b")
+
+
+def reinterpret_implausible_year(min_v: float, max_v: float, raw_text: str) -> tuple[float, float, str] | None:
+    """Package 14, Tier 3.2. Given a compensation range ALREADY tagged
+    'year' by its own source, returns (new_min, new_max, new_period) if the
+    range is implausible as a literal annual figure and a specific,
+    text-grounded correction applies — otherwise None (leave it alone,
+    including every genuinely low-but-real wage this project has no
+    business overriding: Appen's own $2.40/hour Myanmar rate, ansiblehealth's
+    own $500-900/month remote-VA rate, a real EU internship's own monthly
+    stipend — none of those are 'year'-tagged in the first place, so this
+    function is never even called for them; see this file's own module
+    docstring header for the two rules this applies, in order, and their
+    own thresholds' docstrings for exactly why each number was chosen from
+    this package's own live data, not picked in the abstract:
+
+    1. max < 100 -- clearly hourly-shaped, mistagged 'year' by its own
+       source. Reinterpreted as period='hour', values UNCHANGED (they were
+       already the real hourly numbers, just mislabelled).
+    2. 250 <= max < 12,000 AND raw_text carries no k/K marker -- a bare,
+       unscaled number an employer meant in thousands (raw_text carrying a
+       real 'k'/'K', e.g. Ashby's own '2K-2.5K' tierSummary, means the
+       value is ALREADY correctly scaled -- that case returns None,
+       deliberately not touched here).
+
+    100-250 is left alone on purpose -- see _BARE_THOUSANDS_LOWER_BOUND's
+    own docstring for the real, disclosed residual this leaves (Tier 3.3's
+    plausibility gate flags it instead of this function guessing at it)."""
+    if max_v is None or max_v <= 0:
+        return None
+    if max_v < _YEAR_LOOKS_HOURLY_THRESHOLD:
+        return (min_v, max_v, "hour")
+    if _BARE_THOUSANDS_LOWER_BOUND <= max_v < _BARE_THOUSANDS_UPPER_BOUND and not _HAS_K_MARKER_RE.search(raw_text or ""):
+        return (min_v * 1000, max_v * 1000, "year")
+    return None
+
+
+# Package 14, Tier 3.1 — the external audit's Finding 3: postings compensation
+# spans nine currencies with no conversion layer, so any cross-country
+# aggregate over it was meaningless. normalise.to_usd() is keyed by COUNTRY
+# (it looks up data/processed/fx_rates.json, itself country-keyed, following
+# the World Bank's own PA.NUS.FCRF shape), not by currency — this maps each
+# currency this pipeline's postings actually carry to ONE representative
+# country whose own FX series IS that currency (EUR -> DE rather than IE/NL/
+# ES/FI: all four are the same EUR/USD rate from 1999 on, DE's own series is
+# simply the one already fetched furthest back). SG/JP/KH/IN/AM were added to
+# fx_rates.json specifically for this (src_fx_rates.py's own
+# POSTINGS_EXTRA_FX_COUNTRIES) -- none of the five were part of the 15-country
+# wage spine before this package. A currency this pipeline sees in a FUTURE
+# posting with no entry here fails honestly (normalise.to_usd() itself
+# refuses an unmapped country/year, rule 1) rather than silently not
+# converting or guessing a rate.
+CURRENCY_TO_FX_COUNTRY = {
+    "USD": "US", "EUR": "DE", "GBP": "GB", "CAD": "CA",
+    "SGD": "SG", "JPY": "JP", "KHR": "KH", "INR": "IN", "AMD": "AM",
+    # AUD/SEK/NOK/DKK/AED: NOT in Finding 3's own named list, added anyway
+    # -- each maps to a country ALREADY IN fx_rates.json as one of the
+    # original 15 wage-spine countries (AU/SE/NO/DK/AE), so this costs
+    # zero new fetching and closes a real, measured gap live data exposed
+    # (37 AUD-denominated postings converting to 0 under the audit's own
+    # named 9-currency list alone; SEK/NOK/DKK/AED each smaller but the
+    # same free win). Every other real currency observed live in postings
+    # (PHP, PLN, CNY, HUF, THB, MXN, BRL, CZK, KRW, RON, CHF, MYR, HKD,
+    # TWD, ARS -- each single- to low-double-digit counts, none a country
+    # this pipeline already has FX history for) is a disclosed residual,
+    # not silently dropped -- see NEEDS-DECISION.md.
+    "AUD": "AU", "SEK": "SE", "NOK": "NO", "DKK": "DK", "AED": "AE",
+}
+
+
+def convert_compensation_to_usd(comp: dict, effective_year: int) -> dict | None:
+    """Package 14, Tier 3.1. Given a posting's own native `compensation`
+    dict and an effective year (that posting's own posted_at year when
+    known, else the harvest run's own year -- see build_postings.py's own
+    comment on why a live-scraped posting has no fixed 'reference year' the
+    way a government wage survey does), returns the SAME year-matched-FX
+    machinery the wage spine uses (normalise.to_usd(), rule 1: no fallback
+    to a different year) applied to this posting's own min/max, or None
+    when the currency isn't mapped or that year has no rate -- never a
+    guessed or nearby-year conversion. Native values are UNTOUCHED by this
+    function; the caller attaches the result as a new, clearly-derived
+    'usd' sub-field, never overwriting the native min/max/currency
+    (normalise.py's own rule 5, "native is the source of truth")."""
+    currency = comp.get("currency")
+    fx_country = CURRENCY_TO_FX_COUNTRY.get(currency)
+    if not fx_country or comp.get("min") is None or comp.get("max") is None:
+        return None
+    lo = normalise.to_usd(comp["min"], fx_country, effective_year)
+    hi = normalise.to_usd(comp["max"], fx_country, effective_year)
+    if not lo["ok"] or not hi["ok"]:
+        return None
+    return {
+        "min": lo["value_usd"], "max": hi["value_usd"],
+        "fx_rate": lo["fx_rate"], "fx_year": lo["fx_year"], "fx_source": lo["fx_source"],
+        "fx_country_used": fx_country,
+    }
 
 
 def dedupe_seed(candidates: list[str]) -> list[str]:

@@ -54,27 +54,50 @@ BASE = "https://api.worldbank.org/v2"
 # anything the API itself returns.
 KNOWN_PEGS = {"AE": "3.6725 AED per USD", "QA": "3.64 QAR per USD"}
 
+# Package 14, Tier 3.1 — the postings panel's own compensation spans nine
+# currencies (USD, EUR, GBP, CAD, SGD, JPY, KHR, INR, AMD), five of whose
+# countries were never part of the wage spine's own 15 and so had no FX
+# series here at all: routing postings through normalise.to_usd() (this
+# package's own fix, see build_postings.py) needs a real, year-matched rate
+# for every one of them, not just the ones the wage spine happened to need.
+# Fetched as a SEPARATE request from the wage spine's own 15 (not folded
+# into COUNTRY_IDS, which several other checks in this pipeline treat as
+# exactly "the 15 wage-spine countries") — same indicator, same source,
+# same period-average convention, merged into the SAME fx_rates.json under
+# their own ISO2 keys. Not exhaustive of every currency any postings
+# provider might ever surface (Finding 3's own list is what's live TODAY);
+# a currency this pipeline sees in the future without a matching entry
+# here fails normalise.to_usd() honestly (rule 1: no fallback), the same
+# way any other unmapped year or country already does.
+POSTINGS_EXTRA_FX_COUNTRIES = {"SG": "SGP", "JP": "JPN", "KH": "KHM", "IN": "IND", "AM": "ARM"}
+
 
 def run() -> None:
     banner(SOURCE_ID, NAME)
-    iso3 = ";".join(ISO2_TO_ISO3[c] for c in COUNTRY_IDS)
+    all_iso2 = COUNTRY_IDS + list(POSTINGS_EXTRA_FX_COUNTRIES)
+    all_iso3_map = {**{c: ISO2_TO_ISO3[c] for c in COUNTRY_IDS}, **POSTINGS_EXTRA_FX_COUNTRIES}
+    iso3_to_iso2_full = {**ISO3_TO_ISO2, **{v: k for k, v in POSTINGS_EXTRA_FX_COUNTRIES.items()}}
+    iso3 = ";".join(all_iso3_map[c] for c in all_iso2)
     url = f"{BASE}/country/{iso3}/indicator/{INDICATOR}?format=json&per_page=20000&date={START}:{END}"
     payload = fetch_json(url, dest=RAW / SOURCE_ID / f"{INDICATOR}.json")
 
     if not isinstance(payload, list) or len(payload) < 2 or payload[1] is None:
         log("    !! no data returned")
-        out: dict[str, list] = {c: [] for c in COUNTRY_IDS}
+        out: dict[str, list] = {c: [] for c in all_iso2}
         total_rows = 0
     else:
-        out = {c: [] for c in COUNTRY_IDS}
+        out = {c: [] for c in all_iso2}
         for row in payload[1]:
-            iso2 = ISO3_TO_ISO2.get(row.get("countryiso3code", ""))
+            iso2 = iso3_to_iso2_full.get(row.get("countryiso3code", ""))
             if iso2 is None or row.get("value") is None:
                 continue
             out[iso2].append({"year": int(row["date"]), "value": row["value"]})
         for c, series in out.items():
             series.sort(key=lambda r: r["year"])
         total_rows = sum(len(v) for v in out.values())
+        for c in POSTINGS_EXTRA_FX_COUNTRIES:
+            latest = out[c][-1] if out[c] else None
+            log(f"    {c} (postings-only): {len(out[c])} years, latest {latest}")
 
     for c in ("DK", "SE", "AE", "QA"):
         series = out.get(c, [])
@@ -97,6 +120,13 @@ def run() -> None:
                 "each country's own legacy currency before 1999 — the World Bank's own series, not a "
                 "transform this pipeline applies.",
             "known_pegs": KNOWN_PEGS,
+            "postings_extra_countries": {
+                "note": "Package 14, Tier 3.1 — SG/JP/KH/IN/AM are NOT part of the 15-country wage "
+                        "spine; fetched here only so the postings panel's own SGD/JPY/KHR/INR/AMD "
+                        "compensation can convert through normalise.to_usd() with a real, year-matched "
+                        "rate rather than not converting those currencies at all.",
+                "countries": sorted(POSTINGS_EXTRA_FX_COUNTRIES),
+            },
         },
     )
     record_provenance(
@@ -109,8 +139,9 @@ def run() -> None:
                         "redistribute it (CC BY 4.0 would permit it; the repo simply doesn't). Only "
                         "the derived data/processed/fx_rates.json is committed.",
         transforms=[
-            f"Requested indicator {INDICATOR} for all 15 covered countries in one call (semicolon-"
-            f"joined ISO3), {START}-{END}.",
+            f"Requested indicator {INDICATOR} for all 15 wage-spine countries PLUS 5 postings-only "
+            f"countries (SG, JP, KH, IN, AM — package 14, Tier 3.1, needed to convert postings' own "
+            f"SGD/JPY/KHR/INR/AMD compensation) in one call (semicolon-joined ISO3), {START}-{END}.",
             "Dropped rows with null values (World Bank returns nulls for unreported years).",
             "Regrouped from flat rows to {ISO2: [{year, value}]} sorted ascending by year — same "
             "shape convention as scripts/src_world_bank.py.",
@@ -119,8 +150,9 @@ def run() -> None:
         ],
         output=f"data/processed/{SOURCE_ID}.json",
         rows=total_rows,
-        coverage=f"15/15 countries, {START}-{END} (per-country coverage varies; pre-independence or "
-                 "pre-modern-currency years are gaps, not zeros)",
+        coverage=f"15/15 wage-spine countries + 5/5 postings-only countries (SG, JP, KH, IN, AM), "
+                 f"{START}-{END} (per-country coverage varies; pre-independence or pre-modern-currency "
+                 "years are gaps, not zeros)",
         notes="Period-average, not end-of-period — the correct series for converting an annual wage "
               "figure, which is itself an average over the year.",
     )

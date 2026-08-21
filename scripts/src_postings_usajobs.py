@@ -23,7 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import banner, fetch_json, log, main_guard, record_provenance, write_processed  # noqa: E402
-from postings_common import country_from_location  # noqa: E402
+from postings_common import country_from_location, reinterpret_implausible_year  # noqa: E402
 
 SOURCE_ID = "postings_usajobs"
 BASE = "https://data.usajobs.gov/api/historicjoa"
@@ -78,9 +78,22 @@ def run() -> None:
             else:
                 period = None
             if lo is not None and hi is not None and lo > 0 and period:
+                raw_text = f"{lo:,.0f}-{hi:,.0f} USD ({r.get('salaryType', '')})"
+                # Package 14, Tier 3.2 (external audit Finding 3) — a
+                # handful of "Per Year" seasonal/entry announcements
+                # (Internal Revenue Service seasonal Clerk roles, Forest
+                # Service seasonal technicians) carry hourly-shaped values
+                # ($12-26) under their own reported salaryType of "Per
+                # Year" — OPM's own listing, not this pipeline's parsing;
+                # reinterpret_implausible_year's own hourly-shaped rule
+                # applies the same way it does for Ashby's own mistagged
+                # interval, see that function's own docstring.
+                if period == "year":
+                    fix = reinterpret_implausible_year(lo, hi, raw_text)
+                    if fix:
+                        lo, hi, period = fix
                 comp = {"min": lo, "max": hi, "currency": "USD", "period": period,
-                        "raw_text": f"{lo:,.0f}-{hi:,.0f} USD ({r.get('salaryType', '')})",
-                        "confidence": "structured"}
+                        "raw_text": raw_text, "confidence": "structured"}
             locs = r.get("positionlocations") or [{}]
             loc = locs[0]
             loc_raw = ", ".join(x for x in (loc.get("positionLocationCity"), loc.get("positionLocationState")) if x)

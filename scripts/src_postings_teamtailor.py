@@ -33,7 +33,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import FetchError, banner, fetch_json, log, main_guard, record_provenance, write_processed  # noqa: E402
-from postings_common import POSTINGS_RAW, country_from_location, log_provider_summary  # noqa: E402
+from postings_common import (  # noqa: E402
+    POSTINGS_RAW, country_from_location, load_previously_verified, log_provider_summary,
+    merge_verified_companies,
+)
 
 SOURCE_ID = "postings_teamtailor"
 PROVIDER = "teamtailor"
@@ -58,8 +61,9 @@ CANDIDATES = [
 def run() -> None:
     banner(SOURCE_ID, "Teamtailor public jobs.json feed — postings panel")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    previous = load_previously_verified(SOURCE_ID)
     postings: list[dict] = []
-    verified_companies: dict[str, dict] = {}
+    this_run_verified: dict[str, dict] = {}
     tested = 0
     countries: dict[str | None, int] = {}
     for token in CANDIDATES:
@@ -104,13 +108,26 @@ def run() -> None:
         postings.extend(rows)
         for r in rows:
             countries[r["country"]] = countries.get(r["country"], 0) + 1
-        verified_companies[token] = {"company": doc.get("title") or token, "provider": PROVIDER, "job_count": len(rows)}
+        this_run_verified[token] = {"company": doc.get("title") or token, "provider": PROVIDER, "job_count": len(rows)}
 
-    log_provider_summary(PROVIDER, tested, len(verified_companies), len(postings), countries)
+    # Every candidate is probed every run (the hand-seeded list is small
+    # enough that there is no cache/new-candidate split to make) — so
+    # probed_tokens is simply every candidate, and the merge below only
+    # ever protects against a genuine transient failure, never a starved
+    # probe budget the way the three larger, hint-file-driven providers
+    # can be.
+    verified_companies, removed = merge_verified_companies(previous, set(CANDIDATES), this_run_verified)
+    for r in removed:
+        log(f"    REMOVED {r['token']} — {r['consecutive_failures']} consecutive failed probes, "
+            f"last verified {r['last_seen_ok']}")
+
+    log_provider_summary(PROVIDER, tested, len(this_run_verified), len(postings), countries)
 
     write_processed(SOURCE_ID, {"postings": postings, "verified_companies": verified_companies}, meta={
         "candidates_hand_seeded": len(CANDIDATES),
         "verified_companies": len(verified_companies),
+        "verified_companies_reconfirmed_this_run": len(this_run_verified),
+        "verified_companies_removed_this_run": removed,
         "postings_count": len(postings),
         "compensation_present_count": sum(1 for p in postings if p["compensation"]),
         "seeding_method": "hand-curated (no third-party candidate list available for this provider)",

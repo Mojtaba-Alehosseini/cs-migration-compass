@@ -33,7 +33,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import FetchError, banner, fetch_json, log, main_guard, record_provenance, write_processed  # noqa: E402
 from postings_common import (  # noqa: E402
-    POSTINGS_RAW, SEED_HINTS, country_from_location, dedupe_seed, log_provider_summary,
+    POSTINGS_RAW, SEED_HINTS, build_probe_order, country_from_location, dedupe_seed,
+    load_previously_verified, log_provider_summary, merge_verified_companies, reinterpret_implausible_year,
 )
 
 SOURCE_ID = "postings_ashby"
@@ -117,10 +118,22 @@ def _normalise(token: str, doc: dict) -> list[dict]:
                     # "NONE" (equity-only, no minValue in practice), or any
                     # future value this pipeline hasn't seen.
                     continue
+                raw_text = tier.get("tierSummary") or comp.get("compensationTierSummary") or ""
+                min_v, max_v = c["minValue"], c.get("maxValue") or c["minValue"]
+                # Package 14, Tier 3.2 (external audit Finding 3) — Ashby's
+                # own interval tag is real but not always right for the
+                # specific numbers attached to it: an employer's own ATS
+                # form entry, not this pipeline mis-reading real text (see
+                # reinterpret_implausible_year's own docstring for the two
+                # narrow, text-grounded corrections this applies).
+                if period == "year":
+                    fix = reinterpret_implausible_year(min_v, max_v, raw_text)
+                    if fix:
+                        min_v, max_v, period = fix
                 parsed_comp = {
-                    "min": c["minValue"], "max": c.get("maxValue") or c["minValue"],
+                    "min": min_v, "max": max_v,
                     "currency": c["currencyCode"], "period": period,
-                    "raw_text": tier.get("tierSummary") or comp.get("compensationTierSummary") or "",
+                    "raw_text": raw_text,
                     "confidence": "structured",
                 }
                 break
@@ -146,14 +159,14 @@ def run() -> None:
     candidates = _load_candidates()
     log(f"    {len(candidates)} candidate tokens loaded from the seed hint file")
 
+    previous = load_previously_verified(SOURCE_ID)
     already_cached = {p.stem for p in OUT_DIR.glob("*.json")}
-    to_probe = [c for c in candidates if c in already_cached] + \
-        [c for c in candidates if c not in already_cached][:MAX_NEW_PER_RUN]
-    log(f"    {len(already_cached)} already cached from prior runs, "
-        f"probing {len(to_probe)} this run (cap {MAX_NEW_PER_RUN} new)")
+    to_probe = build_probe_order(candidates, already_cached, set(previous.keys()), MAX_NEW_PER_RUN)
+    log(f"    {len(already_cached)} already cached from prior runs, {len(previous)} previously "
+        f"committed as verified, probing {len(to_probe)} this run (cap {MAX_NEW_PER_RUN} new)")
 
     postings: list[dict] = []
-    verified_companies: dict[str, dict] = {}
+    this_run_verified: dict[str, dict] = {}
     tested = 0
     countries: dict[str | None, int] = {}
     for token in to_probe:
@@ -167,14 +180,21 @@ def run() -> None:
         postings.extend(rows)
         for r in rows:
             countries[r["country"]] = countries.get(r["country"], 0) + 1
-        verified_companies[token] = {
+        this_run_verified[token] = {
             "company": doc.get("organizationName") or None, "provider": PROVIDER,
             "job_count": len(rows),
         }
         if tested % 50 == 0:
-            log(f"    ...{tested}/{len(to_probe)} probed, {len(verified_companies)} verified so far")
+            log(f"    ...{tested}/{len(to_probe)} probed, {len(this_run_verified)} verified so far")
 
-    log_provider_summary(PROVIDER, tested, len(verified_companies), len(postings), countries)
+    verified_companies, removed = merge_verified_companies(previous, set(to_probe), this_run_verified)
+    for r in removed:
+        log(f"    REMOVED {r['token']} ({r['company']}) — {r['consecutive_failures']} consecutive "
+            f"failed probes, last verified {r['last_seen_ok']}")
+
+    log_provider_summary(PROVIDER, tested, len(this_run_verified), len(postings), countries)
+    log(f"    verified_companies (durable): {len(verified_companies)} ({len(this_run_verified)} reconfirmed "
+        f"this run, {len(removed)} removed after repeated failures)")
 
     write_processed(SOURCE_ID, {
         "postings": postings,
@@ -184,6 +204,8 @@ def run() -> None:
         "candidates_probed_this_run": len(to_probe),
         "candidates_probed_cumulative": len(already_cached | set(to_probe)),
         "verified_companies": len(verified_companies),
+        "verified_companies_reconfirmed_this_run": len(this_run_verified),
+        "verified_companies_removed_this_run": removed,
         "postings_count": len(postings),
         "compensation_present_count": sum(1 for p in postings if p["compensation"]),
     })

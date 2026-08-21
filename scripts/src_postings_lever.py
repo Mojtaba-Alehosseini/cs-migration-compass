@@ -25,7 +25,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import FetchError, banner, fetch_json, log, main_guard, record_provenance, write_processed  # noqa: E402
 from postings_common import (  # noqa: E402
-    POSTINGS_RAW, SEED_HINTS, country_from_location, dedupe_seed, log_provider_summary,
+    POSTINGS_RAW, SEED_HINTS, build_probe_order, country_from_location, dedupe_seed,
+    load_previously_verified, log_provider_summary, merge_verified_companies, reinterpret_implausible_year,
 )
 
 SOURCE_ID = "postings_lever"
@@ -84,10 +85,21 @@ def _parse_salary_range(sr: dict | None) -> dict | None:
             # not forced into the nearest wrong one.
             period = None
         if period:
+            min_v, max_v = sr["min"], sr.get("max") or sr["min"]
+            raw_text = f"{sr.get('min')}-{sr.get('max')} {sr.get('currency', '')} ({sr.get('interval', '')})"
+            # Package 14, Tier 3.2 (external audit Finding 3) — Lever's own
+            # interval tag has the identical failure mode as Ashby's own
+            # (see src_postings_ashby.py's own comment at the same point):
+            # a "per-year-salary" tag on numbers that are plainly hourly
+            # ($25-30) or plainly a bare thousands shorthand ($220-240).
+            if period == "year":
+                fix = reinterpret_implausible_year(min_v, max_v, raw_text)
+                if fix:
+                    min_v, max_v, period = fix
             comp = {
-                "min": sr["min"], "max": sr.get("max") or sr["min"],
+                "min": min_v, "max": max_v,
                 "currency": sr.get("currency") or "USD", "period": period,
-                "raw_text": f"{sr.get('min')}-{sr.get('max')} {sr.get('currency', '')} ({sr.get('interval', '')})",
+                "raw_text": raw_text,
                 "confidence": "structured",
             }
     return comp
@@ -99,14 +111,14 @@ def run() -> None:
     candidates = _load_candidates()
     log(f"    {len(candidates)} candidate tokens loaded from the seed hint file")
 
+    previous = load_previously_verified(SOURCE_ID)
     already_cached = {p.stem for p in OUT_DIR.glob("*.json")}
-    to_probe = [c for c in candidates if c in already_cached] + \
-        [c for c in candidates if c not in already_cached][:MAX_NEW_PER_RUN]
-    log(f"    {len(already_cached)} already cached from prior runs, "
-        f"probing {len(to_probe)} this run (cap {MAX_NEW_PER_RUN} new)")
+    to_probe = build_probe_order(candidates, already_cached, set(previous.keys()), MAX_NEW_PER_RUN)
+    log(f"    {len(already_cached)} already cached from prior runs, {len(previous)} previously "
+        f"committed as verified, probing {len(to_probe)} this run (cap {MAX_NEW_PER_RUN} new)")
 
     postings: list[dict] = []
-    verified_companies: dict[str, dict] = {}
+    this_run_verified: dict[str, dict] = {}
     tested = 0
     with_salary_range = 0
     countries: dict[str | None, int] = {}
@@ -153,11 +165,18 @@ def run() -> None:
         postings.extend(company_rows)
         for r in company_rows:
             countries[r["country"]] = countries.get(r["country"], 0) + 1
-        verified_companies[token] = {"company": None, "provider": PROVIDER, "job_count": len(company_rows)}
+        this_run_verified[token] = {"company": None, "provider": PROVIDER, "job_count": len(company_rows)}
         if tested % 50 == 0:
-            log(f"    ...{tested}/{len(to_probe)} probed, {len(verified_companies)} verified so far")
+            log(f"    ...{tested}/{len(to_probe)} probed, {len(this_run_verified)} verified so far")
 
-    log_provider_summary(PROVIDER, tested, len(verified_companies), len(postings), countries)
+    verified_companies, removed = merge_verified_companies(previous, set(to_probe), this_run_verified)
+    for r in removed:
+        log(f"    REMOVED {r['token']} — {r['consecutive_failures']} consecutive failed probes, "
+            f"last verified {r['last_seen_ok']}")
+
+    log_provider_summary(PROVIDER, tested, len(this_run_verified), len(postings), countries)
+    log(f"    verified_companies (durable): {len(verified_companies)} ({len(this_run_verified)} reconfirmed "
+        f"this run, {len(removed)} removed after repeated failures)")
     log(f"    {with_salary_range} of {len(postings)} postings carried a populated salaryRange "
         f"({with_salary_range / len(postings) * 100 if postings else 0:.1f}%) — real but empirically rare on this provider")
 
@@ -168,6 +187,8 @@ def run() -> None:
         "candidates_in_hint_file": len(candidates),
         "candidates_probed_this_run": len(to_probe),
         "verified_companies": len(verified_companies),
+        "verified_companies_reconfirmed_this_run": len(this_run_verified),
+        "verified_companies_removed_this_run": removed,
         "postings_count": len(postings),
         "compensation_present_count": with_salary_range,
     })

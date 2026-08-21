@@ -23,7 +23,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import FetchError, banner, fetch_json, log, main_guard, record_provenance, write_processed  # noqa: E402
 from postings_common import (  # noqa: E402
-    POSTINGS_RAW, SEED_HINTS, country_from_location, dedupe_seed, log_provider_summary,
+    POSTINGS_RAW, SEED_HINTS, build_probe_order, country_from_location, dedupe_seed,
+    load_previously_verified, log_provider_summary, merge_verified_companies,
 )
 
 SOURCE_ID = "postings_greenhouse"
@@ -90,14 +91,14 @@ def run() -> None:
     candidates = _load_candidates()
     log(f"    {len(candidates)} candidate tokens loaded from the seed hint file")
 
+    previous = load_previously_verified(SOURCE_ID)
     already_cached = {p.stem for p in (OUT_DIR / "lists").glob("*.json")}
-    to_probe = [c for c in candidates if c in already_cached] + \
-        [c for c in candidates if c not in already_cached][:MAX_NEW_COMPANIES_PER_RUN]
-    log(f"    {len(already_cached)} already cached from prior runs, "
-        f"probing {len(to_probe)} this run (cap {MAX_NEW_COMPANIES_PER_RUN} new)")
+    to_probe = build_probe_order(candidates, already_cached, set(previous.keys()), MAX_NEW_COMPANIES_PER_RUN)
+    log(f"    {len(already_cached)} already cached from prior runs, {len(previous)} previously "
+        f"committed as verified, probing {len(to_probe)} this run (cap {MAX_NEW_COMPANIES_PER_RUN} new)")
 
     postings: list[dict] = []
-    verified_companies: dict[str, dict] = {}
+    this_run_verified: dict[str, dict] = {}
     tested = 0
     fanout_requests = 0
     countries: dict[str | None, int] = {}
@@ -166,12 +167,19 @@ def run() -> None:
         postings.extend(company_rows)
         for r in company_rows:
             countries[r["country"]] = countries.get(r["country"], 0) + 1
-        verified_companies[token] = {"company": company_name, "provider": PROVIDER, "job_count": len(company_rows)}
+        this_run_verified[token] = {"company": company_name, "provider": PROVIDER, "job_count": len(company_rows)}
         if tested % 25 == 0:
-            log(f"    ...{tested}/{len(to_probe)} probed, {len(verified_companies)} verified, "
+            log(f"    ...{tested}/{len(to_probe)} probed, {len(this_run_verified)} verified, "
                 f"{fanout_requests} compensation look-ups so far")
 
-    log_provider_summary(PROVIDER, tested, len(verified_companies), len(postings), countries)
+    verified_companies, removed = merge_verified_companies(previous, set(to_probe), this_run_verified)
+    for r in removed:
+        log(f"    REMOVED {r['token']} ({r['company']}) — {r['consecutive_failures']} consecutive "
+            f"failed probes, last verified {r['last_seen_ok']}")
+
+    log_provider_summary(PROVIDER, tested, len(this_run_verified), len(postings), countries)
+    log(f"    verified_companies (durable): {len(verified_companies)} ({len(this_run_verified)} reconfirmed "
+        f"this run, {len(removed)} removed after repeated failures)")
     log(f"    compensation fan-out: {fanout_requests} per-job requests this run, throttled at "
         f"{THROTTLE_SECONDS}s each, capped at {MAX_JOBS_PER_COMPANY_FOR_COMPENSATION} jobs/company")
 
@@ -182,6 +190,8 @@ def run() -> None:
         "candidates_in_hint_file": len(candidates),
         "candidates_probed_this_run": len(to_probe),
         "verified_companies": len(verified_companies),
+        "verified_companies_reconfirmed_this_run": len(this_run_verified),
+        "verified_companies_removed_this_run": removed,
         "postings_count": len(postings),
         "compensation_present_count": sum(1 for p in postings if p["compensation"]),
         "compensation_fanout_requests_this_run": fanout_requests,
