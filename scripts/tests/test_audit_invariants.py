@@ -101,7 +101,7 @@ class TestUnitDisclosure(AuditInvariantTestCase):
     def test_fails_on_a_bare_pay_field_with_no_recoverable_unit(self):
         self._write("bad", "bad", {"occupations": {"1": {"mean": 80000, "median": 70000}}})
         ad.check_pay_fields_disclose_currency_and_period(self.tmp)
-        self.assertTrue(any("cannot be recovered" in e for e in ad.ERRORS), ad.ERRORS)
+        self.assertTrue(any("missing its own currency and period" in e for e in ad.ERRORS), ad.ERRORS)
 
     def test_passes_when_currency_and_period_are_container_siblings(self):
         self._write("good", "good", {"native": {"currency": "SEK", "period": "month",
@@ -121,19 +121,47 @@ class TestUnitDisclosure(AuditInvariantTestCase):
 
 
 class TestMagnitudePlausibility(AuditInvariantTestCase):
-    """check_magnitude_plausibility() deliberately excludes 'mean' from its
-    own buckets (each distribution's spread is counted once via its
-    percentiles, not mean too) and _find_families() needs >=2 matching
-    fields to recognise a family at all -- so every fixture here carries
-    both mean_usd_year AND median_usd_year, and the outlier is on median,
-    the field that's actually bucketed."""
+    """check_magnitude_plausibility() prefers a family's own non-mean
+    (percentile) values for BOUND-BUILDING (each distribution's spread is
+    counted once, not mean too) but TESTS every value including mean
+    (adversarial review finding H1 -- an earlier version excluded mean
+    from testing too, not just bound-building, which let a mean-only
+    source escape checking entirely). Two independent bounds: dataset-
+    relative (median +/- 8x MAD of the bucket, floor clamped to a quarter
+    of the median -- finding H3, an earlier version's unclamped floor went
+    negative in most real buckets) and an absolute sanity band per period
+    (finding H1 again -- catches an entire bucket being wrong the same
+    way, which the relative bound cannot by construction)."""
 
-    def test_flags_an_order_of_magnitude_outlier(self):
+    def test_flags_a_dataset_relative_outlier_within_the_absolute_band(self):
+        # 3x the rest of the bucket -- outside the relative bound but well
+        # inside the absolute year band [500, 5_000_000], so this proves
+        # the RELATIVE check specifically, not just the absolute one.
         occs = {str(i): {"mean_usd_year": 80000 + i * 500, "median_usd_year": 78000 + i * 500} for i in range(8)}
-        occs["outlier"] = {"mean_usd_year": 8_000_000, "median_usd_year": 8_000_000}  # 100x the rest
+        occs["outlier"] = {"mean_usd_year": 240_000, "median_usd_year": 240_000}
         self._write("bad", "bad", {"occupations": occs})
         ad.check_magnitude_plausibility(self.tmp)
         self.assertTrue(any("plausible range" in f for f in ad.FLAGS), ad.FLAGS)
+
+    def test_flags_a_whole_bucket_uniformly_wrong_via_the_absolute_band(self):
+        # The real H1 scenario: EVERY point in the bucket is wrong the same
+        # way (an annual figure written into every hourly-labelled field),
+        # so the relative bound learns the wrong scale and cannot catch it
+        # -- only an absolute, dataset-independent band can.
+        occs = {str(i): {"mean_usd_hour": 80000 + i * 500, "median_usd_hour": 78000 + i * 500} for i in range(8)}
+        self._write("bad", "bad", {"occupations": occs})
+        ad.check_magnitude_plausibility(self.tmp)
+        self.assertTrue(any("absolute sanity band" in f for f in ad.FLAGS), ad.FLAGS)
+
+    def test_a_lone_mean_only_family_is_still_tested(self):
+        # H1's other half: a family with ONLY a mean (no sibling
+        # percentiles) must still be bucketed and tested, not silently
+        # skipped because "mean" is excluded from bound-building.
+        occs = {str(i): {"mean_usd_year": 80000 + i * 500} for i in range(4)}
+        occs["outlier"] = {"mean_usd_year": 9_000_000}
+        self._write("bad", "bad", {"occupations": occs})
+        ad.check_magnitude_plausibility(self.tmp)
+        self.assertTrue(any("absolute sanity band" in f for f in ad.FLAGS), ad.FLAGS)
 
     def test_does_not_flag_a_tight_cluster(self):
         occs = {str(i): {"mean_usd_year": 80000 + i * 500, "median_usd_year": 78000 + i * 500} for i in range(8)}

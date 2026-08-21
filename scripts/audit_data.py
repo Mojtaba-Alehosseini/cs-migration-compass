@@ -85,9 +85,28 @@ def _load(path: Path) -> dict | None:
 # exclusion, the very first run flagged real, correct CI margins as
 # "non-monotonic" simply because a margin is usually smaller than its own
 # point estimate, which is not what monotonicity means here.
-_TOKEN_RE = re.compile(r"(p10|p25|p50|p75|p90|median|mean)", re.I)
-_EXCLUDE_RE = re.compile(r"margin|ci95|ci_95|confidence|stderr|std_err", re.I)
+_TOKEN_RE = re.compile(r"(p10|p25|p50|p75|p90|median|mean|average)", re.I)
+# margin/ci95/etc: a confidence-interval half-width, not a point estimate.
+# pct_change_yoy: salary_uk.json's own year-over-year CHANGE RATE (a %),
+# reusing mean/median for a different concept, same shape as
+# coefficient_of_variation_pct below. paid_weekly_hours: salary_ie.json's
+# own median/mean of HOURS WORKED, not of pay -- caught live by adversarial
+# review testing the unit-disclosure check against real data (a genuine
+# non-pay figure that happens to share the mean/median vocabulary, not a
+# check bug this time).
+_EXCLUDE_RE = re.compile(r"margin|ci95|ci_95|confidence|stderr|std_err|pct_change_yoy|paid_weekly_hours", re.I)
 _ORDER = ["p10", "p25", "median", "p75", "p90"]  # p50 normalised to "median" below
+
+# A percentile-labelling qualifier immediately after the token, stripped
+# before grouping -- salary_ca.json's own real field names are p10_low_cad_
+# hour, p25_q1_cad_hour, median_cad_hour, p75_q3_cad_hour, p90_high_cad_hour:
+# five DIFFERENT suffixes for what is one family. Found by adversarial
+# review, not anticipated: grouping on the raw (prefix, suffix) tuple made
+# every one of these its own 1-member family, and (before the >=1 fix below
+# existed) the >=2 gate then dropped every single one -- 826 real wage
+# figures, ALL of Canada's own published dispersion, invisible to every
+# family-based check in this file.
+_QUALIFIER_RE = re.compile(r"^_(low|high|q1|q3)(?=_|$)", re.I)
 
 # A container whose OWN key means its p10/p25/mean/median-shaped children are
 # not pay figures at all. Found live on the first real run against this
@@ -102,6 +121,18 @@ _ORDER = ["p10", "p25", "median", "p75", "p90"]  # p50 normalised to "median" be
 # its parent key already says so via its own "_pct" suffix).
 _NOT_A_WAGE_CONTAINER_RE = re.compile(r"coefficient_of_variation", re.I)
 
+# Files with no pay data at all, whose OWN fields still happen to match the
+# mean/median/p10.. vocabulary for an unrelated concept -- climate_normals
+# .json's monthly mean_c (mean temperature, Celsius) is the one confirmed
+# live: matched "mean", found no currency/period anywhere (correctly -- it
+# has none), and was flagged by every family-based check in this file as a
+# missing-unit pay figure, 252 times over, once the >=1 fix (below) made a
+# lone mean_c field checkable at all. A per-FIELD exclusion pattern doesn't
+# fit here the way pct_change_yoy/paid_weekly_hours do above -- "_c" alone
+# is too generic to safely exclude as a suffix pattern -- so this is scoped
+# to the one file actually evidenced to need it, not guessed more broadly.
+_NOT_A_WAGE_FILE = {"climate_normals.json"}
+
 
 def _family_key(field_name: str) -> tuple[str, str, str] | None:
     """(prefix, token, suffix) for a recognised wage field name, or None."""
@@ -111,9 +142,12 @@ def _family_key(field_name: str) -> tuple[str, str, str] | None:
     if not m:
         return None
     token = m.group(1).lower()
-    if token == "p50":
-        token = "median"
+    if token in ("p50", "average"):
+        token = "median" if token == "p50" else "mean"
     prefix, suffix = field_name[:m.start()], field_name[m.end():]
+    qm = _QUALIFIER_RE.match(suffix)
+    if qm:
+        suffix = suffix[qm.end():]
     return (prefix, token, suffix)
 
 
@@ -131,35 +165,70 @@ def _numeric_leaf(v):
     return None
 
 
-def _has_unit(obj) -> bool:
-    return isinstance(obj, dict) and isinstance(obj.get("currency"), str) and isinstance(obj.get("period"), str)
-
-
 _CURRENCY_RE = re.compile(r"(?:^|_)(usd|eur|gbp|sek|nok|dkk|cad|aud|qar|aed)(?:_|$)", re.I)
 
 
-def _resolve_unit(prefix: str, suffix: str, container: dict, ancestors: list[dict]) -> tuple[str | None, str | None]:
-    """A family's own (currency, period), from whichever of this pipeline's
-    two real conventions applies: name-embedded (salary_*.json / bls_oews.json)
-    checked first, falling back to container/ancestor sibling fields
-    (wage_distribution.json). Shared by the unit-disclosure check and the
-    magnitude-plausibility bucketer so the two can't silently disagree about
-    which figures have a recoverable unit."""
-    unit_text = (prefix + suffix).lower()
-    period = "hour" if "hour" in unit_text else "month" if "month" in unit_text else \
-        "year" if ("annual" in unit_text or "year" in unit_text) else None
-    m = _CURRENCY_RE.search(unit_text)
-    currency = m.group(1).upper() if m else None
-    if currency and period:
-        return currency, period
+_CONTAINER_CURRENCY_KEYS = ("currency", "currency_original")
+
+
+def _resolve_unit(prefix: str, suffix: str, container: dict, ancestors: list[dict],
+                   container_key_name: str = "") -> tuple[str | None, str | None]:
+    """A family's own (currency, period), resolved INDEPENDENTLY — name-
+    embedded first, falling back to a container/ancestor sibling field, or
+    to the name of the KEY the container itself sits under — not as a
+    single all-or-nothing pair, and not from one fixed source. Three real
+    conventions, each covering fields the others miss:
+    (1) the LEAF field's own name (salary_*.json's mean_sek_month);
+    (2) a currency/period SIBLING field on the container (wage_
+        distribution.json's bare mean/median next to "currency": "SEK");
+    (3) the CONTAINER's OWN key name (salary_es.json's own
+        broader_category_context.age_bands_eur_year: {"All ages. Average
+        gross salary.": 34505.8, ...} — real INE age-band context data,
+        the leaf keys are Spanish/English PROSE labels with no unit in
+        them at all, and there is no currency/period sibling either; the
+        unit lives only in "age_bands_eur_year", the dict's own key one
+        level up, which nothing before this checked).
+    levels_fyi.json's own median_total_comp_usd names its currency (the
+    "_usd" suffix) but not its period (a container sibling, "period":
+    "year"); its own sibling median_original names NEITHER in its own
+    name, but its currency is a container sibling too, just under a
+    different real key (currency_original — the ORIGINAL, pre-conversion
+    currency, which varies per record, so it can never be the blanket
+    "currency" key a USD-converted sibling field would want). An earlier
+    version required BOTH currency and period to come from the SAME
+    source and so resolved neither for these real, otherwise-fully-
+    disclosed fields — found live: 830 real, correctly-USD-and-annual
+    levels.fyi/Stack Overflow figures flagged as unit-less (adversarial
+    review finding M9's own predicted "several are genuine" cases), then
+    13 more real, correctly-EUR-and-annual salary_es.json context figures
+    once convention (3) was found needed too, in the SAME remediation."""
+    def _from_text(text: str) -> tuple[str | None, str | None]:
+        t = text.lower()
+        p = "hour" if "hour" in t else "month" if "month" in t else \
+            "year" if ("annual" in t or "year" in t) else None
+        cm = _CURRENCY_RE.search(t)
+        return (cm.group(1).upper() if cm else None), p
+
+    currency, period = _from_text(prefix + suffix)
+    if container_key_name and not (currency and period):
+        key_currency, key_period = _from_text(container_key_name)
+        currency = currency or key_currency
+        period = period or key_period
     for ctx in [container, *ancestors[-2:]]:
-        if _has_unit(ctx):
-            return ctx["currency"], ctx["period"]
-    return None, None
+        if currency and period:
+            break
+        if not currency:
+            for key in _CONTAINER_CURRENCY_KEYS:
+                if isinstance(ctx.get(key), str):
+                    currency = ctx[key]
+                    break
+        if not period and isinstance(ctx.get("period"), str):
+            period = ctx["period"]
+    return currency, period
 
 
 def _find_families(obj, path: str, out: list[dict], ancestors: list[dict] | None = None) -> None:
-    """Recursively find every dict whose own keys include >=2 members of a
+    """Recursively find every dict whose own keys include >=1 member of a
     single (prefix, suffix) wage family, and record {path, prefix, suffix,
     values: {token: (field_name, value)}, currency, period} — the last two
     resolved via _resolve_unit(), None/None if genuinely unrecoverable (that
@@ -168,7 +237,18 @@ def _find_families(obj, path: str, out: list[dict], ancestors: list[dict] | None
     currency+period, e.g. check_magnitude_plausibility). Does not descend
     into a family's OWN matched keys further (they're leaves for this
     purpose) but does descend into every other key normally, so a nested
-    dispersion_by_year structure is walked into, not just its own top level."""
+    dispersion_by_year structure is walked into, not just its own top level.
+
+    >=1, not >=2 (an earlier version's own threshold): a lone pay field with
+    no sibling percentiles in the SAME dict -- bls_oews.json's own
+    hourly_mean_usd, salary_es.json's national_reference.mean_eur_year --
+    is still a real figure a negative/zero check and a magnitude check both
+    need to see. Found by adversarial review: >=2 silently dropped 1,412
+    real pay figures from every family-based check in this file, is_es and
+    bls_oews's own lone means among them. The checks that genuinely need
+    >=2 (monotonicity) or a specific combination (mean+p10+p90) already
+    guard for that themselves via their own `continue` — this threshold is
+    not what protects them."""
     ancestors = ancestors or []
     if isinstance(obj, dict):
         groups: dict[tuple[str, str], dict[str, tuple[str, float]]] = {}
@@ -178,11 +258,12 @@ def _find_families(obj, path: str, out: list[dict], ancestors: list[dict] | None
             if fam and leaf is not None:
                 prefix, token, suffix = fam
                 groups.setdefault((prefix, suffix), {})[token] = (str(k), leaf)
-        is_wage_container = not _NOT_A_WAGE_CONTAINER_RE.search(path.rsplit(".", 1)[-1])
+        own_key_name = path.rsplit(".", 1)[-1]
+        is_wage_container = not _NOT_A_WAGE_CONTAINER_RE.search(own_key_name)
         if is_wage_container:
             for (prefix, suffix), members in groups.items():
-                if len(members) >= 2:
-                    currency, period = _resolve_unit(prefix, suffix, obj, ancestors)
+                if len(members) >= 1:
+                    currency, period = _resolve_unit(prefix, suffix, obj, ancestors, own_key_name)
                     out.append({"path": path, "prefix": prefix, "suffix": suffix, "values": members,
                                 "currency": currency, "period": period})
         for k, v in obj.items():
@@ -195,6 +276,8 @@ def _find_families(obj, path: str, out: list[dict], ancestors: list[dict] | None
 def _all_families(processed_dir: Path = PROCESSED) -> list[tuple[Path, dict]]:
     out = []
     for p in sorted(processed_dir.glob("*.json")):
+        if p.name in _NOT_A_WAGE_FILE:
+            continue
         doc = _load(p)
         if doc is None:
             continue
@@ -242,9 +325,21 @@ def check_mean_within_percentile_range(processed_dir: Path = PROCESSED) -> None:
 
 
 def check_no_negative_or_zero_pay(processed_dir: Path = PROCESSED) -> None:
+    """A figure only gets checked here once it's confirmed to be a PAY
+    figure (a resolved currency and period), not merely a field name that
+    happens to match the mean/median/p10../average token vocabulary. Found
+    live once the >=1 family-size fix (above) stopped hiding it:
+    climate_normals.json's own `mean_c` (mean temperature, Celsius) matched
+    the same token and, once eligible for checking at all, was flagged as
+    "negative pay" for every city with a winter month below freezing --
+    a real value, correctly negative, not a pay figure at all. Requiring a
+    resolved unit is the same precondition check_magnitude_plausibility
+    already uses, so the two can't disagree about what counts as pay."""
     log("· no negative pay figures; a real $0/€0/etc. is never presented as a figure")
     checked = bad = 0
     for path, fam in _all_families(processed_dir):
+        if not fam.get("currency") or not fam.get("period"):
+            continue
         for tok, (name, val) in fam["values"].items():
             checked += 1
             if val < 0:
@@ -286,8 +381,32 @@ def check_distribution_label_matches_percentile_presence(processed_dir: Path = P
                             f"expected one of {sorted(_KNOWN_DISTRIBUTION_LABELS)}")
                     elif dist in ("central-tendency-only", "mean-only"):
                         checked += 1
-                        has_pct = any(_family_key(str(k)) and _family_key(str(k))[1] not in ("mean",)
-                                      for k in obj if isinstance(obj.get(k), (int, float)))
+                        # wage_distribution.json's own convention puts
+                        # distribution as a SIBLING of value, not of the
+                        # percentile fields themselves (native: {distribution,
+                        # value: {mean, p10, ...}}) -- checking only obj's own
+                        # direct children missed this shape entirely (a
+                        # constructed mean-only-labelled record with a full
+                        # p10-p90 spread nested under value: {} passed this
+                        # check clean). Checked here, not just obj itself.
+                        candidates = [obj]
+                        nested_value = obj.get("value")
+                        if isinstance(nested_value, dict):
+                            candidates.append(nested_value)
+                        # "central-tendency-only" means mean AND/OR median,
+                        # no percentiles -- median is a central-tendency
+                        # measure, not a percentile, so excluding only
+                        # "mean" here flagged every real AU/IE/DE record
+                        # (mean+median present, p10-p90 genuinely null) as
+                        # self-contradicting the moment the nested-value
+                        # lookup above could see median at all. Verified
+                        # against the real data before fixing, not assumed:
+                        # all three have {} for every non-null field other
+                        # than mean/median.
+                        has_pct = any(
+                            _family_key(str(k)) and _family_key(str(k))[1] not in ("mean", "median")
+                            for c in candidates for k in c if isinstance(c.get(k), (int, float))
+                        )
                         if has_pct:
                             bad += 1
                             err(f"{path.name}:{ctx_path}: distribution={dist!r} but this record carries a "
@@ -317,21 +436,12 @@ def check_pay_fields_disclose_currency_and_period(processed_dir: Path = PROCESSE
     log("· every pay field's unit (currency+period) is recoverable from its name or its container")
     checked = bad = 0
     for path in sorted(processed_dir.glob("*.json")):
+        if path.name in _NOT_A_WAGE_FILE:
+            continue
         doc = _load(path)
         if doc is None:
             continue
 
-        has_unit = _has_unit
-
-        # wage_distribution.json's own convention nests the bare mean/median/
-        # p10.. fields one level under a "value" key that is a SIBLING of
-        # currency/period (native: {currency, period, value: {mean, ...}}),
-        # not their direct container — checking only the immediate parent
-        # (as a first version of this function did) flagged all 15 countries'
-        # worth of correctly-disclosed figures as unit-less. ancestors[-1] is
-        # the immediate parent, ancestors[-2] the grandparent; wage_
-        # distribution.json's shape needs the grandparent, so both are
-        # checked rather than assuming one fixed nesting depth.
         def walk(obj, ctx_path, ancestors):
             nonlocal checked, bad
             if not isinstance(obj, dict):
@@ -344,9 +454,9 @@ def check_pay_fields_disclose_currency_and_period(processed_dir: Path = PROCESSE
             # fields are a percentage, not a pay figure, so they need no
             # currency/period disclosure at all; not just "checked and
             # passing", genuinely out of scope for this rule.
-            if _NOT_A_WAGE_CONTAINER_RE.search(ctx_path.rsplit(".", 1)[-1]):
+            own_key_name = ctx_path.rsplit(".", 1)[-1]
+            if _NOT_A_WAGE_CONTAINER_RE.search(own_key_name):
                 return
-            container_has_unit = has_unit(obj) or any(has_unit(a) for a in ancestors[-2:])
             for k, v in obj.items():
                 if isinstance(v, (int, float)):
                     fam = _family_key(str(k))
@@ -354,11 +464,28 @@ def check_pay_fields_disclose_currency_and_period(processed_dir: Path = PROCESSE
                         continue
                     checked += 1
                     prefix, token, suffix = fam
-                    name_embeds_unit = bool(re.search(r"[a-z]", prefix + suffix, re.I))
-                    if not name_embeds_unit and not container_has_unit:
+                    # Reuses _resolve_unit() -- the SAME function
+                    # check_magnitude_plausibility's own bucketing calls via
+                    # _find_families() -- rather than this check's own
+                    # separate `any letter in the name` test. An earlier,
+                    # separate test accepted ANY letter anywhere in the
+                    # name as "the unit is disclosed": total_mean (no
+                    # currency, no period), median_eur (currency, no
+                    # period) and median_year (period, no currency) all
+                    # passed it, and then silently vanished from magnitude
+                    # checking too, since _resolve_unit() correctly returns
+                    # None/None for all three — a badly-named field passed
+                    # the disclosure check AND disappeared from the value
+                    # check, with no warning from either. Adversarial
+                    # review finding M9, reproduced against these exact
+                    # three constructed names before this fix.
+                    currency, period = _resolve_unit(prefix, suffix, obj, ancestors, own_key_name)
+                    if not currency or not period:
                         bad += 1
-                        err(f"{path.name}:{ctx_path}.{k}: bare {token} with no currency/period in its own "
-                            "name and none on its container or grandparent — this figure's unit cannot be recovered")
+                        missing = ("currency and period" if not currency and not period
+                                   else "period" if currency else "currency")
+                        err(f"{path.name}:{ctx_path}.{k}: {token} field {k!r} is missing its own {missing} — "
+                            "neither its name nor its container/grandparent discloses it")
                 else:
                     walk(v, f"{ctx_path}.{k}", ancestors + [obj])
 
@@ -366,53 +493,90 @@ def check_pay_fields_disclose_currency_and_period(processed_dir: Path = PROCESSE
     log(f"  {checked} pay field(s) checked, {bad} with no recoverable unit")
 
 
+# Absolute, currency-agnostic sanity bands per period -- deliberately wide
+# (these are sanity bounds, not plausibility bounds; the dataset-relative
+# check below does the fine-grained work). Exists specifically because a
+# bound built from a bucket's OWN spread cannot catch every point in that
+# SAME bucket being wrong the same way -- adversarial review finding H1,
+# reproduced live: writing the ANNUAL mean into every one of bls_oews.json's
+# 31 hourly_mean_usd fields (the real historical P7 bug) passed the
+# dataset-relative check cleanly, because the bucket's own median moved
+# with it. No real wage in any currency this pipeline commits sits outside
+# these; a value that does is wrong regardless of what its own bucket says.
+_ABSOLUTE_SANITY_BANDS = {"hour": (0.5, 2000), "month": (50, 500_000), "year": (500, 5_000_000)}
+
+
 def check_magnitude_plausibility(processed_dir: Path = PROCESSED) -> None:
-    """Order-of-magnitude bounds built from this dataset's OWN committed
-    values, not an externally-asserted table -- grouped by (currency,
-    period) where that's recoverable (see the check above), median +/- a
-    wide multiple of the median absolute deviation (robust to a handful of
-    real outliers skewing a plain mean/stdev). Needs >=5 points in a
-    bucket to say anything at all (fewer than that, "the data's own
-    spread" is too thin to define a bound from). Flags for review; never
-    silently dropped, never auto-"fixed"."""
-    log("· order-of-magnitude plausibility per (currency, period), bounds built from this dataset's own spread")
-    buckets: dict[tuple[str, str], list[tuple[str, str, float]]] = {}
+    """Two independent bounds per figure, per (currency, period) — flags for
+    review, never silently dropped, never auto-"fixed":
+
+    1. Dataset-relative: median +/- a wide multiple of the median absolute
+       deviation of that bucket's OWN percentile values (robust to a
+       handful of real outliers skewing a plain mean/stdev; needs >=5
+       points to say anything). The lower bound is clamped to a quarter of
+       the median -- unclamped, `median - 8*MAD` is negative in 12 of this
+       dataset's own 13 real buckets, meaning a figure could read as low as
+       $0 and still pass (adversarial review finding H3, reproduced live:
+       a Netherlands hourly rate left un-annualised, a DKK/hour figure 10x
+       too small, and seven other constructed downward errors all passed
+       the unclamped bound).
+    2. Absolute (_ABSOLUTE_SANITY_BANDS): catches the case (1) cannot by
+       construction -- an entire bucket wrong the same way.
+
+    Every value in a family is tested against both, INCLUDING mean (an
+    earlier version excluded mean from testing, not just from bound-
+    building, which let bls_oews.json's own mean-only hourly_mean_usd
+    field escape checking entirely -- adversarial review finding H1).
+    Bound-building itself still prefers a family's own non-mean
+    (percentile) values where present, falling back to mean only when
+    that's the sole figure a family has -- avoids double-counting a
+    distribution's own spread without leaving a mean-only source's bucket
+    empty."""
+    log("· order-of-magnitude plausibility per (currency, period): dataset-relative + absolute sanity bounds")
+    bucket_source: dict[tuple[str, str], list[float]] = {}
+    all_points: list[tuple[str, str, float, str, str]] = []
     for path, fam in _all_families(processed_dir):
         # fam's own currency/period, resolved by _find_families() via
         # _resolve_unit() -- name-embedded (salary_*.json, bls_oews.json) OR
-        # container/ancestor sibling fields (wage_distribution.json). A first
-        # version of this loop re-derived currency from prefix/suffix TEXT
-        # ALONE and skipped anything without it, which silently excluded
-        # every wage_distribution.json family (its own convention is bare
-        # mean/p10/etc. with currency on an ancestor, not in the name) from
-        # magnitude checking entirely -- 43 families in the one file the
-        # deployed site actually reads, checked by nothing. Reusing the
-        # already-resolved fields here means this bucketer and the
-        # unit-disclosure check above can't silently disagree about which
-        # figures have a recoverable unit.
+        # container/ancestor sibling fields (wage_distribution.json).
         currency, period = fam.get("currency"), fam.get("period")
         if not currency or not period:
             continue
+        non_mean = {tok: v for tok, v in fam["values"].items() if tok != "mean"}
+        for _, val in (non_mean or fam["values"]).values():
+            bucket_source.setdefault((currency, period), []).append(val)
         for tok, (name, val) in fam["values"].items():
-            if tok == "mean":
-                continue  # count each distribution's own spread once via its percentiles, not mean too
-            buckets.setdefault((currency, period), []).append((path.name, name, val))
+            all_points.append((path.name, name, val, currency, period))
 
-    flagged = 0
-    for (currency, period), points in buckets.items():
-        if len(points) < 5:
+    bounds: dict[tuple[str, str], tuple[float, float, float, int]] = {}
+    for key, vals in bucket_source.items():
+        if len(vals) < 5:
             continue
-        vals = [v for _, _, v in points]
         med = statistics.median(vals)
         mad = statistics.median([abs(v - med) for v in vals]) or (med * 0.05)
-        lo, hi = med - 8 * mad, med + 8 * mad
-        for fname, field, val in points:
-            if val < lo or val > hi:
-                flagged += 1
-                flag(f"{fname}:{field}: {val:,g} {currency}/{period} is outside this dataset's own "
-                     f"plausible range [{lo:,.0f}, {hi:,.0f}] (median {med:,.0f}, {len(points)} points in bucket) "
-                     "— review, not auto-corrected")
-    log(f"  {sum(len(v) for v in buckets.values())} figure(s) across {len(buckets)} (currency, period) bucket(s), "
+        lo = max(med - 8 * mad, med / 4)
+        hi = med + 8 * mad
+        bounds[key] = (lo, hi, med, len(vals))
+
+    flagged = 0
+    for fname, field, val, currency, period in all_points:
+        absolute = _ABSOLUTE_SANITY_BANDS.get(period)
+        if absolute and not (absolute[0] <= val <= absolute[1]):
+            flagged += 1
+            flag(f"{fname}:{field}: {val:,g} {currency}/{period} is outside the absolute sanity band "
+                 f"[{absolute[0]:,g}, {absolute[1]:,g}] for any {period}-basis figure this pipeline commits "
+                 "— review, not auto-corrected")
+            continue  # already flagged; don't double-flag the same figure against the relative bound too
+        b = bounds.get((currency, period))
+        if b is None:
+            continue
+        lo, hi, med, n = b
+        if val < lo or val > hi:
+            flagged += 1
+            flag(f"{fname}:{field}: {val:,g} {currency}/{period} is outside this dataset's own "
+                 f"plausible range [{lo:,.0f}, {hi:,.0f}] (median {med:,.0f}, {n} points in bucket) "
+                 "— review, not auto-corrected")
+    log(f"  {len(all_points)} figure(s) across {len(bounds)} dataset-relative bucket(s), "
         f"{flagged} flagged for review")
 
 
