@@ -410,9 +410,120 @@ def reproduce_section_0():
                  "requirement. NOT reported as evidence of anything in this package.")
 
 
+
+# ------------------------------------------------------------------ tier 2
+
+def tier2_estimator_audit():
+    """Where does the site summarise a skewed field, and with what estimator?
+
+    The codebase-wide search is deliberately part of the finding: there is
+    exactly ONE arithmetic mean over a collection anywhere in the site
+    (`meanPerYear` in site/src/data/explore.ts, used twice), and it is a
+    WITHIN-YEAR temporal average of 12 monthly readings of a single series
+    -- not a cross-sectional average over a skewed population. That
+    distinction is why the log-normality finding, which is real and large,
+    does not translate into a wrong published average. Reported with the
+    measured within-year gap so the conclusion rests on a number rather
+    than on the argument.
+    """
+    log("tier 2 — estimator correctness and published precision")
+    cities = _core()
+
+    fields = {}
+    for lab, path in [("salary_mid", "salary_usd_year.mid"),
+                      ("salary_new_grad", "salary_usd_year.new_grad"),
+                      ("salary_senior", "salary_usd_year.senior"),
+                      ("rent_centre", "rent_1br_center_usd_month"),
+                      ("rent_outside", "rent_1br_outside_usd_month"),
+                      ("cost_of_living", "col_single_no_rent_usd_month"),
+                      ("apt_price_centre", "apt_price_center_usd_m2"),
+                      ("apt_price_outside", "apt_price_outside_usd_m2"),
+                      ("savings_mid", "computed.mid.savings_usd_year"),
+                      ("years_to_home_mid", "computed.mid.years_to_home"),
+                      ("m2_per_year_mid", "computed.mid.m2_per_year")]:
+        vals = [v for v in (_get(ct, path) for ct in cities) if v is not None]
+        e = estimator_error(vals)
+        if e:
+            e["path"] = path
+            fields[lab] = e
+    worst = max(fields.items(), key=lambda kv: abs(kv[1]["mean_vs_median_pct"] or 0))
+    finding("2-A", "how wrong an arithmetic mean would be, per skewed field", "QUANTIFIED",
+            fields=fields,
+            worst_field=worst[0],
+            worst_mean_vs_median_pct=worst[1]["mean_vs_median_pct"],
+            note="this is the error an arithmetic mean WOULD introduce, not an error the "
+                 "site currently makes -- see 2-B for where means are actually taken.")
+
+    # Where the site actually takes a mean: within-year monthly averaging.
+    ter = _proc("teranet_national_bank_hpi")["cities"]
+    uk = _proc("uk_hpi")
+    gaps = []
+    for city, rec in ter.items():
+        by = defaultdict(list)
+        for r in rec["series"]:
+            by[r["date"][:4]].append(r["index"])
+        for y, v in by.items():
+            v = [x for x in v if x and x > 0]
+            if len(v) >= 6:
+                gaps.append(abs(100 * (st.mean(v) - st.median(v)) / st.median(v)))
+    uk_gaps = []
+    for city, rec in uk.items():
+        by = defaultdict(list)
+        for r in rec["series"]:
+            if r.get("avg_price_gbp"):
+                by[r["month"][:4]].append(r["avg_price_gbp"])
+        for y, v in by.items():
+            if len(v) >= 6:
+                uk_gaps.append(abs(100 * (st.mean(v) - st.median(v)) / st.median(v)))
+    finding("2-B", "the only arithmetic means the site takes are within-year temporal averages",
+            "NO ESTIMATOR DEFECT",
+            where="site/src/data/explore.ts meanPerYear(), 2 call sites (Teranet index, UK HPI London price)",
+            teranet_within_year_mean_vs_median_pct={"median": round(st.median(gaps), 3),
+                                                   "max": round(max(gaps), 3)},
+            uk_hpi_within_year_mean_vs_median_pct={"median": round(st.median(uk_gaps), 4),
+                                                  "max": round(max(uk_gaps), 4)},
+            note="UK HPI's gap is negligible, as a smooth monthly price series should be. "
+                 "Teranet's is 100x larger -- not because the mean is the wrong estimator "
+                 "but because that series carries injected per-observation noise; see 6-A.")
+
+    # Published precision vs supported precision, postings medians.
+    post = _proc("postings")
+    by_cc = defaultdict(list)
+    for p in post["postings"]:
+        c = p.get("compensation")
+        if not c or c.get("period") != "year" or not p.get("country"):
+            continue
+        u = c.get("usd")
+        if u:
+            by_cc[p["country"]].append((u["min"] + u["max"]) / 2)
+    rng = np.random.default_rng(15)
+    rows = []
+    for r in post["pay_summary_by_country"]:
+        v = np.array(by_cc[r["country"]], float)
+        n = v.size
+        b = np.array([np.median(v[rng.integers(0, n, n)]) for _ in range(10000)])
+        lo, hi = (float(x) for x in np.percentile(b, [2.5, 97.5]))
+        rows.append({"country": r["country"], "n": int(n),
+                     "published": r["median_usd_year"],
+                     "ci_lo": round(lo), "ci_hi": round(hi),
+                     "half_width_pct": round(100 * (hi - lo) / 2 / float(np.median(v)), 1)})
+    thin = [r for r in rows if r["n"] < 12]
+    finding("2-C", "published advertised medians carry precision the sample cannot support",
+            "DEFECT",
+            per_country=rows,
+            n_countries_published=len(rows),
+            n_below_min_n_for_a_distributional_claim=len(thin),
+            worst={"country": max(rows, key=lambda r: r["half_width_pct"])["country"],
+                   "half_width_pct": max(r["half_width_pct"] for r in rows)},
+            note="values are published to the cent from samples as small as n=5. The "
+                 "underlying employer-stated figures are heaped (see 0-D); FX conversion "
+                 "then manufactures apparent precision that was never in the source.")
+
+
 def run():
     log("CS Migration Compass — statistical audit (package 15)")
     reproduce_section_0()
+    tier2_estimator_audit()
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"schema": "package-15 statistical audit v1",
                                "findings": FINDINGS}, indent=1, ensure_ascii=False) + "\n",

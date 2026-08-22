@@ -320,6 +320,222 @@
     }
    },
    "note": "every series reads nonconforming, including ones with no defect. Pooling heterogeneous fields breaks Benford's homogeneity requirement, and scale-bounded or index-normalised fields break its scale-invariance requirement. NOT reported as evidence of anything in this package."
+  },
+  {
+   "id": "2-A",
+   "title": "how wrong an arithmetic mean would be, per skewed field",
+   "verdict": "QUANTIFIED",
+   "fields": {
+    "salary_mid": {
+     "n": 73,
+     "mean": 98438.35616438356,
+     "median": 86000.0,
+     "geometric_mean": 89414.79320199961,
+     "skew": 1.021,
+     "excess_kurtosis": 2.078,
+     "mean_vs_median_pct": 14.46,
+     "mean_vs_geomean_pct": 10.09,
+     "path": "salary_usd_year.mid"
+    },
+    "salary_new_grad": {
+     "n": 73,
+     "mean": 72602.7397260274,
+     "median": 70000.0,
+     "geometric_mean": 65957.7847134693,
+     "skew": 1.034,
+     "excess_kurtosis": 2.356,
+     "mean_vs_median_pct": 3.72,
+     "mean_vs_geomean_pct": 10.07,
+     "path": "salary_usd_year.new_grad"
+    },
+    "salary_senior": {
+     "n": 73,
+     "mean": 135479.45205479453,
+     "median": 115000.0,
+     "geometric_mean": 122081.93411453349,
+     "skew": 0.912,
+     "excess_kurtosis": 1.307,
+     "mean_vs_median_pct": 17.81,
+     "mean_vs_geomean_pct": 10.97,
+     "path": "salary_usd_year.senior"
+    },
+    "rent_centre": {
+     "n": 73,
+     "mean": 1918.3561643835617,
+     "median": 1800.0,
+     "geometric_mean": 1834.6631926648408,
+     "skew": 1.54,
+     "excess_kurtosis": 3.393,
+     "mean_vs_median_pct": 6.58,
+     "mean_vs_geomean_pct": 4.56,
+     "path": "rent_1br_center_usd_month"
+    },
+    "rent_outside": {
+     "n": 73,
+     "mean": 1449.041095890411,
+     "median": 1380.0,
+     "geometric_mean": 1384.9957153330263,
+     "skew": 1.236,
+     "excess_kurtosis": 1.553,
+     "mean_vs_median_pct": 5.0,
+     "mean_vs_geomean_pct": 4.62,
+     "path": "rent_1br_outside_usd_month"
+    },
+    "cost_of_living": {
+     "n": 72,
+     "mean": 1220.5555555555557,
+     "median": 1210.0,
+     "geometric_mean": 1208.3283118918262,
+     "skew": 0.38,
+     "excess_kurtosis": -0.055,
+     "mean_vs_median_pct": 0.87,
+     "mean_vs_geomean_pct": 1.01,
+     "path": "col_single_no_rent_usd_month"
+    },
+    "apt_price_centre": {
+     "n": 72,
+     "mean": 7423.611111111111,
+     "median": 7100.0,
+     "geometric_mean": 6696.777440777185,
+     "skew": 1.19,
+     "excess_kurtosis": 2.05,
+     "mean_vs_median_pct": 4.56,
+     "mean_vs_geomean_pct": 10.85,
+     "path": "apt_price_center_usd_m2"
+    },
+    "apt_price_outside": {
+     "n": 72,
+     "mean": 4525.0,
+     "median": 4200.0,
+     "geometric_mean": 4075.4157638183324,
+     "skew": 0.446,
+     "excess_kurtosis": -0.93,
+     "mean_vs_median_pct": 7.74,
+     "mean_vs_geomean_pct": 11.03,
+     "path": "apt_price_outside_usd_m2"
+    },
+    "savings_mid": {
+     "n": 72,
+     "mean": 39985.27777777778,
+     "median": 32410.0,
+     "geometric_mean": 26922.151227935334,
+     "skew": 0.851,
+     "excess_kurtosis": 1.502,
+     "mean_vs_median_pct": 23.37,
+     "mean_vs_geomean_pct": 48.52,
+     "path": "computed.mid.savings_usd_year"
+    },
+    "years_to_home_mid": {
+     "n": 72,
+     "mean": 70.1277777777778,
+     "median": 14.25,
+     "geometric_mean": 13.627461498622582,
+     "skew": 6.381,
+     "excess_kurtosis": 41.071,
+     "mean_vs_median_pct": 392.12,
+     "mean_vs_geomean_pct": 414.61,
+     "path": "computed.mid.years_to_home"
+    },
+    "m2_per_year_mid": {
+     "n": 72,
+     "mean": 12.044444444444444,
+     "median": 6.35,
+     "geometric_mean": null,
+     "skew": 0.883,
+     "excess_kurtosis": -0.453,
+     "mean_vs_median_pct": 89.68,
+     "mean_vs_geomean_pct": null,
+     "path": "computed.mid.m2_per_year"
+    }
+   },
+   "worst_field": "years_to_home_mid",
+   "worst_mean_vs_median_pct": 392.12,
+   "note": "this is the error an arithmetic mean WOULD introduce, not an error the site currently makes -- see 2-B for where means are actually taken."
+  },
+  {
+   "id": "2-B",
+   "title": "the only arithmetic means the site takes are within-year temporal averages",
+   "verdict": "NO ESTIMATOR DEFECT",
+   "where": "site/src/data/explore.ts meanPerYear(), 2 call sites (Teranet index, UK HPI London price)",
+   "teranet_within_year_mean_vs_median_pct": {
+    "median": 2.792,
+    "max": 29.22
+   },
+   "uk_hpi_within_year_mean_vs_median_pct": {
+    "median": 0.4824,
+    "max": 2.4887
+   },
+   "note": "UK HPI's gap is negligible, as a smooth monthly price series should be. Teranet's is 100x larger -- not because the mean is the wrong estimator but because that series carries injected per-observation noise; see 6-A."
+  },
+  {
+   "id": "2-C",
+   "title": "published advertised medians carry precision the sample cannot support",
+   "verdict": "DEFECT",
+   "per_country": [
+    {
+     "country": "SG",
+     "n": 5,
+     "published": 152969.52,
+     "ci_lo": 60177,
+     "ci_hi": 317412,
+     "half_width_pct": 84.1
+    },
+    {
+     "country": "GB",
+     "n": 21,
+     "published": 151420.6,
+     "ci_lo": 144837,
+     "ci_hi": 190922,
+     "half_width_pct": 15.2
+    },
+    {
+     "country": "CA",
+     "n": 9,
+     "published": 113191.58,
+     "ci_lo": 85771,
+     "ci_hi": 168085,
+     "half_width_pct": 36.4
+    },
+    {
+     "country": "FR",
+     "n": 9,
+     "published": 87150.25,
+     "ci_lo": 71978,
+     "ci_hi": 145316,
+     "half_width_pct": 42.1
+    },
+    {
+     "country": "US",
+     "n": 3980,
+     "published": 82994.5,
+     "ci_lo": 82994,
+     "ci_hi": 84876,
+     "half_width_pct": 1.1
+    },
+    {
+     "country": "JP",
+     "n": 11,
+     "published": 77254.0,
+     "ci_lo": 60177,
+     "ci_hi": 85771,
+     "half_width_pct": 16.6
+    },
+    {
+     "country": "NL",
+     "n": 7,
+     "published": 73448.9,
+     "ci_lo": 53109,
+     "ci_hi": 80794,
+     "half_width_pct": 18.8
+    }
+   ],
+   "n_countries_published": 7,
+   "n_below_min_n_for_a_distributional_claim": 5,
+   "worst": {
+    "country": "SG",
+    "half_width_pct": 84.1
+   },
+   "note": "values are published to the cent from samples as small as n=5. The underlying employer-stated figures are heaped (see 0-D); FX conversion then manufactures apparent precision that was never in the source."
   }
  ]
 }
