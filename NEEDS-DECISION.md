@@ -1769,3 +1769,79 @@ version of the exact destructive-refresh problem Tier 0.2 just fixed (a company 
 turn in a capped rotation is functionally the same as one silently dropped), so this needs real design
 attention when the scale actually warrants it, not a number picked defensively today against a
 problem that is not yet present.
+
+## 42. `/postings` "Median advertised pay by country" supports one country, not seven — how should it be shown?
+
+Package 15 measured what that chart rests on. Three compounding problems, all quantified in
+`REPORT-P15.md` and `docs/DATA-FITNESS.md §1`:
+
+1. **The panel is ~28% software.** The harvest takes every job a seeded company posts, so the median
+   is taken over an arbitrary occupational mix that differs by country. Three independent methods
+   agree on the share: keyword census 27.2%, a 400-title hand-labelled sample 29.0%, a trained
+   classifier 27.89%.
+2. **Six of seven countries have too few postings.** Singapore's published figure rests on **five**
+   postings with a 95% bootstrap interval of **$60,177–$317,412** (±84%).
+3. **The published precision is manufactured.** Employer-entered pay is heaped to round thousands
+   (77.5% of native annual minima end in 0 or 5; terminal-digit uniformity rejected, p < 0.001). FX
+   conversion turns a round native figure into `$152,969.52`.
+
+Re-derived on the de-duplicated, software-only subset, **the US median moves +18.9%**
+($82,994 → $98,688). Canada +13.2%. After cleaning, **only the US clears a defensible minimum n.**
+
+The analysis is finished and the corrected form is specified:
+
+> Median advertised pay, software roles only — United States: **$99,000**
+> (95% CI $96,000–$101,000, n = 1,319 after de-duplication)
+
+**Decide:** which of these the chart should become —
+
+- **(a)** one country (US only), rounded to $1,000, interval shown;
+- **(b)** all seven, each with its interval drawn and an explicit "indicative only, n<30" mark on
+  the six thin ones;
+- **(c)** retire the chart until the panel covers more countries at usable depth.
+
+This is a product decision about what the page claims, not a data question — which is why package 15
+did not make it unilaterally. Everything needed to implement any of the three is committed:
+`data/processed/postings_title_classes.json` (per-title class, F1 0.822 for SW),
+`postings_duplicate_clusters.json` (precision 0.958), and
+`data/quality_history/postings_pay_rederived.json` (per-country re-derived medians with CIs and a
+representativeness score against Eurostat ICT employment).
+
+## 43. Teranet's monthly index carries injected per-observation noise — disclose, aggregate, or drop?
+
+Every Teranet city's monthly series shows residual autocorrelation of **+0.07 to +0.27** about a
+smooth trend, with month-over-month autocorrelation near **−0.44**. The two control indices in this
+same repo — UK HPI and FHFA, both real published house-price indices — read **+0.985**. A genuine
+price index is persistent; independent per-observation noise destroys that persistence and drives
+the MoM autocorrelation negative. 60–64% of Teranet months move more than 10%, with swings to 139%.
+
+**This is not a parsing bug.** The stated base holds exactly (2005-06 = 100.0 for every city), the
+long-run trend survives (Spearman with time 0.909 for Toronto), and the raw endpoint payload itself
+carries the volatility — the pipeline transcribes it faithfully. `housepriceindex.ca`'s endpoint is
+undocumented and the index is proprietary, which is the most likely explanation.
+
+The site plots an **annual mean** of the monthly values, which turns out to be a mitigation rather
+than a defect: averaging 12 points cuts the noise by roughly √12.
+
+**Decide:** whether to (a) keep the annual series and add a chart-level note that monthly Teranet
+values are not interpretable; (b) drop Teranet and rely on the other Canadian housing evidence; or
+(c) raise it with the publisher. Option (a) is the smallest honest change and is what
+`docs/DATA-FITNESS.md §5` currently recommends.
+
+## 44. Percentile transfer is not currently testable, and therefore not defensible
+
+The site intends to infer pay for countries where employers do not publish ranges, by transferring a
+percentile position from countries where they do. Package 15 tried to test that assumption and
+**could not**: the test needs at least two countries with both posted salaries and official
+distributions at a shared occupation depth, and after classification and de-duplication **only the
+US clears the sample-size floor**. There is no second country to fit a relationship against.
+
+That is a blocker rather than an omission, and it has a direct consequence: **on current evidence,
+percentile transfer is not defensible into any country.** The expected mechanism (Nordic and
+continental pay compression) remains plausible and untested.
+
+**Decide:** whether to (a) shelve transfer until the panel covers a second country at usable depth;
+or (b) commission a targeted harvest aimed specifically at the countries transfer would serve, so
+the assumption becomes testable. Note that the same audit measured the panel as under-sampling
+exactly those countries: Denmark 0.07×, Norway 0.10×, Sweden and Finland 0.26× against their own
+Eurostat ICT-employment share.
