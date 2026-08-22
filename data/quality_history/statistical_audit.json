@@ -1,0 +1,325 @@
+{
+ "schema": "package-15 statistical audit v1",
+ "findings": [
+  {
+   "id": "0-A",
+   "title": "postings panel is not a software-jobs panel",
+   "verdict": "REPRODUCED",
+   "n_postings": 48267,
+   "keyword_census": {
+    "engineer": 11948,
+    "manager": 8831,
+    "sales": 3818,
+    "analyst": 1487,
+    "director": 1473,
+    "developer": 1126,
+    "nurse": 363
+   },
+   "first_pass_census": {
+    "engineer": 11948,
+    "manager": 8831,
+    "sales": 3818,
+    "analyst": 1487,
+    "director": 1473,
+    "developer": 1126,
+    "nurse": 363
+   }
+  },
+  {
+   "id": "0-B",
+   "title": "occupation is None on every posting",
+   "verdict": "REPRODUCED",
+   "none_rate_pct": 100.0,
+   "n": 48267,
+   "of": 48267
+  },
+  {
+   "id": "0-C",
+   "title": "exact duplicate postings",
+   "verdict": "REPRODUCED",
+   "groups": 2000,
+   "rows_in_dup_groups": 4430,
+   "rows_in_dup_groups_pct": 9.18,
+   "removable_excess": 2430,
+   "removable_excess_pct": 5.03,
+   "note": "first pass reported 9.4% as rows-in-groups; the REMOVABLE share is the excess, which is materially smaller and is what de-duplication changes"
+  },
+  {
+   "id": "0-D",
+   "title": "advertised pay is heaped; employer-entered vs system-generated",
+   "verdict": "REPRODUCED",
+   "by_provider": {
+    "ashby": {
+     "n": 15236,
+     "ends_0_or_5_pct": 94.5,
+     "ends_000_pct": 84.2
+    },
+    "greenhouse": {
+     "n": 1822,
+     "ends_0_or_5_pct": 88.7,
+     "ends_000_pct": 64.1
+    },
+    "lever": {
+     "n": 4821,
+     "ends_0_or_5_pct": 74.9,
+     "ends_000_pct": 53.7
+    },
+    "usajobs": {
+     "n": 7067,
+     "ends_0_or_5_pct": 28.4,
+     "ends_000_pct": 2.4
+    },
+    "hn": {
+     "n": 148,
+     "ends_0_or_5_pct": 100.0,
+     "ends_000_pct": 94.6
+    }
+   },
+   "first_pass": {
+    "ashby": {
+     "ends_0_or_5_pct": 97.1,
+     "ends_000_pct": 89.5
+    },
+    "usajobs": {
+     "ends_0_or_5_pct": 25.4,
+     "ends_000_pct": 1.4
+    }
+   }
+  },
+  {
+   "id": "0-E",
+   "title": "implied US rental yields far above non-US",
+   "verdict": "REPRODUCED, CAUSE REATTRIBUTED",
+   "recipe": "12 x rent_1br_outside / (60 m2 x apt_price_outside)",
+   "median_all_pct": 6.32,
+   "max_pct": 15.67,
+   "us_median_pct": 10.61,
+   "non_us_median_pct": 4.94,
+   "mannwhitney_p": 3.601e-11,
+   "us_median_at_centre_pct": 7.7,
+   "non_us_median_at_centre_pct": 4.04,
+   "centre_mannwhitney_p": 2.625e-08,
+   "note": "present at the CENTRE too, where both series are apartments, so it is not a centre/outside stock-composition artefact; Australia and Canada have US-like housing stock and non-US yields, so it is not a new-world-housing artefact either. Transcription verified faithful against live Numbeo (see gate 11 in REPORT-P15.md)."
+  },
+  {
+   "id": "0-F",
+   "title": "key fields are log-normal with heavy right tails",
+   "verdict": "REPRODUCED",
+   "fields": {
+    "salary_mid": {
+     "n": 73,
+     "mean": 98438.35616438356,
+     "median": 86000.0,
+     "geometric_mean": 89414.79320199961,
+     "skew": 1.021,
+     "excess_kurtosis": 2.078,
+     "mean_vs_median_pct": 14.46,
+     "mean_vs_geomean_pct": 10.09,
+     "shapiro_log_p": 0.2348,
+     "shapiro_raw_p": 0.00040635
+    },
+    "rent_outside": {
+     "n": 73,
+     "mean": 1449.041095890411,
+     "median": 1380.0,
+     "geometric_mean": 1384.9957153330263,
+     "skew": 1.236,
+     "excess_kurtosis": 1.553,
+     "mean_vs_median_pct": 5.0,
+     "mean_vs_geomean_pct": 4.62,
+     "shapiro_log_p": 0.1232,
+     "shapiro_raw_p": 2.114e-05
+    },
+    "years_to_home_mid": {
+     "n": 72,
+     "mean": 70.1277777777778,
+     "median": 14.25,
+     "geometric_mean": 13.627461498622582,
+     "skew": 6.381,
+     "excess_kurtosis": 41.071,
+     "mean_vs_median_pct": 392.12,
+     "mean_vs_geomean_pct": 414.61,
+     "shapiro_log_p": 0.0,
+     "shapiro_raw_p": 6.9559e-18
+    },
+    "savings_mid": {
+     "n": 72,
+     "mean": 39985.27777777778,
+     "median": 32410.0,
+     "geometric_mean": 26922.151227935334,
+     "skew": 0.851,
+     "excess_kurtosis": 1.502,
+     "mean_vs_median_pct": 23.37,
+     "mean_vs_geomean_pct": 48.52,
+     "shapiro_log_p": 0.0,
+     "shapiro_raw_p": 0.00023414
+    }
+   },
+   "first_pass": {
+    "salary_skew": 1.02,
+    "rent_skew": 1.24,
+    "years_to_home_skew": 6.38,
+    "years_to_home_kurtosis": 41.1
+   }
+  },
+  {
+   "id": "0-G",
+   "title": "published city metrics are collinear",
+   "verdict": "REPRODUCED, PARTLY RE-ATTRIBUTED",
+   "n_cities": 72,
+   "n_features": 9,
+   "components_for_90pct": 4,
+   "cumulative_variance": [
+    0.5173,
+    0.7821,
+    0.8828,
+    0.9354,
+    0.9747
+   ],
+   "strongest_pairs": [
+    {
+     "r": 0.9902,
+     "a": "salary_usd_year.mid",
+     "b": "computed.mid.net_usd"
+    },
+    {
+     "r": 0.9815,
+     "a": "computed.mid.net_usd",
+     "b": "computed.mid.savings_usd_year"
+    },
+    {
+     "r": 0.974,
+     "a": "salary_usd_year.mid",
+     "b": "computed.mid.savings_usd_year"
+    },
+    {
+     "r": 0.9532,
+     "a": "rent_1br_center_usd_month",
+     "b": "rent_1br_outside_usd_month"
+    },
+    {
+     "r": 0.8095,
+     "a": "apt_price_center_usd_m2",
+     "b": "apt_price_outside_usd_m2"
+    }
+   ],
+   "note": "salary<->savings and salary<->net are DERIVED relationships, not two independent measurements agreeing; see the leakage graph in tier 3.4. The genuinely independent redundancy is rent-centre <-> rent-outside."
+  },
+  {
+   "id": "0-H",
+   "title": "core salary vs levels.fyi agree well, four cities do not",
+   "verdict": "REPRODUCED",
+   "n": 57,
+   "pearson_r": 0.8981,
+   "spearman_r": 0.875,
+   "ratio_median": 1.1618,
+   "outliers": [
+    {
+     "city": "doha",
+     "country": "QA",
+     "ratio": 2.205,
+     "robust_z": 4.8,
+     "core": 30000,
+     "levels_fyi": 66145
+    },
+    {
+     "city": "dublin",
+     "country": "IE",
+     "ratio": 2.038,
+     "robust_z": 4.04,
+     "core": 61000,
+     "levels_fyi": 124346
+    },
+    {
+     "city": "valencia",
+     "country": "ES",
+     "ratio": 2.024,
+     "robust_z": 3.97,
+     "core": 32000,
+     "levels_fyi": 64780
+    },
+    {
+     "city": "london",
+     "country": "GB",
+     "ratio": 1.954,
+     "robust_z": 3.65,
+     "core": 69000,
+     "levels_fyi": 134809
+    }
+   ],
+   "bland_altman": {
+    "n": 57,
+    "space": "log",
+    "bias_ratio": 1.2197,
+    "loa_lo_ratio": 0.7887,
+    "loa_hi_ratio": 1.8864,
+    "pearson_r": 0.8981,
+    "spearman_r": 0.875
+   },
+   "deming": {
+    "n": 57,
+    "slope": 1.1249,
+    "intercept": 6871.91,
+    "ols_slope": 0.9983
+   }
+  },
+  {
+   "id": "0-I",
+   "title": "missingness is concentrated in one city, so MAR not MCAR",
+   "verdict": "REPRODUCED",
+   "missing_cells": 3,
+   "of_cells": 438,
+   "cities_with_any_missing": [
+    "aarhus"
+   ],
+   "by_field": {
+    "col_single_no_rent_usd_month": [
+     "aarhus"
+    ],
+    "apt_price_center_usd_m2": [
+     "aarhus"
+    ],
+    "apt_price_outside_usd_m2": [
+     "aarhus"
+    ]
+   },
+   "note": "cross-country imputation would be invalid here; the pipeline does not impute and several harvesters say so explicitly in their transforms."
+  },
+  {
+   "id": "0-J",
+   "title": "Benford is the wrong test for this data",
+   "verdict": "REPRODUCED AND ENDORSED",
+   "per_dataset": {
+    "world_bank": {
+     "n": 6355,
+     "mad": 0.06367,
+     "orders_of_magnitude_spanned": 10.23,
+     "precondition_met": true,
+     "interpretable": true
+    },
+    "bls_oews": {
+     "n": 512,
+     "mad": 0.085,
+     "orders_of_magnitude_spanned": 4.45,
+     "precondition_met": true,
+     "interpretable": true
+    },
+    "fhfa_hpi_metro": {
+     "n": 18642,
+     "mad": 0.04883,
+     "orders_of_magnitude_spanned": 3.31,
+     "precondition_met": true,
+     "interpretable": true
+    },
+    "postings": {
+     "n": 53174,
+     "mad": 0.04446,
+     "orders_of_magnitude_spanned": 8.44,
+     "precondition_met": true,
+     "interpretable": true
+    }
+   },
+   "note": "every series reads nonconforming, including ones with no defect. Pooling heterogeneous fields breaks Benford's homogeneity requirement, and scale-bounded or index-normalised fields break its scale-invariance requirement. NOT reported as evidence of anything in this package."
+  }
+ ]
+}

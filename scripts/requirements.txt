@@ -15,3 +15,13 @@ Pillow>=10.0            # renders the Open Graph link-preview images
 PyYAML>=6.0             # scripts/postings_classify_config.yaml (package 12, tier 3) — every
                         # user-facing classifier filter lives there, never hardcoded in the .py
 
+# --- package 15: statistical audit ---
+# Version floors are the exact versions package 15's own analysis ran against
+# (recorded so a future re-run can tell "the stats moved" from "the library
+# moved"). scipy: distribution fits, Shapiro-Wilk/Anderson-Darling, bootstrap.
+# scikit-learn: IsolationForest/LOF, TF-IDF + linear title classifier,
+# gradient-boosted model-based record validation. statsmodels: OLS/Deming
+# support, VIF, CUSUM/Chow structural-break tests.
+scipy>=1.15.1           # 1.15.1 used by package 15
+scikit-learn>=1.8.0     # 1.8.0 used by package 15
+statsmodels>=0.14.6     # 0.14.6 used by package 15
