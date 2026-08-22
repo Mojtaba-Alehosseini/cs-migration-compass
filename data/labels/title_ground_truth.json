@@ -1,0 +1,2433 @@
+{
+ "schema": "package-15 hand-labelled title ground truth v1",
+ "n": 400,
+ "seed": 15,
+ "stratification": {
+  "ashby": 150,
+  "greenhouse": 110,
+  "lever": 80,
+  "usajobs": 40,
+  "hn": 10,
+  "teamtailor": 10
+ },
+ "sampled_from": "distinct titles in data/processed/postings.json",
+ "labeller_note": "assigned by reading each title individually, before any classifier existed; no keyword rule was used to produce a label",
+ "classes": {
+  "SW": "software/data/IT engineering, development, DevOps, ML, security engineering, sysadmin",
+  "ENG": "engineering that is NOT software (mechanical, electrical, civil, manufacturing, hardware, aerospace)",
+  "SALES": "sales, account management, business development, partnerships, marketing, customer success",
+  "MGT": "general management, operations, HR, finance, legal, admin, recruiting, strategy, programme/product management",
+  "HEALTH": "clinical, medical, nursing, therapy, veterinary",
+  "SVC": "retail, hospitality, warehouse, food service, front-line customer service, seasonal store",
+  "OTHER": "design, non-software research, education, media, and undecidable/placeholder postings"
+ },
+ "known_ambiguities": [
+  "Product and programme management is labelled MGT even at software companies: a title alone does not establish that the holder writes software.",
+  "Solutions and pre-sales engineering is labelled SALES: the role is quota-carrying even though the title says engineer.",
+  "A bare 'Engineer I' or 'Senior Engineer' with no domain is labelled ENG, the larger prior across this corpus. This is expected to be a real source of SW/ENG confusion and should show up in the confusion matrix rather than be hidden by it.",
+  "USAJOBS 'Interdisciplinary' postings genuinely span several occupations by design; labelled on the dominant reading of the title.",
+  "'AI Trainer' freelance postings are labelled OTHER, not SW: they are data-annotation work advertised by subject-matter domain (chemistry, law, Bengali), not software engineering."
+ ],
+ "records": [
+  {
+   "i": 0,
+   "provider": "ashby",
+   "title": "Event Marketing Lead",
+   "label": "SALES"
+  },
+  {
+   "i": 1,
+   "provider": "ashby",
+   "title": "AI Operator - Platform Delivery",
+   "label": "SW"
+  },
+  {
+   "i": 2,
+   "provider": "ashby",
+   "title": "Senior AI Agent Engineer (Intelligence Service)",
+   "label": "SW"
+  },
+  {
+   "i": 3,
+   "provider": "ashby",
+   "title": "Strategic Business Development Executive (Private Defense & Aerospace)",
+   "label": "SALES"
+  },
+  {
+   "i": 4,
+   "provider": "ashby",
+   "title": "Accounting Administrator",
+   "label": "MGT"
+  },
+  {
+   "i": 5,
+   "provider": "ashby",
+   "title": "Director of Enterprise Marketing",
+   "label": "SALES"
+  },
+  {
+   "i": 6,
+   "provider": "ashby",
+   "title": "Founding Engineering Manager",
+   "label": "SW"
+  },
+  {
+   "i": 7,
+   "provider": "ashby",
+   "title": "APAC Communications",
+   "label": "MGT"
+  },
+  {
+   "i": 8,
+   "provider": "ashby",
+   "title": "Associate Manager, Talent Acquisition",
+   "label": "MGT"
+  },
+  {
+   "i": 9,
+   "provider": "ashby",
+   "title": "Software Engineer, Test (SDET)",
+   "label": "SW"
+  },
+  {
+   "i": 10,
+   "provider": "ashby",
+   "title": "Deployment Strategist Lead - Mexico",
+   "label": "MGT"
+  },
+  {
+   "i": 11,
+   "provider": "ashby",
+   "title": "Sr. Escalation Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 12,
+   "provider": "ashby",
+   "title": "Manufacturing Engineer, Production",
+   "label": "ENG"
+  },
+  {
+   "i": 13,
+   "provider": "ashby",
+   "title": "Founding Full-Stack Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 14,
+   "provider": "ashby",
+   "title": "Creative Strategy Lead",
+   "label": "OTHER"
+  },
+  {
+   "i": 15,
+   "provider": "ashby",
+   "title": "Lead Security and Infrastructure Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 16,
+   "provider": "ashby",
+   "title": "Public Sector Partnerships Lead - Middle East",
+   "label": "SALES"
+  },
+  {
+   "i": 17,
+   "provider": "ashby",
+   "title": "Staff Electrical Operator",
+   "label": "ENG"
+  },
+  {
+   "i": 18,
+   "provider": "ashby",
+   "title": "Manager of Commercial Analysis and Reporting",
+   "label": "MGT"
+  },
+  {
+   "i": 19,
+   "provider": "ashby",
+   "title": "HRBP, GTM",
+   "label": "MGT"
+  },
+  {
+   "i": 20,
+   "provider": "ashby",
+   "title": "Mid-Market Implementation Specialist - Americas (East)",
+   "label": "SALES"
+  },
+  {
+   "i": 21,
+   "provider": "ashby",
+   "title": "General Interest - Future Roles",
+   "label": "OTHER"
+  },
+  {
+   "i": 22,
+   "provider": "ashby",
+   "title": "Licensed Clinical Social Worker (LCSW) — Independent Contractor (Full Caseload)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 23,
+   "provider": "ashby",
+   "title": "Forward Deployed Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 24,
+   "provider": "ashby",
+   "title": "Enterprise Technical Account Executive - m/f/d - Spain",
+   "label": "SALES"
+  },
+  {
+   "i": 25,
+   "provider": "ashby",
+   "title": "Majors Account Executive",
+   "label": "SALES"
+  },
+  {
+   "i": 26,
+   "provider": "ashby",
+   "title": "家具采购与物流代理 - 佛山 / Furniture Sourcing & Logistics Agent - Foshan",
+   "label": "MGT"
+  },
+  {
+   "i": 27,
+   "provider": "ashby",
+   "title": "Insurance Sales Representative (Brokerage, Base Salary + Monthly Incentives)",
+   "label": "SALES"
+  },
+  {
+   "i": 28,
+   "provider": "ashby",
+   "title": "Financial Aid Training & Development Specialist",
+   "label": "MGT"
+  },
+  {
+   "i": 29,
+   "provider": "ashby",
+   "title": "Implementation Associate (SaaS)",
+   "label": "SALES"
+  },
+  {
+   "i": 30,
+   "provider": "ashby",
+   "title": "Staff Software Engineer, Product Engineering - EU",
+   "label": "SW"
+  },
+  {
+   "i": 31,
+   "provider": "ashby",
+   "title": "Sales Operations Manager - Turkey",
+   "label": "SALES"
+  },
+  {
+   "i": 32,
+   "provider": "ashby",
+   "title": "People Operations Manager - 12 mth FTC",
+   "label": "MGT"
+  },
+  {
+   "i": 33,
+   "provider": "ashby",
+   "title": "Forward Deployed Engineer, Federal",
+   "label": "SW"
+  },
+  {
+   "i": 34,
+   "provider": "ashby",
+   "title": "Senior Manager, Environmental Planning",
+   "label": "MGT"
+  },
+  {
+   "i": 35,
+   "provider": "ashby",
+   "title": "Product Marketing Manager, Spend",
+   "label": "SALES"
+  },
+  {
+   "i": 36,
+   "provider": "ashby",
+   "title": "People Operations Analyst (Total Rewards & Analytics)",
+   "label": "MGT"
+  },
+  {
+   "i": 37,
+   "provider": "ashby",
+   "title": "Researcher, Evals",
+   "label": "OTHER"
+  },
+  {
+   "i": 38,
+   "provider": "ashby",
+   "title": "Business Systems Analyst",
+   "label": "SW"
+  },
+  {
+   "i": 39,
+   "provider": "ashby",
+   "title": "Prognostics Engineer",
+   "label": "ENG"
+  },
+  {
+   "i": 40,
+   "provider": "ashby",
+   "title": "Senior Full Stack Product Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 41,
+   "provider": "ashby",
+   "title": "Manager, Global Growth, Lifecycle",
+   "label": "SALES"
+  },
+  {
+   "i": 42,
+   "provider": "ashby",
+   "title": "Principal, Robotics Software Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 43,
+   "provider": "ashby",
+   "title": "Senior IT Operations Manager",
+   "label": "SW"
+  },
+  {
+   "i": 44,
+   "provider": "ashby",
+   "title": "Intercompany Accountant",
+   "label": "MGT"
+  },
+  {
+   "i": 45,
+   "provider": "ashby",
+   "title": "Sr. Computer Vision / Machine Learning Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 46,
+   "provider": "ashby",
+   "title": "Senior Technical Product Manager — Customer Workflow",
+   "label": "MGT"
+  },
+  {
+   "i": 47,
+   "provider": "ashby",
+   "title": "Product Manager - Sales AI",
+   "label": "MGT"
+  },
+  {
+   "i": 48,
+   "provider": "ashby",
+   "title": "Operations Manager (Trade)",
+   "label": "MGT"
+  },
+  {
+   "i": 49,
+   "provider": "ashby",
+   "title": "UX Designer (Contract)",
+   "label": "OTHER"
+  },
+  {
+   "i": 50,
+   "provider": "ashby",
+   "title": "Become a Business Founder",
+   "label": "OTHER"
+  },
+  {
+   "i": 51,
+   "provider": "ashby",
+   "title": "Residential Construction/Field Project Manager",
+   "label": "MGT"
+  },
+  {
+   "i": 52,
+   "provider": "ashby",
+   "title": "Account Director - Brazil",
+   "label": "SALES"
+  },
+  {
+   "i": 53,
+   "provider": "ashby",
+   "title": "Enterprise Account Executive - Berlin (m/w/d)",
+   "label": "SALES"
+  },
+  {
+   "i": 54,
+   "provider": "ashby",
+   "title": "Decision Engineering Team Lead, Infrastructure Development & Delivery",
+   "label": "SW"
+  },
+  {
+   "i": 55,
+   "provider": "ashby",
+   "title": "Senior Backend Engineer, AI Team",
+   "label": "SW"
+  },
+  {
+   "i": 56,
+   "provider": "ashby",
+   "title": "Director, Strategic Partnerships APAC",
+   "label": "SALES"
+  },
+  {
+   "i": 57,
+   "provider": "ashby",
+   "title": "Senior Sales Enterprise Manager (NBFC)",
+   "label": "SALES"
+  },
+  {
+   "i": 58,
+   "provider": "ashby",
+   "title": "Vice President , Marketing (Go-to-Market)",
+   "label": "SALES"
+  },
+  {
+   "i": 59,
+   "provider": "ashby",
+   "title": "Spacecraft Quality Inspector (2nd Shift)",
+   "label": "ENG"
+  },
+  {
+   "i": 60,
+   "provider": "ashby",
+   "title": "Staff Research Engineer, Model Efficiency",
+   "label": "SW"
+  },
+  {
+   "i": 61,
+   "provider": "ashby",
+   "title": "ASIC Technical Program Manager",
+   "label": "ENG"
+  },
+  {
+   "i": 62,
+   "provider": "ashby",
+   "title": "Head of Developer Experience",
+   "label": "SW"
+  },
+  {
+   "i": 63,
+   "provider": "ashby",
+   "title": "Senior Applied Data Scientist",
+   "label": "SW"
+  },
+  {
+   "i": 64,
+   "provider": "ashby",
+   "title": "Robot Deployment Lead",
+   "label": "ENG"
+  },
+  {
+   "i": 65,
+   "provider": "ashby",
+   "title": "Developer, Open Source",
+   "label": "SW"
+  },
+  {
+   "i": 66,
+   "provider": "ashby",
+   "title": "Commercial Solutions Engineer - UK",
+   "label": "SALES"
+  },
+  {
+   "i": 67,
+   "provider": "ashby",
+   "title": "Creative Lead - Fixed Term Contract",
+   "label": "OTHER"
+  },
+  {
+   "i": 68,
+   "provider": "ashby",
+   "title": "Modelling Resident (8-Month Contract)",
+   "label": "OTHER"
+  },
+  {
+   "i": 69,
+   "provider": "ashby",
+   "title": "Applied AI Scientist",
+   "label": "SW"
+  },
+  {
+   "i": 70,
+   "provider": "ashby",
+   "title": "Business Development Manager - AI Trainer - Freelance - 8-20 hrs/week - Remote",
+   "label": "SALES"
+  },
+  {
+   "i": 71,
+   "provider": "ashby",
+   "title": "Quality Control Technician - Mechanical",
+   "label": "ENG"
+  },
+  {
+   "i": 72,
+   "provider": "ashby",
+   "title": "Staff Software Engineer, Localization",
+   "label": "SW"
+  },
+  {
+   "i": 73,
+   "provider": "ashby",
+   "title": "Senior Electronics Test Engineer",
+   "label": "ENG"
+  },
+  {
+   "i": 74,
+   "provider": "ashby",
+   "title": "Head of Sales, DACH",
+   "label": "SALES"
+  },
+  {
+   "i": 75,
+   "provider": "ashby",
+   "title": "Office and Event Manager",
+   "label": "MGT"
+  },
+  {
+   "i": 76,
+   "provider": "ashby",
+   "title": "Sales Development - Netherlands",
+   "label": "SALES"
+  },
+  {
+   "i": 77,
+   "provider": "ashby",
+   "title": "Forward Deployed Geospatial Engineer - SAR Intelligence, Espoo",
+   "label": "SW"
+  },
+  {
+   "i": 78,
+   "provider": "ashby",
+   "title": "Electrician (Austin)",
+   "label": "ENG"
+  },
+  {
+   "i": 79,
+   "provider": "ashby",
+   "title": "Senior Cryptocurrency Intelligence Scientist",
+   "label": "SW"
+  },
+  {
+   "i": 80,
+   "provider": "ashby",
+   "title": "SVP of Supply Chain Operations",
+   "label": "MGT"
+  },
+  {
+   "i": 81,
+   "provider": "ashby",
+   "title": "Machine Learning Research Engineer (MLRE) - Research",
+   "label": "SW"
+  },
+  {
+   "i": 82,
+   "provider": "ashby",
+   "title": "Business Operations Manager (NY or SF)",
+   "label": "MGT"
+  },
+  {
+   "i": 83,
+   "provider": "ashby",
+   "title": "Founders Associate - Internship",
+   "label": "MGT"
+  },
+  {
+   "i": 84,
+   "provider": "ashby",
+   "title": "Infrastructure Engineer (India)",
+   "label": "SW"
+  },
+  {
+   "i": 85,
+   "provider": "ashby",
+   "title": "Inside Account Executive, Mid-Market",
+   "label": "SALES"
+  },
+  {
+   "i": 86,
+   "provider": "ashby",
+   "title": "Director, Brazil",
+   "label": "MGT"
+  },
+  {
+   "i": 87,
+   "provider": "ashby",
+   "title": "Senior Software Engineer | Voice | Full-Stack",
+   "label": "SW"
+  },
+  {
+   "i": 88,
+   "provider": "ashby",
+   "title": "Internships",
+   "label": "OTHER"
+  },
+  {
+   "i": 89,
+   "provider": "ashby",
+   "title": "Member of Technical Staff, Exceptional Generalist (Remote)",
+   "label": "SW"
+  },
+  {
+   "i": 90,
+   "provider": "ashby",
+   "title": "Regional Learning Manager, Learning Operations",
+   "label": "MGT"
+  },
+  {
+   "i": 91,
+   "provider": "ashby",
+   "title": "Lead Pre-Sales 🇧🇪",
+   "label": "SALES"
+  },
+  {
+   "i": 92,
+   "provider": "ashby",
+   "title": "Procurement Manager - Athens",
+   "label": "MGT"
+  },
+  {
+   "i": 93,
+   "provider": "ashby",
+   "title": "VP of Projects",
+   "label": "MGT"
+  },
+  {
+   "i": 94,
+   "provider": "ashby",
+   "title": "Business Development Manager - Paris (CDD 6 mois)",
+   "label": "SALES"
+  },
+  {
+   "i": 95,
+   "provider": "ashby",
+   "title": "Technical Product & Program Manager",
+   "label": "MGT"
+  },
+  {
+   "i": 96,
+   "provider": "ashby",
+   "title": "[Internal] Developer, Rust",
+   "label": "SW"
+  },
+  {
+   "i": 97,
+   "provider": "ashby",
+   "title": "Graphic Designer (In-House)",
+   "label": "OTHER"
+  },
+  {
+   "i": 98,
+   "provider": "ashby",
+   "title": "Recruitment Manager -EMEA (FTC)",
+   "label": "MGT"
+  },
+  {
+   "i": 99,
+   "provider": "ashby",
+   "title": "Demo Engineer",
+   "label": "SALES"
+  },
+  {
+   "i": 100,
+   "provider": "ashby",
+   "title": "Create your own",
+   "label": "OTHER"
+  },
+  {
+   "i": 101,
+   "provider": "ashby",
+   "title": "Software Engineer, Full Stack (Enterprise Lifecycle)",
+   "label": "SW"
+  },
+  {
+   "i": 102,
+   "provider": "ashby",
+   "title": "Revenue Enablement Manager",
+   "label": "SALES"
+  },
+  {
+   "i": 103,
+   "provider": "ashby",
+   "title": "Member of the Technical Staff",
+   "label": "SW"
+  },
+  {
+   "i": 104,
+   "provider": "ashby",
+   "title": "Mechanical Engineer, Fluids",
+   "label": "ENG"
+  },
+  {
+   "i": 105,
+   "provider": "ashby",
+   "title": "AI Transformation Lead",
+   "label": "MGT"
+  },
+  {
+   "i": 106,
+   "provider": "ashby",
+   "title": "GTM Partnerships Manager, AU, SME & Growth",
+   "label": "SALES"
+  },
+  {
+   "i": 107,
+   "provider": "ashby",
+   "title": "Strategy Consultant - AI Trainer - Freelance - 8-20 hrs/week - Remote",
+   "label": "MGT"
+  },
+  {
+   "i": 108,
+   "provider": "ashby",
+   "title": "Climate Success Manager (full-time internship)",
+   "label": "SALES"
+  },
+  {
+   "i": 109,
+   "provider": "ashby",
+   "title": "Head of Engineering - Options",
+   "label": "SW"
+  },
+  {
+   "i": 110,
+   "provider": "ashby",
+   "title": "Backend Engineer- Inference Services",
+   "label": "SW"
+  },
+  {
+   "i": 111,
+   "provider": "ashby",
+   "title": "Agent Solutions Engineer",
+   "label": "SALES"
+  },
+  {
+   "i": 112,
+   "provider": "ashby",
+   "title": "Product Manager - Virtual Fencing",
+   "label": "MGT"
+  },
+  {
+   "i": 113,
+   "provider": "ashby",
+   "title": "Autonomy Engineer, Navigation",
+   "label": "SW"
+  },
+  {
+   "i": 114,
+   "provider": "ashby",
+   "title": "Fully Licensed Therapist- Remote (Oregon)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 115,
+   "provider": "ashby",
+   "title": "Director of Federal Programs, Additive Manufacturing",
+   "label": "MGT"
+  },
+  {
+   "i": 116,
+   "provider": "ashby",
+   "title": "SRE / DevOps Lead",
+   "label": "SW"
+  },
+  {
+   "i": 117,
+   "provider": "ashby",
+   "title": "Senior Full-Stack Engineer (Front-End Leaning)",
+   "label": "SW"
+  },
+  {
+   "i": 118,
+   "provider": "ashby",
+   "title": "Registered Mental Health Counselor Intern (RMHCI) - Remote",
+   "label": "HEALTH"
+  },
+  {
+   "i": 119,
+   "provider": "ashby",
+   "title": "SEO Content Writer",
+   "label": "OTHER"
+  },
+  {
+   "i": 120,
+   "provider": "ashby",
+   "title": "Allocations Specialist - France",
+   "label": "MGT"
+  },
+  {
+   "i": 121,
+   "provider": "ashby",
+   "title": "SaaS Sales Manager - AI Trainer - Freelance - 8-20 hrs/week - Remote",
+   "label": "SALES"
+  },
+  {
+   "i": 122,
+   "provider": "ashby",
+   "title": "BCBA Consultant  - Washington (Part-Time, Remote)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 123,
+   "provider": "ashby",
+   "title": "CSM Mid Market",
+   "label": "SALES"
+  },
+  {
+   "i": 124,
+   "provider": "ashby",
+   "title": "Project Controls Analyst",
+   "label": "MGT"
+  },
+  {
+   "i": 125,
+   "provider": "ashby",
+   "title": "Forward Deployed Engineer, Infrastructure Specialist (Public Sector)",
+   "label": "SW"
+  },
+  {
+   "i": 126,
+   "provider": "ashby",
+   "title": "University Partnership Development Associate",
+   "label": "SALES"
+  },
+  {
+   "i": 127,
+   "provider": "ashby",
+   "title": "Technical Buyer",
+   "label": "MGT"
+  },
+  {
+   "i": 128,
+   "provider": "ashby",
+   "title": "Senior Plant Maintenance Lead",
+   "label": "ENG"
+  },
+  {
+   "i": 129,
+   "provider": "ashby",
+   "title": "Product Lead, Payment Fraud - Relocation to Singapore Required",
+   "label": "MGT"
+  },
+  {
+   "i": 130,
+   "provider": "ashby",
+   "title": "Speech Therapist — Independent Contractor (Part Caseload)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 131,
+   "provider": "ashby",
+   "title": "Staff Software Engineer - India",
+   "label": "SW"
+  },
+  {
+   "i": 132,
+   "provider": "ashby",
+   "title": "Fusion Island Group Leader (f/m/d)",
+   "label": "ENG"
+  },
+  {
+   "i": 133,
+   "provider": "ashby",
+   "title": "Software Engineer, ML Infrastructure",
+   "label": "SW"
+  },
+  {
+   "i": 134,
+   "provider": "ashby",
+   "title": "Change.org Elections Organizers - Los Angeles/Orange County/Riverside County",
+   "label": "OTHER"
+  },
+  {
+   "i": 135,
+   "provider": "ashby",
+   "title": "Senior Research Scientist FMTA",
+   "label": "OTHER"
+  },
+  {
+   "i": 136,
+   "provider": "ashby",
+   "title": "AI Engineer - Operations",
+   "label": "SW"
+  },
+  {
+   "i": 137,
+   "provider": "ashby",
+   "title": "Associate, Credit Risk Operations",
+   "label": "MGT"
+  },
+  {
+   "i": 138,
+   "provider": "ashby",
+   "title": "Lead Engineer (Singapore)",
+   "label": "SW"
+  },
+  {
+   "i": 139,
+   "provider": "ashby",
+   "title": "Tech Lead, Hexagate",
+   "label": "SW"
+  },
+  {
+   "i": 140,
+   "provider": "ashby",
+   "title": "Senior Unity Developer (Anti Cheat)",
+   "label": "SW"
+  },
+  {
+   "i": 141,
+   "provider": "ashby",
+   "title": "Member Experience Associate (Part-Time) - Chicago",
+   "label": "SVC"
+  },
+  {
+   "i": 142,
+   "provider": "ashby",
+   "title": "Principal Hardware Systems Engineer",
+   "label": "ENG"
+  },
+  {
+   "i": 143,
+   "provider": "ashby",
+   "title": "Live Stream Associate I Seasonal",
+   "label": "SVC"
+  },
+  {
+   "i": 144,
+   "provider": "ashby",
+   "title": "Associate Solutions Engineer | Healthcare",
+   "label": "SALES"
+  },
+  {
+   "i": 145,
+   "provider": "ashby",
+   "title": "Senior Software Engineer (AI and Platform)",
+   "label": "SW"
+  },
+  {
+   "i": 146,
+   "provider": "ashby",
+   "title": "Staff Cloud Security Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 147,
+   "provider": "ashby",
+   "title": "IT Consultant",
+   "label": "SW"
+  },
+  {
+   "i": 148,
+   "provider": "ashby",
+   "title": "Senior Privacy and AI Counsel",
+   "label": "MGT"
+  },
+  {
+   "i": 149,
+   "provider": "ashby",
+   "title": "Product Engineer (Full Stack)",
+   "label": "SW"
+  },
+  {
+   "i": 150,
+   "provider": "greenhouse",
+   "title": "Operador Produção Jr",
+   "label": "ENG"
+  },
+  {
+   "i": 151,
+   "provider": "greenhouse",
+   "title": "Silicon Engineer",
+   "label": "ENG"
+  },
+  {
+   "i": 152,
+   "provider": "greenhouse",
+   "title": "Analytical Chemistry Specialist - Freelance AI Trainer Project",
+   "label": "OTHER"
+  },
+  {
+   "i": 153,
+   "provider": "greenhouse",
+   "title": "Sap Innovation Architect",
+   "label": "SW"
+  },
+  {
+   "i": 154,
+   "provider": "greenhouse",
+   "title": "Recruiter - Deutschsprachig - Amsterdam",
+   "label": "MGT"
+  },
+  {
+   "i": 155,
+   "provider": "greenhouse",
+   "title": "Account Executive - Northern Europe",
+   "label": "SALES"
+  },
+  {
+   "i": 156,
+   "provider": "greenhouse",
+   "title": "Post Graduate Admissions Manager",
+   "label": "MGT"
+  },
+  {
+   "i": 157,
+   "provider": "greenhouse",
+   "title": "Supply Chain Planner",
+   "label": "MGT"
+  },
+  {
+   "i": 158,
+   "provider": "greenhouse",
+   "title": "Regulatory Counsel",
+   "label": "MGT"
+  },
+  {
+   "i": 159,
+   "provider": "greenhouse",
+   "title": "Senior Software Engineer (Infrastructure )",
+   "label": "SW"
+  },
+  {
+   "i": 160,
+   "provider": "greenhouse",
+   "title": "(Senior) Customer Success Manager",
+   "label": "SALES"
+  },
+  {
+   "i": 161,
+   "provider": "greenhouse",
+   "title": "Director, Quality Systems",
+   "label": "MGT"
+  },
+  {
+   "i": 162,
+   "provider": "greenhouse",
+   "title": "Lead Data Scientist - (Singapore Based)",
+   "label": "SW"
+  },
+  {
+   "i": 163,
+   "provider": "greenhouse",
+   "title": "Lead Aeromechanics, Thermal & Acoustics Engineer – Special Programs",
+   "label": "ENG"
+  },
+  {
+   "i": 164,
+   "provider": "greenhouse",
+   "title": "Senior Partner Manager (Rocket Travel by Agoda)",
+   "label": "SALES"
+  },
+  {
+   "i": 165,
+   "provider": "greenhouse",
+   "title": "Senior Robot Software Triage & RCA Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 166,
+   "provider": "greenhouse",
+   "title": "Oracle Functional Specialist (Bangkok Based - Relocation Provided)",
+   "label": "SW"
+  },
+  {
+   "i": 167,
+   "provider": "greenhouse",
+   "title": "Operations Lead - Broadway Plaza",
+   "label": "SVC"
+  },
+  {
+   "i": 168,
+   "provider": "greenhouse",
+   "title": "LA Kings - Social Production Assistant",
+   "label": "OTHER"
+  },
+  {
+   "i": 169,
+   "provider": "greenhouse",
+   "title": "Staff Metrology Engineer",
+   "label": "ENG"
+  },
+  {
+   "i": 170,
+   "provider": "greenhouse",
+   "title": "Operations Associate (Full-Time) - Sydney CBD",
+   "label": "SVC"
+  },
+  {
+   "i": 171,
+   "provider": "greenhouse",
+   "title": "Senior Manufacturing Test Engineer, Altius",
+   "label": "ENG"
+  },
+  {
+   "i": 172,
+   "provider": "greenhouse",
+   "title": "Operations Associate (Part-Time) - Madison Ave",
+   "label": "SVC"
+  },
+  {
+   "i": 173,
+   "provider": "greenhouse",
+   "title": "(Associate) Customer Success Manager",
+   "label": "SALES"
+  },
+  {
+   "i": 174,
+   "provider": "greenhouse",
+   "title": "Store Manager - Columbus Ave UWS",
+   "label": "SVC"
+  },
+  {
+   "i": 175,
+   "provider": "greenhouse",
+   "title": "Principal Public Sector Sales Account Manager - Intelligence Community",
+   "label": "SALES"
+  },
+  {
+   "i": 176,
+   "provider": "greenhouse",
+   "title": "Industrial Engineer, Supply Chain Material Flow",
+   "label": "ENG"
+  },
+  {
+   "i": 177,
+   "provider": "greenhouse",
+   "title": "Peer Support Specialist",
+   "label": "HEALTH"
+  },
+  {
+   "i": 178,
+   "provider": "greenhouse",
+   "title": "Bengali Language Specialist - Freelance AI Trainer Project",
+   "label": "OTHER"
+  },
+  {
+   "i": 179,
+   "provider": "greenhouse",
+   "title": "Executive Assistant - COO",
+   "label": "MGT"
+  },
+  {
+   "i": 180,
+   "provider": "greenhouse",
+   "title": "UAV Operator, Launched Effects",
+   "label": "ENG"
+  },
+  {
+   "i": 181,
+   "provider": "greenhouse",
+   "title": "Senior Product Marketing Manager, Enterprise",
+   "label": "SALES"
+  },
+  {
+   "i": 182,
+   "provider": "greenhouse",
+   "title": "Custom Software Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 183,
+   "provider": "greenhouse",
+   "title": "Sr. Software Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 184,
+   "provider": "greenhouse",
+   "title": "SAP Basis Administrator – Onsite in St. Louis, MO",
+   "label": "SW"
+  },
+  {
+   "i": 185,
+   "provider": "greenhouse",
+   "title": "Paralegal, Program on Freedom of Religion and Belief",
+   "label": "MGT"
+  },
+  {
+   "i": 186,
+   "provider": "greenhouse",
+   "title": "Developer Experience Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 187,
+   "provider": "greenhouse",
+   "title": "Partner 20, Design Systems Lead",
+   "label": "OTHER"
+  },
+  {
+   "i": 188,
+   "provider": "greenhouse",
+   "title": "Consultor de Vendas - Mogi Guaçu/SP",
+   "label": "SALES"
+  },
+  {
+   "i": 189,
+   "provider": "greenhouse",
+   "title": "Operations Associate (Full-Time) - Williamsburg",
+   "label": "SVC"
+  },
+  {
+   "i": 190,
+   "provider": "greenhouse",
+   "title": "Physician, Bay Area Street Medicine Focus",
+   "label": "HEALTH"
+  },
+  {
+   "i": 191,
+   "provider": "greenhouse",
+   "title": "Senior Device Engineer (Gateway)",
+   "label": "ENG"
+  },
+  {
+   "i": 192,
+   "provider": "greenhouse",
+   "title": "Supervisor de Vendas - Cosmópolis/SP",
+   "label": "SALES"
+  },
+  {
+   "i": 193,
+   "provider": "greenhouse",
+   "title": "SharePoint Analyst Lead (Future Opportunity)",
+   "label": "SW"
+  },
+  {
+   "i": 194,
+   "provider": "greenhouse",
+   "title": "Support System Lead, Maneuver Dominance",
+   "label": "ENG"
+  },
+  {
+   "i": 195,
+   "provider": "greenhouse",
+   "title": "Senior Manager, Corporate Finance",
+   "label": "MGT"
+  },
+  {
+   "i": 196,
+   "provider": "greenhouse",
+   "title": "Sr. Field Marketing Manager",
+   "label": "SALES"
+  },
+  {
+   "i": 197,
+   "provider": "greenhouse",
+   "title": "Data Solutions Consultant",
+   "label": "SW"
+  },
+  {
+   "i": 198,
+   "provider": "greenhouse",
+   "title": "Resource Manager, Customer Success",
+   "label": "SALES"
+  },
+  {
+   "i": 199,
+   "provider": "greenhouse",
+   "title": "Staff Data Developer",
+   "label": "SW"
+  },
+  {
+   "i": 200,
+   "provider": "greenhouse",
+   "title": "2026 Total Rewards/People Operations Specialist - Early Career Rotation Program",
+   "label": "MGT"
+  },
+  {
+   "i": 201,
+   "provider": "greenhouse",
+   "title": "Consultor de Vendas - Vinhedo/SP",
+   "label": "SALES"
+  },
+  {
+   "i": 202,
+   "provider": "greenhouse",
+   "title": "Employee Relations Senior Consultant (Bangkok-based, relocation provided)",
+   "label": "MGT"
+  },
+  {
+   "i": 203,
+   "provider": "greenhouse",
+   "title": "Web Product Manager",
+   "label": "MGT"
+  },
+  {
+   "i": 204,
+   "provider": "greenhouse",
+   "title": "Senior Director, Supply Chain Planning Process",
+   "label": "MGT"
+  },
+  {
+   "i": 205,
+   "provider": "greenhouse",
+   "title": "Engineering Manager, Identity & Access",
+   "label": "SW"
+  },
+  {
+   "i": 206,
+   "provider": "greenhouse",
+   "title": "Web3 Internship- Product Management Intern, OneSavie Lab",
+   "label": "MGT"
+  },
+  {
+   "i": 207,
+   "provider": "greenhouse",
+   "title": "GTM Enablement & IA Specialist",
+   "label": "SALES"
+  },
+  {
+   "i": 208,
+   "provider": "greenhouse",
+   "title": "Staff AI Security Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 209,
+   "provider": "greenhouse",
+   "title": "Senior/Executive Medical Director, Clinical Development (New Indications)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 210,
+   "provider": "greenhouse",
+   "title": "Social Editor (Freelancer) - MX",
+   "label": "OTHER"
+  },
+  {
+   "i": 211,
+   "provider": "greenhouse",
+   "title": "Support Associate- Japanese Speaker 24/7  (Yokohama, requires relocation to Yokohama)",
+   "label": "SVC"
+  },
+  {
+   "i": 212,
+   "provider": "greenhouse",
+   "title": "Operations Associate (Part-Time) - UTC Sarasota",
+   "label": "SVC"
+  },
+  {
+   "i": 213,
+   "provider": "greenhouse",
+   "title": "Production Recruiting Lead, Connected Warfare",
+   "label": "MGT"
+  },
+  {
+   "i": 214,
+   "provider": "greenhouse",
+   "title": "STEM Specialist (Fluent in Marathi) - Freelance AI Trainer Project",
+   "label": "OTHER"
+  },
+  {
+   "i": 215,
+   "provider": "greenhouse",
+   "title": "International Deployment Manager, Asia-Pacific",
+   "label": "MGT"
+  },
+  {
+   "i": 216,
+   "provider": "greenhouse",
+   "title": "Software Engineer, Data",
+   "label": "SW"
+  },
+  {
+   "i": 217,
+   "provider": "greenhouse",
+   "title": "Vice President, Controller",
+   "label": "MGT"
+  },
+  {
+   "i": 218,
+   "provider": "greenhouse",
+   "title": "Senior Software Engineer - Tax Platform",
+   "label": "SW"
+  },
+  {
+   "i": 219,
+   "provider": "greenhouse",
+   "title": "Technical Operations Engineer, USMC",
+   "label": "ENG"
+  },
+  {
+   "i": 220,
+   "provider": "greenhouse",
+   "title": "Data Consultant Colômbia",
+   "label": "SW"
+  },
+  {
+   "i": 221,
+   "provider": "greenhouse",
+   "title": "Senior Specialist, Luxe",
+   "label": "SVC"
+  },
+  {
+   "i": 222,
+   "provider": "greenhouse",
+   "title": "Senior Engineering Manager, Media Foundation",
+   "label": "SW"
+  },
+  {
+   "i": 223,
+   "provider": "greenhouse",
+   "title": "Staff Open Architecture Systems Engineer, C2",
+   "label": "ENG"
+  },
+  {
+   "i": 224,
+   "provider": "greenhouse",
+   "title": "Engineer I",
+   "label": "ENG"
+  },
+  {
+   "i": 225,
+   "provider": "greenhouse",
+   "title": "Payload Specialist",
+   "label": "ENG"
+  },
+  {
+   "i": 226,
+   "provider": "greenhouse",
+   "title": "Senior Director, Account Management, Corporate",
+   "label": "SALES"
+  },
+  {
+   "i": 227,
+   "provider": "greenhouse",
+   "title": "Store Director - Hong Kong",
+   "label": "SVC"
+  },
+  {
+   "i": 228,
+   "provider": "greenhouse",
+   "title": "Specifying Engineer - Nevada Systems Group",
+   "label": "ENG"
+  },
+  {
+   "i": 229,
+   "provider": "greenhouse",
+   "title": "Sales & Service Lead - Brentwood Town Center",
+   "label": "SVC"
+  },
+  {
+   "i": 230,
+   "provider": "greenhouse",
+   "title": "Analista de Produtos Sênior - Campinas/SP",
+   "label": "MGT"
+  },
+  {
+   "i": 231,
+   "provider": "greenhouse",
+   "title": "Manager / Senior Lead, Commercial Strategy, Global Accounts",
+   "label": "SALES"
+  },
+  {
+   "i": 232,
+   "provider": "greenhouse",
+   "title": "Partner Onboarding Specialist - Tokyo, Japan (6 Month Contract)",
+   "label": "SALES"
+  },
+  {
+   "i": 233,
+   "provider": "greenhouse",
+   "title": "Digital Events Marketing Manager",
+   "label": "SALES"
+  },
+  {
+   "i": 234,
+   "provider": "greenhouse",
+   "title": "Manager Electrical Engineer, Wiring Design",
+   "label": "ENG"
+  },
+  {
+   "i": 235,
+   "provider": "greenhouse",
+   "title": "Principal Sound Designer",
+   "label": "OTHER"
+  },
+  {
+   "i": 236,
+   "provider": "greenhouse",
+   "title": "Financial Compliance Specialist (India)  – Freelance AI Trainer Project",
+   "label": "OTHER"
+  },
+  {
+   "i": 237,
+   "provider": "greenhouse",
+   "title": "Board-Certified Veterinary Cardiac Surgeon",
+   "label": "HEALTH"
+  },
+  {
+   "i": 238,
+   "provider": "greenhouse",
+   "title": "Senior Engineer",
+   "label": "ENG"
+  },
+  {
+   "i": 239,
+   "provider": "greenhouse",
+   "title": "Staff Equipment Engineer, Rocket Motor Systems",
+   "label": "ENG"
+  },
+  {
+   "i": 240,
+   "provider": "greenhouse",
+   "title": "Head of Deal Desk - International",
+   "label": "SALES"
+  },
+  {
+   "i": 241,
+   "provider": "greenhouse",
+   "title": "Consultor de Vendas - Santo André/SP - Centro",
+   "label": "SALES"
+  },
+  {
+   "i": 242,
+   "provider": "greenhouse",
+   "title": "Business Process Engineer",
+   "label": "MGT"
+  },
+  {
+   "i": 243,
+   "provider": "greenhouse",
+   "title": "Vice President or Principal, Wealth Management Marketing",
+   "label": "SALES"
+  },
+  {
+   "i": 244,
+   "provider": "greenhouse",
+   "title": "Lead Engineer, Advanced Behaviors & Algorithms – Special Programs",
+   "label": "SW"
+  },
+  {
+   "i": 245,
+   "provider": "greenhouse",
+   "title": "Graph Data Scientist",
+   "label": "SW"
+  },
+  {
+   "i": 246,
+   "provider": "greenhouse",
+   "title": "Calibration Technician (IPM)",
+   "label": "ENG"
+  },
+  {
+   "i": 247,
+   "provider": "greenhouse",
+   "title": "Senior Associate (Strategy)",
+   "label": "MGT"
+  },
+  {
+   "i": 248,
+   "provider": "greenhouse",
+   "title": "Senior System Administrator II (Ceph Engineer)",
+   "label": "SW"
+  },
+  {
+   "i": 249,
+   "provider": "greenhouse",
+   "title": "Engineering Test Technician",
+   "label": "ENG"
+  },
+  {
+   "i": 250,
+   "provider": "greenhouse",
+   "title": "Instructional Aide",
+   "label": "OTHER"
+  },
+  {
+   "i": 251,
+   "provider": "greenhouse",
+   "title": "Operations Associate (Part-Time) - UTC La Jolla",
+   "label": "SVC"
+  },
+  {
+   "i": 252,
+   "provider": "greenhouse",
+   "title": "Engineer IV - Full Stack Developer(React+Java)",
+   "label": "SW"
+  },
+  {
+   "i": 253,
+   "provider": "greenhouse",
+   "title": "Supervisor de Vendas - Criciúma/SC",
+   "label": "SALES"
+  },
+  {
+   "i": 254,
+   "provider": "greenhouse",
+   "title": "Backend Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 255,
+   "provider": "greenhouse",
+   "title": "Production Operations Manager, Maritime",
+   "label": "MGT"
+  },
+  {
+   "i": 256,
+   "provider": "greenhouse",
+   "title": "Sales Associate (Part-Time) - Bethesda Row",
+   "label": "SVC"
+  },
+  {
+   "i": 257,
+   "provider": "greenhouse",
+   "title": "Information Review and Release Analyst - Senior",
+   "label": "MGT"
+  },
+  {
+   "i": 258,
+   "provider": "greenhouse",
+   "title": "Sales Associate (Part-Time) - Flatiron",
+   "label": "SVC"
+  },
+  {
+   "i": 259,
+   "provider": "greenhouse",
+   "title": "Especialista em Ciência de dados (Modelagem de Crédito)",
+   "label": "SW"
+  },
+  {
+   "i": 260,
+   "provider": "lever",
+   "title": "Principal Product Manager, AI Product",
+   "label": "MGT"
+  },
+  {
+   "i": 261,
+   "provider": "lever",
+   "title": "Technical Lead, Software Engineering",
+   "label": "SW"
+  },
+  {
+   "i": 262,
+   "provider": "lever",
+   "title": "Customer Service Agent",
+   "label": "SVC"
+  },
+  {
+   "i": 263,
+   "provider": "lever",
+   "title": "Senior Software Engineer   (NIN-AE4-17.022425)",
+   "label": "SW"
+  },
+  {
+   "i": 264,
+   "provider": "lever",
+   "title": "Director of Government Solutions Managed Services",
+   "label": "MGT"
+  },
+  {
+   "i": 265,
+   "provider": "lever",
+   "title": "Senior Land Development Manager",
+   "label": "MGT"
+  },
+  {
+   "i": 266,
+   "provider": "lever",
+   "title": "Senior Fraud Operations Specialist",
+   "label": "MGT"
+  },
+  {
+   "i": 267,
+   "provider": "lever",
+   "title": "Senior Devops Engineer-US shift",
+   "label": "SW"
+  },
+  {
+   "i": 268,
+   "provider": "lever",
+   "title": "Senior DevOps Programmer - Core Technologies  | Programmeur·euse DevOps sénior·e - Technologies centrales",
+   "label": "SW"
+  },
+  {
+   "i": 269,
+   "provider": "lever",
+   "title": "WiFi RF Engineer",
+   "label": "ENG"
+  },
+  {
+   "i": 270,
+   "provider": "lever",
+   "title": "Director of Account Management",
+   "label": "SALES"
+  },
+  {
+   "i": 271,
+   "provider": "lever",
+   "title": "Sales Development Representative - London (German-Speaking)",
+   "label": "SALES"
+  },
+  {
+   "i": 272,
+   "provider": "lever",
+   "title": "Board Certified Behavior Analyst (BCBA) - Pineville, NC",
+   "label": "HEALTH"
+  },
+  {
+   "i": 273,
+   "provider": "lever",
+   "title": "SAP SD, IBP & MM Consultant Lead",
+   "label": "SW"
+  },
+  {
+   "i": 274,
+   "provider": "lever",
+   "title": "Keep In Touch",
+   "label": "OTHER"
+  },
+  {
+   "i": 275,
+   "provider": "lever",
+   "title": "Seasonal Operations Coordinator (Coconut Grove)",
+   "label": "SVC"
+  },
+  {
+   "i": 276,
+   "provider": "lever",
+   "title": "Higher Education Interim Chief Information Officer (CIO)",
+   "label": "SW"
+  },
+  {
+   "i": 277,
+   "provider": "lever",
+   "title": "Alternance - Creative Designer Apprentice",
+   "label": "OTHER"
+  },
+  {
+   "i": 278,
+   "provider": "lever",
+   "title": "Senior Associate - PMO",
+   "label": "MGT"
+  },
+  {
+   "i": 279,
+   "provider": "lever",
+   "title": "Office Administrator – Beaver Global",
+   "label": "MGT"
+  },
+  {
+   "i": 280,
+   "provider": "lever",
+   "title": "Remote Content Marketing Strategist - Eastern Canada",
+   "label": "SALES"
+  },
+  {
+   "i": 281,
+   "provider": "lever",
+   "title": "Direct Marketing Associate - Lockport, IL",
+   "label": "SALES"
+  },
+  {
+   "i": 282,
+   "provider": "lever",
+   "title": "Assistant Vice President - Loyalty Marketing (UAE Nationals)",
+   "label": "SALES"
+  },
+  {
+   "i": 283,
+   "provider": "lever",
+   "title": "VP of Public Affairs",
+   "label": "MGT"
+  },
+  {
+   "i": 284,
+   "provider": "lever",
+   "title": "394 - Senior Dataflow Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 285,
+   "provider": "lever",
+   "title": "Senior Clinical Trial Manager",
+   "label": "HEALTH"
+  },
+  {
+   "i": 286,
+   "provider": "lever",
+   "title": "Security Engineer (Golang) - 6 months Contract",
+   "label": "SW"
+  },
+  {
+   "i": 287,
+   "provider": "lever",
+   "title": "Area Sales Manager (Veneto and Sardinia)",
+   "label": "SALES"
+  },
+  {
+   "i": 288,
+   "provider": "lever",
+   "title": "Operations Coordinator (IT Department)- Fixed term contract",
+   "label": "MGT"
+  },
+  {
+   "i": 289,
+   "provider": "lever",
+   "title": "Senior Application Engineer",
+   "label": "SW"
+  },
+  {
+   "i": 290,
+   "provider": "lever",
+   "title": "Senior Customer Success Specialist - Software Implementation & Onboarding",
+   "label": "SALES"
+  },
+  {
+   "i": 291,
+   "provider": "lever",
+   "title": "Window Installer - Erie, PA",
+   "label": "SVC"
+  },
+  {
+   "i": 292,
+   "provider": "lever",
+   "title": "Institutional Client Services (APAC)",
+   "label": "SALES"
+  },
+  {
+   "i": 293,
+   "provider": "lever",
+   "title": "Proyecto (Almacén-Administrativo)",
+   "label": "SVC"
+  },
+  {
+   "i": 294,
+   "provider": "lever",
+   "title": "Senior Backend Programmer – Central Technologies | Programmeur·euse Backend Sénior·e – Technologies centrales",
+   "label": "SW"
+  },
+  {
+   "i": 295,
+   "provider": "lever",
+   "title": "Seasonal Sales Associate",
+   "label": "SVC"
+  },
+  {
+   "i": 296,
+   "provider": "lever",
+   "title": "Remote Creative Production Project Manager - Barbados",
+   "label": "OTHER"
+  },
+  {
+   "i": 297,
+   "provider": "lever",
+   "title": "Senior Software Engineer (Flask/React) - Remote, Latin America",
+   "label": "SW"
+  },
+  {
+   "i": 298,
+   "provider": "lever",
+   "title": "Common Data Link (CDL) Test & Evaluation Analyst",
+   "label": "ENG"
+  },
+  {
+   "i": 299,
+   "provider": "lever",
+   "title": "Digital Community Specialist",
+   "label": "SALES"
+  },
+  {
+   "i": 300,
+   "provider": "lever",
+   "title": "Mechanical Engineer",
+   "label": "ENG"
+  },
+  {
+   "i": 301,
+   "provider": "lever",
+   "title": "Senior Analyst, FP&A",
+   "label": "MGT"
+  },
+  {
+   "i": 302,
+   "provider": "lever",
+   "title": "Senior Level Designer (7-month contract)",
+   "label": "OTHER"
+  },
+  {
+   "i": 303,
+   "provider": "lever",
+   "title": "Occupational Therapist (Home Health) - Placerville",
+   "label": "HEALTH"
+  },
+  {
+   "i": 304,
+   "provider": "lever",
+   "title": "Technical Product Owner (TPO) – Mobile App (Flutter) | Presencial CDMX",
+   "label": "MGT"
+  },
+  {
+   "i": 305,
+   "provider": "lever",
+   "title": "Senior Director of Capture Management",
+   "label": "SALES"
+  },
+  {
+   "i": 306,
+   "provider": "lever",
+   "title": "Site Support Manager - Aftermarket Sales - Goldfields (Perth or Kalgoorlie Based)",
+   "label": "SALES"
+  },
+  {
+   "i": 307,
+   "provider": "lever",
+   "title": "Brand Specialist - Palo Alto, CA",
+   "label": "SALES"
+  },
+  {
+   "i": 308,
+   "provider": "lever",
+   "title": "Fractional Director of Technology (Advisor Network)",
+   "label": "SW"
+  },
+  {
+   "i": 309,
+   "provider": "lever",
+   "title": "Full Time Stock Coordinator (University Village)",
+   "label": "SVC"
+  },
+  {
+   "i": 310,
+   "provider": "lever",
+   "title": "Direct Marketing Associate - West Virginia",
+   "label": "SALES"
+  },
+  {
+   "i": 311,
+   "provider": "lever",
+   "title": "Strategic Account Manager",
+   "label": "SALES"
+  },
+  {
+   "i": 312,
+   "provider": "lever",
+   "title": "Senior Software Engineer⭐",
+   "label": "SW"
+  },
+  {
+   "i": 313,
+   "provider": "lever",
+   "title": "Regional Coordinator Sales Enablement",
+   "label": "SALES"
+  },
+  {
+   "i": 314,
+   "provider": "lever",
+   "title": "Claims Adjuster - Liability & Coverage (JD Required)",
+   "label": "MGT"
+  },
+  {
+   "i": 315,
+   "provider": "lever",
+   "title": "Red Team Engineer/ Offensive Security Lead",
+   "label": "SW"
+  },
+  {
+   "i": 316,
+   "provider": "lever",
+   "title": "Occupational Therapist I (2025-0243)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 317,
+   "provider": "lever",
+   "title": "MySQL & Oracle DBA   (ORA-2252-04.021823)",
+   "label": "SW"
+  },
+  {
+   "i": 318,
+   "provider": "lever",
+   "title": "Senior Agile Specialist",
+   "label": "MGT"
+  },
+  {
+   "i": 319,
+   "provider": "lever",
+   "title": "IT Service Desk Analyst",
+   "label": "SW"
+  },
+  {
+   "i": 320,
+   "provider": "lever",
+   "title": "Director of Security Operations (Remote LATAM)",
+   "label": "SW"
+  },
+  {
+   "i": 321,
+   "provider": "lever",
+   "title": "Junior Graphic Designer",
+   "label": "OTHER"
+  },
+  {
+   "i": 322,
+   "provider": "lever",
+   "title": "Retail and Event Marketing Promoter - Cleveland, OH",
+   "label": "SALES"
+  },
+  {
+   "i": 323,
+   "provider": "lever",
+   "title": "Cocinero/a - Aethos Mallorca",
+   "label": "SVC"
+  },
+  {
+   "i": 324,
+   "provider": "lever",
+   "title": "Manager, Transformation, Remote",
+   "label": "MGT"
+  },
+  {
+   "i": 325,
+   "provider": "lever",
+   "title": "Full Stack Engineer, BigPay (Fully Remote)",
+   "label": "SW"
+  },
+  {
+   "i": 326,
+   "provider": "lever",
+   "title": "Join our Talent Pool - Project Management (Europe)",
+   "label": "MGT"
+  },
+  {
+   "i": 327,
+   "provider": "lever",
+   "title": "Design Consultant - Albert Lea, MN",
+   "label": "OTHER"
+  },
+  {
+   "i": 328,
+   "provider": "lever",
+   "title": "Temporary Counselor II/III",
+   "label": "HEALTH"
+  },
+  {
+   "i": 329,
+   "provider": "lever",
+   "title": "Information Systems Security Officer (ISSO)",
+   "label": "SW"
+  },
+  {
+   "i": 330,
+   "provider": "lever",
+   "title": "Local Office Manager - Part-time",
+   "label": "MGT"
+  },
+  {
+   "i": 331,
+   "provider": "lever",
+   "title": "Cybersecurity Architect – Senior Technical Advisor",
+   "label": "SW"
+  },
+  {
+   "i": 332,
+   "provider": "lever",
+   "title": "Senior Account Manager 🇫🇷",
+   "label": "SALES"
+  },
+  {
+   "i": 333,
+   "provider": "lever",
+   "title": "Senior Technical Product Manager - AI Innovation, Remote",
+   "label": "MGT"
+  },
+  {
+   "i": 334,
+   "provider": "lever",
+   "title": "Head of Engineering",
+   "label": "SW"
+  },
+  {
+   "i": 335,
+   "provider": "lever",
+   "title": "Customer Success Manager, OmniChannel",
+   "label": "SALES"
+  },
+  {
+   "i": 336,
+   "provider": "lever",
+   "title": "Senior Manager, Global Supply Management",
+   "label": "MGT"
+  },
+  {
+   "i": 337,
+   "provider": "lever",
+   "title": "Shift Supervisor - Malibu",
+   "label": "SVC"
+  },
+  {
+   "i": 338,
+   "provider": "lever",
+   "title": "Coating Inspector",
+   "label": "ENG"
+  },
+  {
+   "i": 339,
+   "provider": "lever",
+   "title": "Head of Product (Game)",
+   "label": "MGT"
+  },
+  {
+   "i": 340,
+   "provider": "usajobs",
+   "title": "IT Specialist (Network Services)",
+   "label": "SW"
+  },
+  {
+   "i": 341,
+   "provider": "usajobs",
+   "title": "Program Manager *MSP* **NTE 1 Year**",
+   "label": "MGT"
+  },
+  {
+   "i": 342,
+   "provider": "usajobs",
+   "title": "Registered Nurse - Nurse Recruiter",
+   "label": "HEALTH"
+  },
+  {
+   "i": 343,
+   "provider": "usajobs",
+   "title": "IT Specialist (SYSANALYSIS)",
+   "label": "SW"
+  },
+  {
+   "i": 344,
+   "provider": "usajobs",
+   "title": "Library Technician",
+   "label": "OTHER"
+  },
+  {
+   "i": 345,
+   "provider": "usajobs",
+   "title": "REGISTERED NURSE - Care Manager (Clermont)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 346,
+   "provider": "usajobs",
+   "title": "SURGICAL TECHNICIAN",
+   "label": "HEALTH"
+  },
+  {
+   "i": 347,
+   "provider": "usajobs",
+   "title": "Psychology Technician",
+   "label": "HEALTH"
+  },
+  {
+   "i": 348,
+   "provider": "usajobs",
+   "title": "Safety & Occupational Health Specialist",
+   "label": "MGT"
+  },
+  {
+   "i": 349,
+   "provider": "usajobs",
+   "title": "IT Specialist APPSW",
+   "label": "SW"
+  },
+  {
+   "i": 350,
+   "provider": "usajobs",
+   "title": "Medical Officer (ER)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 351,
+   "provider": "usajobs",
+   "title": "Physician (Vascular Surgeon)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 352,
+   "provider": "usajobs",
+   "title": "Otolaryngologist",
+   "label": "HEALTH"
+  },
+  {
+   "i": 353,
+   "provider": "usajobs",
+   "title": "Nursing Assistant (3N Surgical) - Internal",
+   "label": "HEALTH"
+  },
+  {
+   "i": 354,
+   "provider": "usajobs",
+   "title": "Physician (Part Time) - Palliative Care",
+   "label": "HEALTH"
+  },
+  {
+   "i": 355,
+   "provider": "usajobs",
+   "title": "Medical Technician (Phlebotomy)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 356,
+   "provider": "usajobs",
+   "title": "NURSE PRACTITIONER",
+   "label": "HEALTH"
+  },
+  {
+   "i": 357,
+   "provider": "usajobs",
+   "title": "Dental Officer (Chief Dental Officer)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 358,
+   "provider": "usajobs",
+   "title": "Expeditionary Cyber Program Officer (Interdisciplinary Position)",
+   "label": "SW"
+  },
+  {
+   "i": 359,
+   "provider": "usajobs",
+   "title": "Statistician, ZP-1530-IV, BEA-M-VFP",
+   "label": "OTHER"
+  },
+  {
+   "i": 360,
+   "provider": "usajobs",
+   "title": "IT Specialist, ZP-2210-IV, BEA-M-MB",
+   "label": "SW"
+  },
+  {
+   "i": 361,
+   "provider": "usajobs",
+   "title": "UNIT PROGRAM COORDINATOR",
+   "label": "MGT"
+  },
+  {
+   "i": 362,
+   "provider": "usajobs",
+   "title": "Computer Assistant (OA)",
+   "label": "SW"
+  },
+  {
+   "i": 363,
+   "provider": "usajobs",
+   "title": "INFORMATION TECHNOLOGY SPECIALIST  **ROSTER**",
+   "label": "SW"
+  },
+  {
+   "i": 364,
+   "provider": "usajobs",
+   "title": "Supervisory Interdisciplinary Engineer (Electronics, Mechanical, or Computer)",
+   "label": "ENG"
+  },
+  {
+   "i": 365,
+   "provider": "usajobs",
+   "title": "MILITARY SYSTEMS SPECIALIST",
+   "label": "ENG"
+  },
+  {
+   "i": 366,
+   "provider": "usajobs",
+   "title": "Interdisciplinary Engineer/Computer Scientist",
+   "label": "SW"
+  },
+  {
+   "i": 367,
+   "provider": "usajobs",
+   "title": "IT Specialist (Information Security) GS-2210-12",
+   "label": "SW"
+  },
+  {
+   "i": 368,
+   "provider": "usajobs",
+   "title": "Information Technology Specialist (Information Technology Security and Audit Compliance Specialist)",
+   "label": "SW"
+  },
+  {
+   "i": 369,
+   "provider": "usajobs",
+   "title": "Student Trainee (Admin & Office Support)",
+   "label": "MGT"
+  },
+  {
+   "i": 370,
+   "provider": "usajobs",
+   "title": "Interdisciplinary (0854, 0855, 1550)",
+   "label": "ENG"
+  },
+  {
+   "i": 371,
+   "provider": "usajobs",
+   "title": "Staff Operations and Training Specialist",
+   "label": "MGT"
+  },
+  {
+   "i": 372,
+   "provider": "usajobs",
+   "title": "INTERDISCIPLINARY (MANAGER)",
+   "label": "MGT"
+  },
+  {
+   "i": 373,
+   "provider": "usajobs",
+   "title": "Information Technology Specialist (APPSW)",
+   "label": "SW"
+  },
+  {
+   "i": 374,
+   "provider": "usajobs",
+   "title": "Social Worker - Community Based Outpatient Clinics",
+   "label": "HEALTH"
+  },
+  {
+   "i": 375,
+   "provider": "usajobs",
+   "title": "Pharmacy Technician (Inpatient)",
+   "label": "HEALTH"
+  },
+  {
+   "i": 376,
+   "provider": "usajobs",
+   "title": "Health System Specialist (SR/Performance Improvement Specialist)",
+   "label": "MGT"
+  },
+  {
+   "i": 377,
+   "provider": "usajobs",
+   "title": "Supervisory IT Specialist (INFOSEC/NETWORK)",
+   "label": "SW"
+  },
+  {
+   "i": 378,
+   "provider": "usajobs",
+   "title": "IT Specialist (Information Security)",
+   "label": "SW"
+  },
+  {
+   "i": 379,
+   "provider": "usajobs",
+   "title": "Tax Specialist",
+   "label": "MGT"
+  },
+  {
+   "i": 380,
+   "provider": "hn",
+   "title": "Talonic | Staff Site Reliability Engineer (founding) | Berlin, Germany |",
+   "label": "SW"
+  },
+  {
+   "i": 381,
+   "provider": "hn",
+   "title": "MixRank (YC S11) | Software Engineers | 100% Remote (Global) | Full-Time",
+   "label": "SW"
+  },
+  {
+   "i": 382,
+   "provider": "hn",
+   "title": "Oscilar.com | Site Lead, Sr/Staff Software Engineers, Security Engineer, PM, Data Engineer | REMOTE (US/Canada/Brazil/Poland/UK/India) | Full-time AI Risk Decisioning™ platform that helps organization",
+   "label": "SW"
+  },
+  {
+   "i": 383,
+   "provider": "hn",
+   "title": "Solution Street | Northern Virginia (Washington, DC Metro Area) Remote & Hybrid roles available - USA only.",
+   "label": "OTHER"
+  },
+  {
+   "i": 384,
+   "provider": "hn",
+   "title": "PlantingSpace | Full-time | Remote (EU time zone) + Quarterly Meet-ups | https://planting.space",
+   "label": "OTHER"
+  },
+  {
+   "i": 385,
+   "provider": "hn",
+   "title": "SpendAi | Seattle, WA | ONSITE | Senior Software Engineer | Engineer #4",
+   "label": "SW"
+  },
+  {
+   "i": 386,
+   "provider": "hn",
+   "title": "Senior Python Backend Engineer | REMOTE (EMEA/APAC)",
+   "label": "SW"
+  },
+  {
+   "i": 387,
+   "provider": "hn",
+   "title": "Full Stack Software Engineer | San Francisco, CA | Full-time | ONSITE | $150K-$210K + equity",
+   "label": "SW"
+  },
+  {
+   "i": 388,
+   "provider": "hn",
+   "title": "Phaselaw | Product Engineer | Remote (US) or Hybrid (NYC) | Full-time",
+   "label": "SW"
+  },
+  {
+   "i": 389,
+   "provider": "hn",
+   "title": "Bactrix | Founding Software Engineer | REMOTE | Equity | AI/Biotech",
+   "label": "SW"
+  },
+  {
+   "i": 390,
+   "provider": "teamtailor",
+   "title": "Team Lead, Group Consolidation",
+   "label": "MGT"
+  },
+  {
+   "i": 391,
+   "provider": "teamtailor",
+   "title": "Sales & Store Operations Associate, NYC",
+   "label": "SVC"
+  },
+  {
+   "i": 392,
+   "provider": "teamtailor",
+   "title": "Analytics Implementation Specialist",
+   "label": "SW"
+  },
+  {
+   "i": 393,
+   "provider": "teamtailor",
+   "title": "Global Display & OLV Specialist | Brand & Marketing",
+   "label": "SALES"
+  },
+  {
+   "i": 394,
+   "provider": "teamtailor",
+   "title": "Supply Planner",
+   "label": "MGT"
+  },
+  {
+   "i": 395,
+   "provider": "teamtailor",
+   "title": "Assortment & Merchandising Director",
+   "label": "MGT"
+  },
+  {
+   "i": 396,
+   "provider": "teamtailor",
+   "title": "Experienced Mechanical Engineer",
+   "label": "ENG"
+  },
+  {
+   "i": 397,
+   "provider": "teamtailor",
+   "title": "Vi söker mekanikingenjörer i Halmstad",
+   "label": "ENG"
+  },
+  {
+   "i": 398,
+   "provider": "teamtailor",
+   "title": "Junior Creative Producer",
+   "label": "OTHER"
+  },
+  {
+   "i": 399,
+   "provider": "teamtailor",
+   "title": "MarTech & CRM Developer",
+   "label": "SW"
+  }
+ ]
+}

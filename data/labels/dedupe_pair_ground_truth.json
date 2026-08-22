@@ -1,0 +1,1088 @@
+{
+ "schema": "package-15 dedupe pair ground truth v1",
+ "n": 120,
+ "definition": "same_job = the two rows describe the SAME vacancy at the same employer and the same location, differing only in wording, punctuation, case or a formatting marker. A different city, a different seniority, a different pay grade, a different specialisation or a different requisition number makes them DIFFERENT jobs even at the same employer -- those are real separate vacancies and removing them would delete real data.",
+ "sampling": "stratified across the cosine range 0.60-1.00 (24 per band) so the threshold is tuned on the region where the decision is actually hard, not on the easy tails",
+ "pairs": [
+  {
+   "k": 0,
+   "i": 15125,
+   "j": 15156,
+   "cosine": 0.6812,
+   "same_job": false,
+   "a": "Program Manager, Capabilities @ hadrian-automation / Los Angeles, CA",
+   "b": "NDT Engineer, Capabilities @ hadrian-automation / Los Angeles, CA"
+  },
+  {
+   "k": 1,
+   "i": 846,
+   "j": 850,
+   "cosine": 0.601,
+   "same_job": false,
+   "a": "Backend Engineer IC2 @ addi / Colombia",
+   "b": "Frontend Engineer IC2 @ addi / Colombia"
+  },
+  {
+   "k": 2,
+   "i": 36895,
+   "j": 36897,
+   "cosine": 0.6599,
+   "same_job": false,
+   "a": "Beauty Brand Specialist - Greater London Area @ beautybarrage / London",
+   "b": "Brand Executive - London @ beautybarrage / London"
+  },
+  {
+   "k": 3,
+   "i": 1929,
+   "j": 1945,
+   "cosine": 0.6661,
+   "same_job": false,
+   "a": "Telehealth (board-eligible) Endocrinologist (1099) | Evenings, Fridays, and/or Weekends @ allarahealth / Illinois",
+   "b": "Telehealth Endocrinologist (1099)| Evenings, Fridays, and/or Weekends @ allarahealth / Florida"
+  },
+  {
+   "k": 4,
+   "i": 11677,
+   "j": 11678,
+   "cosine": 0.698,
+   "same_job": false,
+   "a": "Strategic Account Executive - Brazil @ elevenlabs / Brazil",
+   "b": "Enterprise Solutions Engineer - Brazil @ elevenlabs / Brazil"
+  },
+  {
+   "k": 5,
+   "i": 16892,
+   "j": 16905,
+   "cosine": 0.657,
+   "same_job": false,
+   "a": "Sr. Process & Operations Engineer @ hims-and-hers / Minnetonka, Minnesota",
+   "b": "Sr. Engineer, Design Quality Assurance @ hims-and-hers / Minnetonka, Minnesota"
+  },
+  {
+   "k": 6,
+   "i": 1732,
+   "j": 1805,
+   "cosine": 0.6473,
+   "same_job": false,
+   "a": "Account Executive - Canada 🇨🇦 @ alan / Toronto, ON, Canada",
+   "b": "Member Support Expert - Canada 🇨🇦 @ alan / Toronto, ON, Canada"
+  },
+  {
+   "k": 7,
+   "i": 2271,
+   "j": 2427,
+   "cosine": 0.675,
+   "same_job": false,
+   "a": "Board Certified Behavior Analyst (BCBA) @ alpacahealth / Grand Junction, CO",
+   "b": "Registered Behavior Technician (RBT) @ alpacahealth / Grand Junction, CO"
+  },
+  {
+   "k": 8,
+   "i": 10950,
+   "j": 10952,
+   "cosine": 0.6181,
+   "same_job": false,
+   "a": "Applied AI Researcher, AI Systems @ distyl / San Francisco",
+   "b": "Applied AI Researcher, System Self-Improvement @ distyl / San Francisco"
+  },
+  {
+   "k": 9,
+   "i": 26290,
+   "j": 26291,
+   "cosine": 0.696,
+   "same_job": false,
+   "a": "Residential House Manager @ Aspire Living & Learning  / Catonsville, Maryland",
+   "b": "Residential House Manager  @ Aspire Living & Learning  / Bel Air, MD"
+  },
+  {
+   "k": 10,
+   "i": 16932,
+   "j": 16956,
+   "cosine": 0.6353,
+   "same_job": false,
+   "a": "Product Manager – Vertical Programs @ hinge-health / San Francisco-HQ",
+   "b": "Sr. Product Designer, New Programs  @ hinge-health / San Francisco-HQ"
+  },
+  {
+   "k": 11,
+   "i": 9349,
+   "j": 9411,
+   "cosine": 0.6124,
+   "same_job": false,
+   "a": "Staff Corporate Security Engineer @ crusoe / San Francisco, CA - US",
+   "b": "Senior Software Engineer, Security @ crusoe / San Francisco, CA - US"
+  },
+  {
+   "k": 12,
+   "i": 24702,
+   "j": 24822,
+   "cosine": 0.6871,
+   "same_job": false,
+   "a": "Lead Software Engineer Back End, (Singapore Based) @ Agoda / Singapore",
+   "b": "Staff/Lead LLM Data Scientist (Singapore based) @ Agoda / Singapore"
+  },
+  {
+   "k": 13,
+   "i": 33936,
+   "j": 34013,
+   "cosine": 0.6581,
+   "same_job": false,
+   "a": "Part Time Speech Language Pathologist (SLP) @ 21hhs / Vacaville, California",
+   "b": "Speech Language Pathologist (SLP) @ 21hhs / San Rafael, California"
+  },
+  {
+   "k": 14,
+   "i": 25762,
+   "j": 25779,
+   "cosine": 0.6233,
+   "same_job": false,
+   "a": "On-Call Roadway Technical Manager  @ Benesch / Raleigh, NC",
+   "b": "Roadway Project Manager  @ Benesch / Raleigh, NC"
+  },
+  {
+   "k": 15,
+   "i": 20694,
+   "j": 20698,
+   "cosine": 0.648,
+   "same_job": false,
+   "a": "General Audio Fiction Application @ Absurd Ventures / Santa Monica OR San Rafael",
+   "b": "General Film & TV Application @ Absurd Ventures / Santa Monica OR San Rafael"
+  },
+  {
+   "k": 16,
+   "i": 27953,
+   "j": 27962,
+   "cosine": 0.6726,
+   "same_job": false,
+   "a": "Business Development Representative, Hazel AI @ Altruist / San Francisco, CA",
+   "b": "Sales Development Representative @ Altruist / Los Angeles, CA"
+  },
+  {
+   "k": 17,
+   "i": 19154,
+   "j": 19155,
+   "cosine": 0.6658,
+   "same_job": false,
+   "a": "Forward Deployed Engineer Intern (Mountain View) @ kognitos / Mountain View",
+   "b": "Forward Deployed Engineer — Associate (Contract-to-Hire) @ kognitos / Mountain View"
+  },
+  {
+   "k": 18,
+   "i": 24970,
+   "j": 25110,
+   "cosine": 0.6128,
+   "same_job": false,
+   "a": "Engineering Manager, Community Support Engineering @ Airbnb / China",
+   "b": "Staff Machine Learning Engineer, Customer Support Engineering @ Airbnb / China"
+  },
+  {
+   "k": 19,
+   "i": 16007,
+   "j": 16076,
+   "cosine": 0.6858,
+   "same_job": false,
+   "a": "Technical User Operations Specialist, APAC - Weekends (Wed-Sun) @ harvey / Sydney",
+   "b": "Technical User Operations Specialist – EMEA (Wed–Sun) @ harvey / Dublin"
+  },
+  {
+   "k": 20,
+   "i": 14895,
+   "j": 14897,
+   "cosine": 0.645,
+   "same_job": false,
+   "a": "Software Engineer @ govwell / New York, NY",
+   "b": "Senior Software Engineer, Payments @ govwell / New York, NY"
+  },
+  {
+   "k": 21,
+   "i": 25733,
+   "j": 25760,
+   "cosine": 0.6668,
+   "same_job": false,
+   "a": "Civil/ Construction Engineer  @ Benesch / Milwaukee, WI; Neenah, WI; Madison, WI",
+   "b": "Land Surveyor @ Benesch / Milwaukee, WI; Neenah, WI; Madison, WI"
+  },
+  {
+   "k": 22,
+   "i": 22828,
+   "j": 22888,
+   "cosine": 0.689,
+   "same_job": false,
+   "a": "Box Office Attendant - Midland Theater @ AEG Worldwide / Kansas City, MO",
+   "b": "Guest Services Staff - Midland Theater @ AEG Worldwide / Kansas City, MO"
+  },
+  {
+   "k": 23,
+   "i": 15861,
+   "j": 15949,
+   "cosine": 0.6679,
+   "same_job": false,
+   "a": "IT Operations Analyst  @ harvey / San Francisco",
+   "b": "Support Operations Data Analyst @ harvey / San Francisco"
+  },
+  {
+   "k": 24,
+   "i": 16334,
+   "j": 16335,
+   "cosine": 0.7502,
+   "same_job": false,
+   "a": "Forward Deployed Engineer @ hcompany / Hybrid Paris",
+   "b": "Founding Forward Deployed Engineer - US @ hcompany / Hybrid New York"
+  },
+  {
+   "k": 25,
+   "i": 43731,
+   "j": 43776,
+   "cosine": 0.7032,
+   "same_job": false,
+   "a": "Inside Sales @ cargo-partner / Hanoi, Vietnam",
+   "b": "Vietnam, Inside Sales @ cargo-partner / Ho Chi Minh City, Vietnam"
+  },
+  {
+   "k": 26,
+   "i": 28650,
+   "j": 28655,
+   "cosine": 0.7504,
+   "same_job": false,
+   "a": "Engineer I @ Anaplan / Gurugram",
+   "b": "Engineer III @ Anaplan / Gurugram, India"
+  },
+  {
+   "k": 27,
+   "i": 24309,
+   "j": 24311,
+   "cosine": 0.7211,
+   "same_job": false,
+   "a": "Analista de Produtos Sênior - Campinas/SP @ Agibank / Campinas, São Paulo, Brasil",
+   "b": "Analista de Produtos Sênior - Folha de Pagamento INSS - Campinas/SP @ Agibank / Campinas, São Paulo, Brasil"
+  },
+  {
+   "k": 28,
+   "i": 13210,
+   "j": 13215,
+   "cosine": 0.7092,
+   "same_job": false,
+   "a": "Technical BDR @ firecrawl / San Francisco, CA (Hybrid)",
+   "b": "Technical Writer @ firecrawl / San Francisco, CA (Hybrid)"
+  },
+  {
+   "k": 29,
+   "i": 33750,
+   "j": 33754,
+   "cosine": 0.7172,
+   "same_job": false,
+   "a": "Clinical Social Worker (MSW or LCSW) @ 21hhs / Palo Alto, California",
+   "b": "Clinical Social Worker (MSW or LCSW): Home Health @ 21hhs / Petaluma, California"
+  },
+  {
+   "k": 30,
+   "i": 25648,
+   "j": 25654,
+   "cosine": 0.7246,
+   "same_job": false,
+   "a": "Senior Staff Software Engineer @ Alarm.com / Tysons, Virginia",
+   "b": "Software Engineer II @ Alarm.com / Tysons, Virginia"
+  },
+  {
+   "k": 31,
+   "i": 24299,
+   "j": 24309,
+   "cosine": 0.7782,
+   "same_job": false,
+   "a": "Analista de Dados Sênior - Campinas/SP @ Agibank / Campinas, São Paulo, Brasil",
+   "b": "Analista de Produtos Sênior - Campinas/SP @ Agibank / Campinas, São Paulo, Brasil"
+  },
+  {
+   "k": 32,
+   "i": 27613,
+   "j": 27616,
+   "cosine": 0.712,
+   "same_job": false,
+   "a": "Associate, Client Service, Japanese Speaker, 2026 @ AlphaSights / Hong Kong ",
+   "b": "Associate, Client Service, Japanese Speaker, 2027 @ AlphaSights / Tokyo"
+  },
+  {
+   "k": 33,
+   "i": 3287,
+   "j": 3290,
+   "cosine": 0.7681,
+   "same_job": true,
+   "a": "Software Engineer, Design Systems @ assembledhq / San Francisco, CA",
+   "b": "Software Engineer, Design Systems @ assembledhq / United States"
+  },
+  {
+   "k": 34,
+   "i": 25760,
+   "j": 25774,
+   "cosine": 0.7127,
+   "same_job": false,
+   "a": "Land Surveyor @ Benesch / Milwaukee, WI; Neenah, WI; Madison, WI",
+   "b": "Roadway Project Engineer @ Benesch / Milwaukee, WI; Neenah, WI; Madison, WI"
+  },
+  {
+   "k": 35,
+   "i": 33570,
+   "j": 33576,
+   "cosine": 0.7056,
+   "same_job": false,
+   "a": "Stage - Assistant(e) Comptable (H/F) - Paris  @ Artefact / 9th arrondissement of Paris, 75009, Paris, France",
+   "b": "Superviseur Comptable (H/F) - CDI - PARIS @ Artefact / 9th arrondissement of Paris, 75009, Paris, France"
+  },
+  {
+   "k": 36,
+   "i": 46329,
+   "j": 46453,
+   "cosine": 0.7922,
+   "same_job": false,
+   "a": "Interdisciplinary @ U.S. Army Test and Evaluation Command / White Sands Missile Range, New Mexico",
+   "b": "Supervisory Interdisciplinary @ U.S. Army Test and Evaluation Command / White Sands Missile Range, New Mexico"
+  },
+  {
+   "k": 37,
+   "i": 19840,
+   "j": 19842,
+   "cosine": 0.754,
+   "same_job": false,
+   "a": "Localization Language Lead - Italian @ 2K / Madrid, Spain; Madrid, Spain",
+   "b": "Localization Language Lead, Russian @ 2K / Madrid, Spain"
+  },
+  {
+   "k": 38,
+   "i": 24807,
+   "j": 24809,
+   "cosine": 0.7723,
+   "same_job": false,
+   "a": "Senior/Staff Data Engineer - Bangkok based, relocation provided @ Agoda / Bangkok, Thailand",
+   "b": "Senior/Staff Data Engineer - Bidding (Bangkok based, relocation provided) @ Agoda / Bangkok"
+  },
+  {
+   "k": 39,
+   "i": 33654,
+   "j": 33660,
+   "cosine": 0.7383,
+   "same_job": false,
+   "a": "Estágio em Engenharia de Análise de Dados - Vaga afirmativa para mulheres cis e trans @ LinkedIn Job Wrapping / Avenida das Nações Unidas, 12901,11° andar São Paulo",
+   "b": "Estágio em Marketing Digital - Vaga afirmativa para mulheres cis e trans @ LinkedIn Job Wrapping / Avenida das Nações Unidas, 12901,11° andar São Paulo"
+  },
+  {
+   "k": 40,
+   "i": 17056,
+   "j": 17063,
+   "cosine": 0.7921,
+   "same_job": true,
+   "a": "Account Executive (Consultative Sales) @ hirehangar / South Africa - Johannesburg",
+   "b": "Account Executive  @ hirehangar / South Africa - Johannesburg"
+  },
+  {
+   "k": 41,
+   "i": 42899,
+   "j": 42900,
+   "cosine": 0.7013,
+   "same_job": false,
+   "a": "Staff Structural Designer @ brindleyengineering / Lisle, IL",
+   "b": "Staff Structural Engineer @ brindleyengineering / Lisle, IL"
+  },
+  {
+   "k": 42,
+   "i": 36346,
+   "j": 36352,
+   "cosine": 0.7702,
+   "same_job": false,
+   "a": "Carrier Account Representative @ arrivelogistics / Chicago, IL",
+   "b": "Carrier Account Representative @ arrivelogistics / Austin, TX"
+  },
+  {
+   "k": 43,
+   "i": 25537,
+   "j": 25538,
+   "cosine": 0.7123,
+   "same_job": false,
+   "a": "Software Engineer - C++ @ Akuna Capital / Chicago, IL",
+   "b": "Software Engineer - Data Engineering @ Akuna Capital / Chicago, IL"
+  },
+  {
+   "k": 44,
+   "i": 22617,
+   "j": 22707,
+   "cosine": 0.7316,
+   "same_job": false,
+   "a": "Enterprise Account Manager @ Adyen / New York",
+   "b": "Senior Enterprise Account Manager @ Adyen / San Francisco"
+  },
+  {
+   "k": 45,
+   "i": 44231,
+   "j": 44243,
+   "cosine": 0.7579,
+   "same_job": false,
+   "a": "Information Technology Specialist (System Analysis)  @ Centers for Medicare & Medicaid Services / Woodlawn, Maryland",
+   "b": "Information Technology Specialist @ Centers for Medicare & Medicaid Services / Woodlawn, Maryland"
+  },
+  {
+   "k": 46,
+   "i": 46268,
+   "j": 46482,
+   "cosine": 0.7129,
+   "same_job": false,
+   "a": "SUPERVISORY INTERDISCIPLINARY ENGINEER/SCIENTIST @ Naval Air Systems Command / Point Mugu, California",
+   "b": "Interdisciplinary Engineer @ Naval Air Systems Command / Point Mugu, California"
+  },
+  {
+   "k": 47,
+   "i": 2173,
+   "j": 2190,
+   "cosine": 0.7502,
+   "same_job": false,
+   "a": "Referral Partnerships Manager @ alpacahealth / Fort Worth, TX",
+   "b": "Referral Partnerships Manager @ alpacahealth / Austin, TX"
+  },
+  {
+   "k": 48,
+   "i": 44228,
+   "j": 44250,
+   "cosine": 0.8967,
+   "same_job": true,
+   "a": "IT Specialist (Securty) - ZP-2210-IV(GS-13/14 equivalent) @ National Institute of Standards and Technology / Gaithersburg, Maryland",
+   "b": "IT Specialist (Security), ZP-2210-IV (GS-13/14 Equivalent) @ National Institute of Standards and Technology / Gaithersburg, Maryland"
+  },
+  {
+   "k": 49,
+   "i": 1923,
+   "j": 1931,
+   "cosine": 0.8157,
+   "same_job": false,
+   "a": "1099 Telemedicine Nurse Practitioner| Evenings, Fridays, and/or Weekends @ allarahealth / Maryland",
+   "b": "1099 Telemedicine Nurse Practitioner| Evenings, Fridays, and/or Weekends @ allarahealth / Illinois"
+  },
+  {
+   "k": 50,
+   "i": 17661,
+   "j": 17691,
+   "cosine": 0.8136,
+   "same_job": false,
+   "a": "Account Executive (Advisory) - Frankfurt (m/w/d) @ ideals / Frankfurt, Germany",
+   "b": "Enterprise Account Executive - Frankfurt (m/w/d) @ ideals / Frankfurt, Germany"
+  },
+  {
+   "k": 51,
+   "i": 13817,
+   "j": 13904,
+   "cosine": 0.8845,
+   "same_job": false,
+   "a": "Staff Quality Engineer @ formenergy / Weirton, WV",
+   "b": "Senior Quality Engineer @ formenergy / Weirton, WV"
+  },
+  {
+   "k": 52,
+   "i": 15928,
+   "j": 15930,
+   "cosine": 0.8556,
+   "same_job": false,
+   "a": "Practice Lead, Law Firm Transformation @ harvey / San Francisco",
+   "b": "Practice Lead, In-house Transformation @ harvey / San Francisco"
+  },
+  {
+   "k": 53,
+   "i": 1906,
+   "j": 1920,
+   "cosine": 0.8701,
+   "same_job": false,
+   "a": "Telehealth Registered Dietitian | FT W2 @ allarahealth / Maryland",
+   "b": "1099 Telehealth Registered Dietitian | Flexible Schedule @ allarahealth / Maryland"
+  },
+  {
+   "k": 54,
+   "i": 26023,
+   "j": 26028,
+   "cosine": 0.8725,
+   "same_job": true,
+   "a": "Occupational Therapist (Pediatrics) @ Cortica - Neurodevelopmental / Carlsbad, CA",
+   "b": "Pediatric Occupational Therapist (OTR/L) @ Cortica - Neurodevelopmental / Carlsbad, CA"
+  },
+  {
+   "k": 55,
+   "i": 46188,
+   "j": 46508,
+   "cosine": 0.8012,
+   "same_job": false,
+   "a": "INTERDISCIPLINARY COMPUTER SCIENTIST/COMPUTER ENGINEER @ U.S. Army Communications Electronics Command / Aberdeen Proving Ground, Maryland",
+   "b": "Interdisciplinary @ U.S. Army Communications Electronics Command / Aberdeen Proving Ground, Maryland"
+  },
+  {
+   "k": 56,
+   "i": 14968,
+   "j": 14972,
+   "cosine": 0.841,
+   "same_job": false,
+   "a": "Software Engineer, Origin @ graphite / New York City, New York",
+   "b": "Software Engineer @ graphite / New York City, New York"
+  },
+  {
+   "k": 57,
+   "i": 10575,
+   "j": 10619,
+   "cosine": 0.8219,
+   "same_job": false,
+   "a": "Finance and Strategy Senior Associate  @ deliveroo / London - The River Building HQ",
+   "b": "Senior Finance & Strategy Manager @ deliveroo / London - The River Building HQ"
+  },
+  {
+   "k": 58,
+   "i": 11891,
+   "j": 11899,
+   "cosine": 0.8695,
+   "same_job": false,
+   "a": "VP of Revenue Operations  @ eliseai / New York City",
+   "b": "Revenue Operations Manager  @ eliseai / New York City"
+  },
+  {
+   "k": 59,
+   "i": 36362,
+   "j": 36364,
+   "cosine": 0.8506,
+   "same_job": false,
+   "a": "Client Success Associate @ arrivelogistics / Austin, TX",
+   "b": "Client Success Associate @ arrivelogistics / Chicago, IL"
+  },
+  {
+   "k": 60,
+   "i": 3580,
+   "j": 3581,
+   "cosine": 0.8664,
+   "same_job": false,
+   "a": "Scaled Customer Success Manager @ attio / New York",
+   "b": "Scaled Customer Success Manager @ attio / San Francisco"
+  },
+  {
+   "k": 61,
+   "i": 8349,
+   "j": 8367,
+   "cosine": 0.8568,
+   "same_job": false,
+   "a": "Workplace & Engagement Coordinator @ cognition / New York City",
+   "b": "Workplace & Engagement Coordinator @ cognition / London"
+  },
+  {
+   "k": 62,
+   "i": 44224,
+   "j": 44269,
+   "cosine": 0.8614,
+   "same_job": true,
+   "a": "Information Technology Specialist @ Other Agencies and Independent Organizations / District of Columbia, District of Columbia",
+   "b": "Information Technology Specialist @ Other Agencies and Independent Organizations / Washington, District of Columbia"
+  },
+  {
+   "k": 63,
+   "i": 27315,
+   "j": 27319,
+   "cosine": 0.8129,
+   "same_job": false,
+   "a": "Account Executive, Existing Business @ AlphaSense / Remote - United States",
+   "b": "Account Executive, New Business  @ AlphaSense / Remote - United States"
+  },
+  {
+   "k": 64,
+   "i": 36896,
+   "j": 36979,
+   "cosine": 0.8717,
+   "same_job": false,
+   "a": "Brand Executive - Chicago @ beautybarrage / Chicago, IL",
+   "b": "Brand Specialist - Chicago, IL @ beautybarrage / Chicago, IL"
+  },
+  {
+   "k": 65,
+   "i": 46340,
+   "j": 46368,
+   "cosine": 0.8852,
+   "same_job": false,
+   "a": "Interdisciplinary Engineer/Scientist @ Naval Air Systems Command / China Lake, California",
+   "b": "INTERDISCIPLINARY @ Naval Air Systems Command / China Lake, California"
+  },
+  {
+   "k": 66,
+   "i": 20937,
+   "j": 20939,
+   "cosine": 0.8452,
+   "same_job": false,
+   "a": "Intervention Specialist @ ACCEL Schools / Cornerstone Academy - Middle School",
+   "b": "Intervention Specialist @ ACCEL Schools / Cornerstone Academy - High School"
+  },
+  {
+   "k": 67,
+   "i": 16125,
+   "j": 16128,
+   "cosine": 0.8594,
+   "same_job": false,
+   "a": "Senior Public Sector Counsel @ harvey / New York",
+   "b": "Senior Public Sector Counsel @ harvey / Dallas"
+  },
+  {
+   "k": 68,
+   "i": 46155,
+   "j": 46286,
+   "cosine": 0.8601,
+   "same_job": false,
+   "a": "Computer Engineer/Electronics Engineer/Computer Scientist @ Defense Information Systems Agency / Fort Meade, Maryland",
+   "b": "Supervisory Computer Engineer, Electronics Engineer, Computer Scientist @ Defense Information Systems Agency / Fort Meade, Maryland"
+  },
+  {
+   "k": 69,
+   "i": 33461,
+   "j": 33481,
+   "cosine": 0.8705,
+   "same_job": false,
+   "a": "Consulting Director  @ Artefact / Stationsplein 32, 3511 ED Utrecht",
+   "b": "Data Consulting Manager @ Artefact / Stationsplein 32, 3511 ED Utrecht"
+  },
+  {
+   "k": 70,
+   "i": 9218,
+   "j": 9461,
+   "cosine": 0.8419,
+   "same_job": false,
+   "a": "Senior Customer Success Manager @ crusoe / San Francisco, CA - US",
+   "b": "Customer Success Manager @ crusoe / Denver, CO - US"
+  },
+  {
+   "k": 71,
+   "i": 21950,
+   "j": 22005,
+   "cosine": 0.8131,
+   "same_job": false,
+   "a": "Behavior Technician @ Acorn Health / Murfreesboro, Tennessee, United States",
+   "b": "Board Certified Behavior Analyst @ Acorn Health / Acorn Health of Tennessee; Murfreesboro, Tennessee, United States"
+  },
+  {
+   "k": 72,
+   "i": 16296,
+   "j": 16297,
+   "cosine": 0.9136,
+   "same_job": false,
+   "a": "Staff Deep Learning Engineer @ haydenai / San Francisco HQ Office",
+   "b": "Deep Learning Engineer @ haydenai / San Francisco HQ Office"
+  },
+  {
+   "k": 73,
+   "i": 16309,
+   "j": 16311,
+   "cosine": 0.9129,
+   "same_job": false,
+   "a": "Head of Growth Marketing @ haystacknews / Fort Lauderdale Office",
+   "b": "Head of Marketing @ haystacknews / Fort Lauderdale Office"
+  },
+  {
+   "k": 74,
+   "i": 10852,
+   "j": 10861,
+   "cosine": 0.9495,
+   "same_job": false,
+   "a": "Account Strategist, Paid Media (Remote Canada)  @ directive / Remote - Canada",
+   "b": "Senior Account Strategist, Paid Media (Remote Canada)  @ directive / Remote - Canada"
+  },
+  {
+   "k": 75,
+   "i": 46288,
+   "j": 46505,
+   "cosine": 0.9425,
+   "same_job": false,
+   "a": "ENGINEER @ Naval Sea Systems Command / Panama City Naval Surface Warfare Center, Florida",
+   "b": "ENGINEER/SCIENTIST @ Naval Sea Systems Command / Panama City Naval Surface Warfare Center, Florida"
+  },
+  {
+   "k": 76,
+   "i": 32899,
+   "j": 32954,
+   "cosine": 0.9053,
+   "same_job": false,
+   "a": "Senior Software Engineer - Integrated Test @ Archer / San Jose, California, United States",
+   "b": "Staff Software Engineer - Integrated Test @ Archer / San Jose, California, United States"
+  },
+  {
+   "k": 77,
+   "i": 16355,
+   "j": 16358,
+   "cosine": 0.9061,
+   "same_job": true,
+   "a": "Seasonal Bilingual Agent Support Representative (Remote - VA) @ healthsherpa / Seasonal Hiring",
+   "b": "Seasonal Bilingual Agent Support Representative (Remote - FL, OH, TN, TX, UT, VA) @ healthsherpa / Seasonal Hiring"
+  },
+  {
+   "k": 78,
+   "i": 20543,
+   "j": 20544,
+   "cosine": 0.9711,
+   "same_job": true,
+   "a": "Substitute and On-Call Opportunities Inquire Here! @ AbilityPath / San Mateo County, and Santa Clara County",
+   "b": "Substitute or On-Call Opportunities Inquire here @ AbilityPath / San Mateo County, CA and Santa Clara County,CA"
+  },
+  {
+   "k": 79,
+   "i": 45737,
+   "j": 45984,
+   "cosine": 0.9509,
+   "same_job": false,
+   "a": "Pharmacologist, GS-0405-13 @ Food and Drug Administration / Silver Spring, Maryland",
+   "b": "Pharmacologist GS-0405-11 @ Food and Drug Administration / Silver Spring, Maryland"
+  },
+  {
+   "k": 80,
+   "i": 24245,
+   "j": 24247,
+   "cosine": 0.9211,
+   "same_job": false,
+   "a": "Digital Media Buyer Trainee 2026 Q1 @ WITHIN / New York City, New York",
+   "b": "Digital Media Buyer Trainee 2026 Q3 @ WITHIN / New York City, New York"
+  },
+  {
+   "k": 81,
+   "i": 17477,
+   "j": 17479,
+   "cosine": 0.9466,
+   "same_job": false,
+   "a": "Electronics Engineer - Avionics @ iceye / Espoo",
+   "b": "Senior Electronics Engineer - Avionics @ iceye / Espoo"
+  },
+  {
+   "k": 82,
+   "i": 46899,
+   "j": 46910,
+   "cosine": 0.9474,
+   "same_job": true,
+   "a": "Printing Services Assistant (COTA) @ Social Security Administration / Falls Church, Virginia",
+   "b": "Printing Services Assistant @ Social Security Administration / Falls Church, Virginia"
+  },
+  {
+   "k": 83,
+   "i": 23107,
+   "j": 23109,
+   "cosine": 0.9157,
+   "same_job": false,
+   "a": "Analytics Lead, Full Stack @ Affirm / Remote UK",
+   "b": "Analytics Lead, Full Stack @ Affirm / Remote Canada"
+  },
+  {
+   "k": 84,
+   "i": 43045,
+   "j": 43046,
+   "cosine": 0.9762,
+   "same_job": false,
+   "a": "Junior Visual Manager  (Palisades Men's) @ buckmason / Palisades, CA",
+   "b": "Junior Visual Manager  (Palisades Women's) @ buckmason / Palisades, CA"
+  },
+  {
+   "k": 85,
+   "i": 3300,
+   "j": 3322,
+   "cosine": 0.921,
+   "same_job": false,
+   "a": "Agent Product Manager @ assorthealth / San Francisco",
+   "b": "Senior Agent Product Manager @ assorthealth / San Francisco"
+  },
+  {
+   "k": 86,
+   "i": 42864,
+   "j": 42865,
+   "cosine": 0.9269,
+   "same_job": false,
+   "a": "Senior Tech Specialist, DevOps - R01564153 @ brillio-2 / Guadalajara, Jalisco, Mexico",
+   "b": "Senior Tech Specialist, DevOps R01564150 @ brillio-2 / Guadalajara, Jalisco, Mexico"
+  },
+  {
+   "k": 87,
+   "i": 45798,
+   "j": 45835,
+   "cosine": 0.9486,
+   "same_job": false,
+   "a": "Toxicologist GS-0415-12 @ Food and Drug Administration / Silver Spring, Maryland",
+   "b": "Toxicologist GS-0415-11 @ Food and Drug Administration / Silver Spring, Maryland"
+  },
+  {
+   "k": 88,
+   "i": 44040,
+   "j": 44148,
+   "cosine": 0.9017,
+   "same_job": true,
+   "a": "Information Technology Specialist, GS-2210-14 @ Environmental Protection Agency / Washington, District of Columbia",
+   "b": "Information Technology Specialist @ Environmental Protection Agency / Washington, District of Columbia"
+  },
+  {
+   "k": 89,
+   "i": 43136,
+   "j": 43195,
+   "cosine": 0.9159,
+   "same_job": false,
+   "a": "Part-Time Stylist (Georgetown) @ buckmason / Georgetown, D.C.",
+   "b": "Stock Coordinator (Georgetown) @ buckmason / Georgetown, D.C."
+  },
+  {
+   "k": 90,
+   "i": 15858,
+   "j": 15859,
+   "cosine": 0.9571,
+   "same_job": false,
+   "a": "Senior or Staff Design Engineer, Design Systems @ harvey / San Francisco",
+   "b": "Senior or Staff Design Engineer, Design Systems @ harvey / New York"
+  },
+  {
+   "k": 91,
+   "i": 24244,
+   "j": 24246,
+   "cosine": 0.9597,
+   "same_job": false,
+   "a": "Digital Media Buyer Trainee 2026 @ WITHIN / New York City, New York",
+   "b": "Digital Media Buyer Trainee 2026 Q2 @ WITHIN / New York City, New York"
+  },
+  {
+   "k": 92,
+   "i": 9519,
+   "j": 9556,
+   "cosine": 0.9371,
+   "same_job": false,
+   "a": "Staff Quality Control (QC) Engineer @ crusoe / Abilene, TX - US",
+   "b": "Senior Staff Quality Control Engineer @ crusoe / Abilene, TX - US"
+  },
+  {
+   "k": 93,
+   "i": 9128,
+   "j": 9129,
+   "cosine": 0.9362,
+   "same_job": false,
+   "a": "Senior Customer Success Partner, Enterprise @ creatoriq / New York",
+   "b": "Customer Success Partner, Enterprise @ creatoriq / New York"
+  },
+  {
+   "k": 94,
+   "i": 34185,
+   "j": 34210,
+   "cosine": 0.9398,
+   "same_job": false,
+   "a": "Building Engineer @ ableserve / Philadelphia, PA",
+   "b": "Lead Building Engineer @ ableserve / Philadelphia, PA"
+  },
+  {
+   "k": 95,
+   "i": 24672,
+   "j": 24770,
+   "cosine": 0.9299,
+   "same_job": false,
+   "a": "Engineering Manager, Back End - Fintech (Bangkok based, relocation provided) @ Agoda / Bangkok (One Bangkok Office)",
+   "b": "Senior Engineering Manager - Fintech (Bangkok based, relocation provided) @ Agoda / Bangkok (One Bangkok Office)"
+  },
+  {
+   "k": 96,
+   "i": 44474,
+   "j": 44924,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "IT SPECIALIST (INFOSEC/NETWORK) @ Air National Guard Units / Middle River, Maryland",
+   "b": "IT SPECIALIST (INFOSEC/NETWORK) @ Air National Guard Units / Middle River, Maryland"
+  },
+  {
+   "k": 97,
+   "i": 46258,
+   "j": 46353,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "ENGINEER @ Naval Sea Systems Command / Naval Surface Warfare Center, Maryland",
+   "b": "ENGINEER @ Naval Sea Systems Command / Naval Surface Warfare Center, Maryland"
+  },
+  {
+   "k": 98,
+   "i": 2202,
+   "j": 2298,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Start an ABA Practice - Board Certified Behavior Analyst (BCBA) @ alpacahealth / Abilene, TX",
+   "b": "Start an ABA Practice - Board Certified Behavior Analyst (BCBA) @ alpacahealth / Abilene, TX"
+  },
+  {
+   "k": 99,
+   "i": 32922,
+   "j": 32923,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Sr. Supplier Quality Engineer @ Archer / San Jose, California, United States",
+   "b": "Sr. Supplier Quality Engineer @ Archer / San Jose, California, United States"
+  },
+  {
+   "k": 100,
+   "i": 46250,
+   "j": 46275,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "INTERDISCIPLINARY @ Defense Information Systems Agency / Fort Meade, Maryland",
+   "b": "INTERDISCIPLINARY @ Defense Information Systems Agency / Fort Meade, Maryland"
+  },
+  {
+   "k": 101,
+   "i": 16490,
+   "j": 16492,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Software Engineer, Core Platform (All Levels) @ heliux / HQ (San Francisco, CA)",
+   "b": "Software Engineer, Core Platform (All Levels) @ heliux / HQ (San Francisco, CA)"
+  },
+  {
+   "k": 102,
+   "i": 35134,
+   "j": 35136,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "General Application @ akabrands / Anywhere",
+   "b": "General Application @ akabrands / Anywhere"
+  },
+  {
+   "k": 103,
+   "i": 12798,
+   "j": 12801,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Machine Learning Engineer  @ faculty / UK - London",
+   "b": "Machine Learning Engineer @ faculty / UK - London"
+  },
+  {
+   "k": 104,
+   "i": 10469,
+   "j": 10471,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Technical Support Engineer II @ delinea / Home Office (Philippines)",
+   "b": "Technical Support Engineer II @ delinea / Home Office (Philippines)"
+  },
+  {
+   "k": 105,
+   "i": 44301,
+   "j": 44302,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "IT Specialist (CUSTSPT) @ Bureau of the Fiscal Service / Kansas City, Missouri",
+   "b": "IT Specialist (CUSTSPT) @ Bureau of the Fiscal Service / Kansas City, Missouri"
+  },
+  {
+   "k": 106,
+   "i": 12771,
+   "j": 12809,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Senior Machine Learning Engineer @ faculty / UK - London",
+   "b": "Senior Machine Learning Engineer  @ faculty / UK - London"
+  },
+  {
+   "k": 107,
+   "i": 32681,
+   "j": 32684,
+   "cosine": 0.9927,
+   "same_job": false,
+   "a": "Sr. Thermodynamics Performance Engineer  @ Arbor Energy / El Segundo, CA",
+   "b": "Thermodynamics Performance Engineer  @ Arbor Energy / El Segundo, CA"
+  },
+  {
+   "k": 108,
+   "i": 27386,
+   "j": 27387,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Enterprise Account Executive, Corporate @ AlphaSense / Singapore, Central, Singapore",
+   "b": "Enterprise Account Executive, Corporate @ AlphaSense / Singapore, Central, Singapore"
+  },
+  {
+   "k": 109,
+   "i": 46285,
+   "j": 46501,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Computer Engineer, AST - Software Systems @ Langley Research Center / Hampton, Virginia",
+   "b": "Computer Engineer, AST, Software Systems @ Langley Research Center / Hampton, Virginia"
+  },
+  {
+   "k": 110,
+   "i": 45479,
+   "j": 45891,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "ADMINISTRATIVE SUPPORT TECHNICIAN (OA) @ Air Force Personnel Center / March AFB, California",
+   "b": "ADMINISTRATIVE SUPPORT TECHNICIAN (OA) @ Air Force Personnel Center / March AFB, California"
+  },
+  {
+   "k": 111,
+   "i": 47234,
+   "j": 47435,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "IT SPECIALIST (SYSADMIN) @ Department of the Air Force / Dover AFB, Delaware",
+   "b": "IT SPECIALIST (SYSADMIN) @ Department of the Air Force / Dover AFB, Delaware"
+  },
+  {
+   "k": 112,
+   "i": 47141,
+   "j": 47148,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "LEAD MAIL CLERK- Temporary NTE 1 Year @ Internal Revenue Service / Covington, Kentucky",
+   "b": "LEAD MAIL CLERK- Temporary NTE 1 Year @ Internal Revenue Service / Covington, Kentucky"
+  },
+  {
+   "k": 113,
+   "i": 44323,
+   "j": 44372,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Information Technology Specialist @ Air Force Personnel Center / Andrews AFB, Maryland",
+   "b": "Information Technology Specialist @ Air Force Personnel Center / Andrews AFB, Maryland"
+  },
+  {
+   "k": 114,
+   "i": 10491,
+   "j": 10505,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Manager, Software Development Engineering @ delinea / U.S. Remote",
+   "b": "Manager, Software Development Engineering @ delinea / U.S. Remote"
+  },
+  {
+   "k": 115,
+   "i": 45826,
+   "j": 46057,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Computer Scientist/Computer Engineer @ Air Force Personnel Center / Eglin AFB, Florida",
+   "b": "Computer Scientist/Computer Engineer @ Air Force Personnel Center / Eglin AFB, Florida"
+  },
+  {
+   "k": 116,
+   "i": 12780,
+   "j": 12810,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "Principal Machine Learning Engineer @ faculty / UK - London",
+   "b": "Principal Machine Learning Engineer @ faculty / UK - London"
+  },
+  {
+   "k": 117,
+   "i": 47077,
+   "j": 47096,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "LEAD CLERK- Temporary NTE 1 Year @ Internal Revenue Service / Covington, Kentucky",
+   "b": "Lead Clerk- Temporary NTE 1 Year @ Internal Revenue Service / Covington, Kentucky"
+  },
+  {
+   "k": 118,
+   "i": 15861,
+   "j": 16141,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "IT Operations Analyst  @ harvey / San Francisco",
+   "b": "IT Operations Analyst @ harvey / San Francisco"
+  },
+  {
+   "k": 119,
+   "i": 46640,
+   "j": 46825,
+   "cosine": 1.0,
+   "same_job": true,
+   "a": "FACILITY SERVICES ASSISTANT @ National Park Service / Van Horn, Texas",
+   "b": "FACILITY SERVICES ASSISTANT @ National Park Service / Van Horn, Texas"
+  }
+ ]
+}

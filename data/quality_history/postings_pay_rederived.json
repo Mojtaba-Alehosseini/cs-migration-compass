@@ -1,0 +1,169 @@
+{
+ "schema": "package-15 postings pay re-derivation v1",
+ "min_n_to_publish": 30,
+ "corpus": {
+  "n_postings": 48267,
+  "n_after_dedupe": 45921,
+  "n_removed": 2346
+ },
+ "pipeline": [
+  "as published today (all occupations, duplicates included)",
+  "+ near-duplicate rows removed (threshold 0.98, precision 0.958)",
+  "+ restricted to titles the classifier ships as SW"
+ ],
+ "per_country": [
+  {
+   "country": "CA",
+   "published": 113191.58,
+   "n_published_basis": 9,
+   "n_after_dedupe": 9,
+   "n_software_only": 6,
+   "software_median_usd_year": 128121.14,
+   "ci_lo": 113192,
+   "ci_hi": 183463,
+   "ci_half_width_pct": 27.4,
+   "delta_vs_published_pct": 13.2,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "FR",
+   "published": 87150.25,
+   "n_published_basis": 9,
+   "n_after_dedupe": 9,
+   "n_software_only": 2,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "GB",
+   "published": 151420.6,
+   "n_published_basis": 21,
+   "n_after_dedupe": 21,
+   "n_software_only": 13,
+   "software_median_usd_year": 151420.6,
+   "ci_lo": 144837,
+   "ci_hi": 204089,
+   "ci_half_width_pct": 19.6,
+   "delta_vs_published_pct": -0.0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "JP",
+   "published": 77254.0,
+   "n_published_basis": 11,
+   "n_after_dedupe": 11,
+   "n_software_only": 3,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "NL",
+   "published": 73448.9,
+   "n_published_basis": 7,
+   "n_after_dedupe": 7,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "SG",
+   "published": 152969.52,
+   "n_published_basis": 5,
+   "n_after_dedupe": 5,
+   "n_software_only": 4,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "US",
+   "published": 82994.5,
+   "n_published_basis": 3980,
+   "n_after_dedupe": 3905,
+   "n_software_only": 1319,
+   "software_median_usd_year": 98688.0,
+   "ci_lo": 96489,
+   "ci_hi": 101141,
+   "ci_half_width_pct": 2.4,
+   "delta_vs_published_pct": 18.9,
+   "publishable_at_min_n": true
+  }
+ ],
+ "selection_bias_vs_eurostat_ict": [
+  {
+   "country": "GB",
+   "panel_share_pct": 4.986,
+   "ict_pct_of_employment": 5.6,
+   "ict_year": 2019,
+   "panel_postings": 2116,
+   "representativeness": 5.59
+  },
+  {
+   "country": "DE",
+   "panel_share_pct": 1.706,
+   "ict_pct_of_employment": 5.5,
+   "ict_year": 2025,
+   "panel_postings": 724,
+   "representativeness": 1.947
+  },
+  {
+   "country": "ES",
+   "panel_share_pct": 0.81,
+   "ict_pct_of_employment": 4.8,
+   "ict_year": 2025,
+   "panel_postings": 344,
+   "representativeness": 1.059
+  },
+  {
+   "country": "NL",
+   "panel_share_pct": 0.723,
+   "ict_pct_of_employment": 7.2,
+   "ict_year": 2025,
+   "panel_postings": 307,
+   "representativeness": 0.63
+  },
+  {
+   "country": "IE",
+   "panel_share_pct": 0.398,
+   "ict_pct_of_employment": 6.2,
+   "ict_year": 2025,
+   "panel_postings": 169,
+   "representativeness": 0.403
+  },
+  {
+   "country": "SE",
+   "panel_share_pct": 0.37,
+   "ict_pct_of_employment": 8.9,
+   "ict_year": 2025,
+   "panel_postings": 157,
+   "representativeness": 0.261
+  },
+  {
+   "country": "FI",
+   "panel_share_pct": 0.325,
+   "ict_pct_of_employment": 7.8,
+   "ict_year": 2025,
+   "panel_postings": 138,
+   "representativeness": 0.262
+  },
+  {
+   "country": "IT",
+   "panel_share_pct": 0.304,
+   "ict_pct_of_employment": 3.8,
+   "ict_year": 2025,
+   "panel_postings": 129,
+   "representativeness": 0.502
+  },
+  {
+   "country": "NO",
+   "panel_share_pct": 0.094,
+   "ict_pct_of_employment": 5.9,
+   "ict_year": 2025,
+   "panel_postings": 40,
+   "representativeness": 0.1
+  },
+  {
+   "country": "DK",
+   "panel_share_pct": 0.064,
+   "ict_pct_of_employment": 5.7,
+   "ict_year": 2025,
+   "panel_postings": 27,
+   "representativeness": 0.07
+  }
+ ]
+}

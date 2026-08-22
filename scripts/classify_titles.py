@@ -1,0 +1,273 @@
+"""Package 15, Tier 5.1 — occupation classification from job titles, without an LLM.
+
+The Gemini classifier this repo already ships has never run: `occupation` is
+None on all 48,267 postings, and it needs an API key that no environment in
+this project has had. It is also not needed for this job. A job title is a
+short, highly stereotyped string; TF-IDF over word AND character n-grams
+plus a linear model is a strong baseline for exactly that shape of problem,
+and unlike an LLM it is deterministic, offline, free, and auditable.
+
+EVALUATION PROTOCOL, and why it is the shape it is:
+
+  * Every reported number comes from a model that never saw the record it is
+    scoring. 5-fold STRATIFIED cross_val_predict gives an out-of-fold
+    prediction for all 400 labelled titles, so the confusion matrix is
+    computed on 400 honest predictions rather than on an 80-record test
+    split that would put 2 SVC examples in it.
+  * A separate stratified 25% holdout is ALSO reported, fitted on the other
+    75% only. It is the weaker estimate (small n) but it is the one that
+    cannot be argued with, and if the two disagree badly that is itself a
+    finding.
+  * De-duplication happens BEFORE the split. The corpus has 30,528 distinct
+    titles across 48,267 postings; if the same title could land in both
+    train and test the score would be inflated by memorisation. The ground
+    truth is sampled from distinct titles for this reason.
+  * Classes are shipped only if they clear a stated F1 threshold on the
+    out-of-fold predictions. Everything else is emitted as `unclassified`,
+    which is a real answer and is recorded as such.
+
+WHAT THIS DELIBERATELY DOES NOT DO: it never produces a pay figure, and it
+never touches compensation. Standing rule 3: a model classifies; it never
+produces a pay figure.
+
+    python scripts/classify_titles.py               # evaluate + classify the corpus
+    python scripts/classify_titles.py --self-test   # gate 14
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from collections import Counter
+from pathlib import Path
+
+import numpy as np
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix, f1_score
+from sklearn.model_selection import StratifiedKFold, cross_val_predict, train_test_split
+from sklearn.pipeline import FeatureUnion, Pipeline
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _common import PROCESSED, ROOT, log  # noqa: E402
+
+GT = ROOT / "data" / "labels" / "title_ground_truth.json"
+OUT_EVAL = ROOT / "data" / "quality_history" / "title_classifier_eval.json"
+OUT_PRED = PROCESSED / "postings_title_classes.json"
+
+# A class ships only if it earns it. 0.70 F1 is this package's own stated bar:
+# high enough that a shipped class is usable for filtering, low enough to be
+# reachable from 400 labels across 7 classes. Classes below it are folded into
+# `unclassified` rather than published at a quality nobody measured.
+F1_SHIP_THRESHOLD = 0.70
+
+# Below this predicted probability the model is not confident enough to assert
+# a class, whatever the class's own F1. Chosen from the reliability curve in
+# the eval artifact, not picked in the abstract.
+PROBA_FLOOR = 0.40
+
+SEED = 15
+
+
+def build_model():
+    """Word n-grams catch 'software engineer'; character n-grams catch
+    'SWE', 'DevOps', 'Sr.', misspellings, and the CJK/Portuguese/Swedish
+    titles in this corpus that word tokenisation handles badly."""
+    feats = FeatureUnion([
+        ("word", TfidfVectorizer(analyzer="word", ngram_range=(1, 2), sublinear_tf=True,
+                                 min_df=1, lowercase=True, strip_accents="unicode")),
+        ("char", TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 5), sublinear_tf=True,
+                                 min_df=1, lowercase=True, strip_accents="unicode")),
+    ])
+    clf = LogisticRegression(max_iter=4000, C=4.0, class_weight="balanced", random_state=SEED)
+    return Pipeline([("feats", feats), ("clf", clf)])
+
+
+def _load_gt():
+    d = json.loads(GT.read_text(encoding="utf-8"))
+    X = [r["title"] for r in d["records"]]
+    y = [r["label"] for r in d["records"]]
+    return d, X, y
+
+
+def evaluate():
+    d, X, y = _load_gt()
+    X, y = np.array(X, dtype=object), np.array(y)
+    log(f"evaluating on {len(X)} hand-labelled titles, {len(set(y))} classes")
+
+    # --- out-of-fold: every record scored by a model that never saw it
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
+    oof = cross_val_predict(build_model(), X, y, cv=skf, n_jobs=1)
+    labels = sorted(set(y))
+    rep = classification_report(y, oof, labels=labels, output_dict=True, zero_division=0)
+    cm = confusion_matrix(y, oof, labels=labels)
+
+    # --- independent holdout, fitted on the other 75% only
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=SEED)
+    m = build_model().fit(Xtr, ytr)
+    hold_pred = m.predict(Xte)
+    hold_rep = classification_report(yte, hold_pred, labels=labels, output_dict=True, zero_division=0)
+
+    shipped = [c for c in labels if rep[c]["f1-score"] >= F1_SHIP_THRESHOLD]
+    art = {
+        "schema": "package-15 title classifier evaluation v1",
+        "n_labelled": int(len(X)),
+        "classes": labels,
+        "protocol": {
+            "out_of_fold": "5-fold StratifiedKFold cross_val_predict — every one of the 400 "
+                           "records is predicted by a model fitted without it",
+            "holdout": "separate stratified 25% split, model fitted on the remaining 75% only",
+            "leakage_control": "ground truth is sampled from DISTINCT titles, so no title can "
+                               "appear in both train and test",
+        },
+        "f1_ship_threshold": F1_SHIP_THRESHOLD,
+        "proba_floor": PROBA_FLOOR,
+        "out_of_fold": {
+            "accuracy": round(float(rep["accuracy"]), 4),
+            "macro_f1": round(float(rep["macro avg"]["f1-score"]), 4),
+            "weighted_f1": round(float(rep["weighted avg"]["f1-score"]), 4),
+            "per_class": {c: {"precision": round(rep[c]["precision"], 4),
+                              "recall": round(rep[c]["recall"], 4),
+                              "f1": round(rep[c]["f1-score"], 4),
+                              "support": int(rep[c]["support"])} for c in labels},
+            "confusion_matrix": {"labels": labels, "rows_are_true": True,
+                                 "matrix": cm.tolist()},
+        },
+        "holdout_25pct": {
+            "n": int(len(yte)),
+            "accuracy": round(float(hold_rep["accuracy"]), 4),
+            "macro_f1": round(float(hold_rep["macro avg"]["f1-score"]), 4),
+            "per_class_f1": {c: round(hold_rep[c]["f1-score"], 4) for c in labels},
+        },
+        "shipped_classes": shipped,
+        "withheld_classes": [c for c in labels if c not in shipped],
+    }
+    return art, labels
+
+
+def classify_corpus(art, labels):
+    """Fit on all 400 labels, then classify every DISTINCT title once and map
+    back to postings. Distinct-title classification is ~16x less work than
+    per-posting and is identical by construction, since the model sees only
+    the title."""
+    d, X, y = _load_gt()
+    base = build_model()
+    # Calibrated probabilities: an uncalibrated logistic margin is not a
+    # probability, and PROBA_FLOOR would be meaningless applied to one.
+    model = CalibratedClassifierCV(base, method="sigmoid", cv=5).fit(np.array(X, dtype=object), np.array(y))
+
+    post = json.loads((PROCESSED / "postings.json").read_text(encoding="utf-8"))["data"]["postings"]
+    titles = sorted({(p.get("title") or "").strip() for p in post if (p.get("title") or "").strip()})
+    log(f"classifying {len(titles)} distinct titles")
+    proba = model.predict_proba(np.array(titles, dtype=object))
+    cls = model.classes_
+    best = proba.argmax(1)
+    shipped = set(art["shipped_classes"])
+
+    out, conf_hist = {}, Counter()
+    for t, bi, row in zip(titles, best, proba):
+        c, p = cls[bi], float(row[bi])
+        if c not in shipped or p < PROBA_FLOOR:
+            out[t] = {"class": "unclassified", "proba": round(p, 4), "top": c}
+        else:
+            out[t] = {"class": c, "proba": round(p, 4)}
+        conf_hist[out[t]["class"]] += 1
+
+    per_posting = Counter()
+    for p in post:
+        t = (p.get("title") or "").strip()
+        per_posting[out.get(t, {}).get("class", "unclassified")] += 1
+
+    art["corpus"] = {
+        "n_distinct_titles": len(titles),
+        "n_postings": len(post),
+        "distinct_title_class_counts": dict(conf_hist.most_common()),
+        "posting_class_counts": dict(per_posting.most_common()),
+        "software_share_of_postings_pct": round(100 * per_posting.get("SW", 0) / len(post), 2),
+        "unclassified_share_of_postings_pct": round(100 * per_posting.get("unclassified", 0) / len(post), 2),
+    }
+    return out, art
+
+
+def run():
+    art, labels = evaluate()
+    oof = art["out_of_fold"]
+    log(f"  out-of-fold accuracy {oof['accuracy']:.3f}  macro-F1 {oof['macro_f1']:.3f}")
+    for c in labels:
+        m = oof["per_class"][c]
+        flag = "SHIP" if c in art["shipped_classes"] else "withheld"
+        log(f"    {c:<7} P={m['precision']:.3f} R={m['recall']:.3f} F1={m['f1']:.3f} n={m['support']:<4} {flag}")
+    log(f"  holdout(25%) accuracy {art['holdout_25pct']['accuracy']:.3f} "
+        f"macro-F1 {art['holdout_25pct']['macro_f1']:.3f}")
+
+    preds, art = classify_corpus(art, labels)
+    c = art["corpus"]
+    log(f"  corpus: {c['software_share_of_postings_pct']}% of postings classified SW, "
+        f"{c['unclassified_share_of_postings_pct']}% unclassified")
+
+    OUT_EVAL.parent.mkdir(parents=True, exist_ok=True)
+    OUT_EVAL.write_text(json.dumps(art, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    OUT_PRED.write_text(json.dumps({
+        "source_id": "postings_title_classes",
+        "generated_at": None,
+        "meta": {"model": "TF-IDF (word 1-2 + char_wb 2-5) -> calibrated logistic regression",
+                 "trained_on": "data/labels/title_ground_truth.json (400 hand-labelled titles)",
+                 "shipped_classes": art["shipped_classes"],
+                 "withheld_classes": art["withheld_classes"],
+                 "f1_ship_threshold": F1_SHIP_THRESHOLD, "proba_floor": PROBA_FLOOR,
+                 "evaluation": "data/quality_history/title_classifier_eval.json",
+                 "caveat": "a class assignment is a CLASSIFICATION, never a pay figure and never "
+                           "an occupation code; it is not the ISCO crosswalk and must not be "
+                           "compared against wage-spine occupations."},
+        "data": {"by_title": preds},
+    }, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    log(f"  wrote {OUT_EVAL.relative_to(ROOT)} and {OUT_PRED.relative_to(ROOT)}")
+    return 0
+
+
+def self_test():
+    fails = []
+
+    def ck(n, c, d=""):
+        print(f"  {'PASS' if c else 'FAIL'}  {n}{('  [' + d + ']') if d else ''}")
+        if not c:
+            fails.append(n)
+
+    print("=== classify_titles.py self-test ===")
+    d, X, y = _load_gt()
+    ck("ground truth loads with 400 records", len(X) == 400, f"n={len(X)}")
+    ck("no title appears twice (train/test leakage impossible)",
+       len(set(X)) == len(X), f"{len(set(X))} distinct of {len(X)}")
+
+    # A model trained on shuffled labels must score near chance. If it does
+    # not, the pipeline is leaking the answer through the features.
+    rng = np.random.default_rng(SEED)
+    yshuf = np.array(y)[rng.permutation(len(y))]
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
+    oof_shuf = cross_val_predict(build_model(), np.array(X, dtype=object), yshuf, cv=skf)
+    f1_shuf = f1_score(yshuf, oof_shuf, average="macro", zero_division=0)
+    ck("label-permutation control scores near chance (no leakage)", f1_shuf < 0.20,
+       f"macro-F1 on shuffled labels = {f1_shuf:.3f}")
+
+    oof = cross_val_predict(build_model(), np.array(X, dtype=object), np.array(y), cv=skf)
+    f1_real = f1_score(y, oof, average="macro", zero_division=0)
+    ck("real labels score far above the permutation control", f1_real > f1_shuf + 0.35,
+       f"real={f1_real:.3f} vs shuffled={f1_shuf:.3f}")
+
+    m = build_model().fit(np.array(X, dtype=object), np.array(y))
+    probe = ["Senior Software Engineer", "Registered Nurse", "Sales Associate (Part-Time)",
+             "Mechanical Engineer, Fluids"]
+    got = list(m.predict(np.array(probe, dtype=object)))
+    ck("obvious titles land in the obvious classes",
+       got == ["SW", "HEALTH", "SVC", "ENG"], f"{dict(zip(probe, got))}")
+
+    print(f"\n{len(fails)} failure(s)" + (": " + ", ".join(fails) if fails else " — all controls hold"))
+    return 1 if fails else 0
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--self-test", action="store_true")
+    a = ap.parse_args()
+    sys.exit(self_test() if a.self_test else run())

@@ -1,0 +1,81 @@
+{
+ "schema": "package-15 dedupe evaluation v1",
+ "n_postings": 48267,
+ "normalised_exact": {
+  "groups": 2258,
+  "removable": 2702,
+  "removable_pct": 5.598
+ },
+ "near_duplicate": {
+  "threshold": 0.98,
+  "clusters": 2384,
+  "removable": 2884,
+  "removable_pct": 5.975
+ },
+ "threshold_tuning": [
+  {
+   "threshold": 0.7,
+   "tp": 29,
+   "fp": 33,
+   "fn": 3,
+   "precision": 0.4677,
+   "recall": 0.9062,
+   "f1": 0.617
+  },
+  {
+   "threshold": 0.75,
+   "tp": 29,
+   "fp": 23,
+   "fn": 3,
+   "precision": 0.5577,
+   "recall": 0.9062,
+   "f1": 0.6905
+  },
+  {
+   "threshold": 0.8,
+   "tp": 27,
+   "fp": 18,
+   "fn": 5,
+   "precision": 0.6,
+   "recall": 0.8438,
+   "f1": 0.7013
+  },
+  {
+   "threshold": 0.85,
+   "tp": 27,
+   "fp": 13,
+   "fn": 5,
+   "precision": 0.675,
+   "recall": 0.8438,
+   "f1": 0.75
+  },
+  {
+   "threshold": 0.9,
+   "tp": 26,
+   "fp": 10,
+   "fn": 6,
+   "precision": 0.7222,
+   "recall": 0.8125,
+   "f1": 0.7647
+  },
+  {
+   "threshold": 0.95,
+   "tp": 24,
+   "fp": 3,
+   "fn": 8,
+   "precision": 0.8889,
+   "recall": 0.75,
+   "f1": 0.8136
+  },
+  {
+   "threshold": 0.98,
+   "tp": 23,
+   "fp": 1,
+   "fn": 9,
+   "precision": 0.9583,
+   "recall": 0.7188,
+   "f1": 0.8214
+  }
+ ],
+ "labelled_pairs": 120
+}
