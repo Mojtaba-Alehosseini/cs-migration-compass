@@ -489,6 +489,25 @@
       "notes": "Run again once GEMINI_API_KEY is set."
     },
     {
+      "source_id": "postings_duplicate_clusters",
+      "name": "Postings near-duplicate clusters — package 15",
+      "urls": [],
+      "fetched_at": "2026-08-22T15:29:04+00:00",
+      "license": "Derived from data/processed/postings.json; adds no new source data.",
+      "redistribution": "derived — index clusters over postings already committed",
+      "transforms": [
+        "Normalised (title | company | location), removing formatting-only tokens but NOT seniority or location, which distinguish genuinely different vacancies.",
+        "Blocked by company, collapsed to distinct normalised keys, then TF-IDF char_wb(3,5) cosine within each block.",
+        "Threshold 0.98 tuned against 120 hand-labelled pairs sampled across the whole cosine range (data/labels/dedupe_pair_ground_truth.json); the de-duplicator's own precision and recall are in data/quality_history/dedupe_eval.json.",
+        "Union-find clustering. Nothing is deleted from postings.json — this file records WHICH rows are duplicates so a consumer can choose."
+      ],
+      "output": "data/processed/postings_duplicate_clusters.json",
+      "status": "ok",
+      "rows": 2384,
+      "coverage": "2884 removable rows of 48267 (5.98%)",
+      "notes": "Recall is bounded by company blocking: a cross-employer duplicate (the same requisition posted by an agency and the employer) is out of scope by construction."
+    },
+    {
       "source_id": "postings_greenhouse",
       "name": "Greenhouse Job Board API — advertised pay, per-job pay_transparency fan-out",
       "urls": [
@@ -583,6 +602,26 @@
       "rows": 56,
       "coverage": "6 verified companies, 56 postings",
       "notes": "Advertised pay — NEVER merged with survey-earnings data. Salary-free in this session's own sample; kept for volume and Nordic-market coverage per the work order's own explicit instruction for sources like this."
+    },
+    {
+      "source_id": "postings_title_classes",
+      "name": "Postings job-title occupation classes — TF-IDF + linear model, package 15",
+      "urls": [],
+      "fetched_at": "2026-08-22T15:28:44+00:00",
+      "license": "Derived from data/processed/postings.json, which carries each provider's own licence; this file adds a classification and no new source data.",
+      "redistribution": "derived — a label per distinct job title, computed offline from titles already committed in postings.json",
+      "transforms": [
+        "Hand-labelled 400 provider-stratified distinct titles by reading each one (data/labels/title_ground_truth.json); no keyword rule produced a label.",
+        "Fitted TF-IDF (word 1-2 + char_wb 2-5) into a calibrated logistic regression.",
+        "Evaluated out-of-fold (5-fold stratified) AND on a held-out 25% split; per-class precision/recall/F1 and the confusion matrix are in data/quality_history/title_classifier_eval.json.",
+        "Shipped only classes clearing F1 >= 0.7 out-of-fold; everything else, and anything below probability 0.4, is emitted as 'unclassified'.",
+        "Never produces or touches a pay figure — standing rule 3."
+      ],
+      "output": "data/processed/postings_title_classes.json",
+      "status": "ok",
+      "rows": 30528,
+      "coverage": "30528 distinct titles covering 48267 postings",
+      "notes": "A class here is NOT an ISCO occupation code and must never be compared against the wage spine's own occupations or crosswalk."
     },
     {
       "source_id": "postings_usajobs",
@@ -1171,5 +1210,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-21T18:11:11+00:00"
+  "updated_at": "2026-08-22T15:29:04+00:00"
 }

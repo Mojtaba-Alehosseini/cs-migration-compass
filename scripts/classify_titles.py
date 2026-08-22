@@ -50,7 +50,7 @@ from sklearn.model_selection import StratifiedKFold, cross_val_predict, train_te
 from sklearn.pipeline import FeatureUnion, Pipeline
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import PROCESSED, ROOT, log  # noqa: E402
+from _common import PROCESSED, ROOT, log, record_provenance, write_processed  # noqa: E402
 
 GT = ROOT / "data" / "labels" / "title_ground_truth.json"
 OUT_EVAL = ROOT / "data" / "quality_history" / "title_classifier_eval.json"
@@ -208,20 +208,51 @@ def run():
 
     OUT_EVAL.parent.mkdir(parents=True, exist_ok=True)
     OUT_EVAL.write_text(json.dumps(art, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-    OUT_PRED.write_text(json.dumps({
-        "source_id": "postings_title_classes",
-        "generated_at": None,
-        "meta": {"model": "TF-IDF (word 1-2 + char_wb 2-5) -> calibrated logistic regression",
-                 "trained_on": "data/labels/title_ground_truth.json (400 hand-labelled titles)",
-                 "shipped_classes": art["shipped_classes"],
-                 "withheld_classes": art["withheld_classes"],
-                 "f1_ship_threshold": F1_SHIP_THRESHOLD, "proba_floor": PROBA_FLOOR,
-                 "evaluation": "data/quality_history/title_classifier_eval.json",
-                 "caveat": "a class assignment is a CLASSIFICATION, never a pay figure and never "
-                           "an occupation code; it is not the ISCO crosswalk and must not be "
-                           "compared against wage-spine occupations."},
-        "data": {"by_title": preds},
-    }, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    write_processed("postings_title_classes",
+        {"classified_titles": [{"title": k, **v} for k, v in sorted(preds.items())]},
+        meta={"model": "TF-IDF (word 1-2 + char_wb 2-5) -> calibrated logistic regression",
+              "trained_on": "data/labels/title_ground_truth.json (400 hand-labelled titles)",
+              "shipped_classes": art["shipped_classes"],
+              "withheld_classes": art["withheld_classes"],
+              "f1_ship_threshold": F1_SHIP_THRESHOLD, "proba_floor": PROBA_FLOOR,
+              "out_of_fold_macro_f1": art["out_of_fold"]["macro_f1"],
+              "evaluation": "data/quality_history/title_classifier_eval.json",
+              "caveat": "a class assignment is a CLASSIFICATION, never a pay figure and never an "
+                        "occupation code; it is not the ISCO crosswalk and must not be compared "
+                        "against wage-spine occupations.",
+              "shape_note": "a LIST of records, deliberately, not a title-keyed dict. A dict keyed "
+                            "by free-text job titles is structurally indistinguishable from one "
+                            "keyed by occupation codes, and validate_data.py's own "
+                            "_occupation_like_records() correctly read it as occupation wage data "
+                            "and demanded a distribution flag. Same class of collision package 14 "
+                            "hit with advertised_by_country: the check is right, so the file "
+                            "changed shape rather than the check being weakened."})
+    record_provenance(
+        source_id="postings_title_classes",
+        name="Postings job-title occupation classes — TF-IDF + linear model, package 15",
+        urls=[],
+        license_note="Derived from data/processed/postings.json, which carries each provider's own "
+                     "licence; this file adds a classification and no new source data.",
+        redistribution="derived — a label per distinct job title, computed offline from titles "
+                       "already committed in postings.json",
+        transforms=[
+            "Hand-labelled 400 provider-stratified distinct titles by reading each one "
+            "(data/labels/title_ground_truth.json); no keyword rule produced a label.",
+            "Fitted TF-IDF (word 1-2 + char_wb 2-5) into a calibrated logistic regression.",
+            "Evaluated out-of-fold (5-fold stratified) AND on a held-out 25% split; per-class "
+            "precision/recall/F1 and the confusion matrix are in "
+            "data/quality_history/title_classifier_eval.json.",
+            f"Shipped only classes clearing F1 >= {F1_SHIP_THRESHOLD} out-of-fold; everything "
+            f"else, and anything below probability {PROBA_FLOOR}, is emitted as 'unclassified'.",
+            "Never produces or touches a pay figure — standing rule 3.",
+        ],
+        output=f"data/processed/{OUT_PRED.stem}.json",
+        rows=len(preds),
+        coverage=f"{art['corpus']['n_distinct_titles']} distinct titles covering "
+                 f"{art['corpus']['n_postings']} postings",
+        notes="A class here is NOT an ISCO occupation code and must never be compared against the "
+              "wage spine's own occupations or crosswalk.",
+    )
     log(f"  wrote {OUT_EVAL.relative_to(ROOT)} and {OUT_PRED.relative_to(ROOT)}")
     return 0
 

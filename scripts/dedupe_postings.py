@@ -35,7 +35,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import PROCESSED, ROOT, log  # noqa: E402
+from _common import PROCESSED, ROOT, log, record_provenance, write_processed  # noqa: E402
 
 OUT = PROCESSED / "postings_duplicate_clusters.json"
 EVAL = ROOT / "data" / "quality_history" / "dedupe_eval.json"
@@ -184,21 +184,19 @@ def run():
         for i in sorted(g)[1:]:
             keep.discard(i)
 
-    OUT.write_text(json.dumps({
-        "source_id": "postings_duplicate_clusters",
-        "meta": {"method": "TF-IDF char_wb(3,5) cosine over normalised title|company|location, "
-                           "blocked by company, union-find clustering",
-                 "threshold": thr, "blocking_recall_ceiling":
-                     "cross-employer duplicates are out of scope by construction",
-                 "oversized_blocks_skipped": skipped,
-                 "n_oversized_blocks": len(skipped),
-                 "evaluation": "data/quality_history/dedupe_eval.json"},
-        "data": {"n_postings": N, "n_clusters": len(groups),
-                 "removable_rows": near_excess,
-                 "removable_pct": round(100 * near_excess / N, 3),
-                 "keep_indices_count": len(keep),
-                 "clusters": [sorted(g) for g in list(groups.values())[:2000]]},
-    }, indent=1) + "\n", encoding="utf-8")
+    write_processed("postings_duplicate_clusters",
+        {"n_postings": N, "n_clusters": len(groups), "removable_rows": near_excess,
+         "removable_pct": round(100 * near_excess / N, 3),
+         "keep_indices_count": len(keep),
+         "clusters": [sorted(g) for g in groups.values()]},
+        meta={"method": "TF-IDF char_wb(3,5) cosine over normalised title|company|location, "
+                        "blocked by company, union-find clustering",
+              "threshold": thr,
+              "blocking_recall_ceiling": "cross-employer duplicates are out of scope by construction",
+              "n_oversized_blocks_skipped": len(skipped),
+              "evaluation": "data/quality_history/dedupe_eval.json",
+              "note": "nothing is deleted from postings.json; this records WHICH rows are "
+                      "duplicates so a consumer can choose."})
 
     EVAL.write_text(json.dumps({
         "schema": "package-15 dedupe evaluation v1",
@@ -210,6 +208,29 @@ def run():
         "threshold_tuning": tuning,
         "labelled_pairs": (gt or {}).get("n"),
     }, indent=1) + "\n", encoding="utf-8")
+    record_provenance(
+        source_id="postings_duplicate_clusters",
+        name="Postings near-duplicate clusters — package 15",
+        urls=[],
+        license_note="Derived from data/processed/postings.json; adds no new source data.",
+        redistribution="derived — index clusters over postings already committed",
+        transforms=[
+            "Normalised (title | company | location), removing formatting-only tokens but NOT "
+            "seniority or location, which distinguish genuinely different vacancies.",
+            "Blocked by company, collapsed to distinct normalised keys, then TF-IDF char_wb(3,5) "
+            "cosine within each block.",
+            f"Threshold {thr} tuned against 120 hand-labelled pairs sampled across the whole "
+            "cosine range (data/labels/dedupe_pair_ground_truth.json); the de-duplicator's own "
+            "precision and recall are in data/quality_history/dedupe_eval.json.",
+            "Union-find clustering. Nothing is deleted from postings.json — this file records "
+            "WHICH rows are duplicates so a consumer can choose.",
+        ],
+        output=f"data/processed/{OUT.stem}.json",
+        rows=len(groups),
+        coverage=f"{near_excess} removable rows of {N} ({100*near_excess/N:.2f}%)",
+        notes="Recall is bounded by company blocking: a cross-employer duplicate (the same "
+              "requisition posted by an agency and the employer) is out of scope by construction.",
+    )
     log(f"  wrote {OUT.name} and {EVAL.name}")
     return 0
 

@@ -39,7 +39,8 @@ SEED = 15
 
 def _load():
     post = json.loads((PROCESSED / "postings.json").read_text(encoding="utf-8"))["data"]
-    cls = json.loads((PROCESSED / "postings_title_classes.json").read_text(encoding="utf-8"))["data"]["by_title"]
+    raw = json.loads((PROCESSED / "postings_title_classes.json").read_text(encoding="utf-8"))["data"]
+    cls = {r["title"]: r for r in raw["classified_titles"]}
     dup = json.loads((PROCESSED / "postings_duplicate_clusters.json").read_text(encoding="utf-8"))["data"]
     return post, cls, dup
 
