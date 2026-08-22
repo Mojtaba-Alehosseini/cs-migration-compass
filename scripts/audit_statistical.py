@@ -475,9 +475,26 @@ def tier2_estimator_audit():
         for y, v in by.items():
             if len(v) >= 6:
                 uk_gaps.append(abs(100 * (st.mean(v) - st.median(v)) / st.median(v)))
-    finding("2-B", "the only arithmetic means the site takes are within-year temporal averages",
+    finding("2-B", "every arithmetic mean over a collection in this repo is a temporal average",
             "NO ESTIMATOR DEFECT",
-            where="site/src/data/explore.ts meanPerYear(), 2 call sites (Teranet index, UK HPI London price)",
+            where_site="site/src/data/explore.ts meanPerYear(), 2 call sites (Teranet index, "
+                       "UK HPI London price)",
+            where_pipeline=[
+                "scripts/src_climate_normals.py:124-125 — daily highs/lows averaged into a "
+                "monthly normal. An 'average high' IS definitionally a mean; there is no "
+                "alternative estimator to prefer. Measured anyway: |mean-median| across the 12 "
+                "monthly values is 0.45 C median, 0.96 C max across 21 cities.",
+                "scripts/src_indeed_postings.py:63 — ~30 daily index readings averaged into a "
+                "monthly index. Same class as meanPerYear: a temporal average of a smooth "
+                "series (month-over-month sd 5.3%), not a cross-sectional average over a "
+                "skewed population.",
+            ],
+            correction="An earlier revision of this finding said the site takes EXACTLY ONE "
+                       "arithmetic mean anywhere. That search was scoped to site/src only, and "
+                       "the claim was stated as though it covered the whole repo. Two more exist "
+                       "on the Python side, listed above. Both are temporal averages and neither "
+                       "is an estimator defect, so the conclusion is unchanged -- but the "
+                       "original claim was broader than the evidence behind it.",
             teranet_within_year_mean_vs_median_pct={"median": round(st.median(gaps), 3),
                                                    "max": round(max(gaps), 3)},
             uk_hpi_within_year_mean_vs_median_pct={"median": round(st.median(uk_gaps), 4),

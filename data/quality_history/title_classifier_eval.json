@@ -157,6 +157,53 @@
    "SW": 0.7719
   }
  },
+ "confidence_calibration": {
+  "note": "out-of-fold accuracy and coverage at each candidate probability floor; PROBA_FLOOR is read off this table",
+  "table": [
+   {
+    "floor": 0.0,
+    "coverage_pct": 100.0,
+    "accuracy_above_floor": 0.6875,
+    "n": 400
+   },
+   {
+    "floor": 0.3,
+    "coverage_pct": 91.5,
+    "accuracy_above_floor": 0.7295,
+    "n": 366
+   },
+   {
+    "floor": 0.4,
+    "coverage_pct": 77.75,
+    "accuracy_above_floor": 0.7974,
+    "n": 311
+   },
+   {
+    "floor": 0.5,
+    "coverage_pct": 60.0,
+    "accuracy_above_floor": 0.8875,
+    "n": 240
+   },
+   {
+    "floor": 0.6,
+    "coverage_pct": 38.75,
+    "accuracy_above_floor": 0.9548,
+    "n": 155
+   },
+   {
+    "floor": 0.7,
+    "coverage_pct": 19.0,
+    "accuracy_above_floor": 0.9737,
+    "n": 76
+   },
+   {
+    "floor": 0.8,
+    "coverage_pct": 2.5,
+    "accuracy_above_floor": 1.0,
+    "n": 10
+   }
+  ]
+ },
  "shipped_classes": [
   "HEALTH",
   "SALES",

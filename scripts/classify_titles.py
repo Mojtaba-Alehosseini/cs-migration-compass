@@ -63,8 +63,15 @@ OUT_PRED = PROCESSED / "postings_title_classes.json"
 F1_SHIP_THRESHOLD = 0.70
 
 # Below this predicted probability the model is not confident enough to assert
-# a class, whatever the class's own F1. Chosen from the reliability curve in
-# the eval artifact, not picked in the abstract.
+# a class, whatever the class's own F1. Justified by the accuracy-vs-coverage
+# table this script emits into the eval artifact (`confidence_calibration`):
+# an earlier revision of this comment claimed it came from "the reliability
+# curve in the eval artifact" when no such curve was ever computed, which is
+# exactly the kind of unsupported claim this package exists to catch. The
+# table is now real and the floor is read off it: out-of-fold, a 0.40 floor
+# keeps 77.8% coverage at 0.797 accuracy, against 0.730 at a 0.30 floor and
+# 0.888 at 0.50 for only 60.0% coverage. 0.40 is where accuracy first clears
+# ~0.80 without discarding a quarter of the corpus.
 PROBA_FLOOR = 0.40
 
 SEED = 15
@@ -110,6 +117,24 @@ def evaluate():
     hold_rep = classification_report(yte, hold_pred, labels=labels, output_dict=True, zero_division=0)
 
     shipped = [c for c in labels if rep[c]["f1-score"] >= F1_SHIP_THRESHOLD]
+
+    # Accuracy vs coverage at each candidate probability floor, computed
+    # out-of-fold so it is honest. This is what PROBA_FLOOR is read off:
+    # a floor is worth paying for only if the accuracy it buys exceeds the
+    # coverage it costs.
+    oof_proba = cross_val_predict(CalibratedClassifierCV(build_model(), method="sigmoid", cv=5),
+                                  X, y, cv=skf, method="predict_proba", n_jobs=1)
+    oof_cls = np.array(sorted(set(y)))
+    top_i = oof_proba.argmax(1)
+    top_p = oof_proba.max(1)
+    top_lab = oof_cls[top_i]
+    calib = []
+    for floor in [0.0, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80]:
+        m = top_p >= floor
+        calib.append({"floor": floor,
+                      "coverage_pct": round(100 * float(m.mean()), 2),
+                      "accuracy_above_floor": round(float((top_lab[m] == y[m]).mean()), 4) if m.any() else None,
+                      "n": int(m.sum())})
     art = {
         "schema": "package-15 title classifier evaluation v1",
         "n_labelled": int(len(X)),
@@ -139,6 +164,11 @@ def evaluate():
             "accuracy": round(float(hold_rep["accuracy"]), 4),
             "macro_f1": round(float(hold_rep["macro avg"]["f1-score"]), 4),
             "per_class_f1": {c: round(hold_rep[c]["f1-score"], 4) for c in labels},
+        },
+        "confidence_calibration": {
+            "note": "out-of-fold accuracy and coverage at each candidate probability floor; "
+                    "PROBA_FLOOR is read off this table",
+            "table": calib,
         },
         "shipped_classes": shipped,
         "withheld_classes": [c for c in labels if c not in shipped],
