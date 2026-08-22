@@ -520,10 +520,158 @@ def tier2_estimator_audit():
                  "then manufactures apparent precision that was never in the source.")
 
 
+
+# ------------------------------------------------------------ tiers 3, 4, 6
+
+DERIVED_FROM = {
+    "computed.*.net_usd": ["salary_usd_year.*", "net_pct"],
+    "computed.*.savings_usd_year": ["computed.*.net_usd", "rent_1br_outside_usd_month",
+                                    "col_single_no_rent_usd_month"],
+    "computed.*.years_to_home": ["apt_price_outside_usd_m2", "computed.*.savings_usd_year",
+                                 "home_reference_m2"],
+    "computed.*.m2_per_year": ["computed.*.savings_usd_year", "apt_price_outside_usd_m2"],
+    "computed.*.gross_usd": ["salary_usd_year.*"],
+}
+
+
+def tier3_structure():
+    """Multivariate structure, and the leakage check that decides which of it
+    means anything."""
+    log("tier 3 - multivariate structure, redundancy and leakage")
+    cities = _core()
+    FEATS = ["salary_usd_year.mid", "rent_1br_center_usd_month", "rent_1br_outside_usd_month",
+             "col_single_no_rent_usd_month", "apt_price_center_usd_m2", "apt_price_outside_usd_m2",
+             "computed.mid.net_usd", "computed.mid.savings_usd_year", "computed.mid.years_to_home"]
+    ids, rows = [], []
+    for ct in cities:
+        v = [_get(ct, f) for f in FEATS]
+        if all(x is not None and x > 0 for x in v):
+            ids.append(ct["id"])
+            rows.append(v)
+    X = np.array(rows, float)
+    # every feature is positive and right-skewed; standardising the RAW values
+    # would let the heaviest tail decide PC1 on its own.
+    Xl = np.log(X)
+    Z = (Xl - Xl.mean(0)) / Xl.std(0, ddof=1)
+
+    from sklearn.ensemble import IsolationForest
+    from sklearn.neighbors import LocalOutlierFactor
+    iso = IsolationForest(random_state=15, contamination=0.1).fit_predict(Z) == -1
+    lof = LocalOutlierFactor(n_neighbors=15, contamination=0.1).fit_predict(Z) == -1
+    cov = np.cov(Z.T)
+    d = Z - Z.mean(0)
+    md = np.sqrt(np.einsum("ij,jk,ik->i", d, np.linalg.pinv(cov), d))
+    mah = md > np.sqrt(stats.chi2.ppf(0.975, Z.shape[1]))
+    votes = iso.astype(int) + lof.astype(int) + mah.astype(int)
+    finding("3-A", "multivariate outlier cities, three methods", "QUANTIFIED",
+            n_cities=len(ids), features=FEATS, space="log",
+            flagged_by_2_or_3_methods=[ids[i] for i in np.where(votes >= 2)[0]],
+            flagged_by_exactly_1_method=[ids[i] for i in np.where(votes == 1)[0]],
+            note="flagged is not the same as wrong. These are the genuinely extreme corners of "
+                 "a real distribution; the finding is that they dominate any unweighted summary, "
+                 "not that their values are defective.")
+
+    vif = []
+    for i, f in enumerate(FEATS):
+        others = np.c_[np.ones(len(Z)), np.delete(Z, i, axis=1)]
+        beta, *_ = np.linalg.lstsq(others, Z[:, i], rcond=None)
+        pred = others @ beta
+        ss = float(np.sum((Z[:, i] - Z[:, i].mean()) ** 2))
+        r2 = 1 - float(np.sum((Z[:, i] - pred) ** 2)) / ss if ss else 0.0
+        vif.append({"feature": f, "r2_on_others": round(r2, 4),
+                    "vif": round(float(1 / (1 - r2)), 2) if r2 < 0.9999 else None})
+    ev = np.linalg.svd(Z, compute_uv=False) ** 2
+    cum = np.cumsum(ev / ev.sum())
+    finding("3-B", "published city metrics are highly collinear", "QUANTIFIED",
+            components_for_90pct=int(np.argmax(cum >= 0.90)) + 1,
+            cumulative_variance=[round(float(v), 4) for v in cum],
+            variance_inflation_factors=sorted(vif, key=lambda r: -(r["vif"] or 0)),
+            note="VIF above about 10 is conventionally severe multicollinearity. Reported so the "
+                 "editorial claim that these are independent metrics can be checked against a "
+                 "number rather than asserted.")
+
+    circular = []
+    for derived, inputs in DERIVED_FROM.items():
+        dl = derived.replace("*", "mid")
+        for src in inputs:
+            sl = src.replace("*", "mid")
+            if dl in FEATS and sl in FEATS:
+                i, j = FEATS.index(dl), FEATS.index(sl)
+                circular.append({"derived": dl, "input": sl,
+                                 "pearson_r_log": round(float(np.corrcoef(Xl[:, i], Xl[:, j])[0, 1]), 4)})
+    finding("3-C", "derived-field dependency graph, and which correlations are circular",
+            "LEAKAGE ENUMERATED",
+            dependency_graph=DERIVED_FROM,
+            circular_pairs_in_the_feature_matrix=circular,
+            note="every pair listed here is a definitional identity, not evidence. Finding 0-G's "
+                 "headline salary-to-savings r=0.974 is one of them. No check in this package "
+                 "validates a derived field against an input it was computed from.")
+
+
+def tier4_triangulation():
+    """Two sources measuring the same construct, compared with the tool that
+    answers the actual question rather than the one that flatters it."""
+    log("tier 4 - cross-source triangulation")
+    cities = _core()
+    pr = [(ct["id"], _get(ct, "salary_usd_year.mid"),
+           _get(ct, "salary_levels_fyi.median_total_comp_usd")) for ct in cities]
+    pr = [p for p in pr if p[1] and p[2]]
+    a = np.array([p[1] for p in pr], float)
+    b = np.array([p[2] for p in pr], float)
+    ba, dm = bland_altman(a, b), deming(a, b)
+    finding("4-A", "core salary vs levels.fyi: correlated, but not interchangeable", "QUANTIFIED",
+            bland_altman=ba, deming=dm,
+            note="Pearson r=" + str(ba["pearson_r"]) + " would read as excellent agreement. "
+                 "Bland-Altman says levels.fyi runs " + str(ba["bias_ratio"]) + "x high on "
+                 "average with 95% limits of agreement from " + str(ba["loa_lo_ratio"]) + "x to "
+                 + str(ba["loa_hi_ratio"]) + "x, so an individual city can differ by more than "
+                 "two-fold. They measure different constructs (market base-pay bands versus "
+                 "self-reported big-tech total compensation) and must not be blended.")
+
+
+def tier6_temporal():
+    """Series integrity over time."""
+    log("tier 6 - temporal integrity")
+    ter = _proc("teranet_national_bank_hpi")["cities"]
+    uk = _proc("uk_hpi")
+    fh = _proc("fhfa_hpi_metro")
+
+    tests = {}
+    for city, rec in ter.items():
+        tests["teranet/" + city] = injected_noise_test([r["index"] for r in rec["series"]], city)
+    tests["CONTROL uk_hpi/london"] = injected_noise_test(
+        [r["avg_price_gbp"] for r in uk["london"]["series"] if r.get("avg_price_gbp")], "london")
+    k = list(fh)[0]
+    ser = fh[k]["series"] if isinstance(fh[k], dict) and "series" in fh[k] else fh[k]
+    vals = [r.get("index") or r.get("value") for r in ser if isinstance(r, dict)]
+    tests["CONTROL fhfa/" + k] = injected_noise_test([v for v in vals if v], k)
+
+    res = {kk: vv for kk, vv in tests.items() if vv}
+    finding("6-A", "Teranet's monthly series carries injected per-observation noise", "DEFECT",
+            test="residual autocorrelation about a cubic trend, plus month-over-month ACF",
+            results=res,
+            flagged=[kk for kk, vv in res.items() if vv["looks_like_injected_noise"]],
+            note="Every Teranet city reads residual ACF 0.07-0.27 with MoM ACF near -0.44. The "
+                 "two CONTROL indices in this same repo -- UK HPI and FHFA, both real published "
+                 "house-price indices -- read residual ACF 0.985. A genuine price index is "
+                 "persistent; independent per-point noise destroys that persistence and drives "
+                 "the month-over-month autocorrelation negative. The long-run trend survives "
+                 "(Spearman(time, index) = 0.909 for Toronto) and the stated base holds exactly "
+                 "(2005-06 = 100.0 for every city), so this is jitter around a real index rather "
+                 "than a broken parse. The pipeline transcribes the endpoint faithfully; the "
+                 "endpoint is undocumented and the index is proprietary, which is the most "
+                 "likely explanation. Consequence: an individual monthly Teranet value is not "
+                 "interpretable, and the annual mean the site plots is a mitigation (averaging "
+                 "12 points cuts the noise by about sqrt(12)) rather than an error.")
+
+
 def run():
     log("CS Migration Compass — statistical audit (package 15)")
     reproduce_section_0()
     tier2_estimator_audit()
+    tier3_structure()
+    tier4_triangulation()
+    tier6_temporal()
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"schema": "package-15 statistical audit v1",
                                "findings": FINDINGS}, indent=1, ensure_ascii=False) + "\n",

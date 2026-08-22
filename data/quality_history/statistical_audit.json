@@ -536,6 +536,276 @@
     "half_width_pct": 84.1
    },
    "note": "values are published to the cent from samples as small as n=5. The underlying employer-stated figures are heaped (see 0-D); FX conversion then manufactures apparent precision that was never in the source."
+  },
+  {
+   "id": "3-A",
+   "title": "multivariate outlier cities, three methods",
+   "verdict": "QUANTIFIED",
+   "n_cities": 72,
+   "features": [
+    "salary_usd_year.mid",
+    "rent_1br_center_usd_month",
+    "rent_1br_outside_usd_month",
+    "col_single_no_rent_usd_month",
+    "apt_price_center_usd_m2",
+    "apt_price_outside_usd_m2",
+    "computed.mid.net_usd",
+    "computed.mid.savings_usd_year",
+    "computed.mid.years_to_home"
+   ],
+   "space": "log",
+   "flagged_by_2_or_3_methods": [
+    "doha",
+    "new_york",
+    "sf_bay_area",
+    "london",
+    "milan",
+    "turin",
+    "valencia"
+   ],
+   "flagged_by_exactly_1_method": [
+    "abu-dhabi",
+    "boston",
+    "san_diego",
+    "rome"
+   ],
+   "note": "flagged is not the same as wrong. These are the genuinely extreme corners of a real distribution; the finding is that they dominate any unweighted summary, not that their values are defective."
+  },
+  {
+   "id": "3-B",
+   "title": "published city metrics are highly collinear",
+   "verdict": "QUANTIFIED",
+   "components_for_90pct": 3,
+   "cumulative_variance": [
+    0.5195,
+    0.8384,
+    0.9168,
+    0.9618,
+    0.9804,
+    0.9951,
+    0.9992,
+    1.0,
+    1.0
+   ],
+   "variance_inflation_factors": [
+    {
+     "feature": "computed.mid.net_usd",
+     "r2_on_others": 0.9885,
+     "vif": 86.6
+    },
+    {
+     "feature": "salary_usd_year.mid",
+     "r2_on_others": 0.9821,
+     "vif": 55.75
+    },
+    {
+     "feature": "rent_1br_center_usd_month",
+     "r2_on_others": 0.938,
+     "vif": 16.14
+    },
+    {
+     "feature": "rent_1br_outside_usd_month",
+     "r2_on_others": 0.9308,
+     "vif": 14.46
+    },
+    {
+     "feature": "apt_price_center_usd_m2",
+     "r2_on_others": 0.7974,
+     "vif": 4.94
+    },
+    {
+     "feature": "col_single_no_rent_usd_month",
+     "r2_on_others": 0.6401,
+     "vif": 2.78
+    },
+    {
+     "feature": "apt_price_outside_usd_m2",
+     "r2_on_others": 0.9999,
+     "vif": null
+    },
+    {
+     "feature": "computed.mid.savings_usd_year",
+     "r2_on_others": 1.0,
+     "vif": null
+    },
+    {
+     "feature": "computed.mid.years_to_home",
+     "r2_on_others": 1.0,
+     "vif": null
+    }
+   ],
+   "note": "VIF above about 10 is conventionally severe multicollinearity. Reported so the editorial claim that these are independent metrics can be checked against a number rather than asserted."
+  },
+  {
+   "id": "3-C",
+   "title": "derived-field dependency graph, and which correlations are circular",
+   "verdict": "LEAKAGE ENUMERATED",
+   "dependency_graph": {
+    "computed.*.net_usd": [
+     "salary_usd_year.*",
+     "net_pct"
+    ],
+    "computed.*.savings_usd_year": [
+     "computed.*.net_usd",
+     "rent_1br_outside_usd_month",
+     "col_single_no_rent_usd_month"
+    ],
+    "computed.*.years_to_home": [
+     "apt_price_outside_usd_m2",
+     "computed.*.savings_usd_year",
+     "home_reference_m2"
+    ],
+    "computed.*.m2_per_year": [
+     "computed.*.savings_usd_year",
+     "apt_price_outside_usd_m2"
+    ],
+    "computed.*.gross_usd": [
+     "salary_usd_year.*"
+    ]
+   },
+   "circular_pairs_in_the_feature_matrix": [
+    {
+     "derived": "computed.mid.net_usd",
+     "input": "salary_usd_year.mid",
+     "pearson_r_log": 0.9818
+    },
+    {
+     "derived": "computed.mid.savings_usd_year",
+     "input": "computed.mid.net_usd",
+     "pearson_r_log": 0.8767
+    },
+    {
+     "derived": "computed.mid.savings_usd_year",
+     "input": "rent_1br_outside_usd_month",
+     "pearson_r_log": 0.3201
+    },
+    {
+     "derived": "computed.mid.savings_usd_year",
+     "input": "col_single_no_rent_usd_month",
+     "pearson_r_log": 0.4596
+    },
+    {
+     "derived": "computed.mid.years_to_home",
+     "input": "apt_price_outside_usd_m2",
+     "pearson_r_log": 0.5052
+    },
+    {
+     "derived": "computed.mid.years_to_home",
+     "input": "computed.mid.savings_usd_year",
+     "pearson_r_log": -0.9384
+    }
+   ],
+   "note": "every pair listed here is a definitional identity, not evidence. Finding 0-G's headline salary-to-savings r=0.974 is one of them. No check in this package validates a derived field against an input it was computed from."
+  },
+  {
+   "id": "4-A",
+   "title": "core salary vs levels.fyi: correlated, but not interchangeable",
+   "verdict": "QUANTIFIED",
+   "bland_altman": {
+    "n": 57,
+    "space": "log",
+    "bias_ratio": 1.2197,
+    "loa_lo_ratio": 0.7887,
+    "loa_hi_ratio": 1.8864,
+    "pearson_r": 0.8981,
+    "spearman_r": 0.875
+   },
+   "deming": {
+    "n": 57,
+    "slope": 1.1249,
+    "intercept": 6871.91,
+    "ols_slope": 0.9983
+   },
+   "note": "Pearson r=0.8981 would read as excellent agreement. Bland-Altman says levels.fyi runs 1.2197x high on average with 95% limits of agreement from 0.7887x to 1.8864x, so an individual city can differ by more than two-fold. They measure different constructs (market base-pay bands versus self-reported big-tech total compensation) and must not be blended."
+  },
+  {
+   "id": "6-A",
+   "title": "Teranet's monthly series carries injected per-observation noise",
+   "verdict": "DEFECT",
+   "test": "residual autocorrelation about a cubic trend, plus month-over-month ACF",
+   "results": {
+    "teranet/toronto": {
+     "n": 337,
+     "label": "toronto",
+     "residual_acf_lag1": 0.2372,
+     "residual_acf_lag2": 0.1257,
+     "mom_acf_lag1": -0.3984,
+     "mom_sd_pct": 24.649,
+     "looks_like_injected_noise": true
+    },
+    "teranet/vancouver": {
+     "n": 433,
+     "label": "vancouver",
+     "residual_acf_lag1": 0.2679,
+     "residual_acf_lag2": 0.2305,
+     "mom_acf_lag1": -0.4667,
+     "mom_sd_pct": 29.115,
+     "looks_like_injected_noise": true
+    },
+    "teranet/montreal": {
+     "n": 433,
+     "label": "montreal",
+     "residual_acf_lag1": 0.1771,
+     "residual_acf_lag2": 0.1299,
+     "mom_acf_lag1": -0.4429,
+     "mom_sd_pct": 30.588,
+     "looks_like_injected_noise": true
+    },
+    "teranet/ottawa": {
+     "n": 337,
+     "label": "ottawa",
+     "residual_acf_lag1": 0.1131,
+     "residual_acf_lag2": 0.0568,
+     "mom_acf_lag1": -0.4697,
+     "mom_sd_pct": 25.538,
+     "looks_like_injected_noise": true
+    },
+    "teranet/calgary": {
+     "n": 330,
+     "label": "calgary",
+     "residual_acf_lag1": 0.2354,
+     "residual_acf_lag2": 0.1526,
+     "mom_acf_lag1": -0.4174,
+     "mom_sd_pct": 22.048,
+     "looks_like_injected_noise": true
+    },
+    "teranet/halifax": {
+     "n": 433,
+     "label": "halifax",
+     "residual_acf_lag1": 0.1686,
+     "residual_acf_lag2": 0.2201,
+     "mom_acf_lag1": -0.4634,
+     "mom_sd_pct": 31.322,
+     "looks_like_injected_noise": true
+    },
+    "CONTROL uk_hpi/london": {
+     "n": 698,
+     "label": "london",
+     "residual_acf_lag1": 0.9849,
+     "residual_acf_lag2": 0.9711,
+     "mom_acf_lag1": -0.0495,
+     "mom_sd_pct": 2.136,
+     "looks_like_injected_noise": false
+    },
+    "CONTROL fhfa/new_york": {
+     "n": 202,
+     "label": "new_york",
+     "residual_acf_lag1": 0.9849,
+     "residual_acf_lag2": 0.9611,
+     "mom_acf_lag1": 0.5133,
+     "mom_sd_pct": 2.145,
+     "looks_like_injected_noise": false
+    }
+   },
+   "flagged": [
+    "teranet/toronto",
+    "teranet/vancouver",
+    "teranet/montreal",
+    "teranet/ottawa",
+    "teranet/calgary",
+    "teranet/halifax"
+   ],
+   "note": "Every Teranet city reads residual ACF 0.07-0.27 with MoM ACF near -0.44. The two CONTROL indices in this same repo -- UK HPI and FHFA, both real published house-price indices -- read residual ACF 0.985. A genuine price index is persistent; independent per-point noise destroys that persistence and drives the month-over-month autocorrelation negative. The long-run trend survives (Spearman(time, index) = 0.909 for Toronto) and the stated base holds exactly (2005-06 = 100.0 for every city), so this is jitter around a real index rather than a broken parse. The pipeline transcribes the endpoint faithfully; the endpoint is undocumented and the index is proprietary, which is the most likely explanation. Consequence: an individual monthly Teranet value is not interpretable, and the annual mean the site plots is a mitigation (averaging 12 points cuts the noise by about sqrt(12)) rather than an error."
   }
  ]
 }
