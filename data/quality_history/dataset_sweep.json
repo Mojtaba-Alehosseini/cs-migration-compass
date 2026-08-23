@@ -3812,10 +3812,10 @@
   },
   "city_coordinates": {
    "source_id": "city_coordinates",
-   "generated_at": "2026-08-10T07:48:14+00:00",
+   "generated_at": "2026-08-23T04:04:38+00:00",
    "vintage": {
     "latest_period_in_data": null,
-    "generated_at": "2026-08-10",
+    "generated_at": "2026-08-23",
     "years_behind_generation": null
    },
    "coverage": {
@@ -3859,7 +3859,7 @@
     "n": 146,
     "n_negative": 51,
     "n_zero": 0,
-    "min": -125.4494,
+    "min": -123.1193,
     "max": 153.4309
    }
   }
