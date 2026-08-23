@@ -213,6 +213,30 @@ export function Postings() {
   }, [filtered, view])
   const maxDot = Math.max(1, ...mapDots.map((d) => d.count))
 
+  // Package 16 — the caption used to read "one dot per resolved country", which
+  // was never true: the coordinate table holds 42 countries and the panel
+  // resolves 100, so 58 were silently dropped by the filter above. Widening
+  // country resolution from 12.1% to 9.4% unresolved made it worse (74 -> 100
+  // countries) without touching the table, which is what turned a quiet
+  // inaccuracy into a visible one. Rather than assert a number that drifts, the
+  // gap is computed from the same table the dots come from.
+  const mapOmitted = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const p of data?.postings ?? []) {
+      if (p.country) counts.set(p.country, (counts.get(p.country) ?? 0) + 1)
+    }
+    const missing = [...counts.entries()].filter(([cc]) => !COUNTRY_LATLON[cc])
+    const total = [...counts.values()].reduce((s, k) => s + k, 0)
+    const n = missing.reduce((s, [, k]) => s + k, 0)
+    return {
+      n,
+      countries: missing.length,
+      shownCountries: Object.keys(COUNTRY_LATLON).length,
+      pct: total ? Math.round((100 * n) / total) : 0,
+      largest: missing.sort((a, b) => b[1] - a[1]).slice(0, 3).map(([cc]) => cc),
+    }
+  }, [data])
+
   const providersAvailable = data ? Object.entries(data.provider_summary).filter(([, v]) => v.available) : []
   const withComp = data ? data.postings.filter((p) => p.compensation).length : 0
   // Package 16 — split once, here, so the panel and the withheld register can
@@ -438,7 +462,18 @@ export function Postings() {
           {view === 'map' ? (
             <div className="panel" style={{ marginTop: 12 }}>
               <h2>Where these postings are</h2>
-              <div className="sub">One dot per resolved country, sized by posting count. Never per individual posting — no source in this package publishes coordinates precise enough for that.</div>
+              <div className="sub">
+                One dot per resolved country <b>this map holds a point for</b>, sized by posting
+                count. Never per individual posting — no source in this package publishes
+                coordinates precise enough for that.
+                {mapOmitted.n > 0 && (
+                  <> {' '}The map's coordinate table covers {mapOmitted.shownCountries} countries;{' '}
+                    <b>{mapOmitted.n.toLocaleString()} postings ({mapOmitted.pct}%) across{' '}
+                    {mapOmitted.countries} others are not drawn</b> — largest{' '}
+                    {mapOmitted.largest.join(', ')}. They are still in the list and the counts above.
+                  </>
+                )}
+              </div>
               <svg viewBox={`0 0 ${MAP.W} ${MAP.H}`} style={{ width: '100%', height: 'auto', marginTop: 10 }} role="img"
                 aria-label={`${mapDots.length} countries with postings, largest: ${mapDots.slice().sort((a, b) => b.count - a.count)[0]?.cc ?? 'none'}`}>
                 <path d={LAND_PATH} fill="var(--surface-raised)" stroke="var(--line)" strokeWidth={0.5} />
