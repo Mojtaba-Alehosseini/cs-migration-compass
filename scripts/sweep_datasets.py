@@ -367,14 +367,12 @@ def sweep_one(sid: str, doc: dict, controls: dict) -> dict:
     return rec
 
 
-IDENTITIES = {
-    "eurostat_ict_specialists": "ict_specialists_thousands / total employment should ≈ "
-                                "ict_share_of_employment_pct — checked against "
-                                "eurostat_total_employment",
-    "un_wpp": "total_population / land area should ≈ population_density",
-    "world_bank": "gdp_per_capita_usd and gdp_per_capita_ppp_intl must agree in rank order for "
-                  "countries with similar price levels",
-}
+# NOTE: only ONE cross-dataset identity is implemented, in check_identities()
+# below. An earlier revision declared three here in a constant nothing read,
+# which advertised coverage that did not exist — the other two (un_wpp density
+# against land area; world_bank USD versus PPP rank order) are not computed and
+# are listed in REPORT-P16.md under what was not done, where an unimplemented
+# check belongs.
 
 
 def check_identities() -> dict:

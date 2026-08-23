@@ -24,8 +24,8 @@ import { UnstableMark } from '../components/Unstable'
 import { useToast } from '../components/Toast'
 import { QUESTIONS, pickColor } from '../data/questions'
 import type { SecondAxis } from '../data/questions'
-import { money, years } from '../data/format'
-import { savingsPerYear, yearsToHome, type Budget } from '../data/compute'
+import { dropApprox, money, years } from '../data/format'
+import { savingsPerYear, stabilityOf, yearsToHome, type Budget } from '../data/compute'
 import { downloadCsv } from '../lib/export'
 import type { City } from '../data/types'
 
@@ -223,7 +223,16 @@ export function Home() {
                   {/* The same marker the table and Compare use: this question's
                       axis is years-to-home, which can be rounding-limited. */}
                   {question.id === 'home' && <UnstableMark city={c} band="mid" />}
-                  <b className="tnum">{question.fmt(question.value(c, countryOf(c)))}</b>{' '}
+                  {/* Package 16 — dropApprox, for the same reason Compare and Position
+                    * use it: the "≈" above is the stronger marker and the formatter
+                    * emits one too, so this rendered "≈≈never" and "≈~23 yrs".
+                    * Unstable.tsx's own comment claimed every caller stripped it;
+                    * three did not. */}
+                  <b className="tnum">
+                    {question.id === 'home' && stabilityOf(c, 'mid') === 'unstable'
+                      ? dropApprox(question.fmt(question.value(c, countryOf(c))))
+                      : question.fmt(question.value(c, countryOf(c)))}
+                  </b>{' '}
                   <button onClick={() => toggle(c.id)} aria-label={`Remove ${c.name}`}
                     style={{ color: 'var(--ink-3)', padding: '0 2px' }}>✕</button>
                 </span>
@@ -303,7 +312,11 @@ export function Home() {
                   </td>
                   <td style={cell}>
                     {question.id === 'home' && <UnstableMark city={city} band="mid" />}
-                    <span className="tnum">{question.fmt(v)}</span>
+                    <span className="tnum">
+                      {question.id === 'home' && stabilityOf(city, 'mid') === 'unstable'
+                        ? dropApprox(question.fmt(v))
+                        : question.fmt(v)}
+                    </span>
                   </td>
                   <td style={cell}><span className="tnum">{money(city.salary_usd_year.mid)}</span></td>
                   <td style={cell}><span className="tnum">{money(savingsPerYear(city, 'mid'))}</span></td>

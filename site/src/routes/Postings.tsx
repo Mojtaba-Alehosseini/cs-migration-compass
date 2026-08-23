@@ -444,29 +444,44 @@ export function Postings() {
                   Too few to quote a median
                 </h3>
                 <div className="sub" style={{ marginBottom: 8 }}>
-                  Counts below are postings that <b>state an annual pay range</b> — not every
-                  posting harvested. Most postings state no pay at all, which is why a country with
-                  thousands of listings can still show single digits here. None of these reaches{' '}
-                  {data!.pay_summary_min_n} distinct software roles with a pay range, so none gets a
-                  median. Their counts are real; a median of them would not be. Shown rather than
-                  hidden, because the gap is the finding.
+                  These counts are <b>much smaller than each country's posting total</b>, and two
+                  filters explain almost all of the gap. Most advertisements state no pay at all, or
+                  state it hourly or monthly rather than annually. Then, for every country except
+                  the US, <b>the current year cannot be converted to USD</b>: the World Bank
+                  exchange-rate series ends at 2025, and this site never substitutes a neighbouring
+                  year's rate. That removes 88–92% of the annual-pay postings for Great Britain,
+                  Canada, Germany and France — almost all of them 2026. So these are not simply
+                  countries with little data; they are countries whose recent data cannot yet be
+                  priced. None reaches {data!.pay_summary_min_n} qualifying software roles, so none
+                  gets a median. Shown rather than hidden, because the gap is the finding.
                 </div>
                 {/* Package 16 — bounded, so the panel's height does not depend on
                   * how many countries happen to fall below the floor. Unbounded, it
                   * rendered 1,115px against a 346px skeleton and cost CLS 0.254,
                   * which is 13 points of the Lighthouse performance score on the one
                   * route that was already the site's worst. Found by gate 12. */}
-                <div style={{ maxHeight: 260, overflowY: 'auto' }}>
+                <div
+                  tabIndex={0}
+                  role="region"
+                  aria-label="Countries withheld from the advertised-pay figure, scrollable"
+                  style={{ maxHeight: 260, overflowY: 'auto' }}
+                >
                 <table className="tbl">
                   <caption className="sr-only">
-                    Countries withheld from the advertised-pay figure, with their counts of postings stating an annual pay range
+                    Countries withheld from the advertised-pay figure, with their counts of postings whose annual pay could be priced in USD
                   </caption>
                   <thead>
                     <tr>
                       <th scope="col">Country</th>
-                      <th scope="col" style={{ textAlign: 'right' }}>With pay range</th>
-                      <th scope="col" style={{ textAlign: 'right' }}>Distinct roles</th>
-                      <th scope="col" style={{ textAlign: 'right' }}>…of those, software</th>
+                      {/* Package 16 — these headers each named a bigger quantity than the
+                        * number beneath them. "With pay range" showed 21 for GB, which has
+                        * 346 postings with a pay range; the 21 was annual-and-convertible.
+                        * "Distinct roles" showed 20 against GB's actual 2,063, reusing a
+                        * term this page defines two panels above. Found by an adversarial
+                        * review reading the rendered page. */}
+                      <th scope="col" style={{ textAlign: 'right' }}>Annual pay, priced in USD</th>
+                      <th scope="col" style={{ textAlign: 'right' }}>…once per role</th>
+                      <th scope="col" style={{ textAlign: 'right' }}>…software, recent</th>
                       <th scope="col">Why withheld</th>
                     </tr>
                   </thead>

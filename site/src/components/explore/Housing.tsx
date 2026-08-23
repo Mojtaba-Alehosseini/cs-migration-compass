@@ -194,6 +194,14 @@ function CityRibbons({ data }: { data: HousingData }) {
    * a regression over ~28 points averages it down, while a ratio of two points
    * averages nothing. This reports a DIRECTION, which is exactly what the
    * fitness verdict says survives, and never a level. */
+  /** The first year a series actually has, so a trend is never labelled with a
+   *  window it was not fitted to. Toronto starts 1998 and Vancouver 1990; both
+   *  were captioned "since 1998", and Vancouver's real 1998-onward slope is
+   *  +5.6%/yr against the +4.4% shown. The sparkline draws from 1998, so the
+   *  eight invisible years were also setting the y-scale. */
+  const firstYear = (p: Pair[]): number | null =>
+    (p.length ? Math.round(Math.min(...p.map(([x]) => x))) : null)
+
   const trendPctPerYear = (p: Pair[]): string => {
     const pts = p.filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y) && y > 0)
     if (pts.length < 8) return 'too short to read a trend'
@@ -250,12 +258,15 @@ function CityRibbons({ data }: { data: HousingData }) {
         <div className="ribbon">
           <div className="rh"><b>Toronto · Vancouver</b>
             <span>
-              ≈{trendPctPerYear(data.teranet.toronto)} · ≈{trendPctPerYear(data.teranet.vancouver)} since 1998
+              ≈{trendPctPerYear(data.teranet.toronto)} since {firstYear(data.teranet.toronto)} ·{' '}
+              ≈{trendPctPerYear(data.teranet.vancouver)} since {firstYear(data.teranet.vancouver)}
             </span></div>
           {spark([
             { pts: data.teranet.toronto, color: cc('CA') },
             { pts: data.teranet.vancouver, color: cc('CA'), dash: true },
-          ], 1998, 2026, 'Toronto and Vancouver house price index since 1998')}
+          ], Math.min(firstYear(data.teranet.toronto) ?? 1998,
+                      firstYear(data.teranet.vancouver) ?? 1998), 2026,
+          'Toronto and Vancouver house price index')}
           <div className="unit">
             Teranet–National Bank repeat-sales index — <b>direction only</b>. This series carries
             per-observation noise larger than the trend it describes (residual autocorrelation

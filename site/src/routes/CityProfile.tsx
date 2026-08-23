@@ -9,10 +9,11 @@ import { Flag, FlagRibbon } from '../components/Flag'
 import { Figure } from '../components/Figure'
 import { UnstableMark } from '../components/Unstable'
 import { useData } from '../data/store'
-import { money, num, pct, sourceName, years, NO_DATA, asOfLabel } from '../data/format'
+import { dropApprox, money, num, pct, sourceName, years, NO_DATA, asOfLabel } from '../data/format'
 import {
   HOME_M2, instabilityNote, isNeverAffordable, m2PerYear, missingInputs, netFor,
   savingsPerYear, yearsToHome,
+  stabilityOf,
 } from '../data/compute'
 import { NotFound } from './NotFound'
 import type { Band } from '../data/types'
@@ -137,8 +138,11 @@ export function CityProfile() {
                       * extra" -- it is partly total-comp versus base -- and saying so
                       * is the difference between a comparison and a blend. */}
                     Across the 57 cities holding both, this figure runs <b>1.22×</b> the market band
-                    on average, but city by city anywhere from <b>0.79×</b> to <b>1.89×</b>. Read
-                    them side by side; they are never added, averaged or substituted for each other.
+                    on average, and Bland–Altman puts the 95% limits of agreement at <b>0.79×</b> to
+                    <b>1.89×</b> — a statistical interval, not the observed range, which is wider:
+                    four cities sit above it (Doha 2.20×, Dublin 2.04×, Valencia 2.02×, London
+                    1.95×). Read them side by side; they are never added, averaged or substituted
+                    for each other.
                   </>
                 ) : lf?.unavailable_reason ? (
                   <span className="nodata">No levels.fyi figure for {city.name} — {lf.unavailable_reason.slice(0, 120)}…</span>
@@ -202,7 +206,8 @@ export function CityProfile() {
           ) : y2h != null && m2 != null && city.apt_price_outside_usd_m2 != null ? (
             <>
               <div className="big" style={{ fontSize: 'var(--text-2xl)' }}>
-                <UnstableMark city={city} band={band} />{years(y2h)}
+                <UnstableMark city={city} band={band} />
+                {stabilityOf(city, band) === 'unstable' ? dropApprox(years(y2h)) : years(y2h)}
               </div>
               {instabilityNote(city, band) && (
                 <p className="unstable-note">{instabilityNote(city, band)}</p>

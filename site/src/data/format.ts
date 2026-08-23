@@ -47,6 +47,14 @@ export function years(v: number | null | undefined, never = false): string {
   if (never) return 'never on this salary'
   if (v == null || !Number.isFinite(v)) return NO_DATA
   if (v >= 100) return '100+ yrs'
+  // Rounding to a whole year is right at 23 years (±2%) and wrong at 1.2
+  // (±42%, and it reads "1 yrs"). Below two years the year is no longer the
+  // natural unit, so say it in months — which is a real precision the inputs
+  // support, not a decimal place invented to look exact.
+  if (v < 2) {
+    const months = Math.round(v * 12)
+    return months <= 1 ? '~1 month' : `~${months} months`
+  }
   return `~${Math.round(v)} yrs`
 }
 

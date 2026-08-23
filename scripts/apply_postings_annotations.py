@@ -215,6 +215,14 @@ def annotate(rows: list[dict], classes_doc: dict, clusters_doc: dict, eval_doc: 
         rec = by_title.get((r.get("title") or "").strip())
         if rec is None:
             r["title_class"] = {"class": "unclassified", "proba": None, "why": "not_in_vocabulary"}
+        elif rec["class"] == "unclassified":
+            # The classifier itself returned no class (below its probability
+            # floor). An earlier version routed this down the "class_withheld"
+            # branch too, which labelled 24,474 rows as withheld when only
+            # 3,182 were — anyone filtering on the reason code over-selected by
+            # 8.7x, and the documented `not_in_vocabulary` code fired on none.
+            r["title_class"] = {"class": "unclassified", "proba": rec.get("proba"),
+                                "why": "model_declined", "model_said": None}
         elif rec["class"] not in ship:
             r["title_class"] = {"class": "unclassified", "proba": rec.get("proba"),
                                 "why": "class_withheld", "model_said": rec["class"]}
@@ -232,7 +240,12 @@ def annotate(rows: list[dict], classes_doc: dict, clusters_doc: dict, eval_doc: 
         for i in idx[1:]:
             dup_of[i] = keep
     for i, r in enumerate(rows):
-        r["duplicate_of"] = rows[dup_of[i]]["id"] if i in dup_of else None
+        rep = rows[dup_of[i]]["id"] if i in dup_of else None
+        # Three ids are duplicated in the corpus, so pointing BY id can produce a
+        # row that claims to be a re-listing of itself. Two rows did
+        # (usajobs:464745500, usajobs:464770500). The id collision is upstream
+        # and not this step's to fix, but emitting a self-referential pointer is.
+        r["duplicate_of"] = None if rep == r.get("id") else rep
     n_dup = len(dup_of)
     log(f"    duplicate_of set on {n_dup:,} of {n:,} rows ({100*n_dup/n:.2f}%); "
         f"{n - n_dup:,} distinct roles. No row removed.")
@@ -296,7 +309,13 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
                "n_as_published": len(pub), "n_deduped": len(ded), "n_software_only": len(sw),
                "n_software_all_years": len(sw_all),
                "published_from_year": PUBLISH_FROM_YEAR,
-               "median_as_published_usd_year": round(float(np.median(pub)), 2) if pub else None,
+               # Rounded like every other published figure. This is the raw,
+               # all-occupation, duplicates-included median and it is shipped to
+               # the browser for every country including the withheld ones, so
+               # leaving it at two decimals kept the manufactured FX cents
+               # DATA-FITNESS rules out ($152,969.52 was the original defect
+               # value) alive on the wire.
+               "median_as_published_usd_year": _round(float(np.median(pub))) if pub else None,
                # kept as a DIAGNOSTIC, never published: this is the figure that
                # pools every vintage, and the gap between it and the windowed
                # one is the reason the window exists.
@@ -460,6 +479,10 @@ def run() -> int:
         "proba_floor": stats["proba_floor"],
         "why_codes": {
             "not_in_vocabulary": "the title does not appear in the classifier's own output",
+            "model_declined": "the classifier returned no class for this title — its top class "
+                              "fell below the probability floor. NOT the same as a class this "
+                              "build withholds, and counting the two together overstated the "
+                              "withheld group 8.7x.",
             "class_withheld": ("the model assigned a class this build does not ship, because its "
                                f"F1 95% confidence interval does not lie entirely above "
                                f"{F1_SHIP_THRESHOLD}. model_said records which class it was."),
@@ -492,18 +515,32 @@ def run() -> int:
         "annotations_applied_by": "scripts/apply_postings_annotations.py (package 16, tier 1)",
     })
     write_processed(SOURCE_ID, d, meta=meta)
+    # This step FETCHES NOTHING; it joins and re-derives files that already
+    # exist. Every field below therefore has to describe a derivation. An
+    # earlier version passed urls=["https://github.com/"] with no coverage,
+    # which put a link to GitHub's homepage in the source column of /data —
+    # this site's transparency page, on a site whose promise is that every
+    # number is sourced and dated — with a licence sentence in the licence slot
+    # and "raw committed" against a file nothing was downloaded for. Found by an
+    # adversarial review reading the rendered page rather than the call.
     record_provenance(
         source_id=SOURCE_ID,
         name="Job postings (merged ATS providers, classified and de-duplicated)",
-        urls=["https://github.com/"],
-        license_note="each provider's own public job board API; see per-provider provenance entries",
+        urls=[],
+        license_note="derived; each provider's own provenance entry carries its API, its licence "
+                     "and its fetch date",
+        redistribution="derived — nothing is fetched by this step",
+        coverage=f"{len(doc['data'].get('seed_companies') or {}):,} companies across "
+                 f"{sum(1 for v in (doc['data'].get('provider_summary') or {}).values() if v.get('available'))} "
+                 f"providers",
         transforms=[
             "merged every postings_<provider>.json (build_postings.py)",
             "joined postings_title_classes.json as title_class; only classes whose F1 95% CI lies "
             "entirely above 0.70 ship, the rest are emitted as unclassified",
             "joined postings_duplicate_clusters.json as duplicate_of; no row removed",
-            "re-derived pay_summary_by_country on distinct roles, software titles only, with "
-            "bootstrap CIs, a 30-posting floor and $1,000 rounding",
+            f"re-derived pay_summary_by_country on distinct roles, software titles only, posted "
+            f"{PUBLISH_FROM_YEAR} or later, with bootstrap CIs, a {MIN_N_PUBLISH}-posting floor "
+            f"and ${PUBLISH_ROUNDING:,} rounding",
         ],
         output=f"data/processed/{SOURCE_ID}.json",
         rows=n,
