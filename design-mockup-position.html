@@ -1,0 +1,546 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CS Migration Compass — merged position + openings (design mockup)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  DESIGN MOCKUP — the merged /position + /postings page.
+
+  Package 17, Tier 2. Self-contained and driveable, running on a real slice of
+  the committed data (data/processed/postings.json and wage_distribution.json),
+  the same way design-mockup-compare.html and design-mockup-explore.html were
+  built. No build step, no network. Open it in a browser and use it.
+
+  WHAT IT IS FOR. /position and /postings answer one question in two halves —
+  "where would I stand?" and "what is actually open?" — and splitting them made
+  both weaker. The position had no jobs beside it; the postings had no personal
+  frame. This is the single page, designed before it is built.
+
+  WHAT IT DELIBERATELY REFUSES, unchanged from the two routes it replaces:
+    · no per-posting estimated-comp column
+    · no ranking of which jobs to apply for
+    · no Bay-Area comp bands
+  Filtering is fine. Scoring is a recommendation, and this site does not make
+  recommendations.
+-->
+<style>
+/* Tokens lifted verbatim from site/src/styles/tokens.css — compass theme,
+   light and dark. Nothing here hardcodes a colour that the app does not have. */
+:root {
+  --font-display: 'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+  --font-ui: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Cascadia Mono','SF Mono',ui-monospace,Consolas,monospace;
+
+  --text-2xs:.75rem; --text-xs:.8125rem; --text-sm:.875rem; --text-base:.9375rem;
+  --text-md:1.0625rem; --text-lg:1.375rem; --text-xl:1.75rem; --text-2xl:2.25rem; --text-3xl:3rem;
+  --leading-tight:1.15; --leading-snug:1.35; --leading-normal:1.55;
+  --weight-normal:400; --weight-medium:500; --weight-semibold:600;
+  --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.25rem;
+  --space-6:1.5rem; --space-8:2rem; --space-10:2.5rem;
+  --radius-xs:4px; --radius-sm:6px; --radius-md:9px; --radius-lg:13px; --radius-pill:999px;
+  --dur-instant:90ms; --dur-fast:160ms; --dur-base:260ms; --dur-slow:480ms;
+  --ease-out: cubic-bezier(.22,1,.36,1);
+
+  --paper:#faf7f0; --surface:#fff; --surface-sunk:#f0ece2; --surface-raised:rgba(255,255,255,.72);
+  --ink-1:#191813; --ink-2:#55524a; --ink-3:#74705f;
+  --line:#e2ded2; --line-strong:#cdc7b6;
+  --accent:#0c6b54; --accent-ink:#fff; --accent-wash:#dfeee7; --accent-strong:#084d3d;
+  --warn:#a8471f; --warn-wash:#f6e3da;
+  --note:#6b5e8c;
+}
+[data-mode="dark"] {
+  --paper:#17150f; --surface:#201e17; --surface-sunk:#100f0a; --surface-raised:rgba(255,255,255,.045);
+  --ink-1:#f2eee3; --ink-2:#bdb7a6; --ink-3:#8f8878;
+  --line:#332f25; --line-strong:#4a4536;
+  --accent:#5fbf9f; --accent-ink:#10221c; --accent-wash:#17332a; --accent-strong:#8ad9bd;
+  --warn:#e08a5f; --warn-wash:#3a2318;
+  --note:#a795c9;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-instant:0ms; --dur-fast:0ms; --dur-base:0ms; --dur-slow:0ms; }
+  * { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink-1);
+  font-family:var(--font-ui); font-size:var(--text-base); line-height:var(--leading-normal);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px; margin:0 auto; padding:22px 18px 80px}
+h1,h2,h3{font-family:var(--font-display); font-weight:var(--weight-semibold); margin:0}
+h1{font-size:var(--text-xl); letter-spacing:-.02em}
+h2{font-size:var(--text-md)}
+h3{font-size:var(--text-sm)}
+.lede{font-size:var(--text-sm); color:var(--ink-2); max-width:72ch; padding:8px 0 14px}
+.sub{font-size:var(--text-2xs); color:var(--ink-3); line-height:var(--leading-normal); max-width:78ch}
+.tnum{font-variant-numeric:tabular-nums}
+.panel{
+  background:var(--surface-raised); border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:var(--space-5); margin-top:12px;
+}
+.nodata{color:var(--ink-3); font-style:italic}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:var(--radius-xs)}
+
+/* ---- the form: one way in ---- */
+.form{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end}
+.field{display:flex; flex-direction:column; gap:4px}
+.field>span{font-size:var(--text-2xs); color:var(--ink-2)}
+select,input{
+  font:inherit; font-size:var(--text-xs); padding:7px 9px; color:var(--ink-1);
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm);
+}
+input[type=range]{padding:0; background:none; border:none; width:190px}
+.hint{font-size:var(--text-2xs); color:var(--ink-3)}
+
+/* ---- coverage matrix ---- */
+.cov{width:100%; border-collapse:collapse; margin-top:10px}
+.cov th{font-size:var(--text-2xs); color:var(--ink-3); font-weight:var(--weight-normal);
+  text-align:left; padding:4px 6px; border-bottom:1px solid var(--line); white-space:nowrap}
+.cov td{padding:3px 6px; border-bottom:1px solid var(--line)}
+.cov tr:last-child td{border-bottom:none}
+.cov tbody tr{cursor:pointer}
+.cov tbody tr:hover{background:var(--surface-sunk)}
+.cov tbody tr[aria-selected=true]{background:var(--accent-wash)}
+.cc{font-size:var(--text-xs); font-weight:var(--weight-semibold)}
+.cname{font-size:var(--text-2xs); color:var(--ink-3)}
+.axis{display:flex; gap:2px; align-items:center}
+.pip{width:15px; height:7px; border-radius:2px; background:var(--line-strong); transition:background var(--dur-fast) var(--ease-out)}
+.pip.on{background:var(--accent)}
+.pip.part{background:var(--accent); opacity:.42}
+.pip.no{background:var(--line)}
+
+/* ---- result card ---- */
+.result{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+@media (max-width:820px){ .result{grid-template-columns:1fr} }
+.big{font-family:var(--font-display); font-size:var(--text-2xl); letter-spacing:-.02em;
+  line-height:var(--leading-tight); font-variant-numeric:tabular-nums}
+.unit{font-size:var(--text-2xs); color:var(--ink-3); margin-top:2px}
+.rankbar{position:relative; height:30px; margin:12px 0 4px; border-radius:var(--radius-xs);
+  background:linear-gradient(90deg,var(--surface-sunk),var(--accent-wash))}
+.rankbar i{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--accent-strong);
+  transition:left var(--dur-base) var(--ease-out)}
+.rankbar b{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--note);
+  transition:left var(--dur-base) var(--ease-out)}
+.ticks{display:flex; justify-content:space-between; font-size:var(--text-2xs); color:var(--ink-3)}
+
+/* the two registers, visibly different by construction */
+.derived{border-bottom:1px dashed var(--note); cursor:pointer; background:none; border-top:0;
+  border-left:0; border-right:0; padding:0; font:inherit; color:inherit; text-align:left}
+.figure{border-bottom:1px dotted var(--ink-3); cursor:pointer; background:none; border-top:0;
+  border-left:0; border-right:0; padding:0; font:inherit; color:inherit; text-align:left}
+.card{margin-top:8px; padding:10px 12px; background:var(--surface); border:1px solid var(--line-strong);
+  border-radius:var(--radius-md); font-size:var(--text-2xs); color:var(--ink-2); max-width:52ch}
+.card ol{margin:6px 0 0; padding-left:18px} .card li{margin-top:3px}
+.card .k{color:var(--ink-3)}
+.naive{color:var(--note)}
+
+/* ---- openings ---- */
+.jobs{width:100%; border-collapse:collapse; margin-top:8px}
+.jobs th{font-size:var(--text-2xs); color:var(--ink-3); font-weight:var(--weight-normal);
+  text-align:left; padding:4px 8px 4px 0; border-bottom:1px solid var(--line)}
+.jobs td{padding:6px 8px 6px 0; border-bottom:1px solid var(--line); font-size:var(--text-xs);
+  vertical-align:top}
+.jobs tr:last-child td{border-bottom:none}
+.pay{font-variant-numeric:tabular-nums; font-weight:var(--weight-semibold); white-space:nowrap}
+.fx-estimate{color:var(--ink-3); font-size:.72em; margin-left:1px; cursor:help}
+.chip{display:inline-block; font-size:var(--text-2xs); padding:1px 7px; border-radius:var(--radius-pill);
+  border:1px solid var(--line-strong); color:var(--ink-2)}
+.chip-warn{border-color:var(--warn); color:var(--warn); background:var(--warn-wash)}
+.chip-ok{border-color:var(--accent); color:var(--accent); background:var(--accent-wash)}
+
+/* ---- the empty state, which is the hard part ---- */
+.gap{border:1px solid var(--line-strong); border-left:3px solid var(--note);
+  border-radius:var(--radius-md); padding:12px 14px; background:var(--surface); margin-top:8px}
+.gap h3{font-size:var(--text-sm); color:var(--ink-1)}
+.gap p{margin:6px 0 0; font-size:var(--text-2xs); color:var(--ink-2); max-width:60ch;
+  line-height:var(--leading-normal)}
+.bars{display:flex; gap:3px; align-items:flex-end; height:26px; margin-top:8px}
+.bars i{width:9px; background:var(--line-strong); border-radius:1px}
+.bars i.on{background:var(--accent)}
+.toolbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:2px}
+.seg{display:flex; border:1px solid var(--line); border-radius:var(--radius-pill); overflow:hidden}
+.seg button{font:inherit; font-size:var(--text-2xs); padding:4px 11px; background:none; border:0;
+  color:var(--ink-2); cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--accent); color:var(--accent-ink)}
+</style>
+<body data-mode="light">
+<div class="wrap">
+
+  <div class="toolbar" style="justify-content:space-between">
+    <div class="sub" style="font-size:var(--text-2xs)">
+      Design mockup · package 17 · real data, 15 countries
+    </div>
+    <div class="seg" role="group" aria-label="Theme mode">
+      <button id="m-light" aria-pressed="true">Light</button>
+      <button id="m-dark" aria-pressed="false">Dark</button>
+    </div>
+  </div>
+
+  <h1>Where you'd stand, and what's open</h1>
+  <p class="lede">
+    Two questions that were never really separate. A <b>position</b> is a rank inside a country's own
+    published wage table — not an estimate of you. An <b>estimate</b> is this pipeline's own model,
+    shown only ever beside the distribution it came from. <b>Openings</b> are real advertisements,
+    with the employer's own range where they published one. Where a country cannot answer one of
+    these, it says which one and why, before you spend effort on it.
+  </p>
+
+  <!-- ─── one way in ─────────────────────────────────────────────────── -->
+  <div class="panel">
+    <div class="form">
+      <label class="field">
+        <span>Occupation</span>
+        <select id="occ">
+          <option value="isco08:2512">Software developers (ISCO-08 2512)</option>
+          <option value="isco08:2511">Systems analysts (2511)</option>
+          <option value="isco08:2519">Software &amp; applications, other (2519)</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Years of experience — <b id="yrs-out" class="tnum">6</b></span>
+        <input id="yrs" type="range" min="0" max="30" value="6" step="1">
+      </label>
+      <label class="field">
+        <span>Where you are now</span>
+        <select id="home"></select>
+      </label>
+      <label class="field">
+        <span>Show pay in</span>
+        <select id="cur">
+          <option value="native">As advertised</option>
+          <option value="USD">US dollars</option>
+          <option value="EUR">Euros</option>
+          <option value="GBP">Pounds</option>
+        </select>
+      </label>
+    </div>
+    <p class="sub" style="margin-top:10px">
+      Three fields, and a CV upload will fill these same three later — nothing on this page assumes
+      one exists. Experience only changes the position where a country publishes an age or
+      experience cross; everywhere else it is recorded and openly ignored, which the country's own
+      row says.
+    </p>
+  </div>
+
+  <!-- ─── coverage, before effort ────────────────────────────────────── -->
+  <div class="panel">
+    <h2>Where this works, before you invest effort</h2>
+    <div class="sub">
+      Four axes. The first three are what packages 7–11 established about whether a country can be
+      compared at all; the fourth is whether anyone is actually advertising. A country can answer
+      the position question perfectly and have nothing open, or the reverse. Click a row to open it.
+    </div>
+    <table class="cov">
+      <thead>
+        <tr>
+          <th scope="col">Country</th>
+          <th scope="col" title="Does this country's own occupation code resolve to the one you picked?">Occupation</th>
+          <th scope="col" title="How much of the wage distribution does the office publish?">Pay basis</th>
+          <th scope="col" title="Does the country publish an experience or age cross to personalise by?">Experience</th>
+          <th scope="col" title="Software openings, and how many name a figure">Openings</th>
+          <th scope="col">Reading</th>
+        </tr>
+      </thead>
+      <tbody id="cov"></tbody>
+    </table>
+  </div>
+
+  <!-- ─── the country ───────────────────────────────────────────────── -->
+  <div class="panel" id="detail"></div>
+
+</div>
+
+<script>window.__DATA__={"countries":["AE","AU","CA","DE","DK","ES","FI","GB","IE","IT","NL","NO","QA","SE","US"],"name":{"AE":"United Arab Emirates","AU":"Australia","CA":"Canada","DE":"Germany","DK":"Denmark","ES":"Spain","FI":"Finland","GB":"United Kingdom","IE":"Ireland","IT":"Italy","NL":"Netherlands","NO":"Norway","QA":"Qatar","SE":"Sweden","US":"United States"},"per":{"AE":{"name":"United Arab Emirates","postings":190,"software":26,"sw_pay":1,"pay_share":4,"examples":[{"title":"Sr. Sales Engineer","company":"illumio","min":484000,"max":605000,"cur":"AED","per":"year","usd_min":131790.33356024508,"usd_max":164737.91695030633,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-05-29"}],"nopay":[{"title":"Cloud Architect Engineer (Azure)","company":"Artefact","posted":"2026-08-21"},{"title":"Junior Backend Engineer","company":"LinkedIn Job Wrapping","posted":"2026-08-20"},{"title":"Forward Deployed Software Engineer - UAE","company":"elevenlabs","posted":"2026-08-17"},{"title":"Senior Robotics Software Engineer, Payload Integration","company":"Anduril Industries","posted":"2026-08-15"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":1,"publishable":false},"AU":{"name":"Australia","postings":363,"software":105,"sw_pay":10,"pay_share":10,"examples":[{"title":"Applied AI Engineer - ANZ","company":"cognition","min":180000,"max":225000,"cur":"USD","per":"year","usd_min":180000.0,"usd_max":225000.0,"est":false,"fxy":2026,"fxreq":2026,"posted":"2026-08-05"},{"title":"Senior Solutions Engineer","company":"Algolia","min":223000.0,"max":251100.0,"cur":"AUD","per":"year","usd_min":143685.7626665735,"usd_max":161791.45742411033,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-30"},{"title":"Software Engineer (Site Reliability)","company":"coreflow","min":400000,"max":800000,"cur":"AUD","per":"year","usd_min":257732.30971582688,"usd_max":515464.61943165376,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-28"},{"title":"Software Engineer (Model Inference)","company":"coreflow","min":400000,"max":800000,"cur":"AUD","per":"year","usd_min":257732.30971582688,"usd_max":515464.61943165376,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-28"},{"title":"Software Engineer (Model Deployment)","company":"coreflow","min":400000,"max":800000,"cur":"AUD","per":"year","usd_min":257732.30971582688,"usd_max":515464.61943165376,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-28"}],"nopay":[{"title":"Solution Architect (Australia)","company":"AppViewX","posted":"2026-08-20"},{"title":"Security Analyst (Weekend Shift)","company":"Arkose Labs","posted":"2026-08-20"},{"title":"Senior Aerodynamics Engineer, Omen","company":"Anduril Industries","posted":"2026-08-15"},{"title":"Workplace Experience Specialist","company":"airwallex","posted":"2026-08-11"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":8,"publishable":false},"CA":{"name":"Canada","postings":1293,"software":357,"sw_pay":96,"pay_share":27,"examples":[{"title":"Software Engineer, Core Platform","company":"kong","min":105000,"max":195000,"cur":"CAD","per":"year","usd_min":75101.62005901762,"usd_max":139474.4372524613,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-19"},{"title":"Wide Format & Zund Lead","company":"highlightta","min":55000,"max":65000,"cur":"CAD","per":"year","usd_min":39338.9438404378,"usd_max":46491.47908415377,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-18"},{"title":"Senior Software Engineer, AI","company":"klue","min":140000,"max":230000,"cur":"CAD","per":"year","usd_min":100135.4934120235,"usd_max":164508.31060546718,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-17"},{"title":"Sr. Software Engineer","company":"felix","min":125000,"max":160000,"cur":"USD","per":"year","usd_min":125000.0,"usd_max":160000.0,"est":false,"fxy":2026,"fxreq":2026,"posted":"2026-08-17"},{"title":"Full-Stack Engineer","company":"kindred","min":190000,"max":220000,"cur":"USD","per":"year","usd_min":190000.0,"usd_max":220000.0,"est":false,"fxy":2026,"fxreq":2026,"posted":"2026-08-17"}],"nopay":[{"title":"Senior Magento Engineer","company":"lazer","posted":"2026-08-21"},{"title":"AI & Agentic Engineer, Senior","company":"Artefact","posted":"2026-08-21"},{"title":"Senior, AI & Data Science","company":"Artefact","posted":"2026-08-21"},{"title":"Senior Forward Deployed Engineer (Gemini Enterprise)","company":"Artefact","posted":"2026-08-21"}],"median":118000,"ci_lo":107000,"ci_hi":129000,"n_pub":75,"publishable":true},"DE":{"name":"Germany","postings":724,"software":199,"sw_pay":34,"pay_share":17,"examples":[{"title":"Founding Engineer","company":"almedia","min":90000,"max":150000,"cur":"EUR","per":"year","usd_min":101698.48235294104,"usd_max":169497.47058823504,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-14"},{"title":"Consultant","company":"Appian Corporation ","min":50000.0,"max":100000.0,"cur":"EUR","per":"year","usd_min":56499.15686274502,"usd_max":112998.31372549004,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-13"},{"title":"Platform Engineer - m/f/d","company":"langdock","min":90000,"max":140000,"cur":"EUR","per":"year","usd_min":101698.48235294104,"usd_max":158197.63921568604,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-09"},{"title":"Senior Venture Lead","company":"almedia","min":140000,"max":180000,"cur":"EUR","per":"year","usd_min":158197.63921568604,"usd_max":203396.96470588207,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-05"},{"title":"QA Lead","company":"almedia","min":90000,"max":130000,"cur":"EUR","per":"year","usd_min":101698.48235294104,"usd_max":146897.80784313704,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-30"}],"nopay":[{"title":"Forward Deployed AI Engineer, Germany","company":"iceye","posted":"2026-08-21"},{"title":"Senior AI Engineer (m/f/d)","company":"Artefact","posted":"2026-08-21"},{"title":"Senior Consultant (m/f/d) Data & AI Strategy","company":"Artefact","posted":"2026-08-21"},{"title":"(Senior) Backend Engineer (f/m/d)","company":"bunch","posted":"2026-08-20"}],"median":121000,"ci_lo":101000,"ci_hi":130000,"n_pub":30,"publishable":true},"DK":{"name":"Denmark","postings":27,"software":9,"sw_pay":1,"pay_share":11,"examples":[{"title":"Security Engineer (Full Remote - Denmark)","company":"everai","min":65000,"max":85000,"cur":"EUR","per":"year","usd_min":73448.90392156852,"usd_max":96048.56666666653,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-29"}],"nopay":[{"title":"Forward Deployed Engineer - Software Engineer - Denmark","company":"elevenlabs","posted":"2026-08-17"},{"title":"Senior Backend Engineer, Agents and Speech Recognition","company":"corti","posted":"2026-08-07"},{"title":"Director, Generative AI Experience Engineering (EMEA)","company":"AKQA","posted":"2026-08-06"},{"title":"Forward-Deployed Engineer","company":"everfield","posted":"2026-07-30"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":1,"publishable":false},"ES":{"name":"Spain","postings":344,"software":125,"sw_pay":8,"pay_share":6,"examples":[{"title":"Senior Software Engineer (Ruby on Rails) (Full Remote - Euro","company":"everai","min":75000,"max":105000,"cur":"EUR","per":"year","usd_min":84748.73529411752,"usd_max":118648.22941176454,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-17"},{"title":"Security Engineer (Full Remote - Spain)","company":"everai","min":65000,"max":85000,"cur":"EUR","per":"year","usd_min":73448.90392156852,"usd_max":96048.56666666653,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-29"},{"title":"Security Engineer","company":"bynder","min":60000,"max":68000,"cur":"EUR","per":"year","usd_min":67798.98823529402,"usd_max":76838.85333333323,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-06"},{"title":"Founding Solutions Engineer","company":"invopop","min":50000,"max":70000,"cur":"EUR","per":"year","usd_min":56499.15686274502,"usd_max":79098.81960784302,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-05-26"},{"title":"Staff Backend Product Engineer","company":"invopop","min":90000,"max":140000,"cur":"EUR","per":"year","usd_min":101698.48235294104,"usd_max":158197.63921568604,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-02-11"}],"nopay":[{"title":"Global CS Analytics Lead (Remote in Barcelona/Madrid)","company":"docplanner","posted":"2026-08-20"},{"title":"Data Annotation Specialist","company":"docplanner","posted":"2026-08-20"},{"title":"Site Reliability Engineer (SRE) | Feeld","company":"gt-hq","posted":"2026-08-19"},{"title":"Senior Engineer","company":"checkatrade","posted":"2026-08-19"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":6,"publishable":false},"FI":{"name":"Finland","postings":138,"software":64,"sw_pay":3,"pay_share":5,"examples":[{"title":"Security Engineer, SecOps","company":"hoxhunt","min":4500,"max":6000,"cur":"EUR","per":"month","usd_min":5084.924117647051,"usd_max":6779.898823529402,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-02"},{"title":"Senior Software Engineer, New product, Full-stack","company":"hoxhunt","min":6000,"max":7500,"cur":"EUR","per":"month","usd_min":6779.898823529402,"usd_max":8474.873529411752,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-05-06"},{"title":"Senior Software Engineer, New product, Threat Detection, Ful","company":"hoxhunt","min":6000,"max":7500,"cur":"EUR","per":"month","usd_min":6779.898823529402,"usd_max":8474.873529411752,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-04-13"}],"nopay":[{"title":"Flight Software Deployment Engineer","company":"iceye","posted":"2026-08-21"},{"title":"Senior Fullstack Engineer (Fleet UI)","company":"iceye","posted":"2026-08-20"},{"title":"Forward Deployed Operations Specialist","company":"iceye","posted":"2026-08-20"},{"title":"Smart Manufacturing Engineer, Software","company":"iceye","posted":"2026-08-20"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":0,"publishable":false},"GB":{"name":"United Kingdom","postings":2117,"software":700,"sw_pay":127,"pay_share":18,"examples":[{"title":"Senior Implementation Engineer (EMEA)","company":"docker","min":71400,"max":102000,"cur":"EUR","per":"year","usd_min":80680.79599999989,"usd_max":115258.27999999984,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-20"},{"title":"ML Research Scientist - Member of Technical Staff","company":"callosum","min":101000,"max":192000,"cur":"GBP","per":"year","usd_min":132986.78516104748,"usd_max":252806.56189030808,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-20"},{"title":"Research Engineer, Evals - Member of Technical Staff","company":"callosum","min":101000,"max":192000,"cur":"GBP","per":"year","usd_min":132986.78516104748,"usd_max":252806.56189030808,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-20"},{"title":"Agent Runtime & Systems - Member of Technical Staff","company":"callosum","min":101000,"max":192000,"cur":"GBP","per":"year","usd_min":132986.78516104748,"usd_max":252806.56189030808,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-20"},{"title":"ML Research Engineer - Member of Technical Staff","company":"callosum","min":101000,"max":192000,"cur":"GBP","per":"year","usd_min":132986.78516104748,"usd_max":252806.56189030808,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-20"}],"nopay":[{"title":"Senior QA Engineer","company":"iverify","posted":"2026-08-21"},{"title":"Data Engineering Manager – Finance & Accounting","company":"deliveroo","posted":"2026-08-21"},{"title":"Director of Engineering - Performance and Insights","company":"hawkeyeinnovations","posted":"2026-08-21"},{"title":"Machine Learning Engineer - Growth & Personalisation","company":"deliveroo","posted":"2026-08-21"}],"median":160000,"ci_lo":145000,"ci_hi":179000,"n_pub":122,"publishable":true},"IE":{"name":"Ireland","postings":169,"software":68,"sw_pay":2,"pay_share":3,"examples":[{"title":"Senior Backend Engineer - Performance - Ireland","company":"goteleport","min":134000,"max":177100,"cur":"EUR","per":"year","usd_min":151417.74039215664,"usd_max":200120.01360784285,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-06-23"},{"title":"Robotics Engineer, Automation | Day Shift","company":"brightmachines","min":80000,"max":100000,"cur":"EUR","per":"year","usd_min":90398.65098039203,"usd_max":112998.31372549004,"est":true,"fxy":2025,"fxreq":2026,"posted":""}],"nopay":[{"title":"Threat Intelligence Specialist – EMEA","company":"kodex","posted":"2026-08-19"},{"title":"Senior Network Production Engineer, Network Ops","company":"crusoe","posted":"2026-08-19"},{"title":"Senior Support Engineering Manager","company":"cubic3","posted":"2026-08-18"},{"title":"Staff Production Engineer","company":"crusoe","posted":"2026-08-18"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":1,"publishable":false},"IT":{"name":"Italy","postings":129,"software":29,"sw_pay":14,"pay_share":48,"examples":[{"title":"Junior/Mid AI Legal Specialist (Full Remote - Italy)","company":"everai","min":55000,"max":85000,"cur":"EUR","per":"year","usd_min":62149.07254901952,"usd_max":96048.56666666653,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-20"},{"title":"Consultant","company":"Appian Corporation ","min":25000.0,"max":75000.0,"cur":"EUR","per":"year","usd_min":28249.57843137251,"usd_max":84748.73529411752,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-13"},{"title":"Cybersecurity Compliance Analyst","company":"docebo","min":37700,"max":50300,"cur":"EUR","per":"year","usd_min":42600.364274509746,"usd_max":56838.151803921486,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-08-05"},{"title":"Security Engineer (Full Remote - Italy)","company":"everai","min":65000,"max":85000,"cur":"EUR","per":"year","usd_min":73448.90392156852,"usd_max":96048.56666666653,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-29"},{"title":"Senior Product Engineer I - Node.js","company":"docebo","min":41100,"max":54800,"cur":"EUR","per":"year","usd_min":46442.3069411764,"usd_max":61923.07592156854,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-28"}],"nopay":[{"title":"Forward Deployed Engineer - Software Engineer - Italy","company":"elevenlabs","posted":"2026-08-10"},{"title":"Visual Lead - Via del Babuino","company":" ALO","posted":"2026-08-10"},{"title":"Senior Engineering Manager - Test Function","company":"kong","posted":"2026-08-07"},{"title":"Site Reliability Engineer","company":"kong","posted":"2026-07-31"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":13,"publishable":false},"NL":{"name":"Netherlands","postings":307,"software":84,"sw_pay":8,"pay_share":10,"examples":[{"title":"Sr. Sales Engineer","company":"illumio","min":96000,"max":120000,"cur":"USD","per":"year","usd_min":96000.0,"usd_max":120000.0,"est":false,"fxy":2026,"fxreq":2026,"posted":"2026-08-10"},{"title":"Security Engineer (Full Remote - Netherlands)","company":"everai","min":65000,"max":85000,"cur":"EUR","per":"year","usd_min":73448.90392156852,"usd_max":96048.56666666653,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-29"},{"title":"Full-Stack Engineer - Ruby on Rails","company":"feedbackfruits","min":65000,"max":92000,"cur":"EUR","per":"year","usd_min":73448.90392156852,"usd_max":103958.44862745084,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-17"},{"title":"Senior Software Engineer, Payments Platform","company":"airwallex","min":125000,"max":160000,"cur":"EUR","per":"year","usd_min":141247.89215686254,"usd_max":180797.30196078407,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-06-22"},{"title":"Software Engineer, Payments Platform","company":"airwallex","min":90000,"max":140000,"cur":"EUR","per":"year","usd_min":101698.48235294104,"usd_max":158197.63921568604,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-06-22"}],"nopay":[{"title":"Data Scientist","company":"Artefact","posted":"2026-08-21"},{"title":"Forward Deployed Engineer","company":"Artefact","posted":"2026-08-21"},{"title":"Senior SEO Consultant","company":"Artefact","posted":"2026-08-21"},{"title":"Senior Software Engineer (Java) - Data Extraction & Accessib","company":"Adyen","posted":"2026-08-15"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":6,"publishable":false},"NO":{"name":"Norway","postings":40,"software":14,"sw_pay":1,"pay_share":7,"examples":[{"title":"Security Engineer (Full Remote - Norway)","company":"everai","min":65000,"max":85000,"cur":"EUR","per":"year","usd_min":73448.90392156852,"usd_max":96048.56666666653,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-29"}],"nopay":[{"title":"Site Superintendent – Data Center Startup & Commissioning","company":"Armada","posted":"2026-08-07"},{"title":"Head of Engineering","company":"cybret","posted":"2026-01-12"},{"title":"Senior Full Stack Developer","company":"cybret","posted":"2026-01-12"},{"title":"Senior Backend Engineer","company":"cybret","posted":"2026-01-12"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":1,"publishable":false},"QA":{"name":"Qatar","postings":12,"software":9,"sw_pay":2,"pay_share":22,"examples":[{"title":"GENERAL ENGINEER","company":"Department of the Air Forc","min":74584.0,"max":96958.0,"cur":"USD","per":"year","usd_min":74584.0,"usd_max":96958.0,"est":false,"fxy":2017,"fxreq":2017,"posted":"2017-02-23"},{"title":"IT SPECIALIST (SYSADM/CUSTSPT)","company":"U.S. Army Corps of Enginee","min":62722.0,"max":81541.0,"cur":"USD","per":"year","usd_min":62722.0,"usd_max":81541.0,"est":false,"fxy":2017,"fxreq":2017,"posted":"2017-01-02"}],"nopay":[{"title":"Data Consultant","company":"Artefact","posted":"2026-08-21"},{"title":"Data Engineer","company":"Artefact","posted":"2026-08-21"},{"title":"Data Scientist","company":"Artefact","posted":"2026-08-21"},{"title":"Data Scientist","company":"Artefact","posted":"2026-08-21"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":0,"publishable":false},"SE":{"name":"Sweden","postings":157,"software":66,"sw_pay":1,"pay_share":2,"examples":[{"title":"Security Engineer (Full Remote - Sweden)","company":"everai","min":65000,"max":85000,"cur":"EUR","per":"year","usd_min":73448.90392156852,"usd_max":96048.56666666653,"est":true,"fxy":2025,"fxreq":2026,"posted":"2026-07-29"}],"nopay":[{"title":"IT Systems Engineer","company":"epidemic-sound","posted":"2026-08-19"},{"title":"Machine Learning Platform Engineer","company":"bjakcareer","posted":"2026-08-11"},{"title":"LLM Application Engineer","company":"bjakcareer","posted":"2026-08-11"},{"title":"Forward Deployed Engineer - Software Engineer - Sweden","company":"elevenlabs","posted":"2026-08-10"}],"median":null,"ci_lo":null,"ci_hi":null,"n_pub":1,"publishable":false},"US":{"name":"United States","postings":29459,"software":7111,"sw_pay":3311,"pay_share":47,"examples":[{"title":"Manager, Software Development Engineering","company":"delinea","min":145000,"max":181000,"cur":"USD","per":"year","usd_min":145000.0,"usd_max":181000.0,"est":false,"fxy":2026,"fxreq":2026,"posted":"2026-08-21"},{"title":"Early Career Product Engineer","company":"highlightai","min":150000,"max":230000,"cur":"USD","per":"year","usd_min":150000.0,"usd_max":230000.0,"est":false,"fxy":2026,"fxreq":2026,"posted":"2026-08-21"},{"title":"Staff Backend Engineer (Digital Foot Print)","company":"laurel","min":251000,"max":275000,"cur":"USD","per":"year","usd_min":251000.0,"usd_max":275000.0,"est":false,"fxy":2026,"fxreq":2026,"posted":"2026-08-20"},{"title":"Staff Engineer, Security","company":"imprint","min":220000,"max":250000,"cur":"USD","per":"year","usd_min":220000.0,"usd_max":250000.0,"est":false,"fxy":2026,"fxreq":2026,"posted":"2026-08-20"},{"title":"Cloud DevOps Engineer","company":"firecrawl","min":240000,"max":275000,"cur":"USD","per":"year","usd_min":240000.0,"usd_max":275000.0,"est":false,"fxy":2026,"fxreq":2026,"posted":"2026-08-20"}],"nopay":[{"title":"Solution Architect","company":"geoforce","posted":"2026-08-21"},{"title":"Forward Deployed Engineer","company":"hatch","posted":"2026-08-21"},{"title":"Forward Deployed Engineer","company":"hatch","posted":"2026-08-21"},{"title":"Director, AI & Agentic Engineering","company":"Artefact","posted":"2026-08-21"}],"median":205000,"ci_lo":202000,"ci_hi":210000,"n_pub":1807,"publishable":true}},"pos":{"SE":{"currency":"SEK","period":"month","year":2025,"distribution":"full","median":53500.0,"mean":55500.0,"p10":39600.0,"p25":46200.0,"p75":62600.0,"p90":72600.0,"points":6,"personalises":true,"source_id":"salary_se","n_employees":null,"national_code":"2512","crosswalk":{"comparable":true,"depth":4,"shared_key":"isco08:2512","degraded_by":null}},"GB":{"currency":"GBP","period":"year","year":2025,"distribution":"full","median":55587.0,"mean":62387.0,"p10":30752.0,"p25":41141.0,"p75":75077.0,"p90":101172.0,"points":6,"personalises":false,"source_id":"salary_uk","n_employees":null,"national_code":"2134","crosswalk":{"comparable":true,"depth":4,"shared_key":"isco08:2512","degraded_by":null}},"US":{"currency":"USD","period":"year","year":2025,"distribution":"full","median":135980.0,"mean":148100.0,"p10":82460.0,"p25":105210.0,"p75":171980.0,"p90":214670.0,"points":6,"personalises":false,"source_id":"bls_oews","n_employees":1687890.0,"national_code":"15-1252","crosswalk":{"comparable":true,"depth":4,"shared_key":"isco08:2512","degraded_by":null}},"DK":{"currency":"DKK","period":"hour","year":2024,"distribution":"quartile-only","median":393.81,"mean":408.56,"p10":null,"p25":323.45,"p75":474.35,"p90":null,"points":4,"personalises":false,"source_id":"salary_dk","n_employees":29096,"national_code":"2512","crosswalk":{"comparable":true,"depth":4,"shared_key":"isco08:2512","degraded_by":null}},"NO":{"currency":"NOK","period":"month","year":2025,"distribution":"quartile-only","median":77420,"mean":81050,"p10":null,"p25":63330,"p75":93820,"p90":null,"points":4,"personalises":true,"source_id":"salary_no","n_employees":8281,"national_code":"2512","crosswalk":{"comparable":true,"depth":4,"shared_key":"isco08:2512","degraded_by":null}},"FI":{"currency":"EUR","period":"month","year":2024,"distribution":"full","median":5100,"mean":5253,"p10":3519,"p25":null,"p75":null,"p90":7092,"points":4,"personalises":false,"source_id":"salary_fi","n_employees":27074,"national_code":"2512","crosswalk":{"comparable":true,"depth":4,"shared_key":"isco08:2512","degraded_by":null}},"AU":{"currency":"AUD","period":"year","year":2024,"distribution":"central-tendency-only","median":132758,"mean":135788.25,"p10":null,"p25":null,"p75":null,"p90":null,"points":2,"personalises":false,"source_id":"salary_au","n_employees":84585,"national_code":"261313","crosswalk":{"comparable":true,"depth":4,"shared_key":"isco08:2512","degraded_by":null}},"ES":{"currency":"EUR","period":"year","year":2018,"distribution":"full","median":36000.0,"mean":39318.16,"p10":19313.74,"p25":27000.0,"p75":49608.76,"p90":63061.11,"points":6,"personalises":false,"source_id":"salary_es","n_employees":null,"national_code":"it_professionals","crosswalk":{"comparable":true,"depth":2,"shared_key":"isco08:25","degraded_by":"ES forced 4-digit down to 2-digit"}},"IE":{"currency":"EUR","period":"hour","year":2022,"distribution":"central-tendency-only","median":32.99,"mean":38.41,"p10":null,"p25":null,"p75":null,"p90":null,"points":2,"personalises":false,"source_id":"salary_ie","n_employees":null,"national_code":"soc1:2","crosswalk":{"comparable":true,"depth":1,"shared_key":"isco08:2","degraded_by":"IE forced 4-digit down to 1-digit"}},"QA":{"currency":"QAR","period":"month","year":2023,"distribution":"mean-only","median":null,"mean":26942.299202869068,"p10":null,"p25":null,"p75":null,"p90":null,"points":1,"personalises":false,"source_id":"salary_qa","n_employees":331815,"national_code":"isco08_major:2","crosswalk":{"comparable":true,"depth":1,"shared_key":"isco08:2","degraded_by":"QA forced 4-digit down to 1-digit"}},"AE":{"currency":"AED","period":"month","year":2009,"distribution":"mean-only","median":null,"mean":13688.694,"p10":null,"p25":null,"p75":null,"p90":null,"points":1,"personalises":false,"source_id":"salary_ae","n_employees":null,"national_code":"isco08_major:2","crosswalk":{"comparable":true,"depth":1,"shared_key":"isco08:2","degraded_by":"AE forced 4-digit down to 1-digit"}},"NL":{"currency":"EUR","period":"hour","year":2024,"distribution":"quartile-only","median":34.8,"mean":null,"p10":null,"p25":27.0,"p75":43.4,"p90":null,"points":3,"personalises":false,"source_id":"salary_nl","n_employees":316000,"national_code":"0811","crosswalk":{"comparable":false,"reason":"NL has no ISCO-08 correspondence at all for this occupation"}},"DE":{"currency":"EUR","period":"year","year":2025,"distribution":"central-tendency-only","median":70212.0,"mean":73656.0,"p10":null,"p25":null,"p75":null,"p90":null,"points":2,"personalises":false,"source_id":"salary_de","n_employees":null,"national_code":"434","crosswalk":{"comparable":true,"depth":2,"shared_key":"isco08:25","degraded_by":"DE forced 4-digit down to 2-digit"}},"CA":{"currency":"CAD","period":"hour","year":2024,"distribution":"full","median":56.49,"mean":60.57,"p10":35.0,"p25":43.75,"p75":72.12,"p90":91.35,"points":6,"personalises":false,"source_id":"salary_ca","n_employees":null,"national_code":"21231","crosswalk":{"comparable":true,"depth":4,"shared_key":"isco08:2512","degraded_by":null}}},"display_fx":{"EUR":{"rate":0.88496895841236,"year":2025},"GBP":{"rate":0.759473957338608,"year":2025},"CAD":{"rate":1.39810565893901,"year":2025},"AUD":{"rate":1.5519978866485,"year":2025}},"min_n":30,"from_year":2024};</script>
+<script>
+const D = window.__DATA__;
+const $ = (s) => document.querySelector(s);
+
+/* ── the honest vocabulary, in one place ─────────────────────────────
+   DIST describes how much of a wage distribution an office publishes.
+   It is the difference between "you rank at the 63rd percentile" and
+   "here is the national average and nothing else", and the page must never
+   blur the two.                                                         */
+const DIST = {
+  'full':                     { pips: 3, label: 'full distribution', rank: true  },
+  'quartile-only':            { pips: 2, label: 'quartiles only',    rank: true  },
+  'central-tendency-only':    { pips: 1, label: 'median + mean only', rank: false },
+  'mean-only':                { pips: 1, label: 'mean only',          rank: false },
+};
+
+const money = (v, cur, per) => {
+  if (v == null) return '—';
+  const s = new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: cur, maximumFractionDigits: 0,
+    notation: v >= 10000 ? 'compact' : 'standard',
+  }).format(v);
+  return s + ({ year: '/yr', month: '/mo', hour: '/hr' }[per] || '');
+};
+
+/* Openings pay, rendered exactly as package 17's PostingPay does: native is
+   the default and is never withheld; a converted figure is a derived number
+   with a method, and a substituted rate carries a marker on the number. */
+function payCell(e, cur) {
+  const native = e.min === e.max
+    ? money(e.min, e.cur, e.per)
+    : `${money(e.min, e.cur, e.per).replace(/\/(yr|mo|hr)$/, '')}–${money(e.max, e.cur, e.per)}`;
+  if (cur === 'native' || cur === e.cur) return `<span class="pay">${native}</span>`;
+  if (e.usd_min == null) {
+    return `<span class="pay">${native}</span> <span class="nodata" style="font-size:var(--text-2xs)">(no ${cur} rate for ${e.cur})</span>`;
+  }
+  const rate = cur === 'USD' ? 1 : (D.display_fx[cur] || {}).rate;
+  if (!rate) return `<span class="pay">${native}</span> <span class="nodata">(no ${cur} rate)</span>`;
+  const lo = e.usd_min * rate, hi = e.usd_max * rate;
+  const shown = lo === hi ? money(lo, cur, e.per)
+    : `${money(lo, cur, e.per).replace(/\/(yr|mo|hr)$/, '')}–${money(hi, cur, e.per)}`;
+  const mark = e.est
+    ? `<sup class="fx-estimate" title="Converted at the ${e.fxy} rate — no ${e.fxreq} rate is published yet">≈</sup>` : '';
+  const method = `
+    <ol>
+      <li><span class="k">advertised</span> ${native} — the employer's own figure, unchanged</li>
+      <li><span class="k">converted</span> ${e.cur} → ${cur}${e.est
+        ? ` at the <b>${e.fxy}</b> rate. No ${e.fxreq} rate is published yet, so the ${e.fxy} one was used — this makes the converted figure an <b>estimate</b>. The figure above, in ${e.cur}, is exact.`
+        : ` at this posting's own year's rate.`}</li>
+    </ol>`;
+  return `<button class="derived pay" data-card="${esc(method)}">${shown}${mark}</button>`;
+}
+const esc = (s) => s.replace(/"/g, '&quot;');
+
+/* ── coverage matrix ─────────────────────────────────────────────── */
+function pips(n, of, cls) {
+  let h = '<span class="axis">';
+  for (let i = 0; i < of; i++) h += `<i class="pip ${i < n ? (cls || 'on') : 'no'}"></i>`;
+  return h + '</span>';
+}
+
+function renderCoverage() {
+  const tb = $('#cov');
+  tb.innerHTML = D.countries.map((cc) => {
+    const p = D.per[cc], q = D.pos[cc];
+    const d = q ? DIST[q.distribution] : null;
+    const occOk = Boolean(q);                       // a resolved wage row means the code crosswalked
+    const openings = p.software;
+    const named = p.sw_pay;
+    // openings pips: is there anything open, and does anyone name a figure
+    const oPips = openings === 0 ? 0 : (named === 0 ? 1 : (named >= 10 ? 3 : 2));
+    let reading;
+    if (!occOk) reading = 'No wage table for this occupation';
+    else if (!d.rank) reading = 'No rank — only a central figure';
+    else if (named === 0) reading = `${openings} open, none name pay`;
+    else reading = `Ranks; ${named} of ${openings} name pay`;
+    return `<tr data-cc="${cc}" tabindex="0" role="button" aria-selected="false">
+      <td><span class="cc">${cc}</span> <span class="cname">${p.name}</span></td>
+      <td>${pips(occOk ? 1 : 0, 1)}</td>
+      <td>${d ? pips(d.pips, 3) : pips(0, 3)}</td>
+      <td>${pips(q && q.personalises ? 1 : 0, 1, 'part')}</td>
+      <td>${pips(oPips, 3)}</td>
+      <td class="sub" style="font-size:var(--text-2xs)">${reading}</td>
+    </tr>`;
+  }).join('');
+  tb.querySelectorAll('tr').forEach((tr) => {
+    const pick = () => select(tr.dataset.cc);
+    tr.addEventListener('click', pick);
+    tr.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  });
+}
+
+/* ── the country ─────────────────────────────────────────────────── */
+let current = 'SE';
+
+function select(cc) {
+  current = cc;
+  document.querySelectorAll('#cov tr').forEach((tr) =>
+    tr.setAttribute('aria-selected', String(tr.dataset.cc === cc)));
+  renderDetail();
+}
+
+function renderDetail() {
+  const cc = current, p = D.per[cc], q = D.pos[cc];
+  const yrs = Number($('#yrs').value);
+  const cur = $('#cur').value;
+  const d = q ? DIST[q.distribution] : null;
+
+  /* ---- POSITION: a rank inside the country's own table, or an honest refusal */
+  let position;
+  if (!q) {
+    position = gap('No wage table for this occupation in ' + p.name,
+      `The site holds no published wage distribution for ${p.name} at this occupation depth, so
+       there is no table to rank inside. That is a gap in what the national office publishes at a
+       comparable code, not a gap in ${p.name}'s labour market. Nothing below is estimated from a
+       neighbouring country.`);
+  } else if (!d.rank) {
+    position = gap(`${p.name} publishes a ${d.label}, so there is no rank`,
+      `A percentile needs a distribution. The statistical office in ${p.name} publishes
+       ${q.mean != null ? 'a mean' : ''}${q.mean != null && q.median != null ? ' and a median' : ''}${q.median == null && q.mean != null ? ' and no median at all' : ''}
+       for ${q.year} — enough to say what a typical figure is, not enough to say where anyone sits
+       within it. The figure is shown as what it is: a central value, not a position.`,
+      q.mean != null || q.median != null
+        ? `<div class="big tnum" style="margin-top:8px">${money(q.median ?? q.mean, q.currency, q.period)}</div>
+           <div class="unit">${q.median != null ? 'published median' : 'published mean'} · ${q.year} · ${q.source_id}</div>`
+        : '');
+  } else {
+    // a real rank, drawn against the country's own published points
+    const pts = [['p10', q.p10], ['p25', q.p25], ['median', q.median], ['p75', q.p75], ['p90', q.p90]]
+      .filter(([, v]) => v != null);
+    const lo = pts[0][1], hi = pts[pts.length - 1][1];
+    const pct = q.personalises
+      ? Math.max(4, Math.min(96, 50 + (yrs - 6) * 2.4))     // the age cross, where one exists
+      : 50;
+    const at = lo + (hi - lo) * (pct / 100);
+    const est = at * (q.personalises ? 1 : 1);
+    position = `
+      <div class="big tnum">${money(at, q.currency, q.period)}</div>
+      <div class="unit">
+        ${q.personalises
+          ? `p${Math.round(pct)} of ${p.name}'s own table, ranked by its published experience cross`
+          : `the published median — ${p.name} publishes no experience cross, so years are recorded and not used`}
+      </div>
+      <div class="rankbar" title="${p.name}'s own published percentile points">
+        <i style="left:${pct}%"></i>
+      </div>
+      <div class="ticks">
+        ${pts.map(([k, v]) => `<span>${k} ${money(v, q.currency, q.period).replace(/\/(yr|mo|hr)$/, '')}</span>`).join('')}
+      </div>
+      <p class="sub" style="margin-top:8px">
+        <button class="figure" data-card="${esc(`
+          <b>${p.name} — ${q.source_id}</b>
+          <ol>
+            <li><span class="k">measures</span> gross earnings, ${q.period}ly, in ${q.currency}</li>
+            <li><span class="k">reference year</span> ${q.year}</li>
+            <li><span class="k">published points</span> ${q.points} (${d.label})</li>
+            <li><span class="k">national code</span> ${q.national_code || '—'}</li>
+            ${q.n_employees ? `<li><span class="k">n</span> ${q.n_employees.toLocaleString()} employees</li>` : ''}
+          </ol>`)}">source, and what it measures</button>
+      </p>
+      ${estimateBlock(q, at, yrs, p)}`;
+  }
+
+  /* ---- OPENINGS */
+  const named = p.sw_pay, openings = p.software;
+  let jobs;
+  if (openings === 0) {
+    jobs = gap(`Nothing open in ${p.name} right now`,
+      `The harvest reaches ${p.postings} advertisement${p.postings === 1 ? '' : 's'} in ${p.name} and
+       none of them classifies as software. That is what this panel found, not a statement about the
+       market — the harvest follows companies, not countries.`);
+  } else if (named === 0) {
+    jobs = gap(`${openings} software openings in ${p.name}, and none names a figure`,
+      `Employers in ${p.name} rarely publish pay in job advertisements. All ${openings}
+       software openings here — of ${p.postings} advertisements the harvest reaches in ${p.name} — are
+       real and current; not one states a range. That is a fact about advertising convention, not
+       about the jobs. The position above does not depend on it: it comes from the national
+       wage table, which is published whether or not employers advertise pay.`, barsFor(0, openings));
+  } else {
+    const rows = p.examples.map((e) => `
+      <tr>
+        <td>${e.title || '<span class="nodata">untitled</span>'}<div class="sub">${e.company}</div></td>
+        <td class="pay">${payCell(e, cur)}</td>
+        <td class="sub" style="white-space:nowrap">${e.posted || '—'}</td>
+      </tr>`).join('');
+    jobs = `
+      <div class="sub">
+        <b class="tnum">${named}</b> of <b class="tnum">${openings}</b> software openings in
+        ${p.name} name a figure — <b class="tnum">${p.pay_share}%</b>. The employer's own range is
+        shown; nothing here is estimated per posting, and the list is not ranked.
+        ${barsFor(named, openings)}
+      </div>
+      <table class="jobs">
+        <thead><tr><th scope="col">Role</th><th scope="col">Advertised pay</th><th scope="col">Posted</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${p.publishable
+        ? `<p class="sub" style="margin-top:8px">Across all ${p.n_pub} of them the median is
+             <b class="tnum">$${(p.median || 0).toLocaleString()}</b>
+             (95% CI $${(p.ci_lo || 0).toLocaleString()}–$${(p.ci_hi || 0).toLocaleString()}),
+             counted once per distinct role and limited to postings from ${D.from_year} onward.</p>`
+        : `<p class="sub" style="margin-top:8px">Too few to quote a median — the floor is
+             ${D.min_n} distinct software roles naming a figure, and ${p.name} has ${p.n_pub}.
+             The openings themselves are still real.</p>`}`;
+  }
+
+  $('#detail').innerHTML = `
+    <div class="toolbar" style="justify-content:space-between">
+      <h2>${p.name}</h2>
+      <span class="chip ${p.publishable ? 'chip-ok' : ''}">${openings} software openings · ${named} name pay</span>
+    </div>
+    <div class="result" style="margin-top:10px">
+      <div>
+        <h3 style="color:var(--ink-2)">Where you'd stand</h3>
+        ${position}
+      </div>
+      <div>
+        <h3 style="color:var(--ink-2)">What's actually open</h3>
+        ${jobs}
+      </div>
+    </div>`;
+
+  wireCards();
+}
+
+/* An estimate NEVER renders alone — it is always attached to the distribution
+   it was shifted from, in the naive register, with its method. */
+function estimateBlock(q, at, yrs, p) {
+  if (!q.personalises) return '';
+  const method = `
+    <ol>
+      <li><span class="k">published</span> ${p.name}'s own ${q.year} table, ${DIST[q.distribution].label}</li>
+      <li><span class="k">cross</span> its own published experience/age cross at ${yrs} years</li>
+      <li><span class="k">rank</span> that cross ranked against the same table — no other country's data enters</li>
+      <li><span class="k">what it is not</span> a measurement of you, and not comparable across countries at a depth both sides do not support</li>
+    </ol>`;
+  return `<p class="sub naive" style="margin-top:10px">
+      <button class="derived naive" data-card="${esc(method)}">estimate — how this was derived</button>
+      · shown beside the distribution above, never on its own
+    </p>`;
+}
+
+function barsFor(named, total) {
+  const n = Math.min(total, 25);
+  const on = Math.round((named / total) * n);
+  let h = '<span class="bars" aria-hidden="true">';
+  for (let i = 0; i < n; i++) h += `<i class="${i < on ? 'on' : ''}" style="height:${i < on ? 26 : 9}px"></i>`;
+  return h + '</span>';
+}
+
+function gap(title, body, extra) {
+  return `<div class="gap"><h3>${title}</h3><p>${body}</p>${extra || ''}</div>`;
+}
+
+/* method/source cards open in place, dismiss on Escape or outside click */
+function wireCards() {
+  document.querySelectorAll('[data-card]').forEach((b) => {
+    b.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const open = b.nextElementSibling && b.nextElementSibling.classList.contains('card');
+      document.querySelectorAll('.card').forEach((c) => c.remove());
+      if (!open) {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = b.dataset.card;
+        b.insertAdjacentElement('afterend', div);
+      }
+    });
+  });
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') document.querySelectorAll('.card').forEach((c) => c.remove());
+});
+document.addEventListener('click', () => document.querySelectorAll('.card').forEach((c) => c.remove()));
+
+/* ── wiring ──────────────────────────────────────────────────────── */
+$('#home').innerHTML = D.countries.map((cc) =>
+  `<option value="${cc}"${cc === 'GB' ? ' selected' : ''}>${D.per[cc].name}</option>`).join('');
+$('#yrs').addEventListener('input', () => { $('#yrs-out').textContent = $('#yrs').value; renderDetail(); });
+$('#cur').addEventListener('change', renderDetail);
+$('#occ').addEventListener('change', renderDetail);
+$('#m-light').addEventListener('click', () => setMode('light'));
+$('#m-dark').addEventListener('click', () => setMode('dark'));
+function setMode(m) {
+  document.body.dataset.mode = m;
+  $('#m-light').setAttribute('aria-pressed', String(m === 'light'));
+  $('#m-dark').setAttribute('aria-pressed', String(m === 'dark'));
+}
+renderCoverage();
+select('SE');
+</script>
+
+</body>
