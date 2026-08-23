@@ -223,15 +223,29 @@ try {
   // The consequence the catalogue names: a STABLE city's exact pixel would
   // move if the unstable extreme were back in the domain computation.
   const sydney = await scatterPoint('Sydney')
-  const sydneyReal = Number(sydney.title.match(/:\s*([\d.]+) yrs/)[1])
+  // Package 16 — the tooltip reads "~23 yrs", not "23.4 yrs":
+  // docs/DATA-FITNESS.md §2 rules a one-decimal years-to-home unsupportable on
+  // inputs rounded to $10/month and $100/m². The `~` is now part of every
+  // years-to-home figure, so this pattern accepts it.
+  const sydneyReal = Number(sydney.title.match(/:\s*~?([\d.]+)\s*yrs/)[1])
   const sydneyExpected = pixelFor(axis1, sydneyReal)
-  say(`  Sydney: ${sydneyReal} yrs at cy=${sydney.cy.toFixed(2)} (axis predicts ${sydneyExpected.toFixed(2)})`)
+  // ...and because the DISPLAYED value is now rounded to a whole year, the
+  // predicted pixel inherits up to half a year of uncertainty. That is derived
+  // here rather than absorbed into a fixed pixel budget that happens to be big
+  // enough: the drawing tolerance stays 1.5px and the rounding term is added on
+  // top, so this assertion keeps meaning "plotted where its value puts it"
+  // instead of quietly becoming "plotted roughly nearby".
+  const halfYearPx = Math.abs(pixelFor(axis1, sydneyReal + 0.5) - pixelFor(axis1, sydneyReal))
+  const tol = 1.5 + halfYearPx
+  say(`  Sydney: ~${sydneyReal} yrs at cy=${sydney.cy.toFixed(2)} `
+    + `(axis predicts ${sydneyExpected.toFixed(2)}, tolerance ±${tol.toFixed(2)}px `
+    + `= 1.5 drawing + ${halfYearPx.toFixed(2)} from rounding)`)
   // Both halves matter and neither is enough alone: the pixel agreeing with
   // the axis is true whatever the domain is (it is drawn from that same
   // axis), so the domain bound is what makes this a statement about Milan
   // being kept out of it.
-  check(domainTop < 200 && Math.abs(sydney.cy - sydneyExpected) < 1.5,
-    `R1: a known-stable city plots where its own real value puts it, on a domain that tops out at ${domainTop} yrs (±1.5px)`)
+  check(domainTop < 200 && Math.abs(sydney.cy - sydneyExpected) < tol,
+    `R1: a known-stable city plots where its own real value puts it, on a domain that tops out at ${domainTop} yrs (±${tol.toFixed(2)}px)`)
 
   /* ==================================================================== */
   say('')
