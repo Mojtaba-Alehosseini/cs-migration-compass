@@ -25,6 +25,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAsync } from '../components/explore/useAsync'
+import { useData } from '../data/store'
 import { Flag } from '../components/Flag'
 import { Gap, ChartSkeleton } from '../components/explore/Controls'
 import { loadPostings, fmtCompensation, fmtCompany, PROVIDER_LABEL, type Posting } from '../data/postings'
@@ -145,6 +146,7 @@ const NO_LOCATION = '—'
 
 export function Postings() {
   const { data, error } = useAsync(loadPostings, 'postings')
+  const core = useData()
   const [view, setView] = useState<'list' | 'map'>('list')
   const [countryFilter, setCountryFilter] = useState('')
   const [levelFilter, setLevelFilter] = useState('')
@@ -162,12 +164,20 @@ export function Postings() {
     })
   }, [data, countryFilter, levelFilter, remoteOnly, query])
 
-  const countries = useMemo(() => {
-    if (!data) return []
-    return Object.entries(data.country_counts)
+  // Package 16 — the panel carries 85 countries this site does not cover, 17.1%
+  // of the corpus. Listing them in one flat dropdown reads as coverage: nothing
+  // told a reader that picking Poland gets postings but no city, no cost of
+  // living, no tax model and no years-to-home. Split into two labelled groups so
+  // the difference is visible without hiding data anyone might want.
+  // NEEDS-DECISION.md #45 holds the actual scope question.
+  const [inScope, outOfScope] = useMemo(() => {
+    if (!data) return [[], []] as [[string, number][], [string, number][]]
+    const covered = new Set(core.citiesByCountry.keys())
+    const all = Object.entries(data.country_counts)
       .filter(([cc]) => cc !== 'unresolved')
-      .sort((a, b) => b[1] - a[1])
-  }, [data])
+      .sort((a, b) => b[1] - a[1]) as [string, number][]
+    return [all.filter(([cc]) => covered.has(cc)), all.filter(([cc]) => !covered.has(cc))]
+  }, [data, core])
 
   const mapDots = useMemo(() => {
     // Package 14 -- gated on view === 'map': this scans every one of
@@ -285,7 +295,12 @@ export function Postings() {
                   style={{ display: 'block', marginTop: 4, padding: '6px 8px', border: '1px solid var(--line)',
                     background: 'var(--surface)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)' }}>
                   <option value="">All ({data.postings.length.toLocaleString()})</option>
-                  {countries.map(([cc, n]) => <option key={cc} value={cc}>{cc} ({n})</option>)}
+                  <optgroup label="Countries this site covers">
+                    {inScope.map(([cc, k]) => <option key={cc} value={cc}>{cc} ({k.toLocaleString()})</option>)}
+                  </optgroup>
+                  <optgroup label="Also in the harvest — not covered by this site">
+                    {outOfScope.map(([cc, k]) => <option key={cc} value={cc}>{cc} ({k.toLocaleString()})</option>)}
+                  </optgroup>
                 </select>
               </label>
               <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
@@ -310,7 +325,17 @@ export function Postings() {
             </div>
             <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 8 }}>
               "Category" (occupation) is not filterable yet — see the classifier's own status on{' '}
-              <Link to="/data/postings-seed">the seed-list page</Link>.
+              <Link to="/data/postings-seed">the seed-list page</Link>.{' '}
+              {outOfScope.length > 0 && (
+                <>
+                  The harvest also reaches <b>{outOfScope.length} countries this site does not
+                  cover</b>{' '}
+                  ({outOfScope.reduce((s, [, k]) => s + k, 0).toLocaleString()} advertisements,{' '}
+                  {Math.round(100 * outOfScope.reduce((s, [, k]) => s + k, 0) / data.postings.length)}%).
+                  They are listed separately above: there are postings for them, but none of this
+                  site's cost-of-living, tax or housing data.
+                </>
+              )}
             </p>
           </div>
 

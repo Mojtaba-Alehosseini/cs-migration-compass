@@ -42,6 +42,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import PROCESSED, ROOT, banner, log, record_provenance, write_processed  # noqa: E402
+from postings_common import country_from_location  # noqa: E402
 
 SOURCE_ID = "postings"
 CLASSES = PROCESSED / "postings_title_classes.json"
@@ -131,6 +132,39 @@ def median_with_ci(vals: list[float], n_boot: int = 10000, seed: int = 20260101)
 
 def _round(x: float | None) -> float | None:
     return None if x is None else round(x / PUBLISH_ROUNDING) * PUBLISH_ROUNDING
+
+
+def reresolve_countries(rows: list[dict]) -> dict:
+    """Re-run the location parser over every row, filling blanks and correcting
+    what it can now name.
+
+    Applied HERE rather than by re-running the harvesters, because re-harvesting
+    would re-fetch six provider APIs to recompute a pure function of text
+    already committed.
+
+    The rule is asymmetric on purpose: where the parser produces a country it
+    wins, and where it produces nothing the existing value is KEPT. That second
+    half matters -- 154 rows carry a country the parser cannot derive from their
+    location text at all, because the provider supplied it directly (Teamtailor
+    stamps SE, USAJOBS stamps US on "Location Negotiable After Selection").
+    Overwriting those with None would destroy real information to satisfy a
+    parser."""
+    filled, corrected = 0, []
+    for r in rows:
+        got = country_from_location(r.get("location_raw"))
+        if not got:
+            continue
+        if not r.get("country"):
+            r["country"] = got
+            filled += 1
+        elif r["country"] != got:
+            corrected.append({"location": r.get("location_raw"), "was": r["country"], "now": got})
+            r["country"] = got
+    log(f"    country re-resolution: filled {filled:,} blanks, corrected {len(corrected)}")
+    from collections import Counter as _C
+    for (was, now), k in _C((c["was"], c["now"]) for c in corrected).most_common():
+        log(f"      {was} -> {now}: {k}")
+    return {"filled": filled, "corrected": corrected}
 
 
 def annotate(rows: list[dict], classes_doc: dict, clusters_doc: dict, eval_doc: dict) -> dict:
@@ -285,6 +319,7 @@ def run() -> int:
     fp = corpus_fingerprint(rows)
     log(f"    corpus fingerprint {fp[:16]} over {n:,} rows")
 
+    resolution = reresolve_countries(rows)
     stats = annotate(rows, classes_doc, clusters_doc, eval_doc)
     summary, summary_meta = pay_summary(rows)
 
@@ -299,12 +334,41 @@ def run() -> int:
                 f"median {r['median_as_published_usd_year']})")
 
     country_counts = Counter(r.get("country") or "unresolved" for r in rows)
+    n_unresolved = country_counts.get("unresolved", 0)
     d = doc["data"]
     d["postings"] = rows
     d["country_counts"] = dict(country_counts)
     d["pay_summary_by_country"] = summary
     d["pay_summary_meta"] = summary_meta
     d["pay_summary_min_n"] = MIN_N_PUBLISH
+    d["country_resolution"] = {
+        "unresolved": n_unresolved,
+        "unresolved_pct": round(100 * n_unresolved / n, 2),
+        "filled_this_run": resolution["filled"],
+        "corrected_this_run": resolution["corrected"],
+        "residual_failure_modes": {
+            "remote_with_no_country_named": "the largest remaining group. 'Remote', 'Anywhere', "
+                                            "'Fully Remote', 'Remoto' — these are not unparsed "
+                                            "locations, they are postings that genuinely state no "
+                                            "country, and coercing them into one would invent a "
+                                            "denominator.",
+            "supra_national_regions": "'Asia', 'Europe', 'LATAM', 'North America', 'EMEA'. Real "
+                                      "information, but not a country. Left unresolved rather than "
+                                      "assigned to a member state.",
+            "bare_city_or_office_shorthand": "'Santa Clara', 'Scotts Valley', 'SF Office', "
+                                             "'Emeryville HQ'. Resolvable in principle with a wider "
+                                             "gazetteer, but the ambiguous cases are real "
+                                             "('Worcester' is Massachusetts or England, 'Cali' is "
+                                             "Colombia or California) and this parser has already "
+                                             "shipped one substring-matching incident.",
+            "junk": "'550', ''. Nothing to resolve.",
+        },
+        "known_unfixed": (
+            "three country names are deliberately NOT in the table — panama, lebanon and jordan — "
+            "because each collides with a US place ('Panama City Beach, FL', 'Lebanon, OH', "
+            "'West Jordan, UT') that the 2-letter state code, checked after the country table, "
+            "would lose to. The ordering question this raises is recorded in NEEDS-DECISION.md."),
+    }
     d["title_class_summary"] = {
         "shipped_classes": stats["ship"],
         "class_decisions": stats["decisions"],

@@ -441,6 +441,67 @@ def _word_match(name: str, low: str) -> bool:
     return re.search(r"(?<![a-z])" + re.escape(name) + r"(?![a-z])", low) is not None
 
 
+# Work-arrangement words carry no geography. Stripping them lets a country
+# token that was only ever a prefix ("Remote - US") resolve normally. NOT
+# including "anywhere", "global", "worldwide", "world wide" or "distributed":
+# those are not noise around a location, they ARE the location, and a posting
+# that says "Anywhere" genuinely has no country. Nor supra-national regions
+# ("Asia", "Europe", "LATAM", "North America") -- real information, but not a
+# country, and coercing them into one would invent a denominator.
+_WORK_ARRANGEMENT = re.compile(
+    r"\b(remote|remoto|hybrid|onsite|on[\-\s]?site|in[\-\s]?office|wfh|"
+    r"work from home|based|located|only|first|friendly|optional|preferred|"
+    r"flexible|full[\-\s]?time|part[\-\s]?time)\b", re.I)
+
+# Office/site boilerplate around a place name: "SF Office", "NYC Headquarters",
+# "HQ - Sunnyvale (Office)", "Emeryville HQ".
+_OFFICE_NOISE = re.compile(
+    r"\b(hq|headquarters|head office|office|campus|site|location|region)\b", re.I)
+
+
+# Package 16 — 31 country names the wide table did not hold. Measured, not
+# guessed: 5,824 postings (12.1%) resolved to nothing, and plain country names
+# were a large share of the fixable remainder. Every candidate was SIMULATED
+# against the whole committed corpus first, because this function has shipped a
+# matching bug of exactly this shape before (see the docstring below), and the
+# simulation earned its keep three times over.
+#
+# It found two entries that CORRECT a live misassignment rather than merely
+# adding one:
+#   * "brasil" — 4 postings reading "Porto Alegre, Rio Grande do Sul, Brasil"
+#     and similar were labelled PORTUGAL, because the city table maps "porto"
+#     to PT and that matched the first word of a Brazilian city. Naming the
+#     country fixes them.
+#   * "costa rica" — 9 postings reading "San Jose, Costa Rica" were labelled US,
+#     the California San Jose winning on the city table.
+#
+# And it found three that must NOT be added, because a US place legitimately
+# carries the name and would be reassigned away from the right answer:
+#   * "panama"  would take "Panama City Beach, FL" from US to PA
+#   * "lebanon" would take "Lebanon, OH" from US to LB
+#   * "jordan"  would take "West Jordan, UT" and "South Jordan, UT" from US to JO
+# Each collides with the 2-letter state code checked AFTER this table, so the
+# country name would win. Excluded rather than worked around: the ordering
+# question is real, it also affects the "China Lake, CA" case this function
+# already documents, and it belongs to the owner. See NEEDS-DECISION.md.
+_COUNTRY_NAMES_WIDE.update({
+    "brasil": "BR", "costa rica": "CR",
+    "morocco": "MA", "maroc": "MA", "uruguay": "UY", "bolivia": "BO", "nicaragua": "NI",
+    "el salvador": "SV", "honduras": "HN", "guatemala": "GT", "paraguay": "PY", "ecuador": "EC",
+    "dominican republic": "DO", "jamaica": "JM", "ghana": "GH",
+    # Puerto Rico is a US territory, so it maps to US, not to its own ISO2. That
+    # resolves 13 rows reading "San Juan, Puerto Rico" without this pipeline
+    # taking a position on territorial status, and it leaves the 9 USAJOBS
+    # federal postings there labelled US, which is what they already were. If
+    # the site ever wants territories broken out, that is a product decision,
+    # not a parser default. See NEEDS-DECISION.md.
+    "puerto rico": "US",
+    "algeria": "DZ", "ethiopia": "ET", "uganda": "UG", "tanzania": "TZ", "zambia": "ZM",
+    "cameroon": "CM", "rwanda": "RW", "kuwait": "KW", "bahrain": "BH", "oman": "OM",
+    "cambodia": "KH", "laos": "LA", "myanmar": "MM", "kosovo": "XK", "méxico": "MX",
+})
+
+
 def country_from_location(location_raw: str | None) -> str | None:
     """Best-effort ISO2 from a free-text location string. Order: an exact
     ISO2/ISO3/name match (_common.py's own to_iso2); a full US state name;
@@ -510,6 +571,32 @@ def country_from_location(location_raw: str | None) -> str | None:
     for city, iso2 in _CITY_TO_COUNTRY.items():
         if _word_match(city, low):
             return iso2
+
+    # Package 16 — LAST resort: strip work-arrangement and office boilerplate,
+    # then resolve what is left. 5,824 postings (12.1%) resolved to nothing, and
+    # measuring them showed the single largest FIXABLE group was not an unknown
+    # place at all but a known country wearing a prefix: "Remote - US",
+    # "US Remote", "Remote (US)", "US-Remote", "Remote CAN". The country token
+    # was right there; the string just never matched anything as a whole.
+    #
+    # This runs LAST on purpose. Everything above sees the original string
+    # first, so no existing resolution can change -- this only ever converts a
+    # None into a country. A regression test asserts exactly that against the
+    # committed corpus, because silently reassigning a country would be a far
+    # worse defect than failing to resolve one.
+    stripped = _WORK_ARRANGEMENT.sub(" ", low)
+    stripped = _OFFICE_NOISE.sub(" ", stripped)
+    stripped = re.sub(r"[\s\-–—,()/|]+", " ", stripped).strip()
+    if stripped and stripped != low:
+        direct = to_iso2(stripped)
+        if direct:
+            return direct
+        for name, iso2 in _COUNTRY_NAMES_WIDE.items():
+            if _word_match(name, stripped):
+                return iso2
+        for city, iso2 in _CITY_TO_COUNTRY.items():
+            if _word_match(city, stripped):
+                return iso2
     return None
 
 

@@ -1854,3 +1854,87 @@ the assumption becomes testable. Note that the same audit measured the panel as 
 exactly those countries: against each country's share of European ICT specialist headcount, Italy
 sits at 0.28x, Denmark 0.30x, Norway 0.45x, Sweden 0.64x and Germany 0.60x, while Great Britain is
 over-represented at 2.26x.
+
+## 45. The postings panel covers 85 countries the site does not — scope expansion, or noise?
+
+The site's editorial scope is **15 countries** (AE, AU, CA, DE, DK, ES, FI, GB, IE, IT, NL, NO, QA,
+SE, US) across 73 cities. Its postings panel is not scoped to them at all. Measured on the current
+corpus:
+
+| | postings | share | countries |
+|---|---:|---:|---:|
+| Inside the 15 | 35,470 | 73.5% | 15 of 15 |
+| **Outside the 15** | **8,241** | **17.1%** | **85** |
+| Unresolved | 4,556 | 9.4% | — |
+
+The largest out-of-scope entries are India (1,051), France (686), Brazil (607), Singapore (581),
+Mexico (359), Thailand (348), Japan (320), South Korea (314) and Poland (281).
+
+**This is not only a filter-list question.** Until package 16 removed it, the published
+"median advertised pay by country" chart showed seven countries — and **three of them (France,
+Singapore, Japan) are outside the site's own scope**. The chart invited a comparison between
+countries the rest of the site does not cover, has no cost-of-living data for, and cannot compute a
+years-to-home or take-home figure for. A reader could reasonably have read "Singapore $152,969" as a
+destination this site supports. It does not.
+
+Note also how thin some *in-scope* countries are: Qatar has 12 postings, Denmark 27, Norway 41, Italy
+129. The panel is not merely wider than the spine, it is **wider and shallower** — 85 countries it
+does not cover, and four it does cover with fewer than 150 advertisements each.
+
+**Decide:** which of these the panel should be —
+
+- **(a)** scoped to the 15, with everything else dropped at harvest time. Smallest, most consistent
+  site; loses 17% of a corpus that cost real API budget to collect.
+- **(b)** scoped to the 15 for every DERIVED figure and every default view, with the rest reachable
+  behind an explicit "outside this site's scope" toggle. Keeps the data, stops it implying coverage.
+- **(c)** an explicit scope expansion — pick the out-of-scope countries with enough volume to matter
+  (IN, BR, PL at least) and give them the cities, cost-of-living and tax data the other 15 have.
+  Much the largest piece of work, and the only option that makes the panel's breadth honest.
+
+Package 16 did **not** choose. It made the current state legible instead: the country filter now
+separates "countries this site covers" from "also in the harvest", so nobody reads the second group
+as coverage. That is a stopgap, not the decision.
+
+## 46. Three country names are deliberately unparsed, because the checking order would misassign a US place
+
+`country_from_location()` checks, in order: exact ISO match, full US state name, the wide country-name
+table, bare 2-letter US state code, then a city table. Package 16 added 31 country names to that
+table and had to leave out three:
+
+| Name | Would gain | Would break |
+|---|---:|---|
+| `panama` | 30 postings | `Panama City Beach, FL` → US becomes PA |
+| `lebanon` | 6 | `Lebanon, OH` → US becomes LB |
+| `jordan` | 1 | `West Jordan, UT`, `South Jordan, UT` → US becomes JO |
+
+Each collides with a US place whose only US signal is the **2-letter state code, which is checked
+after the country table**. The same ordering already produces a documented wrong answer in the other
+direction: `China Lake, CA` resolves to China rather than the US, while its own sibling record
+`China Lake, California` resolves correctly.
+
+Promoting the 2-letter state-code check above the country table would fix all four of these. It
+would also change any location where a bare 2-letter token that happens to be a US state code sits
+beside a country name — and `Delhi, IN` (Indiana) is the shape that makes this a real trade, not an
+obvious win. That case already resolves to US today, so the change would not create it, but it would
+entrench it.
+
+**Decide:** whether to (a) reorder, accepting the `Delhi, IN` class of error to fix the
+`Panama City Beach, FL` class; (b) build the genuine city+state/country co-occurrence check that
+gets both right, which is the correct fix and the most work; or (c) leave the order alone and accept
+that three country names stay unparsed. Package 16 took (c) and disclosed it.
+
+## 47. Puerto Rico is mapped to the US, not to its own ISO code
+
+`"puerto rico"` resolves to **US**. Thirteen postings read "San Juan, Puerto Rico", "Arecibo, Puerto
+Rico" and similar; nine of them are USAJOBS federal roles that were already labelled US.
+
+Mapping to `PR` would have been the literal ISO answer and would have moved those nine off US.
+Mapping to `US` resolves the rows without this pipeline taking a position on territorial status, and
+leaves every existing label untouched. Two other cases were treated the opposite way and are worth
+naming, because the reasoning differs: `Bahrain Island` and `Kuwait` are US-government postings
+physically located abroad, and those were moved off US, on the grounds that a migration site's
+question is where the job IS, not who signs the cheque.
+
+**Decide:** whether territories should ever appear separately from their sovereign state. It affects
+nothing today — PR is not in the 15 either way — but it will the moment anyone counts "countries in
+the panel".
