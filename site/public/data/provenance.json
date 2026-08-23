@@ -436,7 +436,7 @@
       "urls": [
         "https://github.com/"
       ],
-      "fetched_at": "2026-08-23T04:21:02+00:00",
+      "fetched_at": "2026-08-23T05:43:22+00:00",
       "license": "each provider's own public job board API; see per-provider provenance entries",
       "redistribution": "raw committed",
       "transforms": [
@@ -449,7 +449,7 @@
       "status": "ok",
       "rows": 48267,
       "coverage": null,
-      "notes": "45,383 distinct roles among 48,267 raw rows; 1 of 17 countries clear the publication floor"
+      "notes": "45,383 distinct roles among 48,267 raw rows; 1 of 31 countries clear the publication floor"
     },
     {
       "source_id": "postings_ashby",
@@ -574,7 +574,7 @@
       "source_id": "postings_seed_summary",
       "name": "Postings seed-list summary — the small fields the transparency page actually reads",
       "urls": [],
-      "fetched_at": "2026-08-21T18:11:11+00:00",
+      "fetched_at": "2026-08-23T05:31:01+00:00",
       "license": "Inherits each provider source's own license, same as postings.json itself — this file adds no new terms, only a smaller re-shaping of already-committed, already-licensed data.",
       "redistribution": "derived — nothing fetched here; a build-time SUBSET of postings.json's own fields, which already carries the real provenance for this same data.",
       "transforms": [
@@ -1212,5 +1212,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-23T04:21:02+00:00"
+  "updated_at": "2026-08-23T05:43:22+00:00"
 }

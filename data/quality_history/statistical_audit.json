@@ -336,8 +336,8 @@
      "why_not_interpretable": "pooled heterogeneous fields; Benford requires ONE homogeneous, scale-free quantity, and a wide pooled span does not satisfy that"
     },
     "postings": {
-     "n": 101606,
-     "mad": 0.03395,
+     "n": 142688,
+     "mad": 0.02242,
      "orders_of_magnitude_spanned": 9.06,
      "scale_span_ok": true,
      "homogeneous_quantity": false,
@@ -516,51 +516,75 @@
    "per_country": [
     {
      "country": "US",
-     "n": 3980,
-     "published": 82994.5,
-     "ci_lo": 82994,
-     "ci_hi": 84827,
-     "ci_method": "percentile (BCa undefined: degenerate bootstrap)",
-     "lo_pct": 0.0,
-     "hi_pct": 2.21,
-     "interval_is_just_the_sample_range": false,
-     "bootstrap_mass_on_point_estimate_pct": 59.1
-    },
-    {
-     "country": "GB",
-     "n": 21,
-     "published": 151420.6,
-     "ci_lo": 137179,
-     "ci_hi": 151421,
+     "n": 10467,
+     "published": 140000.0,
+     "ci_lo": 136960,
+     "ci_hi": 140000,
      "ci_method": "BCa",
-     "lo_pct": -9.41,
+     "lo_pct": -2.17,
      "hi_pct": 0.0,
      "interval_is_just_the_sample_range": false,
-     "bootstrap_mass_on_point_estimate_pct": 49.5
-    },
-    {
-     "country": "JP",
-     "n": 11,
-     "published": 77254.0,
-     "ci_lo": 60177,
-     "ci_hi": 85771,
-     "ci_method": "percentile (n=11 below BCa floor 12)",
-     "lo_pct": -22.11,
-     "hi_pct": 11.02,
-     "interval_is_just_the_sample_range": false,
-     "bootstrap_mass_on_point_estimate_pct": 24.6
+     "bootstrap_mass_on_point_estimate_pct": 65.2
     },
     {
      "country": "CA",
-     "n": 9,
-     "published": 113191.58,
-     "ci_lo": 85771,
-     "ci_hi": 168085,
-     "ci_method": "percentile (n=9 below BCa floor 12)",
-     "lo_pct": -24.22,
-     "hi_pct": 48.5,
+     "n": 36,
+     "published": 132625.0,
+     "ci_lo": 113192,
+     "ci_hi": 145000,
+     "ci_method": "BCa",
+     "lo_pct": -14.65,
+     "hi_pct": 9.33,
      "interval_is_just_the_sample_range": false,
-     "bootstrap_mass_on_point_estimate_pct": 70.4
+     "bootstrap_mass_on_point_estimate_pct": 5.4
+    },
+    {
+     "country": "GB",
+     "n": 36,
+     "published": 141008.05,
+     "ci_lo": 77111,
+     "ci_hi": 151421,
+     "ci_method": "BCa",
+     "lo_pct": -45.31,
+     "hi_pct": 7.38,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 7.7
+    },
+    {
+     "country": "JP",
+     "n": 12,
+     "published": 80388.9,
+     "ci_lo": 60972,
+     "ci_hi": 85771,
+     "ci_method": "BCa",
+     "lo_pct": -24.15,
+     "hi_pct": 6.7,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 13.5
+    },
+    {
+     "country": "SG",
+     "n": 11,
+     "published": 206508.85,
+     "ci_lo": 149145,
+     "ci_hi": 230000,
+     "ci_method": "percentile (n=11 below BCa floor 12)",
+     "lo_pct": -27.78,
+     "hi_pct": 11.38,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 24.4
+    },
+    {
+     "country": "NL",
+     "n": 9,
+     "published": 73448.9,
+     "ci_lo": 53109,
+     "ci_hi": 89834,
+     "ci_method": "percentile (n=9 below BCa floor 12)",
+     "lo_pct": -27.69,
+     "hi_pct": 22.31,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 70.3
     },
     {
      "country": "FR",
@@ -575,40 +599,88 @@
      "bootstrap_mass_on_point_estimate_pct": 27.5
     },
     {
-     "country": "NL",
-     "n": 7,
-     "published": 73448.9,
-     "ci_lo": 53109,
-     "ci_hi": 80794,
-     "ci_method": "percentile (n=7 below BCa floor 12)",
-     "lo_pct": -27.69,
-     "hi_pct": 10.0,
-     "interval_is_just_the_sample_range": false,
-     "bootstrap_mass_on_point_estimate_pct": 77.9
-    },
-    {
-     "country": "SG",
-     "n": 5,
-     "published": 152969.52,
-     "ci_lo": 60177,
-     "ci_hi": 317412,
-     "ci_method": "percentile (n=5 below BCa floor 12)",
-     "lo_pct": -60.66,
-     "hi_pct": 107.5,
-     "interval_is_just_the_sample_range": true,
-     "bootstrap_mass_on_point_estimate_pct": 36.2
-    },
-    {
      "country": "DE",
-     "n": 3,
-     "published": 85771.0,
-     "ci_lo": 73449,
+     "n": 8,
+     "published": 107500.0,
+     "ci_lo": 85771,
      "ci_hi": 163848,
-     "ci_method": "percentile (n=3 below BCa floor 12)",
-     "lo_pct": -14.37,
-     "hi_pct": 91.03,
+     "ci_method": "percentile (n=8 below BCa floor 12)",
+     "lo_pct": -20.21,
+     "hi_pct": 52.42,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 13.1
+    },
+    {
+     "country": "PH",
+     "n": 6,
+     "published": 14780.0,
+     "ci_lo": 5738,
+     "ci_hi": 30500,
+     "ci_method": "percentile (n=6 below BCa floor 12)",
+     "lo_pct": -61.18,
+     "hi_pct": 106.36,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 15.6
+    },
+    {
+     "country": "AU",
+     "n": 5,
+     "published": 140000.0,
+     "ci_lo": 86985,
+     "ci_hi": 202500,
+     "ci_method": "percentile (n=5 below BCa floor 12)",
+     "lo_pct": -37.87,
+     "hi_pct": 44.64,
      "interval_is_just_the_sample_range": true,
-     "bootstrap_mass_on_point_estimate_pct": 48.8
+     "bootstrap_mass_on_point_estimate_pct": 37.0
+    },
+    {
+     "country": "MX",
+     "n": 4,
+     "published": 159743.75,
+     "ci_lo": 50000,
+     "ci_hi": 189000,
+     "ci_method": "percentile (n=4 below BCa floor 12)",
+     "lo_pct": -68.7,
+     "hi_pct": 18.31,
+     "interval_is_just_the_sample_range": true,
+     "bootstrap_mass_on_point_estimate_pct": 20.7
+    },
+    {
+     "country": "BH",
+     "n": 4,
+     "published": 63556.0,
+     "ci_lo": 45032,
+     "ci_hi": 72132,
+     "ci_method": "percentile (n=4 below BCa floor 12)",
+     "lo_pct": -29.15,
+     "hi_pct": 13.49,
+     "interval_is_just_the_sample_range": true,
+     "bootstrap_mass_on_point_estimate_pct": 19.8
+    },
+    {
+     "country": "BR",
+     "n": 3,
+     "published": 45000.0,
+     "ci_lo": 45000,
+     "ci_hi": 71500,
+     "ci_method": "percentile (n=3 below BCa floor 12)",
+     "lo_pct": 0.0,
+     "hi_pct": 58.89,
+     "interval_is_just_the_sample_range": true,
+     "bootstrap_mass_on_point_estimate_pct": 72.8
+    },
+    {
+     "country": "IN",
+     "n": 3,
+     "published": 3648.53,
+     "ci_lo": 2616,
+     "ci_hi": 194838,
+     "ci_method": "percentile (n=3 below BCa floor 12)",
+     "lo_pct": -28.3,
+     "hi_pct": 5240.17,
+     "interval_is_just_the_sample_range": true,
+     "bootstrap_mass_on_point_estimate_pct": 46.6
     },
     {
      "country": "PT",
@@ -620,9 +692,63 @@
      "why_no_interval": "n=2 is below the minimum at which a bootstrap of the median describes anything"
     },
     {
-     "country": "IN",
+     "country": "KH",
      "n": 2,
-     "published": 3132.23,
+     "published": 28630.81,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=2 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "ES",
+     "n": 2,
+     "published": 177993.75,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=2 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "IT",
+     "n": 2,
+     "published": 65625.0,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=2 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "AR",
+     "n": 2,
+     "published": 38844.0,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=2 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "IE",
+     "n": 2,
+     "published": 93600.0,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=2 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "CN",
+     "n": 2,
+     "published": 133750.0,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=2 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "KW",
+     "n": 2,
+     "published": 90573.25,
      "ci_lo": null,
      "ci_hi": null,
      "ci_method": "not computable",
@@ -647,9 +773,54 @@
      "why_no_interval": "n=2 is below the minimum at which a bootstrap of the median describes anything"
     },
     {
-     "country": "AU",
+     "country": "IL",
      "n": 1,
-     "published": 86984.65,
+     "published": 185000.0,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=1 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "ZA",
+     "n": 1,
+     "published": 16000.0,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=1 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "JM",
+     "n": 1,
+     "published": 15000.0,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=1 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "KE",
+     "n": 1,
+     "published": 70000.0,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=1 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "NZ",
+     "n": 1,
+     "published": 100000.0,
+     "ci_lo": null,
+     "ci_hi": null,
+     "ci_method": "not computable",
+     "why_no_interval": "n=1 is below the minimum at which a bootstrap of the median describes anything"
+    },
+    {
+     "country": "PL",
+     "n": 1,
+     "published": 103500.0,
      "ci_lo": null,
      "ci_hi": null,
      "ci_method": "not computable",
@@ -665,14 +836,14 @@
      "why_no_interval": "n=1 is below the minimum at which a bootstrap of the median describes anything"
     }
    ],
-   "n_countries_published": 14,
-   "n_below_min_n_for_a_distributional_claim": 12,
-   "n_with_no_computable_interval_at_all": 6,
+   "n_countries_published": 31,
+   "n_below_min_n_for_a_distributional_claim": 27,
+   "n_with_no_computable_interval_at_all": 17,
    "widest": {
-    "country": "SG",
-    "span_pct": 168.2
+    "country": "IN",
+    "span_pct": 5268.5
    },
-   "n_intervals_that_are_just_the_sample_range": 2,
+   "n_intervals_that_are_just_the_sample_range": 5,
    "method_note": "BCa where n permits, percentile below n=12, and each row states which it got. An adversarial review found an earlier version computing percentile intervals inline while the report claimed BCa; the BCa implementation was self-tested but never actually called.",
    "interval_caveats": "These intervals are strongly ASYMMETRIC and are reported as signed lo/hi deviations rather than a single +/-. At the smallest n the bootstrap has no resolution and its 2.5/97.5 percentiles are simply the sample min and max, which is flagged per row. For the US, most of the bootstrap mass sits on a single heaped value, so its very narrow interval reflects heaping as much as precision.",
    "note": "values are published to the cent from samples as small as n=5. The underlying employer-stated figures are heaped (see 0-D); FX conversion then manufactures apparent precision that was never in the source."

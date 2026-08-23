@@ -49,6 +49,14 @@ DATASETS = [
     "bls_oews", "oecd_indicators", "oecd_economic_outlook", "wikipedia_english_speakers",
     "levels_fyi", "world_bank", "fx_rates", "hours_worked", "experience_gradient",
     "city_coordinates",
+    # Package 16 — the three house-price indices are swept too, though the work
+    # order's list does not name them. Two are the controls this sweep judges
+    # everything else against, and the third is the known defect. Running the
+    # pipeline over all three means the control readings and the confirmed
+    # finding are PRODUCED by the code rather than asserted beside it, so the
+    # claim "no second Teranet" is checked by a run that demonstrably still
+    # finds the first one.
+    "uk_hpi", "fhfa_hpi_metro", "teranet_national_bank_hpi",
 ]
 
 # A series whose name says it is a rate, a change or a share is already
@@ -68,46 +76,75 @@ MIN_N_FOR_ACF = 36
 MOM_SD_PCT_CONSISTENT_WITH_INJECTED_NOISE = 8.0
 
 
-def corroborate(flagged, family):
+# A real published index reads ~0.985 on this test. Anything this far below a
+# known-good control of the same kind is behaving differently from a series we
+# KNOW is sound -- which is the comparison that made the original Teranet
+# finding trustworthy, and the one this rule got wrong on its first attempt.
+ACF_GAP_FROM_GOOD_CONTROL = 0.30
+
+
+def corroborate(flagged, family, good_control_acf=None):
     """Is a low-autocorrelation reading a DEFECT, or is the test simply not
     valid for this kind of series?
 
-    What made the Teranet finding trustworthy was not the threshold. It was the
-    SEPARATION: six Teranet cities clustered at 0.11-0.27 while the two real
-    published indices in the same repo sat at 0.985, with nothing between them.
-    An absolute threshold alone has no such backing, and this sweep proved it --
-    it flagged four of thirteen national annual hours-worked series, whose
-    readings run 0.095 to 0.748 in one unbroken continuum with a median of
-    0.485. There is no gap there. Those four are the low tail of a distribution,
-    not a defective subgroup, and annual hours worked genuinely moves year to
-    year (recessions, holiday reform, part-time share), so the test's own stated
-    precondition -- a path smooth relative to the sampling interval -- does not
-    hold for it at all.
+    THIS RULE WAS WRONG THE FIRST TIME AND THE ERROR IS WORTH RECORDING,
+    because it is the exact failure the work order asked the reviewer to hunt
+    for: a check too weak to fail, dressed as rigour.
 
-    A flag is therefore corroborated only when the series is an OUTLIER against
-    its own peers AND its point-to-point movement is large enough for injected
-    noise to be a plausible explanation."""
+    The first version required a flagged series to be an OUTLIER AGAINST ITS
+    OWN PEER FAMILY. Fed the six Teranet cities package 15 actually measured,
+    it confirmed ZERO of them. A whole-family defect -- one bad extractor
+    corrupting every series it produces -- has no outlier by construction: the
+    peer median is dragged down with the defect, so `flagged < median - gap`
+    can never fire. That is precisely Teranet's shape, so "no second Teranet"
+    was being asserted by a rule that could not have found the first one.
+
+    What actually made the original finding trustworthy was never the peer
+    spread. It was the SEPARATION FROM A KNOWN-GOOD CONTROL: Teranet at
+    0.11-0.27 against UK HPI and FHFA at 0.985, two real published indices in
+    the same repo. So that is the test now. The peer family is still computed
+    and reported, because a whole family reading low is INFORMATIVE -- it
+    points at a shared extractor rather than one bad series -- but it can no
+    longer veto a finding.
+
+    The movement threshold stays, and it is what correctly rejects the annual
+    hours-worked readings: they sit far below the control too, but they move
+    0.5-2.7% point to point where injected noise of this kind moves 22-31%.
+    Being unlike a price index is not the same as being corrupted, and annual
+    hours worked is genuinely unlike one."""
     peers = [f["residual_acf_lag1"] for f in family]
     med = float(np.median(peers)) if peers else None
-    separated = bool(med is not None and len(peers) >= 3
-                     and flagged["residual_acf_lag1"] < med - 0.30)
+    acf = flagged["residual_acf_lag1"]
+    separated = bool(good_control_acf is not None
+                     and acf < good_control_acf - ACF_GAP_FROM_GOOD_CONTROL)
     big_moves = flagged.get("mom_sd_pct", 0) >= MOM_SD_PCT_CONSISTENT_WITH_INJECTED_NOISE
+    family_low = bool(med is not None and good_control_acf is not None
+                      and med < good_control_acf - ACF_GAP_FROM_GOOD_CONTROL)
     return {
+        "good_control_residual_acf": (round(good_control_acf, 3)
+                                      if good_control_acf is not None else None),
+        "separated_from_known_good_control": separated,
+        "movement_large_enough_for_injected_noise": bool(big_moves),
         "peer_family_n": len(peers),
         "peer_median_residual_acf": round(med, 3) if med is not None else None,
         "peer_min": round(float(np.min(peers)), 3) if peers else None,
         "peer_max": round(float(np.max(peers)), 3) if peers else None,
-        "is_outlier_against_peers": separated,
-        "movement_large_enough_for_injected_noise": bool(big_moves),
+        "whole_peer_family_also_low": family_low,
         "corroborated": bool(separated and big_moves),
-        "why": ("outlier against its own peer family AND moves enough per point for injected "
-                "noise to explain it" if separated and big_moves else
-                "the whole peer family reads low, so this is the tail of one distribution rather "
-                "than a defective subgroup — the test's precondition (a path smooth relative to "
-                "the sampling interval) most likely does not hold for this kind of series"
-                if not separated else
-                "an outlier, but its point-to-point movement is far too small for injected noise "
-                "of the kind this test detects"),
+        "why": (
+            "cannot judge: no known-good control series was available to compare against"
+            if good_control_acf is None else
+            ("behaves unlike a known-good index of the same kind AND moves enough per point "
+             "for injected noise to explain it"
+             + (" -- and its whole peer family reads low too, which points at a shared "
+                "extractor rather than one bad series" if family_low else ""))
+            if separated and big_moves else
+            "behaves unlike a known-good index, but its point-to-point movement is far too small "
+            "for injected noise of the kind this test detects -- more likely the test's "
+            "precondition (a path smooth relative to the sampling interval) does not hold for "
+            "this kind of series at all"
+            if separated else
+            "sits close to a known-good index of the same kind"),
     }
 
 
@@ -155,9 +192,25 @@ def find_series(node, path="", out=None):
         for k, v in node.items():
             find_series(v, f"{path}/{k}" if path else str(k), out)
     elif isinstance(node, list) and node and isinstance(node[0], dict):
-        tk = next((k for k in ("year", "date", "period", "y") if k in node[0]), None)
+        # "month" was missing, and it cost the most valuable 30 series in the
+        # sweep: indeed_hiring_lab_job_postings keys its records by `month` and
+        # holds 30 metro index series of 78 points each -- monthly index levels,
+        # precisely the shape the persistence test is built for and the same
+        # shape as Teranet. They were reported as "0 series found", which reads
+        # as "nothing here to test" rather than "this reader cannot see it".
+        tk = next((k for k in ("year", "date", "period", "month", "y") if k in node[0]), None)
+        # A numeric field is not automatically a measurement. FHFA records read
+        # {year, quarter, index}: treating `quarter` as a value builds the
+        # series 4,1,2,3,4,1,2,3... which of course fails a persistence test,
+        # and produced 15 confident false flags against the very index this
+        # sweep uses as a KNOWN-GOOD control. Time components and record
+        # bookkeeping are excluded from the value side; they are coordinates,
+        # not observations.
+        _NOT_A_MEASUREMENT = {"year", "quarter", "month", "week", "day", "days",
+                              "period", "y", "n", "count", "rank"}
         vks = [k for k, v in node[0].items()
-               if k != tk and isinstance(v, (int, float)) and not isinstance(v, bool)]
+               if k != tk and k.lower() not in _NOT_A_MEASUREMENT
+               and isinstance(v, (int, float)) and not isinstance(v, bool)]
         if tk:
             for vk in vks:
                 pts = []
@@ -249,16 +302,41 @@ def sweep_one(sid: str, doc: dict, controls: dict) -> dict:
     # Group tested series into FAMILIES -- the same measured quantity across
     # countries or cities -- so a flag can be judged against its own peers
     # instead of against an absolute threshold alone.
+    # Group by the measured QUANTITY, not by position. An earlier version
+    # dropped exactly one leading path segment on the assumption that segment 0
+    # is the entity -- true for `US/hours_worked/...`, false for Teranet's
+    # `cities/<city>/series/index`, where segment 0 is the constant "cities" and
+    # every city therefore became a family of one. A singleton family made the
+    # peer comparison arithmetically incapable of firing. Dropping the segment
+    # that VARIES across series leaves the quantity, whatever its depth.
+    def _family_key(label):
+        return "/".join(p for i, p in enumerate(label.split("/")) if p and i != _varying[0])
+
+    parts = [r["label"].split("/") for r in tested]
+    depth = min((len(p) for p in parts), default=0)
+    _varying = [0]
+    best = -1
+    for i in range(depth):
+        k = len({p[i] for p in parts})
+        if k > best:
+            best, _varying[0] = k, i
     families: dict[str, list] = {}
     for r in tested:
-        fam = "/".join(p for p in r["label"].split("/")[1:] if p) or r["label"]
-        families.setdefault(fam, []).append(r)
+        families.setdefault(_family_key(r["label"]), []).append(r)
+    good = (controls.get("CONTROL real published index (UK HPI London)") or {})
+    good_acf = good.get("residual_acf_lag1")
     for r in tested:
         if r.get("looks_like_injected_noise"):
-            fam = "/".join(p for p in r["label"].split("/")[1:] if p) or r["label"]
-            r["corroboration"] = corroborate(r, families.get(fam, []))
+            r["corroboration"] = corroborate(r, families.get(_family_key(r["label"]), []),
+                                             good_control_acf=good_acf)
 
     rec["persistence_test"] = {
+        "no_time_series_present": len(all_series) == 0,
+        "no_time_series_reason": ("this dataset holds point-in-time values or per-category "
+                                  "records, not a series over time, so the persistence test has "
+                                  "nothing to apply to. Reported explicitly: a silent zero is "
+                                  "indistinguishable from a check that passed."
+                                  if len(all_series) == 0 else None),
         "n_series_found": len(all_series),
         "n_tested": len(tested),
         "n_skipped": sum(skipped.values()),
@@ -459,21 +537,47 @@ def self_test() -> int:
     ck("a series shorter than the minimum is refused rather than guessed at",
        injected_noise_test(list(range(10)), "short") is None)
 
-    # corroboration: the Teranet shape must survive, the hours-worked shape must not
-    teranet_like = {"residual_acf_lag1": 0.24, "mom_sd_pct": 24.6}
-    teranet_family = [{"residual_acf_lag1": v} for v in (0.985, 0.985, 0.24)]
-    ck("CORROBORATES a Teranet-shaped flag (outlier vs peers, huge point-to-point moves)",
-       corroborate(teranet_like, teranet_family)["corroborated"])
-    hours_like = {"residual_acf_lag1": 0.095, "mom_sd_pct": 2.67}
+    # THE control that matters: the rule must confirm the defect it exists to
+    # find. These are the six Teranet cities package 15 actually measured,
+    # against the real UK HPI control reading. The first version of this rule,
+    # which required a flag to be an outlier against its own peer family,
+    # confirmed ZERO of them -- so this control is built from real measured
+    # values rather than a convenient hand-picked family.
+    UK_HPI_GOOD = 0.9849
+    TERANET = [("toronto", 0.2372, 24.649), ("vancouver", 0.2679, 29.115),
+               ("montreal", 0.1771, 30.588), ("ottawa", 0.1131, 25.538),
+               ("calgary", 0.2354, 22.048), ("halifax", 0.1686, 31.322)]
+    ter_family = [{"residual_acf_lag1": a} for _, a, _ in TERANET]
+
+    def _corr(a, m, fam):
+        return corroborate({"residual_acf_lag1": a, "mom_sd_pct": m}, fam,
+                           good_control_acf=UK_HPI_GOOD)
+
+    confirmed = sum(_corr(a, m, ter_family)["corroborated"] for _, a, m in TERANET)
+    ck("CONFIRMS all six real Teranet cities -- the defect this rule exists to find",
+       confirmed == 6, f"{confirmed}/6")
+    ck("...and confirms one as a SINGLETON family, with no peers to compare against",
+       _corr(0.2372, 24.649, [{"residual_acf_lag1": 0.2372}])["corroborated"],
+       "a whole-family defect has no outlier by construction")
+    ck("reports a whole low-reading family as a corroborating signal, never a veto",
+       _corr(0.2372, 24.649, ter_family)["whole_peer_family_also_low"])
+
+    HOURS = [("GB", 0.095, 2.67), ("DE", 0.285, 1.11), ("IT", 0.184, 2.45), ("ES", 0.270, 1.50)]
     hours_family = [{"residual_acf_lag1": v} for v in
                     (0.413, 0.327, 0.285, 0.512, 0.270, 0.583, 0.095, 0.663, 0.184, 0.485,
                      0.607, 0.748, 0.677)]
-    ck("REFUSES to corroborate an hours-worked-shaped flag (tail of one continuum)",
-       not corroborate(hours_like, hours_family)["corroborated"],
-       corroborate(hours_like, hours_family)["why"][:60])
-    ck("refuses a peer outlier whose movement is far too small for injected noise",
-       not corroborate({"residual_acf_lag1": 0.05, "mom_sd_pct": 0.4},
-                       [{"residual_acf_lag1": v} for v in (0.9, 0.9, 0.9)])["corroborated"])
+    ck("REJECTS all four annual hours-worked readings",
+       sum(not _corr(a, m, hours_family)["corroborated"] for _, a, m in HOURS) == 4)
+    ck("...and rejects them on MOVEMENT, not on peer separation",
+       all(_corr(a, m, hours_family)["separated_from_known_good_control"]
+           and not _corr(a, m, hours_family)["movement_large_enough_for_injected_noise"]
+           for _, a, m in HOURS),
+       "all four ARE far from the control; none moves enough to be injected noise")
+    ck("a series close to the known-good control is not corroborated",
+       not _corr(0.97, 25.0, ter_family)["corroborated"])
+    ck("with no control available it refuses to judge rather than guessing",
+       corroborate({"residual_acf_lag1": 0.1, "mom_sd_pct": 30.0}, ter_family,
+                   good_control_acf=None)["corroborated"] is False)
 
     # series discovery
     doc = {"US": {"gdp": [{"year": 2000 + i, "value": 1.0 * i} for i in range(12)]},
@@ -483,6 +587,17 @@ def self_test() -> int:
     ck("finds a year-keyed dict series", any("pop" in k for k in found))
     ck("a series with too few points is not reported",
        not find_series({"X": {"v": [{"year": 2000, "value": 1}]}}))
+    fhfa_like = {"seattle": {"series": [{"year": 1975 + i // 4, "quarter": i % 4 + 1,
+                                        "index": 20.0 + i} for i in range(80)]}}
+    found2 = dict(find_series(fhfa_like))
+    ck("a time COMPONENT is not mistaken for a measurement",
+       not any(k.endswith("quarter") for k in found2) and any(k.endswith("index") for k in found2),
+       f"extracted {sorted(found2)}")
+    monthly = {"atlanta": {"series": [{"month": f"2020-{m:02d}", "index": 100.0 + m, "days": 30}
+                                      for m in range(1, 13)]}}
+    found3 = dict(find_series(monthly))
+    ck("a month-keyed series is discovered at all",
+       any(k.endswith("index") for k in found3), f"extracted {sorted(found3)}")
 
     print(f"\n{len(fails)} failure(s)" + (" — all controls hold" if not fails else f": {fails}"))
     return 1 if fails else 0

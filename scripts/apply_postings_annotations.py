@@ -71,6 +71,23 @@ MIN_N_PUBLISH = 30
 # assumption that silently made its first recount 1,239 against a real 1,117.
 PAY_SUMMARY_CLASS = "SW"
 
+# Advertised pay from 2016 and from 2026 are not the same quantity, and pooling
+# them into one median produces a number that describes neither. Measured on the
+# US: the corpus holds 2026 rows at a median of $203,963 and 2016-2017 rows at
+# ~$87,000, and an unrestricted median lands at $175,000 -- between two
+# populations $115,000 apart, 53% of one and 29% of the other. That is a
+# bimodal mixture wearing a point estimate.
+#
+# An adversarial review found this by asking what the headline number was made
+# of. Nothing on screen carried a date, which breaks this project's own standing
+# rule that every published number carries a source, a date and a denominator.
+#
+# Three years: the current year and two behind it. Wide enough to hold a usable
+# sample, narrow enough that nominal pay has not moved much across it. Rows with
+# no posted_at are excluded from the published figure -- an undated row cannot be
+# placed in or out of the window, and 8.4% of the US subset is undated.
+PUBLISH_FROM_YEAR = 2024
+
 # §0-D measured advertised pay heaped to round thousands: 77.5% of native
 # annual minima end in 0 or 5, 65% end in 000, terminal-digit uniformity
 # rejected at p < 0.001. A median of heaped data resolves no finer than the
@@ -240,8 +257,21 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
             return None
         return (u["min"] + u["max"]) / 2
 
+    def posted_year(r):
+        s = (r.get("posted_at") or "")[:4]
+        return int(s) if s.isdigit() else None
+
+    def in_window(r):
+        y = posted_year(r)
+        return y is not None and y >= PUBLISH_FROM_YEAR
+
     pops: dict[str, dict[str, list[float]]] = {k: defaultdict(list) for k in
-                                               ("as_published", "deduped", "software")}
+                                               ("as_published", "deduped", "software",
+                                                "software_all_years")}
+    # who and when the published figure is actually made of. A median with no
+    # description of its own composition is how this figure came to be 77%
+    # nine-year-old federal listings without anyone noticing.
+    comp_rows: dict[str, list[dict]] = defaultdict(list)
     for r in rows:
         cc, m = r.get("country"), mid(r)
         if not cc or m is None:
@@ -251,17 +281,47 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
             continue
         pops["deduped"][cc].append(m)
         if (r.get("title_class") or {}).get("class") == PAY_SUMMARY_CLASS:
-            pops["software"][cc].append(m)
+            pops["software_all_years"][cc].append(m)
+            if in_window(r):
+                pops["software"][cc].append(m)
+                comp_rows[cc].append(r)
 
     out = []
     for cc in sorted(pops["as_published"], key=lambda c: -len(pops["as_published"][c])):
         pub = pops["as_published"][cc]
         ded = pops["deduped"][cc]
         sw = pops["software"][cc]
+        sw_all = pops["software_all_years"][cc]
         rec = {"country": cc,
                "n_as_published": len(pub), "n_deduped": len(ded), "n_software_only": len(sw),
-               "median_as_published_usd_year": round(float(np.median(pub)), 2) if pub else None}
+               "n_software_all_years": len(sw_all),
+               "published_from_year": PUBLISH_FROM_YEAR,
+               "median_as_published_usd_year": round(float(np.median(pub)), 2) if pub else None,
+               # kept as a DIAGNOSTIC, never published: this is the figure that
+               # pools every vintage, and the gap between it and the windowed
+               # one is the reason the window exists.
+               "diagnostic_median_all_years_usd_year": (round(float(np.median(sw_all)), 2)
+                                                        if sw_all else None)}
         rec["publishable"] = bool(len(sw) >= MIN_N_PUBLISH)
+        if rec["publishable"]:
+            cr = comp_rows[cc]
+            yrs = Counter((r.get("posted_at") or "")[:4] for r in cr)
+            prov = Counter(r.get("provider") for r in cr)
+            top_p, top_n = prov.most_common(1)[0]
+            rec["composition"] = {
+                "by_year": {y: k for y, k in sorted(yrs.items())},
+                "by_provider": dict(prov.most_common()),
+                "share_from_latest_year_pct": round(100 * yrs[max(yrs)] / len(cr), 1),
+                "largest_provider": top_p,
+                "largest_provider_share_pct": round(100 * top_n / len(cr), 1),
+                "caveat": (
+                    f"{round(100 * top_n / len(cr))}% of these advertisements come from one "
+                    f"source ({top_p}). The window that makes the figure current also makes it "
+                    f"narrower: USAJOBS supplies 872 US software rows and every one of them is "
+                    f"dated 2016-2018, so restricting to {PUBLISH_FROM_YEAR}+ removes federal "
+                    f"listings entirely and leaves private ATS boards. That is a real selection, "
+                    f"stated rather than absorbed."),
+            }
         # A median is emitted ONLY for a country that clears the floor. An
         # earlier revision computed one for every country with any software row
         # and relied on the UI to filter -- so the JSON still carried medians
@@ -288,8 +348,23 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
 
     meta = {
         "basis": f"de-duplicated (one row per distinct role), restricted to titles classified "
-                 f"{PAY_SUMMARY_CLASS}",
+                 f"{PAY_SUMMARY_CLASS}, posted {PUBLISH_FROM_YEAR} or later",
         "restricted_to_class": PAY_SUMMARY_CLASS,
+        "published_from_year": PUBLISH_FROM_YEAR,
+        "vintage_reason": (
+            "advertised pay from 2016 and from 2026 are not the same quantity. Pooled, the US "
+            "median lands at $175,000 between a 2026 population near $204,000 (53% of rows) and a "
+            "2016-2017 one near $87,000 (29%) — a bimodal mixture wearing a point estimate, and "
+            "one that carried no date on screen at all. diagnostic_median_all_years_usd_year "
+            "keeps the pooled figure per country so the gap stays visible."),
+        "vintage_cost": (
+            "the window also removes US federal listings entirely: USAJOBS supplies 872 US "
+            "software rows and every one is dated 2016-2018. The published figure is therefore "
+            "private job-board pay, and each country's `composition` block states its own year "
+            "and provider mix rather than leaving that to be discovered."),
+        "undated_rows_excluded": (
+            "a row with no posted_at cannot be placed inside or outside the window and is "
+            "excluded from the published figure"),
         "min_n_to_publish": MIN_N_PUBLISH,
         "published_rounding_usd": PUBLISH_ROUNDING,
         "rounding_reason": "advertised pay is heaped to round thousands (77.5% of native annual "
@@ -342,6 +417,11 @@ def run() -> int:
     d = doc["data"]
     d["postings"] = rows
     d["country_counts"] = dict(country_counts)
+    # build_postings.py leaves this behind as a deliberate tripwire, and this
+    # step is what earns the right to remove it. Leaving it set while also
+    # writing real figures would make the tripwire fire forever, which trains
+    # people to ignore it.
+    d.pop("pay_summary_status", None)
     d["pay_summary_by_country"] = summary
     d["pay_summary_meta"] = summary_meta
     d["pay_summary_min_n"] = MIN_N_PUBLISH
@@ -443,6 +523,7 @@ def self_test() -> int:
             fails.append(name)
 
     print("=== apply_postings_annotations.py self-test ===")
+    _Y = f"{PUBLISH_FROM_YEAR}-06-01"
 
     # ship rule: interval, not point estimate
     ev = {"per_class_f1_ci95": {
@@ -477,11 +558,11 @@ def self_test() -> int:
     ck("does NOT flag a healthy n=400 interval", not qb["do_not_quote"])
 
     # the join itself
-    rows = [{"id": "a", "title": "Software Engineer", "country": "US",
+    rows = [{"id": "a", "title": "Software Engineer", "country": "US", "posted_at": _Y,
              "compensation": {"period": "year", "usd": {"min": 100000, "max": 100000}}},
-            {"id": "b", "title": "Software Engineer", "country": "US",
+            {"id": "b", "title": "Software Engineer", "country": "US", "posted_at": _Y,
              "compensation": {"period": "year", "usd": {"min": 100000, "max": 100000}}},
-            {"id": "c", "title": "Registered Nurse", "country": "US",
+            {"id": "c", "title": "Registered Nurse", "country": "US", "posted_at": _Y,
              "compensation": {"period": "year", "usd": {"min": 40000, "max": 40000}}}]
     cls = {"meta": {"proba_floor": 0.4}, "data": {"classified_titles": [
         {"title": "Software Engineer", "class": "SW", "proba": 0.9},
@@ -489,7 +570,7 @@ def self_test() -> int:
     clus = {"data": {"clusters": [[0, 1]], "n_postings": 3}}
     st = annotate(rows, cls, clus, ev)
     ck("a shipped class survives the join", rows[0]["title_class"]["class"] == "SW")
-    ws = [{"id": "w", "title": "  Software Engineer ", "country": "US",
+    ws = [{"id": "w", "title": "  Software Engineer ", "country": "US", "posted_at": _Y,
            "compensation": {"period": "year", "usd": {"min": 1e5, "max": 1e5}}}]
     annotate(ws, cls, {"data": {"clusters": [], "n_postings": 1}}, ev)
     ck("an untrimmed title still joins (6.7% of the real corpus has one)",
@@ -506,12 +587,29 @@ def self_test() -> int:
        us["n_as_published"] == 3 and us["n_software_only"] == 1, str(us["n_software_only"]))
     ck("a country below the floor is withheld with a stated reason",
        not us["publishable"] and "floor to publish" in us["withheld_reason"])
+    old_rows = [{"id": f"o{i}", "title": "Software Engineer", "country": "ZZ",
+                 "posted_at": f"{PUBLISH_FROM_YEAR - 5}-06-01",
+                 "compensation": {"period": "year", "usd": {"min": 5e4, "max": 5e4}}}
+                for i in range(60)]
+    annotate(old_rows, cls, {"data": {"clusters": [], "n_postings": 60}}, ev)
+    s_old, _ = pay_summary(old_rows)
+    ck("60 software rows from BEFORE the window cannot publish a median",
+       not s_old[0]["publishable"] and s_old[0]["n_software_only"] == 0
+       and s_old[0]["n_software_all_years"] == 60,
+       "pooling vintages is what produced a $175,000 median between two populations")
+    undated = [{"id": f"u{i}", "title": "Software Engineer", "country": "ZY",
+                "compensation": {"period": "year", "usd": {"min": 5e4, "max": 5e4}}}
+               for i in range(60)]
+    annotate(undated, cls, {"data": {"clusters": [], "n_postings": 60}}, ev)
+    s_und, _ = pay_summary(undated)
+    ck("undated rows cannot publish a median either — they cannot be placed in the window",
+       not s_und[0]["publishable"] and s_und[0]["n_software_only"] == 0)
     ck("a country below the floor carries NO median in the data, not just in the view",
        "median_usd_year" not in us and "median_published_usd_year" not in us,
        "the floor must hold in the payload, not only in the UI")
 
     # a country must not pass the floor on duplicated rows alone
-    many = [{"id": f"d{i}", "title": "Software Engineer", "country": "XX",
+    many = [{"id": f"d{i}", "title": "Software Engineer", "country": "XX", "posted_at": _Y,
              "compensation": {"period": "year", "usd": {"min": 1e5, "max": 1e5}}} for i in range(40)]
     st2 = annotate(many, cls, {"data": {"clusters": [list(range(40))], "n_postings": 40}}, ev)
     s2, _ = pay_summary(many)

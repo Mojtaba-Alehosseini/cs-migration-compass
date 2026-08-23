@@ -91,7 +91,34 @@ def fx_rate(country: str, year: int) -> dict | None:
 def to_usd(value: float, country: str, year: int) -> dict:
     """Convert a native-currency value to USD at the rate from ITS OWN year.
     Returns {"ok": False, "reason": ...} rather than a number if that
-    year's rate is unavailable — never substitutes a different year."""
+    year's rate is unavailable — never substitutes a different year.
+
+    USD is the IDENTITY and needs no rate. That is not an exception to rule 1
+    ("no fallback to a different year") — it is the observation that rule 1
+    exists to stop a 2024 rate standing in for a 2026 one, and there is no
+    substitution happening when the conversion is x -> x. The World Bank's
+    PA.NUS.FCRF for the US is 1.0 in every year it publishes, by definition.
+
+    Requiring that published 1.0 was doing real damage. The series stops at
+    2025, so every 2026-dated US posting quoted in USD failed conversion, and
+    1,566 US software postings — the entire current year — were dropped from
+    the site's only published pay figure. What survived was 77% 2016-2017
+    USAJOBS listings, and the published median moved from $217,000 (2025) to
+    $99,000 purely through which years happened to have an FX rate. Found by an
+    adversarial review of package 16, which asked what the headline number was
+    actually made of.
+
+    Deliberately narrow: this short-circuits only when the source currency is
+    itself USD. Every other currency still requires its own year's rate, and
+    still refuses rather than reaching for a neighbouring one."""
+    if country == "US":
+        return {
+            "ok": True,
+            "value_usd": float(value),
+            "chain": [{"op": "fx_convert",
+                       "detail": f"{value} USD is already USD — identity, no rate applied"}],
+            "fx_rate": 1.0, "fx_year": year, "fx_source": "identity (USD to USD)",
+        }
     rate = fx_rate(country, year)
     if rate is None:
         return {"ok": False, "reason": f"no FX rate for {country} in {year} — "

@@ -147,8 +147,35 @@ class TestConvertCompensationToUsd(unittest.TestCase):
         self.assertIsNone(convert_compensation_to_usd({"currency": "ZZZ", "min": 1, "max": 2}, 2025))
 
     def test_a_year_with_no_fx_rate_refuses_rather_than_substituting(self):
-        # 1500 predates every currency this pipeline's postings use.
-        self.assertIsNone(convert_compensation_to_usd({"currency": "USD", "min": 1, "max": 2}, 1500))
+        """The rule: never reach for a neighbouring year's rate.
+
+        Package 16 — this used USD as its example currency, which stopped
+        exercising the rule once USD-to-USD became an identity that needs no
+        rate at all. The rule is unchanged and is now tested with a currency
+        that genuinely requires one. 1500 predates every rate this pipeline
+        holds; 2026 is the real, current case (the World Bank series ends at
+        2025), and it must still refuse."""
+        self.assertIsNone(convert_compensation_to_usd({"currency": "GBP", "min": 1, "max": 2}, 1500))
+        self.assertIsNone(convert_compensation_to_usd(
+            {"currency": "GBP", "min": 50_000, "max": 60_000}, 2026))
+        self.assertIsNone(convert_compensation_to_usd(
+            {"currency": "EUR", "min": 50_000, "max": 60_000}, 2026))
+
+    def test_usd_needs_no_rate_because_it_is_the_identity(self):
+        """USD to USD is x -> x, exact in every year, and requiring a published
+        1.0 for it was doing real damage: the FX series ends at 2025, so every
+        2026-dated US posting failed conversion and 1,566 US software postings —
+        the whole current year — were dropped from the site's only published pay
+        figure. What survived was 77% 2016-2017 federal listings. This is not a
+        hole in the no-substitution rule; nothing is being substituted."""
+        for year in (2024, 2025, 2026, 2030):
+            with self.subTest(year=year):
+                got = convert_compensation_to_usd(
+                    {"currency": "USD", "min": 100_000, "max": 120_000}, year)
+                self.assertIsNotNone(got)
+                self.assertEqual((got["min"], got["max"]), (100_000, 120_000))
+                self.assertEqual(got["fx_rate"], 1.0)
+                self.assertIn("identity", got["fx_source"])
 
     def test_missing_min_or_max_is_never_converted(self):
         self.assertIsNone(convert_compensation_to_usd({"currency": "USD", "min": None, "max": 100}, 2025))

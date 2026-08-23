@@ -13,24 +13,88 @@
  ],
  "per_country": [
   {
+   "country": "AR",
+   "published": 38844.0,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "AU",
+   "published": 140000.0,
+   "n_published_basis": 5,
+   "n_after_dedupe": 5,
+   "n_software_only": 2,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "BH",
+   "published": 63556.0,
+   "n_published_basis": 4,
+   "n_after_dedupe": 4,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "BR",
+   "published": 45000.0,
+   "n_published_basis": 3,
+   "n_after_dedupe": 3,
+   "n_software_only": 3,
+   "publishable_at_min_n": false
+  },
+  {
    "country": "CA",
-   "published": 113191.58,
-   "n_published_basis": 9,
-   "n_after_dedupe": 9,
-   "n_software_only": 6,
-   "software_median_usd_year": 128121.14,
-   "ci_lo": 113192,
-   "ci_hi": 183463,
-   "ci_half_width_pct": 27.4,
+   "published": 132625.0,
+   "n_published_basis": 36,
+   "n_after_dedupe": 36,
+   "n_software_only": 21,
+   "software_median_usd_year": 140000.0,
+   "ci_lo": 117500,
+   "ci_hi": 150000,
+   "ci_half_width_pct": 11.6,
    "ci_quality": {
-    "n": 6,
-    "below_min_n": true,
-    "distinct_values": 4,
+    "n": 21,
+    "below_min_n": false,
+    "distinct_values": 18,
     "spans_full_sample_range": false,
-    "pct_of_resamples_at_the_point_estimate": 22.1,
-    "do_not_quote": true
+    "pct_of_resamples_at_the_point_estimate": 16.9,
+    "do_not_quote": false
    },
-   "delta_vs_published_pct": 13.2,
+   "delta_vs_published_pct": 5.6,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "CN",
+   "published": 133750.0,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 1,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "CO",
+   "published": 111456.0,
+   "n_published_basis": 1,
+   "n_after_dedupe": 1,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "DE",
+   "published": 107500.0,
+   "n_published_basis": 8,
+   "n_after_dedupe": 8,
+   "n_software_only": 4,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "ES",
+   "published": 177993.75,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 0,
    "publishable_at_min_n": false
   },
   {
@@ -43,69 +107,210 @@
   },
   {
    "country": "GB",
-   "published": 151420.6,
-   "n_published_basis": 21,
-   "n_after_dedupe": 20,
-   "n_software_only": 13,
+   "published": 141008.05,
+   "n_published_basis": 36,
+   "n_after_dedupe": 35,
+   "n_software_only": 14,
    "software_median_usd_year": 151420.6,
-   "ci_lo": 144837,
+   "ci_lo": 118503,
    "ci_hi": 204089,
-   "ci_half_width_pct": 19.6,
+   "ci_half_width_pct": 28.3,
    "ci_quality": {
-    "n": 13,
+    "n": 14,
     "below_min_n": false,
-    "distinct_values": 10,
+    "distinct_values": 11,
     "spans_full_sample_range": false,
-    "pct_of_resamples_at_the_point_estimate": 41.3,
+    "pct_of_resamples_at_the_point_estimate": 23.9,
     "do_not_quote": false
    },
-   "delta_vs_published_pct": -0.0,
+   "delta_vs_published_pct": 7.4,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "IE",
+   "published": 93600.0,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "IL",
+   "published": 185000.0,
+   "n_published_basis": 1,
+   "n_after_dedupe": 1,
+   "n_software_only": 1,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "IN",
+   "published": 3648.53,
+   "n_published_basis": 3,
+   "n_after_dedupe": 3,
+   "n_software_only": 3,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "IT",
+   "published": 65625.0,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "JM",
+   "published": 15000.0,
+   "n_published_basis": 1,
+   "n_after_dedupe": 1,
+   "n_software_only": 0,
    "publishable_at_min_n": false
   },
   {
    "country": "JP",
-   "published": 77254.0,
-   "n_published_basis": 11,
-   "n_after_dedupe": 11,
+   "published": 80388.9,
+   "n_published_basis": 12,
+   "n_after_dedupe": 12,
    "n_software_only": 3,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "KE",
+   "published": 70000.0,
+   "n_published_basis": 1,
+   "n_after_dedupe": 1,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "KH",
+   "published": 28630.81,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "KR",
+   "published": 66154.25,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "KW",
+   "published": 90573.25,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 2,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "MX",
+   "published": 159743.75,
+   "n_published_basis": 4,
+   "n_after_dedupe": 4,
+   "n_software_only": 1,
    "publishable_at_min_n": false
   },
   {
    "country": "NL",
    "published": 73448.9,
-   "n_published_basis": 7,
-   "n_after_dedupe": 7,
+   "n_published_basis": 9,
+   "n_after_dedupe": 9,
+   "n_software_only": 1,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "NZ",
+   "published": 100000.0,
+   "n_published_basis": 1,
+   "n_after_dedupe": 1,
+   "n_software_only": 1,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "PH",
+   "published": 14780.0,
+   "n_published_basis": 6,
+   "n_after_dedupe": 6,
    "n_software_only": 0,
    "publishable_at_min_n": false
   },
   {
+   "country": "PL",
+   "published": 103500.0,
+   "n_published_basis": 1,
+   "n_after_dedupe": 1,
+   "n_software_only": 1,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "PT",
+   "published": 115258.28,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 1,
+   "publishable_at_min_n": false
+  },
+  {
+   "country": "QA",
+   "published": 78951.25,
+   "n_published_basis": 2,
+   "n_after_dedupe": 2,
+   "n_software_only": 2,
+   "publishable_at_min_n": false
+  },
+  {
    "country": "SG",
-   "published": 152969.52,
-   "n_published_basis": 5,
-   "n_after_dedupe": 5,
-   "n_software_only": 4,
+   "published": 206508.85,
+   "n_published_basis": 11,
+   "n_after_dedupe": 10,
+   "n_software_only": 6,
+   "software_median_usd_year": 204504.43,
+   "ci_lo": 151057,
+   "ci_hi": 308706,
+   "ci_half_width_pct": 38.5,
+   "ci_quality": {
+    "n": 6,
+    "below_min_n": true,
+    "distinct_values": 6,
+    "spans_full_sample_range": false,
+    "pct_of_resamples_at_the_point_estimate": 15.2,
+    "do_not_quote": true
+   },
+   "delta_vs_published_pct": -1.0,
    "publishable_at_min_n": false
   },
   {
    "country": "US",
-   "published": 82994.5,
-   "n_published_basis": 3980,
-   "n_after_dedupe": 3421,
-   "n_software_only": 1117,
-   "software_median_usd_year": 98688.0,
-   "ci_lo": 95307,
-   "ci_hi": 101357,
-   "ci_half_width_pct": 3.1,
+   "published": 140000.0,
+   "n_published_basis": 10467,
+   "n_after_dedupe": 9833,
+   "n_software_only": 2928,
+   "software_median_usd_year": 175000.0,
+   "ci_lo": 170000,
+   "ci_hi": 179500,
+   "ci_half_width_pct": 2.7,
    "ci_quality": {
-    "n": 1117,
+    "n": 2928,
     "below_min_n": false,
-    "distinct_values": 454,
+    "distinct_values": 839,
     "spans_full_sample_range": false,
-    "pct_of_resamples_at_the_point_estimate": 52.4,
+    "pct_of_resamples_at_the_point_estimate": 49.7,
     "do_not_quote": false
    },
-   "delta_vs_published_pct": 18.9,
+   "delta_vs_published_pct": 25.0,
    "publishable_at_min_n": true
+  },
+  {
+   "country": "ZA",
+   "published": 16000.0,
+   "n_published_basis": 1,
+   "n_after_dedupe": 1,
+   "n_software_only": 0,
+   "publishable_at_min_n": false
   }
  ],
  "selection_bias_vs_eurostat_ict": {
@@ -119,18 +324,18 @@
   "countries": [
    {
     "country": "GB",
-    "panel_share_pct": 4.986,
+    "panel_share_pct": 4.843,
     "ict_specialists_thousands": 1807.0,
     "ict_year": 2019,
     "ict_pct_of_employment": 5.6,
-    "panel_postings": 2116,
+    "panel_postings": 2117,
     "expected_share_pct": 22.608,
     "representativeness": 2.255,
     "basis_year_is_stale": "basis year 2019 vs 2025 for the rest of the panel; Eurostat stopped covering this country. The ratio mixes vintages and is indicative only."
    },
    {
     "country": "DE",
-    "panel_share_pct": 1.706,
+    "panel_share_pct": 1.656,
     "ict_specialists_thousands": 2319.1,
     "ict_year": 2025,
     "ict_pct_of_employment": 5.5,
@@ -140,7 +345,7 @@
    },
    {
     "country": "ES",
-    "panel_share_pct": 0.81,
+    "panel_share_pct": 0.787,
     "ict_specialists_thousands": 1060.9,
     "ict_year": 2025,
     "ict_pct_of_employment": 4.8,
@@ -150,73 +355,73 @@
    },
    {
     "country": "NL",
-    "panel_share_pct": 0.723,
+    "panel_share_pct": 0.702,
     "ict_specialists_thousands": 708.8,
     "ict_year": 2025,
     "ict_pct_of_employment": 7.2,
     "panel_postings": 307,
     "expected_share_pct": 8.868,
-    "representativeness": 0.834
+    "representativeness": 0.833
    },
    {
     "country": "IE",
-    "panel_share_pct": 0.398,
+    "panel_share_pct": 0.387,
     "ict_specialists_thousands": 172.4,
     "ict_year": 2025,
     "ict_pct_of_employment": 6.2,
     "panel_postings": 169,
     "expected_share_pct": 2.157,
-    "representativeness": 1.887
+    "representativeness": 1.889
    },
    {
     "country": "SE",
-    "panel_share_pct": 0.37,
+    "panel_share_pct": 0.359,
     "ict_specialists_thousands": 470.9,
     "ict_year": 2025,
     "ict_pct_of_employment": 8.9,
     "panel_postings": 157,
     "expected_share_pct": 5.892,
-    "representativeness": 0.642
+    "representativeness": 0.641
    },
    {
     "country": "FI",
-    "panel_share_pct": 0.325,
+    "panel_share_pct": 0.316,
     "ict_specialists_thousands": 202.3,
     "ict_year": 2025,
     "ict_pct_of_employment": 7.8,
     "panel_postings": 138,
     "expected_share_pct": 2.531,
-    "representativeness": 1.313
+    "representativeness": 1.314
    },
    {
     "country": "IT",
-    "panel_share_pct": 0.304,
+    "panel_share_pct": 0.295,
     "ict_specialists_thousands": 904.8,
     "ict_year": 2025,
     "ict_pct_of_employment": 3.8,
     "panel_postings": 129,
     "expected_share_pct": 11.32,
-    "representativeness": 0.275
+    "representativeness": 0.274
    },
    {
     "country": "NO",
-    "panel_share_pct": 0.094,
+    "panel_share_pct": 0.092,
     "ict_specialists_thousands": 171.1,
     "ict_year": 2025,
     "ict_pct_of_employment": 5.9,
     "panel_postings": 40,
     "expected_share_pct": 2.141,
-    "representativeness": 0.449
+    "representativeness": 0.452
    },
    {
     "country": "DK",
-    "panel_share_pct": 0.064,
+    "panel_share_pct": 0.062,
     "ict_specialists_thousands": 175.5,
     "ict_year": 2025,
     "ict_pct_of_employment": 5.7,
     "panel_postings": 27,
     "expected_share_pct": 2.196,
-    "representativeness": 0.298
+    "representativeness": 0.297
    }
   ]
  }

@@ -36,9 +36,12 @@ import { project } from '../components/CityMap'
  *  to be visible on — the mode existed in engine.ts but nothing rendered it
  *  anywhere, found while gathering this package's own gate 9 evidence. Median
  *  advertised pay by country, annual-salary postings only, expressed in USD.
- *  Countries below build_postings.py's own MIN_CHART_N (shipped as
- *  data.pay_summary_min_n, read where the caption below needs to name it)
- *  are already dropped server-side, before this file ever sees the array.
+ *  Package 16 — countries below the floor are NO LONGER dropped server-side,
+ *  and this comment used to say they were. They are all present in
+ *  pay_summary_by_country carrying `publishable: false` and a `withheld_reason`,
+ *  because "we harvested 21 GB postings and 13 of them are software" is a true
+ *  and useful statement while a median of 13 is not. The floor itself is read
+ *  from data.pay_summary_min_n (30), still never duplicated in this file.
  *
  *  Package 14: reads `data.pay_summary_by_country`, pre-computed at build
  *  time (build_postings.py) — this function used to scan the FULL raw
@@ -381,7 +384,9 @@ export function Postings() {
             <h2>Median advertised pay, software roles only</h2>
             <div className="sub">
               Annual-salary postings, converted to USD at each posting's own year, counted once per
-              distinct role and restricted to titles classified as software. This is this site's{' '}
+              distinct role, restricted to titles classified as software, and{' '}
+              <b>limited to recent postings</b> — pay advertised in 2016 and in 2026 are not the same
+              quantity, and a median pooling them describes neither. This is this site's{' '}
               <b>advertised</b> mode — never blended with the survey-sourced lines on{' '}
               <Link to="/explore/money">Explore · Money</Link>, and never comparable to them: each
               posting contributes the <i>midpoint of an advertised range</i>, which is a property of
@@ -399,9 +404,32 @@ export function Postings() {
                       95% CI ${Math.round(r.ci_lo_published_usd_year!).toLocaleString()}–$
                       {Math.round(r.ci_hi_published_usd_year!).toLocaleString()} · n ={' '}
                       {r.n_software_only.toLocaleString()} distinct software roles
+                      {r.published_from_year ? `, posted ${r.published_from_year} or later` : ''}
                     </span>
                   </div>
                 ))}
+                {/* Package 16 — every published number on this site carries a source, a
+                  * date and a denominator. This one carried no date, and it mattered more
+                  * than anywhere else: pooled across every vintage the US median was
+                  * $175,000, sitting between a 2026 population near $204,000 and a
+                  * 2016-2017 one near $87,000. A bimodal mixture wearing a point estimate.
+                  * The window fixes that and introduces its own selection, which is why
+                  * the composition is printed rather than described. */}
+                {publishable[0]?.composition && (
+                  <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 10 }}>
+                    <b>What this is made of.</b>{' '}
+                    {Object.entries(publishable[0]!.composition!.by_year)
+                      .map(([y, k]) => `${y}: ${k.toLocaleString()}`)
+                      .join(' · ')}
+                    {' — '}
+                    {publishable[0]!.composition!.share_from_latest_year_pct}% from the most recent
+                    year. {publishable[0]!.composition!.largest_provider_share_pct}% come from a
+                    single source ({publishable[0]!.composition!.largest_provider}). Restricting to
+                    recent postings also removes US federal listings entirely, since every one of
+                    those is dated 2016–2018 — so this is private job-board pay, not the whole
+                    market.
+                  </p>
+                )}
                 <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 10 }}>
                   Rounded to the nearest $1,000 because advertised pay is heaped to round thousands —
                   77.5% of native annual minima end in 0 or 5 — so a median of it resolves no finer.

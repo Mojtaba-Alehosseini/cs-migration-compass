@@ -455,6 +455,13 @@ _WORK_ARRANGEMENT = re.compile(
 
 # Office/site boilerplate around a place name: "SF Office", "NYC Headquarters",
 # "HQ - Sunnyvale (Office)", "Emeryville HQ".
+# "No location", "no office", "none", "n/a", "tbd" — these state the ABSENCE of
+# a place. Checked before and after boilerplate stripping.
+_NEGATED_LOCATION = re.compile(
+    r"^\s*(no|none|n/?a|not\s+applicable|tbd|to\s+be\s+determined|unknown|unspecified|"
+    r"various|multiple)\b[\s\-–—,()/|]*"
+    r"(location|office|city|country|site|place|specified|listed|set)?\s*$", re.I)
+
 _OFFICE_NOISE = re.compile(
     r"\b(hq|headquarters|head office|office|campus|site|location|region)\b", re.I)
 
@@ -584,9 +591,20 @@ def country_from_location(location_raw: str | None) -> str | None:
     # None into a country. A regression test asserts exactly that against the
     # committed corpus, because silently reassigning a country would be a far
     # worse defect than failing to resolve one.
+    # A string that says there is NO location must never be stripped down into
+    # one. "No Location" and "No office" both reduced to the token "no", which
+    # to_iso2 read as Norway -- one live posting was counted as Norwegian. The
+    # retry exists to uncover a country the text already names, never to
+    # manufacture one out of the residue of a negation.
+    if _NEGATED_LOCATION.match(low):
+        return None
     stripped = _WORK_ARRANGEMENT.sub(" ", low)
     stripped = _OFFICE_NOISE.sub(" ", stripped)
     stripped = re.sub(r"[\s\-–—,()/|]+", " ", stripped).strip()
+    # ...and the same guard again after stripping, because the negation may only
+    # become adjacent once the boilerplate around it is gone.
+    if _NEGATED_LOCATION.match(stripped):
+        return None
     if stripped and stripped != low:
         direct = to_iso2(stripped)
         if direct:

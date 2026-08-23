@@ -212,7 +212,13 @@ def run() -> None:
     # hourly EUR posting is still a real hourly figure and still excluded
     # here on purpose -- mixing periods into one axis is a different, still-
     # live problem this fix does not touch.
-    MIN_CHART_N, MAX_CHART_COUNTRIES = 5, 12
+    # MIN_CHART_N and MAX_CHART_COUNTRIES are GONE. They were the old chart's
+    # filter: any country with 5+ annual USD postings, top 12 by median. This
+    # step no longer derives a per-country median at all (see below), so a
+    # constant naming a threshold nothing applies is worse than no constant —
+    # anyone reading this file would have concluded the publication floor is 5.
+    # It is 30, it lives in apply_postings_annotations.MIN_N_PUBLISH, and that
+    # is the single place it is defined.
     by_country_usd_year: dict[str, list[float]] = {}
     for p in all_postings:
         c = p.get("compensation")
@@ -257,14 +263,15 @@ def run() -> None:
             "not yet derived — run scripts/apply_postings_annotations.py, which restricts to "
             "distinct roles and software titles, applies a 30-posting floor and rounds to the "
             "nearest $1,000"),
-        # Package 14, adversarial review L11 -- MIN_CHART_N used to also live
-        # as a second, separately-maintained copy in Postings.tsx, read only
-        # by its own on-screen caption text ("5+ per country to appear").
-        # Nothing forced the two to move together; changing this constant
-        # here would have silently made that caption wrong. Shipped instead,
-        # so the caption reads the one number that actually governs
-        # pay_summary_by_country's own filter, not a hopeful duplicate of it.
-        "pay_summary_min_n": MIN_CHART_N,
+        # Package 14, adversarial review L11 established that the on-screen
+        # floor must be READ from the data rather than duplicated in the UI.
+        # That still holds; only the value's owner moved. Package 16 derives the
+        # per-country figures in apply_postings_annotations.py, which sets this
+        # key to its own MIN_N_PUBLISH (30) when it runs. Shipping 5 from here
+        # would be a number that is briefly true and then silently replaced, so
+        # this step ships the ABSENCE instead — and validate_data.py fails if
+        # the annotation step never arrives to fill it in.
+        "pay_summary_min_n": None,
     }, meta={
         "postings_count": len(all_postings),
         "seed_companies_count": len(seed_companies),

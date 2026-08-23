@@ -91,6 +91,20 @@ export interface PostingsData {
     n_as_published: number
     n_deduped: number
     n_software_only: number
+    n_software_all_years?: number
+    published_from_year?: number
+    /** The pooled-every-vintage median. A DIAGNOSTIC, never rendered as a
+     *  headline: it is the number that mixed 2016 federal listings with 2026
+     *  private ones and landed between them. */
+    diagnostic_median_all_years_usd_year?: number | null
+    composition?: {
+      by_year: Record<string, number>
+      by_provider: Record<string, number>
+      share_from_latest_year_pct: number
+      largest_provider: string
+      largest_provider_share_pct: number
+      caveat: string
+    }
     median_as_published_usd_year: number | null
     median_usd_year?: number
     median_published_usd_year?: number

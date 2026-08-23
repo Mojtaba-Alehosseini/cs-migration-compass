@@ -57,13 +57,19 @@ class TestCountryResolution(unittest.TestCase):
             with self.subTest(location=s):
                 self.assertEqual(country_from_location(s), want)
 
-    def test_two_live_misassignments_are_corrected(self):
-        """Both were found by simulating the widening, not by looking for them."""
+    def test_four_live_misassignment_groups_are_corrected(self):
+        """All FOUR were found by simulating the widening, not by looking for them.
+        An earlier report said two; the fixture-based test above enumerates the
+        real set, which is how the undercount was caught."""
         # "porto" mapped to Portugal and matched the first word of a Brazilian city
         self.assertEqual(country_from_location("Porto Alegre, Rio Grande do Sul, Brasil"), "BR")
         self.assertEqual(country_from_location("Porto União, Santa Catarina, Brasil"), "BR")
         # the California San Jose won on the city table
         self.assertEqual(country_from_location("San Jose, Costa Rica"), "CR")
+        # ...and two more the first write-up omitted: US-government postings
+        # physically located abroad, where the location text names the country.
+        self.assertEqual(country_from_location("Bahrain Island"), "BH")
+        self.assertEqual(country_from_location("Kuwait"), "KW")
 
     def test_the_three_names_left_out_stay_left_out(self):
         """panama, lebanon and jordan each collide with a US place whose only US
@@ -79,25 +85,80 @@ class TestCountryResolution(unittest.TestCase):
         """A territorial-status question this pipeline does not answer. See #47."""
         self.assertEqual(country_from_location("San Juan, Puerto Rico"), "US")
 
+    # The four correction groups package 16 made deliberately, and the ONLY
+    # disagreements with the pre-package-16 answer that are allowed to exist.
+    # Keyed on a location PREFIX because one of them is a 400-character list of
+    # thirteen Brazilian municipalities, and a test nobody can read is a test
+    # nobody maintains.
+    EXPECTED_CORRECTIONS = [
+        # "porto" mapped to Portugal and matched the first word of a Brazilian city
+        ("Porto Alegre, Rio Grande do Sul, Brasil", "PT", "BR"),
+        ("Porto União, Santa Catarina, Brasil", "PT", "BR"),
+        ("Araputanga, Mato Grosso, Brasil;", "PT", "BR"),
+        # the California San Jose won on the city table
+        ("San Jose, Costa Rica", "US", "CR"),
+        # US-government postings physically located abroad; the text names the country
+        ("Bahrain Island", "US", "BH"),
+        ("Kuwait", "US", "KW"),
+    ]
+
     def test_the_widening_never_reassigns_a_committed_country(self):
-        """THE safety property, checked against the real corpus rather than a
-        handful of strings. Every row the parser can resolve must agree with the
-        country the pipeline committed — except where the pipeline itself is the
-        source (a provider stamps the country and the location text does not name
-        it), which is why disagreement is only allowed in that direction."""
-        path = PROCESSED / "postings.json"
-        if not path.exists():
-            self.skipTest("postings.json not built")
-        rows = json.loads(path.read_text(encoding="utf-8"))["data"]["postings"]
-        mismatched = []
-        for r in rows:
-            got = country_from_location(r.get("location_raw"))
-            if got and r.get("country") and got != r["country"]:
-                mismatched.append((r.get("location_raw"), r["country"], got))
+        """THE safety property — checked against ground truth the parser did not
+        produce.
+
+        An earlier version of this test compared the parser against
+        postings.json's own `country` field. That field is SET from this very
+        function by apply_postings_annotations.reresolve_countries(), so
+        re-running the ordinary pipeline made any parser change self-consistent
+        and turned the test green again — while silently reassigning countries.
+        A reviewer demonstrated it: adding `panama` produced 12 mismatches, and
+        one pipeline run restored a passing test with 34 US postings relabelled
+        Panama. Deriving a check's ground truth from the function under test is
+        the exact anti-pattern this repo has been bitten by before.
+
+        The fixture is a snapshot of the country assignments as they stood
+        BEFORE package 16 touched the parser, taken from git and keyed by
+        location TEXT. Re-running the pipeline cannot change it."""
+        fix = (Path(__file__).parent / "fixtures"
+               / "country_assignments_before_package16.json")
+        if not fix.exists():
+            self.fail("the ground-truth fixture is missing; this test cannot be satisfied by "
+                      "regenerating the pipeline, which is the point of it")
+        before = json.loads(fix.read_text(encoding="utf-8"))["assignments"]
+        contradictions = set()
+        for loc, was in before.items():
+            now = country_from_location(loc)
+            if now and now != was:
+                contradictions.add((loc, was, now))
+        def is_expected(loc, was, now):
+            return any(loc.startswith(p) and was == w and now == g
+                       for p, w, g in self.EXPECTED_CORRECTIONS)
+
+        unexpected = sorted((loc, was, now) for loc, was, now in contradictions
+                            if not is_expected(loc, was, now))
+        matched = {p for p, w, g in self.EXPECTED_CORRECTIONS
+                   if any(loc.startswith(p) and was == w and now == g
+                          for loc, was, now in contradictions)}
+        missing = sorted({p for p, _, _ in self.EXPECTED_CORRECTIONS} - matched)
         self.assertEqual(
-            mismatched, [],
-            f"{len(mismatched)} postings carry a country the parser now disagrees with. "
-            f"Widening this parser may only fill blanks. First few: {mismatched[:5]}")
+            unexpected, [],
+            f"the parser now disagrees with {len(unexpected)} pre-package-16 assignment(s) that "
+            f"nobody decided to change. Widening this parser may fill blanks; it may not "
+            f"reassign a country without that reassignment being argued for and listed here. "
+            f"First few: {[(l[:60], w, g) for l, w, g in unexpected[:5]]}")
+        self.assertEqual(
+            missing, [],
+            f"{len(missing)} documented correction(s) no longer happen — the fix that made them "
+            f"has been lost: {missing}")
+
+    def test_the_fixture_is_large_enough_to_be_worth_something(self):
+        """A fixture that shrank to a handful of rows would make the test above
+        pass trivially, so its size is asserted too."""
+        fix = (Path(__file__).parent / "fixtures"
+               / "country_assignments_before_package16.json")
+        before = json.loads(fix.read_text(encoding="utf-8"))["assignments"]
+        self.assertGreater(len(before), 4000,
+                           f"only {len(before)} location texts in the ground-truth fixture")
 
     def test_the_earlier_substring_disasters_stay_fixed(self):
         """Regression pins from the incident this function's docstring records."""

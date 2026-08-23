@@ -417,6 +417,16 @@ def check_postings_annotations_applied(processed_dir: Path = PROCESSED) -> None:
         err("pay_summary_meta does not state restricted_to_class, so this check cannot verify the "
             "published medians rest on the subset they claim")
         return
+    # ...and the vintage window, for the same reason: this check re-derives the
+    # published population from the rows, so it has to know every restriction
+    # that population was built under. Missing this one made it report 2,928
+    # where the figure says 1,807 -- the difference being nine-year-old federal
+    # listings the window deliberately excludes.
+    from_year = (data.get("pay_summary_meta") or {}).get("published_from_year")
+    if from_year is None:
+        err("pay_summary_meta does not state published_from_year, so this check cannot verify "
+            "which vintages the published medians rest on")
+        return
     for rec in data.get("pay_summary_by_country") or []:
         if not rec.get("publishable"):
             if rec.get("median_published_usd_year") is not None:
@@ -429,7 +439,9 @@ def check_postings_annotations_applied(processed_dir: Path = PROCESSED) -> None:
                      and not r.get("duplicate_of")
                      and (r.get("title_class") or {}).get("class") == want
                      and (r.get("compensation") or {}).get("period") == "year"
-                     and (r.get("compensation") or {}).get("usd"))
+                     and (r.get("compensation") or {}).get("usd")
+                     and (r.get("posted_at") or "")[:4].isdigit()
+                     and int((r.get("posted_at") or "")[:4]) >= from_year)
         if n_real < (data.get("pay_summary_min_n") or 30):
             err(f"{cc} publishes a median on {n_real} qualifying rows, below the stated floor of "
                  f"{data.get('pay_summary_min_n')}")
