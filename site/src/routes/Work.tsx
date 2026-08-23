@@ -33,7 +33,7 @@ import { loadWages, type WageCountry } from '../data/explore'
 import { loadOccupations, useData } from '../data/store'
 import { loadExperienceGradient, profileFromParams, profileToParams, DEFAULT_OCCUPATION,
   type Profile } from '../data/profile'
-import { loadPostings, fmtCompany, type Posting } from '../data/postings'
+import { loadOpenings, fmtCompany, type Openings as OpeningsData } from '../data/postings'
 import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency }
   from '../components/PostingPay'
 import { ProfileForm, CountryRow, PayVsCost, CoverageMap } from './Position'
@@ -42,22 +42,20 @@ import { ProfileForm, CountryRow, PayVsCost, CoverageMap } from './Position'
 
 /** Software openings for one country, and — where employers named a figure —
  *  the employer's own range. Never a per-posting estimate, never ranked. */
-function Openings({ cc, name, postings, display, crossRates }: {
-  cc: string
+function Openings({ name, block, display, crossRates }: {
   name: string
-  postings: Posting[]
+  block: OpeningsData['by_country'][string] | undefined
   display: DisplayCurrency
   crossRates: Record<string, number>
 }) {
-  const all = useMemo(() => postings.filter((p) => p.country === cc), [postings, cc])
-  // `sw` is the classifier's own answer, shipped as one key per software row
-  // (~92 KB). An earlier version re-derived software from the title with a
-  // regex, which disagreed with the real model on about 20% of rows in both
-  // directions — a second, worse classifier deciding what a reader sees while
-  // the published medians came from the first. The page and its own figures now
-  // count the same set.
-  const software = useMemo(() => all.filter((p) => p.sw), [all])
-  const named = useMemo(() => software.filter((p) => p.compensation), [software])
+  // Counts and examples arrive pre-computed in a 144 KB file rather than being
+  // filtered out of a 24 MB array on the main thread — see loadOpenings(). The
+  // software set is the CLASSIFIER's, the same one the published medians use,
+  // never re-derived from titles here.
+  const all = { length: block?.all ?? 0 }
+  const software = { length: block?.software ?? 0 }
+  const named = { length: block?.named ?? 0 }
+  const examples = block?.examples ?? []
 
   if (software.length === 0) {
     return (
@@ -106,7 +104,7 @@ function Openings({ cc, name, postings, display, crossRates }: {
           </tr>
         </thead>
         <tbody>
-          {named.slice(0, 8).map((p) => (
+          {examples.map((p) => (
             <tr key={p.id}>
               <th scope="row" style={{ fontWeight: 'var(--weight-normal)' }}>
                 {p.url
@@ -122,9 +120,10 @@ function Openings({ cc, name, postings, display, crossRates }: {
           ))}
         </tbody>
       </table>
-      {named.length > 8 && (
+      {named.length > examples.length && (
         <p className="sub" style={{ marginTop: 6 }}>
-          Showing 8 of {named.length}. Not ranked — these are the most recent.
+          Showing {examples.length} of {named.length}. Not ranked — these are the most recent.{' '}
+          <Link to="/data/postings-seed">The full list</Link> loads on demand.
         </p>
       )}
     </>
@@ -179,13 +178,14 @@ export function Work() {
   const { data: wages, error: wagesError } = useAsync(loadWages, 'wages')
   const { data: gradient, error: gradientError } = useAsync(loadExperienceGradient, 'gradient')
   const { data: occupations, error: occupationsError } = useAsync(loadOccupations, 'occupations')
-  const { data: postings, error: postingsError } = useAsync(loadPostings, 'postings')
+  const { data: postings, error: postingsError } = useAsync(loadOpenings, 'openings')
   const loadError = wagesError ?? gradientError ?? occupationsError ?? postingsError
 
   const [display, setDisplay] = useState<DisplayCurrency>('native')
   const crossRates = useMemo(() => Object.fromEntries(
     Object.entries(postings?.display_fx?.rates ?? {}).map(([k, v]) => [k, v.rate]),
   ), [postings])
+  const byCountry = postings?.by_country ?? {}
 
   const wageByCountry = useMemo(() => {
     const m = new Map<string, WageCountry>()
@@ -306,8 +306,9 @@ export function Work() {
                   const row = wageByCountry.get(cc)
                   const dist = row?.native?.distribution
                   const d = dist ? DIST_PIPS[dist] : undefined
-                  const open = postings.postings.filter((p) => p.country === cc && p.sw)
-                  const named = open.filter((p) => p.compensation)
+                  const b = byCountry[cc]
+                  const open = { length: b?.software ?? 0 }
+                  const named = { length: b?.named ?? 0 }
                   const reading = !row ? 'No wage table for this occupation'
                     : !d?.ranks ? 'No rank — only a central figure'
                     : open.length === 0 ? 'Ranks; nothing open'
@@ -318,9 +319,14 @@ export function Work() {
                       >
                       <th scope="row" style={{ fontWeight: 'var(--weight-normal)' }}>
                         <a href={`#c-${cc}`}
-                          style={{ background: 'none', border: 0, padding: 0, font: 'inherit',
+                          style={{ background: 'none', border: 0, font: 'inherit',
                             color: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center',
-                            gap: 6, textDecoration: 'none' }}>
+                            gap: 6, textDecoration: 'none',
+                            // WCAG 2.5.8 target size — these links rendered 17px
+                            // tall and Lighthouse flagged all fifteen. Padding,
+                            // not a fixed height, so the cell grows only as far
+                            // as the target needs.
+                            minHeight: 24, padding: '4px 2px' }}>
                           <Flag cc={cc} size={12} /> <b>{cc}</b>
                           <span className="sub">{countryName(cc)}</span>
                         </a>
@@ -381,7 +387,7 @@ export function Work() {
                         * the same advertisements. Rendered against the first of
                         * the pair only. */}
                       {key === cc || key === `${cc}-first`
-                        ? <Openings cc={cc} name={countryName(cc)} postings={postings.postings}
+                        ? <Openings name={countryName(cc)} block={byCountry[cc]}
                             display={display} crossRates={crossRates} />
                         : (
                           <p className="sub">

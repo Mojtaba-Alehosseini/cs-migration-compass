@@ -254,6 +254,81 @@ def build_core() -> dict:
     }
 
 
+# How many openings the merged page shows per country before it says "and N
+# more". Eight is what the design settled on: enough to see the shape of what a
+# country pays, few enough that fifteen countries stay one screenful each.
+OPENINGS_PER_COUNTRY = 8
+
+
+def _openings_summary(doc: dict) -> dict:
+    """The ONLY postings data /work needs, as its own small file.
+
+    /postings sat at 0.86 on Lighthouse from package 14 to package 17 because
+    the page parsed a 22 MB array on load. NEEDS-DECISION #38 recorded it as an
+    architectural limitation, and it was — for a page that rendered the whole
+    list. The merged page does not: it renders per-country counts and at most
+    eight example openings each. That is a few hundred rows, not 48,267.
+
+    Measured on the merged page before this existed: LCP was already fine at
+    0.66s and TOTAL BLOCKING TIME was 484ms — the cost was never the download,
+    it was parsing 24 MB and filtering it fifteen times on the main thread.
+
+    So this ships what the page displays. The full list, its filters and its map
+    stay on /data/postings-seed, which loads the big file on demand — which is
+    the right place for it, because that page is *about* the list.
+    """
+    data = doc.get("data") or {}
+    rows = data.get("postings") or []
+    by: dict[str, dict] = {}
+    for r in rows:
+        cc = r.get("country")
+        if not cc:
+            continue
+        b = by.setdefault(cc, {"all": 0, "software": 0, "named": 0, "examples": []})
+        b["all"] += 1
+        if not r.get("sw"):
+            continue
+        b["software"] += 1
+        if r.get("compensation"):
+            b["named"] += 1
+            b["examples"].append(r)
+    out = {}
+    for cc, b in by.items():
+        ex = sorted(b["examples"], key=lambda r: (r.get("posted_at") or ""), reverse=True)
+        out[cc] = {
+            "all": b["all"], "software": b["software"], "named": b["named"],
+            "examples": [{
+                "id": r["id"], "title": r.get("title"), "company": r.get("company"),
+                "company_slug": r.get("company_slug"), "url": r.get("url"),
+                "posted_at": r.get("posted_at"), "compensation": r.get("compensation"),
+            } for r in ex[:OPENINGS_PER_COUNTRY]],
+        }
+    return {
+        "source_id": "openings",
+        "generated_at": doc.get("generated_at"),
+        "meta": {
+            "what": "per-country opening counts and up to "
+                    f"{OPENINGS_PER_COUNTRY} example advertisements each, for the merged "
+                    "position-and-openings page",
+            "software_is": "the classifier's own answer (the same set the published per-country "
+                           "medians are computed from), never re-derived from titles",
+            "examples_are": "the most recent that state a pay range. NOT ranked, NOT scored, and "
+                            "never a recommendation of which to apply for",
+            "full_list": "data/history/postings.json, loaded on demand by /data/postings-seed",
+        },
+        "data": {
+            "by_country": out,
+            "pay_summary_by_country": data.get("pay_summary_by_country"),
+            "pay_summary_meta": data.get("pay_summary_meta"),
+            "pay_summary_min_n": data.get("pay_summary_min_n"),
+            "display_fx": data.get("display_fx"),
+            "duplicate_summary": data.get("duplicate_summary"),
+            "title_class_summary": data.get("title_class_summary"),
+            "country_resolution": data.get("country_resolution"),
+        },
+    }
+
+
 def _slim_postings(doc: dict) -> dict:
     """Ship the postings annotations the UI reads, not the diagnostics.
 
@@ -327,6 +402,13 @@ def main() -> int:
             continue
         if source_id == "postings":
             doc = _slim_postings(doc)
+            small = _openings_summary(doc)
+            (HISTORY_DIR / "openings.json").write_text(
+                json.dumps(small, ensure_ascii=False, separators=(",", ":")) + "\n",
+                encoding="utf-8")
+            log(f"  openings.json      {(HISTORY_DIR / 'openings.json').stat().st_size/1024:8.1f} KB  "
+                f"({len(small['data']['by_country'])} countries, "
+                f"{OPENINGS_PER_COUNTRY} examples each) — what /work loads instead of the full list")
         dest = HISTORY_DIR / f"{source_id}.json"
         dest.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         kb = dest.stat().st_size / 1024

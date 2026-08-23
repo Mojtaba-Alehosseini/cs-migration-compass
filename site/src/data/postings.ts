@@ -11,6 +11,44 @@
 
 import { loadHistory } from './store'
 
+/** Package 17 — what the merged page loads INSTEAD of the full postings array.
+ *
+ *  /postings sat at 0.86 on Lighthouse from package 14 because the page parsed
+ *  a 22 MB array on load. Measured on the merged page, LCP was already fine at
+ *  0.66s and the cost was TOTAL BLOCKING TIME of 484ms: parsing 24 MB and
+ *  filtering it fifteen times on the main thread. This file carries per-country
+ *  counts and up to eight example openings each — a few hundred rows instead of
+ *  48,267 — and the full list stays where it belongs, on the page that is about
+ *  the list. NEEDS-DECISION #38. */
+export interface Openings {
+  by_country: Record<string, {
+    all: number
+    software: number
+    named: number
+    examples: {
+      id: string
+      title: string | null
+      company: string | null
+      company_slug: string
+      url: string | null
+      posted_at: string | null
+      compensation: Compensation | null
+    }[]
+  }>
+  pay_summary_by_country: PostingsData['pay_summary_by_country']
+  pay_summary_meta?: PostingsData['pay_summary_meta']
+  pay_summary_min_n: number
+  display_fx?: PostingsData['display_fx']
+  duplicate_summary?: PostingsData['duplicate_summary']
+  title_class_summary?: PostingsData['title_class_summary']
+  country_resolution?: { unresolved: number; unresolved_pct: number }
+}
+
+export async function loadOpenings(): Promise<Openings> {
+  const h = await loadHistory<Openings>('openings')
+  return h.data
+}
+
 export interface Compensation {
   /** The employer's own figures, in the employer's own currency. Never
    *  rewritten, never withheld, and the default everywhere pay is shown. */
