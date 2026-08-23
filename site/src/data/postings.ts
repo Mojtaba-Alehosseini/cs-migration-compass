@@ -12,12 +12,32 @@
 import { loadHistory } from './store'
 
 export interface Compensation {
+  /** The employer's own figures, in the employer's own currency. Never
+   *  rewritten, never withheld, and the default everywhere pay is shown. */
   min: number
   max: number
   currency: string
   period: 'year' | 'month' | 'hour'
   raw_text: string
   confidence: 'structured' | 'parsed_text'
+  /** Package 17 — the converted view, present only when a rate existed within
+   *  normalise.MAX_FX_GAP_YEARS of this posting's own year. `estimated` is true
+   *  when the rate came from a different year than the posting; `fx_year` is
+   *  the year actually used and `fx_year_requested` the one asked for. A
+   *  consumer can therefore mark a substituted conversion without re-deriving
+   *  why it was substituted, and there is no shape in which a substituted rate
+   *  arrives looking exact. */
+  usd?: {
+    min: number
+    max: number
+    fx_rate: number
+    fx_year: number
+    fx_source: string
+    fx_country_used: string
+    estimated: boolean
+    fx_gap_years: number
+    fx_year_requested: number
+  } | null
 }
 
 export interface Posting {
@@ -128,6 +148,12 @@ export interface PostingsData {
     shipped_classes: string[]
     counts: Record<string, number>
     caveat: string
+  }
+  display_fx?: {
+    pivot: string
+    rates: Record<string, { rate: number; year: number }>
+    source: string
+    note: string
   }
   duplicate_summary?: {
     raw_rows: number

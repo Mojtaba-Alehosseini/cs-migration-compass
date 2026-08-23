@@ -460,6 +460,22 @@ def run() -> int:
                 f"(as published: n={r['n_as_published']}, "
                 f"median {r['median_as_published_usd_year']})")
 
+    # Cross-rates for the display-currency picker, derived from the same
+    # World Bank series everything else uses and carrying the year they came
+    # from. USD is the pivot because that is what every posting is already
+    # converted through; these turn USD into the reader's chosen currency.
+    #
+    # The year is stated rather than implied: these are annual period averages
+    # like every other rate here, and a reader switching the page to euros is
+    # entitled to know the conversion is not live.
+    fx = json.loads((PROCESSED / "fx_rates.json").read_text(encoding="utf-8"))["data"]
+    display_fx = {}
+    for code, cc in (("EUR", "DE"), ("GBP", "GB"), ("CAD", "CA"), ("AUD", "AU")):
+        got = [x for x in (fx.get(cc) or []) if x.get("value") is not None]
+        if got:
+            latest = max(got, key=lambda x: x["year"])
+            display_fx[code] = {"rate": latest["value"], "year": latest["year"]}
+
     country_counts = Counter(r.get("country") or "unresolved" for r in rows)
     n_unresolved = country_counts.get("unresolved", 0)
     d = doc["data"]
@@ -473,6 +489,14 @@ def run() -> int:
     d["pay_summary_by_country"] = summary
     d["pay_summary_meta"] = summary_meta
     d["pay_summary_min_n"] = MIN_N_PUBLISH
+    d["display_fx"] = {
+        "pivot": "USD",
+        "rates": display_fx,
+        "source": "fx_rates (World Bank PA.NUS.FCRF, annual period average)",
+        "note": ("multiply a posting's USD figure by these to show it in another currency. Annual "
+                 "period averages, not live rates — the year each one comes from is stated. Native "
+                 "currency needs none of this and is always the default."),
+    }
     d["country_resolution"] = {
         "unresolved": n_unresolved,
         "unresolved_pct": round(100 * n_unresolved / n, 2),

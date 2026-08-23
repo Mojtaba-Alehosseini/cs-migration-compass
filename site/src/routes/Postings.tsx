@@ -25,6 +25,8 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAsync } from '../components/explore/useAsync'
+import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency }
+  from '../components/PostingPay'
 import { useData } from '../data/store'
 import { Flag } from '../components/Flag'
 import { Gap, ChartSkeleton } from '../components/explore/Controls'
@@ -114,7 +116,11 @@ function levelGuess(title: string | null): 'intern' | 'junior' | 'senior' | 'sta
 }
 const LEVEL_LABEL = { intern: 'Intern', junior: 'Junior', senior: 'Senior', 'staff+': 'Staff+' } as const
 
-function PostingRow({ p }: { p: Posting }) {
+function PostingRow({ p, display, crossRates }: {
+  p: Posting
+  display: DisplayCurrency
+  crossRates?: Record<string, number>
+}) {
   const comp = fmtCompensation(p.compensation)
   return (
     <tr>
@@ -135,7 +141,14 @@ function PostingRow({ p }: { p: Posting }) {
       </td>
       <td style={{ padding: '7px 10px', fontSize: 'var(--text-xs)', fontWeight: comp ? 600 : 400 }}
         title={p.compensation?.raw_text || undefined}>
-        {comp || (
+        {/* Package 17 — PostingPay, not a formatted string. It renders the
+          * employer's own figure by default and can never withhold it, and a
+          * converted view arrives as a <Derived> whose method card states the
+          * rate's year. A substituted rate carries its own marker on the
+          * number. */}
+        {p.compensation ? (
+          <PostingPay comp={p.compensation} display={display} crossRates={crossRates} />
+        ) : (
           <span style={{ color: 'var(--ink-3)', fontWeight: 400, fontStyle: 'italic' }}>
             not stated
           </span>
@@ -155,6 +168,13 @@ export function Postings() {
   const [levelFilter, setLevelFilter] = useState('')
   const [query, setQuery] = useState('')
   const [remoteOnly, setRemoteOnly] = useState(false)
+  // Package 17 — 'native' is the default and stays the source of truth. Every
+  // other option is a derived view; switching never alters a native figure.
+  const [displayCurrency, setDisplayCurrency] = useState<DisplayCurrency>('native')
+  const crossRates = useMemo(() => {
+    const r = data?.display_fx?.rates ?? {}
+    return Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v.rate]))
+  }, [data])
 
   const filtered = useMemo(() => {
     if (!data) return []
@@ -335,6 +355,17 @@ export function Postings() {
                   <optgroup label="Also in the harvest — not covered by this site">
                     {outOfScope.map(([cc, k]) => <option key={cc} value={cc}>{cc} ({k.toLocaleString()})</option>)}
                   </optgroup>
+                </select>
+              </label>
+              <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
+                Show pay in
+                <select value={displayCurrency}
+                  onChange={(e) => setDisplayCurrency(e.target.value as DisplayCurrency)}
+                  style={{ display: 'block', marginTop: 4, padding: '6px 8px', border: '1px solid var(--line)',
+                    background: 'var(--surface)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)' }}>
+                  {DISPLAY_CURRENCIES.map((c) => (
+                    <option key={c} value={c}>{DISPLAY_CURRENCY_LABEL[c]}</option>
+                  ))}
                 </select>
               </label>
               <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
@@ -548,7 +579,9 @@ export function Postings() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.slice(0, 500).map((p) => <PostingRow key={p.id} p={p} />)}
+                  {filtered.slice(0, 500).map((p) => (
+                    <PostingRow key={p.id} p={p} display={displayCurrency} crossRates={crossRates} />
+                  ))}
                 </tbody>
               </table>
               {filtered.length > 500 && (

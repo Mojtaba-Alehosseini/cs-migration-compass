@@ -951,6 +951,20 @@ table.cmp {
   font-family: var(--font-ui);
   cursor: help;
 }
+.fx-estimate {
+  /* Package 17 — a converted figure whose rate came from a different year than
+     the posting. Same register as .unstable-mark: a marker on the NUMBER, not
+     an alarm and not a footnote elsewhere on the page. Quieter than the
+     instability mark because the claim is weaker: this is a 1-3% conversion
+     drift, not a figure smaller than its own rounding. It resolves on tap
+     through the <Derived> method card that wraps it, which states the year
+     actually used and why. */
+  color: var(--ink-3);
+  font-size: 0.72em;
+  margin-left: 1px;
+  font-family: var(--font-ui);
+  cursor: help;
+}
 .unstable-note {
   display: block;
   color: var(--warn);
