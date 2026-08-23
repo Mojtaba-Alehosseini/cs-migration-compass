@@ -156,6 +156,108 @@ const DIST_PIPS: Record<string, { pips: number; label: string; ranks: boolean }>
   'mean-only': { pips: 1, label: 'mean only', ranks: false },
 }
 
+/** The published per-country advertised-pay figure, with its composition and
+ *  the countries withheld from it.
+ *
+ *  This is package 16's headline deliverable and an earlier revision of the
+ *  merge dropped it — it lived on /postings, /postings became a redirect, and
+ *  nothing carried it across. Restored here rather than on the full-list page
+ *  because it belongs beside the position: they are the two answers to "what
+ *  does this country pay", one from a national wage table and one from what
+ *  employers advertise, and they must never be blended. */
+function PublishedPay({ summary, meta, minN }: {
+  summary: NonNullable<OpeningsData['pay_summary_by_country']>
+  meta: OpeningsData['pay_summary_meta']
+  minN: number
+}) {
+  const publishable = summary.filter((r) => r.publishable && r.median_published_usd_year != null)
+  const withheld = summary.filter((r) => !r.publishable)
+    .sort((a, b) => b.n_as_published - a.n_as_published)
+  if (publishable.length === 0 && withheld.length === 0) return null
+  return (
+    <div className="panel" style={{ marginTop: 12 }}>
+      <h2>Median advertised pay, software roles only</h2>
+      <div className="sub">
+        Annual-salary advertisements, counted once per distinct role, restricted to titles
+        classified as software and <b>limited to recent postings</b> — pay advertised in 2016 and in
+        2026 are not the same quantity, and a median pooling them describes neither. This is the
+        site's <b>advertised</b> mode: never blended with the wage tables above, and never
+        comparable to them, because each posting contributes the <i>midpoint of an advertised
+        range</i> rather than a salary anyone is paid.
+      </div>
+      {publishable.map((r) => (
+        <div key={r.country} style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginTop: 10 }}>
+          <Flag cc={r.country} size={13} />
+          <span style={{ fontSize: 'var(--text-lg)', fontWeight: 600 }}>{r.country}</span>
+          <span style={{ fontSize: 'var(--text-lg)' }} className="tnum">
+            ${Math.round(r.median_published_usd_year!).toLocaleString()}
+          </span>
+          <span className="sub">
+            95% CI ${Math.round(r.ci_lo_published_usd_year!).toLocaleString()}–$
+            {Math.round(r.ci_hi_published_usd_year!).toLocaleString()} · n ={' '}
+            {r.n_software_only.toLocaleString()} distinct software roles
+            {r.published_from_year ? `, posted ${r.published_from_year} or later` : ''}
+          </span>
+        </div>
+      ))}
+      {publishable[0]?.composition && (
+        <p className="sub" style={{ marginTop: 10 }}>
+          <b>What the {publishable[0]!.country} figure is made of.</b>{' '}
+          {Object.entries(publishable[0]!.composition!.by_year)
+            .map(([y, k]) => `${y}: ${k.toLocaleString()}`).join(' · ')}
+          {' — '}{publishable[0]!.composition!.share_from_latest_year_pct}% from the most recent
+          year, and {publishable[0]!.composition!.largest_provider_share_pct}% from a single source
+          ({publishable[0]!.composition!.largest_provider}). Restricting to recent postings also
+          removes US federal listings entirely, since every one of those is dated 2016–2018.
+        </p>
+      )}
+      <p className="sub" style={{ marginTop: 8 }}>
+        Rounded to the nearest $1,000 because advertised pay is heaped to round thousands — 77.5% of
+        native annual minima end in 0 or 5 — so a median of it resolves no finer.
+      </p>
+      {withheld.length > 0 && (
+        <div style={{ marginTop: 14 }}>
+          <h3 style={{ fontSize: 'var(--text-sm)', margin: '0 0 6px' }}>Too few to quote a median</h3>
+          <div className="sub" style={{ marginBottom: 8 }}>
+            Counts below are advertisements whose annual pay could be priced in USD — not every
+            posting harvested. None reaches {minN} distinct software roles, so none gets a median.
+            Their counts are real; a median of them would not be.
+          </div>
+          <div style={{ maxHeight: 240, overflowY: 'auto' }} tabIndex={0} role="region"
+            aria-label="Countries withheld from the advertised-pay figure, scrollable">
+            <table className="tbl">
+              <caption className="sr-only">
+                Countries withheld from the advertised-pay figure
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Country</th>
+                  <th scope="col" style={{ textAlign: 'right' }}>Annual pay, priced in USD</th>
+                  <th scope="col" style={{ textAlign: 'right' }}>…once per role</th>
+                  <th scope="col" style={{ textAlign: 'right' }}>…software, recent</th>
+                  <th scope="col">Why withheld</th>
+                </tr>
+              </thead>
+              <tbody>
+                {withheld.map((r) => (
+                  <tr key={r.country}>
+                    <th scope="row">{r.country}</th>
+                    <td style={{ textAlign: 'right' }}>{r.n_as_published.toLocaleString()}</td>
+                    <td style={{ textAlign: 'right' }}>{r.n_deduped.toLocaleString()}</td>
+                    <td style={{ textAlign: 'right' }}>{r.n_software_only.toLocaleString()}</td>
+                    <td className="sub">{r.withheld_reason}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {meta?.vintage_cost && <p className="sub" style={{ marginTop: 8 }}>{meta.vintage_cost}</p>}
+    </div>
+  )
+}
+
 /* ------------------------------------------------------------------- page --- */
 
 export function Work() {
@@ -404,6 +506,11 @@ export function Work() {
         )}
       </div>
 
+      {postings?.pay_summary_by_country && (
+        <PublishedPay summary={postings.pay_summary_by_country}
+          meta={postings.pay_summary_meta} minN={postings.pay_summary_min_n} />
+      )}
+
       {wages && gradient && (
         <>
           <PayVsCost profile={profile} wageByCountry={wageByCountry} gradient={gradient} />
@@ -413,8 +520,9 @@ export function Work() {
 
       <p className="sub" style={{ marginTop: 14 }}>
         This page replaces <code>/position</code> and <code>/postings</code>; both still resolve
-        here. The full posting list, its filters and the harvest's own coverage live on{' '}
-        <Link to="/data/postings-seed">the seed-list page</Link>.
+        here. <Link to="/openings">Every opening</Link> holds the full list with its filters and
+        loads on demand; <Link to="/data/postings-seed">the seed list</Link> holds the companies and
+        sources behind it.
       </p>
     </div>
   )

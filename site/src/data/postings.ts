@@ -186,6 +186,11 @@ export interface PostingsData {
     n_publishable: number
     n_countries_considered: number
     midpoint_caveat: string
+    published_from_year?: number
+    vintage_reason?: string
+    vintage_cost?: string
+    excluded_as_implausible?: Record<string, number>
+    excluded_as_implausible_band_usd_year?: [number, number]
   }
   title_class_summary?: {
     shipped_classes: string[]

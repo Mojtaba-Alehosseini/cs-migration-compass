@@ -18,6 +18,7 @@ const CityProfile = lazy(() => import('./routes/CityProfile').then((m) => ({ def
 const CountryProfile = lazy(() => import('./routes/CountryProfile').then((m) => ({ default: m.CountryProfile })))
 const DataMethods = lazy(() => import('./routes/DataMethods').then((m) => ({ default: m.DataMethods })))
 const Work = lazy(() => import('./routes/Work').then((m) => ({ default: m.Work })))
+const Openings = lazy(() => import('./routes/Openings').then((m) => ({ default: m.Openings })))
 
 /** A redirect that carries the query string with it.
  *
@@ -65,6 +66,10 @@ const router = createHashRouter([
       // than a redirect nobody notices. `replace` so the dead path does not
       // sit in history behind the live one.
       { path: 'work', element: lazyRoute(<Work />) },
+      // The browsable full list, on its own route so it loads its own weight —
+      // /work shows eight examples per country from a 144 KB summary, and this
+      // page is the one for which parsing the whole array is the right trade.
+      { path: 'openings', element: lazyRoute(<Openings />) },
       { path: 'position', element: <KeepQuery to="/work" /> },
       { path: 'postings', element: <KeepQuery to="/work" /> },
       { path: 'data/postings-seed', element: lazyRoute(<PostingsSeed />) },
