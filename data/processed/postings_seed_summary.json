@@ -1,6 +1,6 @@
 {
  "source_id": "postings_seed_summary",
- "generated_at": "2026-08-23T05:31:01+00:00",
+ "generated_at": "2026-08-23T13:40:01+00:00",
  "meta": {
   "seed_companies_count": 1723,
   "derived_from": "data/processed/postings.json"
@@ -11,21 +11,21 @@
     "available": true,
     "postings_count": 19715,
     "compensation_present_count": 7654,
-    "compensation_converted_to_usd_count": 6560,
+    "compensation_converted_to_usd_count": 7572,
     "generated_at": "2026-08-21T17:18:38+00:00"
    },
    "greenhouse": {
     "available": true,
     "postings_count": 14015,
     "compensation_present_count": 971,
-    "compensation_converted_to_usd_count": 885,
+    "compensation_converted_to_usd_count": 963,
     "generated_at": "2026-08-21T17:33:58+00:00"
    },
    "lever": {
     "available": true,
     "postings_count": 10238,
     "compensation_present_count": 3724,
-    "compensation_converted_to_usd_count": 3386,
+    "compensation_converted_to_usd_count": 3701,
     "generated_at": "2026-08-21T17:45:14+00:00"
    },
    "teamtailor": {
@@ -46,7 +46,7 @@
     "available": true,
     "postings_count": 243,
     "compensation_present_count": 74,
-    "compensation_converted_to_usd_count": 68,
+    "compensation_converted_to_usd_count": 74,
     "generated_at": "2026-08-21T17:52:29+00:00"
    }
   },

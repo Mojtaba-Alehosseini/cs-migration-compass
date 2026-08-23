@@ -790,14 +790,31 @@ def convert_compensation_to_usd(comp: dict, effective_year: int) -> dict | None:
     fx_country = CURRENCY_TO_FX_COUNTRY.get(currency)
     if not fx_country or comp.get("min") is None or comp.get("max") is None:
         return None
-    lo = normalise.to_usd(comp["min"], fx_country, effective_year)
-    hi = normalise.to_usd(comp["max"], fx_country, effective_year)
+    # Package 17 — a POSTING may reach up to normalise.MAX_FX_GAP_YEARS for a
+    # rate, and the result says so. A historical series still may not: to_usd()
+    # refuses any substitution unless the caller asks, and only this call site
+    # asks. The reasoning and the measured error are in normalise.py beside the
+    # constant, and in docs/METHODOLOGY.md.
+    #
+    # The alternative was what the site did until now: discard the posting. For
+    # GB, CA, DE and FR that meant discarding 88-92% of every annual-pay
+    # advertisement, nearly all of them dated this year, to avoid a median error
+    # of about 2%.
+    lo = normalise.to_usd(comp["min"], fx_country, effective_year,
+                          max_gap_years=normalise.MAX_FX_GAP_YEARS)
+    hi = normalise.to_usd(comp["max"], fx_country, effective_year,
+                          max_gap_years=normalise.MAX_FX_GAP_YEARS)
     if not lo["ok"] or not hi["ok"]:
         return None
     return {
         "min": lo["value_usd"], "max": hi["value_usd"],
         "fx_rate": lo["fx_rate"], "fx_year": lo["fx_year"], "fx_source": lo["fx_source"],
         "fx_country_used": fx_country,
+        # Carried per posting, not inferred later: a consumer that renders the
+        # converted figure has to be able to mark it without re-deriving why.
+        "estimated": bool(lo.get("estimated")),
+        "fx_gap_years": lo.get("fx_gap_years", 0),
+        "fx_year_requested": lo.get("fx_year_requested", effective_year),
     }
 
 

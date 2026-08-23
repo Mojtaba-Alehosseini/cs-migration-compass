@@ -88,6 +88,20 @@ PAY_SUMMARY_CLASS = "SW"
 # placed in or out of the window, and 8.4% of the US subset is undated.
 PUBLISH_FROM_YEAR = 2024
 
+# The same absolute annual band audit_data.py uses (_ABSOLUTE_SANITY_BANDS).
+# Package 14 established that an implausible posting is FLAGGED, never deleted,
+# and that still holds -- the row stays in postings.json with its own value
+# untouched. But flagging is not the same as averaging it into a published
+# median, and nothing stopped that until now.
+#
+# It became visible when package 17 relaxed the FX year-matching rule: postings
+# like "250-400 SGD/year" (an employer typo, almost certainly a daily rate)
+# could not convert before and were invisible; converted, one of them lands at
+# $249/year inside a country's software population. A median is a robust
+# statistic and would mostly shrug this off, but "mostly" is not a reason to
+# feed it values the repo's own audit calls implausible.
+PUBLISH_ANNUAL_USD_BAND = (500, 5_000_000)
+
 # §0-D measured advertised pay heaped to round thousands: 77.5% of native
 # annual minima end in 0 or 5, 65% end in 000, terminal-digit uniformity
 # rejected at p < 0.001. A median of heaped data resolves no finer than the
@@ -263,12 +277,19 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
       deduped       one row per distinct role
       software      + only titles this build ships as SW
     """
+    implausible: Counter = Counter()
+
     def mid(r):
         c = r.get("compensation") or {}
         u = c.get("usd")
         if not u or c.get("period") != "year":
             return None
-        return (u["min"] + u["max"]) / 2
+        m = (u["min"] + u["max"]) / 2
+        lo, hi = PUBLISH_ANNUAL_USD_BAND
+        if not (lo <= m <= hi):
+            implausible[r.get("country") or "?"] += 1
+            return None
+        return m
 
     def posted_year(r):
         s = (r.get("posted_at") or "")[:4]
@@ -366,6 +387,14 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
         out.append(rec)
 
     meta = {
+        "excluded_as_implausible": dict(implausible),
+        "excluded_as_implausible_band_usd_year": list(PUBLISH_ANNUAL_USD_BAND),
+        "excluded_as_implausible_note": (
+            "rows whose annualised USD midpoint falls outside the band audit_data.py already "
+            "flags. They remain in postings.json with their own values untouched — package 14's "
+            "rule that an implausible posting is flagged and never deleted still holds — but they "
+            "are not averaged into a published median. Mostly employer typos: a daily or hourly "
+            "figure tagged as annual."),
         "basis": f"de-duplicated (one row per distinct role), restricted to titles classified "
                  f"{PAY_SUMMARY_CLASS}, posted {PUBLISH_FROM_YEAR} or later",
         "restricted_to_class": PAY_SUMMARY_CLASS,

@@ -434,7 +434,7 @@
       "source_id": "postings",
       "name": "Job postings (merged ATS providers, classified and de-duplicated)",
       "urls": [],
-      "fetched_at": "2026-08-23T05:53:09+00:00",
+      "fetched_at": "2026-08-23T13:53:24+00:00",
       "license": "derived; each provider's own provenance entry carries its API, its licence and its fetch date",
       "redistribution": "derived — nothing is fetched by this step",
       "transforms": [
@@ -447,7 +447,7 @@
       "status": "ok",
       "rows": 48267,
       "coverage": "1,723 companies across 6 providers",
-      "notes": "45,383 distinct roles among 48,267 raw rows; 1 of 31 countries clear the publication floor"
+      "notes": "45,383 distinct roles among 48,267 raw rows; 5 of 49 countries clear the publication floor"
     },
     {
       "source_id": "postings_ashby",
@@ -572,7 +572,7 @@
       "source_id": "postings_seed_summary",
       "name": "Postings seed-list summary — the small fields the transparency page actually reads",
       "urls": [],
-      "fetched_at": "2026-08-23T05:31:01+00:00",
+      "fetched_at": "2026-08-23T13:40:01+00:00",
       "license": "Inherits each provider source's own license, same as postings.json itself — this file adds no new terms, only a smaller re-shaping of already-committed, already-licensed data.",
       "redistribution": "derived — nothing fetched here; a build-time SUBSET of postings.json's own fields, which already carries the real provenance for this same data.",
       "transforms": [
@@ -1210,5 +1210,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-23T05:53:09+00:00"
+  "updated_at": "2026-08-23T13:53:24+00:00"
 }

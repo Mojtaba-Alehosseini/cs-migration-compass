@@ -146,20 +146,37 @@ class TestConvertCompensationToUsd(unittest.TestCase):
     def test_an_unmapped_currency_is_never_converted(self):
         self.assertIsNone(convert_compensation_to_usd({"currency": "ZZZ", "min": 1, "max": 2}, 2025))
 
-    def test_a_year_with_no_fx_rate_refuses_rather_than_substituting(self):
-        """The rule: never reach for a neighbouring year's rate.
+    def test_a_year_beyond_the_allowance_refuses_rather_than_substituting(self):
+        """The rule: never reach SILENTLY, and never reach far.
 
-        Package 16 — this used USD as its example currency, which stopped
-        exercising the rule once USD-to-USD became an identity that needs no
-        rate at all. The rule is unchanged and is now tested with a currency
-        that genuinely requires one. 1500 predates every rate this pipeline
-        holds; 2026 is the real, current case (the World Bank series ends at
-        2025), and it must still refuse."""
+        Package 16 tested this with 2026 GBP, which then refused. Package 17
+        changed that deliberately: a POSTING may now reach up to
+        normalise.MAX_FX_GAP_YEARS for a rate, because refusing cost 88-92% of
+        the annual-pay advertisements for GB, CA, DE and FR to avoid an error of
+        about two percent. The rule did not go away — it acquired a ceiling and
+        a marker, and both halves are asserted here and in
+        test_package17_fx_gap.py.
+
+        What must still refuse: anything past the ceiling, and anything on the
+        STRICT path, which is every caller that does not opt in."""
+        import normalise as nm
+        # past the ceiling: no rate within MAX_FX_GAP_YEARS of these
         self.assertIsNone(convert_compensation_to_usd({"currency": "GBP", "min": 1, "max": 2}, 1500))
         self.assertIsNone(convert_compensation_to_usd(
-            {"currency": "GBP", "min": 50_000, "max": 60_000}, 2026))
+            {"currency": "GBP", "min": 50_000, "max": 60_000}, 2029))
         self.assertIsNone(convert_compensation_to_usd(
-            {"currency": "EUR", "min": 50_000, "max": 60_000}, 2026))
+            {"currency": "EUR", "min": 50_000, "max": 60_000}, 2029))
+        # the strict path — unchanged, and still what the wage spine gets
+        self.assertFalse(nm.to_usd(50_000, "GB", 2026)["ok"])
+        self.assertFalse(nm.to_usd(50_000, "DE", 2026)["ok"])
+
+    def test_a_reachable_year_converts_but_is_marked_an_estimate(self):
+        """The other half: it converts, and it can never look exact."""
+        got = convert_compensation_to_usd({"currency": "GBP", "min": 50_000, "max": 60_000}, 2026)
+        self.assertIsNotNone(got)
+        self.assertTrue(got["estimated"])
+        self.assertEqual(got["fx_year"], 2025)
+        self.assertEqual(got["fx_gap_years"], 1)
 
     def test_usd_needs_no_rate_because_it_is_the_identity(self):
         """USD to USD is x -> x, exact in every year, and requiring a published

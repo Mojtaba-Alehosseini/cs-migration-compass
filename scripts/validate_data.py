@@ -427,6 +427,17 @@ def check_postings_annotations_applied(processed_dir: Path = PROCESSED) -> None:
         err("pay_summary_meta does not state published_from_year, so this check cannot verify "
             "which vintages the published medians rest on")
         return
+    # ...and the plausibility band, for the third time and the same reason: this
+    # check re-derives the published population from the rows, so every
+    # restriction that population was built under has to be declared and read,
+    # never assumed. Missing this one made the recount 1,812 against a stated
+    # 1,807 -- the difference being employer typos like "250-400 SGD/year".
+    band = (data.get("pay_summary_meta") or {}).get("excluded_as_implausible_band_usd_year")
+    if not band or len(band) != 2:
+        err("pay_summary_meta does not state excluded_as_implausible_band_usd_year, so this check "
+            "cannot verify which rows the published medians excluded")
+        return
+    band_lo, band_hi = band
     for rec in data.get("pay_summary_by_country") or []:
         if not rec.get("publishable"):
             if rec.get("median_published_usd_year") is not None:
@@ -441,7 +452,10 @@ def check_postings_annotations_applied(processed_dir: Path = PROCESSED) -> None:
                      and (r.get("compensation") or {}).get("period") == "year"
                      and (r.get("compensation") or {}).get("usd")
                      and (r.get("posted_at") or "")[:4].isdigit()
-                     and int((r.get("posted_at") or "")[:4]) >= from_year)
+                     and int((r.get("posted_at") or "")[:4]) >= from_year
+                     and band_lo <= (((r.get("compensation") or {}).get("usd") or {}).get("min", 0)
+                                     + ((r.get("compensation") or {}).get("usd") or {}).get("max", 0)) / 2
+                     <= band_hi)
         if n_real < (data.get("pay_summary_min_n") or 30):
             err(f"{cc} publishes a median on {n_real} qualifying rows, below the stated floor of "
                  f"{data.get('pay_summary_min_n')}")

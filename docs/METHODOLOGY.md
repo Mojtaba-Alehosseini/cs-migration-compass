@@ -30,6 +30,54 @@ the conclusions do not change, but the figures shown will lag reality.
 1970s-to-2020s price series would be actively misleading, so the UK house-price
 history stays in GBP and is labelled as such.
 
+### Year-matching, and the one place it is relaxed
+
+Job postings do not use the pinned rates above. Each posting converts at the
+World Bank annual rate for **its own year** (`PA.NUS.FCRF`, period average),
+through `normalise.to_usd()`. Package 9's rule stands: *a figure with no
+matching-year rate is not converted, and a rate from a different year is never
+substituted silently.*
+
+That rule is right for a historical series and was wrong for a job posted this
+month. The World Bank series publishes with a lag — in August 2026 it ends at
+2025 — so every 2026 posting failed for want of a rate differing from 2025's by
+one or two percent. The site was discarding **88–92% of the annual-pay postings
+for Great Britain, Canada, Germany and France** to avoid a rounding-scale error.
+
+So `to_usd()` now takes a maximum gap, **defaulting to zero**. Only the postings
+conversion passes one. Every other caller — the wage spine, and every historical
+series — keeps exact year-matching, unchanged and untested-against.
+
+**The threshold is `normalise.MAX_FX_GAP_YEARS = 2`,** chosen from this repo's
+own FX series rather than by feel. Absolute year-over-year change in the rate,
+across all 20 currencies, restricted to 2015 onward because that is the regime a
+current posting sits in:
+
+| gap | n | median | p90 | max |
+|---:|---:|---:|---:|---:|
+| 1 year | 200 | 2.0% | 8.3% | 19.8% |
+| 2 years | 180 | 3.0% | 9.6% | 28.0% |
+| 3 years | 160 | 3.3% | 11.6% | 37.9% |
+
+Two years covers the publication lag with a year of slack and holds the median
+error at 3%. Three begins to reach, and the tail grows faster than the median.
+
+**The worst case at two years is still about 28%, which is why a substituted
+conversion is marked as an estimate rather than presented as exact.** Wherever
+the site shows a converted figure that reached for its rate, it carries an
+estimate marker resolving to the year actually used.
+
+The full history contains far worse single-year moves — 3,070% for Armenia in
+1993–94, and about 100% for Italy, Spain and Finland in 1998–99 — but every one
+is a currency introduction or redenomination (the euro replacing the lira,
+peseta and markka), all before 2000, and none can fall within two years of a
+posting dated now.
+
+**Native currency is never withheld.** A salary advertised in pounds is exact in
+pounds and needs no rate at all, so the native figure is always shown and is the
+default. Conversion is an additional, optional view — and a posting is never
+hidden because its currency could not be converted.
+
 ### Net pay
 
 ```

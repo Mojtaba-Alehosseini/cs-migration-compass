@@ -76,6 +76,40 @@ def _composition(source_id: str) -> dict | None:
     return next((s for s in doc.get("sources", []) if s["source_id"] == source_id), None)
 
 
+# How many years a conversion may reach for a rate before it is refused
+# outright. Chosen from this repo's own FX series, not by feel.
+#
+# The World Bank's annual PA.NUS.FCRF series publishes with a lag: in August
+# 2026 it ends at 2025. Rule 1 (no nearby-year substitution) was written for a
+# HISTORICAL series, where pricing a 1968 London house at a 2026 rate would be a
+# lie of fifty-eight years. Applied to a job posted this month it discards the
+# posting to avoid an error of one or two percent — 88-92% of the annual-pay
+# postings for GB, CA, DE and FR, almost all of them 2026.
+#
+# Measured across all 20 currencies in fx_rates.json, restricted to 2015 onward
+# because that is the regime a current posting sits in:
+#
+#     gap    n    median    p90     max
+#      1    200     2.0%    8.3%   19.8%
+#      2    180     3.0%    9.6%   28.0%
+#      3    160     3.3%   11.6%   37.9%
+#
+# Two years covers the publication lag with a year of slack and keeps the median
+# error at 3%. Three begins to reach, and the tail grows faster than the median.
+# The worst case at two years is still ~28%, which is precisely why a substituted
+# conversion is MARKED AS AN ESTIMATE rather than presented as exact.
+#
+# The full history has far worse moves — 3,070% for AM 1993-94, 100% for IT, ES
+# and FI in 1998-99 — but every one is a redenomination or a currency
+# introduction (the euro replacing the lira, peseta and markka), all before 2000,
+# and none can fall within two years of a posting dated now.
+#
+# This is a CEILING, not a default. to_usd() still refuses any substitution
+# unless a caller asks for one explicitly, so every historical series keeps the
+# exact year-matching package 9 built for it.
+MAX_FX_GAP_YEARS = 2
+
+
 def fx_rate(country: str, year: int) -> dict | None:
     """The FX rate for EXACTLY this country and year, or None. Rule 1: no
     nearby-year fallback exists in this function on purpose — a caller
@@ -88,7 +122,38 @@ def fx_rate(country: str, year: int) -> dict | None:
     return None
 
 
-def to_usd(value: float, country: str, year: int) -> dict:
+def fx_rate_within(country: str, year: int, max_gap_years: int) -> dict | None:
+    """The rate for `year` if it exists, else the NEAREST year within
+    `max_gap_years`, preferring the smaller gap and, on a tie, the earlier year
+    (a published past rate over an implied future one).
+
+    Returns the same shape as fx_rate() plus `gap_years` and `estimated`, so a
+    caller can never receive a substituted rate without also receiving the fact
+    that it was substituted. There is no code path that returns a substituted
+    rate looking like an exact one.
+    """
+    exact = fx_rate(country, year)
+    if exact:
+        return {**exact, "gap_years": 0, "estimated": False}
+    if max_gap_years <= 0:
+        return None
+    best = None
+    for row in _fx_series(country):
+        gap = abs(row["year"] - year)
+        if gap > max_gap_years:
+            continue
+        key = (gap, row["year"] > year)      # nearer first; on a tie prefer the past
+        if best is None or key < best[0]:
+            best = (key, row)
+    if best is None:
+        return None
+    row = best[1]
+    return {"rate": row["value"], "year": row["year"], "country": country,
+            "source": "fx_rates (World Bank PA.NUS.FCRF, period average)",
+            "gap_years": abs(row["year"] - year), "estimated": True}
+
+
+def to_usd(value: float, country: str, year: int, max_gap_years: int = 0) -> dict:
     """Convert a native-currency value to USD at the rate from ITS OWN year.
     Returns {"ok": False, "reason": ...} rather than a number if that
     year's rate is unavailable — never substitutes a different year.
@@ -118,19 +183,27 @@ def to_usd(value: float, country: str, year: int) -> dict:
             "chain": [{"op": "fx_convert",
                        "detail": f"{value} USD is already USD — identity, no rate applied"}],
             "fx_rate": 1.0, "fx_year": year, "fx_source": "identity (USD to USD)",
+            "estimated": False, "fx_gap_years": 0,
         }
-    rate = fx_rate(country, year)
+    rate = fx_rate_within(country, year, max_gap_years)
     if rate is None:
-        return {"ok": False, "reason": f"no FX rate for {country} in {year} — "
-                 "not converted, never substituted from a different year"}
+        why = (f"no FX rate for {country} in {year}, and none within {max_gap_years} "
+               f"year(s) either" if max_gap_years > 0 else
+               f"no FX rate for {country} in {year} — not converted, never substituted from a "
+               f"different year")
+        return {"ok": False, "reason": why}
+    detail = (f"{value} / {rate['rate']} ({country} {rate['year']} period-average rate, "
+              f"{rate['source']})")
+    if rate["estimated"]:
+        detail += (f" — ESTIMATE: no {year} rate is published, so the {rate['year']} rate was used "
+                   f"({rate['gap_years']} year gap)")
     return {
         "ok": True,
         "value_usd": value / rate["rate"],
-        "chain": [
-            {"op": "fx_convert", "detail": f"{value} / {rate['rate']} ({country} {year} period-average "
-             f"rate, {rate['source']})"},
-        ],
-        "fx_rate": rate["rate"], "fx_year": year, "fx_source": rate["source"],
+        "chain": [{"op": "fx_convert", "detail": detail}],
+        "fx_rate": rate["rate"], "fx_year": rate["year"], "fx_source": rate["source"],
+        "estimated": rate["estimated"], "fx_gap_years": rate["gap_years"],
+        "fx_year_requested": year,
     }
 
 
