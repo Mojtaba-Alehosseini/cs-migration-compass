@@ -163,6 +163,40 @@ def run():
     log(f"  {len(pairs)} candidate pairs above 0.60 cosine ({len(skipped)} oversized blocks skipped)")
 
     gt = json.loads(LABELS.read_text(encoding="utf-8")) if LABELS.exists() else None
+
+    # The labels store posting INDICES. If postings.json is re-harvested the
+    # rows behind those indices change and every number below silently becomes
+    # a measurement of different pairs -- not an error, just quietly wrong.
+    # This is not hypothetical: package 14 grew this corpus from 46,040 to
+    # 48,267. Each label also stores the display string it was labelled from,
+    # so the two are compared here and a mismatch is fatal rather than noted.
+    label_check = None
+    if gt:
+        def _disp(r):
+            # company first, then the slug -- the order the labels were built
+            # with. Reversing it makes 118 of 240 endpoints "mismatch" while
+            # nothing is actually wrong, which is how this check was first
+            # written and why it is worth stating the order explicitly.
+            return (f"{r.get('title')} @ {r.get('company') or r.get('company_slug')} "
+                    f"/ {r.get('location_raw')}")
+        bad = []
+        for r in gt["pairs"]:
+            for idx, stored in ((r["i"], r.get("a")), (r["j"], r.get("b"))):
+                if stored is None:
+                    continue
+                if not (0 <= idx < N) or _disp(post[idx]) != stored:
+                    bad.append({"index": idx, "labelled_as": stored,
+                                "now": _disp(post[idx]) if 0 <= idx < N else "OUT OF RANGE"})
+        label_check = {"n_pairs": len(gt["pairs"]), "n_endpoints": 2 * len(gt["pairs"]),
+                       "n_mismatched": len(bad), "corpus_size_now": N,
+                       "examples": bad[:5], "valid": not bad}
+        if bad:
+            log(f"  FATAL: {len(bad)} of {2*len(gt['pairs'])} labelled endpoints no longer match "
+                f"the corpus -- postings.json has changed since labelling. Re-label before "
+                f"trusting any threshold. First: {bad[0]}")
+            raise SystemExit(2)
+        log(f"  labels verified against the corpus: {2*len(gt['pairs'])} endpoints, 0 mismatches")
+
     tuning = []
     if gt:
         # Score the CLUSTERING, not the candidate-pair list, because the
@@ -311,6 +345,7 @@ def run():
             "misses sit in bands the sample deliberately over-represents. Quote the reweighted "
             "recall for the de-duplicator's real behaviour."),
         "labelled_pairs": (gt or {}).get("n"),
+        "label_corpus_integrity": label_check,
         "recall_ceilings": {
             "cross_employer": "duplicates posted by two different employers (an agency and the "
                               "employer) are out of scope by construction",
@@ -372,6 +407,26 @@ def self_test():
     ck("normalisation does NOT collapse different cities",
        key_of({"title": "X", "company": "C", "location_raw": "Berlin"}) !=
        key_of({"title": "X", "company": "C", "location_raw": "Munich"}))
+
+    # The label/corpus integrity check reports clean on the real data, so it is
+    # shown FIRING here: a check never observed to fail is not evidence. The
+    # constructed violation is the one that actually happens -- the corpus is
+    # re-harvested and the row behind a stored index becomes a different job.
+    def _disp_t(r):
+        return (f"{r.get('title')} @ {r.get('company') or r.get('company_slug')} "
+                f"/ {r.get('location_raw')}")
+    corpus = [{"title": "Software Engineer", "company": "Acme", "location_raw": "NY"},
+              {"title": "Nurse Practitioner", "company": "Mercy", "location_raw": "LA"}]
+    lab = [{"i": 0, "j": 1, "a": _disp_t(corpus[0]), "b": _disp_t(corpus[1])}]
+    ck("label/corpus check passes on a corpus that has not moved",
+       all(_disp_t(corpus[p[k]]) == p[v] for p in lab for k, v in (("i", "a"), ("j", "b"))))
+    shifted = [{"title": "Warehouse Picker", "company": "Acme", "location_raw": "NY"}] + corpus
+    n_bad = sum(1 for p in lab for k, v in (("i", "a"), ("j", "b"))
+                if _disp_t(shifted[p[k]]) != p[v])
+    ck("label/corpus check FIRES when one row is prepended to the corpus",
+       n_bad == 2, f"{n_bad} of 2 endpoints detected as moved")
+    ck("label/corpus check FIRES on an out-of-range index",
+       not (0 <= 99 < len(shifted)))
 
     fake = [{"title": "Sales Associate", "company": "Acme", "location_raw": "NY"},
             {"title": "Sales Associate (Part-Time)", "company": "Acme", "location_raw": "NY"},

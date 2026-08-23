@@ -100,6 +100,14 @@
  ],
  "stratified_sample_disclosure": "the 120 labelled pairs are 24 per cosine band, not a random sample of candidate pairs. 'precision'/'recall' are the figures ON THAT SAMPLE and are what the threshold was tuned on. '*_reweighted' rescales each labelled pair by its band's population/sample ratio and estimates what the de-duplicator achieves over all candidate pairs. At the shipped threshold precision is identical -- every true and false positive falls in the top band -- but recall is LOWER reweighted, because the misses sit in bands the sample deliberately over-represents. Quote the reweighted recall for the de-duplicator's real behaviour.",
  "labelled_pairs": 120,
+ "label_corpus_integrity": {
+  "n_pairs": 120,
+  "n_endpoints": 240,
+  "n_mismatched": 0,
+  "corpus_size_now": 48267,
+  "examples": [],
+  "valid": true
+ },
  "recall_ceilings": {
   "cross_employer": "duplicates posted by two different employers (an agency and the employer) are out of scope by construction",
   "oversized_blocks_skipped": [
