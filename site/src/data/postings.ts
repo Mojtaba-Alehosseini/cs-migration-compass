@@ -37,15 +37,16 @@ export interface Posting {
    *  coarse job families, not ISCO codes, and conflating them would invite
    *  comparison against the wage spine, which the standing rules forbid. */
   occupation: { occupation_key: string; confidence: 'high' | 'medium' | 'low' } | null
-  /** Package 16 — coarse job FAMILY from the offline TF-IDF classifier, joined
-   *  from postings_title_classes.json. Only classes whose F1 95% CI lies
-   *  entirely above 0.70 are shipped; everything else reads `unclassified`
-   *  with the reason recorded. Never a pay figure, never an occupation code. */
-  title_class?: { class: string; proba: number | null; reason: string | null }
-  /** Package 16 — id of the row this one is a re-listing of, or null if it is
-   *  the representative. No row is ever removed; derived statistics use only
-   *  rows where this is null. */
-  duplicate_of?: string | null
+  /* Package 16 — `title_class` and `duplicate_of` are NOT declared here on
+   * purpose, because they are NOT SHIPPED. Both exist on every row in
+   * data/processed/postings.json, which is what the analysis scripts read, and
+   * build_site_data.py strips them before writing the browser payload: nothing
+   * in site/src reads either one, and carrying them cost 15 Lighthouse points
+   * on /postings, measured. Declaring them optional would be a type that lies —
+   * it would promise a field that never arrives and invite code that silently
+   * does nothing. If a category filter is built, ship them and declare them
+   * together. The AGGREGATES are shipped and typed below:
+   * `title_class_summary`, `duplicate_summary`, `pay_summary_by_country`. */
 }
 
 export interface SeedCompany {
