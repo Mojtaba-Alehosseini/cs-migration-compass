@@ -1,6 +1,6 @@
 {
  "source_id": "city_coordinates",
- "generated_at": "2026-08-10T07:48:14+00:00",
+ "generated_at": "2026-08-23T04:04:38+00:00",
  "meta": {
   "convention": "GeoNames populated-place point (the settlement's principal point, roughly the city centre) — not a metro-area centroid.",
   "fields": {
@@ -225,9 +225,9 @@
    "geocoded_as": "Toronto, Ontario CA"
   },
   "vancouver": {
-   "lat": 49.6506,
-   "lon": -125.4494,
-   "geocoded_as": "Vancouver Island, British Columbia CA"
+   "lat": 49.2497,
+   "lon": -123.1193,
+   "geocoded_as": "Vancouver, British Columbia CA"
   },
   "montreal": {
    "lat": 45.5088,

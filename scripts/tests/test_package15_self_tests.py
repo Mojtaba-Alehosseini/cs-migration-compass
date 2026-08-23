@@ -1,4 +1,4 @@
-"""Package 15 — wire every statistical harness's own self-test into CI.
+"""Packages 15 and 16 — wire every statistical harness's own self-test into CI.
 
 Each package-15 script ships a `--self-test` that constructs a violation for
 every rule it implements and asserts the rule FIRES. That is the whole basis
@@ -7,7 +7,7 @@ never observed to fail is not evidence.
 
 Those self-tests were runnable by hand but nothing ran them automatically,
 so they could rot silently -- which is precisely the failure mode they exist
-to prevent. This runs all five as part of the normal regression suite, so a
+to prevent. This runs all eight as part of the normal regression suite, so a
 change that quietly disables a check fails CI instead of passing it.
 
 Each is invoked as a subprocess rather than imported, because that is how a
@@ -29,6 +29,15 @@ HARNESSES = [
     ("classify_titles", "title classifier, including the label-permutation leakage control"),
     ("dedupe_postings", "near-duplicate normalisation and blocking"),
     ("rederive_postings_pay", "software-only re-derivation and bootstrap CI"),
+    # Package 16 — same contract, same reason. These three make claims about the
+    # site's live numbers (the classifier/de-dup join, the 22-dataset sweep, and
+    # the two external verifications), so their controls have to keep firing.
+    ("apply_postings_annotations", "the classification/de-duplication join, the publication floor "
+                                   "and the interval-based ship rule"),
+    ("sweep_datasets", "series classification, the persistence test's preconditions, and peer "
+                       "corroboration of a flag"),
+    ("verify_reference_data", "great-circle distance, and the coordinate failure modes it exists "
+                              "to catch"),
 ]
 
 

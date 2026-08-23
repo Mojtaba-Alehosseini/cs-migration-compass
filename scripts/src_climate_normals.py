@@ -77,6 +77,20 @@ def geocode(city: dict) -> dict | None:
     same_country = [r for r in results if r.get("country_code") == city["country"]]
     if not same_country:
         return None
+    # ...and only a POPULATED PLACE. GeoNames feature codes beginning "PPL" are
+    # settlements; ISL is an island, ADM an administrative division. Without
+    # this the "largest by population" tie-break below can hand a city's
+    # coordinates to a landmass that merely contains it, which is exactly what
+    # happened: "Vancouver Island" (ISL, population 748,937 for the whole
+    # island) outranked the city of "Vancouver" (PPL, 662,248), and the site
+    # drew Vancouver 174 km away in the Strait of Georgia. geocoded_as recorded
+    # the substitution faithfully the whole time -- the field did its job,
+    # nothing read it. Found by checking every coordinate against an independent
+    # gazetteer (scripts/verify_reference_data.py).
+    settlements = [r for r in same_country
+                   if str(r.get("feature_code") or "").upper().startswith("PPL")]
+    if settlements:
+        same_country = settlements
     same_country.sort(key=lambda r: -(r.get("population") or 0))
     return same_country[0]
 

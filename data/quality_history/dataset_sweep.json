@@ -1,0 +1,3867 @@
+{
+ "schema": "package-16 dataset sweep v1",
+ "datasets_requested": 22,
+ "datasets_swept": 22,
+ "datasets_missing": [],
+ "persistence_test_preconditions": "the residual-autocorrelation test is valid only for a LEVEL series sampled at a regular interval, with at least 36 points. Rates, growth figures and shares are already differenced or bounded and are SKIPPED WITH A REASON, not silently dropped: running the test on them would have produced confident false findings across roughly half the numeric series here.",
+ "controls": {
+  "CONTROL real published index (UK HPI London)": {
+   "n": 698,
+   "label": "uk_hpi/london",
+   "residual_acf_lag1": 0.9849,
+   "residual_acf_lag2": 0.9711,
+   "mom_acf_lag1": -0.0495,
+   "mom_sd_pct": 2.136,
+   "looks_like_injected_noise": false
+  },
+  "CONTROL known-defective index (Teranet Toronto)": {
+   "n": 337,
+   "label": "teranet/toronto",
+   "residual_acf_lag1": 0.2372,
+   "residual_acf_lag2": 0.1257,
+   "mom_acf_lag1": -0.3984,
+   "mom_sd_pct": 24.649,
+   "looks_like_injected_noise": true
+  }
+ },
+ "cross_dataset_identities": {
+  "eurostat_ict_share_identity": {
+   "n_country_years": 191,
+   "median_abs_diff_pp": 0.146,
+   "max_abs_diff_pp": 0.482,
+   "worst": {
+    "country": "DE",
+    "year": 2021,
+    "published_share_pct": 4.9,
+    "implied_share_pct": 4.418,
+    "abs_diff_pp": 0.482
+   },
+   "reading": "ICT specialists divided by total employment should reproduce the published ICT share. Both come from Eurostat but from different tables, so a large gap would mean the two are not the denominators they appear to be — which matters, because package 15 already corrected a selection-bias figure for using the wrong one.",
+   "verdict": "consistent"
+  }
+ },
+ "by_dataset": {
+  "climate_normals": {
+   "source_id": "climate_normals",
+   "generated_at": "2026-08-05T00:29:41+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-05",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "city",
+    "present": 21,
+    "of_spine": 73,
+    "missing": [
+     "aarhus",
+     "adelaide",
+     "amsterdam",
+     "austin",
+     "barcelona",
+     "bergen",
+     "berlin",
+     "calgary",
+     "columbus",
+     "copenhagen",
+     "cork",
+     "denver",
+     "detroit",
+     "doha",
+     "dubai",
+     "dublin",
+     "edinburgh",
+     "eindhoven",
+     "frankfurt",
+     "gothenburg"
+    ],
+    "n_missing": 52
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 1554,
+    "n_negative": 43,
+    "n_zero": 5,
+    "min": -122.41942,
+    "max": 192.4
+   }
+  },
+  "mipex": {
+   "source_id": "mipex",
+   "generated_at": "2026-08-04T19:40:08+00:00",
+   "vintage": {
+    "latest_period_in_data": 2024,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": 2
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 9,
+    "of_spine": 15,
+    "missing": [
+     "AE",
+     "AU",
+     "GB",
+     "NO",
+     "QA",
+     "US"
+    ]
+   },
+   "persistence_test": {
+    "n_series_found": 81,
+    "n_tested": 0,
+    "n_skipped": 81,
+    "skipped_reasons": {
+     "fewer than 36 points": {
+      "count": 81,
+      "example": "CA/overall/score"
+     }
+    },
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 738,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 22.22,
+    "max": 2024.0
+   }
+  },
+  "un_wpp": {
+   "source_id": "un_wpp",
+   "generated_at": "2026-08-04T19:38:46+00:00",
+   "vintage": {
+    "latest_period_in_data": 2100,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": -74
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 15,
+    "of_spine": 15,
+    "missing": []
+   },
+   "persistence_test": {
+    "n_series_found": 30,
+    "n_tested": 30,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": [
+     {
+      "n": 111,
+      "label": "QA/total_population/value",
+      "residual_acf_lag1": 0.9291,
+      "residual_acf_lag2": 0.8265,
+      "mom_acf_lag1": 0.8888,
+      "mom_sd_pct": 3.613,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "QA/population_density/value",
+      "residual_acf_lag1": 0.9291,
+      "residual_acf_lag2": 0.8265,
+      "mom_acf_lag1": 0.8888,
+      "mom_sd_pct": 3.613,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "AE/total_population/value",
+      "residual_acf_lag1": 0.9095,
+      "residual_acf_lag2": 0.7831,
+      "mom_acf_lag1": 0.9135,
+      "mom_sd_pct": 2.419,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "AE/population_density/value",
+      "residual_acf_lag1": 0.9095,
+      "residual_acf_lag2": 0.7832,
+      "mom_acf_lag1": 0.9135,
+      "mom_sd_pct": 2.419,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "DK/total_population/value",
+      "residual_acf_lag1": 0.954,
+      "residual_acf_lag2": 0.8966,
+      "mom_acf_lag1": 0.9595,
+      "mom_sd_pct": 0.253,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "DK/population_density/value",
+      "residual_acf_lag1": 0.954,
+      "residual_acf_lag2": 0.8966,
+      "mom_acf_lag1": 0.9595,
+      "mom_sd_pct": 0.253,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "FI/total_population/value",
+      "residual_acf_lag1": 0.9583,
+      "residual_acf_lag2": 0.8915,
+      "mom_acf_lag1": 0.9611,
+      "mom_sd_pct": 0.3,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "FI/population_density/value",
+      "residual_acf_lag1": 0.9583,
+      "residual_acf_lag2": 0.8915,
+      "mom_acf_lag1": 0.961,
+      "mom_sd_pct": 0.3,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "IE/total_population/value",
+      "residual_acf_lag1": 0.9128,
+      "residual_acf_lag2": 0.8059,
+      "mom_acf_lag1": 0.9599,
+      "mom_sd_pct": 0.728,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "IE/population_density/value",
+      "residual_acf_lag1": 0.9128,
+      "residual_acf_lag2": 0.8059,
+      "mom_acf_lag1": 0.9599,
+      "mom_sd_pct": 0.728,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "NO/total_population/value",
+      "residual_acf_lag1": 0.9322,
+      "residual_acf_lag2": 0.8522,
+      "mom_acf_lag1": 0.9803,
+      "mom_sd_pct": 0.46,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "NO/population_density/value",
+      "residual_acf_lag1": 0.9322,
+      "residual_acf_lag2": 0.8522,
+      "mom_acf_lag1": 0.9805,
+      "mom_sd_pct": 0.46,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "SE/total_population/value",
+      "residual_acf_lag1": 0.9584,
+      "residual_acf_lag2": 0.8952,
+      "mom_acf_lag1": 0.9638,
+      "mom_sd_pct": 0.33,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "SE/population_density/value",
+      "residual_acf_lag1": 0.9584,
+      "residual_acf_lag2": 0.8951,
+      "mom_acf_lag1": 0.9637,
+      "mom_sd_pct": 0.33,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "GB/total_population/value",
+      "residual_acf_lag1": 0.9332,
+      "residual_acf_lag2": 0.8547,
+      "mom_acf_lag1": 0.9777,
+      "mom_sd_pct": 0.292,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "GB/population_density/value",
+      "residual_acf_lag1": 0.9332,
+      "residual_acf_lag2": 0.8547,
+      "mom_acf_lag1": 0.9778,
+      "mom_sd_pct": 0.292,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "IT/total_population/value",
+      "residual_acf_lag1": 0.9044,
+      "residual_acf_lag2": 0.7834,
+      "mom_acf_lag1": 0.9622,
+      "mom_sd_pct": 0.434,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "IT/population_density/value",
+      "residual_acf_lag1": 0.9044,
+      "residual_acf_lag2": 0.7833,
+      "mom_acf_lag1": 0.9622,
+      "mom_sd_pct": 0.434,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "ES/total_population/value",
+      "residual_acf_lag1": 0.8831,
+      "residual_acf_lag2": 0.7185,
+      "mom_acf_lag1": 0.9684,
+      "mom_sd_pct": 0.628,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "ES/population_density/value",
+      "residual_acf_lag1": 0.8831,
+      "residual_acf_lag2": 0.7185,
+      "mom_acf_lag1": 0.9684,
+      "mom_sd_pct": 0.628,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "DE/total_population/value",
+      "residual_acf_lag1": 0.9702,
+      "residual_acf_lag2": 0.8938,
+      "mom_acf_lag1": 0.8274,
+      "mom_sd_pct": 0.29,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "DE/population_density/value",
+      "residual_acf_lag1": 0.9702,
+      "residual_acf_lag2": 0.8938,
+      "mom_acf_lag1": 0.8275,
+      "mom_sd_pct": 0.29,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "NL/total_population/value",
+      "residual_acf_lag1": 0.9749,
+      "residual_acf_lag2": 0.9326,
+      "mom_acf_lag1": 0.9565,
+      "mom_sd_pct": 0.351,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "NL/population_density/value",
+      "residual_acf_lag1": 0.9749,
+      "residual_acf_lag2": 0.9326,
+      "mom_acf_lag1": 0.9565,
+      "mom_sd_pct": 0.351,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "CA/total_population/value",
+      "residual_acf_lag1": 0.9607,
+      "residual_acf_lag2": 0.9065,
+      "mom_acf_lag1": 0.9563,
+      "mom_sd_pct": 0.338,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "CA/population_density/value",
+      "residual_acf_lag1": 0.9605,
+      "residual_acf_lag2": 0.9065,
+      "mom_acf_lag1": 0.956,
+      "mom_sd_pct": 0.338,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "US/total_population/value",
+      "residual_acf_lag1": 0.937,
+      "residual_acf_lag2": 0.8464,
+      "mom_acf_lag1": 0.9612,
+      "mom_sd_pct": 0.337,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "US/population_density/value",
+      "residual_acf_lag1": 0.937,
+      "residual_acf_lag2": 0.8464,
+      "mom_acf_lag1": 0.9611,
+      "mom_sd_pct": 0.337,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "AU/total_population/value",
+      "residual_acf_lag1": 0.9319,
+      "residual_acf_lag2": 0.8415,
+      "mom_acf_lag1": 0.9647,
+      "mom_sd_pct": 0.37,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 111,
+      "label": "AU/population_density/value",
+      "residual_acf_lag1": 0.932,
+      "residual_acf_lag2": 0.8414,
+      "mom_acf_lag1": 0.9623,
+      "mom_sd_pct": 0.371,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     }
+    ]
+   },
+   "numeric_leaves": {
+    "n": 6660,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 2.229,
+    "max": 421278889.0
+   }
+  },
+  "world_happiness_report": {
+   "source_id": "world_happiness_report",
+   "generated_at": "2026-08-04T19:20:16+00:00",
+   "vintage": {
+    "latest_period_in_data": 2025,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": 1
+   },
+   "coverage": {
+    "keyed_by": "other/nested",
+    "spine_countries_found_one_level_down": 15,
+    "spine_cities_found_one_level_down": 0
+   },
+   "persistence_test": {
+    "n_series_found": 31,
+    "n_tested": 0,
+    "n_skipped": 31,
+    "skipped_reasons": {
+     "fewer than 36 points": {
+      "count": 30,
+      "example": "countries/FI/rank"
+     },
+     "already a rate or a change — the test does not apply": {
+      "count": 1,
+      "example": "ranked_countries_per_year"
+     }
+    },
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 1211,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 0.0401455983519554,
+    "max": 2025.0
+   }
+  },
+  "rsf_press_freedom": {
+   "source_id": "rsf_press_freedom",
+   "generated_at": "2026-08-04T19:20:41+00:00",
+   "vintage": {
+    "latest_period_in_data": 2026,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": 0
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 15,
+    "of_spine": 15,
+    "missing": []
+   },
+   "persistence_test": {
+    "n_series_found": 120,
+    "n_tested": 0,
+    "n_skipped": 120,
+    "skipped_reasons": {
+     "fewer than 36 points": {
+      "count": 120,
+      "example": "FI/score"
+     }
+    },
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 675,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 1.0,
+    "max": 2026.0
+   }
+  },
+  "ef_epi": {
+   "source_id": "ef_epi",
+   "generated_at": "2026-08-04T19:46:08+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 10,
+    "of_spine": 15,
+    "missing": [
+     "AU",
+     "CA",
+     "GB",
+     "IE",
+     "US"
+    ]
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 19,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 1.0,
+    "max": 624.0
+   }
+  },
+  "wipo_gii": {
+   "source_id": "wipo_gii",
+   "generated_at": "2026-08-04T19:46:34+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 13,
+    "of_spine": 15,
+    "missing": [
+     "NL",
+     "US"
+    ]
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 26,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 2.0,
+    "max": 64.5
+   }
+  },
+  "numbeo_history": {
+   "source_id": "numbeo_history",
+   "generated_at": "2026-08-04T19:54:24+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "other/nested",
+    "spine_countries_found_one_level_down": 0,
+    "spine_cities_found_one_level_down": 0
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 1080,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 17.7,
+    "max": 177.9
+   }
+  },
+  "eurostat_ict_specialists": {
+   "source_id": "eurostat_ict_specialists",
+   "generated_at": "2026-08-04T19:12:06+00:00",
+   "vintage": {
+    "latest_period_in_data": 2025,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": 1
+   },
+   "coverage": {
+    "keyed_by": "other/nested",
+    "spine_countries_found_one_level_down": 10,
+    "spine_cities_found_one_level_down": 0
+   },
+   "persistence_test": {
+    "n_series_found": 22,
+    "n_tested": 0,
+    "n_skipped": 22,
+    "skipped_reasons": {
+     "already a rate or a change — the test does not apply": {
+      "count": 11,
+      "example": "countries/DE/ict_share_of_employment_pct/value"
+     },
+     "fewer than 36 points": {
+      "count": 11,
+      "example": "countries/DE/ict_specialists_thousands/value"
+     }
+    },
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 888,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 2.8,
+    "max": 10450.8
+   }
+  },
+  "eurostat_total_employment": {
+   "source_id": "eurostat_total_employment",
+   "generated_at": "2026-08-04T19:12:11+00:00",
+   "vintage": {
+    "latest_period_in_data": 2025,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": 1
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 9,
+    "of_spine": 15,
+    "missing": [
+     "AE",
+     "AU",
+     "CA",
+     "GB",
+     "QA",
+     "US"
+    ]
+   },
+   "persistence_test": {
+    "n_series_found": 36,
+    "n_tested": 8,
+    "n_skipped": 28,
+    "skipped_reasons": {
+     "fewer than 36 points": {
+      "count": 28,
+      "example": "DE/total_employment_thousands/value"
+     }
+    },
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": [
+     {
+      "n": 46,
+      "label": "FI/total_employment_thousands/value",
+      "residual_acf_lag1": 0.8389,
+      "residual_acf_lag2": 0.5546,
+      "mom_acf_lag1": 0.6061,
+      "mom_sd_pct": 2.167,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 46,
+      "label": "FI/population_thousands/value",
+      "residual_acf_lag1": 0.8897,
+      "residual_acf_lag2": 0.6479,
+      "mom_acf_lag1": 0.7574,
+      "mom_sd_pct": 0.138,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 46,
+      "label": "FI/employees_thousands/value",
+      "residual_acf_lag1": 0.8526,
+      "residual_acf_lag2": 0.5684,
+      "mom_acf_lag1": 0.6337,
+      "mom_sd_pct": 2.355,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 46,
+      "label": "FI/self_employed_thousands/value",
+      "residual_acf_lag1": 0.557,
+      "residual_acf_lag2": 0.3154,
+      "mom_acf_lag1": 0.1279,
+      "mom_sd_pct": 2.393,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 51,
+      "label": "NO/total_employment_thousands/value",
+      "residual_acf_lag1": 0.7733,
+      "residual_acf_lag2": 0.375,
+      "mom_acf_lag1": 0.5537,
+      "mom_sd_pct": 1.456,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 51,
+      "label": "NO/population_thousands/value",
+      "residual_acf_lag1": 0.9074,
+      "residual_acf_lag2": 0.7607,
+      "mom_acf_lag1": 0.9236,
+      "mom_sd_pct": 0.308,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 51,
+      "label": "NO/employees_thousands/value",
+      "residual_acf_lag1": 0.7613,
+      "residual_acf_lag2": 0.3464,
+      "mom_acf_lag1": 0.5503,
+      "mom_sd_pct": 1.554,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 51,
+      "label": "NO/self_employed_thousands/value",
+      "residual_acf_lag1": 0.8838,
+      "residual_acf_lag2": 0.7206,
+      "mom_acf_lag1": 0.2853,
+      "mom_sd_pct": 1.613,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     }
+    ]
+   },
+   "numeric_leaves": {
+    "n": 2560,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 148.0,
+    "max": 83517.0
+   }
+  },
+  "un_migrant_stock": {
+   "source_id": "un_migrant_stock",
+   "generated_at": "2026-08-04T19:28:05+00:00",
+   "vintage": {
+    "latest_period_in_data": 2024,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": 2
+   },
+   "coverage": {
+    "keyed_by": "other/nested",
+    "spine_countries_found_one_level_down": 15,
+    "spine_cities_found_one_level_down": 0
+   },
+   "persistence_test": {
+    "n_series_found": 26,
+    "n_tested": 0,
+    "n_skipped": 26,
+    "skipped_reasons": {
+     "fewer than 36 points": {
+      "count": 26,
+      "example": "total_foreign_born/QA/value"
+     }
+    },
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 3207,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 1.0,
+    "max": 52375047.0
+   }
+  },
+  "indeed_hiring_lab_job_postings": {
+   "source_id": "indeed_hiring_lab_job_postings",
+   "generated_at": "2026-08-04T19:19:18+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "city",
+    "present": 30,
+    "of_spine": 73,
+    "missing": [
+     "aarhus",
+     "abu-dhabi",
+     "adelaide",
+     "amsterdam",
+     "barcelona",
+     "bergen",
+     "berlin",
+     "brisbane",
+     "calgary",
+     "canberra",
+     "copenhagen",
+     "cork",
+     "doha",
+     "dubai",
+     "dublin",
+     "edinburgh",
+     "eindhoven",
+     "frankfurt",
+     "gold-coast",
+     "gothenburg"
+    ],
+    "n_missing": 43
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 4956,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 28.0,
+    "max": 212.55
+   }
+  },
+  "bls_oews": {
+   "source_id": "bls_oews",
+   "generated_at": "2026-08-11T22:19:16+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-11",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "city",
+    "present": 30,
+    "of_spine": 73,
+    "missing": [
+     "aarhus",
+     "abu-dhabi",
+     "adelaide",
+     "amsterdam",
+     "barcelona",
+     "bergen",
+     "berlin",
+     "brisbane",
+     "calgary",
+     "canberra",
+     "copenhagen",
+     "cork",
+     "doha",
+     "dubai",
+     "dublin",
+     "edinburgh",
+     "eindhoven",
+     "frankfurt",
+     "gold-coast",
+     "gothenburg"
+    ],
+    "n_missing": 43
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 512,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 59.44,
+    "max": 1687890.0
+   }
+  },
+  "oecd_indicators": {
+   "source_id": "oecd_indicators",
+   "generated_at": "2026-08-04T19:23:54+00:00",
+   "vintage": {
+    "latest_period_in_data": 2026,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": 0
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 13,
+    "of_spine": 15,
+    "missing": [
+     "AE",
+     "QA"
+    ]
+   },
+   "persistence_test": {
+    "n_series_found": 195,
+    "n_tested": 117,
+    "n_skipped": 78,
+    "skipped_reasons": {
+     "fewer than 36 points": {
+      "count": 78,
+      "example": "AU/tax_wedge/AV_ITR_PT_WG_EARN_G/value"
+     }
+    },
+    "flagged_by_threshold": [
+     {
+      "n": 36,
+      "label": "GB/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.0951,
+      "residual_acf_lag2": -0.1323,
+      "mom_acf_lag1": -0.3751,
+      "mom_sd_pct": 2.669,
+      "looks_like_injected_noise": true,
+      "series_kind": "level",
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": true,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "an outlier, but its point-to-point movement is far too small for injected noise of the kind this test detects"
+      }
+     },
+     {
+      "n": 36,
+      "label": "DE/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.2846,
+      "residual_acf_lag2": -0.0297,
+      "mom_acf_lag1": -0.2861,
+      "mom_sd_pct": 1.11,
+      "looks_like_injected_noise": true,
+      "series_kind": "level",
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": false,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "the whole peer family reads low, so this is the tail of one distribution rather than a defective subgroup — the test's precondition (a path smooth relative to the sampling interval) most likely does not hold for this kind of series"
+      }
+     },
+     {
+      "n": 36,
+      "label": "IT/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.1841,
+      "residual_acf_lag2": -0.1237,
+      "mom_acf_lag1": -0.2864,
+      "mom_sd_pct": 2.446,
+      "looks_like_injected_noise": true,
+      "series_kind": "level",
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": true,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "an outlier, but its point-to-point movement is far too small for injected noise of the kind this test detects"
+      }
+     },
+     {
+      "n": 36,
+      "label": "ES/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.2699,
+      "residual_acf_lag2": -0.1083,
+      "mom_acf_lag1": -0.2527,
+      "mom_sd_pct": 1.499,
+      "looks_like_injected_noise": true,
+      "series_kind": "level",
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": false,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "the whole peer family reads low, so this is the tail of one distribution rather than a defective subgroup — the test's precondition (a path smooth relative to the sampling interval) most likely does not hold for this kind of series"
+      }
+     }
+    ],
+    "flagged": [],
+    "uncorroborated_flags": [
+     {
+      "label": "GB/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.0951,
+      "mom_sd_pct": 2.669,
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": true,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "an outlier, but its point-to-point movement is far too small for injected noise of the kind this test detects"
+      }
+     },
+     {
+      "label": "DE/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.2846,
+      "mom_sd_pct": 1.11,
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": false,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "the whole peer family reads low, so this is the tail of one distribution rather than a defective subgroup — the test's precondition (a path smooth relative to the sampling interval) most likely does not hold for this kind of series"
+      }
+     },
+     {
+      "label": "IT/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.1841,
+      "mom_sd_pct": 2.446,
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": true,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "an outlier, but its point-to-point movement is far too small for injected noise of the kind this test detects"
+      }
+     },
+     {
+      "label": "ES/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.2699,
+      "mom_sd_pct": 1.499,
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": false,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "the whole peer family reads low, so this is the tail of one distribution rather than a defective subgroup — the test's precondition (a path smooth relative to the sampling interval) most likely does not hold for this kind of series"
+      }
+     }
+    ],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": [
+     {
+      "n": 225,
+      "label": "AU/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.8493,
+      "residual_acf_lag2": 0.751,
+      "mom_acf_lag1": -0.1693,
+      "mom_sd_pct": 3.563,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 213,
+      "label": "AU/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9106,
+      "residual_acf_lag2": 0.8165,
+      "mom_acf_lag1": 0.0736,
+      "mom_sd_pct": 3.064,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "AU/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.8811,
+      "residual_acf_lag2": 0.7634,
+      "mom_acf_lag1": 0.0763,
+      "mom_sd_pct": 2.865,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "AU/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9035,
+      "residual_acf_lag2": 0.7738,
+      "mom_acf_lag1": 0.457,
+      "mom_sd_pct": 2.253,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 213,
+      "label": "AU/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9873,
+      "residual_acf_lag2": 0.9635,
+      "mom_acf_lag1": 0.8639,
+      "mom_sd_pct": 1.024,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 213,
+      "label": "AU/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9106,
+      "residual_acf_lag2": 0.8165,
+      "mom_acf_lag1": 0.0736,
+      "mom_sd_pct": 3.064,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "AU/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.8493,
+      "residual_acf_lag2": 0.751,
+      "mom_acf_lag1": -0.1693,
+      "mom_sd_pct": 3.563,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "AU/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.3895,
+      "residual_acf_lag2": -0.2128,
+      "mom_acf_lag1": 0.2128,
+      "mom_sd_pct": 1.367,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "AU/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.4133,
+      "residual_acf_lag2": 0.1035,
+      "mom_acf_lag1": -0.1894,
+      "mom_sd_pct": 0.728,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "US/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.925,
+      "residual_acf_lag2": 0.88,
+      "mom_acf_lag1": -0.2002,
+      "mom_sd_pct": 2.83,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 220,
+      "label": "US/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9499,
+      "residual_acf_lag2": 0.9074,
+      "mom_acf_lag1": -0.0837,
+      "mom_sd_pct": 2.509,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "US/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9709,
+      "residual_acf_lag2": 0.9431,
+      "mom_acf_lag1": -0.0193,
+      "mom_sd_pct": 2.133,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "US/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9811,
+      "residual_acf_lag2": 0.9558,
+      "mom_acf_lag1": 0.2109,
+      "mom_sd_pct": 1.754,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 220,
+      "label": "US/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9512,
+      "residual_acf_lag2": 0.8896,
+      "mom_acf_lag1": 0.7516,
+      "mom_sd_pct": 0.85,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 220,
+      "label": "US/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9499,
+      "residual_acf_lag2": 0.9074,
+      "mom_acf_lag1": -0.0837,
+      "mom_sd_pct": 2.509,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "US/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.925,
+      "residual_acf_lag2": 0.88,
+      "mom_acf_lag1": -0.2002,
+      "mom_sd_pct": 2.83,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "US/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.6583,
+      "residual_acf_lag2": 0.192,
+      "mom_acf_lag1": 0.2367,
+      "mom_sd_pct": 1.537,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "US/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.6767,
+      "residual_acf_lag2": 0.3528,
+      "mom_acf_lag1": -0.0179,
+      "mom_sd_pct": 0.554,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "CA/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.8743,
+      "residual_acf_lag2": 0.7764,
+      "mom_acf_lag1": -0.1414,
+      "mom_sd_pct": 3.289,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "CA/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9031,
+      "residual_acf_lag2": 0.8014,
+      "mom_acf_lag1": 0.0752,
+      "mom_sd_pct": 3.073,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "CA/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.8993,
+      "residual_acf_lag2": 0.7905,
+      "mom_acf_lag1": 0.0195,
+      "mom_sd_pct": 2.868,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "CA/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.8853,
+      "residual_acf_lag2": 0.7607,
+      "mom_acf_lag1": 0.3478,
+      "mom_sd_pct": 2.331,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "CA/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9599,
+      "residual_acf_lag2": 0.9116,
+      "mom_acf_lag1": 0.9029,
+      "mom_sd_pct": 0.556,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "CA/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9031,
+      "residual_acf_lag2": 0.8014,
+      "mom_acf_lag1": 0.0752,
+      "mom_sd_pct": 3.073,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "CA/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.8743,
+      "residual_acf_lag2": 0.7764,
+      "mom_acf_lag1": -0.1414,
+      "mom_sd_pct": 3.289,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "CA/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.5829,
+      "residual_acf_lag2": 0.0171,
+      "mom_acf_lag1": 0.2908,
+      "mom_sd_pct": 1.34,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "CA/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.3265,
+      "residual_acf_lag2": 0.0057,
+      "mom_acf_lag1": -0.1695,
+      "mom_sd_pct": 0.743,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 156,
+      "label": "GB/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.9237,
+      "residual_acf_lag2": 0.8668,
+      "mom_acf_lag1": -0.0937,
+      "mom_sd_pct": 4.15,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "GB/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9293,
+      "residual_acf_lag2": 0.873,
+      "mom_acf_lag1": -0.1346,
+      "mom_sd_pct": 4.864,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "GB/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9458,
+      "residual_acf_lag2": 0.8946,
+      "mom_acf_lag1": 0.0136,
+      "mom_sd_pct": 4.24,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "GB/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9593,
+      "residual_acf_lag2": 0.9113,
+      "mom_acf_lag1": 0.4686,
+      "mom_sd_pct": 2.906,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "GB/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9568,
+      "residual_acf_lag2": 0.9061,
+      "mom_acf_lag1": 0.6008,
+      "mom_sd_pct": 1.697,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "GB/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9293,
+      "residual_acf_lag2": 0.873,
+      "mom_acf_lag1": -0.1346,
+      "mom_sd_pct": 4.864,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 156,
+      "label": "GB/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9237,
+      "residual_acf_lag2": 0.8668,
+      "mom_acf_lag1": -0.0937,
+      "mom_sd_pct": 4.15,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "GB/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.7746,
+      "residual_acf_lag2": 0.5564,
+      "mom_acf_lag1": 0.283,
+      "mom_sd_pct": 1.892,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "GB/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.0951,
+      "residual_acf_lag2": -0.1323,
+      "mom_acf_lag1": -0.3751,
+      "mom_sd_pct": 2.669,
+      "looks_like_injected_noise": true,
+      "series_kind": "level",
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": true,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "an outlier, but its point-to-point movement is far too small for injected noise of the kind this test detects"
+      }
+     },
+     {
+      "n": 225,
+      "label": "IE/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9614,
+      "residual_acf_lag2": 0.9315,
+      "mom_acf_lag1": -0.087,
+      "mom_sd_pct": 5.594,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "IE/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9337,
+      "residual_acf_lag2": 0.8846,
+      "mom_acf_lag1": -0.1315,
+      "mom_sd_pct": 3.864,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "IE/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.965,
+      "residual_acf_lag2": 0.9352,
+      "mom_acf_lag1": 0.0324,
+      "mom_sd_pct": 4.703,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 197,
+      "label": "IE/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.9424,
+      "residual_acf_lag2": 0.8999,
+      "mom_acf_lag1": -0.1543,
+      "mom_sd_pct": 5.048,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "IE/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9618,
+      "residual_acf_lag2": 0.933,
+      "mom_acf_lag1": -0.1134,
+      "mom_sd_pct": 4.77,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "IE/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9614,
+      "residual_acf_lag2": 0.9315,
+      "mom_acf_lag1": -0.087,
+      "mom_sd_pct": 5.594,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 197,
+      "label": "IE/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9424,
+      "residual_acf_lag2": 0.8999,
+      "mom_acf_lag1": -0.1543,
+      "mom_sd_pct": 5.048,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IE/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.674,
+      "residual_acf_lag2": 0.2621,
+      "mom_acf_lag1": 0.4545,
+      "mom_sd_pct": 2.704,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IE/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.6628,
+      "residual_acf_lag2": 0.2942,
+      "mom_acf_lag1": 0.0562,
+      "mom_sd_pct": 1.669,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "DE/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.8777,
+      "residual_acf_lag2": 0.7883,
+      "mom_acf_lag1": -0.1338,
+      "mom_sd_pct": 2.378,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "DE/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.984,
+      "residual_acf_lag2": 0.9642,
+      "mom_acf_lag1": 0.432,
+      "mom_sd_pct": 0.736,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "DE/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9109,
+      "residual_acf_lag2": 0.843,
+      "mom_acf_lag1": -0.1225,
+      "mom_sd_pct": 2.306,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 185,
+      "label": "DE/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.8615,
+      "residual_acf_lag2": 0.7773,
+      "mom_acf_lag1": -0.1901,
+      "mom_sd_pct": 2.857,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "DE/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9508,
+      "residual_acf_lag2": 0.9027,
+      "mom_acf_lag1": 0.1696,
+      "mom_sd_pct": 1.525,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "DE/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.8777,
+      "residual_acf_lag2": 0.7883,
+      "mom_acf_lag1": -0.1338,
+      "mom_sd_pct": 2.378,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 185,
+      "label": "DE/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.8615,
+      "residual_acf_lag2": 0.7773,
+      "mom_acf_lag1": -0.1901,
+      "mom_sd_pct": 2.857,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DE/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.7885,
+      "residual_acf_lag2": 0.4856,
+      "mom_acf_lag1": 0.1347,
+      "mom_sd_pct": 1.301,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DE/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.2846,
+      "residual_acf_lag2": -0.0297,
+      "mom_acf_lag1": -0.2861,
+      "mom_sd_pct": 1.11,
+      "looks_like_injected_noise": true,
+      "series_kind": "level",
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": false,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "the whole peer family reads low, so this is the tail of one distribution rather than a defective subgroup — the test's precondition (a path smooth relative to the sampling interval) most likely does not hold for this kind of series"
+      }
+     },
+     {
+      "n": 184,
+      "label": "NL/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.9568,
+      "residual_acf_lag2": 0.9197,
+      "mom_acf_lag1": -0.1279,
+      "mom_sd_pct": 3.592,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "NL/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.967,
+      "residual_acf_lag2": 0.9374,
+      "mom_acf_lag1": -0.0857,
+      "mom_sd_pct": 4.591,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "NL/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9708,
+      "residual_acf_lag2": 0.943,
+      "mom_acf_lag1": -0.0566,
+      "mom_sd_pct": 4.172,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "NL/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9817,
+      "residual_acf_lag2": 0.957,
+      "mom_acf_lag1": 0.2031,
+      "mom_sd_pct": 3.264,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "NL/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9327,
+      "residual_acf_lag2": 0.8598,
+      "mom_acf_lag1": 0.3765,
+      "mom_sd_pct": 0.867,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "NL/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.967,
+      "residual_acf_lag2": 0.9374,
+      "mom_acf_lag1": -0.0857,
+      "mom_sd_pct": 4.591,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 184,
+      "label": "NL/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9568,
+      "residual_acf_lag2": 0.9197,
+      "mom_acf_lag1": -0.1279,
+      "mom_sd_pct": 3.592,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NL/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.3767,
+      "residual_acf_lag2": -0.263,
+      "mom_acf_lag1": 0.1809,
+      "mom_sd_pct": 1.68,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NL/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.4846,
+      "residual_acf_lag2": 0.2004,
+      "mom_acf_lag1": -0.1739,
+      "mom_sd_pct": 1.154,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "IT/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9692,
+      "residual_acf_lag2": 0.937,
+      "mom_acf_lag1": 0.6558,
+      "mom_sd_pct": 3.778,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "IT/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9346,
+      "residual_acf_lag2": 0.8828,
+      "mom_acf_lag1": 0.0062,
+      "mom_sd_pct": 5.44,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "IT/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9409,
+      "residual_acf_lag2": 0.8911,
+      "mom_acf_lag1": -0.0125,
+      "mom_sd_pct": 4.44,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "IT/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.9061,
+      "residual_acf_lag2": 0.8362,
+      "mom_acf_lag1": -0.1116,
+      "mom_sd_pct": 4.964,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "IT/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9368,
+      "residual_acf_lag2": 0.8691,
+      "mom_acf_lag1": 0.5249,
+      "mom_sd_pct": 1.821,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "IT/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9346,
+      "residual_acf_lag2": 0.8828,
+      "mom_acf_lag1": 0.0062,
+      "mom_sd_pct": 5.44,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "IT/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9061,
+      "residual_acf_lag2": 0.8362,
+      "mom_acf_lag1": -0.1116,
+      "mom_sd_pct": 4.964,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IT/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.3822,
+      "residual_acf_lag2": 0.0687,
+      "mom_acf_lag1": -0.2081,
+      "mom_sd_pct": 1.776,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IT/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.1841,
+      "residual_acf_lag2": -0.1237,
+      "mom_acf_lag1": -0.2864,
+      "mom_sd_pct": 2.446,
+      "looks_like_injected_noise": true,
+      "series_kind": "level",
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": true,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "an outlier, but its point-to-point movement is far too small for injected noise of the kind this test detects"
+      }
+     },
+     {
+      "n": 221,
+      "label": "ES/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.958,
+      "residual_acf_lag2": 0.9194,
+      "mom_acf_lag1": -0.002,
+      "mom_sd_pct": 4.13,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 221,
+      "label": "ES/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9635,
+      "residual_acf_lag2": 0.928,
+      "mom_acf_lag1": 0.4202,
+      "mom_sd_pct": 3.587,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 221,
+      "label": "ES/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9613,
+      "residual_acf_lag2": 0.9264,
+      "mom_acf_lag1": 0.0156,
+      "mom_sd_pct": 4.392,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 221,
+      "label": "ES/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9618,
+      "residual_acf_lag2": 0.9261,
+      "mom_acf_lag1": 0.0682,
+      "mom_sd_pct": 4.306,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "ES/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9673,
+      "residual_acf_lag2": 0.9295,
+      "mom_acf_lag1": 0.9157,
+      "mom_sd_pct": 1.049,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 221,
+      "label": "ES/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9618,
+      "residual_acf_lag2": 0.9261,
+      "mom_acf_lag1": 0.0682,
+      "mom_sd_pct": 4.306,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 221,
+      "label": "ES/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9559,
+      "residual_acf_lag2": 0.9158,
+      "mom_acf_lag1": -0.0048,
+      "mom_sd_pct": 4.178,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "ES/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.6528,
+      "residual_acf_lag2": 0.2508,
+      "mom_acf_lag1": 0.1994,
+      "mom_sd_pct": 1.969,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "ES/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.2699,
+      "residual_acf_lag2": -0.1083,
+      "mom_acf_lag1": -0.2527,
+      "mom_sd_pct": 1.499,
+      "looks_like_injected_noise": true,
+      "series_kind": "level",
+      "corroboration": {
+       "peer_family_n": 13,
+       "peer_median_residual_acf": 0.485,
+       "peer_min": 0.095,
+       "peer_max": 0.748,
+       "is_outlier_against_peers": false,
+       "movement_large_enough_for_injected_noise": false,
+       "corroborated": false,
+       "why": "the whole peer family reads low, so this is the tail of one distribution rather than a defective subgroup — the test's precondition (a path smooth relative to the sampling interval) most likely does not hold for this kind of series"
+      }
+     },
+     {
+      "n": 225,
+      "label": "SE/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.9148,
+      "residual_acf_lag2": 0.8528,
+      "mom_acf_lag1": -0.1555,
+      "mom_sd_pct": 3.88,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "SE/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9434,
+      "residual_acf_lag2": 0.876,
+      "mom_acf_lag1": 0.1914,
+      "mom_sd_pct": 2.403,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "SE/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9351,
+      "residual_acf_lag2": 0.8789,
+      "mom_acf_lag1": -0.0984,
+      "mom_sd_pct": 3.776,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "SE/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9402,
+      "residual_acf_lag2": 0.8916,
+      "mom_acf_lag1": -0.157,
+      "mom_sd_pct": 4.432,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "SE/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9743,
+      "residual_acf_lag2": 0.9404,
+      "mom_acf_lag1": 0.6453,
+      "mom_sd_pct": 1.416,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "SE/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9402,
+      "residual_acf_lag2": 0.8916,
+      "mom_acf_lag1": -0.157,
+      "mom_sd_pct": 4.432,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "SE/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9148,
+      "residual_acf_lag2": 0.8528,
+      "mom_acf_lag1": -0.1555,
+      "mom_sd_pct": 3.88,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "SE/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.3507,
+      "residual_acf_lag2": -0.0434,
+      "mom_acf_lag1": 0.1319,
+      "mom_sd_pct": 2.043,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "SE/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.748,
+      "residual_acf_lag2": 0.4648,
+      "mom_acf_lag1": 0.1359,
+      "mom_sd_pct": 0.99,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 181,
+      "label": "DK/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.9256,
+      "residual_acf_lag2": 0.8623,
+      "mom_acf_lag1": -0.0662,
+      "mom_sd_pct": 4.359,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "DK/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9394,
+      "residual_acf_lag2": 0.8837,
+      "mom_acf_lag1": -0.0473,
+      "mom_sd_pct": 4.177,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "DK/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9579,
+      "residual_acf_lag2": 0.9097,
+      "mom_acf_lag1": 0.2362,
+      "mom_sd_pct": 3.081,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "DK/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9461,
+      "residual_acf_lag2": 0.8968,
+      "mom_acf_lag1": -0.0411,
+      "mom_sd_pct": 4.087,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "DK/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9719,
+      "residual_acf_lag2": 0.9374,
+      "mom_acf_lag1": 0.9037,
+      "mom_sd_pct": 0.779,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "DK/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9461,
+      "residual_acf_lag2": 0.8968,
+      "mom_acf_lag1": -0.0411,
+      "mom_sd_pct": 4.087,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 181,
+      "label": "DK/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9256,
+      "residual_acf_lag2": 0.8623,
+      "mom_acf_lag1": -0.0662,
+      "mom_sd_pct": 4.359,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DK/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.3701,
+      "residual_acf_lag2": -0.2642,
+      "mom_acf_lag1": 0.0078,
+      "mom_sd_pct": 1.499,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DK/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.5124,
+      "residual_acf_lag2": 0.2148,
+      "mom_acf_lag1": -0.1824,
+      "mom_sd_pct": 1.13,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 192,
+      "label": "NO/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.9202,
+      "residual_acf_lag2": 0.8601,
+      "mom_acf_lag1": -0.1172,
+      "mom_sd_pct": 4.2,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 188,
+      "label": "NO/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9299,
+      "residual_acf_lag2": 0.8662,
+      "mom_acf_lag1": -0.0619,
+      "mom_sd_pct": 3.916,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "NO/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9427,
+      "residual_acf_lag2": 0.8906,
+      "mom_acf_lag1": -0.0385,
+      "mom_sd_pct": 3.365,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 224,
+      "label": "NO/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9595,
+      "residual_acf_lag2": 0.8976,
+      "mom_acf_lag1": 0.2287,
+      "mom_sd_pct": 2.569,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 190,
+      "label": "NO/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9697,
+      "residual_acf_lag2": 0.9221,
+      "mom_acf_lag1": 0.8721,
+      "mom_sd_pct": 0.668,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 188,
+      "label": "NO/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9299,
+      "residual_acf_lag2": 0.8662,
+      "mom_acf_lag1": -0.0619,
+      "mom_sd_pct": 3.916,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 192,
+      "label": "NO/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9202,
+      "residual_acf_lag2": 0.8601,
+      "mom_acf_lag1": -0.1172,
+      "mom_sd_pct": 4.2,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NO/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.6597,
+      "residual_acf_lag2": 0.3102,
+      "mom_acf_lag1": 0.3249,
+      "mom_sd_pct": 1.333,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NO/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.6071,
+      "residual_acf_lag2": 0.1836,
+      "mom_acf_lag1": 0.0589,
+      "mom_sd_pct": 0.696,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 205,
+      "label": "FI/house_prices/HPI_YDH_IX/value",
+      "residual_acf_lag1": 0.8831,
+      "residual_acf_lag2": 0.805,
+      "mom_acf_lag1": -0.1564,
+      "mom_sd_pct": 4.719,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "FI/house_prices/HPI_IX/value",
+      "residual_acf_lag1": 0.9564,
+      "residual_acf_lag2": 0.9118,
+      "mom_acf_lag1": 0.2118,
+      "mom_sd_pct": 3.442,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "FI/house_prices/RHP_IX/value",
+      "residual_acf_lag1": 0.9329,
+      "residual_acf_lag2": 0.878,
+      "mom_acf_lag1": -0.0664,
+      "mom_sd_pct": 4.366,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "FI/house_prices/HPI_RPI_IX/value",
+      "residual_acf_lag1": 0.9265,
+      "residual_acf_lag2": 0.8697,
+      "mom_acf_lag1": -0.0885,
+      "mom_sd_pct": 3.897,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 226,
+      "label": "FI/house_prices/RPI_IX/value",
+      "residual_acf_lag1": 0.9659,
+      "residual_acf_lag2": 0.9211,
+      "mom_acf_lag1": 0.4899,
+      "mom_sd_pct": 1.593,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 225,
+      "label": "FI/house_prices/HPI_RPI_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.9265,
+      "residual_acf_lag2": 0.8697,
+      "mom_acf_lag1": -0.0885,
+      "mom_sd_pct": 3.897,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 205,
+      "label": "FI/house_prices/HPI_YDH_AVG_PT_AVG_L_TERM/value",
+      "residual_acf_lag1": 0.8831,
+      "residual_acf_lag2": 0.805,
+      "mom_acf_lag1": -0.1564,
+      "mom_sd_pct": 4.719,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "FI/avg_wages/WG_USD_PPP/value",
+      "residual_acf_lag1": 0.4119,
+      "residual_acf_lag2": 0.1197,
+      "mom_acf_lag1": -0.1533,
+      "mom_sd_pct": 2.471,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "FI/hours_worked/HW_H_Y_PS/value",
+      "residual_acf_lag1": 0.5831,
+      "residual_acf_lag2": 0.271,
+      "mom_acf_lag1": 0.0623,
+      "mom_sd_pct": 0.468,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     }
+    ]
+   },
+   "numeric_leaves": {
+    "n": 22703,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 1.82770912489979,
+    "max": 801694.997447
+   }
+  },
+  "oecd_economic_outlook": {
+   "source_id": "oecd_economic_outlook",
+   "generated_at": "2026-08-04T19:29:21+00:00",
+   "vintage": {
+    "latest_period_in_data": 2027,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": -1
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 13,
+    "of_spine": 15,
+    "missing": [
+     "AE",
+     "QA"
+    ]
+   },
+   "persistence_test": {
+    "n_series_found": 65,
+    "n_tested": 0,
+    "n_skipped": 65,
+    "skipped_reasons": {
+     "already a rate or a change — the test does not apply": {
+      "count": 52,
+      "example": "US/unemployment_pct/value"
+     },
+     "fewer than 36 points": {
+      "count": 13,
+      "example": "US/population/value"
+     }
+    },
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 3640,
+    "n_negative": 328,
+    "n_zero": 0,
+    "min": -32.1455069248943,
+    "max": 343521319.724559
+   }
+  },
+  "wikipedia_english_speakers": {
+   "source_id": "wikipedia_english_speakers",
+   "generated_at": "2026-08-04T19:34:07+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 13,
+    "of_spine": 15,
+    "missing": [
+     "AE",
+     "QA"
+    ]
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 26,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 28.2,
+    "max": 312142415.0
+   }
+  },
+  "levels_fyi": {
+   "source_id": "levels_fyi",
+   "generated_at": "2026-08-21T04:02:35+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-21",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "city",
+    "present": 63,
+    "of_spine": 73,
+    "missing": [
+     "austin",
+     "charlotte",
+     "columbus",
+     "dallas",
+     "houston",
+     "las_vegas",
+     "minneapolis",
+     "nashville",
+     "philadelphia",
+     "portland"
+    ],
+    "n_missing": 10
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 366,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 28163.0,
+    "max": 1103315.0
+   }
+  },
+  "world_bank": {
+   "source_id": "world_bank",
+   "generated_at": "2026-08-04T19:10:45+00:00",
+   "vintage": {
+    "latest_period_in_data": 2025,
+    "generated_at": "2026-08-04",
+    "years_behind_generation": 1
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 15,
+    "of_spine": 15,
+    "missing": []
+   },
+   "persistence_test": {
+    "n_series_found": 90,
+    "n_tested": 58,
+    "n_skipped": 32,
+    "skipped_reasons": {
+     "already a rate or a change — the test does not apply": {
+      "count": 30,
+      "example": "AU/inflation_pct/value"
+     },
+     "fewer than 36 points": {
+      "count": 2,
+      "example": "AE/gdp_per_capita_usd/value"
+     }
+    },
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": [
+     {
+      "n": 36,
+      "label": "AU/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.7396,
+      "residual_acf_lag2": 0.391,
+      "mom_acf_lag1": 0.2391,
+      "mom_sd_pct": 10.604,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "AU/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.6547,
+      "residual_acf_lag2": 0.2069,
+      "mom_acf_lag1": 0.1173,
+      "mom_sd_pct": 2.969,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "AU/net_migration/value",
+      "residual_acf_lag1": 0.4458,
+      "residual_acf_lag2": -0.0889,
+      "mom_acf_lag1": -0.0622,
+      "mom_sd_pct": 41.829,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "AU/population/value",
+      "residual_acf_lag1": 0.6847,
+      "residual_acf_lag2": 0.2018,
+      "mom_acf_lag1": 0.537,
+      "mom_sd_pct": 0.417,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "US/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.6926,
+      "residual_acf_lag2": 0.3319,
+      "mom_acf_lag1": 0.2638,
+      "mom_sd_pct": 2.368,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "US/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.6926,
+      "residual_acf_lag2": 0.3319,
+      "mom_acf_lag1": 0.2638,
+      "mom_sd_pct": 2.368,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "US/net_migration/value",
+      "residual_acf_lag1": 0.3702,
+      "residual_acf_lag2": -0.1249,
+      "mom_acf_lag1": 0.0262,
+      "mom_sd_pct": 28.082,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "US/population/value",
+      "residual_acf_lag1": 0.6854,
+      "residual_acf_lag2": 0.1033,
+      "mom_acf_lag1": 0.8178,
+      "mom_sd_pct": 0.278,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "CA/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.7491,
+      "residual_acf_lag2": 0.4437,
+      "mom_acf_lag1": 0.2085,
+      "mom_sd_pct": 7.901,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "CA/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.5645,
+      "residual_acf_lag2": 0.0588,
+      "mom_acf_lag1": 0.1248,
+      "mom_sd_pct": 3.818,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "CA/net_migration/value",
+      "residual_acf_lag1": 0.2746,
+      "residual_acf_lag2": -0.4172,
+      "mom_acf_lag1": -0.0622,
+      "mom_sd_pct": 26.702,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "CA/population/value",
+      "residual_acf_lag1": 0.6158,
+      "residual_acf_lag2": 0.0344,
+      "mom_acf_lag1": 0.5111,
+      "mom_sd_pct": 0.489,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "GB/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.6592,
+      "residual_acf_lag2": 0.2764,
+      "mom_acf_lag1": 0.1769,
+      "mom_sd_pct": 7.961,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "GB/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.4029,
+      "residual_acf_lag2": 0.0396,
+      "mom_acf_lag1": -0.0737,
+      "mom_sd_pct": 3.317,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "GB/net_migration/value",
+      "residual_acf_lag1": 0.4373,
+      "residual_acf_lag2": -0.0149,
+      "mom_acf_lag1": -0.0378,
+      "mom_sd_pct": 47.278,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "GB/population/value",
+      "residual_acf_lag1": 0.7472,
+      "residual_acf_lag2": 0.2772,
+      "mom_acf_lag1": 0.6907,
+      "mom_sd_pct": 0.276,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IE/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.7025,
+      "residual_acf_lag2": 0.4195,
+      "mom_acf_lag1": 0.2117,
+      "mom_sd_pct": 8.471,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IE/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.4923,
+      "residual_acf_lag2": 0.0432,
+      "mom_acf_lag1": 0.0862,
+      "mom_sd_pct": 7.221,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IE/net_migration/value",
+      "residual_acf_lag1": 0.6509,
+      "residual_acf_lag2": 0.2308,
+      "mom_acf_lag1": -0.0264,
+      "mom_sd_pct": 506.352,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "IE/population/value",
+      "residual_acf_lag1": 0.8905,
+      "residual_acf_lag2": 0.6693,
+      "mom_acf_lag1": 0.8499,
+      "mom_sd_pct": 0.654,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DE/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.633,
+      "residual_acf_lag2": 0.3492,
+      "mom_acf_lag1": 0.062,
+      "mom_sd_pct": 8.192,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DE/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.1865,
+      "residual_acf_lag2": -0.4742,
+      "mom_acf_lag1": -0.0597,
+      "mom_sd_pct": 2.665,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DE/net_migration/value",
+      "residual_acf_lag1": 0.2164,
+      "residual_acf_lag2": -0.1211,
+      "mom_acf_lag1": 0.0689,
+      "mom_sd_pct": 264.442,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "DE/population/value",
+      "residual_acf_lag1": 0.7691,
+      "residual_acf_lag2": 0.4692,
+      "mom_acf_lag1": 0.4073,
+      "mom_sd_pct": 0.449,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NL/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.7462,
+      "residual_acf_lag2": 0.5026,
+      "mom_acf_lag1": 0.1368,
+      "mom_sd_pct": 8.001,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NL/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.6825,
+      "residual_acf_lag2": 0.3651,
+      "mom_acf_lag1": 0.1774,
+      "mom_sd_pct": 3.276,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NL/net_migration/value",
+      "residual_acf_lag1": 0.3891,
+      "residual_acf_lag2": -0.0976,
+      "mom_acf_lag1": -0.0226,
+      "mom_sd_pct": 1820.107,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "NL/population/value",
+      "residual_acf_lag1": 0.7734,
+      "residual_acf_lag2": 0.3645,
+      "mom_acf_lag1": 0.7482,
+      "mom_sd_pct": 0.189,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IT/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.7346,
+      "residual_acf_lag2": 0.4952,
+      "mom_acf_lag1": 0.061,
+      "mom_sd_pct": 8.646,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IT/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.5524,
+      "residual_acf_lag2": 0.1064,
+      "mom_acf_lag1": 0.118,
+      "mom_sd_pct": 3.632,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "IT/net_migration/value",
+      "residual_acf_lag1": 0.0525,
+      "residual_acf_lag2": 0.1507,
+      "mom_acf_lag1": -0.1474,
+      "mom_sd_pct": 343.314,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "IT/population/value",
+      "residual_acf_lag1": 0.7877,
+      "residual_acf_lag2": 0.4958,
+      "mom_acf_lag1": 0.9046,
+      "mom_sd_pct": 0.321,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "ES/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.7733,
+      "residual_acf_lag2": 0.5329,
+      "mom_acf_lag1": 0.1742,
+      "mom_sd_pct": 9.178,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "ES/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.6655,
+      "residual_acf_lag2": 0.2875,
+      "mom_acf_lag1": 0.1581,
+      "mom_sd_pct": 4.567,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "ES/net_migration/value",
+      "residual_acf_lag1": 0.7496,
+      "residual_acf_lag2": 0.4577,
+      "mom_acf_lag1": -0.0337,
+      "mom_sd_pct": 931.453,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "ES/population/value",
+      "residual_acf_lag1": 0.8745,
+      "residual_acf_lag2": 0.6614,
+      "mom_acf_lag1": 0.8769,
+      "mom_sd_pct": 0.61,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "SE/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.538,
+      "residual_acf_lag2": 0.1826,
+      "mom_acf_lag1": 0.0639,
+      "mom_sd_pct": 10.255,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "SE/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.618,
+      "residual_acf_lag2": 0.2857,
+      "mom_acf_lag1": 0.0308,
+      "mom_sd_pct": 2.914,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "SE/net_migration/value",
+      "residual_acf_lag1": 0.4744,
+      "residual_acf_lag2": -0.0297,
+      "mom_acf_lag1": 0.135,
+      "mom_sd_pct": 37.088,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "SE/population/value",
+      "residual_acf_lag1": 0.7769,
+      "residual_acf_lag2": 0.5055,
+      "mom_acf_lag1": 0.9045,
+      "mom_sd_pct": 0.343,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DK/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.7135,
+      "residual_acf_lag2": 0.4393,
+      "mom_acf_lag1": 0.1494,
+      "mom_sd_pct": 7.982,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DK/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.4887,
+      "residual_acf_lag2": 0.1616,
+      "mom_acf_lag1": -0.1628,
+      "mom_sd_pct": 3.04,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "DK/net_migration/value",
+      "residual_acf_lag1": 0.3622,
+      "residual_acf_lag2": -0.1813,
+      "mom_acf_lag1": 0.1538,
+      "mom_sd_pct": 52.738,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "DK/population/value",
+      "residual_acf_lag1": 0.7739,
+      "residual_acf_lag2": 0.3256,
+      "mom_acf_lag1": 0.6802,
+      "mom_sd_pct": 0.151,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NO/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.6611,
+      "residual_acf_lag2": 0.3024,
+      "mom_acf_lag1": 0.1546,
+      "mom_sd_pct": 12.115,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NO/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.4392,
+      "residual_acf_lag2": -0.051,
+      "mom_acf_lag1": 0.08,
+      "mom_sd_pct": 10.609,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "NO/net_migration/value",
+      "residual_acf_lag1": 0.6542,
+      "residual_acf_lag2": 0.2618,
+      "mom_acf_lag1": 0.0392,
+      "mom_sd_pct": 73.67,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "NO/population/value",
+      "residual_acf_lag1": 0.8769,
+      "residual_acf_lag2": 0.6376,
+      "mom_acf_lag1": 0.8723,
+      "mom_sd_pct": 0.28,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "FI/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.6614,
+      "residual_acf_lag2": 0.3432,
+      "mom_acf_lag1": 0.2133,
+      "mom_sd_pct": 10.472,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "FI/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.6971,
+      "residual_acf_lag2": 0.37,
+      "mom_acf_lag1": 0.2641,
+      "mom_sd_pct": 3.525,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "FI/net_migration/value",
+      "residual_acf_lag1": 0.317,
+      "residual_acf_lag2": -0.1031,
+      "mom_acf_lag1": -0.1513,
+      "mom_sd_pct": 45.542,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "FI/population/value",
+      "residual_acf_lag1": 0.8305,
+      "residual_acf_lag2": 0.5415,
+      "mom_acf_lag1": 0.8206,
+      "mom_sd_pct": 0.134,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "AE/net_migration/value",
+      "residual_acf_lag1": 0.5547,
+      "residual_acf_lag2": -0.0682,
+      "mom_acf_lag1": 0.1415,
+      "mom_sd_pct": 182.362,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "AE/population/value",
+      "residual_acf_lag1": 0.6846,
+      "residual_acf_lag2": 0.1947,
+      "mom_acf_lag1": 0.7478,
+      "mom_sd_pct": 2.605,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "QA/gdp_per_capita_usd/value",
+      "residual_acf_lag1": 0.7006,
+      "residual_acf_lag2": 0.3304,
+      "mom_acf_lag1": 0.1087,
+      "mom_sd_pct": 17.74,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "QA/gdp_per_capita_ppp_intl/value",
+      "residual_acf_lag1": 0.7482,
+      "residual_acf_lag2": 0.3924,
+      "mom_acf_lag1": 0.0685,
+      "mom_sd_pct": 12.742,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     },
+     {
+      "n": 36,
+      "label": "QA/net_migration/value",
+      "residual_acf_lag1": 0.6716,
+      "residual_acf_lag2": 0.1351,
+      "mom_acf_lag1": 0.1839,
+      "mom_sd_pct": 147.41,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 36,
+      "label": "QA/population/value",
+      "residual_acf_lag1": 0.6349,
+      "residual_acf_lag2": 0.2819,
+      "mom_acf_lag1": 0.528,
+      "mom_sd_pct": 5.989,
+      "looks_like_injected_noise": false,
+      "series_kind": "level"
+     }
+    ]
+   },
+   "numeric_leaves": {
+    "n": 6406,
+    "n_negative": 51,
+    "n_zero": 0,
+    "min": -754469.0,
+    "max": 341784857.0
+   }
+  },
+  "fx_rates": {
+   "source_id": "fx_rates",
+   "generated_at": "2026-08-21T14:42:26+00:00",
+   "vintage": {
+    "latest_period_in_data": 2025,
+    "generated_at": "2026-08-21",
+    "years_behind_generation": 1
+   },
+   "coverage": {
+    "keyed_by": "country",
+    "present": 15,
+    "of_spine": 15,
+    "missing": []
+   },
+   "persistence_test": {
+    "n_series_found": 20,
+    "n_tested": 19,
+    "n_skipped": 1,
+    "skipped_reasons": {
+     "fewer than 36 points": {
+      "count": 1,
+      "example": "AM/value"
+     }
+    },
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": [
+     {
+      "n": 66,
+      "label": "AU/value",
+      "residual_acf_lag1": 0.8545,
+      "residual_acf_lag2": 0.6412,
+      "mom_acf_lag1": 0.2762,
+      "mom_sd_pct": 8.025,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "US/value",
+      "residual_acf_lag1": 0.8427,
+      "residual_acf_lag2": 0.7526,
+      "mom_acf_lag1": 0.0,
+      "mom_sd_pct": 0.0,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "CA/value",
+      "residual_acf_lag1": 0.8957,
+      "residual_acf_lag2": 0.7135,
+      "mom_acf_lag1": 0.4089,
+      "mom_sd_pct": 4.684,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "GB/value",
+      "residual_acf_lag1": 0.7348,
+      "residual_acf_lag2": 0.3471,
+      "mom_acf_lag1": 0.2803,
+      "mom_sd_pct": 7.839,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "IE/value",
+      "residual_acf_lag1": 0.796,
+      "residual_acf_lag2": 0.4666,
+      "mom_acf_lag1": 0.2783,
+      "mom_sd_pct": 9.665,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "DE/value",
+      "residual_acf_lag1": 0.7608,
+      "residual_acf_lag2": 0.4442,
+      "mom_acf_lag1": 0.0301,
+      "mom_sd_pct": 10.336,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "NL/value",
+      "residual_acf_lag1": 0.7255,
+      "residual_acf_lag2": 0.387,
+      "mom_acf_lag1": 0.0029,
+      "mom_sd_pct": 10.753,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "IT/value",
+      "residual_acf_lag1": 0.8116,
+      "residual_acf_lag2": 0.6179,
+      "mom_acf_lag1": -0.0102,
+      "mom_sd_pct": 15.9,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "ES/value",
+      "residual_acf_lag1": 0.8056,
+      "residual_acf_lag2": 0.5942,
+      "mom_acf_lag1": 0.039,
+      "mom_sd_pct": 15.962,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "SE/value",
+      "residual_acf_lag1": 0.802,
+      "residual_acf_lag2": 0.513,
+      "mom_acf_lag1": 0.2338,
+      "mom_sd_pct": 9.599,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "DK/value",
+      "residual_acf_lag1": 0.8043,
+      "residual_acf_lag2": 0.49,
+      "mom_acf_lag1": 0.2746,
+      "mom_sd_pct": 8.705,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "NO/value",
+      "residual_acf_lag1": 0.8471,
+      "residual_acf_lag2": 0.6147,
+      "mom_acf_lag1": 0.2889,
+      "mom_sd_pct": 7.877,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "FI/value",
+      "residual_acf_lag1": 0.745,
+      "residual_acf_lag2": 0.4863,
+      "mom_acf_lag1": -0.0232,
+      "mom_sd_pct": 13.601,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 60,
+      "label": "AE/value",
+      "residual_acf_lag1": 0.7395,
+      "residual_acf_lag2": 0.3144,
+      "mom_acf_lag1": 0.5445,
+      "mom_sd_pct": 1.557,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 60,
+      "label": "QA/value",
+      "residual_acf_lag1": 0.7333,
+      "residual_acf_lag2": 0.2886,
+      "mom_acf_lag1": 0.5675,
+      "mom_sd_pct": 1.604,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "SG/value",
+      "residual_acf_lag1": 0.84,
+      "residual_acf_lag2": 0.5787,
+      "mom_acf_lag1": 0.3952,
+      "mom_sd_pct": 3.933,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "JP/value",
+      "residual_acf_lag1": 0.7186,
+      "residual_acf_lag2": 0.353,
+      "mom_acf_lag1": 0.2818,
+      "mom_sd_pct": 9.213,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 50,
+      "label": "KH/value",
+      "residual_acf_lag1": 0.8565,
+      "residual_acf_lag2": 0.6709,
+      "mom_acf_lag1": 0.6503,
+      "mom_sd_pct": 28.805,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     },
+     {
+      "n": 66,
+      "label": "IN/value",
+      "residual_acf_lag1": 0.8838,
+      "residual_acf_lag2": 0.7469,
+      "mom_acf_lag1": 0.3197,
+      "mom_sd_pct": 7.452,
+      "looks_like_injected_noise": false,
+      "series_kind": "ambiguous"
+     }
+    ]
+   },
+   "numeric_leaves": {
+    "n": 2518,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 0.357142999357143,
+    "max": 4184.91666666667
+   }
+  },
+  "hours_worked": {
+   "source_id": "hours_worked",
+   "generated_at": "2026-08-12T15:19:32+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-12",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "other/nested",
+    "spine_countries_found_one_level_down": 4,
+    "spine_cities_found_one_level_down": 0
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 65,
+    "n_negative": 0,
+    "n_zero": 0,
+    "min": 37.6,
+    "max": 2529313.0
+   }
+  },
+  "experience_gradient": {
+   "source_id": "experience_gradient",
+   "generated_at": "2026-08-13T02:48:54+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-13",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "other/nested",
+    "spine_countries_found_one_level_down": 2,
+    "spine_cities_found_one_level_down": 0
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 30,
+    "n_negative": 3,
+    "n_zero": 0,
+    "min": -34.95,
+    "max": 88380.0
+   }
+  },
+  "city_coordinates": {
+   "source_id": "city_coordinates",
+   "generated_at": "2026-08-10T07:48:14+00:00",
+   "vintage": {
+    "latest_period_in_data": null,
+    "generated_at": "2026-08-10",
+    "years_behind_generation": null
+   },
+   "coverage": {
+    "keyed_by": "city",
+    "present": 73,
+    "of_spine": 73,
+    "missing": [],
+    "n_missing": 0
+   },
+   "persistence_test": {
+    "n_series_found": 0,
+    "n_tested": 0,
+    "n_skipped": 0,
+    "skipped_reasons": {},
+    "flagged_by_threshold": [],
+    "flagged": [],
+    "uncorroborated_flags": [],
+    "controls": {
+     "CONTROL real published index (UK HPI London)": {
+      "n": 698,
+      "label": "uk_hpi/london",
+      "residual_acf_lag1": 0.9849,
+      "residual_acf_lag2": 0.9711,
+      "mom_acf_lag1": -0.0495,
+      "mom_sd_pct": 2.136,
+      "looks_like_injected_noise": false
+     },
+     "CONTROL known-defective index (Teranet Toronto)": {
+      "n": 337,
+      "label": "teranet/toronto",
+      "residual_acf_lag1": 0.2372,
+      "residual_acf_lag2": 0.1257,
+      "mom_acf_lag1": -0.3984,
+      "mom_sd_pct": 24.649,
+      "looks_like_injected_noise": true
+     }
+    },
+    "all_results": []
+   },
+   "numeric_leaves": {
+    "n": 146,
+    "n_negative": 51,
+    "n_zero": 0,
+    "min": -125.4494,
+    "max": 153.4309
+   }
+  }
+ }
+}

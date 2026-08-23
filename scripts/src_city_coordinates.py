@@ -42,6 +42,20 @@ LAND_SOURCE_ID = "natural_earth_land"
 LAND_NAME = "Natural Earth 110m physical land — map outline"
 DELAY = 0.2
 
+# Coordinates this pipeline once got WRONG and is explicitly allowed to move.
+# Each needs the corrected point and the reason, so a reviewer can see what
+# changed and why without diffing two data files. Nothing else may move.
+CORRECTIONS = {
+    "vancouver": {
+        "to": (49.2497, -123.1193),
+        "why": ("was Vancouver ISLAND (49.6506, -125.4494), 174 km out in the Strait of Georgia. "
+                "The geocoder returned both and the tie-break preferred the larger population -- "
+                "the island's 748,937 beat the city's 662,248. geocoded_as recorded the "
+                "substitution the whole time; nothing read it. Caught by checking all 73 against "
+                "OpenStreetMap (scripts/verify_reference_data.py)."),
+    },
+}
+
 CONVENTION = (
     "GeoNames populated-place point (the settlement's principal point, roughly the city "
     "centre) — not a metro-area centroid."
@@ -56,6 +70,7 @@ def run() -> None:
     processed: dict[str, dict] = {}
     failures: list[str] = []
     changed: list[str] = []
+    corrected: list[str] = []
 
     for i, city in enumerate(records, 1):
         try:
@@ -80,9 +95,20 @@ def run() -> None:
         # step is only ever allowed to add.
         prev = (city.get("lat"), city.get("lon"))
         if prev != (None, None) and prev != (lat, lon) and prev[0] is not None:
-            log(f"    [{i:2}/73] {city['id']:16s} !! would move {prev} -> {(lat, lon)} — kept the existing point")
-            failures.append(f"{city['id']}: refused to move an existing point")
-            continue
+            # The additive-only rule stands, with ONE documented exception per
+            # entry in CORRECTIONS below. A coordinate that changes under you is
+            # a data change and must never happen silently -- but a coordinate
+            # that is simply WRONG has to be fixable, and the honest way is an
+            # explicit, reviewed list rather than a flag that waves the guard
+            # through for everything.
+            fix = CORRECTIONS.get(city["id"])
+            if fix and abs(fix["to"][0] - lat) < 0.01 and abs(fix["to"][1] - lon) < 0.01:
+                log(f"    [{i:2}/73] {city['id']:16s} CORRECTED {prev} -> {(lat, lon)}  {fix['why']}")
+                corrected.append(city["id"])
+            else:
+                log(f"    [{i:2}/73] {city['id']:16s} !! would move {prev} -> {(lat, lon)} — kept the existing point")
+                failures.append(f"{city['id']}: refused to move an existing point")
+                continue
         if prev[0] is None:
             changed.append(city["id"])
         city["lat"] = lat
@@ -93,6 +119,8 @@ def run() -> None:
         json.dumps(cities_doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8"
     )
     log(f"    wrote lat/lon for {len(processed)}/73 cities into data/cities.json ({len(changed)} newly added)")
+    if corrected:
+        log(f"    CORRECTED {len(corrected)}: {', '.join(corrected)} — see CORRECTIONS")
     if failures:
         log(f"    !! {len(failures)} failed: {', '.join(failures[:6])}")
 

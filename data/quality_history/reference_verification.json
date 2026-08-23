@@ -1,0 +1,243 @@
+{
+ "schema": "package-16 reference verification v1",
+ "city_coordinates": {
+  "independent_source": "OpenStreetMap Nominatim",
+  "why_independent": "city_coordinates was geocoded with Open-Meteo, which is GeoNames-derived. climate_normals used the same geocoder and its coordinates agree to 5 dp, so it is not a second opinion. Nominatim is built from independent OSM survey and import data.",
+  "tolerance_km": 25.0,
+  "n_checked": 73,
+  "n_unchecked": 0,
+  "unchecked": [],
+  "max_discrepancy_km": 17.86,
+  "median_discrepancy_km": 0.46,
+  "p90_discrepancy_km": 2.01,
+  "n_outside_tolerance": 0,
+  "outside_tolerance": [],
+  "worst_10": [
+   {
+    "city": "sf_bay_area",
+    "name": "SF Bay Area",
+    "country": "US",
+    "ours": [
+     37.7749,
+     -122.4194
+    ],
+    "nominatim": [
+     37.61719,
+     -122.38106
+    ],
+    "km_apart": 17.86,
+    "our_geocoded_as": "San Francisco, California US",
+    "nominatim_matched": "SF Bay Area Bird Encounters Kids' Spot D7, Departures, San Mateo County, California, 94128",
+    "within_tolerance": true
+   },
+   {
+    "city": "dubai",
+    "name": "Dubai",
+    "country": "AE",
+    "ours": [
+     25.0772,
+     55.3093
+    ],
+    "nominatim": [
+     25.07428,
+     55.18856
+    ],
+    "km_apart": 12.16,
+    "our_geocoded_as": "Dubai, Dubai AE",
+    "nominatim_matched": "دبي, الإمارات العربية المتحدة",
+    "within_tolerance": true
+   },
+   {
+    "city": "toronto",
+    "name": "Toronto",
+    "country": "CA",
+    "ours": [
+     43.7064,
+     -79.3986
+    ],
+    "nominatim": [
+     43.65348,
+     -79.38393
+    ],
+    "km_apart": 6.0,
+    "our_geocoded_as": "Toronto, Ontario CA",
+    "nominatim_matched": "Toronto, Golden Horseshoe, Ontario, Canada",
+    "within_tolerance": true
+   },
+   {
+    "city": "manchester",
+    "name": "Manchester",
+    "country": "GB",
+    "ours": [
+     53.4809,
+     -2.2374
+    ],
+    "nominatim": [
+     53.44246,
+     -2.23245
+    ],
+    "km_apart": 4.29,
+    "our_geocoded_as": "Manchester, England GB",
+    "nominatim_matched": "Manchester, Greater Manchester, England, United Kingdom",
+    "within_tolerance": true
+   },
+   {
+    "city": "doha",
+    "name": "Doha",
+    "country": "QA",
+    "ours": [
+     25.2855,
+     51.531
+    ],
+    "nominatim": [
+     25.31088,
+     51.50818
+    ],
+    "km_apart": 3.64,
+    "our_geocoded_as": "Doha, Baladiyat ad Dawhah QA",
+    "nominatim_matched": "الدوحة, قطر",
+    "within_tolerance": true
+   },
+   {
+    "city": "chicago",
+    "name": "Chicago",
+    "country": "US",
+    "ours": [
+     41.85,
+     -87.65
+    ],
+    "nominatim": [
+     41.87556,
+     -87.62442
+    ],
+    "km_apart": 3.54,
+    "our_geocoded_as": "Chicago, Illinois US",
+    "nominatim_matched": "Chicago, South Chicago Township, Cook County, Illinois, United States",
+    "within_tolerance": true
+   },
+   {
+    "city": "canberra",
+    "name": "Canberra",
+    "country": "AU",
+    "ours": [
+     -35.2835,
+     149.1281
+    ],
+    "nominatim": [
+     -35.29759,
+     149.10127
+    ],
+    "km_apart": 2.9,
+    "our_geocoded_as": "Canberra, Australian Capital Territory AU",
+    "nominatim_matched": "Canberra, District of Canberra Central, Australian Capital Territory, 2600, Australia",
+    "within_tolerance": true
+   },
+   {
+    "city": "rome",
+    "name": "Rome",
+    "country": "IT",
+    "ours": [
+     41.8919,
+     12.5113
+    ],
+    "nominatim": [
+     41.89332,
+     12.48293
+    ],
+    "km_apart": 2.35,
+    "our_geocoded_as": "Rome, Lazio IT",
+    "nominatim_matched": "Roma, Roma Capitale, Lazio, Italia",
+    "within_tolerance": true
+   },
+   {
+    "city": "abu-dhabi",
+    "name": "Abu Dhabi",
+    "country": "AE",
+    "ours": [
+     24.4512,
+     54.397
+    ],
+    "nominatim": [
+     24.45384,
+     54.3774
+    ],
+    "km_apart": 2.01,
+    "our_geocoded_as": "Abu Dhabi, Abu Dhabi Emirate AE",
+    "nominatim_matched": "أبو ظبي, أبوظبي, أبو ظبي, الإمارات العربية المتحدة",
+    "within_tolerance": true
+   },
+   {
+    "city": "calgary",
+    "name": "Calgary",
+    "country": "CA",
+    "ours": [
+     51.0501,
+     -114.0853
+    ],
+    "nominatim": [
+     51.04561,
+     -114.05754
+    ],
+    "km_apart": 2.0,
+    "our_geocoded_as": "Calgary, Alberta CA",
+    "nominatim_matched": "Calgary, Alberta, Canada",
+    "within_tolerance": true
+   }
+  ]
+ },
+ "fx_rates": {
+  "independent_source": "European Central Bank daily reference rates (via frankfurter.app)",
+  "method": "both quantities are an ANNUAL MEAN of local currency per USD. The ECB side is computed by averaging every business day's LCU/EUR divided by USD/EUR across the calendar year -- averaged rather than sampled, because one day's rate is a different quantity from a year's mean and comparing them would manufacture a discrepancy that is only a definition difference.",
+  "tolerance_pct": 2.0,
+  "checks": [
+   {
+    "currency": "GBP",
+    "year": 2015,
+    "ours_worldbank_lcu_per_usd": 0.65455,
+    "theirs_ecb_annual_mean_lcu_per_usd": 0.65427,
+    "n_business_days_averaged": 257,
+    "diff_pct": 0.042,
+    "agrees": true
+   },
+   {
+    "currency": "SEK",
+    "year": 2018,
+    "ours_worldbank_lcu_per_usd": 8.69252,
+    "theirs_ecb_annual_mean_lcu_per_usd": 8.69573,
+    "n_business_days_averaged": 256,
+    "diff_pct": -0.037,
+    "agrees": true
+   },
+   {
+    "currency": "JPY",
+    "year": 2020,
+    "ours_worldbank_lcu_per_usd": 106.77458,
+    "theirs_ecb_annual_mean_lcu_per_usd": 106.74828,
+    "n_business_days_averaged": 258,
+    "diff_pct": 0.025,
+    "agrees": true
+   },
+   {
+    "currency": "CAD",
+    "year": 2022,
+    "ours_worldbank_lcu_per_usd": 1.30155,
+    "theirs_ecb_annual_mean_lcu_per_usd": 1.30171,
+    "n_business_days_averaged": 258,
+    "diff_pct": -0.012,
+    "agrees": true
+   },
+   {
+    "currency": "AUD",
+    "year": 2023,
+    "ours_worldbank_lcu_per_usd": 1.50519,
+    "theirs_ecb_annual_mean_lcu_per_usd": 1.50651,
+    "n_business_days_averaged": 256,
+    "diff_pct": -0.087,
+    "agrees": true
+   }
+  ],
+  "n_checked": 5,
+  "n_agreeing": 5,
+  "max_abs_diff_pct": 0.087
+ }
+}

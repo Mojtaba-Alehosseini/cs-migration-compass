@@ -31,6 +31,9 @@ clean unless it has been observed to fail on a constructed violation; each harne
 | Cost-of-living and rent inputs | Supported | As published |
 | "N postings, M companies" counts | Posting count includes re-listings (~6%); **company count sound** | Distinct roles vs raw rows |
 | Cross-source salary agreement | Supported as *correlation*, not as *agreement* | Never blended |
+| City map coordinates | Supported — after correcting one 174 km error | 73/73 verified against an independent gazetteer |
+| Currency conversion (`fx_rates`) | Supported | Agrees with the ECB to better than 0.1% |
+| The other 22 datasets | Swept; **no second Teranet** | See §10 for coverage gaps and what each is fit for |
 
 ---
 
@@ -310,3 +313,112 @@ Stated so that silence is not read as a clean bill of health:
   the US clears the sample-size floor, so there is no second country to fit a relationship against.
   This is a real blocker, not an omission, and it means **percentile transfer is not currently
   defensible into any country** on this evidence.
+
+---
+
+## 10. The other 22 datasets — swept, and what the sweep found
+
+Package 15 profiled 54 datasets but deeply analysed four. These 22 feed real
+features and had never been asked whether they support the claims made on them.
+Package 16 applied the same battery: distributional shape, the residual-
+autocorrelation test that found the Teranet defect, cross-dataset accounting
+identities, vintage, and coverage against the site's own 15 countries and 73
+cities. Full results in `data/quality_history/dataset_sweep.json`.
+
+### There is no second Teranet
+
+**232 series were tested for injected per-observation noise and none was
+confirmed.** 484 more were skipped **with a reason recorded**, because a
+check nobody can see the boundaries of is indistinguishable from one that
+passed: 94 are rates or growth figures the test is invalid for (they
+are differenced by construction and would fail it whether or not anything is
+wrong), and 390 are shorter than the 36 points it needs.
+
+Four series crossed the threshold and are **reported but not claimed**. All four
+are national annual hours-worked series. What made the Teranet finding
+trustworthy was not the threshold, it was the *separation*: six Teranet cities
+clustered at 0.11–0.27 while the two real published indices sat at 0.985, with
+nothing in between. The hours-worked family has no such gap — its thirteen
+countries run 0.095 to 0.748 in one unbroken continuum, median 0.485 — so the
+four low readings are the tail of a distribution, not a defective subgroup.
+Their point-to-point movement (0.5–2.7%) is also far too small for injected
+noise of the kind that test detects; Teranet's was 22–31%. Annual hours worked
+genuinely moves year to year, so the test's own precondition — a path smooth
+relative to the sampling interval — does not hold for it. A flag is now
+corroborated only when a series is an outlier **against its own peer family**
+and moves enough for the explanation to be physically possible.
+
+### City coordinates were wrong, by 174 km
+
+A wrong latitude fails no invariant. It breaks no total, shifts no distribution,
+looks unremarkable in a profile. It silently puts a dot in the wrong place. The
+only way to check it is against a different gazetteer, and it had to be a
+genuinely different one: `city_coordinates` came from Open-Meteo's geocoder,
+which is GeoNames-derived, and `climate_normals` used the same geocoder and
+agrees with it to five decimal places. OpenStreetMap's Nominatim is independent.
+
+All 73 were checked. **Vancouver was 174 km out**, sitting in the Strait of
+Georgia. The geocoder had returned both `Vancouver` (a populated place,
+population 662,248) and `Vancouver Island` (an island, population 748,937), and
+the tie-break preferred the larger population — so the city's coordinates became
+the island's. The `geocoded_as` field recorded the substitution faithfully the
+whole time. Nothing read it.
+
+Fixed at the cause: the geocoder now requires a populated-place feature code
+before applying the population tie-break, so a landmass can never again stand in
+for a settlement it merely contains. Re-checked after the fix: **73 of
+73 cities within tolerance, median disagreement 0.46 km, worst
+17.86 km** — a normal centroid-versus-settlement-point difference.
+
+### FX rates agree with an independent source to better than 0.1%
+
+Every converted figure on the site rests on `fx_rates`, taken from the World
+Bank's annual period-average local currency per USD. Checked against the ECB's
+own daily reference rates, averaged over the same calendar year — averaged
+rather than sampled, because one day's rate is a different quantity from a
+year's mean and comparing them would manufacture a discrepancy that is only a
+definition difference.
+
+| Currency | Year | World Bank | ECB annual mean | Difference |
+|---|---:|---:|---:|---:|
+| GBP | 2015 | 0.6545 | 0.6543 | +0.04% |
+| SEK | 2018 | 8.6925 | 8.6957 | -0.04% |
+| JPY | 2020 | 106.7746 | 106.7483 | +0.03% |
+| CAD | 2022 | 1.3015 | 1.3017 | -0.01% |
+| AUD | 2023 | 1.5052 | 1.5065 | -0.09% |
+
+**5 of 5 agree, worst 0.087%.** These two are as independent as
+this repo can get, and they agree to within a rounding error.
+
+### An accounting identity holds across two Eurostat tables
+
+ICT specialists divided by total employment should reproduce the published ICT
+employment share. The two come from different Eurostat tables, and package 15
+had already corrected a selection-bias figure for using the wrong one of them,
+so this was worth checking rather than assuming. Across **191 country-years
+the median disagreement is 0.146 pp and the worst is 0.482 pp**
+(DE 2021). They share a denominator; the corrected figure stands.
+
+### Coverage gaps, and which are real
+
+Several datasets do not cover all 15 countries. Most of that is correct by
+design and is recorded here so it is never mistaken for a defect:
+
+| Dataset | Coverage | Reading |
+|---|---|---|
+| `ef_epi` | 10/15 | **Correct.** AU, CA, GB, IE and US are absent because the EF English Proficiency Index measures English as a *foreign* language. A score for them would be meaningless. |
+| `eurostat_total_employment` | 9/15 | **Correct.** Eurostat covers the EU/EEA; AE, AU, CA, QA, US are out of scope and GB left after Brexit. |
+| `oecd_indicators`, `oecd_economic_outlook`, `wikipedia_english_speakers` | 13/15 | **Correct.** AE and QA are not OECD members. |
+| `mipex` | 9/15 | **Correct.** MIPEX publishes a fixed country set; AE, AU, GB, NO, QA and US are not in it. |
+| `wipo_gii` | 13/15 | **A real gap, already disclosed, now diagnosed.** US and NL are in the Global Innovation Index but missing here. The cause is visible in the stored `source_line`: the source PDF prints *two countries per line* ("23 Australia 48.1 22 6 90 Cabo Verde 22.3 13 4") and the extractor reads only the first. Not fixed — there is no cached raw and re-fetching a PDF for two index values is out of proportion — but it is an extraction bug, not an absence in the source. |
+| `climate_normals` | 21/73 cities | Partial by construction; the fetch is rate-limited and was never completed. |
+| `bls_oews`, `indeed_hiring_lab_job_postings` | 30/73 cities | **Correct.** Both are US-only sources. |
+| `levels_fyi` | 63/73 cities | Ten cities hold too few self-reports to publish a band; each records its own `unavailable_reason`. |
+
+### Vintage
+
+Two datasets are *forecasts*, not stale data: `un_wpp` runs to 2100 and
+`oecd_economic_outlook` to 2027. The repo already separates forecast from
+observation (`validate_data.py`'s own forecast check) and this sweep confirms
+nothing else projects past its generation year. Everything else sits within two
+years of when it was generated.
