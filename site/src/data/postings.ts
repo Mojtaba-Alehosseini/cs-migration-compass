@@ -57,6 +57,11 @@ export interface Posting {
    *  coarse job families, not ISCO codes, and conflating them would invite
    *  comparison against the wage spine, which the standing rules forbid. */
   occupation: { occupation_key: string; confidence: 'high' | 'medium' | 'low' } | null
+  /** Package 17 — true where the classifier calls this row software. Present
+   *  only when true. This is the SAME set the published per-country medians are
+   *  computed from, which is the point of shipping it: the merged page must not
+   *  re-derive software from titles and then disagree with its own figures. */
+  sw?: boolean
   /* Package 16 — `title_class` and `duplicate_of` are NOT declared here on
    * purpose, because they are NOT SHIPPED. Both exist on every row in
    * data/processed/postings.json, which is what the analysis scripts read, and

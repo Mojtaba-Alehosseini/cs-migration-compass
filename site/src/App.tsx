@@ -6,8 +6,9 @@ import { SelectionContext, useSelectionState } from './data/selection'
 
 const NAV = [
   { to: '/compare', label: 'Compare' },
-  { to: '/position', label: 'Your position' },
-  { to: '/postings', label: 'Postings' },
+  // Package 17 — two entries became one, because they were always one
+  // question: where would I stand, and what is actually open.
+  { to: '/work', label: 'Position & openings' },
   { to: '/explore', label: 'Explore' },
   { to: '/data', label: 'Data & methods' },
 ]

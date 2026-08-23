@@ -116,7 +116,7 @@ function levelGuess(title: string | null): 'intern' | 'junior' | 'senior' | 'sta
 }
 const LEVEL_LABEL = { intern: 'Intern', junior: 'Junior', senior: 'Senior', 'staff+': 'Staff+' } as const
 
-function PostingRow({ p, display, crossRates }: {
+export function PostingRow({ p, display, crossRates }: {
   p: Posting
   display: DisplayCurrency
   crossRates?: Record<string, number>

@@ -77,7 +77,7 @@ function ordinal(pct: number): string {
  *  Only the first two gate whether a position/estimate renders AT ALL
  *  ("works"); experience is a separate, non-gating capability — a country
  *  can work without personalising. */
-function coverageFor(row: WageCountry | undefined, absentReason: string | undefined, gradient: ExperienceGradient | null): {
+export function coverageFor(row: WageCountry | undefined, absentReason: string | undefined, gradient: ExperienceGradient | null): {
   works: boolean; crosswalkOk: boolean; crosswalkDetail: string; distributionDetail: string
   experienceDetail: string; experiencePersonalised: boolean
 } {
@@ -121,7 +121,7 @@ function coverageFor(row: WageCountry | undefined, absentReason: string | undefi
 
 /* --------------------------------------------------------------- form --- */
 
-function ProfileForm({ profile, occupations, onChange }: {
+export function ProfileForm({ profile, occupations, onChange }: {
   profile: Profile; occupations: Occupations | null
   onChange: (patch: Partial<Profile>) => void
 }) {
@@ -208,7 +208,7 @@ function ProfileForm({ profile, occupations, onChange }: {
 
 /* ---------------------------------------------------------- one row --- */
 
-function CountryRow({ row, profile, gradient, highlighted }: {
+export function CountryRow({ row, profile, gradient, highlighted }: {
   row: WageCountry; profile: Profile
   gradient: NonNullable<ReturnType<typeof useAsync<Awaited<ReturnType<typeof loadExperienceGradient>>>>['data']>
   highlighted: boolean
@@ -269,7 +269,7 @@ function CountryRow({ row, profile, gradient, highlighted }: {
 
 /* --------------------------------------------------------- pay v cost --- */
 
-function PayVsCost({ profile, wageByCountry, gradient }: {
+export function PayVsCost({ profile, wageByCountry, gradient }: {
   profile: Profile
   wageByCountry: Map<string, WageCountry>
   gradient: NonNullable<ReturnType<typeof useAsync<Awaited<ReturnType<typeof loadExperienceGradient>>>>['data']>
@@ -366,7 +366,7 @@ function PayVsCost({ profile, wageByCountry, gradient }: {
 
 /* ------------------------------------------------------------- coverage --- */
 
-function CoverageMap({ wages, gradient }: {
+export function CoverageMap({ wages, gradient }: {
   wages: Awaited<ReturnType<typeof loadWages>>
   gradient: ExperienceGradient | null
 }) {

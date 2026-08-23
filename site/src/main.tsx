@@ -1,6 +1,6 @@
 import { StrictMode, Suspense, lazy, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { RouterProvider, createHashRouter } from 'react-router-dom'
+import { Navigate, RouterProvider, createHashRouter, useLocation } from 'react-router-dom'
 import { MotionConfig } from 'motion/react'
 import './styles/base.css'
 import { App } from './App'
@@ -17,8 +17,21 @@ const Explore = lazy(() => import('./routes/Explore').then((m) => ({ default: m.
 const CityProfile = lazy(() => import('./routes/CityProfile').then((m) => ({ default: m.CityProfile })))
 const CountryProfile = lazy(() => import('./routes/CountryProfile').then((m) => ({ default: m.CountryProfile })))
 const DataMethods = lazy(() => import('./routes/DataMethods').then((m) => ({ default: m.DataMethods })))
-const Position = lazy(() => import('./routes/Position').then((m) => ({ default: m.Position })))
-const Postings = lazy(() => import('./routes/Postings').then((m) => ({ default: m.Postings })))
+const Work = lazy(() => import('./routes/Work').then((m) => ({ default: m.Work })))
+
+/** A redirect that carries the query string with it.
+ *
+ *  <Navigate to="/work"> drops it, which quietly breaks exactly the links the
+ *  redirect exists to save: /position?years=8&occupation=isco08:2512 is a
+ *  shareable profile, and arriving at /work with an empty form is a worse
+ *  outcome than a 404 because it looks like it worked. Caught by the UI
+ *  regression suite, which navigates to /position?years=8 and asserts the years
+ *  actually took effect — sixteen checks failed on the first attempt. */
+function KeepQuery({ to }: { to: string }) {
+  const { search, hash } = useLocation()
+  return <Navigate to={{ pathname: to, search, hash }} replace />
+}
+
 const PostingsSeed = lazy(() => import('./routes/PostingsSeed').then((m) => ({ default: m.PostingsSeed })))
 
 /* A fixed-height placeholder, not a spinner: it reserves the space the page is
@@ -46,8 +59,14 @@ const router = createHashRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'compare', element: lazyRoute(<Compare />) },
-      { path: 'position', element: lazyRoute(<Position />) },
-      { path: 'postings', element: lazyRoute(<Postings />) },
+      // Package 17 — /position and /postings are one page. Both old paths
+      // REDIRECT rather than 404: they have been linkable since package 9 and
+      // package 12 respectively, and a shared link that dies is a worse outcome
+      // than a redirect nobody notices. `replace` so the dead path does not
+      // sit in history behind the live one.
+      { path: 'work', element: lazyRoute(<Work />) },
+      { path: 'position', element: <KeepQuery to="/work" /> },
+      { path: 'postings', element: <KeepQuery to="/work" /> },
       { path: 'data/postings-seed', element: lazyRoute(<PostingsSeed />) },
       { path: 'explore', element: lazyRoute(<Explore />) },
       { path: 'explore/:theme', element: lazyRoute(<Explore />) },

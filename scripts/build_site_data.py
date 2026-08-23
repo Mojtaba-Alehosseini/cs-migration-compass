@@ -283,13 +283,26 @@ def _slim_postings(doc: dict) -> dict:
     doc = copy.deepcopy(doc)
     rows = doc.get("data", {}).get("postings") or []
     for r in rows:
-        r.pop("title_class", None)
+        # Package 17 — ONE key, not the whole block. Package 16 dropped
+        # title_class entirely because shipping it cost 15 Lighthouse points,
+        # and the merged page then had to guess at software from the title with
+        # a regex. Measured, that regex disagreed with the real classifier on
+        # about 20% of rows in both directions — it missed 2,427 the model calls
+        # software and added ~2,950 it does not — which is a second, worse
+        # classifier deciding what a reader sees while the published medians come
+        # from the first. `sw` is emitted only where true: 13,463 rows, ~92 KB
+        # raw, against the ~1,000 KB the full block cost.
+        if (r.pop("title_class", None) or {}).get("class") == "SW":
+            r["sw"] = True
         r.pop("duplicate_of", None)
     doc.setdefault("meta", {})["shipped_row_shape"] = (
-        "per-row title_class and duplicate_of are deliberately NOT shipped: nothing in the UI "
-        "reads them and they cost 15 Lighthouse points on /postings, measured. The full record is "
-        "in data/processed/postings.json. The aggregates are shipped -- see data.title_class_"
-        "summary, data.duplicate_summary and data.pay_summary_by_country.")
+        "`sw: true` marks a row the classifier calls software, and is present only where true. The "
+        "full title_class block and duplicate_of are NOT shipped -- they cost 15 Lighthouse points "
+        "on this payload and nothing renders them. The complete record is in "
+        "data/processed/postings.json; the aggregates are shipped as data.title_class_summary, "
+        "data.duplicate_summary and data.pay_summary_by_country. The flag exists so the page shows "
+        "the SAME software set the published medians are computed from, rather than re-deriving it "
+        "from titles and disagreeing with itself.")
     return doc
 
 
