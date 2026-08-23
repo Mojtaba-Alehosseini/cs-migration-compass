@@ -288,12 +288,12 @@ export function Postings() {
           {/* Package 16 — re-measured at the 1350px Lighthouse desktop viewport
             * after the pay panel replaced the chart. Panel chrome is 34px
             * (16+16 padding, 1+1 border), so these are (rendered panel height −
-            * 34): the filter panel renders 187 and the pay panel 584. The old
+            * 34): the filter panel renders 187 and the pay panel 720 (584 before the composition disclosure was added). The old
             * 346 was sized for the seven-country chart that no longer exists and
             * left a 238px gap; the 116 was already 37px short before this
             * package touched anything. Together they cost CLS 0.254. */}
           <div className="panel"><ChartSkeleton height={153} /></div>
-          <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={550} /></div>
+          <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={686} /></div>
           <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={460} /></div>
         </>
       ) : (
