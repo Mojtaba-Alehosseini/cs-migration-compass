@@ -32,7 +32,20 @@ export interface Posting {
   url: string | null
   posted_at: string | null
   compensation: Compensation | null
+  /** ISCO-08 code from the Gemini classifier. Still null on every row — that
+   *  classifier has never run. Do NOT populate it from `title_class`: those are
+   *  coarse job families, not ISCO codes, and conflating them would invite
+   *  comparison against the wage spine, which the standing rules forbid. */
   occupation: { occupation_key: string; confidence: 'high' | 'medium' | 'low' } | null
+  /** Package 16 — coarse job FAMILY from the offline TF-IDF classifier, joined
+   *  from postings_title_classes.json. Only classes whose F1 95% CI lies
+   *  entirely above 0.70 are shipped; everything else reads `unclassified`
+   *  with the reason recorded. Never a pay figure, never an occupation code. */
+  title_class?: { class: string; proba: number | null; reason: string | null }
+  /** Package 16 — id of the row this one is a re-listing of, or null if it is
+   *  the representative. No row is ever removed; derived statistics use only
+   *  rows where this is null. */
+  duplicate_of?: string | null
 }
 
 export interface SeedCompany {
@@ -62,7 +75,52 @@ export interface PostingsData {
    *  2), a real trigger to respect by naming this unambiguously, not to
    *  silence. See build_postings.py's own comment at this field's
    *  construction for the full reasoning. */
-  pay_summary_by_country: { country: string; n: number; median_usd_year: number }[]
+  /** Package 16 — re-derived on DISTINCT ROLES (duplicates excluded) and
+   *  restricted to titles the classifier ships as software. A country appears
+   *  with a median only if it clears `pay_summary_min_n`; the rest carry
+   *  `publishable: false` and a `withheld_reason`, and are shown as counts
+   *  rather than dropped, because "we harvested 21 GB postings and 13 of them
+   *  are software" is a true and useful statement while a median of 13 is not.
+   *  `*_published_*` fields are rounded to the nearest $1,000: §0-D measured
+   *  advertised pay heaped to round thousands, so a median of it resolves no
+   *  finer, and the cents the old field carried were created by FX conversion
+   *  rather than by any employer. */
+  pay_summary_by_country: {
+    country: string
+    n_as_published: number
+    n_deduped: number
+    n_software_only: number
+    median_as_published_usd_year: number | null
+    median_usd_year?: number
+    median_published_usd_year?: number
+    ci_lo_published_usd_year?: number
+    ci_hi_published_usd_year?: number
+    ci_quality?: { n: number; do_not_quote: boolean; below_min_n_for_ci: boolean }
+    delta_vs_as_published_pct?: number
+    publishable: boolean
+    withheld_reason: string | null
+  }[]
+  pay_summary_meta?: {
+    basis: string
+    min_n_to_publish: number
+    published_rounding_usd: number
+    rounding_reason: string
+    n_publishable: number
+    n_countries_considered: number
+    midpoint_caveat: string
+  }
+  title_class_summary?: {
+    shipped_classes: string[]
+    counts: Record<string, number>
+    caveat: string
+  }
+  duplicate_summary?: {
+    raw_rows: number
+    distinct_roles: number
+    re_listings: number
+    re_listings_pct: number
+    reading: string
+  }
   /** The N in "n>=N" above — shipped alongside the data itself (adversarial
    *  review L11) so the on-screen caption naming this threshold reads the
    *  one number that actually governs the filter, not a second,

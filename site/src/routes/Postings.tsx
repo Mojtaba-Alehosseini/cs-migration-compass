@@ -26,10 +26,8 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAsync } from '../components/explore/useAsync'
 import { Flag } from '../components/Flag'
-import { Gap, ChartTable, ChartSkeleton } from '../components/explore/Controls'
-import { Chart } from '../components/chart/Chart'
-import type { ChartCfg, Pt } from '../components/chart/engine'
-import { loadPostings, fmtCompensation, fmtCompany, PROVIDER_LABEL, type Posting, type PostingsData } from '../data/postings'
+import { Gap, ChartSkeleton } from '../components/explore/Controls'
+import { loadPostings, fmtCompensation, fmtCompany, PROVIDER_LABEL, type Posting } from '../data/postings'
 import { LAND_PATH, LAND_VIEWBOX } from '../data/land'
 import { project } from '../components/CityMap'
 
@@ -62,49 +60,15 @@ import { project } from '../components/CityMap'
  *  that conversion touches currency only, never period, so an hourly
  *  posting genuinely is a different quantity and stays excluded on
  *  purpose (disclosed below). */
-function advertisedByCountryCfg(data: PostingsData): ChartCfg | null {
-  // Package 14, adversarial review L11 -- this used to re-slice to a SECOND,
-  // separately-maintained MAX_ADVERTISED_CHART_COUNTRIES copy of Python's
-  // own MAX_CHART_COUNTRIES. build_postings.py already truncates
-  // pay_summary_by_country to its own cap before shipping it; trusting that
-  // directly means one number governs the count, not two that could drift.
-  const rows = data.pay_summary_by_country
-    .map((r) => ({ cc: r.country, n: r.n, med: r.median_usd_year }))
-  if (rows.length < 3) return null
+/* Package 16 — advertisedByCountryCfg() removed, not disabled. It plotted a
+ * median for every country with 5+ annual postings. docs/DATA-FITNESS.md §1
+ * rules that claim unsupported: after de-duplicating and restricting to
+ * software titles, exactly one of seven countries clears a defensible sample
+ * floor, so a line ACROSS countries implies a comparison the data cannot make.
+ * A function that can now only ever return null is worse than no function, so
+ * it is gone; the panel below states the one country the evidence supports and
+ * registers the rest as counts. */
 
-  const pts: Pt[] = rows.map((r, i) => [i, r.med, false, r.n])
-  const maxV = Math.max(...rows.map((r) => r.med))
-  const yMax = Math.ceil(maxV / 20000) * 20000
-  // Tick VALUE and tick LABEL must come from the same rounding, not two
-  // independent ones -- an earlier version rounded the value to the
-  // nearest 10,000 but the label text to the nearest 1,000, so a gridline
-  // at data-value 110,000 carried the label "$106K" (found live by this
-  // package's own adversarial review, reading the rendered SVG directly).
-  const yTicks: [number, string][] = [0, 0.5, 1].map((f) => {
-    const v = Math.round((yMax * f) / 10000) * 10000
-    return [v, `$${Math.round(v / 1000)}K`]
-  })
-  return {
-    aria: `Median advertised USD/year pay by country: ${rows.map((r) => `${r.cc} $${Math.round(r.med).toLocaleString()}`).join(', ')}`,
-    w: 940, h: 220, padL: 56, padR: 86,
-    x: { min: 0, max: rows.length - 1, ticks: rows.map((r, i) => [i, r.cc] as [number, string]) },
-    y: { min: 0, max: yMax, ticks: yTicks },
-    series: [{
-      key: 'advertised', label: 'advertised', color: 'var(--accent)', mode: 'advertised', markers: true,
-      // Keep the n (index 3) point data -- an earlier version stripped it
-      // via `.map(([x,y]) => [x,y])`, which emptied the accessible
-      // ChartTable's own "n" column for every row (found live: the
-      // rendered <td> cells were present but blank, on a chart whose
-      // whole point is showing real per-country denominators).
-      pts,
-    }],
-    fmtX: (v) => rows[Math.round(v)]?.cc ?? '',
-    fmtV: (p) => {
-      const r = rows[Math.round(p[0])]
-      return r ? `$${Math.round(r.med).toLocaleString()}/yr (n=${r.n})` : ''
-    },
-  }
-}
 
 /* Approximate capital/hub coordinates for the countries postings actually
  * resolve to (scripts/postings_common.py's own country_from_location table,
@@ -241,7 +205,18 @@ export function Postings() {
 
   const providersAvailable = data ? Object.entries(data.provider_summary).filter(([, v]) => v.available) : []
   const withComp = data ? data.postings.filter((p) => p.compensation).length : 0
-  const advertisedCfg = useMemo(() => (data ? advertisedByCountryCfg(data) : null), [data])
+  // Package 16 — split once, here, so the panel and the withheld register can
+  // never disagree about which countries qualify.
+  const publishable = useMemo(
+    () => (data?.pay_summary_by_country ?? []).filter((r) => r.publishable && r.median_published_usd_year != null),
+    [data],
+  )
+  const withheld = useMemo(
+    () => (data?.pay_summary_by_country ?? [])
+      .filter((r) => !r.publishable)
+      .sort((a, b) => b.n_as_published - a.n_as_published),
+    [data],
+  )
 
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
@@ -281,7 +256,18 @@ export function Postings() {
         <>
           <div className="panel">
             <div className="sub">
-              {data.postings.length.toLocaleString()} postings, {Object.keys(data.seed_companies).length.toLocaleString()}{' '}
+              {/* Package 16 — raw rows and distinct roles are different numbers and
+                * are now named as such. 5.98% of rows are re-listings of a role
+                * already in the panel: the same requisition re-announced, or one
+                * role opened in several locations. 99.9% of them carry their own
+                * URL, so they are genuine separate advertisements, not scraping
+                * artifacts — which is why they are counted here and excluded from
+                * every derived statistic, rather than deleted. */}
+              {data.postings.length.toLocaleString()} advertisements
+              {data.duplicate_summary
+                ? ` (${data.duplicate_summary.distinct_roles.toLocaleString()} distinct roles — ${data.duplicate_summary.re_listings.toLocaleString()} are re-listings)`
+                : ''}
+              , {Object.keys(data.seed_companies).length.toLocaleString()}{' '}
               companies, {providersAvailable.length} sources ({providersAvailable.map(([k]) => PROVIDER_LABEL[k]).join(', ')}).{' '}
               {withComp.toLocaleString()} ({data.postings.length ? Math.round(withComp / data.postings.length * 100) : 0}%)
               state a real pay range.
@@ -328,29 +314,87 @@ export function Postings() {
             </p>
           </div>
 
-          {advertisedCfg && (
-            <div className="panel" style={{ marginTop: 12 }}>
-              <h2>Median advertised pay by country</h2>
-              <div className="sub">
-                Annual-salary postings only ({data!.pay_summary_min_n}+ per country to appear),
-                converted to USD at each posting's own year — the dotted line is this site's{' '}
-                <b>advertised</b> mode, never restyled from and never blended with the survey-sourced
-                lines on <Link to="/explore/money">Explore · Money</Link>. Hourly and monthly postings
-                are excluded from this one chart to avoid mixing pay periods into a single axis — they
-                still appear in the table and map below.
-              </div>
-              <Chart id="postings-advertised-by-country" cfg={advertisedCfg} transition="fade">
-                <ChartTable
-                  caption="Median advertised USD/year pay by country"
-                  head={['Country', 'Median advertised', 'n']}
-                  rows={advertisedCfg.series[0]!.pts.map((p) => {
-                    const cc = advertisedCfg.x.ticks[Math.round(p[0])]?.[1] ?? ''
-                    return [cc, `$${Math.round(p[1] ?? 0).toLocaleString()}`, String(p[3] ?? '')]
-                  })}
-                />
-              </Chart>
+          {/* Package 16, Tier 2 — docs/DATA-FITNESS.md §1 rules this claim
+            * "Not supported as labelled — 1 country, not 7; nearest $1,000".
+            * The seven-country line is gone. What replaces it publishes only
+            * countries clearing the sample floor, rounded to the precision the
+            * heaping supports, with the interval shown; every other country is
+            * still reported, as a COUNT, so the reader sees the panel's real
+            * coverage instead of a median computed from five postings. */}
+          <div className="panel" style={{ marginTop: 12 }}>
+            <h2>Median advertised pay, software roles only</h2>
+            <div className="sub">
+              Annual-salary postings, converted to USD at each posting's own year, counted once per
+              distinct role and restricted to titles classified as software. This is this site's{' '}
+              <b>advertised</b> mode — never blended with the survey-sourced lines on{' '}
+              <Link to="/explore/money">Explore · Money</Link>, and never comparable to them: each
+              posting contributes the <i>midpoint of an advertised range</i>, which is a property of
+              the advertisement, not a salary anyone is paid.
             </div>
-          )}
+            {publishable.length > 0 ? (
+              <div style={{ marginTop: 12 }}>
+                {publishable.map((r) => (
+                  <div key={r.country} style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: 'var(--text-xl)', fontWeight: 600 }}>{r.country}</span>
+                    <span style={{ fontSize: 'var(--text-xl)' }}>
+                      ${Math.round(r.median_published_usd_year!).toLocaleString()}
+                    </span>
+                    <span style={{ color: 'var(--ink-3)' }}>
+                      95% CI ${Math.round(r.ci_lo_published_usd_year!).toLocaleString()}–$
+                      {Math.round(r.ci_hi_published_usd_year!).toLocaleString()} · n ={' '}
+                      {r.n_software_only.toLocaleString()} distinct software roles
+                    </span>
+                  </div>
+                ))}
+                <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 10 }}>
+                  Rounded to the nearest $1,000 because advertised pay is heaped to round thousands —
+                  77.5% of native annual minima end in 0 or 5 — so a median of it resolves no finer.
+                  The cents this figure used to carry were produced by currency conversion, not by any
+                  employer.
+                </p>
+              </div>
+            ) : null}
+            {withheld.length > 0 && (
+              <div style={{ marginTop: 14 }}>
+                <h3 style={{ fontSize: 'var(--text-sm)', margin: '0 0 6px' }}>
+                  Too few to quote a median
+                </h3>
+                <div className="sub" style={{ marginBottom: 8 }}>
+                  Counts below are postings that <b>state an annual pay range</b> — not every
+                  posting harvested. Most postings state no pay at all, which is why a country with
+                  thousands of listings can still show single digits here. None of these reaches{' '}
+                  {data!.pay_summary_min_n} distinct software roles with a pay range, so none gets a
+                  median. Their counts are real; a median of them would not be. Shown rather than
+                  hidden, because the gap is the finding.
+                </div>
+                <table className="tbl">
+                  <caption className="sr-only">
+                    Countries withheld from the advertised-pay figure, with their counts of postings stating an annual pay range
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Country</th>
+                      <th scope="col" style={{ textAlign: 'right' }}>With pay range</th>
+                      <th scope="col" style={{ textAlign: 'right' }}>Distinct roles</th>
+                      <th scope="col" style={{ textAlign: 'right' }}>…of those, software</th>
+                      <th scope="col">Why withheld</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {withheld.map((r) => (
+                      <tr key={r.country}>
+                        <th scope="row">{r.country}</th>
+                        <td style={{ textAlign: 'right' }}>{r.n_as_published.toLocaleString()}</td>
+                        <td style={{ textAlign: 'right' }}>{r.n_deduped.toLocaleString()}</td>
+                        <td style={{ textAlign: 'right' }}>{r.n_software_only.toLocaleString()}</td>
+                        <td style={{ color: 'var(--ink-3)' }}>{r.withheld_reason}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
 
           {view === 'map' ? (
             <div className="panel" style={{ marginTop: 12 }}>

@@ -432,22 +432,24 @@
     },
     {
       "source_id": "postings",
-      "name": "Postings panel — merged advertised-pay data across all providers",
-      "urls": [],
-      "fetched_at": "2026-08-21T18:11:11+00:00",
-      "license": "Inherits each provider source's own license — this file adds no new terms, only concatenation and summary computation over already-committed, already-licensed data.",
-      "redistribution": "derived — nothing fetched here; every provider's own provenance entry already covers redistribution terms for its own postings.",
+      "name": "Job postings (merged ATS providers, classified and de-duplicated)",
+      "urls": [
+        "https://github.com/"
+      ],
+      "fetched_at": "2026-08-23T03:01:38+00:00",
+      "license": "each provider's own public job board API; see per-provider provenance entries",
+      "redistribution": "raw committed",
       "transforms": [
-        "Concatenated every provider's own postings array into one list.",
-        "Converted each posting's own native compensation to USD at its own effective year's year-matched FX rate (Tier 3.1) — normalise.to_usd(), the same machinery the wage spine uses, applied entirely within postings' own data; never reads wage_distribution.json.",
-        "Computed per-provider and per-country summary counts for the seed-list transparency page and the coverage-denominator discipline this site's own other panels already follow.",
-        "Never touched wage_distribution.json, crosswalk.compare(), or comparison_basis() — the survey/advertised boundary is enforced structurally by check_postings_wage_spine_boundary, not just by convention."
+        "merged every postings_<provider>.json (build_postings.py)",
+        "joined postings_title_classes.json as title_class; only classes whose F1 95% CI lies entirely above 0.70 ship, the rest are emitted as unclassified",
+        "joined postings_duplicate_clusters.json as duplicate_of; no row removed",
+        "re-derived pay_summary_by_country on distinct roles, software titles only, with bootstrap CIs, a 30-posting floor and $1,000 rounding"
       ],
       "output": "data/processed/postings.json",
       "status": "ok",
       "rows": 48267,
-      "coverage": "1723 companies across 6 providers",
-      "notes": "The site's own postings panel reads ONLY this file, never an individual provider file."
+      "coverage": null,
+      "notes": "45,383 distinct roles among 48,267 raw rows; 1 of 14 countries clear the publication floor"
     },
     {
       "source_id": "postings_ashby",
@@ -1210,5 +1212,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-23T01:51:42+00:00"
+  "updated_at": "2026-08-23T03:01:38+00:00"
 }
