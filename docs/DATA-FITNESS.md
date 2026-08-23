@@ -27,9 +27,9 @@ clean unless it has been observed to fail on a constructed violation; each harne
 | Years to own a home (city cards, `/compare`) | **Supported, but not to one decimal** | A range, not a point |
 | City salary bands (new-grad / mid / senior) | Supported | Nearest $1,000 |
 | Wage distribution panel (`/explore/money`) | Supported | As published — already median-based |
-| Canadian house-price trend (Teranet) | **Trend only** | Annual, never monthly |
+| Canadian house-price trend (Teranet) | **Multi-year direction only** | No single value, monthly *or* annual |
 | Cost-of-living and rent inputs | Supported | As published |
-| "N postings, M companies" counts | **Overstated by ~6%** | After de-duplication |
+| "N postings, M companies" counts | Posting count includes re-listings (~6%); **company count sound** | Distinct roles vs raw rows |
 | Cross-source salary agreement | Supported as *correlation*, not as *agreement* | Never blended |
 
 ---
@@ -129,7 +129,7 @@ unchanged by this package.
 
 ---
 
-## 5. Canadian house-price trend (Teranet) — trend only, never monthly
+## 5. Canadian house-price trend (Teranet) — multi-year direction only
 
 **New defect, found in this audit.** **All six** Teranet cities in this repo carry **injected
 per-observation noise** - residual autocorrelation of **+0.113 to +0.268** against **+0.985** for
