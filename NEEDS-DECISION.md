@@ -1776,11 +1776,13 @@ Package 15 measured what that chart rests on. Three compounding problems, all qu
 `REPORT-P15.md` and `docs/DATA-FITNESS.md §1`:
 
 1. **The panel is ~28% software.** The harvest takes every job a seeded company posts, so the median
-   is taken over an arbitrary occupational mix that differs by country. Three independent methods
-   agree on the share: keyword census 27.2%, a 400-title hand-labelled sample 29.0%, a trained
-   classifier 27.89%.
+   is taken over an arbitrary occupational mix that differs by country. Three measurements land in
+   the same place: a keyword rule 27.09%, a 400-title hand-labelled sample 29.0% (95% CI
+   24.8-33.6%), a trained classifier 27.89%. They are not independent - the classifier is trained
+   on the hand labels - so this supports "roughly a quarter to a third", not a two-decimal share.
 2. **Six of seven countries have too few postings.** Singapore's published figure rests on **five**
-   postings with a 95% bootstrap interval of **$60,177–$317,412** (±84%).
+   postings with a 95% bootstrap interval of **$60,177-$317,412** (+/-84%). After cleaning, exactly
+   one of the seven clears a 30-posting floor; the rest fall to between 0 and 13.
 3. **The published precision is manufactured.** Employer-entered pay is heaped to round thousands
    (77.5% of native annual minima end in 0 or 5; terminal-digit uniformity rejected, p < 0.001). FX
    conversion turns a round native figure into `$152,969.52`.
@@ -1790,8 +1792,8 @@ Re-derived on the de-duplicated, software-only subset, **the US median moves +18
 
 The analysis is finished and the corrected form is specified:
 
-> Median advertised pay, software roles only — United States: **$99,000**
-> (95% CI $96,000–$101,000, n = 1,319 after de-duplication)
+> Median advertised pay, software roles only - United States: **$99,000**
+> (95% CI $95,000-$101,000, n = 1,117 after de-duplication)
 
 **Decide:** which of these the chart should become —
 
@@ -1809,8 +1811,8 @@ representativeness score against Eurostat ICT employment).
 
 ## 43. Teranet's monthly index carries injected per-observation noise — disclose, aggregate, or drop?
 
-Every Teranet city's monthly series shows residual autocorrelation of **+0.07 to +0.27** about a
-smooth trend, with month-over-month autocorrelation near **−0.44**. The two control indices in this
+All six Teranet cities show residual autocorrelation of **+0.113 to +0.268** about a
+smooth trend, with month-over-month autocorrelation near **-0.44**. The two control indices in this
 same repo — UK HPI and FHFA, both real published house-price indices — read **+0.985**. A genuine
 price index is persistent; independent per-observation noise destroys that persistence and drives
 the MoM autocorrelation negative. 60–64% of Teranet months move more than 10%, with swings to 139%.
@@ -1820,13 +1822,17 @@ long-run trend survives (Spearman with time 0.909 for Toronto), and the raw endp
 carries the volatility — the pipeline transcribes it faithfully. `housepriceindex.ca`'s endpoint is
 undocumented and the index is proprietary, which is the most likely explanation.
 
-The site plots an **annual mean** of the monthly values, which turns out to be a mitigation rather
-than a defect: averaging 12 points cuts the noise by roughly √12.
+The site plots an **annual mean** of the monthly values. That was first recorded here as a
+mitigation; on measurement it is not one. Averaging 12 points does cut the noise by root-12, but
+what survives is 4.9-6.2% per annual point, which alone implies a year-over-year spread of 7.0-8.7%
+against an observed 7.3-10.8% and a true trend of only **3.1-4.1% per year**. The annual residual
+autocorrelation stays at 0.39-0.42. **Noise dominates the annual series too**; no single Teranet
+value, monthly or annual, is interpretable on its own, and only the multi-year direction survives.
 
-**Decide:** whether to (a) keep the annual series and add a chart-level note that monthly Teranet
-values are not interpretable; (b) drop Teranet and rely on the other Canadian housing evidence; or
-(c) raise it with the publisher. Option (a) is the smallest honest change and is what
-`docs/DATA-FITNESS.md §5` currently recommends.
+**Decide:** whether to (a) keep only a multi-year direction with a chart-level note that no
+individual Teranet value is interpretable; (b) drop Teranet and rely on the other Canadian housing
+evidence; or (c) raise it with the publisher. This is a sharper choice than it first appeared -
+option (a) is no longer "add a footnote about monthly values", it is "stop plotting a level".
 
 ## 44. Percentile transfer is not currently testable, and therefore not defensible
 
@@ -1843,5 +1849,6 @@ continental pay compression) remains plausible and untested.
 **Decide:** whether to (a) shelve transfer until the panel covers a second country at usable depth;
 or (b) commission a targeted harvest aimed specifically at the countries transfer would serve, so
 the assumption becomes testable. Note that the same audit measured the panel as under-sampling
-exactly those countries: Denmark 0.07×, Norway 0.10×, Sweden and Finland 0.26× against their own
-Eurostat ICT-employment share.
+exactly those countries: against each country's share of European ICT specialist headcount, Italy
+sits at 0.28x, Denmark 0.30x, Norway 0.45x, Sweden 0.64x and Germany 0.60x, while Great Britain is
+over-represented at 2.26x.
