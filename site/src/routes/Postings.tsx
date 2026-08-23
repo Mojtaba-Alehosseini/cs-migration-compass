@@ -258,8 +258,15 @@ export function Postings() {
         // panel-span grid, so it borrows ChartSkeleton directly rather than
         // going through ThemeSkeleton's own grid-span wrapper.
         <>
-          <div className="panel"><ChartSkeleton height={116} /></div>
-          <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={346} /></div>
+          {/* Package 16 — re-measured at the 1350px Lighthouse desktop viewport
+            * after the pay panel replaced the chart. Panel chrome is 34px
+            * (16+16 padding, 1+1 border), so these are (rendered panel height −
+            * 34): the filter panel renders 187 and the pay panel 584. The old
+            * 346 was sized for the seven-country chart that no longer exists and
+            * left a 238px gap; the 116 was already 37px short before this
+            * package touched anything. Together they cost CLS 0.254. */}
+          <div className="panel"><ChartSkeleton height={153} /></div>
+          <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={550} /></div>
           <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={460} /></div>
         </>
       ) : (
@@ -392,6 +399,12 @@ export function Postings() {
                   median. Their counts are real; a median of them would not be. Shown rather than
                   hidden, because the gap is the finding.
                 </div>
+                {/* Package 16 — bounded, so the panel's height does not depend on
+                  * how many countries happen to fall below the floor. Unbounded, it
+                  * rendered 1,115px against a 346px skeleton and cost CLS 0.254,
+                  * which is 13 points of the Lighthouse performance score on the one
+                  * route that was already the site's worst. Found by gate 12. */}
+                <div style={{ maxHeight: 260, overflowY: 'auto' }}>
                 <table className="tbl">
                   <caption className="sr-only">
                     Countries withheld from the advertised-pay figure, with their counts of postings stating an annual pay range
@@ -417,6 +430,7 @@ export function Postings() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
             )}
           </div>

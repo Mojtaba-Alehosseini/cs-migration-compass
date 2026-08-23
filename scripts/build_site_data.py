@@ -254,6 +254,45 @@ def build_core() -> dict:
     }
 
 
+def _slim_postings(doc: dict) -> dict:
+    """Ship the postings annotations the UI reads, not the diagnostics.
+
+    Package 16 joined a class and a duplicate pointer onto all 48,267 rows. In
+    data/processed/postings.json -- the source of truth, which is what every
+    analysis script reads -- each row carries the full record. Shipping the same
+    thing to the browser cost 4.9 MB on top of a payload that was already the
+    site's worst (NEEDS-DECISION #38), and pushed /postings from 0.80 to 0.71 on
+    Lighthouse.
+
+    So the per-row annotations are NOT shipped at all, and the aggregates that
+    the UI does read -- title_class_summary, duplicate_summary,
+    pay_summary_by_country -- are, at a few hundred bytes each.
+
+    That is not a guess about cost. Measured on one build, swapping only this
+    file and running Lighthouse three times each: the pre-package-16 payload
+    scores 0.87 with LCP 2.44s, and the same build carrying per-row annotations
+    scores 0.72 with LCP 2.50s. 160 KiB gzipped, 15 points, on the one route
+    that was already the site's worst. Nothing in site/src reads either field --
+    the page still says category is not filterable yet -- so the browser was
+    paying for data no code opened.
+
+    When a category filter is built, ship them again and pay the cost knowingly.
+    Until then the source of truth carries the full record and the wire does
+    not."""
+    import copy
+    doc = copy.deepcopy(doc)
+    rows = doc.get("data", {}).get("postings") or []
+    for r in rows:
+        r.pop("title_class", None)
+        r.pop("duplicate_of", None)
+    doc.setdefault("meta", {})["shipped_row_shape"] = (
+        "per-row title_class and duplicate_of are deliberately NOT shipped: nothing in the UI "
+        "reads them and they cost 15 Lighthouse points on /postings, measured. The full record is "
+        "in data/processed/postings.json. The aggregates are shipped -- see data.title_class_"
+        "summary, data.duplicate_summary and data.pay_summary_by_country.")
+    return doc
+
+
 def main() -> int:
     SITE_DATA.mkdir(parents=True, exist_ok=True)
     HISTORY_DIR.mkdir(parents=True, exist_ok=True)
@@ -273,6 +312,8 @@ def main() -> int:
         if doc is None:
             log(f"  ! {source_id}: no processed file — skipped")
             continue
+        if source_id == "postings":
+            doc = _slim_postings(doc)
         dest = HISTORY_DIR / f"{source_id}.json"
         dest.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         kb = dest.stat().st_size / 1024

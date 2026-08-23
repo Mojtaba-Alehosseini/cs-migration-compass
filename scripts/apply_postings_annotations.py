@@ -187,18 +187,22 @@ def annotate(rows: list[dict], classes_doc: dict, clusters_doc: dict, eval_doc: 
     assert all(k == k.strip() for k in by_title), "classifier vocabulary is not stripped"
     floor = (classes_doc.get("meta") or {}).get("proba_floor")
     counts: Counter = Counter()
+    # A short CODE per row, with the prose held once in title_class_summary.
+    # An earlier revision wrote the full explanatory sentence onto every row.
+    # It was true on all 48,267 of them and identical on 27,656, and it cost
+    # 5.1 MB -- pushing the shipped postings payload from 21.5 MB to 28.2 MB and
+    # the /postings Lighthouse performance score from 0.80 to 0.71. A caveat
+    # repeated 27,656 times is not 27,656 caveats; it is one caveat and a
+    # performance regression.
     for r in rows:
         rec = by_title.get((r.get("title") or "").strip())
         if rec is None:
-            r["title_class"] = {"class": "unclassified", "proba": None,
-                                "reason": "title not present in the classifier's own output"}
+            r["title_class"] = {"class": "unclassified", "proba": None, "why": "not_in_vocabulary"}
         elif rec["class"] not in ship:
             r["title_class"] = {"class": "unclassified", "proba": rec.get("proba"),
-                                "reason": f"model said {rec['class']}, a class this build does not "
-                                          f"ship: its F1 interval does not clear "
-                                          f"{F1_SHIP_THRESHOLD}"}
+                                "why": "class_withheld", "model_said": rec["class"]}
         else:
-            r["title_class"] = {"class": rec["class"], "proba": rec.get("proba"), "reason": None}
+            r["title_class"] = {"class": rec["class"], "proba": rec.get("proba")}
         counts[r["title_class"]["class"]] += 1
     log(f"    title_class: " + ", ".join(f"{k} {v:,}" for k, v in counts.most_common()))
 
@@ -374,6 +378,12 @@ def run() -> int:
         "class_decisions": stats["decisions"],
         "counts": stats["class_counts"],
         "proba_floor": stats["proba_floor"],
+        "why_codes": {
+            "not_in_vocabulary": "the title does not appear in the classifier's own output",
+            "class_withheld": ("the model assigned a class this build does not ship, because its "
+                               f"F1 95% confidence interval does not lie entirely above "
+                               f"{F1_SHIP_THRESHOLD}. model_said records which class it was."),
+        },
         "caveat": "a job FAMILY, not an ISCO occupation code. It is not the wage spine's "
                   "vocabulary and must never be compared against it.",
     }
@@ -485,7 +495,7 @@ def self_test() -> int:
     ck("an untrimmed title still joins (6.7% of the real corpus has one)",
        ws[0]["title_class"]["class"] == "SW", repr(ws[0]["title"]))
     ck("a WITHHELD class becomes unclassified, with the reason recorded",
-       rows[2]["title_class"]["class"] == "unclassified" and "HEALTH" in rows[2]["title_class"]["reason"])
+       rows[2]["title_class"]["class"] == "unclassified" and rows[2]["title_class"]["model_said"] == "HEALTH")
     ck("the duplicate points at its representative and the representative does not",
        rows[1]["duplicate_of"] == "a" and rows[0]["duplicate_of"] is None)
     ck("no row is dropped by the join", len(rows) == 3 and st["n_distinct_roles"] == 2)
