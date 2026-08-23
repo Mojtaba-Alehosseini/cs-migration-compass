@@ -1792,8 +1792,11 @@ Re-derived on the de-duplicated, software-only subset, **the US median moves +18
 
 The analysis is finished and the corrected form is specified:
 
-> Median advertised pay, software roles only - United States: **$99,000**
-> (95% CI $95,000-$101,000, n = 1,117 after de-duplication)
+> Median advertised pay, software roles only - United States: **$205,000**
+> (95% CI $202,000-$210,000, n = 1,807 distinct software roles posted 2024 or later)
+>
+> *(Package 16 superseded the $99,000 / n=1,117 figure first recorded here. That one excluded
+> every 2026 posting through an FX bug and was 77% 2016-2017 federal listings — see #48 and #49.)*
 
 **Decide:** which of these the chart should become —
 
@@ -1938,3 +1941,53 @@ question is where the job IS, not who signs the cheque.
 **Decide:** whether territories should ever appear separately from their sovereign state. It affects
 nothing today — PR is not in the 15 either way — but it will the moment anyone counts "countries in
 the panel".
+
+## 48. How wide should the advertised-pay window be? Package 16 chose three years without authority to
+
+Until package 16 the `/postings` median pooled every vintage in the corpus. Measured, that was not
+a summary of anything: the US figure rested on **714 rows from 2017 and 148 from 2016**, 872 of them
+USAJOBS federal listings, and **not one row from 2026** — while 31,829 of the 48,267-row corpus is
+2026. The cause was an FX bug (see #49). With it fixed, the pooled median became **$175,000**,
+sitting between a 2026 population near **$204,000** and a 2016-2017 one near **$87,000**.
+
+A median between two populations $115,000 apart describes neither. So the published figure is now
+limited to postings from **2024 onward**: **US $205,000, 95% CI $202,000-$210,000, n = 1,807**.
+
+**Three years is a judgement, not a measurement.** It is wide enough to hold a usable sample and
+narrow enough that nominal pay has not moved much across it, but nothing in the data picks it. The
+window also has a cost that is real and one-sided: **every USAJOBS row is dated 2016-2018**, so
+restricting to recent postings removes US federal listings entirely and leaves private ATS boards.
+91.3% of what remains comes from a single provider. The panel states this; it does not resolve it.
+
+**Decide:** (a) keep three years; (b) narrow to the current year only — n = 1,561, and the
+provider concentration gets worse, not better; (c) publish two figures, federal and private, and
+stop pretending one median covers a labour market that pays $87,000 and $217,000 for the same
+title; or (d) deflate the older postings to current prices and pool them, which needs a deflator
+this repo does not currently hold and would mix an index into an advertised-pay figure.
+
+## 49. The current year cannot be priced for any country except the US
+
+`fx_rates` comes from the World Bank's annual period-average series, which ends at **2025**, and
+`normalise.to_usd()` refuses to substitute a neighbouring year's rate — correctly, and that rule
+should stand.
+
+The consequence is severe and was invisible until package 16 went looking. For every non-USD
+country, **88-92% of annual-pay postings cannot be converted**: Great Britain 276 of 312, Canada
+270 of 306, Germany 93 of 101, France 95 of 104 — almost all of them 2026. So the withheld
+countries on `/postings` are not simply thin. Their recent data is *unpriceable* until the rate is
+published, and the sample-floor story the site tells about them is at best half the reason.
+
+Package 16 fixed the US half of this: USD→USD is the identity and needed no rate at all, which
+restored 1,566 US postings and is not an exception to the no-substitution rule. Nothing analogous
+exists for GBP or EUR.
+
+**Decide:** (a) wait for the World Bank's 2026 rate and accept that the panel is a year behind for
+every non-US country; (b) add a second, clearly-labelled FX source with a shorter publication lag
+(the ECB daily series package 16 already verifies against reaches the current day) and state per
+figure which source priced it; or (c) publish non-US figures in their **native currency**, unconverted,
+which is the only option that needs no rate at all and is arguably more honest for a
+migration-comparison site — at the cost of losing cross-country comparability, which is the whole
+point of the panel.
+
+Option (b) is the one that would make the panel work as designed. It is also the one that puts two
+FX sources in the same repo, which this project has so far avoided on purpose.

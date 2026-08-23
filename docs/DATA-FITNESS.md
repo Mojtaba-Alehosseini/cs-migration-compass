@@ -1,7 +1,8 @@
 # Data fitness for purpose
 
-_Package 15. For every claim the site makes on screen: what the evidence actually supports, at what
-precision, and — where it falls short — the corrected form._
+_Packages 15 and 16. For every claim the site makes on screen: what the evidence actually
+supports, at what precision, and — where it falls short — the corrected form. Package 15 measured;
+package 16 applied the corrections and swept the datasets package 15 never reached (§10)._
 
 This is not a validation report. `make validate` and `make audit` already answer "is this value
 legal?". This answers a different question: **is the data fit for the claim the page makes on it?**
@@ -12,10 +13,17 @@ Method, evidence and p-values: `REPORT-P15.md`. Machine-readable findings:
 `data/quality_history/statistical_audit.json`, `profile.json`, `title_classifier_eval.json`,
 `dedupe_eval.json`, `postings_pay_rederived.json`.
 
-**Two rules governed every change made under this package.** No published value was altered —
+**Two rules governed every change made under these packages.** No published value was altered —
 every correction is to a method, a summary, a disclosure or a boundary. And no check is reported
 clean unless it has been observed to fail on a constructed violation; each harness ships a
 `--self-test` that does exactly that.
+
+**One value WAS altered, and it belongs in the preamble rather than a footnote.** Package 16
+corrected Vancouver's coordinates (§10): the geocoder had returned both the city and Vancouver
+Island and the pipeline picked the island, putting the map dot 174 km out to sea. Both points are
+published by the source; what changed is which of them this repo selected. That is a corrected
+*selection*, not an altered source value — but the distinction is fine enough to state plainly
+instead of leaving the blanket claim above to cover it.
 
 ---
 
@@ -23,8 +31,8 @@ clean unless it has been observed to fail on a constructed violation; each harne
 
 | Claim | Verdict | Supported precision |
 |---|---|---|
-| Median advertised pay by country (`/postings`) | **Not supported as labelled** | 1 country, not 7; nearest $1,000 |
-| Years to own a home (city cards, `/compare`) | **Supported, but not to one decimal** | A range, not a point |
+| Median advertised pay by country (`/postings`) | **Not supported as labelled** | 1 country, not 7; recent postings only; nearest $1,000 |
+| Years to own a home (city cards, `/compare`) | **Supported, but not to one decimal** | `~23 yrs`, never `22.6`; the rounding band is on the source card |
 | City salary bands (new-grad / mid / senior) | Supported | Nearest $1,000 |
 | Wage distribution panel (`/explore/money`) | Supported | As published — already median-based |
 | Canadian house-price trend (Teranet) | **Multi-year direction only** | No single value, monthly *or* annual |
@@ -33,7 +41,7 @@ clean unless it has been observed to fail on a constructed violation; each harne
 | Cross-source salary agreement | Supported as *correlation*, not as *agreement* | Never blended |
 | City map coordinates | Supported — after correcting one 174 km error | 73/73 verified against an independent gazetteer |
 | Currency conversion (`fx_rates`) | Supported | Agrees with the ECB to better than 0.1% |
-| The other 22 datasets | Swept; **no second Teranet** | See §10 for coverage gaps and what each is fit for |
+| The other datasets | Swept (25); **the only confirmed defect is Teranet's own** | See §10 for coverage gaps and what each is fit for |
 
 ---
 
@@ -55,29 +63,52 @@ seven countries.
    rule is the weakest of the three, since a substring match counts "engineering manager" and
    "sales engineer" as software. What this supports is "roughly a quarter to a third", not a share
    to two decimals. The occupational mix also differs by country, so the error differs by country.
-2. **The sample is far too small in six of seven countries.** Singapore's published figure rests on
-   **five** postings whose 95% bootstrap interval runs **$60,177 - $317,412** - a half-width of
-   84%, from five values spanning 5.3x. After de-duplicating and restricting to software titles,
-   exactly **one** of the seven (the US, n = 1,117) clears a 30-posting floor; the other six fall
-   to between 0 and 13 postings.
+2. **The sample is far too small in almost every country — and much of that is an FX artefact.**
+   Singapore's original figure rested on **five** postings whose 95% bootstrap interval ran
+   **$60,177 - $317,412**. But the deeper cause is not thin harvesting: for every country except
+   the US, **the current year cannot be priced at all**. The World Bank exchange-rate series ends
+   at 2025 and this repo never substitutes a neighbouring year's rate, so 88-92% of the annual-pay
+   postings for Great Britain, Canada, Germany and France — almost all of them 2026 — have no USD
+   value and cannot enter any median. Those countries are not data-poor; their recent data is
+   unpriceable until the rate is published.
 3. **The published precision is manufactured.** Employer-entered pay is heaped to round thousands
    (77.5% of native annual minima end in 0 or 5; 65% end in 000; terminal-digit uniformity rejected
    at p < 0.001). FX conversion then turns a round native figure into `$152,969.52`. The decimals
    were never in the source.
+4. **The figure carried no date, and that turned out to matter more than anything else.** Package
+   16 found that the US median rested on 1,121 rows of which **714 were posted in 2017 and 148 in
+   2016**, 872 of them USAJOBS federal listings — and **not one row from 2026**, while 31,829 of
+   the 48,267-row corpus is 2026. The cause was a conversion that should never have been attempted:
+   `to_usd()` looked up an FX rate even for USD→USD, so every 2026 US posting quoted in dollars
+   failed for want of a 1.0 nobody had published yet. USD→USD is the identity; the short-circuit is
+   now applied for USD only, and every other currency still requires its own year.
 
-**Re-derived on the clean subset** — de-duplicated, then restricted to titles the classifier ships
-as software — the US median moves **$82,994 → $98,688, +18.9%**. That delta is the size of the
-error being published. Canada moves +13.2%; Great Britain does not move.
+**Re-derived on the clean subset** — de-duplicated, restricted to software titles, and limited to
+postings from 2024 onward — the US median is **$205,000**, against **$140,000** for the raw
+all-occupation population: **+46.4%**.
 
-**Corrected form.** The chart supports **one country (the US), rounded to the nearest $1,000, with
-its interval shown** — not seven countries to the cent:
+*Both earlier figures are superseded and neither is reproducible now, which is the finding rather
+than a regression.* Package 15 measured +18.9% ($82,994 → $98,688) and package 16 reproduced it
+exactly — on a corpus that was silently missing its own current year. With 2026 restored the pooled
+median becomes $175,000, sitting between a 2026 population near $204,000 and a 2016-2017 one near
+$87,000: a bimodal mixture wearing a point estimate. Pooling nine years of nominal advertised pay
+is not a defensible summary, so the published figure is windowed.
 
-> Median advertised pay, software roles only - United States: **$99,000** (95% CI
-> $95,000-$101,000, n = 1,117 postings after de-duplication).
+**Corrected form.** One country, one recent window, rounded to the nearest $1,000, with its
+interval and its composition shown:
 
-Everything else is below the sample size any median needs. **This requires a product decision** —
-whether to show one country, or to show all seven with intervals and an explicit "indicative only"
-label — and is recorded in `NEEDS-DECISION.md`.
+> Median advertised pay, software roles only — United States: **$205,000** (95% CI
+> $202,000-$210,000, n = 1,807 distinct software roles posted 2024 or later).
+> 2024: 27 · 2025: 219 · 2026: 1,561 — 86.4% from the most recent year, and 91.3% from a single
+> provider.
+
+**The window has a cost and the page states it.** Every USAJOBS row is dated 2016-2018, so
+restricting to recent postings removes US federal listings entirely and leaves private ATS boards.
+That is a real selection, disclosed on screen rather than absorbed.
+
+Every other country is below the sample floor, mostly for the FX reason above. **The remaining
+product decisions** — how wide the vintage window should be, and whether to publish anything for a
+country whose current year cannot be priced — are recorded in `NEEDS-DECISION.md`.
 
 ---
 
@@ -176,7 +207,8 @@ per-point noise is so large that what survives still dominates the signal:
 Read the last two columns together. The year-over-year variation that **noise alone** would produce
 is 7.0-8.7%, and the variation actually observed is 7.3-10.8%. Noise accounts for most of what the
 annual series does, against an underlying trend of only **3.1-4.9% per year**. The annual residual
-autocorrelation stays at 0.39-0.42, nowhere near a real index. Averaging cuts the noise by root-12
+autocorrelation stays at 0.39-0.53 where it can be computed at all (three of the six cities;
+the other three are too short), nowhere near a real index. Averaging cuts the noise by root-12
 and it is still larger than the signal it is meant to reveal.
 
 *(That trend range was first published as 3.1-4.1%, from a CAGR — the ratio of the first and last
@@ -325,28 +357,45 @@ autocorrelation test that found the Teranet defect, cross-dataset accounting
 identities, vintage, and coverage against the site's own 15 countries and 73
 cities. Full results in `data/quality_history/dataset_sweep.json`.
 
-### There is no second Teranet
+### The persistence test finds Teranet, and nothing else
 
-**232 series were tested for injected per-observation noise and none was
-confirmed.** 484 more were skipped **with a reason recorded**, because a
-check nobody can see the boundaries of is indistinguishable from one that
-passed: 94 are rates or growth figures the test is invalid for (they
-are differenced by construction and would fail it whether or not anything is
-wrong), and 390 are shorter than the 36 points it needs.
+**311 series tested across 25 datasets; the only ones confirmed are Teranet's own seven.** 454 more
+were skipped **with a reason recorded**, because a check nobody can see the boundaries of is
+indistinguishable from one that passed: 94 are rates or growth figures the test is invalid for, and
+360 are shorter than the 36 points it needs. Ten datasets hold no time series at all and now say so
+explicitly rather than reporting a silent zero.
 
-Four series crossed the threshold and are **reported but not claimed**. All four
-are national annual hours-worked series. What made the Teranet finding
-trustworthy was not the threshold, it was the *separation*: six Teranet cities
-clustered at 0.11–0.27 while the two real published indices sat at 0.985, with
-nothing in between. The hours-worked family has no such gap — its thirteen
-countries run 0.095 to 0.748 in one unbroken continuum, median 0.485 — so the
-four low readings are the tail of a distribution, not a defective subgroup.
-Their point-to-point movement (0.5–2.7%) is also far too small for injected
-noise of the kind that test detects; Teranet's was 22–31%. Annual hours worked
-genuinely moves year to year, so the test's own precondition — a path smooth
-relative to the sampling interval — does not hold for it. A flag is now
-corroborated only when a series is an outlier **against its own peer family**
-and moves enough for the explanation to be physically possible.
+**The first version of this sweep could not have found the defect it was built from, and that is
+the most important thing in this section.** An adversarial review fed it the six Teranet cities
+package 15 measured. It confirmed **zero of six**.
+
+The rule required a flagged series to be an outlier *against its own peer family*. A whole-family
+defect — one bad extractor corrupting every series it produces — has no outlier by construction:
+the peer median is dragged down with the defect. That is exactly Teranet's shape, so "no second
+Teranet" was being asserted by a rule that provably could not have found the first. It was also
+grouping families by stripping one path segment, which made every Teranet city a family of one.
+
+What made the original finding trustworthy was never peer spread. It was **separation from a
+known-good control**: Teranet at 0.11-0.27 against UK HPI and FHFA at 0.985. That is the test now.
+The peer family is still reported — a whole family reading low points at a shared extractor rather
+than one bad series — but it can no longer veto a finding. The three real house-price indices are
+swept alongside the other 22, so the control readings and the confirmed defect are **produced by
+the pipeline** rather than asserted beside it: the run that says "nothing else" is the same run
+that still finds Teranet.
+
+Four series cross the threshold and are **reported but not claimed** — the annual hours-worked
+series for GB, DE, IT and ES. They sit far below the control too, but they move 0.5-2.7% point to
+point where injected noise of this kind moves 22-31%. Annual hours worked genuinely moves year to
+year, so the test's precondition — a path smooth relative to the sampling interval — does not hold
+for it. *(An earlier draft of this section said all four were rejected because their family shows
+no gap. Two of the four **are** peer outliers; what rejects all four is the movement threshold.)*
+
+*Two more defects in the sweep itself, both found before it produced anything anyone relied on.*
+The series classifier read only the last path segment, so `NO/inflation_pct/value` classified on
+`"value"`, was tested as a level, and was duly flagged — a spurious finding caused by the
+classifier. And broadening series discovery to reach monthly data made it treat FHFA's `quarter`
+field as a measurement, building the series 4,1,2,3,4,1,2,3… and producing 15 confident false flags
+against the very index used as a control. Time components are now excluded from the value side.
 
 ### City coordinates were wrong, by 174 km
 
