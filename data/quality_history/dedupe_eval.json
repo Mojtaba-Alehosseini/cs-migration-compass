@@ -20,7 +20,10 @@
    "fn": 0,
    "precision": 0.3107,
    "recall": 1.0,
-   "f1": 0.4741
+   "f1": 0.4741,
+   "precision_reweighted": 0.2318,
+   "recall_reweighted": 1.0,
+   "f1_reweighted": 0.3763
   },
   {
    "threshold": 0.75,
@@ -29,7 +32,10 @@
    "fn": 0,
    "precision": 0.3556,
    "recall": 1.0,
-   "f1": 0.5246
+   "f1": 0.5246,
+   "precision_reweighted": 0.3013,
+   "recall_reweighted": 1.0,
+   "f1_reweighted": 0.463
   },
   {
    "threshold": 0.8,
@@ -38,7 +44,10 @@
    "fn": 2,
    "precision": 0.3846,
    "recall": 0.9375,
-   "f1": 0.5455
+   "f1": 0.5455,
+   "precision_reweighted": 0.342,
+   "recall_reweighted": 0.8764,
+   "f1_reweighted": 0.492
   },
   {
    "threshold": 0.85,
@@ -47,7 +56,10 @@
    "fn": 2,
    "precision": 0.4688,
    "recall": 0.9375,
-   "f1": 0.625
+   "f1": 0.625,
+   "precision_reweighted": 0.4819,
+   "recall_reweighted": 0.8764,
+   "f1_reweighted": 0.6219
   },
   {
    "threshold": 0.9,
@@ -56,7 +68,10 @@
    "fn": 5,
    "precision": 0.54,
    "recall": 0.8438,
-   "f1": 0.6585
+   "f1": 0.6585,
+   "precision_reweighted": 0.5967,
+   "recall_reweighted": 0.7595,
+   "f1_reweighted": 0.6683
   },
   {
    "threshold": 0.95,
@@ -65,7 +80,10 @@
    "fn": 8,
    "precision": 0.75,
    "recall": 0.75,
-   "f1": 0.75
+   "f1": 0.75,
+   "precision_reweighted": 0.8029,
+   "recall_reweighted": 0.6986,
+   "f1_reweighted": 0.7471
   },
   {
    "threshold": 0.98,
@@ -74,9 +92,13 @@
    "fn": 9,
    "precision": 0.9583,
    "recall": 0.7188,
-   "f1": 0.8214
+   "f1": 0.8214,
+   "precision_reweighted": 0.9583,
+   "recall_reweighted": 0.6783,
+   "f1_reweighted": 0.7944
   }
  ],
+ "stratified_sample_disclosure": "the 120 labelled pairs are 24 per cosine band, not a random sample of candidate pairs. 'precision'/'recall' are the figures ON THAT SAMPLE and are what the threshold was tuned on. '*_reweighted' rescales each labelled pair by its band's population/sample ratio and estimates what the de-duplicator achieves over all candidate pairs. At the shipped threshold precision is identical -- every true and false positive falls in the top band -- but recall is LOWER reweighted, because the misses sit in bands the sample deliberately over-represents. Quote the reweighted recall for the de-duplicator's real behaviour.",
  "labelled_pairs": 120,
  "recall_ceilings": {
   "cross_employer": "duplicates posted by two different employers (an agency and the employer) are out of scope by construction",

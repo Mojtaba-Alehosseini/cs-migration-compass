@@ -22,6 +22,14 @@
    "ci_lo": 113192,
    "ci_hi": 183463,
    "ci_half_width_pct": 27.4,
+   "ci_quality": {
+    "n": 6,
+    "below_min_n": true,
+    "distinct_values": 4,
+    "spans_full_sample_range": false,
+    "pct_of_resamples_at_the_point_estimate": 22.1,
+    "do_not_quote": true
+   },
    "delta_vs_published_pct": 13.2,
    "publishable_at_min_n": false
   },
@@ -43,6 +51,14 @@
    "ci_lo": 144837,
    "ci_hi": 204089,
    "ci_half_width_pct": 19.6,
+   "ci_quality": {
+    "n": 13,
+    "below_min_n": false,
+    "distinct_values": 10,
+    "spans_full_sample_range": false,
+    "pct_of_resamples_at_the_point_estimate": 41.3,
+    "do_not_quote": false
+   },
    "delta_vs_published_pct": -0.0,
    "publishable_at_min_n": false
   },
@@ -80,6 +96,14 @@
    "ci_lo": 95307,
    "ci_hi": 101357,
    "ci_half_width_pct": 3.1,
+   "ci_quality": {
+    "n": 1117,
+    "below_min_n": false,
+    "distinct_values": 454,
+    "spans_full_sample_range": false,
+    "pct_of_resamples_at_the_point_estimate": 52.4,
+    "do_not_quote": false
+   },
    "delta_vs_published_pct": 18.9,
    "publishable_at_min_n": true
   }

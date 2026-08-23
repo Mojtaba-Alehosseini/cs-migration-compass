@@ -216,6 +216,13 @@ nothing needs correcting** — but the site should never publish a yield derived
 at a threshold tuned to **precision 0.958 / recall 0.719** against 120 hand-labelled pairs -
 removes **2,884 rows (5.98%)**.
 
+Those 120 pairs are **stratified** - 24 from each of five cosine bands, so the threshold is tuned
+where the decision is hard - which means 0.958/0.719 describe that deliberately hard sample, not the
+population. Reweighted by each band's population share, precision is unchanged at **0.958** (every
+true and false positive falls in the top band) but recall drops to **0.678**, because the misses sit
+in bands the sample over-represents. **0.678 is the figure to quote for real behaviour;** 0.719 is
+the figure the threshold was selected on.
+
 **The company count is not affected.** De-duplication loses exactly **zero** companies: 1,960
 distinct employers before and 1,960 after, and not one of the 2,384 clusters spans more than one
 company - which is by construction, since blocking is *by* company. An earlier draft of this

@@ -184,6 +184,27 @@ def run():
         # are exact-key collisions emitted for every member pair in index
         # order: P=0.958 R=0.719 is unchanged from the previous revision. The
         # rows below 0.95 were wrong and are now corrected.
+        # The 120 labelled pairs are STRATIFIED -- 24 drawn from each of five
+        # cosine bands -- so the threshold is tuned where the decision is hard.
+        # Pooling them and dividing gives precision and recall ON THAT SAMPLE,
+        # which is not the population figure: the bands are oversampled very
+        # unevenly, [0.60,0.70) by 544x against [0.90,0.98) by 110x. Both are
+        # reported. The sample figure is what the threshold was chosen on; the
+        # reweighted one is what the de-duplicator achieves over all candidate
+        # pairs, and it is the lower of the two on recall.
+        BANDS = [(0.60, 0.70), (0.70, 0.80), (0.80, 0.90), (0.90, 0.98), (0.98, 1.0001)]
+
+        def _band(s):
+            for b, (lo, hi) in enumerate(BANDS):
+                if lo <= s < hi:
+                    return b
+            return len(BANDS) - 1
+
+        pop_n = Counter(_band(s) for _, _, s in pairs)
+        smp_n = Counter(_band(r["cosine"]) for r in gt["pairs"])
+        wgt = {b: (pop_n[b] / smp_n[b] if smp_n[b] else 0.0) for b in range(len(BANDS))}
+        band_of = {(r["i"], r["j"]): _band(r["cosine"]) for r in gt["pairs"]}
+
         lut = {(r["i"], r["j"]): r["same_job"] for r in gt["pairs"]}
         for thr in [0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 0.98]:
             lbl = {}
@@ -197,11 +218,24 @@ def run():
             prec = tp / (tp + fp) if tp + fp else 1.0
             rec = tp / (tp + fn) if tp + fn else 0.0
             f1 = 2 * prec * rec / (prec + rec) if prec + rec else 0.0
+            wtp = sum(wgt[band_of[k]] for k, s in lut.items() if s and together[k])
+            wfp = sum(wgt[band_of[k]] for k, s in lut.items() if not s and together[k])
+            wfn = sum(wgt[band_of[k]] for k, s in lut.items() if s and not together[k])
+            wprec = wtp / (wtp + wfp) if wtp + wfp else 1.0
+            wrec = wtp / (wtp + wfn) if wtp + wfn else 0.0
             tuning.append({"threshold": thr, "tp": tp, "fp": fp, "fn": fn,
-                           "precision": round(prec, 4), "recall": round(rec, 4), "f1": round(f1, 4)})
+                           "precision": round(prec, 4), "recall": round(rec, 4), "f1": round(f1, 4),
+                           "precision_reweighted": round(wprec, 4),
+                           "recall_reweighted": round(wrec, 4),
+                           "f1_reweighted": round(2 * wprec * wrec / (wprec + wrec), 4)
+                           if wprec + wrec else 0.0})
         best = max(tuning, key=lambda r: (r["precision"] >= 0.95, r["f1"]))
         thr = best["threshold"]
-        log(f"  tuned threshold {thr}: P={best['precision']:.3f} R={best['recall']:.3f} F1={best['f1']:.3f}")
+        log(f"  tuned threshold {thr}: P={best['precision']:.3f} "
+            f"R={best['recall']:.3f} F1={best['f1']:.3f}")
+        log(f"    reweighted to the candidate-pair population: "
+            f"P={best['precision_reweighted']:.3f} R={best['recall_reweighted']:.3f} "
+            f"F1={best['f1_reweighted']:.3f}")
     else:
         thr = 0.90
         log(f"  no labelled pairs yet; using default threshold {thr}")
@@ -267,6 +301,15 @@ def run():
         "near_duplicate": {"threshold": thr, "clusters": len(groups), "removable": near_excess,
                            "removable_pct": round(100 * near_excess / N, 3)},
         "threshold_tuning": tuning,
+        "stratified_sample_disclosure": (
+            "the 120 labelled pairs are 24 per cosine band, not a random sample of candidate "
+            "pairs. 'precision'/'recall' are the figures ON THAT SAMPLE and are what the "
+            "threshold was tuned on. '*_reweighted' rescales each labelled pair by its band's "
+            "population/sample ratio and estimates what the de-duplicator achieves over all "
+            "candidate pairs. At the shipped threshold precision is identical -- every true and "
+            "false positive falls in the top band -- but recall is LOWER reweighted, because the "
+            "misses sit in bands the sample deliberately over-represents. Quote the reweighted "
+            "recall for the de-duplicator's real behaviour."),
         "labelled_pairs": (gt or {}).get("n"),
         "recall_ceilings": {
             "cross_employer": "duplicates posted by two different employers (an agency and the "

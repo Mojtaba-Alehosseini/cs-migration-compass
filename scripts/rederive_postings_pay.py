@@ -75,13 +75,32 @@ def _samples(rows, keep_idx=None, sw_only=False, cls=None):
     return by
 
 
+# Below this, a bootstrap of the median has too few distinct order statistics to
+# describe a distribution: the resample can only ever return one of a handful of
+# observed values, so the interval collapses towards the sample range and its
+# endpoints are data points rather than quantiles. The interval is still
+# returned -- suppressing it would hide how thin the country is -- but it is
+# returned WITH a flag, because an unflagged "95% CI" invites quotation.
+MIN_N_FOR_MEANINGFUL_CI = 12
+
+
 def _median_ci(v, n_boot=10000, seed=SEED):
     v = np.asarray(v, float)
     n = v.size
     rng = np.random.default_rng(seed)
     b = np.array([np.median(v[rng.integers(0, n, n)]) for _ in range(n_boot)])
     lo, hi = (float(x) for x in np.percentile(b, [2.5, 97.5]))
-    return float(np.median(v)), lo, hi
+    degenerate = {
+        "n": int(n),
+        "below_min_n": bool(n < MIN_N_FOR_MEANINGFUL_CI),
+        "distinct_values": int(np.unique(v).size),
+        "spans_full_sample_range": bool(lo <= v.min() and hi >= v.max()),
+        "pct_of_resamples_at_the_point_estimate": round(
+            100 * float(np.mean(np.isclose(b, np.median(v)))), 1),
+    }
+    degenerate["do_not_quote"] = bool(
+        degenerate["below_min_n"] or degenerate["spans_full_sample_range"])
+    return float(np.median(v)), lo, hi, degenerate
 
 
 def run():
@@ -111,10 +130,11 @@ def run():
                "n_software_only": len(clean.get(cc, []))}
         v = clean.get(cc, [])
         if len(v) >= 5:
-            m, lo, hi = _median_ci(v)
+            m, lo, hi, ci_quality = _median_ci(v)
             rec.update({"software_median_usd_year": round(m, 2),
                         "ci_lo": round(lo), "ci_hi": round(hi),
-                        "ci_half_width_pct": round(100 * (hi - lo) / 2 / m, 1)})
+                        "ci_half_width_pct": round(100 * (hi - lo) / 2 / m, 1),
+                        "ci_quality": ci_quality})
             if rec["published"]:
                 rec["delta_vs_published_pct"] = round(100 * (m - rec["published"]) / rec["published"], 1)
         rec["publishable_at_min_n"] = bool(len(v) >= MIN_N_PUBLISH)
@@ -236,7 +256,7 @@ def self_test():
        f"all={np.median(allc['XX']):,.0f} sw={np.median(swc['XX']):,.0f}")
     ck("de-duplication drops the right row",
        len(_samples(rows, keep_idx={0, 1})["XX"]) == 2)
-    m, lo, hi = _median_ci([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], n_boot=2000)
+    m, lo, hi, _q = _median_ci([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], n_boot=2000)
     ck("bootstrap CI brackets the median", lo <= m <= hi, f"{lo:.1f} <= {m:.1f} <= {hi:.1f}")
 
     print(f"\n{len(fails)} failure(s)" + (": " + ", ".join(fails) if fails else " — all controls hold"))
