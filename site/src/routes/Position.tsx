@@ -25,7 +25,7 @@ import { Gap, ChartSkeleton } from '../components/explore/Controls'
 import { Flag } from '../components/Flag'
 import { useSelection } from '../data/selection'
 import { stabilityOf, yearsToHome, savingsPerYear, type Budget } from '../data/compute'
-import { years as fmtYearsToHome, NO_DATA } from '../data/format'
+import { years as fmtYearsToHome, dropApprox, NO_DATA } from '../data/format'
 import { UnstableMark } from '../components/Unstable'
 
 const PERIOD_LABEL = { hour: '/hour', month: '/month', year: '/year' } as const
@@ -335,7 +335,7 @@ function PayVsCost({ profile, wageByCountry, gradient }: {
                 </Derived>
                 {' → '}
                 {savings != null ? `${fmtNative(Math.round(savings), 'USD')} saved/yr` : NO_DATA} →{' '}
-                {fmtYearsToHome(y, never)}
+                {stability === 'unstable' ? dropApprox(fmtYearsToHome(y, never)) : fmtYearsToHome(y, never)}
               </span>
               {stability === 'unstable' && <UnstableMark city={city} band="mid" budget={budget} />}
               {/* Package 14, adversarial review M7 — real, unresolved gap: this

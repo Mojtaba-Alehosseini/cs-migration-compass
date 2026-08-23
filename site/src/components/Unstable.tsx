@@ -12,7 +12,13 @@ import { stabilityOf, instabilityNote } from '../data/compute'
 import type { Band, City } from '../data/types'
 import type { Budget } from '../data/compute'
 
-/** A small "≈" beside the figure: this is an order of magnitude, not a count. */
+/** A small "≈" beside the figure: this is an order of magnitude, not a count.
+ *
+ *  Package 16 — this is a STRONGER statement than the "~" that data/format.ts
+ *  now puts on every years-to-home figure ("rounded"), so the two must not be
+ *  stacked: the rendered Compare page read "≈~5 yrs". Where this mark is shown,
+ *  the caller strips the tilde with `dropApprox()` below and this glyph carries
+ *  the meaning alone. */
 export function UnstableMark({ city, band, budget }: { city: City; band: Band; budget?: Budget }) {
   if (stabilityOf(city, band, budget) !== 'unstable') return null
   return (

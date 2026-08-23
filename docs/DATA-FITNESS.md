@@ -172,9 +172,16 @@ per-point noise is so large that what survives still dominates the signal:
 
 Read the last two columns together. The year-over-year variation that **noise alone** would produce
 is 7.0-8.7%, and the variation actually observed is 7.3-10.8%. Noise accounts for most of what the
-annual series does, against a true trend of only **3.1-4.1% per year**. The annual residual
+annual series does, against an underlying trend of only **3.1-4.9% per year**. The annual residual
 autocorrelation stays at 0.39-0.42, nowhere near a real index. Averaging cuts the noise by root-12
 and it is still larger than the signal it is meant to reveal.
+
+*(That trend range was first published as 3.1-4.1%, from a CAGR — the ratio of the first and last
+annual values. Package 16 found that self-contradictory: a CAGR rests on exactly two observations
+and so inherits the per-observation noise this very finding reports. A log-linear slope over all ~28
+annual points averages the noise down instead of concentrating it in two values, and it moves
+Vancouver from 3.1% to 4.4%. Both are now reported; the slope is the one to quote. The conclusion is
+unchanged on either estimator — noise still exceeds trend.)*
 
 **Corrected form.** **No single Teranet value - monthly or annual - is interpretable on its own.**
 Only the multi-year direction survives, and only qualitatively. The honest options are to disclose

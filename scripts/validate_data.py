@@ -367,6 +367,77 @@ def check_survey_vs_advertised_pay(source_ids=None, processed_dir: Path = PROCES
                 f"field name(s) {advertised_hits} — these must never occupy the same field")
 
 
+def check_postings_annotations_applied(processed_dir: Path = PROCESSED) -> None:
+    """Integrity rule (package 16). postings.json must carry the corrections
+    package 15 measured, not just have them sitting in data/ beside it.
+
+    This exists because of a real ordering hazard, not a hypothetical one.
+    build_postings.py merges the providers; the classifier and de-duplicator run
+    AFTER it and their results are joined back by
+    apply_postings_annotations.py. Anyone who reruns the build and stops there
+    gets a postings.json with no title_class, no duplicate_of, and an empty pay
+    summary. Before package 16 the same mistake produced something worse -- the
+    old seven-country, all-occupation, duplicates-included median, republished
+    silently, a figure docs/DATA-FITNESS.md §1 has already ruled unsupportable.
+
+    So the build now emits an EMPTY summary with a status, and this check turns
+    that empty state into a failure. A loud absence beats a quiet regression."""
+    log("· postings.json carries package 15's classification and de-duplication")
+    path = processed_dir / "postings.json"
+    if not path.exists():
+        return
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    data = doc.get("data") or {}
+    rows = data.get("postings") or []
+    if not rows:
+        return
+
+    status = data.get("pay_summary_status")
+    if status:
+        err(f"postings.json still carries pay_summary_status ({status!r}) — "
+             f"scripts/apply_postings_annotations.py has not been run since the last build, so the "
+             f"per-country pay figures and every row's title_class are missing")
+
+    missing_class = sum(1 for r in rows if "title_class" not in r)
+    if missing_class:
+        err(f"{missing_class:,} of {len(rows):,} postings carry no title_class — the classifier "
+             f"join has not been applied")
+
+    if not any("duplicate_of" in r for r in rows):
+        err("no posting carries duplicate_of — the de-duplication join has not been applied")
+
+    # A published median must never rest on rows the pipeline itself calls
+    # duplicates or non-software. Checked by RECOUNTING rather than trusting the
+    # stored n, because the stored n is exactly what would be wrong.
+    # Re-derive using the class the payload SAYS it used. Assuming "any shipped
+    # class" made this recount 1,239 against a real 1,117, because SALES ships
+    # too but the pay figure is software-only.
+    want = (data.get("pay_summary_meta") or {}).get("restricted_to_class")
+    if not want:
+        err("pay_summary_meta does not state restricted_to_class, so this check cannot verify the "
+            "published medians rest on the subset they claim")
+        return
+    for rec in data.get("pay_summary_by_country") or []:
+        if not rec.get("publishable"):
+            if rec.get("median_published_usd_year") is not None:
+                err(f"{rec['country']} is below the publication floor yet still carries a "
+                     f"published median")
+            continue
+        cc = rec["country"]
+        n_real = sum(1 for r in rows
+                     if r.get("country") == cc
+                     and not r.get("duplicate_of")
+                     and (r.get("title_class") or {}).get("class") == want
+                     and (r.get("compensation") or {}).get("period") == "year"
+                     and (r.get("compensation") or {}).get("usd"))
+        if n_real < (data.get("pay_summary_min_n") or 30):
+            err(f"{cc} publishes a median on {n_real} qualifying rows, below the stated floor of "
+                 f"{data.get('pay_summary_min_n')}")
+        if abs(n_real - rec.get("n_software_only", -1)) > 0:
+            err(f"{cc} reports n_software_only={rec.get('n_software_only')} but recounting the "
+                 f"de-duplicated, shipped-class rows gives {n_real}")
+
+
 def check_postings_wage_spine_boundary(processed_dir: Path = PROCESSED) -> None:
     """Integrity rule (package 12). A genuine, additive cross-FILE check —
     postings.json literally never carries the wage spine's own distinctive
@@ -1122,6 +1193,7 @@ def main() -> int:
     check_forecast_separation()
     check_odbl_isolation()
     check_survey_vs_advertised_pay()
+    check_postings_annotations_applied()
     check_postings_wage_spine_boundary()
     check_percentiles_not_seniority()
     check_crosswalk_comparison_depth()

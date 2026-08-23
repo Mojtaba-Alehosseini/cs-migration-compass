@@ -124,7 +124,14 @@ def run():
     out = []
     for cc in countries:
         rec = {"country": cc,
-               "published": published.get(cc, {}).get("median_usd_year"),
+               # Package 16 renamed this: the raw, all-occupation,
+               # duplicates-included median now lives under its own explicit
+               # name, and `median_usd_year` means the CORRECTED figure. Reading
+               # the new name keeps this script measuring what it always
+               # measured -- raw against cleaned -- rather than the cleaned
+               # figure against itself.
+               "published": (published.get(cc, {}).get("median_as_published_usd_year")
+                             or published.get(cc, {}).get("median_usd_year")),
                "n_published_basis": len(base.get(cc, [])),
                "n_after_dedupe": len(deduped.get(cc, [])),
                "n_software_only": len(clean.get(cc, []))}

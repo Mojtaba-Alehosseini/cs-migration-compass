@@ -13,6 +13,7 @@
  */
 
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Chart } from '../chart/Chart'
 import type { ChartCfg, ChartHandle } from '../chart/engine'
 import { Picker, ChartFoot, ChartTable, Gap, ThemeSkeleton, type HeroStat } from './Controls'
@@ -180,6 +181,35 @@ function BisPanel({ data }: { data: HousingData }) {
  *  country trend wearing a city's name. */
 function CityRibbons({ data }: { data: HousingData }) {
   const mult = (p: Pair[]) => (p.length ? `×${(last(p)[1] / p[0]![1]).toFixed(1)}` : 'no data')
+
+  /* Package 16 — docs/DATA-FITNESS.md §5 rules the Teranet series
+   * "multi-year direction only — no single value, monthly or annual".
+   * `mult()` is an ENDPOINT RATIO: it divides one year's value by another's,
+   * so it inherits the error in both. Package 15 measured that error as
+   * 4.9–6.2% per annual point after averaging, against a real trend of only
+   * 3.1–4.1%/yr — the noise is larger than the signal it would be reporting.
+   *
+   * A log-linear slope over the whole series is the honest alternative and the
+   * reason is the defect itself: the noise is independent per observation, so
+   * a regression over ~28 points averages it down, while a ratio of two points
+   * averages nothing. This reports a DIRECTION, which is exactly what the
+   * fitness verdict says survives, and never a level. */
+  const trendPctPerYear = (p: Pair[]): string => {
+    const pts = p.filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y) && y > 0)
+    if (pts.length < 8) return 'too short to read a trend'
+    const n = pts.length
+    const mx = pts.reduce((s, [x]) => s + x, 0) / n
+    const my = pts.reduce((s, [, y]) => s + Math.log(y), 0) / n
+    let num = 0
+    let den = 0
+    for (const [x, y] of pts) {
+      num += (x - mx) * (Math.log(y) - my)
+      den += (x - mx) ** 2
+    }
+    if (den === 0) return 'too short to read a trend'
+    const pct = (Math.exp(num / den) - 1) * 100
+    return `${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%/yr`
+  }
   const gbp = (v: number) => `£${Math.round(v / 1000)}k`
 
   const spark = (lines: { pts: Pair[]; color: string; dash?: boolean }[], x0: number, x1: number, title: string) => {
@@ -219,12 +249,20 @@ function CityRibbons({ data }: { data: HousingData }) {
         </div>
         <div className="ribbon">
           <div className="rh"><b>Toronto · Vancouver</b>
-            <span>{mult(data.teranet.toronto)} · {mult(data.teranet.vancouver)} since 1998</span></div>
+            <span>
+              ≈{trendPctPerYear(data.teranet.toronto)} · ≈{trendPctPerYear(data.teranet.vancouver)} since 1998
+            </span></div>
           {spark([
             { pts: data.teranet.toronto, color: cc('CA') },
             { pts: data.teranet.vancouver, color: cc('CA'), dash: true },
           ], 1998, 2026, 'Toronto and Vancouver house price index since 1998')}
-          <div className="unit">Teranet–National Bank repeat-sales index</div>
+          <div className="unit">
+            Teranet–National Bank repeat-sales index — <b>direction only</b>. This series carries
+            per-observation noise larger than the trend it describes (residual autocorrelation
+            0.11–0.27 against 0.985 for the two real published indices beside it), so no single
+            value on it is interpretable, monthly or annual. The shape shows where prices went;
+            do not read a level off it. <Link to="/data">Why →</Link>
+          </div>
         </div>
         <div className="ribbon">
           <div className="rh"><b>London</b>

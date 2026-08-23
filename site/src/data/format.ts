@@ -35,13 +35,39 @@ export function pct(v: number | null | undefined, digits = 0): string {
 }
 
 /** Years-to-home. Long horizons are rounded because false precision on a
- *  40-year projection is theatre, and the impossible case says so in words. */
+ *  40-year projection is theatre, and the impossible case says so in words.
+ *
+ *  Package 16 — the one-decimal form is gone. docs/DATA-FITNESS.md §2: the
+ *  inputs are rounded to $10/month and $100/m², the quantity is a ratio whose
+ *  denominator is a DIFFERENCE of two large numbers, and it is the most skewed
+ *  field in the dataset (skew 6.38, excess kurtosis 41.1). "22.6 yrs" asserted
+ *  a tenth of a year that no input could support. It now reads "~23 yrs", and
+ *  `yearsRange` states the band where one rounding step moves it visibly. */
 export function years(v: number | null | undefined, never = false): string {
   if (never) return 'never on this salary'
   if (v == null || !Number.isFinite(v)) return NO_DATA
   if (v >= 100) return '100+ yrs'
-  if (v >= 30) return `${Math.round(v)} yrs`
-  return `${v.toFixed(1)} yrs`
+  return `~${Math.round(v)} yrs`
+}
+
+/** Strip the leading "~" where a stronger approximation mark (the unstable "≈")
+ *  is already rendered beside the figure. Stacking both read "≈~5 yrs". */
+export function dropApprox(s: string): string {
+  return s.startsWith('~') ? s.slice(1) : s
+}
+
+/** The band a years-to-home figure occupies under one rounding step of its own
+ *  inputs. Collapses to the point form when rounding hides nothing. */
+export function yearsRange(range: [number, number] | null | undefined,
+                           fallback: number | null | undefined, never = false): string {
+  if (never) return 'never on this salary'
+  if (!range) return years(fallback, never)
+  const [lo, hi] = range
+  if (lo >= 100) return '100+ yrs'
+  const [rlo, rhi] = [Math.round(lo), Math.round(hi)]
+  if (rlo === rhi) return years(fallback ?? lo)
+  if (hi >= 100) return `~${rlo}–100+ yrs`
+  return `~${rlo}–${rhi} yrs`
 }
 
 /** "~2 → ~5 yrs", or an honest phrase when there is no path at all. */

@@ -123,11 +123,22 @@ export function CityProfile() {
               })}
               <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', marginTop: 8 }}>
                 {lf?.median_total_comp_usd != null ? (
-                  <>Hatched = the extra that big-name employers pay. Their median total package here is{' '}
+                  <>Hatched = big-name employers, measured differently. Their median total package here is{' '}
                     <Figure source={{
                       name: 'levels.fyi', url: lf.source, asOf: lf.as_of, confidence: 'crowd',
-                      what: 'Total compensation — base plus stock plus bonus, so partly a definition difference from the market band above.',
-                    }}><b>{money(lf.median_total_comp_usd)}</b></Figure>.
+                      what: 'Total compensation — base plus stock plus bonus — against a market BASE-pay band. A different quantity, not a bigger measurement of the same one.',
+                    }}><b>{money(lf.median_total_comp_usd)}</b></Figure>.{' '}
+                    {/* Package 16 — docs/DATA-FITNESS.md: these two are supported as a
+                      * CORRELATION, never as agreement. Pearson r = 0.898 reads as
+                      * excellent agreement and is the wrong statistic for it;
+                      * Bland-Altman in log space puts levels.fyi 1.22x high on average
+                      * with 95% limits from 0.79x to 1.89x, so one city can differ
+                      * more than two-fold. The gap is not simply "what employers pay
+                      * extra" -- it is partly total-comp versus base -- and saying so
+                      * is the difference between a comparison and a blend. */}
+                    Across the 57 cities holding both, this figure runs <b>1.22×</b> the market band
+                    on average, but city by city anywhere from <b>0.79×</b> to <b>1.89×</b>. Read
+                    them side by side; they are never added, averaged or substituted for each other.
                   </>
                 ) : lf?.unavailable_reason ? (
                   <span className="nodata">No levels.fyi figure for {city.name} — {lf.unavailable_reason.slice(0, 120)}…</span>

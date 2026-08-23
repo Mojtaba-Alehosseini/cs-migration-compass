@@ -1825,7 +1825,9 @@ undocumented and the index is proprietary, which is the most likely explanation.
 The site plots an **annual mean** of the monthly values. That was first recorded here as a
 mitigation; on measurement it is not one. Averaging 12 points does cut the noise by root-12, but
 what survives is 4.9-6.2% per annual point, which alone implies a year-over-year spread of 7.0-8.7%
-against an observed 7.3-10.8% and a true trend of only **3.1-4.1% per year**. The annual residual
+against an observed 7.3-10.8% and an underlying trend of only **3.1-4.9% per year** (log-linear
+slope; package 16 replaced the endpoint CAGR first quoted here, which rested on the two noisiest
+quantities in the series and read 3.1-4.1%). The annual residual
 autocorrelation stays at 0.39-0.42. **Noise dominates the annual series too**; no single Teranet
 value, monthly or annual, is interpretable on its own, and only the multi-year direction survives.
 

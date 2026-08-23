@@ -62,6 +62,14 @@ F1_SHIP_THRESHOLD = 0.70
 # rederive_postings_pay.py applies and for the same reason.
 MIN_N_PUBLISH = 30
 
+# The pay figure is restricted to ONE class, not to "any shipped class". SALES
+# ships too, but a software-migration site's advertised-pay figure is about
+# software roles; mixing sales compensation into it would answer a different
+# question. Named here and published in pay_summary_meta so validate_data.py can
+# re-derive the same subset instead of assuming which classes were used -- an
+# assumption that silently made its first recount 1,239 against a real 1,117.
+PAY_SUMMARY_CLASS = "SW"
+
 # §0-D measured advertised pay heaped to round thousands: 77.5% of native
 # annual minima end in 0 or 5, 65% end in 000, terminal-digit uniformity
 # rejected at p < 0.001. A median of heaped data resolves no finer than the
@@ -204,7 +212,7 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
         if r.get("duplicate_of"):
             continue
         pops["deduped"][cc].append(m)
-        if (r.get("title_class") or {}).get("class") == "SW":
+        if (r.get("title_class") or {}).get("class") == PAY_SUMMARY_CLASS:
             pops["software"][cc].append(m)
 
     out = []
@@ -215,7 +223,15 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
         rec = {"country": cc,
                "n_as_published": len(pub), "n_deduped": len(ded), "n_software_only": len(sw),
                "median_as_published_usd_year": round(float(np.median(pub)), 2) if pub else None}
-        if sw:
+        rec["publishable"] = bool(len(sw) >= MIN_N_PUBLISH)
+        # A median is emitted ONLY for a country that clears the floor. An
+        # earlier revision computed one for every country with any software row
+        # and relied on the UI to filter -- so the JSON still carried medians
+        # for DE (n=2), PT (n=1), IN (n=2) and QA (n=2), quotable by anyone
+        # reading the file. validate_data.py's new check caught it. The floor
+        # has to hold in the DATA, not just in the view; a caveat that only one
+        # consumer honours is not a caveat.
+        if sw and rec["publishable"]:
             m, lo, hi, q = median_with_ci(sw)
             rec.update({
                 "median_usd_year": round(m, 2),
@@ -227,14 +243,15 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
             if rec["median_as_published_usd_year"]:
                 rec["delta_vs_as_published_pct"] = round(
                     100 * (m - rec["median_as_published_usd_year"]) / rec["median_as_published_usd_year"], 1)
-        rec["publishable"] = bool(len(sw) >= MIN_N_PUBLISH)
         rec["withheld_reason"] = None if rec["publishable"] else (
             f"only {len(sw)} distinct software roles state an annual pay range; the floor to "
             f"publish a median is {MIN_N_PUBLISH}")
         out.append(rec)
 
     meta = {
-        "basis": "de-duplicated (one row per distinct role), restricted to titles shipped as SW",
+        "basis": f"de-duplicated (one row per distinct role), restricted to titles classified "
+                 f"{PAY_SUMMARY_CLASS}",
+        "restricted_to_class": PAY_SUMMARY_CLASS,
         "min_n_to_publish": MIN_N_PUBLISH,
         "published_rounding_usd": PUBLISH_ROUNDING,
         "rounding_reason": "advertised pay is heaped to round thousands (77.5% of native annual "
@@ -415,6 +432,9 @@ def self_test() -> int:
        us["n_as_published"] == 3 and us["n_software_only"] == 1, str(us["n_software_only"]))
     ck("a country below the floor is withheld with a stated reason",
        not us["publishable"] and "floor to publish" in us["withheld_reason"])
+    ck("a country below the floor carries NO median in the data, not just in the view",
+       "median_usd_year" not in us and "median_published_usd_year" not in us,
+       "the floor must hold in the payload, not only in the UI")
 
     # a country must not pass the floor on duplicated rows alone
     many = [{"id": f"d{i}", "title": "Software Engineer", "country": "XX",

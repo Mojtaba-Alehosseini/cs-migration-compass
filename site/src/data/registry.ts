@@ -113,7 +113,7 @@ export const METRICS: MetricDef[] = [
     source: (c) => ({
       name: 'levels.fyi',
       url: c.salary_levels_fyi?.source,
-      what: 'Total compensation, so partly a definition difference from the market band, not purely an employer premium.',
+      what: 'Total compensation (base + stock + bonus) against a market BASE-pay band — partly a definition difference, not purely an employer premium. Correlated with the market band (r = 0.90) but NOT interchangeable: 1.22x high on average, 95% limits 0.79x-1.89x. Never blended with it.',
     }),
   },
   {

@@ -31,9 +31,10 @@ import { HEADLINE_KEYS, METRIC_BY_KEY, type MetricDef } from '../data/registry'
 import {
   LENS_LABEL, UNSTABLE_METRIC_KEYS, instabilityNote, isNeverAffordable, missingInputs,
   salaryByLens, stabilityOf, type Budget,
+  yearsToHomeRange,
 } from '../data/compute'
 import { UnstableMark } from '../components/Unstable'
-import { money, residencyRange } from '../data/format'
+import { dropApprox, money, residencyRange, yearsRange } from '../data/format'
 import type { Band, City, Country, Lens } from '../data/types'
 import { downloadCsv, downloadJson } from '../lib/export'
 
@@ -444,9 +445,16 @@ const COMPUTED_WHAT: Record<string, (c: City, k: Country | undefined) => string>
   savings: (c, k) =>
     'Net salary − 12 × (rent + living costs).'
     + (c.net_pct != null && k ? ` ${c.net_pct}% of gross survives tax in ${k.name}.` : ''),
-  years_to_home: (c) =>
-    'Price of a 90 m² flat outside the centre ÷ what you save in a year.'
-    + (c.apt_price_outside_usd_m2 != null ? ` Here: 90 × ${money(c.apt_price_outside_usd_m2)}/m².` : ''),
+  years_to_home: (c) => {
+    // Package 16 — state the band the figure occupies under one rounding step
+    // of its own inputs, rather than implying the point is exact.
+    const r = yearsToHomeRange(c, 'mid')
+    const band = r && Math.round(r[1]) !== Math.round(r[0])
+      ? ` Rounding on rent alone moves this to ${yearsRange(r, null)}.` : ''
+    return 'Price of a 90 m² flat outside the centre ÷ what you save in a year.'
+      + (c.apt_price_outside_usd_m2 != null ? ` Here: 90 × ${money(c.apt_price_outside_usd_m2)}/m².` : '')
+      + band
+  },
   m2_per_year: () => 'What a year of saving buys: savings ÷ price per m² outside the centre.',
   salary_net: (c, k) =>
     k?.tax.net_note
@@ -521,8 +529,23 @@ function Cell({ metric, city, value, band, lens }:
   const note = shaky ? instabilityNote(city, band) : null
   const body = (
     <span className="big" style={negative ? { color: 'var(--warn)' } : undefined}>
-      <UnstableMark city={city} band={band} />
-      {negative ? `−${metric.format(Math.abs(value))}` : metric.format(value)}
+      {/* Package 16 — gated by `shaky`, which was already computed two lines up
+        * and already scopes the mark to UNSTABLE_METRIC_KEYS. This rendered
+        * UNCONDITIONALLY before, and UnstableMark's own internal test is only
+        * "is this CITY unstable" — so every metric on an unstable city got the
+        * mark, including ones with no savings input at all. Milan's "Years to
+        * permanent residency" (a visa-policy constant: 5 years, nothing
+        * derived) was labelled "smaller than the rounding on its own inputs".
+        * compute.ts already says why the set exists: "The three savings-derived
+        * metrics share one root cause, so they share one flag." This is that
+        * flag finally being read here. Found by reading the rendered page while
+        * chasing an unrelated "≈~" typography glitch. */}
+      {shaky && <UnstableMark city={city} band={band} />}
+      {/* Package 16 — the "≈" above is the stronger marker; drop the "~" the
+        * formatter adds so the cell does not read "≈~5 yrs". */}
+      {shaky
+        ? dropApprox(negative ? `−${metric.format(Math.abs(value))}` : metric.format(value))
+        : (negative ? `−${metric.format(Math.abs(value))}` : metric.format(value))}
     </span>
   )
 
@@ -600,7 +623,9 @@ function ChartView({ rows, band }: {
                           {shaky && <UnstableMark city={city} band={band} />}
                           {value == null
                             ? 'no data'
-                            : value < 0 ? `−${metric.format(Math.abs(value))}` : metric.format(value)}
+                            : shaky
+                              ? dropApprox(value < 0 ? `−${metric.format(Math.abs(value))}` : metric.format(value))
+                              : (value < 0 ? `−${metric.format(Math.abs(value))}` : metric.format(value))}
                         </b>
                       </div>
                       <div className="track">

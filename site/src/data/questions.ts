@@ -85,8 +85,13 @@ export const QUESTIONS: Question[] = [
     value: (c) => yearsToHome(c, 'mid'),
     scale: xYears,
     ticks: [[2, '2'], [5, '5'], [10, '10'], [20, '20'], [30, '30'], [130, '30+']],
+    // Package 16 — a SECOND copy of the years-to-home formatter, which kept
+    // its own `toFixed(1)` after data/format.ts's was corrected. Same defect,
+    // different file: docs/DATA-FITNESS.md §2 rules one decimal unsupportable
+    // on inputs rounded to $10/month and $100/m². Found by reading the rendered
+    // Compare page, not by grepping for the function that was already fixed.
     fmt: (v) =>
-      v == null ? 'no data' : v >= 130 ? '≈never' : v >= 30 ? `${Math.round(v)} yrs` : `${v.toFixed(1)} yrs`,
+      v == null ? 'no data' : v >= 130 ? '≈never' : `~${Math.round(v)} yrs`,
     secondAxes: [{
       id: 'price_m2',
       label: 'apartment price',

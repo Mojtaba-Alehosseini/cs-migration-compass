@@ -228,15 +228,24 @@ def run() -> None:
         mid = len(s) // 2
         return s[mid] if len(s) % 2 else (s[mid - 1] + s[mid]) / 2
 
-    pay_summary_by_country = sorted(
-        (
-            {"country": cc, "n": len(vals), "median_usd_year": round(_median(vals), 2)}
-            for cc, vals in by_country_usd_year.items() if len(vals) >= MIN_CHART_N
-        ),
-        key=lambda r: -r["median_usd_year"],
-    )[:MAX_CHART_COUNTRIES]
-    log(f"    pay-summary-by-country (USD/year, n>={MIN_CHART_N}): "
-        f"{len(pay_summary_by_country)} countries")
+    # Package 16 — this build step NO LONGER publishes a per-country median.
+    #
+    # It used to emit one for every country with 5+ annual postings, over every
+    # occupation, duplicates included. docs/DATA-FITNESS.md §1 rules that claim
+    # unsupported: the panel is ~28% software, six of seven countries fall below
+    # any defensible sample floor once cleaned, and the cents were manufactured
+    # by FX conversion. The corrected figure needs the classifier and the
+    # de-duplicator, which run AFTER this script, so it is derived by
+    # apply_postings_annotations.py instead.
+    #
+    # Emitting an EMPTY list with a status, rather than the old figure, is
+    # deliberate: if someone rebuilds and forgets the annotation step, the site
+    # shows nothing and validate_data.py fails, instead of silently reverting to
+    # the seven-country figure this project has already ruled unpublishable. A
+    # loud absence beats a quiet regression.
+    pay_summary_by_country: list[dict] = []
+    log(f"    pay-summary-by-country: deferred to apply_postings_annotations.py "
+        f"({len(by_country_usd_year)} countries have annual USD postings to derive from)")
 
     write_processed(SOURCE_ID, {
         "postings": all_postings,
@@ -244,6 +253,10 @@ def run() -> None:
         "seed_companies": seed_companies,
         "country_counts": country_counts,
         "pay_summary_by_country": pay_summary_by_country,
+        "pay_summary_status": (
+            "not yet derived — run scripts/apply_postings_annotations.py, which restricts to "
+            "distinct roles and software titles, applies a 30-posting floor and rounds to the "
+            "nearest $1,000"),
         # Package 14, adversarial review L11 -- MIN_CHART_N used to also live
         # as a second, separately-maintained copy in Postings.tsx, read only
         # by its own on-screen caption text ("5+ per country to appear").

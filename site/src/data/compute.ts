@@ -120,6 +120,24 @@ function yearsToHomeShifted(city: City, band: Band, b: Budget, delta: number): n
   return (HOME_M2 * perM2) / shifted
 }
 
+/** Package 16 — docs/DATA-FITNESS.md §2 rules a one-decimal years-to-home
+ *  unsupportable: the inputs are rounded to $10/month and $100/m², and the
+ *  output is the most skewed field in the dataset (skew 6.38, excess kurtosis
+ *  41.1). This returns the interval the figure actually occupies under one
+ *  rounding step of its own inputs — the same perturbation the stability flag
+ *  uses, reported rather than reduced to a boolean. */
+export function yearsToHomeRange(city: City, band: Band, b: Budget = {}): [number, number] | null {
+  const base = yearsToHome(city, band, b)
+  if (base == null) return null
+  const alts: number[] = [base]
+  for (const delta of [SAVINGS_PRECISION_USD_YEAR, -SAVINGS_PRECISION_USD_YEAR]) {
+    const alt = yearsToHomeShifted(city, band, b, delta)
+    if (alt == null) return null      // one step removes the figure entirely
+    alts.push(alt)
+  }
+  return [Math.min(...alts), Math.max(...alts)]
+}
+
 /** `'unstable'` when one rounding step on the inputs moves years-to-home by more
  *  than a quarter, or removes it altogether. `null` when there is no figure to
  *  judge. Against the live data this flags exactly Milan and Valencia; the worst

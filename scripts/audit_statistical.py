@@ -647,8 +647,27 @@ def tier2_estimator_audit():
     for r in post["pay_summary_by_country"]:
         v = by_cc[r["country"]]
         ci = bootstrap_ci(v, np.median, n_boot=10000)
+        if ci is None:
+            # Package 16 — the summary now lists every country with an annual
+            # USD posting, so countries with n=2 reach here. bootstrap_ci
+            # returns None rather than manufacture an interval from two points.
+            # Recorded as uncomputable instead of skipped, so the row's absence
+            # is never mistaken for the country being fine.
+            rows.append({"country": r["country"], "n": len(v),
+                         "published": r.get("median_as_published_usd_year"),
+                         "ci_lo": None, "ci_hi": None,
+                         "ci_method": "not computable",
+                         "why_no_interval": f"n={len(v)} is below the minimum at which a bootstrap "
+                                            f"of the median describes anything"})
+            continue
         rows.append({"country": r["country"], "n": len(v),
-                     "published": r["median_usd_year"],
+                     # Package 16 — a country below the publication floor no
+                     # longer carries a median at all, which is the point of the
+                     # floor. The as-published figure (every occupation,
+                     # duplicates included) is what this comparison wants, and it
+                     # is kept under its own name precisely so the two are never
+                     # confused.
+                     "published": r.get("median_as_published_usd_year") or r.get("median_usd_year"),
                      "ci_lo": round(ci["lo"]), "ci_hi": round(ci["hi"]),
                      "ci_method": ci["method"],
                      # reported as SIGNED, ASYMMETRIC deviations: these intervals
@@ -659,15 +678,22 @@ def tier2_estimator_audit():
                      "interval_is_just_the_sample_range": ci["equals_sample_range"],
                      "bootstrap_mass_on_point_estimate_pct": ci["bootstrap_mass_at_point_estimate_pct"]})
     thin = [r for r in rows if r["n"] < 12]
+    # Rows too thin for ANY interval carry no lo_pct/hi_pct at all. Ranking over
+    # them with `or 0` would silently treat "no interval" as "a zero-width
+    # interval" and could hand the "widest" title to the wrong country, so they
+    # are excluded from the ranking and counted separately instead.
+    measurable = [r for r in rows if r.get("lo_pct") is not None and r.get("hi_pct") is not None]
     finding("2-C", "published advertised medians carry precision the sample cannot support",
             "DEFECT",
             per_country=rows,
             n_countries_published=len(rows),
             n_below_min_n_for_a_distributional_claim=len(thin),
-            widest={"country": max(rows, key=lambda r: (r["hi_pct"] or 0) - (r["lo_pct"] or 0))["country"],
-                    "span_pct": round(max((r["hi_pct"] or 0) - (r["lo_pct"] or 0) for r in rows), 1)},
+            n_with_no_computable_interval_at_all=len(rows) - len(measurable),
+            widest=({"country": max(measurable, key=lambda r: r["hi_pct"] - r["lo_pct"])["country"],
+                     "span_pct": round(max(r["hi_pct"] - r["lo_pct"] for r in measurable), 1)}
+                    if measurable else None),
             n_intervals_that_are_just_the_sample_range=sum(
-                1 for r in rows if r["interval_is_just_the_sample_range"]),
+                1 for r in rows if r.get("interval_is_just_the_sample_range")),
             method_note="BCa where n permits, percentile below n=12, and each row states which it "
                         "got. An adversarial review found an earlier version computing percentile "
                         "intervals inline while the report claimed BCa; the BCa implementation was "
@@ -881,13 +907,32 @@ def tier6_temporal():
         yrs = sorted(y for y, v in by.items() if len(v) >= 6)
         ann = [st.mean(by[y]) for y in yrs]
         yoy = [100 * (ann[i] - ann[i - 1]) / ann[i - 1] for i in range(1, len(ann))]
-        trend = 100 * ((ann[-1] / ann[0]) ** (1 / (len(ann) - 1)) - 1)
+        # The trend must not be read off the ENDPOINTS. A CAGR is
+        # ann[-1]/ann[0], which inherits the error in both -- the very error
+        # this finding exists to report -- so calling it "the true trend" was
+        # self-contradictory. Package 16 found it while building the site's
+        # replacement for the plotted level. A log-linear OLS slope over all
+        # ~28 annual points averages the per-observation noise down instead of
+        # concentrating it in two values, and it moves the answer materially:
+        # Vancouver reads 3.1%/yr by CAGR and 4.4%/yr by slope. Both are
+        # reported, the slope is the one to quote, and the CONCLUSION is
+        # unchanged either way -- noise alone implies a year-over-year spread
+        # of 7.0-8.7%, which still exceeds the trend on either estimator.
+        ax = np.arange(len(ann), dtype=float)
+        ly = np.log(np.asarray(ann, float))
+        slope = float(np.polyfit(ax, ly, 1)[0])
+        trend = 100 * (math.exp(slope) - 1)
+        cagr = 100 * ((ann[-1] / ann[0]) ** (1 / (len(ann) - 1)) - 1)
         annual[city] = {
             "per_point_log_noise_pct": round(100 * per_pt, 1),
             "implied_annual_mean_noise_pct": round(100 * per_pt / math.sqrt(12), 1),
             "implied_yoy_sd_from_noise_alone_pct": round(100 * per_pt / math.sqrt(12) * math.sqrt(2), 1),
             "observed_yoy_sd_pct": round(float(np.std(yoy)), 1),
-            "true_trend_pct_per_year": round(trend, 1),
+            "trend_pct_per_year_log_linear_slope": round(trend, 1),
+            "trend_pct_per_year_endpoint_cagr": round(cagr, 1),
+            "trend_estimator_note": "quote the slope. The CAGR is a ratio of the first and last "
+                                    "annual values and inherits the per-observation noise in both, "
+                                    "which is the defect this finding reports.",
             "annual_series_residual_acf_lag1": (injected_noise_test(ann, city) or {}).get("residual_acf_lag1"),
         }
 
