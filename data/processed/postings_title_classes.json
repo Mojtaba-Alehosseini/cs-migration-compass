@@ -1,6 +1,6 @@
 {
  "source_id": "postings_title_classes",
- "generated_at": "2026-08-22T15:37:40+00:00",
+ "generated_at": "2026-08-23T01:28:11+00:00",
  "meta": {
   "model": "TF-IDF (word 1-2 + char_wb 2-5) -> calibrated logistic regression",
   "trained_on": "data/labels/title_ground_truth.json (400 hand-labelled titles)",

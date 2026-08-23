@@ -33,7 +33,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import PROCESSED, ROOT, log  # noqa: E402
 
 OUT = ROOT / "data" / "quality_history" / "postings_pay_rederived.json"
-MIN_N_PUBLISH = 30  # see the note in run(); stated, not silently applied
+# Two different sample-size floors exist in this package and they are not the
+# same quantity, so both are named here to stop them being read as one:
+#   * audit_statistical.bootstrap_ci(min_n=12) gates whether an INTERVAL can be
+#     computed at all -- below ~12 a resample cannot explore the distribution
+#     and the interval degenerates towards the sample range.
+#   * MIN_N_PUBLISH gates whether a country median is fit to PUBLISH. 30 is the
+#     conventional floor for treating a median's sampling distribution as
+#     tractable, and it is applied as a hard gate rather than a hint: a country
+#     below it gets no published figure regardless of how tight its interval
+#     happens to look.
+# A country can therefore have a computable CI and still be unpublishable, which
+# is the case for CA (n=6) and GB (n=13).
+MIN_N_PUBLISH = 30
 SEED = 15
 
 
@@ -117,32 +129,61 @@ def run():
             f"{'PUBLISHABLE' if r['publishable_at_min_n'] else 'below min n'}")
 
     # ---- 5.4 selection bias against the site's own ICT-employment series
+    #
+    # The expected share of a pan-European panel is a country's share of
+    # EUROPEAN ICT specialists, which needs an ABSOLUTE count. An earlier
+    # revision normalised `ict_share_of_employment_pct` -- a WITHIN-country
+    # percentage -- across countries, which asks "what fraction of the sum of
+    # national percentages is this country's percentage?", a quantity with no
+    # interpretation: it makes a small country with a high domestic ICT share
+    # look as though it should supply as many postings as a large one with the
+    # same share. `ict_specialists_thousands` is the correct basis and was
+    # sitting unread in the same payload.
     ict = json.loads((PROCESSED / "eurostat_ict_specialists.json").read_text(encoding="utf-8"))["data"]["countries"]
     panel = Counter(p.get("country") for p in rows if p.get("country"))
     tot = sum(panel.values())
     bias = []
     for cc, rec in ict.items():
-        series = (rec or {}).get("ict_share_of_employment_pct") or []
-        last = [x for x in series if isinstance(x, dict) and x.get("value") is not None]
-        if not last:
+        abs_series = [x for x in ((rec or {}).get("ict_specialists_thousands") or [])
+                      if isinstance(x, dict) and x.get("value") is not None]
+        pct_series = [x for x in ((rec or {}).get("ict_share_of_employment_pct") or [])
+                      if isinstance(x, dict) and x.get("value") is not None]
+        if not abs_series:
             continue
-        bias.append({"country": cc, "panel_share_pct": round(100 * panel.get(cc, 0) / tot, 3),
-                     "ict_pct_of_employment": last[-1]["value"],
-                     "ict_year": last[-1].get("year"),
+        bias.append({"country": cc,
+                     "panel_share_pct": round(100 * panel.get(cc, 0) / tot, 3),
+                     "ict_specialists_thousands": abs_series[-1]["value"],
+                     "ict_year": abs_series[-1].get("year"),
+                     "ict_pct_of_employment": pct_series[-1]["value"] if pct_series else None,
                      "panel_postings": panel.get(cc, 0)})
     eu = [b for b in bias if b["panel_postings"] > 0]
+    year_mismatch = sorted({b["ict_year"] for b in eu})
     if eu:
-        ps = np.array([b["panel_share_pct"] for b in eu])
+        ps = np.array([b["panel_share_pct"] for b in eu], float)
         rep = ps / ps.sum()
-        iv = np.array([b["ict_pct_of_employment"] for b in eu], float)
+        iv = np.array([b["ict_specialists_thousands"] for b in eu], float)
         exp = iv / iv.sum()
         for b, r, e in zip(eu, rep, exp):
+            b["expected_share_pct"] = round(100 * float(e), 3)
             b["representativeness"] = round(float(r / e), 3)
+            # Eurostat dropped UK coverage after Brexit, so GB's most recent
+            # observation is 2019 while every other country's is 2025. That is
+            # a real comparability limit and it lands on the country with the
+            # largest over-representation, so it is flagged per row rather
+            # than buried in a footnote.
+            if len(year_mismatch) > 1 and b["ict_year"] != max(year_mismatch):
+                b["basis_year_is_stale"] = (
+                    f"basis year {b['ict_year']} vs {max(year_mismatch)} for the rest of the panel; "
+                    f"Eurostat stopped covering this country. The ratio mixes vintages and is "
+                    f"indicative only.")
         worst = sorted(eu, key=lambda b: b["representativeness"])[:5]
         best = sorted(eu, key=lambda b: -b["representativeness"])[:5]
-        log(f"  selection bias vs Eurostat ICT employment, {len(eu)} EU countries:")
+        log(f"  selection bias vs Eurostat ICT specialist HEADCOUNT, {len(eu)} countries:")
         log(f"    most OVER-represented: {[(b['country'], b['representativeness']) for b in best]}")
         log(f"    most UNDER-represented: {[(b['country'], b['representativeness']) for b in worst]}")
+        if len(year_mismatch) > 1:
+            log(f"    basis years are NOT aligned: {year_mismatch} "
+                f"({[b['country'] for b in eu if b['ict_year'] != max(year_mismatch)]} are stale)")
 
     art = {
         "schema": "package-15 postings pay re-derivation v1",
@@ -152,7 +193,15 @@ def run():
                      "+ near-duplicate rows removed (threshold 0.98, precision 0.958)",
                      "+ restricted to titles the classifier ships as SW"],
         "per_country": out,
-        "selection_bias_vs_eurostat_ict": sorted(eu, key=lambda b: -b["panel_share_pct"]) if eu else [],
+        "selection_bias_vs_eurostat_ict": {
+            "basis": "share of European ICT specialist HEADCOUNT (ict_specialists_thousands), not "
+                     "the within-country employment percentage, which does not normalise across "
+                     "countries of different size",
+            "representativeness": "panel share / expected share; 1.0 is proportional, >1 over-represented",
+            "basis_years": year_mismatch,
+            "basis_years_aligned": len(year_mismatch) == 1,
+            "countries": sorted(eu, key=lambda b: -b["panel_share_pct"]),
+        } if eu else {},
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(art, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")

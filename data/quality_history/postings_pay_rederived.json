@@ -84,86 +84,116 @@
    "publishable_at_min_n": true
   }
  ],
- "selection_bias_vs_eurostat_ict": [
-  {
-   "country": "GB",
-   "panel_share_pct": 4.986,
-   "ict_pct_of_employment": 5.6,
-   "ict_year": 2019,
-   "panel_postings": 2116,
-   "representativeness": 5.59
-  },
-  {
-   "country": "DE",
-   "panel_share_pct": 1.706,
-   "ict_pct_of_employment": 5.5,
-   "ict_year": 2025,
-   "panel_postings": 724,
-   "representativeness": 1.947
-  },
-  {
-   "country": "ES",
-   "panel_share_pct": 0.81,
-   "ict_pct_of_employment": 4.8,
-   "ict_year": 2025,
-   "panel_postings": 344,
-   "representativeness": 1.059
-  },
-  {
-   "country": "NL",
-   "panel_share_pct": 0.723,
-   "ict_pct_of_employment": 7.2,
-   "ict_year": 2025,
-   "panel_postings": 307,
-   "representativeness": 0.63
-  },
-  {
-   "country": "IE",
-   "panel_share_pct": 0.398,
-   "ict_pct_of_employment": 6.2,
-   "ict_year": 2025,
-   "panel_postings": 169,
-   "representativeness": 0.403
-  },
-  {
-   "country": "SE",
-   "panel_share_pct": 0.37,
-   "ict_pct_of_employment": 8.9,
-   "ict_year": 2025,
-   "panel_postings": 157,
-   "representativeness": 0.261
-  },
-  {
-   "country": "FI",
-   "panel_share_pct": 0.325,
-   "ict_pct_of_employment": 7.8,
-   "ict_year": 2025,
-   "panel_postings": 138,
-   "representativeness": 0.262
-  },
-  {
-   "country": "IT",
-   "panel_share_pct": 0.304,
-   "ict_pct_of_employment": 3.8,
-   "ict_year": 2025,
-   "panel_postings": 129,
-   "representativeness": 0.502
-  },
-  {
-   "country": "NO",
-   "panel_share_pct": 0.094,
-   "ict_pct_of_employment": 5.9,
-   "ict_year": 2025,
-   "panel_postings": 40,
-   "representativeness": 0.1
-  },
-  {
-   "country": "DK",
-   "panel_share_pct": 0.064,
-   "ict_pct_of_employment": 5.7,
-   "ict_year": 2025,
-   "panel_postings": 27,
-   "representativeness": 0.07
-  }
- ]
+ "selection_bias_vs_eurostat_ict": {
+  "basis": "share of European ICT specialist HEADCOUNT (ict_specialists_thousands), not the within-country employment percentage, which does not normalise across countries of different size",
+  "representativeness": "panel share / expected share; 1.0 is proportional, >1 over-represented",
+  "basis_years": [
+   2019,
+   2025
+  ],
+  "basis_years_aligned": false,
+  "countries": [
+   {
+    "country": "GB",
+    "panel_share_pct": 4.986,
+    "ict_specialists_thousands": 1807.0,
+    "ict_year": 2019,
+    "ict_pct_of_employment": 5.6,
+    "panel_postings": 2116,
+    "expected_share_pct": 22.608,
+    "representativeness": 2.255,
+    "basis_year_is_stale": "basis year 2019 vs 2025 for the rest of the panel; Eurostat stopped covering this country. The ratio mixes vintages and is indicative only."
+   },
+   {
+    "country": "DE",
+    "panel_share_pct": 1.706,
+    "ict_specialists_thousands": 2319.1,
+    "ict_year": 2025,
+    "ict_pct_of_employment": 5.5,
+    "panel_postings": 724,
+    "expected_share_pct": 29.015,
+    "representativeness": 0.601
+   },
+   {
+    "country": "ES",
+    "panel_share_pct": 0.81,
+    "ict_specialists_thousands": 1060.9,
+    "ict_year": 2025,
+    "ict_pct_of_employment": 4.8,
+    "panel_postings": 344,
+    "expected_share_pct": 13.273,
+    "representativeness": 0.624
+   },
+   {
+    "country": "NL",
+    "panel_share_pct": 0.723,
+    "ict_specialists_thousands": 708.8,
+    "ict_year": 2025,
+    "ict_pct_of_employment": 7.2,
+    "panel_postings": 307,
+    "expected_share_pct": 8.868,
+    "representativeness": 0.834
+   },
+   {
+    "country": "IE",
+    "panel_share_pct": 0.398,
+    "ict_specialists_thousands": 172.4,
+    "ict_year": 2025,
+    "ict_pct_of_employment": 6.2,
+    "panel_postings": 169,
+    "expected_share_pct": 2.157,
+    "representativeness": 1.887
+   },
+   {
+    "country": "SE",
+    "panel_share_pct": 0.37,
+    "ict_specialists_thousands": 470.9,
+    "ict_year": 2025,
+    "ict_pct_of_employment": 8.9,
+    "panel_postings": 157,
+    "expected_share_pct": 5.892,
+    "representativeness": 0.642
+   },
+   {
+    "country": "FI",
+    "panel_share_pct": 0.325,
+    "ict_specialists_thousands": 202.3,
+    "ict_year": 2025,
+    "ict_pct_of_employment": 7.8,
+    "panel_postings": 138,
+    "expected_share_pct": 2.531,
+    "representativeness": 1.313
+   },
+   {
+    "country": "IT",
+    "panel_share_pct": 0.304,
+    "ict_specialists_thousands": 904.8,
+    "ict_year": 2025,
+    "ict_pct_of_employment": 3.8,
+    "panel_postings": 129,
+    "expected_share_pct": 11.32,
+    "representativeness": 0.275
+   },
+   {
+    "country": "NO",
+    "panel_share_pct": 0.094,
+    "ict_specialists_thousands": 171.1,
+    "ict_year": 2025,
+    "ict_pct_of_employment": 5.9,
+    "panel_postings": 40,
+    "expected_share_pct": 2.141,
+    "representativeness": 0.449
+   },
+   {
+    "country": "DK",
+    "panel_share_pct": 0.064,
+    "ict_specialists_thousands": 175.5,
+    "ict_year": 2025,
+    "ict_pct_of_employment": 5.7,
+    "panel_postings": 27,
+    "expected_share_pct": 2.196,
+    "representativeness": 0.298
+   }
+  ]
+ }
 }

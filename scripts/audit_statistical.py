@@ -86,22 +86,51 @@ def estimator_error(vals):
     }
 
 
-def bootstrap_ci(vals, statfn=np.median, n_boot=10000, alpha=0.05, seed=15):
-    """BCa bootstrap interval. Percentile intervals are biased for skewed
-    statistics, which is precisely the case here, so the bias-correction and
-    acceleration terms are not optional decoration."""
+def bootstrap_ci(vals, statfn=np.median, n_boot=10000, alpha=0.05, seed=15,
+                 min_n=12, allow_percentile_fallback=True):
+    """Bootstrap confidence interval, BCa where the sample can support it.
+
+    An adversarial review found this function defined, self-tested, and then
+    NEVER CALLED by the audit: finding 2-C computed its intervals with a plain
+    percentile bootstrap inline while the report claimed "BCa where n permits".
+    It is now the single entry point, and it REPORTS which method it used, so
+    the claim and the computation cannot drift apart again.
+
+    Below `min_n` the BCa machinery is not merely imprecise, it is
+    meaningless -- the jackknife acceleration is estimated from n-1 leave-one-out
+    replicates, and at n=5 the 2.5/97.5 percentiles of the bootstrap are just
+    the sample min and max. Those cases fall back to a percentile interval and
+    say so in `method`, rather than being silently dropped or silently
+    upgraded."""
     a = np.asarray([v for v in vals if v is not None and np.isfinite(v)], float)
     n = a.size
-    if n < 12:
+    if n < 3:
         return None
     rng = np.random.default_rng(seed)
     theta = float(statfn(a))
     boot = np.array([float(statfn(a[rng.integers(0, n, n)])) for _ in range(n_boot)])
+
+    def _pct(why):
+        lo, hi = np.percentile(boot, [100 * alpha / 2, 100 * (1 - alpha / 2)])
+        out = {"statistic": theta, "lo": float(lo), "hi": float(hi),
+               "method": f"percentile ({why})", "n": n, "n_boot": n_boot,
+               "asymmetric": True,
+               "lo_pct_from_statistic": round(100 * (float(lo) - theta) / theta, 2) if theta else None,
+               "hi_pct_from_statistic": round(100 * (float(hi) - theta) / theta, 2) if theta else None}
+        # At tiny n the bootstrap has no resolution: its 2.5/97.5 percentiles
+        # ARE the sample extremes, so the "interval" is the observed range.
+        out["equals_sample_range"] = bool(np.isclose(lo, a.min()) and np.isclose(hi, a.max()))
+        # A heaped field can put most of the bootstrap mass on one atom.
+        out["bootstrap_mass_at_point_estimate_pct"] = round(100 * float(np.mean(boot == theta)), 1)
+        return out
+
+    if n < min_n:
+        if not allow_percentile_fallback:
+            return None
+        return _pct(f"n={n} below BCa floor {min_n}")
     prop = float(np.mean(boot < theta))
     if prop <= 0 or prop >= 1:
-        lo, hi = np.percentile(boot, [100 * alpha / 2, 100 * (1 - alpha / 2)])
-        return {"statistic": theta, "lo": float(lo), "hi": float(hi),
-                "method": "percentile (BCa undefined: degenerate bootstrap)", "n_boot": n_boot}
+        return _pct("BCa undefined: degenerate bootstrap")
     z0 = stats.norm.ppf(prop)
     jack = np.array([float(statfn(np.delete(a, i))) for i in range(n)])
     jbar = jack.mean()
@@ -113,7 +142,13 @@ def bootstrap_ci(vals, statfn=np.median, n_boot=10000, alpha=0.05, seed=15):
     a2 = stats.norm.cdf(z0 + (z0 + zu) / (1 - acc * (z0 + zu)))
     lo, hi = np.percentile(boot, [100 * a1, 100 * a2])
     return {"statistic": theta, "lo": float(lo), "hi": float(hi),
-            "method": "BCa", "n_boot": n_boot, "z0": round(float(z0), 4), "acceleration": round(float(acc), 5)}
+            "method": "BCa", "n": n, "n_boot": n_boot,
+            "z0": round(float(z0), 4), "acceleration": round(float(acc), 5),
+            "asymmetric": True,
+            "lo_pct_from_statistic": round(100 * (float(lo) - theta) / theta, 2) if theta else None,
+            "hi_pct_from_statistic": round(100 * (float(hi) - theta) / theta, 2) if theta else None,
+            "equals_sample_range": bool(np.isclose(lo, a.min()) and np.isclose(hi, a.max())),
+            "bootstrap_mass_at_point_estimate_pct": round(100 * float(np.mean(boot == theta)), 1)}
 
 
 # ------------------------------------------------------- method comparison
@@ -144,14 +179,27 @@ def bland_altman(x, y, log_space=True):
             "loa_lo": bias - 1.96 * sd, "loa_hi": bias + 1.96 * sd}
 
 
-def deming(x, y, lam=1.0):
+def deming(x, y, lam=1.0, log_space=True):
     """Orthogonal/Deming regression. OLS assumes the x variable is measured
     without error; when both sides are estimates (two salary sources, two
     price indices) OLS is biased toward zero slope. lam is the ratio of
-    error variances, 1.0 when neither side is known to be more precise."""
+    error variances, 1.0 when neither side is known to be more precise.
+
+    Runs in LOG space by default. An adversarial review caught this running in
+    raw dollars with lam=1 while the Bland-Altman on the identical pair ran in
+    log space -- and the two then reported slopes on opposite sides of unity
+    (1.125 raw vs 0.878 log). lam=1 in raw dollars asserts equal ABSOLUTE
+    error variances, which is false here: the residual sd is materially larger
+    in the upper half of the salary range than the lower. Errors are
+    proportional, which is exactly why the Bland-Altman was put in log space,
+    so the Deming belongs there too."""
     x = np.asarray(x, float); y = np.asarray(y, float)
     m = np.isfinite(x) & np.isfinite(y)
+    if log_space:
+        m &= (x > 0) & (y > 0)
     x, y = x[m], y[m]
+    if log_space:
+        x, y = np.log(x), np.log(y)
     n = x.size
     if n < 8:
         return None
@@ -163,9 +211,11 @@ def deming(x, y, lam=1.0):
         return None
     disc = (syy - lam * sxx) ** 2 + 4 * lam * sxy ** 2
     slope = ((syy - lam * sxx) + math.sqrt(disc)) / (2 * sxy)
-    return {"n": n, "slope": round(float(slope), 4),
-            "intercept": round(float(my - slope * mx), 2),
-            "ols_slope": round(float(sxy / sxx), 4) if sxx else None}
+    return {"n": n, "space": "log" if log_space else "linear",
+            "slope": round(float(slope), 4),
+            "intercept": round(float(my - slope * mx), 4),
+            "ols_slope": round(float(sxy / sxx), 4) if sxx else None,
+            "lambda": lam}
 
 
 # --------------------------------------------------------- series integrity
@@ -208,7 +258,7 @@ def injected_noise_test(series, label=""):
             "looks_like_injected_noise": bool(r1 < 0.60 and m1 < -0.25)}
 
 
-def benford_mad(vals):
+def benford_mad(vals, homogeneous=False):
     """Benford first-digit MAD. Reported ONLY with its precondition, because
     the precondition is what makes it meaningful: Benford applies to a
     single homogeneous quantity spanning several orders of magnitude with no
@@ -224,8 +274,21 @@ def benford_mad(vals):
     orders = math.log10(max(v) / min(v))
     return {"n": len(v), "mad": round(float(np.mean(np.abs(np.array(obs) - np.array(exp)))), 5),
             "orders_of_magnitude_spanned": round(orders, 2),
-            "precondition_met": bool(orders >= 3),
-            "interpretable": bool(orders >= 3)}
+            "scale_span_ok": bool(orders >= 3),
+            # Benford needs a single HOMOGENEOUS quantity. Pooling every numeric
+            # leaf of a dataset (counts, percentages, prices, indices) breaks
+            # that no matter how many orders of magnitude the pool spans, so
+            # the span test alone must never be read as "precondition met".
+            # An adversarial review found an earlier version reporting
+            # precondition_met: true for all four pooled datasets, which is the
+            # opposite of this finding's own conclusion.
+            "homogeneous_quantity": bool(homogeneous),
+            "precondition_met": bool(orders >= 3 and homogeneous),
+            "interpretable": bool(orders >= 3 and homogeneous),
+            "why_not_interpretable": None if (orders >= 3 and homogeneous) else (
+                "spans fewer than 3 orders of magnitude" if orders < 3 else
+                "pooled heterogeneous fields; Benford requires ONE homogeneous, scale-free "
+                "quantity, and a wide pooled span does not satisfy that")}
 
 
 # ---------------------------------------------------------------- §0 checks
@@ -296,16 +359,51 @@ def reproduce_section_0():
     yc = yld(60, "rent_1br_center_usd_month", "apt_price_center_usd_m2")
     usc = [v for _, cc, v in yc if cc == "US"]
     nonc = [v for _, cc, v in yc if cc != "US"]
+    # The 30 US cities are ONE country; the 42 non-US cities are 14. Treating
+    # 72 clustered observations as 72 independent draws inflates significance,
+    # so the country-collapsed test is reported ALONGSIDE the raw one rather
+    # than instead of it -- and neither is the headline, because the argument
+    # for the conclusion is the non-statistical evidence below.
+    by_country = defaultdict(list)
+    for _, cc, v in y60:
+        by_country[cc].append(v)
+    non_us_country_medians = [st.median(v) for cc, v in by_country.items() if cc != "US"]
+    us_country_median = st.median(by_country["US"])
+    mw_country = stats.mannwhitneyu([us_country_median], non_us_country_medians,
+                                    alternative="greater")
     finding("0-E", "implied US rental yields far above non-US", "REPRODUCED, CAUSE REATTRIBUTED",
             recipe="12 x rent_1br_outside / (60 m2 x apt_price_outside)",
             median_all_pct=round(100 * st.median([v for _, _, v in y60]), 2),
             max_pct=round(100 * max(v for _, _, v in y60), 2),
             us_median_pct=round(100 * st.median(us), 2),
             non_us_median_pct=round(100 * st.median(non), 2),
-            mannwhitney_p=float(f"{mw.pvalue:.3e}"),
+            mannwhitney_p_city_level=float(f"{mw.pvalue:.3e}"),
+            mannwhitney_p_two_sided=float(f"{stats.mannwhitneyu(us, non, alternative='two-sided').pvalue:.3e}"),
+            pseudo_replication={
+                "problem": "the 30 US cities are ONE country and the 42 non-US cities are 14, so "
+                           "the city-level test treats clustered observations as independent draws "
+                           "and its p-value is inflated",
+                "n_non_us_countries": len(non_us_country_medians),
+                "us_country_median_pct": round(100 * us_country_median, 2),
+                "non_us_country_median_pct": round(100 * st.median(non_us_country_medians), 2),
+                "country_collapsed_p": float(f"{mw_country.pvalue:.3e}"),
+                "caveat": "even the country-collapsed test has n=1 in the group of interest, so no "
+                          "p-value here is a sound test of the US-vs-rest contrast. The DIRECTION "
+                          "and SIZE of the gap are solid; the significance level is not, and the "
+                          "conclusion below does not rest on it.",
+            },
             us_median_at_centre_pct=round(100 * st.median(usc), 2),
             non_us_median_at_centre_pct=round(100 * st.median(nonc), 2),
             centre_mannwhitney_p=float(f"{stats.mannwhitneyu(usc, nonc, alternative='greater').pvalue:.3e}"),
+            centre_test_is_not_independent={
+                "spearman_centre_vs_outside_yield": round(float(stats.spearmanr(
+                    [v for _, _, v in yc], [v for _, _, v in y60]).statistic), 4),
+                "why_it_matters": "the centre test runs on the SAME 72 cities and its yields "
+                                  "correlate strongly with the outside ones, so it is a "
+                                  "near-duplicate of the first test rather than independent "
+                                  "corroboration. It still rules OUT the centre/outside "
+                                  "stock-composition story, which is what it was run for.",
+            },
             note="present at the CENTRE too, where both series are apartments, so it is "
                  "not a centre/outside stock-composition artefact; Australia and Canada have "
                  "US-like housing stock and non-US yields, so it is not a new-world-housing "
@@ -399,7 +497,7 @@ def reproduce_section_0():
             elif isinstance(o, (int, float)) and not isinstance(o, bool):
                 vals.append(o)
         walk(_proc(name))
-        r = benford_mad(vals)
+        r = benford_mad(vals, homogeneous=False)
         if r:
             ben[name] = r
     finding("0-J", "Benford is the wrong test for this data", "REPRODUCED AND ENDORSED",
@@ -475,8 +573,8 @@ def tier2_estimator_audit():
         for y, v in by.items():
             if len(v) >= 6:
                 uk_gaps.append(abs(100 * (st.mean(v) - st.median(v)) / st.median(v)))
-    finding("2-B", "every arithmetic mean over a collection in this repo is a temporal average",
-            "NO ESTIMATOR DEFECT",
+    finding("2-B", "where this repo takes an arithmetic mean, and whether each is the wrong estimator",
+            "NO ESTIMATOR DEFECT FOUND, THIRD REVISION OF THIS CLAIM",
             where_site="site/src/data/explore.ts meanPerYear(), 2 call sites (Teranet index, "
                        "UK HPI London price)",
             where_pipeline=[
@@ -489,12 +587,44 @@ def tier2_estimator_audit():
                 "series (month-over-month sd 5.3%), not a cross-sectional average over a "
                 "skewed population.",
             ],
-            correction="An earlier revision of this finding said the site takes EXACTLY ONE "
-                       "arithmetic mean anywhere. That search was scoped to site/src only, and "
-                       "the claim was stated as though it covered the whole repo. Two more exist "
-                       "on the Python side, listed above. Both are temporal averages and neither "
-                       "is an estimator defect, so the conclusion is unchanged -- but the "
-                       "original claim was broader than the evidence behind it.",
+            where_cross_sectional=[
+                "scripts/build_wage_distribution.py:389 — Qatar's overall mean wage as a "
+                "count-weighted mean of the separately-published male and female MEANS. This IS "
+                "a cross-sectional mean over a wage population, and a mean-of-means. It is also "
+                "the arithmetically CORRECT way to pool two sub-population means into an overall "
+                "mean, and Qatar publishes no median, so the site labels the result 'mean'. Not "
+                "an estimator defect; but it falsifies any blanket 'no cross-sectional means' "
+                "claim.",
+                "site/src/data/compute.ts composite() — a weighted mean over normalised metric "
+                "scores driving the weights tool. A mean of user-weighted scores, not of a "
+                "skewed measured quantity.",
+                "site/src/components/ClimateMatcher.tsx — a hand-rolled penalty average over "
+                "climate dimensions. Same character.",
+            ],
+            arithmetic_midpoint_of_advertised_ranges={
+                "where": "scripts/build_postings.py and scripts/rederive_postings_pay.py — every "
+                         "posting is reduced to (usd.min + usd.max) / 2 before any median is "
+                         "taken. That midpoint is the ATOM under gate 5, gate 9 and finding 2-C, "
+                         "and it is an arithmetic mean of a right-skewed range, which is the very "
+                         "thing 2-A quantifies as dangerous.",
+                "measured_effect": "small, because advertised ranges are narrow: max/min has "
+                                   "median 1.30 and p95 2.11. Median arithmetic midpoint 83,994 "
+                                   "vs median geometric midpoint 82,285, a gap of +2.08%; "
+                                   "per-range the two agree within 0.86% for the median row.",
+                "verdict": "real, disclosed, and an order of magnitude smaller than the errors "
+                           "2-A warns about -- but it should have been stated when the headline "
+                           "numbers were first published, not after a review asked.",
+            },
+            correction="This claim has now been wrong TWICE and corrected twice. The first "
+                       "version said the site takes exactly ONE arithmetic mean anywhere; that "
+                       "search covered site/src only. The second added two Python temporal "
+                       "averages and asserted that EVERY mean in the repo is temporal; an "
+                       "adversarial review then found genuine cross-sectional means (Qatar's "
+                       "pooled wage mean above) and, more importantly, the arithmetic midpoint "
+                       "this package's own headline numbers are built on. The conclusion -- no "
+                       "estimator DEFECT -- has survived both corrections, but the scope of the "
+                       "claim was overstated each time, and a reader should weight the verdict "
+                       "accordingly.",
             teranet_within_year_mean_vs_median_pct={"median": round(st.median(gaps), 3),
                                                    "max": round(max(gaps), 3)},
             uk_hpi_within_year_mean_vs_median_pct={"median": round(st.median(uk_gaps), 4),
@@ -513,25 +643,41 @@ def tier2_estimator_audit():
         u = c.get("usd")
         if u:
             by_cc[p["country"]].append((u["min"] + u["max"]) / 2)
-    rng = np.random.default_rng(15)
     rows = []
     for r in post["pay_summary_by_country"]:
-        v = np.array(by_cc[r["country"]], float)
-        n = v.size
-        b = np.array([np.median(v[rng.integers(0, n, n)]) for _ in range(10000)])
-        lo, hi = (float(x) for x in np.percentile(b, [2.5, 97.5]))
-        rows.append({"country": r["country"], "n": int(n),
+        v = by_cc[r["country"]]
+        ci = bootstrap_ci(v, np.median, n_boot=10000)
+        rows.append({"country": r["country"], "n": len(v),
                      "published": r["median_usd_year"],
-                     "ci_lo": round(lo), "ci_hi": round(hi),
-                     "half_width_pct": round(100 * (hi - lo) / 2 / float(np.median(v)), 1)})
+                     "ci_lo": round(ci["lo"]), "ci_hi": round(ci["hi"]),
+                     "ci_method": ci["method"],
+                     # reported as SIGNED, ASYMMETRIC deviations: these intervals
+                     # are not symmetric and a single +/- figure misrepresents
+                     # them (GB is -4.3%/+26.1%, FR -17.4%/+66.7%).
+                     "lo_pct": ci["lo_pct_from_statistic"],
+                     "hi_pct": ci["hi_pct_from_statistic"],
+                     "interval_is_just_the_sample_range": ci["equals_sample_range"],
+                     "bootstrap_mass_on_point_estimate_pct": ci["bootstrap_mass_at_point_estimate_pct"]})
     thin = [r for r in rows if r["n"] < 12]
     finding("2-C", "published advertised medians carry precision the sample cannot support",
             "DEFECT",
             per_country=rows,
             n_countries_published=len(rows),
             n_below_min_n_for_a_distributional_claim=len(thin),
-            worst={"country": max(rows, key=lambda r: r["half_width_pct"])["country"],
-                   "half_width_pct": max(r["half_width_pct"] for r in rows)},
+            widest={"country": max(rows, key=lambda r: (r["hi_pct"] or 0) - (r["lo_pct"] or 0))["country"],
+                    "span_pct": round(max((r["hi_pct"] or 0) - (r["lo_pct"] or 0) for r in rows), 1)},
+            n_intervals_that_are_just_the_sample_range=sum(
+                1 for r in rows if r["interval_is_just_the_sample_range"]),
+            method_note="BCa where n permits, percentile below n=12, and each row states which it "
+                        "got. An adversarial review found an earlier version computing percentile "
+                        "intervals inline while the report claimed BCa; the BCa implementation was "
+                        "self-tested but never actually called.",
+            interval_caveats="These intervals are strongly ASYMMETRIC and are reported as signed "
+                             "lo/hi deviations rather than a single +/-. At the smallest n the "
+                             "bootstrap has no resolution and its 2.5/97.5 percentiles are simply "
+                             "the sample min and max, which is flagged per row. For the US, most "
+                             "of the bootstrap mass sits on a single heaped value, so its very "
+                             "narrow interval reflects heaping as much as precision.",
             note="values are published to the cent from samples as small as n=5. The "
                  "underlying employer-stated figures are heaped (see 0-D); FX conversion "
                  "then manufactures apparent precision that was never in the source.")
@@ -575,15 +721,69 @@ def tier3_structure():
     from sklearn.neighbors import LocalOutlierFactor
     iso = IsolationForest(random_state=15, contamination=0.1).fit_predict(Z) == -1
     lof = LocalOutlierFactor(n_neighbors=15, contamination=0.1).fit_predict(Z) == -1
+
+    # Mahalanobis on this matrix is a LEAKAGE trap, and an adversarial review
+    # caught it as the same failure gate 6 declined a gradient-boosted residual
+    # model to avoid. Three of these nine features are definitional functions
+    # of the others (3-C), so the covariance matrix has near-null directions
+    # that ARE those identities -- and the quadratic form weights a direction
+    # by the INVERSE of its variance, i.e. maximally. np.linalg.pinv does not
+    # rescue this: it keeps full rank and silently inverts a badly conditioned
+    # matrix, which is worse than failing.
     cov = np.cov(Z.T)
+    evals = np.linalg.eigvalsh(cov)
+    cond = float(evals[-1] / evals[0]) if evals[0] > 0 else float("inf")
     d = Z - Z.mean(0)
     md = np.sqrt(np.einsum("ij,jk,ik->i", d, np.linalg.pinv(cov), d))
+    # how much of the distance comes from the near-null (identity) directions?
+    w, V = np.linalg.eigh(cov)
+    proj = (d @ V) ** 2 / np.maximum(w, 1e-12)
+    share_smallest3 = float(proj[:, :3].sum() / proj.sum())
     mah = md > np.sqrt(stats.chi2.ppf(0.975, Z.shape[1]))
-    votes = iso.astype(int) + lof.astype(int) + mah.astype(int)
-    finding("3-A", "multivariate outlier cities, three methods", "QUANTIFIED",
+
+    # An INDEPENDENT-FEATURE variant: drop the three derived features so no
+    # identity can dominate. This is the one whose flags are interpretable.
+    indep_idx = [i for i, f in enumerate(FEATS) if not f.startswith("computed.")]
+    Zi = Z[:, indep_idx]
+    covi = np.cov(Zi.T)
+    di = Zi - Zi.mean(0)
+    mdi = np.sqrt(np.einsum("ij,jk,ik->i", di, np.linalg.inv(covi), di))
+    mah_indep = mdi > np.sqrt(stats.chi2.ppf(0.975, Zi.shape[1]))
+
+    votes = iso.astype(int) + lof.astype(int) + mah_indep.astype(int)
+    finding("3-A", "multivariate outlier cities, three methods", "QUANTIFIED, WITH TWO CAVEATS",
             n_cities=len(ids), features=FEATS, space="log",
             flagged_by_2_or_3_methods=[ids[i] for i in np.where(votes >= 2)[0]],
             flagged_by_exactly_1_method=[ids[i] for i in np.where(votes == 1)[0]],
+            mahalanobis_leakage={
+                "problem": "on the full 9-feature matrix, Mahalanobis measures deviation from "
+                           "identities the pipeline computed itself -- the same failure gate 6 "
+                           "declined a GBM residual model to avoid",
+                "covariance_condition_number": round(cond, 1),
+                "share_of_squared_distance_from_3_smallest_eigen_directions":
+                    round(share_smallest3, 4),
+                "fix": "the reported votes use a Mahalanobis computed on the SIX independently "
+                       "sourced features only (the three computed.* fields dropped), so no "
+                       "definitional identity can drive a flag",
+                "flags_full_matrix": [ids[i] for i in np.where(mah)[0]],
+                "flags_independent_features_only": [ids[i] for i in np.where(mah_indep)[0]],
+            },
+            contamination_artefact={
+                "problem": "IsolationForest and LocalOutlierFactor were both given "
+                           "contamination=0.1, so each flags exactly 10% of cities BY "
+                           "CONSTRUCTION. Neither can ever return 'no multivariate outliers', "
+                           "and most of the votes below are set by that parameter rather than "
+                           "by the data.",
+                "iso_flagged": int(iso.sum()), "lof_flagged": int(lof.sum()),
+                "mahalanobis_flagged": int(mah_indep.sum()),
+                "only_the_mahalanobis_count_is_data_driven": True,
+            },
+            distributional_caveat="the chi-square(9) cut assumes joint multivariate normality "
+                                  "with KNOWN mean and covariance; both are estimated here from "
+                                  "n=72, for which a Beta-based cut is the correct reference. "
+                                  "Checked: it changes the cut from 19.02 to 17.68 and flags the "
+                                  "same cities, so this is a disclosure issue rather than a "
+                                  "result issue.",
             note="flagged is not the same as wrong. These are the genuinely extreme corners of "
                  "a real distribution; the finding is that they dominate any unweighted summary, "
                  "not that their values are defective.")
@@ -664,10 +864,66 @@ def tier6_temporal():
     tests["CONTROL fhfa/" + k] = injected_noise_test([v for v in vals if v], k)
 
     res = {kk: vv for kk, vv in tests.items() if vv}
-    finding("6-A", "Teranet's monthly series carries injected per-observation noise", "DEFECT",
+
+    # H2: the site plots the ANNUAL mean, and an earlier version of this finding
+    # called that "a mitigation rather than an error" without ever testing it.
+    # Averaging 12 points does cut the noise by sqrt(12) -- but the residual
+    # noise that survives is still LARGER than the real year-on-year signal.
+    annual = {}
+    for city, rec in ter.items():
+        s = np.array([r["index"] for r in rec["series"]], float)
+        x = np.arange(s.size)
+        resid = np.log(s) - np.polyval(np.polyfit(x, np.log(s), 3), x)
+        per_pt = float(resid.std(ddof=1))
+        by = defaultdict(list)
+        for r in rec["series"]:
+            by[r["date"][:4]].append(r["index"])
+        yrs = sorted(y for y, v in by.items() if len(v) >= 6)
+        ann = [st.mean(by[y]) for y in yrs]
+        yoy = [100 * (ann[i] - ann[i - 1]) / ann[i - 1] for i in range(1, len(ann))]
+        trend = 100 * ((ann[-1] / ann[0]) ** (1 / (len(ann) - 1)) - 1)
+        annual[city] = {
+            "per_point_log_noise_pct": round(100 * per_pt, 1),
+            "implied_annual_mean_noise_pct": round(100 * per_pt / math.sqrt(12), 1),
+            "implied_yoy_sd_from_noise_alone_pct": round(100 * per_pt / math.sqrt(12) * math.sqrt(2), 1),
+            "observed_yoy_sd_pct": round(float(np.std(yoy)), 1),
+            "true_trend_pct_per_year": round(trend, 1),
+            "annual_series_residual_acf_lag1": (injected_noise_test(ann, city) or {}).get("residual_acf_lag1"),
+        }
+
+    # M6: the payload's own blocks are mutually inconsistent. indx_ch must be
+    # the month-over-month change of indx; it is not, by any reading.
+    raw = json.loads((ROOT / "data" / "raw" / "teranet_national_bank_hpi" /
+                      "indx_data.json").read_text(encoding="utf-8"))["data"]
+    i_ser = [x for x in raw["indx"]["on_toronto"] if x is not None]
+    ch = [x for x in raw["indx_ch"]["on_toronto"] if x is not None]
+    implied = [100 * (i_ser[k] - i_ser[k - 1]) / i_ser[k - 1] for k in range(1, len(i_ser))]
+    m = min(len(implied), len(ch))
+    internal = {
+        "indx_implied_mom_pct_negative": round(100 * sum(1 for v in implied if v < 0) / len(implied), 1),
+        "indx_ch_pct_negative": round(100 * sum(1 for v in ch if v < 0) / len(ch), 1),
+        "correlation_between_them": round(float(np.corrcoef(implied[:m], ch[:m])[0, 1]), 4),
+        "verdict": "indx_ch is defined as the change in indx and cannot be: it is never negative "
+                   "across 27 years while indx implies a negative change in half of all months, "
+                   "and the two are uncorrelated. The payload's blocks do not cohere with each "
+                   "other, so this is not one noisy series inside an otherwise sound feed.",
+    }
+
+    finding("6-A", "Teranet's series is unusable except as a multi-year trend", "DEFECT",
             test="residual autocorrelation about a cubic trend, plus month-over-month ACF",
             results=res,
             flagged=[kk for kk, vv in res.items() if vv["looks_like_injected_noise"]],
+            annual_series_is_NOT_sound=annual,
+            annual_verdict="An earlier version of this finding said the annual mean the site "
+                           "plots was 'a mitigation rather than an error'. That was never tested "
+                           "and it is wrong. Averaging 12 monthly points cuts the per-observation "
+                           "noise (17-21%) to about 5-6% on the annual level, which implies a "
+                           "year-on-year sd of 7.0-8.7% from noise ALONE -- and the observed "
+                           "year-on-year sd is 6.7-10.8%, against a true underlying trend of only "
+                           "3.1-4.1% a year. Year-to-year movement in the published annual series "
+                           "is therefore dominated by noise, not signal. Only a multi-year trend "
+                           "survives.",
+            payload_internal_inconsistency=internal,
             note="Every Teranet city reads residual ACF 0.07-0.27 with MoM ACF near -0.44. The "
                  "two CONTROL indices in this same repo -- UK HPI and FHFA, both real published "
                  "house-price indices -- read residual ACF 0.985. A genuine price index is "
@@ -677,9 +933,11 @@ def tier6_temporal():
                  "(2005-06 = 100.0 for every city), so this is jitter around a real index rather "
                  "than a broken parse. The pipeline transcribes the endpoint faithfully; the "
                  "endpoint is undocumented and the index is proprietary, which is the most "
-                 "likely explanation. Consequence: an individual monthly Teranet value is not "
-                 "interpretable, and the annual mean the site plots is a mitigation (averaging "
-                 "12 points cuts the noise by about sqrt(12)) rather than an error.")
+                 "likely explanation -- though the block-level inconsistency above means "
+                 "'faithfully transcribed but jittered' is too generous a reading: the feed is "
+                 "internally incoherent, not merely noisy. Consequence: neither a monthly value "
+                 "NOR a year-on-year change is interpretable. Only the multi-year trend "
+                 "(Spearman with time 0.909) survives.")
 
 
 def run():
@@ -736,10 +994,20 @@ def self_test():
     true = rng.uniform(50, 200, 200)
     xo = true + rng.normal(0, 20, 200)
     yo = true + rng.normal(0, 20, 200)
-    dm = deming(xo, yo)
+    dm = deming(xo, yo, log_space=False)  # additive-error scenario: linear is the right space
     ck("Deming slope closer to 1 than OLS when both sides carry error",
        abs(dm["slope"] - 1) < abs(dm["ols_slope"] - 1),
        f"deming={dm['slope']} ols={dm['ols_slope']}")
+    # The audit runs Deming in LOG space, because the real pair has
+    # proportional error. Assert the default is that, so the space the
+    # self-test blesses is the space the audit uses.
+    ck("Deming defaults to the log space the audit actually uses",
+       deming(xo, yo)["space"] == "log", deming(xo, yo)["space"])
+    # And that a percentile fallback is labelled rather than passed off as BCa.
+    tiny = bootstrap_ci([1.0, 2, 3, 4, 5], np.median, n_boot=500)
+    ck("small-n interval is labelled percentile, not silently called BCa",
+       tiny["method"].startswith("percentile") and tiny["equals_sample_range"],
+       f"{tiny['method']} range-only={tiny['equals_sample_range']}")
 
     # injected-noise test: smooth random walk vs the same walk plus jitter.
     walk = 100 * np.exp(np.cumsum(rng.normal(0.003, 0.004, 300)))
@@ -755,7 +1023,8 @@ def self_test():
     # Benford: a conforming series passes, a bounded one fails though clean.
     good = np.array([10 ** u for u in rng.uniform(0, 5, 3000)])
     bad = rng.uniform(60000, 90000, 3000)
-    bg, bb = benford_mad(good.tolist()), benford_mad(bad.tolist())
+    bg = benford_mad(good.tolist(), homogeneous=True)
+    bb = benford_mad(bad.tolist(), homogeneous=True)
     ck("Benford passes a genuinely scale-free series", bg["mad"] < 0.006 and bg["precondition_met"],
        f"mad={bg['mad']} orders={bg['orders_of_magnitude_spanned']}")
     ck("Benford's precondition correctly rejects a scale-bounded clean series",

@@ -204,6 +204,106 @@
    }
   ]
  },
+ "as_shipped_rule": {
+  "rule": "argmax, then blanked to 'unclassified' unless the class is shipped AND p >= PROBA_FLOOR",
+  "why_this_differs": "the per_class table above scores pure argmax over all seven classes and is the basis for the ship decision; THIS is what the shipped output achieves. Quote these numbers for the pipeline.",
+  "per_shipped_class": {
+   "HEALTH": {
+    "precision": 0.7917,
+    "recall": 0.6786,
+    "f1": 0.7308,
+    "n_true": 28,
+    "lost_to_floor_or_shiplist": 8
+   },
+   "SALES": {
+    "precision": 0.8889,
+    "recall": 0.7778,
+    "f1": 0.8296,
+    "n_true": 72,
+    "lost_to_floor_or_shiplist": 15
+   },
+   "SW": {
+    "precision": 0.7899,
+    "recall": 0.8103,
+    "f1": 0.8,
+    "n_true": 116,
+    "lost_to_floor_or_shiplist": 21
+   }
+  }
+ },
+ "per_class_f1_ci95": {
+  "ENG": {
+   "f1": 0.64,
+   "ci95": [
+    0.5065,
+    0.7568
+   ],
+   "n_true": 41,
+   "ci_spans_ship_threshold": true
+  },
+  "HEALTH": {
+   "f1": 0.7407,
+   "ci95": [
+    0.5882,
+    0.8571
+   ],
+   "n_true": 28,
+   "ci_spans_ship_threshold": true
+  },
+  "MGT": {
+   "f1": 0.5938,
+   "ci95": [
+    0.5057,
+    0.6796
+   ],
+   "n_true": 86,
+   "ci_spans_ship_threshold": false
+  },
+  "OTHER": {
+   "f1": 0.6182,
+   "ci95": [
+    0.4545,
+    0.7619
+   ],
+   "n_true": 33,
+   "ci_spans_ship_threshold": true
+  },
+  "SALES": {
+   "f1": 0.7808,
+   "ci95": [
+    0.7007,
+    0.8516
+   ],
+   "n_true": 72,
+   "ci_spans_ship_threshold": false
+  },
+  "SVC": {
+   "f1": 0.619,
+   "ci95": [
+    0.4166,
+    0.7755
+   ],
+   "n_true": 24,
+   "ci_spans_ship_threshold": true
+  },
+  "SW": {
+   "f1": 0.822,
+   "ci95": [
+    0.7647,
+    0.8716
+   ],
+   "n_true": 116,
+   "ci_spans_ship_threshold": false
+  }
+ },
+ "selection_disclosure": "both the ship-list and PROBA_FLOOR were chosen on these same 400 out-of-fold predictions. The predictions are honest -- no model saw its own record -- but the THRESHOLDS are fitted to this sample, so the per-class F1 is optimistic as an estimate of a fresh sample by an unmeasured amount. The 25% holdout does not fix this: it is a split of the same 400 records, not an independent sample. Only new hand labels would settle it.",
+ "ship_decisions_within_noise": [
+  "ENG",
+  "HEALTH",
+  "OTHER",
+  "SVC"
+ ],
+ "ship_line_caveat": "the ship rule (F1 >= 0.70 out-of-fold) was fixed before these numbers were seen and is applied as stated. But at n=400 the per-class CIs are wide: four of seven classes have a 95% CI straddling 0.70, so for those the ship/withhold call is not resolvable on this sample. Only SW and SALES sit entirely above the line and only MGT entirely below. HEALTH ships on a point estimate of 0.741 whose interval reaches 0.588 -- treat it as provisional, not as a measured pass.",
  "shipped_classes": [
   "HEALTH",
   "SALES",

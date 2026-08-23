@@ -135,6 +135,47 @@ def evaluate():
                       "coverage_pct": round(100 * float(m.mean()), 2),
                       "accuracy_above_floor": round(float((top_lab[m] == y[m]).mean()), 4) if m.any() else None,
                       "n": int(m.sum())})
+    # --- the rule AS SHIPPED, which is not the rule scored above.
+    # classification_report() scores pure argmax over all seven classes. The
+    # pipeline ships argmax + PROBA_FLOOR + the ship-list, so a row whose top
+    # class is withheld or below the floor becomes "unclassified" -- which is
+    # a RECALL miss the argmax table never charges. Reporting the argmax
+    # numbers as though they described the shipped output would overstate it.
+    as_shipped = np.where(np.isin(top_lab, shipped) & (top_p >= PROBA_FLOOR),
+                          top_lab, "unclassified")
+    shipped_metrics = {}
+    for c in shipped:
+        tp = int(((as_shipped == c) & (y == c)).sum())
+        fp = int(((as_shipped == c) & (y != c)).sum())
+        fn = int(((as_shipped != c) & (y == c)).sum())
+        pr = tp / (tp + fp) if tp + fp else 0.0
+        rc = tp / (tp + fn) if tp + fn else 0.0
+        shipped_metrics[c] = {"precision": round(pr, 4), "recall": round(rc, 4),
+                              "f1": round(2 * pr * rc / (pr + rc), 4) if pr + rc else 0.0,
+                              "n_true": int((y == c).sum()),
+                              "lost_to_floor_or_shiplist": fn - int(((as_shipped != c)
+                                                                    & (as_shipped != "unclassified")
+                                                                    & (y == c)).sum())}
+
+    # --- how much of the per-class F1 is sampling noise. With 24-116 records
+    # per class, a point F1 is not a precise quantity and must not be read as
+    # one, least of all near the 0.70 ship line.
+    rng = np.random.default_rng(SEED)
+    f1_ci = {}
+    for c in labels:
+        boots = []
+        for _ in range(2000):
+            b = rng.integers(0, len(y), len(y))
+            yb, ob = y[b], oof[b]
+            tp = int(((ob == c) & (yb == c)).sum())
+            fp = int(((ob == c) & (yb != c)).sum())
+            fn = int(((ob != c) & (yb == c)).sum())
+            boots.append(2 * tp / (2 * tp + fp + fn) if (2 * tp + fp + fn) else 0.0)
+        lo, hi = np.percentile(boots, [2.5, 97.5])
+        f1_ci[c] = {"f1": round(rep[c]["f1-score"], 4), "ci95": [round(float(lo), 4), round(float(hi), 4)],
+                    "n_true": int((y == c).sum()),
+                    "ci_spans_ship_threshold": bool(lo < F1_SHIP_THRESHOLD <= hi)}
+
     art = {
         "schema": "package-15 title classifier evaluation v1",
         "n_labelled": int(len(X)),
@@ -170,6 +211,31 @@ def evaluate():
                     "PROBA_FLOOR is read off this table",
             "table": calib,
         },
+        "as_shipped_rule": {
+            "rule": "argmax, then blanked to 'unclassified' unless the class is shipped AND "
+                    "p >= PROBA_FLOOR",
+            "why_this_differs": "the per_class table above scores pure argmax over all seven "
+                                "classes and is the basis for the ship decision; THIS is what the "
+                                "shipped output achieves. Quote these numbers for the pipeline.",
+            "per_shipped_class": shipped_metrics,
+        },
+        "per_class_f1_ci95": f1_ci,
+        "selection_disclosure": (
+            "both the ship-list and PROBA_FLOOR were chosen on these same 400 out-of-fold "
+            "predictions. The predictions are honest -- no model saw its own record -- but the "
+            "THRESHOLDS are fitted to this sample, so the per-class F1 is optimistic as an "
+            "estimate of a fresh sample by an unmeasured amount. The 25% holdout does not fix "
+            "this: it is a split of the same 400 records, not an independent sample. Only new "
+            "hand labels would settle it."),
+        "ship_decisions_within_noise": [
+            c for c in labels if f1_ci[c]["ci_spans_ship_threshold"]],
+        "ship_line_caveat": (
+            "the ship rule (F1 >= 0.70 out-of-fold) was fixed before these numbers were seen and "
+            "is applied as stated. But at n=400 the per-class CIs are wide: four of seven classes "
+            "have a 95% CI straddling 0.70, so for those the ship/withhold call is not resolvable "
+            "on this sample. Only SW and SALES sit entirely above the line and only MGT entirely "
+            "below. HEALTH ships on a point estimate of 0.741 whose interval reaches 0.588 -- "
+            "treat it as provisional, not as a measured pass."),
         "shipped_classes": shipped,
         "withheld_classes": [c for c in labels if c not in shipped],
     }
@@ -228,6 +294,12 @@ def run():
         m = oof["per_class"][c]
         flag = "SHIP" if c in art["shipped_classes"] else "withheld"
         log(f"    {c:<7} P={m['precision']:.3f} R={m['recall']:.3f} F1={m['f1']:.3f} n={m['support']:<4} {flag}")
+    for c, m in art["as_shipped_rule"]["per_shipped_class"].items():
+        log(f"    AS SHIPPED {c:<8} P={m['precision']:.3f} R={m['recall']:.3f} F1={m['f1']:.3f} "
+            f"({m['lost_to_floor_or_shiplist']} of {m['n_true']} lost to the floor/ship-list)")
+    if art["ship_decisions_within_noise"]:
+        log(f"  ship/withhold NOT resolvable at n=400 for: "
+            f"{', '.join(art['ship_decisions_within_noise'])} (95% CI straddles {F1_SHIP_THRESHOLD})")
     log(f"  holdout(25%) accuracy {art['holdout_25pct']['accuracy']:.3f} "
         f"macro-F1 {art['holdout_25pct']['macro_f1']:.3f}")
 

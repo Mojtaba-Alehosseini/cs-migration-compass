@@ -1,12 +1,22 @@
 {
  "source_id": "postings_duplicate_clusters",
- "generated_at": "2026-08-22T15:29:04+00:00",
+ "generated_at": "2026-08-23T01:24:11+00:00",
  "meta": {
   "method": "TF-IDF char_wb(3,5) cosine over normalised title|company|location, blocked by company, union-find clustering",
   "threshold": 0.98,
   "blocking_recall_ceiling": "cross-employer duplicates are out of scope by construction",
   "n_oversized_blocks_skipped": 3,
   "evaluation": "data/quality_history/dedupe_eval.json",
+  "removable_is_an_upper_bound": {
+   "with_distinct_url": 2882,
+   "with_distinct_url_pct": 99.9,
+   "with_distinct_posted_at": 969,
+   "with_distinct_posted_at_pct": 33.6,
+   "largest_cluster_rows": 18,
+   "largest_cluster_employer": "U.S. Army Communications Electronics Command",
+   "largest_cluster_distinct_urls": 18,
+   "reading": "these clusters collapse a (title, company, location) triple to one distinct ROLE. They are not a count of scraping artifacts: nearly every removable row has its own URL, and a third sit in clusters spanning several posting dates -- re-announcements and simultaneous openings, which no (title, company, location) label can tell apart from a true duplicate."
+  },
   "note": "nothing is deleted from postings.json; this records WHICH rows are duplicates so a consumer can choose."
  },
  "data": {

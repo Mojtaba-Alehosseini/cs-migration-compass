@@ -92,7 +92,14 @@ def _hill(x, k=None):
     if k >= x.size:
         return None
     denom = float(np.mean(np.log(x[:k])) - math.log(x[k]))
-    return round(1.0 / denom, 4) if denom > 0 else None
+    if denom <= 0:
+        return None
+    alpha = 1.0 / denom
+    # Hill's asymptotic relative sd is alpha/sqrt(k). Returned WITH k so a
+    # reported alpha is reproducible and its precision is visible: at k=5 the
+    # relative sd is ~45%, which is not a usable point estimate on its own.
+    return {"alpha": round(alpha, 4), "k": int(k), "k_over_n": round(k / x.size, 4),
+            "asymptotic_se": round(alpha / math.sqrt(k), 4)}
 
 
 def _granularity(vals):
@@ -109,6 +116,16 @@ def _granularity(vals):
     return None
 
 
+# Pearson's chi-square needs an adequate EXPECTED count per cell. With 10
+# terminal-digit cells the conventional floor (expected >= 5) means n >= 50.
+# An adversarial review found this test previously running at MIN_N = 12 --
+# expected 1.2 per cell -- and emitting p-values like 5e-21 from 13
+# observations, which is the degenerate all-in-one-cell case where the
+# asymptotic approximation simply does not hold. Below this floor the counts
+# are still reported; the p-value and the verdict are not.
+MIN_N_FOR_DIGIT_CHISQ = 50
+
+
 def _digit_heaping(vals):
     """Terminal-digit distribution against uniform. Heaping stops being a
     judgement call once this chi-square rejects: employer-entered pay is a
@@ -120,18 +137,26 @@ def _digit_heaping(vals):
     n = len(ints)
     last = Counter(abs(v) % 10 for v in ints)
     obs = np.array([last.get(d, 0) for d in range(10)], float)
-    try:
-        chi2, p = stats.chisquare(obs)
-    except Exception:
-        chi2, p = float("nan"), float("nan")
+    valid = n >= MIN_N_FOR_DIGIT_CHISQ
+    if valid:
+        try:
+            chi2, p = stats.chisquare(obs)
+        except Exception:
+            chi2, p = float("nan"), float("nan")
+    else:
+        chi2 = p = float("nan")
     return {
         "n": n,
         "ends_in_0_or_5_pct": round(100 * sum(1 for v in ints if v % 5 == 0) / n, 2),
         "ends_in_00_pct": round(100 * sum(1 for v in ints if v % 100 == 0) / n, 2),
         "ends_in_000_pct": round(100 * sum(1 for v in ints if v % 1000 == 0) / n, 2),
+        "chisq_valid": bool(valid),
+        "chisq_min_n": MIN_N_FOR_DIGIT_CHISQ,
+        "expected_per_cell": round(n / 10, 2),
         "terminal_digit_chi2": round(float(chi2), 2) if chi2 == chi2 else None,
         "terminal_digit_p": float(f"{p:.3e}") if p == p else None,
-        "uniform_terminal_digits_rejected": bool(p == p and p < 0.01),
+        # verdict withheld, not defaulted to False, when the test is invalid
+        "uniform_terminal_digits_rejected": bool(p == p and p < 0.01) if valid else None,
     }
 
 
@@ -159,8 +184,15 @@ def _outliers(a):
         lq1, lq3 = np.percentile(la, [25, 75])
         liqr = lq3 - lq1
         sk_out = set(np.where((la < lq1 - 1.5 * liqr) | (la > lq3 + 1.5 * liqr))[0].tolist())
+        sk_distinct = True
     else:
+        # Not positive-and-right-skewed, so there is no log fence to apply and
+        # this rule DEGENERATES to the IQR fence. Reported rather than left
+        # implicit: an adversarial review found the headline "the three rules
+        # disagree" was, on most fields, two rules disagreeing, because this
+        # branch is taken on the majority of them.
         sk_out = set(iqr_out)
+        sk_distinct = False
 
     methods = [iqr_out, rz_out, sk_out]
     consensus = set.intersection(*methods)
@@ -173,6 +205,8 @@ def _outliers(a):
         "flagged_by_any_n": len(any_),
         "methods_disagree": len(any_) != len(consensus),
         "disagreement_n": len(any_) - len(consensus),
+        "skew_fence_is_distinct_from_iqr": bool(sk_distinct),
+        "n_effective_rules": 3 if sk_distinct else 2,
     }
 
 
@@ -230,9 +264,19 @@ def profile_numeric(path, vals):
     p_log = (out["shapiro_log"] or {}).get("p")
     if p_raw is not None and p_log is not None:
         out["better_fit"] = "log-normal" if p_log > p_raw else "normal-ish"
-    out["hill_tail_alpha"] = _hill(a)
-    out["heavy_tailed_infinite_variance"] = bool(
-        out["hill_tail_alpha"] is not None and out["hill_tail_alpha"] < 2)
+        # "log fits better than raw" is a RELATIVE verdict. When both are
+        # rejected outright neither hypothesis describes the field, and the
+        # verdict says only which is less bad -- recorded so it cannot be
+        # read as "this field is log-normal".
+        out["both_hypotheses_rejected"] = bool(p_raw < 1e-10 and p_log < 1e-10)
+    else:
+        out["better_fit"] = None
+        out["comparison_unavailable_reason"] = ("field contains non-positive values, so no log "
+                                                "transform is defined")
+    h = _hill(a)
+    out["hill_tail"] = h
+    out["hill_tail_alpha"] = h["alpha"] if h else None
+    out["heavy_tailed_infinite_variance"] = bool(h and h["alpha"] + 2 * h["asymptotic_se"] < 2)
     out["granularity_step"] = _granularity(a)
     out["digit_heaping"] = _digit_heaping(a)
     out["outliers"] = _outliers(a)
@@ -300,7 +344,13 @@ def run():
         "n_categorical_fields": sum(1 for r in results for f in r.get("fields", [])
                                     if f.get("kind") == "categorical"),
         "summary": {
+            "n_with_raw_vs_log_comparison": sum(1 for f in numeric if f.get("better_fit")),
             "log_normal_better_fit": sum(1 for f in numeric if f.get("better_fit") == "log-normal"),
+            "both_hypotheses_rejected": sum(1 for f in numeric if f.get("both_hypotheses_rejected")),
+            "digit_chisq_invalid_low_n": sum(1 for f in numeric
+                                             if (f.get("digit_heaping") or {}).get("chisq_valid") is False),
+            "outlier_rules_effectively_two": sum(1 for f in numeric
+                                                 if (f.get("outliers") or {}).get("n_effective_rules") == 2),
             "rejects_normal_ad_5pct": sum(1 for f in numeric
                                           if (f.get("anderson_darling_norm") or {}).get("rejects_normal_at_5pct")),
             "heavy_tailed_alpha_lt_2": sum(1 for f in numeric if f.get("heavy_tailed_infinite_variance")),
@@ -316,11 +366,16 @@ def run():
     log(f"  wrote {OUT_JSON.relative_to(ROOT)}")
     s = art["summary"]
     log(f"  {art['n_numeric_fields']} numeric fields, {art['n_categorical_fields']} categorical")
-    log(f"  log-normal fits better than normal: {s['log_normal_better_fit']}")
+    log(f"  log-normal fits better than normal: {s['log_normal_better_fit']} "
+        f"of {s['n_with_raw_vs_log_comparison']} comparable "
+        f"({s['both_hypotheses_rejected']} with BOTH hypotheses rejected)")
     log(f"  Anderson-Darling rejects normality at 5%: {s['rejects_normal_ad_5pct']}")
     log(f"  heavy-tailed (Hill alpha < 2, infinite variance): {s['heavy_tailed_alpha_lt_2']}")
-    log(f"  digit-heaped (terminal-digit uniformity rejected): {s['digit_heaped']}")
-    log(f"  fields where the 3 outlier rules disagree: {s['outlier_methods_disagree']}")
+    log(f"  digit-heaped (terminal-digit uniformity rejected): {s['digit_heaped']} "
+        f"({s['digit_chisq_invalid_low_n']} more had n too small for a valid chi-square)")
+    log(f"  fields where the outlier rules disagree: {s['outlier_methods_disagree']} "
+        f"({s['outlier_rules_effectively_two']} of all fields had only TWO distinct rules — "
+        f"the log fence degenerates to the IQR fence unless the field is positive and skewed)")
     return 0
 
 

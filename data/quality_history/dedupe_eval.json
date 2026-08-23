@@ -15,57 +15,57 @@
  "threshold_tuning": [
   {
    "threshold": 0.7,
-   "tp": 29,
-   "fp": 33,
-   "fn": 3,
-   "precision": 0.4677,
-   "recall": 0.9062,
-   "f1": 0.617
+   "tp": 32,
+   "fp": 71,
+   "fn": 0,
+   "precision": 0.3107,
+   "recall": 1.0,
+   "f1": 0.4741
   },
   {
    "threshold": 0.75,
-   "tp": 29,
-   "fp": 23,
-   "fn": 3,
-   "precision": 0.5577,
-   "recall": 0.9062,
-   "f1": 0.6905
+   "tp": 32,
+   "fp": 58,
+   "fn": 0,
+   "precision": 0.3556,
+   "recall": 1.0,
+   "f1": 0.5246
   },
   {
    "threshold": 0.8,
-   "tp": 27,
-   "fp": 18,
-   "fn": 5,
-   "precision": 0.6,
-   "recall": 0.8438,
-   "f1": 0.7013
+   "tp": 30,
+   "fp": 48,
+   "fn": 2,
+   "precision": 0.3846,
+   "recall": 0.9375,
+   "f1": 0.5455
   },
   {
    "threshold": 0.85,
-   "tp": 27,
-   "fp": 13,
-   "fn": 5,
-   "precision": 0.675,
-   "recall": 0.8438,
-   "f1": 0.75
+   "tp": 30,
+   "fp": 34,
+   "fn": 2,
+   "precision": 0.4688,
+   "recall": 0.9375,
+   "f1": 0.625
   },
   {
    "threshold": 0.9,
-   "tp": 26,
-   "fp": 10,
-   "fn": 6,
-   "precision": 0.7222,
-   "recall": 0.8125,
-   "f1": 0.7647
+   "tp": 27,
+   "fp": 23,
+   "fn": 5,
+   "precision": 0.54,
+   "recall": 0.8438,
+   "f1": 0.6585
   },
   {
    "threshold": 0.95,
    "tp": 24,
-   "fp": 3,
+   "fp": 8,
    "fn": 8,
-   "precision": 0.8889,
+   "precision": 0.75,
    "recall": 0.75,
-   "f1": 0.8136
+   "f1": 0.75
   },
   {
    "threshold": 0.98,
@@ -77,5 +77,25 @@
    "f1": 0.8214
   }
  ],
- "labelled_pairs": 120
+ "labelled_pairs": 120,
+ "recall_ceilings": {
+  "cross_employer": "duplicates posted by two different employers (an agency and the employer) are out of scope by construction",
+  "oversized_blocks_skipped": [
+   {
+    "company": "bjakcareer",
+    "distinct_keys": 1355
+   },
+   {
+    "company": "anduril industries",
+    "distinct_keys": 2110
+   },
+   {
+    "company": "boxlunch",
+    "distinct_keys": 2486
+   }
+  ],
+  "labelled_pairs_not_directly_compared": "15 of the 120 labelled pairs are emitted as no candidate pair in either orientation, and 38 involve a posting that is not its key group's representative. They are still scored, because the table above evaluates cluster co-membership, which is what the script ships.",
+  "note": "companies above the distinct-key cap get EXACT-key de-duplication only, not near-duplicate matching. boxlunch is one of them, which matters because it is the employer used to illustrate duplicates in docs/DATA-FITNESS.md."
+ },
+ "pair_label_caveat": "the ground truth labels (title, company, location) triples only. It cannot see posted_at or the requisition id, so a re-listing and N genuine simultaneous openings are indistinguishable to the labeller -- see the posted_at spread reported alongside the clusters."
 }

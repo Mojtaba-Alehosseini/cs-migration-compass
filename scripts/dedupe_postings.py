@@ -1,9 +1,19 @@
 """Package 15, Tier 5.2 — near-duplicate detection over postings, measured.
 
-Exact matching on (title, company, location) finds 2,000 groups covering
-9.2% of rows. Near-duplicates are the larger problem and exact matching is
-blind to all of them: "Sales Associate" vs "Sales Associate (Part-Time)",
-the same role posted to two cities, the same req re-listed with a suffix.
+Exact matching on the normalised (title, company, location) key finds 2,258
+groups and 2,702 removable rows (5.60%). Near-duplicate matching finds 2,384
+clusters and 2,884 removable (5.98%) -- a genuine superset, but only 182 rows
+larger. Near-duplicates were EXPECTED to be the larger problem; measured, they
+are not, and that expectation is recorded here because it was wrong.
+
+WHAT "REMOVABLE" DOES AND DOES NOT MEAN: it is an upper bound on duplication,
+not a count of scrape artifacts. 99.9% of removable rows carry a distinct URL
+and 33.6% sit in a cluster spanning more than one posted_at. The largest
+cluster is 18 USAJOBS rows with 18 distinct announcement IDs -- a US federal
+role genuinely re-announced over time, not one posting seen 18 times. This
+collapses a (title, company, location) triple to one row, which is the right
+denominator for "how many distinct roles does this panel describe"; it is NOT
+evidence that 6% of the harvest is a scraping defect.
 
 METHOD: TF-IDF character n-grams over a normalised (title | company |
 location) key, then cosine similarity within blocking groups. Blocking by
@@ -155,14 +165,35 @@ def run():
     gt = json.loads(LABELS.read_text(encoding="utf-8")) if LABELS.exists() else None
     tuning = []
     if gt:
+        # Score the CLUSTERING, not the candidate-pair list, because the
+        # clustering is what this script ships and what removes rows.
+        #
+        # An earlier revision asked "was this exact (i, j) tuple emitted above
+        # thr?", which was wrong twice over. First it matched on orientation:
+        # candidate_pairs() emits its TF-IDF representative as (key_a_first,
+        # key_b_first) with keys sorted alphabetically, so 28 of the 120
+        # labelled pairs are emitted only reversed and were counted as misses.
+        # Second, and larger, a representative pair carries the score for its
+        # whole key group -- so for 38 of the 120 labelled pairs at least one
+        # index is not its group's representative, and 15 appear in no
+        # orientation at all, yet union-find still puts them in one cluster by
+        # transitivity. The pair lookup therefore scored transitive successes
+        # as failures and UNDERSTATED recall at loose thresholds.
+        #
+        # Both defects cancel at the shipped 0.98, where the surviving links
+        # are exact-key collisions emitted for every member pair in index
+        # order: P=0.958 R=0.719 is unchanged from the previous revision. The
+        # rows below 0.95 were wrong and are now corrected.
         lut = {(r["i"], r["j"]): r["same_job"] for r in gt["pairs"]}
         for thr in [0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 0.98]:
-            tp = sum(1 for (i, j), same in lut.items()
-                     if same and any(a == i and b == j and s >= thr for a, b, s in pairs))
-            fp = sum(1 for (i, j), same in lut.items()
-                     if not same and any(a == i and b == j and s >= thr for a, b, s in pairs))
-            fn = sum(1 for (i, j), same in lut.items()
-                     if same and not any(a == i and b == j and s >= thr for a, b, s in pairs))
+            lbl = {}
+            for root, members in cluster(post, pairs, thr).items():
+                for i in members:
+                    lbl[i] = root
+            together = {(i, j): lbl.get(i, -1) == lbl.get(j, -2) for i, j in lut}
+            tp = sum(1 for k, same in lut.items() if same and together[k])
+            fp = sum(1 for k, same in lut.items() if not same and together[k])
+            fn = sum(1 for k, same in lut.items() if same and not together[k])
             prec = tp / (tp + fp) if tp + fp else 1.0
             rec = tp / (tp + fn) if tp + fn else 0.0
             f1 = 2 * prec * rec / (prec + rec) if prec + rec else 0.0
@@ -178,6 +209,21 @@ def run():
     groups = cluster(post, pairs, thr)
     near_excess = sum(len(g) - 1 for g in groups.values())
     log(f"  near-duplicate: {len(groups)} clusters, {near_excess} removable ({100*near_excess/N:.2f}%)")
+
+    # What "removable" actually is, measured rather than assumed. A cluster
+    # collapses a (title, company, location) triple; the labels behind the
+    # tuning table see only that triple, so they cannot distinguish one req
+    # scraped twice from a role genuinely re-announced or opened N times.
+    multi_date = multi_url = 0
+    for g in groups.values():
+        idx = sorted(g)
+        if len({post[i].get("posted_at") for i in idx if post[i].get("posted_at")}) > 1:
+            multi_date += len(idx) - 1
+        if len({post[i].get("url") or post[i].get("apply_url") for i in idx}) > 1:
+            multi_url += len(idx) - 1
+    biggest = sorted(max(groups.values(), key=len))
+    log(f"  of {near_excess} removable rows, {multi_url} ({100*multi_url/near_excess:.1f}%) carry a "
+        f"distinct URL and {multi_date} ({100*multi_date/near_excess:.1f}%) a distinct posted_at")
 
     keep = set(range(N))
     for g in groups.values():
@@ -195,6 +241,21 @@ def run():
               "blocking_recall_ceiling": "cross-employer duplicates are out of scope by construction",
               "n_oversized_blocks_skipped": len(skipped),
               "evaluation": "data/quality_history/dedupe_eval.json",
+              "removable_is_an_upper_bound": {
+                  "with_distinct_url": multi_url,
+                  "with_distinct_url_pct": round(100 * multi_url / near_excess, 1),
+                  "with_distinct_posted_at": multi_date,
+                  "with_distinct_posted_at_pct": round(100 * multi_date / near_excess, 1),
+                  "largest_cluster_rows": len(biggest),
+                  "largest_cluster_employer": post[biggest[0]].get("company"),
+                  "largest_cluster_distinct_urls": len({post[i].get("url") or post[i].get("apply_url")
+                                                        for i in biggest}),
+                  "reading": "these clusters collapse a (title, company, location) triple to one "
+                             "distinct ROLE. They are not a count of scraping artifacts: nearly "
+                             "every removable row has its own URL, and a third sit in clusters "
+                             "spanning several posting dates -- re-announcements and simultaneous "
+                             "openings, which no (title, company, location) label can tell apart "
+                             "from a true duplicate."},
               "note": "nothing is deleted from postings.json; this records WHICH rows are "
                       "duplicates so a consumer can choose."})
 
@@ -207,6 +268,22 @@ def run():
                            "removable_pct": round(100 * near_excess / N, 3)},
         "threshold_tuning": tuning,
         "labelled_pairs": (gt or {}).get("n"),
+        "recall_ceilings": {
+            "cross_employer": "duplicates posted by two different employers (an agency and the "
+                              "employer) are out of scope by construction",
+            "oversized_blocks_skipped": skipped,
+            "labelled_pairs_not_directly_compared": "15 of the 120 labelled pairs are emitted as no "
+                    "candidate pair in either orientation, and 38 involve a posting that is not its "
+                    "key group's representative. They are still scored, because the table above "
+                    "evaluates cluster co-membership, which is what the script ships.",
+            "note": "companies above the distinct-key cap get EXACT-key de-duplication only, not "
+                    "near-duplicate matching. boxlunch is one of them, which matters because it "
+                    "is the employer used to illustrate duplicates in docs/DATA-FITNESS.md.",
+        },
+        "pair_label_caveat": "the ground truth labels (title, company, location) triples only. It "
+                             "cannot see posted_at or the requisition id, so a re-listing and N "
+                             "genuine simultaneous openings are indistinguishable to the labeller "
+                             "-- see the posted_at spread reported alongside the clusters.",
     }, indent=1) + "\n", encoding="utf-8")
     record_provenance(
         source_id="postings_duplicate_clusters",

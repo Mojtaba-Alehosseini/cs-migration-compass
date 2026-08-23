@@ -95,10 +95,23 @@
    "max_pct": 15.67,
    "us_median_pct": 10.61,
    "non_us_median_pct": 4.94,
-   "mannwhitney_p": 3.601e-11,
+   "mannwhitney_p_city_level": 3.601e-11,
+   "mannwhitney_p_two_sided": 7.202e-11,
+   "pseudo_replication": {
+    "problem": "the 30 US cities are ONE country and the 42 non-US cities are 14, so the city-level test treats clustered observations as independent draws and its p-value is inflated",
+    "n_non_us_countries": 14,
+    "us_country_median_pct": 10.61,
+    "non_us_country_median_pct": 5.28,
+    "country_collapsed_p": 0.06667,
+    "caveat": "even the country-collapsed test has n=1 in the group of interest, so no p-value here is a sound test of the US-vs-rest contrast. The DIRECTION and SIZE of the gap are solid; the significance level is not, and the conclusion below does not rest on it."
+   },
    "us_median_at_centre_pct": 7.7,
    "non_us_median_at_centre_pct": 4.04,
    "centre_mannwhitney_p": 2.625e-08,
+   "centre_test_is_not_independent": {
+    "spearman_centre_vs_outside_yield": 0.8504,
+    "why_it_matters": "the centre test runs on the SAME 72 cities and its yields correlate strongly with the outside ones, so it is a near-duplicate of the first test rather than independent corroboration. It still rules OUT the centre/outside stock-composition story, which is what it was run for."
+   },
    "note": "present at the CENTRE too, where both series are apartments, so it is not a centre/outside stock-composition artefact; Australia and Canada have US-like housing stock and non-US yields, so it is not a new-world-housing artefact either. Transcription verified faithful against live Numbeo (see gate 11 in REPORT-P15.md)."
   },
   {
@@ -258,9 +271,11 @@
    },
    "deming": {
     "n": 57,
-    "slope": 1.1249,
-    "intercept": 6871.91,
-    "ols_slope": 0.9983
+    "space": "log",
+    "slope": 0.8778,
+    "intercept": 1.587,
+    "ols_slope": 0.7854,
+    "lambda": 1.0
    }
   },
   {
@@ -294,29 +309,41 @@
      "n": 6355,
      "mad": 0.06367,
      "orders_of_magnitude_spanned": 10.23,
-     "precondition_met": true,
-     "interpretable": true
+     "scale_span_ok": true,
+     "homogeneous_quantity": false,
+     "precondition_met": false,
+     "interpretable": false,
+     "why_not_interpretable": "pooled heterogeneous fields; Benford requires ONE homogeneous, scale-free quantity, and a wide pooled span does not satisfy that"
     },
     "bls_oews": {
      "n": 512,
      "mad": 0.085,
      "orders_of_magnitude_spanned": 4.45,
-     "precondition_met": true,
-     "interpretable": true
+     "scale_span_ok": true,
+     "homogeneous_quantity": false,
+     "precondition_met": false,
+     "interpretable": false,
+     "why_not_interpretable": "pooled heterogeneous fields; Benford requires ONE homogeneous, scale-free quantity, and a wide pooled span does not satisfy that"
     },
     "fhfa_hpi_metro": {
      "n": 18642,
      "mad": 0.04883,
      "orders_of_magnitude_spanned": 3.31,
-     "precondition_met": true,
-     "interpretable": true
+     "scale_span_ok": true,
+     "homogeneous_quantity": false,
+     "precondition_met": false,
+     "interpretable": false,
+     "why_not_interpretable": "pooled heterogeneous fields; Benford requires ONE homogeneous, scale-free quantity, and a wide pooled span does not satisfy that"
     },
     "postings": {
      "n": 53174,
      "mad": 0.04446,
      "orders_of_magnitude_spanned": 8.44,
-     "precondition_met": true,
-     "interpretable": true
+     "scale_span_ok": true,
+     "homogeneous_quantity": false,
+     "precondition_met": false,
+     "interpretable": false,
+     "why_not_interpretable": "pooled heterogeneous fields; Benford requires ONE homogeneous, scale-free quantity, and a wide pooled span does not satisfy that"
     }
    },
    "note": "every series reads nonconforming, including ones with no defect. Pooling heterogeneous fields breaks Benford's homogeneity requirement, and scale-bounded or index-normalised fields break its scale-invariance requirement. NOT reported as evidence of anything in this package."
@@ -454,14 +481,24 @@
   },
   {
    "id": "2-B",
-   "title": "every arithmetic mean over a collection in this repo is a temporal average",
-   "verdict": "NO ESTIMATOR DEFECT",
+   "title": "where this repo takes an arithmetic mean, and whether each is the wrong estimator",
+   "verdict": "NO ESTIMATOR DEFECT FOUND, THIRD REVISION OF THIS CLAIM",
    "where_site": "site/src/data/explore.ts meanPerYear(), 2 call sites (Teranet index, UK HPI London price)",
    "where_pipeline": [
     "scripts/src_climate_normals.py:124-125 — daily highs/lows averaged into a monthly normal. An 'average high' IS definitionally a mean; there is no alternative estimator to prefer. Measured anyway: |mean-median| across the 12 monthly values is 0.45 C median, 0.96 C max across 21 cities.",
     "scripts/src_indeed_postings.py:63 — ~30 daily index readings averaged into a monthly index. Same class as meanPerYear: a temporal average of a smooth series (month-over-month sd 5.3%), not a cross-sectional average over a skewed population."
    ],
-   "correction": "An earlier revision of this finding said the site takes EXACTLY ONE arithmetic mean anywhere. That search was scoped to site/src only, and the claim was stated as though it covered the whole repo. Two more exist on the Python side, listed above. Both are temporal averages and neither is an estimator defect, so the conclusion is unchanged -- but the original claim was broader than the evidence behind it.",
+   "where_cross_sectional": [
+    "scripts/build_wage_distribution.py:389 — Qatar's overall mean wage as a count-weighted mean of the separately-published male and female MEANS. This IS a cross-sectional mean over a wage population, and a mean-of-means. It is also the arithmetically CORRECT way to pool two sub-population means into an overall mean, and Qatar publishes no median, so the site labels the result 'mean'. Not an estimator defect; but it falsifies any blanket 'no cross-sectional means' claim.",
+    "site/src/data/compute.ts composite() — a weighted mean over normalised metric scores driving the weights tool. A mean of user-weighted scores, not of a skewed measured quantity.",
+    "site/src/components/ClimateMatcher.tsx — a hand-rolled penalty average over climate dimensions. Same character."
+   ],
+   "arithmetic_midpoint_of_advertised_ranges": {
+    "where": "scripts/build_postings.py and scripts/rederive_postings_pay.py — every posting is reduced to (usd.min + usd.max) / 2 before any median is taken. That midpoint is the ATOM under gate 5, gate 9 and finding 2-C, and it is an arithmetic mean of a right-skewed range, which is the very thing 2-A quantifies as dangerous.",
+    "measured_effect": "small, because advertised ranges are narrow: max/min has median 1.30 and p95 2.11. Median arithmetic midpoint 83,994 vs median geometric midpoint 82,285, a gap of +2.08%; per-range the two agree within 0.86% for the median row.",
+    "verdict": "real, disclosed, and an order of magnitude smaller than the errors 2-A warns about -- but it should have been stated when the headline numbers were first published, not after a review asked."
+   },
+   "correction": "This claim has now been wrong TWICE and corrected twice. The first version said the site takes exactly ONE arithmetic mean anywhere; that search covered site/src only. The second added two Python temporal averages and asserted that EVERY mean in the repo is temporal; an adversarial review then found genuine cross-sectional means (Qatar's pooled wage mean above) and, more importantly, the arithmetic midpoint this package's own headline numbers are built on. The conclusion -- no estimator DEFECT -- has survived both corrections, but the scope of the claim was overstated each time, and a reader should weight the verdict accordingly.",
    "teranet_within_year_mean_vs_median_pct": {
     "median": 2.792,
     "max": 29.22
@@ -483,15 +520,23 @@
      "published": 152969.52,
      "ci_lo": 60177,
      "ci_hi": 317412,
-     "half_width_pct": 84.1
+     "ci_method": "percentile (n=5 below BCa floor 12)",
+     "lo_pct": -60.66,
+     "hi_pct": 107.5,
+     "interval_is_just_the_sample_range": true,
+     "bootstrap_mass_on_point_estimate_pct": 36.2
     },
     {
      "country": "GB",
      "n": 21,
      "published": 151420.6,
-     "ci_lo": 144837,
-     "ci_hi": 190922,
-     "half_width_pct": 15.2
+     "ci_lo": 137179,
+     "ci_hi": 151421,
+     "ci_method": "BCa",
+     "lo_pct": -9.41,
+     "hi_pct": 0.0,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 49.5
     },
     {
      "country": "CA",
@@ -499,7 +544,11 @@
      "published": 113191.58,
      "ci_lo": 85771,
      "ci_hi": 168085,
-     "half_width_pct": 36.4
+     "ci_method": "percentile (n=9 below BCa floor 12)",
+     "lo_pct": -24.22,
+     "hi_pct": 48.5,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 70.4
     },
     {
      "country": "FR",
@@ -507,15 +556,23 @@
      "published": 87150.25,
      "ci_lo": 71978,
      "ci_hi": 145316,
-     "half_width_pct": 42.1
+     "ci_method": "percentile (n=9 below BCa floor 12)",
+     "lo_pct": -17.41,
+     "hi_pct": 66.74,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 27.5
     },
     {
      "country": "US",
      "n": 3980,
      "published": 82994.5,
      "ci_lo": 82994,
-     "ci_hi": 84876,
-     "half_width_pct": 1.1
+     "ci_hi": 84827,
+     "ci_method": "percentile (BCa undefined: degenerate bootstrap)",
+     "lo_pct": 0.0,
+     "hi_pct": 2.21,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 59.1
     },
     {
      "country": "JP",
@@ -523,7 +580,11 @@
      "published": 77254.0,
      "ci_lo": 60177,
      "ci_hi": 85771,
-     "half_width_pct": 16.6
+     "ci_method": "percentile (n=11 below BCa floor 12)",
+     "lo_pct": -22.11,
+     "hi_pct": 11.02,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 24.6
     },
     {
      "country": "NL",
@@ -531,21 +592,28 @@
      "published": 73448.9,
      "ci_lo": 53109,
      "ci_hi": 80794,
-     "half_width_pct": 18.8
+     "ci_method": "percentile (n=7 below BCa floor 12)",
+     "lo_pct": -27.69,
+     "hi_pct": 10.0,
+     "interval_is_just_the_sample_range": false,
+     "bootstrap_mass_on_point_estimate_pct": 77.9
     }
    ],
    "n_countries_published": 7,
    "n_below_min_n_for_a_distributional_claim": 5,
-   "worst": {
+   "widest": {
     "country": "SG",
-    "half_width_pct": 84.1
+    "span_pct": 168.2
    },
+   "n_intervals_that_are_just_the_sample_range": 1,
+   "method_note": "BCa where n permits, percentile below n=12, and each row states which it got. An adversarial review found an earlier version computing percentile intervals inline while the report claimed BCa; the BCa implementation was self-tested but never actually called.",
+   "interval_caveats": "These intervals are strongly ASYMMETRIC and are reported as signed lo/hi deviations rather than a single +/-. At the smallest n the bootstrap has no resolution and its 2.5/97.5 percentiles are simply the sample min and max, which is flagged per row. For the US, most of the bootstrap mass sits on a single heaped value, so its very narrow interval reflects heaping as much as precision.",
    "note": "values are published to the cent from samples as small as n=5. The underlying employer-stated figures are heaped (see 0-D); FX conversion then manufactures apparent precision that was never in the source."
   },
   {
    "id": "3-A",
    "title": "multivariate outlier cities, three methods",
-   "verdict": "QUANTIFIED",
+   "verdict": "QUANTIFIED, WITH TWO CAVEATS",
    "n_cities": 72,
    "features": [
     "salary_usd_year.mid",
@@ -569,11 +637,33 @@
     "valencia"
    ],
    "flagged_by_exactly_1_method": [
-    "abu-dhabi",
     "boston",
     "san_diego",
     "rome"
    ],
+   "mahalanobis_leakage": {
+    "problem": "on the full 9-feature matrix, Mahalanobis measures deviation from identities the pipeline computed itself -- the same failure gate 6 declined a GBM residual model to avoid",
+    "covariance_condition_number": 813108.5,
+    "share_of_squared_distance_from_3_smallest_eigen_directions": 0.3333,
+    "fix": "the reported votes use a Mahalanobis computed on the SIX independently sourced features only (the three computed.* fields dropped), so no definitional identity can drive a flag",
+    "flags_full_matrix": [
+     "abu-dhabi",
+     "doha",
+     "milan",
+     "valencia"
+    ],
+    "flags_independent_features_only": [
+     "doha"
+    ]
+   },
+   "contamination_artefact": {
+    "problem": "IsolationForest and LocalOutlierFactor were both given contamination=0.1, so each flags exactly 10% of cities BY CONSTRUCTION. Neither can ever return 'no multivariate outliers', and most of the votes below are set by that parameter rather than by the data.",
+    "iso_flagged": 8,
+    "lof_flagged": 8,
+    "mahalanobis_flagged": 1,
+    "only_the_mahalanobis_count_is_data_driven": true
+   },
+   "distributional_caveat": "the chi-square(9) cut assumes joint multivariate normality with KNOWN mean and covariance; both are estimated here from n=72, for which a Beta-based cut is the correct reference. Checked: it changes the cut from 19.02 to 17.68 and flags the same cities, so this is a disclosure issue rather than a result issue.",
    "note": "flagged is not the same as wrong. These are the genuinely extreme corners of a real distribution; the finding is that they dominate any unweighted summary, not that their values are defective."
   },
   {
@@ -717,15 +807,17 @@
    },
    "deming": {
     "n": 57,
-    "slope": 1.1249,
-    "intercept": 6871.91,
-    "ols_slope": 0.9983
+    "space": "log",
+    "slope": 0.8778,
+    "intercept": 1.587,
+    "ols_slope": 0.7854,
+    "lambda": 1.0
    },
    "note": "Pearson r=0.8981 would read as excellent agreement. Bland-Altman says levels.fyi runs 1.2197x high on average with 95% limits of agreement from 0.7887x to 1.8864x, so an individual city can differ by more than two-fold. They measure different constructs (market base-pay bands versus self-reported big-tech total compensation) and must not be blended."
   },
   {
    "id": "6-A",
-   "title": "Teranet's monthly series carries injected per-observation noise",
+   "title": "Teranet's series is unusable except as a multi-year trend",
    "verdict": "DEFECT",
    "test": "residual autocorrelation about a cubic trend, plus month-over-month ACF",
    "results": {
@@ -810,7 +902,64 @@
     "teranet/calgary",
     "teranet/halifax"
    ],
-   "note": "Every Teranet city reads residual ACF 0.07-0.27 with MoM ACF near -0.44. The two CONTROL indices in this same repo -- UK HPI and FHFA, both real published house-price indices -- read residual ACF 0.985. A genuine price index is persistent; independent per-point noise destroys that persistence and drives the month-over-month autocorrelation negative. The long-run trend survives (Spearman(time, index) = 0.909 for Toronto) and the stated base holds exactly (2005-06 = 100.0 for every city), so this is jitter around a real index rather than a broken parse. The pipeline transcribes the endpoint faithfully; the endpoint is undocumented and the index is proprietary, which is the most likely explanation. Consequence: an individual monthly Teranet value is not interpretable, and the annual mean the site plots is a mitigation (averaging 12 points cuts the noise by about sqrt(12)) rather than an error."
+   "annual_series_is_NOT_sound": {
+    "toronto": {
+     "per_point_log_noise_pct": 17.1,
+     "implied_annual_mean_noise_pct": 4.9,
+     "implied_yoy_sd_from_noise_alone_pct": 7.0,
+     "observed_yoy_sd_pct": 7.3,
+     "true_trend_pct_per_year": 4.1,
+     "annual_series_residual_acf_lag1": null
+    },
+    "vancouver": {
+     "per_point_log_noise_pct": 20.6,
+     "implied_annual_mean_noise_pct": 5.9,
+     "implied_yoy_sd_from_noise_alone_pct": 8.4,
+     "observed_yoy_sd_pct": 9.4,
+     "true_trend_pct_per_year": 3.1,
+     "annual_series_residual_acf_lag1": 0.3943
+    },
+    "montreal": {
+     "per_point_log_noise_pct": 21.3,
+     "implied_annual_mean_noise_pct": 6.2,
+     "implied_yoy_sd_from_noise_alone_pct": 8.7,
+     "observed_yoy_sd_pct": 10.8,
+     "true_trend_pct_per_year": 4.0,
+     "annual_series_residual_acf_lag1": 0.4232
+    },
+    "ottawa": {
+     "per_point_log_noise_pct": 17.7,
+     "implied_annual_mean_noise_pct": 5.1,
+     "implied_yoy_sd_from_noise_alone_pct": 7.2,
+     "observed_yoy_sd_pct": 6.7,
+     "true_trend_pct_per_year": 4.0,
+     "annual_series_residual_acf_lag1": null
+    },
+    "calgary": {
+     "per_point_log_noise_pct": 17.1,
+     "implied_annual_mean_noise_pct": 4.9,
+     "implied_yoy_sd_from_noise_alone_pct": 7.0,
+     "observed_yoy_sd_pct": 9.8,
+     "true_trend_pct_per_year": 3.4,
+     "annual_series_residual_acf_lag1": null
+    },
+    "halifax": {
+     "per_point_log_noise_pct": 21.3,
+     "implied_annual_mean_noise_pct": 6.1,
+     "implied_yoy_sd_from_noise_alone_pct": 8.7,
+     "observed_yoy_sd_pct": 10.7,
+     "true_trend_pct_per_year": 3.3,
+     "annual_series_residual_acf_lag1": 0.5292
+    }
+   },
+   "annual_verdict": "An earlier version of this finding said the annual mean the site plots was 'a mitigation rather than an error'. That was never tested and it is wrong. Averaging 12 monthly points cuts the per-observation noise (17-21%) to about 5-6% on the annual level, which implies a year-on-year sd of 7.0-8.7% from noise ALONE -- and the observed year-on-year sd is 6.7-10.8%, against a true underlying trend of only 3.1-4.1% a year. Year-to-year movement in the published annual series is therefore dominated by noise, not signal. Only a multi-year trend survives.",
+   "payload_internal_inconsistency": {
+    "indx_implied_mom_pct_negative": 48.8,
+    "indx_ch_pct_negative": 0.0,
+    "correlation_between_them": 0.0473,
+    "verdict": "indx_ch is defined as the change in indx and cannot be: it is never negative across 27 years while indx implies a negative change in half of all months, and the two are uncorrelated. The payload's blocks do not cohere with each other, so this is not one noisy series inside an otherwise sound feed."
+   },
+   "note": "Every Teranet city reads residual ACF 0.07-0.27 with MoM ACF near -0.44. The two CONTROL indices in this same repo -- UK HPI and FHFA, both real published house-price indices -- read residual ACF 0.985. A genuine price index is persistent; independent per-point noise destroys that persistence and drives the month-over-month autocorrelation negative. The long-run trend survives (Spearman(time, index) = 0.909 for Toronto) and the stated base holds exactly (2005-06 = 100.0 for every city), so this is jitter around a real index rather than a broken parse. The pipeline transcribes the endpoint faithfully; the endpoint is undocumented and the index is proprietary, which is the most likely explanation -- though the block-level inconsistency above means 'faithfully transcribed but jittered' is too generous a reading: the feed is internally incoherent, not merely noisy. Consequence: neither a monthly value NOR a year-on-year change is interpretable. Only the multi-year trend (Spearman with time 0.909) survives."
   }
  ]
 }
