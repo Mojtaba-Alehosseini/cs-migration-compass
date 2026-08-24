@@ -777,12 +777,24 @@ def self_test():
     ck("an expired posting DROPS its pair rather than failing the run",
        len(s) == 0 and len(e) == 1 and not ru and e[0]["id"] == "p2")
 
-    # VIOLATION 1 -- an id that resolves to different content. Still fatal.
-    reused_corpus = [corpus[0], _row("p2", "Chief Financial Officer", "Mercy", "LA")]
-    s, e, ru = resolve_labels(reused_corpus, lab)
-    ck("id REUSE is detected (id survives, content changed)",
-       len(ru) == 1 and len(s) == 0,
-       f"{ru[0]['labelled_as']!r} -> {ru[0]['now']!r}" if ru else "not detected")
+    # An id that resolves to different content: detected, the pair drops, and
+    # it is NOT fatal on its own. Fatality is a question of SHARE -- see
+    # MAX_EDITED_ENDPOINT_FRACTION and the run() tests. One edited advert
+    # stopping the pipeline is the bug adversarial review found here, priced at
+    # roughly one blocked run in eleven, and demonstrated in production by run
+    # 32765692993.
+    edited_corpus = [corpus[0], _row("p2", "Chief Financial Officer", "Mercy", "LA")]
+    s, e, ed = resolve_labels(edited_corpus, lab)
+    ck("an EDITED advert is detected and its pair drops", len(ed) == 1 and len(s) == 0,
+       f"{ed[0]['labelled_as']!r} -> {ed[0]['now']!r}" if ed else "not detected")
+
+    # And a formatting-only edit is not a change at all -- norm() calls these
+    # the same job, so it would be incoherent for this script to call the same
+    # difference a broken identity.
+    fmt_corpus = [corpus[0], _row("p2", "Nurse Practitioner (Full-Time)", "Mercy", "LA")]
+    s, e, ed = resolve_labels(fmt_corpus, lab)
+    ck("a formatting-only edit keeps its pair", len(ed) == 0 and len(s) == 1,
+       f"edited={len(ed)} survivors={len(s)}")
 
     # The occurrence ordinal, which is what pair 115 needs: two rows, one id.
     twin = [_row("dup", "Computer Scientist", "AF", "Eglin AFB"),
