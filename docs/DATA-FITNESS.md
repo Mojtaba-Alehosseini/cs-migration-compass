@@ -279,7 +279,9 @@ nothing needs correcting** — but the site should never publish a yield derived
 
 **What the data supports.** Collapsing each distinct (title, company, location) triple to one row -
 at a threshold tuned to **precision 0.958 / recall 0.719** against 120 hand-labelled pairs -
-removes **2,884 rows (5.98%)**.
+removes **2,884 rows (5.98%)**. *(Those four figures are the committed corpus's, where all 120
+labels still resolve. They move with the corpus; the live ones are in `dedupe_eval.json` beside
+the `n` they were computed on — see the note below.)*
 
 Those 120 pairs are **stratified** - 24 from each of five cosine bands, so the threshold is tuned
 where the decision is hard - which means 0.958/0.719 describe that deliberately hard sample, not the
