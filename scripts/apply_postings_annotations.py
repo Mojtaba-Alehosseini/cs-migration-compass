@@ -41,6 +41,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import normalise  # noqa: E402
 from _common import PROCESSED, ROOT, banner, log, record_provenance, write_processed  # noqa: E402
 from postings_common import country_from_location  # noqa: E402
 
@@ -348,19 +349,63 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
             yrs = Counter((r.get("posted_at") or "")[:4] for r in cr)
             prov = Counter(r.get("provider") for r in cr)
             top_p, top_n = prov.most_common(1)[0]
+            # How much of this median rests on a substituted FX rate. Package 17
+            # relaxed year-matching for postings and took GB, CA, FR and DE from
+            # unpublishable to publishable -- but 76-94% of the rows that made
+            # that possible are converted at a NEIGHBOURING year's rate, and the
+            # summary said nothing about it. A figure that exists only because a
+            # rule was relaxed has to carry how far it leaned on the relaxation.
+            # Adversarial review H2.
+            est_n = sum(1 for r in cr
+                        if ((r.get("compensation") or {}).get("usd") or {}).get("estimated"))
+            gaps = [((r.get("compensation") or {}).get("usd") or {}).get("fx_gap_years") or 0
+                    for r in cr]
+            # The USAJOBS sentence is about the US and was emitted verbatim for
+            # every publishable country -- "USAJOBS supplies 872 US software
+            # rows" appeared under the GB, CA, FR and DE figures, where it is
+            # simply false. It is now stated only where it is true, computed
+            # rather than asserted.
+            # title_class is a dict — {"class": "SW", "proba": …} — not a bare
+            # string. Reading it as a string made `fed` silently zero and
+            # dropped a caveat that IS true for the US, which is the same shape
+            # of bug as the one being fixed: a condition that never fires reads
+            # exactly like a condition that is never met.
+            fed = sum(1 for r in rows
+                      if r.get("country") == cc and r.get("provider") == "usajobs"
+                      and (r.get("title_class") or {}).get("class") == PAY_SUMMARY_CLASS
+                      and not r.get("duplicate_of")
+                      and ((r.get("posted_at") or "")[:4] or "0") < str(PUBLISH_FROM_YEAR))
+            caveat = (f"{round(100 * top_n / len(cr))}% of these advertisements come from one "
+                      f"source ({top_p}).")
+            # Only where it is a real selection. GB has exactly one such row,
+            # and "the restriction removes federal listings entirely" is not a
+            # statement worth making about one row -- the same MIN_N_PUBLISH
+            # floor the medians use is the honest bar for saying anything.
+            if fed >= MIN_N_PUBLISH:
+                caveat += (f" The window that makes the figure current also makes it narrower: "
+                           f"USAJOBS supplies {fed:,} {cc} software rows dated before "
+                           f"{PUBLISH_FROM_YEAR}, so the restriction removes federal listings "
+                           f"entirely and leaves private ATS boards. That is a real selection, "
+                           f"stated rather than absorbed.")
+            if est_n:
+                pct = 100 * est_n / len(cr)
+                caveat += (f" {est_n:,} of {len(cr):,} "
+                           f"({'under 1' if 0 < pct < 1 else round(pct)}%) were "
+                           f"converted to USD at a rate from a neighbouring year, never more than "
+                           f"{max(gaps)} away, because no rate for the posting's own year is "
+                           f"published yet. Each such row is an estimate, so this median is one "
+                           f"too" + (" — and is why the figure exists at all." if pct >= 50
+                                     else "."))
             rec["composition"] = {
                 "by_year": {y: k for y, k in sorted(yrs.items())},
                 "by_provider": dict(prov.most_common()),
                 "share_from_latest_year_pct": round(100 * yrs[max(yrs)] / len(cr), 1),
                 "largest_provider": top_p,
                 "largest_provider_share_pct": round(100 * top_n / len(cr), 1),
-                "caveat": (
-                    f"{round(100 * top_n / len(cr))}% of these advertisements come from one "
-                    f"source ({top_p}). The window that makes the figure current also makes it "
-                    f"narrower: USAJOBS supplies 872 US software rows and every one of them is "
-                    f"dated 2016-2018, so restricting to {PUBLISH_FROM_YEAR}+ removes federal "
-                    f"listings entirely and leaves private ATS boards. That is a real selection, "
-                    f"stated rather than absorbed."),
+                "fx_estimated_n": est_n,
+                "fx_estimated_pct": round(100 * est_n / len(cr), 1),
+                "fx_max_gap_years": max(gaps) if gaps else 0,
+                "caveat": caveat,
             }
         # A median is emitted ONLY for a country that clears the floor. An
         # earlier revision computed one for every country with any software row
@@ -405,11 +450,16 @@ def pay_summary(rows: list[dict]) -> tuple[list[dict], dict]:
             "2016-2017 one near $87,000 (29%) — a bimodal mixture wearing a point estimate, and "
             "one that carried no date on screen at all. diagnostic_median_all_years_usd_year "
             "keeps the pooled figure per country so the gap stays visible."),
+        # This used to assert "USAJOBS supplies 872 US software rows" — a
+        # hardcoded count that had drifted to 893, restating a fact the US
+        # composition block now computes and states itself. A number written
+        # down in two places is a number that will disagree with itself; the
+        # per-country caveat is the one that recomputes.
         "vintage_cost": (
-            "the window also removes US federal listings entirely: USAJOBS supplies 872 US "
-            "software rows and every one is dated 2016-2018. The published figure is therefore "
-            "private job-board pay, and each country's `composition` block states its own year "
-            "and provider mix rather than leaving that to be discovered."),
+            "the window has a composition cost as well as a currency benefit: it removes older "
+            "listings wholesale, and where those came from one provider it removes that provider "
+            "with them. Each country's `composition` block states its own year mix, provider mix "
+            "and what the window took out, computed per country rather than asserted once."),
         "undated_rows_excluded": (
             "a row with no posted_at cannot be placed inside or outside the window and is "
             "excluded from the published figure"),
@@ -465,16 +515,28 @@ def run() -> int:
     # from. USD is the pivot because that is what every posting is already
     # converted through; these turn USD into the reader's chosen currency.
     #
-    # The year is stated rather than implied: these are annual period averages
-    # like every other rate here, and a reader switching the page to euros is
-    # entitled to know the conversion is not live.
+    # A FULL YEAR TABLE, not one latest rate. The first version of this shipped
+    # `max(series, key=year)` — a single 2025 rate applied to every posting
+    # regardless of its own year — and adversarial review priced what that
+    # costs: a 2016 US federal listing displayed in Australian dollars came out
+    # 15.4% high, converted across a nine-year gap against a stated ceiling of
+    # two, with no estimate marker, because `estimated` was computed from the
+    # native->USD leg alone. 3,989 rows on the wire are dated 2023 or earlier.
+    #
+    # A second conversion is a conversion. It obeys the same rule as the first:
+    # match the posting's own year, reach no further than MAX_FX_GAP_YEARS, and
+    # say so when it reaches. The client cannot do that from one number, so it
+    # gets the series. Four currencies x 66 years is 4.1 KB.
     fx = json.loads((PROCESSED / "fx_rates.json").read_text(encoding="utf-8"))["data"]
     display_fx = {}
     for code, cc in (("EUR", "DE"), ("GBP", "GB"), ("CAD", "CA"), ("AUD", "AU")):
         got = [x for x in (fx.get(cc) or []) if x.get("value") is not None]
         if got:
             latest = max(got, key=lambda x: x["year"])
-            display_fx[code] = {"rate": latest["value"], "year": latest["year"]}
+            display_fx[code] = {
+                "rate": latest["value"], "year": latest["year"],
+                "by_year": {str(x["year"]): x["value"] for x in sorted(got, key=lambda r: r["year"])},
+            }
 
     country_counts = Counter(r.get("country") or "unresolved" for r in rows)
     n_unresolved = country_counts.get("unresolved", 0)
@@ -492,10 +554,14 @@ def run() -> int:
     d["display_fx"] = {
         "pivot": "USD",
         "rates": display_fx,
+        "max_gap_years": normalise.MAX_FX_GAP_YEARS,
         "source": "fx_rates (World Bank PA.NUS.FCRF, annual period average)",
-        "note": ("multiply a posting's USD figure by these to show it in another currency. Annual "
-                 "period averages, not live rates — the year each one comes from is stated. Native "
-                 "currency needs none of this and is always the default."),
+        "note": ("multiply a posting's USD figure by the rate for THAT POSTING'S OWN YEAR to show "
+                 "it in another currency — by_year carries the whole series for exactly that "
+                 "reason. Annual period averages, not live rates. Reaching past the posting's year "
+                 "is allowed up to max_gap_years and makes the result an estimate, the same rule "
+                 "and the same ceiling the native→USD conversion obeys. Native currency needs none "
+                 "of this and is always the default."),
     }
     d["country_resolution"] = {
         "unresolved": n_unresolved,

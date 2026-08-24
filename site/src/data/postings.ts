@@ -166,6 +166,14 @@ export interface PostingsData {
       share_from_latest_year_pct: number
       largest_provider: string
       largest_provider_share_pct: number
+      /** How much of this median rests on a substituted FX rate. Package 17's
+       *  relaxation is what made GB, CA, FR and DE publishable, and 76-94% of
+       *  their inputs are converted at a neighbouring year's rate — a figure
+       *  that exists because a rule was relaxed has to carry how far it leaned
+       *  on the relaxation. */
+      fx_estimated_n?: number
+      fx_estimated_pct?: number
+      fx_max_gap_years?: number
       caveat: string
     }
     median_as_published_usd_year: number | null
@@ -199,7 +207,14 @@ export interface PostingsData {
   }
   display_fx?: {
     pivot: string
-    rates: Record<string, { rate: number; year: number }>
+    /** `by_year` is the whole series, and is the field the renderer uses: a
+     *  posting is converted at the rate for ITS OWN year, not at the latest
+     *  one. `rate`/`year` are the latest pair, kept only for the caption that
+     *  names the source's vintage. */
+    rates: Record<string, { rate: number; year: number; by_year: Record<string, number> }>
+    /** How far the USD→display leg may reach, mirroring normalise.MAX_FX_GAP_YEARS
+     *  so the client can never be more generous than the pipeline. */
+    max_gap_years?: number
     source: string
     note: string
   }

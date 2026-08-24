@@ -18,10 +18,20 @@
  * comp bands. Filtering is fine. Scoring is a recommendation, and this site does
  * not make recommendations.
  *
- * NOTHING IS DROPPED. Every panel both old routes rendered is composed here
- * from its original component — ProfileForm, CountryRow, PayVsCost and
- * CoverageMap are imported from Position.tsx rather than reimplemented, so they
- * cannot silently diverge. REPORT-P17.md gate 7 itemises the mapping.
+ * WHERE THE OLD PANELS WENT. The position half is composed from its original
+ * components — ProfileForm, CountryRow, PayVsCost and CoverageMap are imported
+ * from Position.tsx rather than reimplemented, so those cannot silently
+ * diverge. The old /postings' browsable list, its filters and its map are NOT
+ * here: they are /openings, which loads the full payload on demand. PublishedPay
+ * below is a rewrite rather than an import, and is therefore the one panel that
+ * CAN drift from what /postings showed.
+ *
+ * An earlier version of this comment said "NOTHING IS DROPPED. Every panel both
+ * old routes rendered is composed here from its original component." Neither
+ * sentence was true, and adversarial review found nine further things the merge
+ * had dropped after the first five were restored. A header that asserts
+ * completeness is a claim like any other and has to survive the same check.
+ * REPORT-P17.md gate 7 itemises the mapping.
  */
 
 import { useCallback, useMemo, useState } from 'react'
@@ -34,20 +44,37 @@ import { loadOccupations, useData } from '../data/store'
 import { loadExperienceGradient, profileFromParams, profileToParams, DEFAULT_OCCUPATION,
   type Profile } from '../data/profile'
 import { loadOpenings, fmtCompany, type Openings as OpeningsData } from '../data/postings'
-import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency }
-  from '../components/PostingPay'
+import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency,
+  type CrossRate } from '../components/PostingPay'
 import { ProfileForm, CountryRow, PayVsCost, CoverageMap } from './Position'
 
 /* ---------------------------------------------------------------- openings --- */
 
 /** Software openings for one country, and — where employers named a figure —
  *  the employer's own range. Never a per-posting estimate, never ranked. */
-function Openings({ name, block, display, crossRates }: {
+function Openings({ name, block, display, crossRates, fxMaxGap, unavailable }: {
   name: string
   block: OpeningsData['by_country'][string] | undefined
   display: DisplayCurrency
-  crossRates: Record<string, number>
+  crossRates: Record<string, CrossRate> | undefined
+  fxMaxGap: number
+  /** The openings summary did not load. Distinct from "nothing is open",
+   *  which is a fact about the harvest — this is a fact about the fetch, and
+   *  saying the first when the second happened is a lie the reader cannot
+   *  check. Adversarial review finding 4. */
+  unavailable?: boolean
 }) {
+  if (unavailable) {
+    return (
+      <Gap title="Openings didn't load" span="s6">
+        <p>
+          The position beside this is unaffected — it comes from the national wage table, which
+          loaded. What failed is the openings summary; reloading usually fixes it, and the full
+          list lives on <Link to="/openings">Every opening</Link>.
+        </p>
+      </Gap>
+    )
+  }
   // Counts and examples arrive pre-computed in a 144 KB file rather than being
   // filtered out of a 24 MB array on the main thread — see loadOpenings(). The
   // software set is the CLASSIFIER's, the same one the published medians use,
@@ -90,7 +117,12 @@ function Openings({ name, block, display, crossRates }: {
       <div className="sub">
         <b className="tnum">{named.length}</b> of <b className="tnum">{software.length}</b> software
         openings in {name} name a figure — <b className="tnum">{share}%</b>. The employer's own range
-        is shown; nothing here is estimated per posting, and the list is not ranked.
+        is shown, never this site's estimate of what a job pays, and the list is not ranked.
+        {display !== 'native' && (
+          <> Converted, it is that same range in another unit; a <sup className="fx-estimate">≈</sup>
+            {' '}marks one whose rate came from a different year, and opens the method that says
+            which.</>
+        )}
       </div>
       <table className="tbl" style={{ marginTop: 8 }}>
         <caption className="sr-only">
@@ -112,7 +144,8 @@ function Openings({ name, block, display, crossRates }: {
                   : p.title}
                 <div className="sub">{fmtCompany(p.company, p.company_slug)}</div>
               </th>
-              <td><PostingPay comp={p.compensation} display={display} crossRates={crossRates} /></td>
+              <td><PostingPay comp={p.compensation} display={display}
+                crossRates={crossRates} maxGapYears={fxMaxGap} /></td>
               <td className="sub" style={{ whiteSpace: 'nowrap' }}>
                 {p.posted_at?.slice(0, 10) ?? '—'}
               </td>
@@ -123,7 +156,12 @@ function Openings({ name, block, display, crossRates }: {
       {named.length > examples.length && (
         <p className="sub" style={{ marginTop: 6 }}>
           Showing {examples.length} of {named.length}. Not ranked — these are the most recent.{' '}
-          <Link to="/data/postings-seed">The full list</Link> loads on demand.
+          {/* /openings, not /data/postings-seed. The seed list holds the
+            * companies and sources; it has never held the advertisements. The
+            * previous commit removed one copy of this wrong signpost and left
+            * this one, which renders six times on today's page. Adversarial
+            * review finding 9. */}
+          <Link to="/openings">The full list</Link> loads on demand.
         </p>
       )}
     </>
@@ -135,9 +173,19 @@ function Openings({ name, block, display, crossRates }: {
  *  the fourth is whether anyone is actually advertising. A country can answer
  *  the position question perfectly and have nothing open, or the reverse, and a
  *  visitor is entitled to know which before filling anything in. */
-function Pips({ on, of, faint }: { on: number; of: number; faint?: boolean }) {
+function Pips({ on, of, faint, label }: {
+  on: number; of: number; faint?: boolean
+  /** What these pips MEAN, in words. The pips themselves are decorative
+   *  `<i aria-hidden>`s, so without this the four data columns of the coverage
+   *  matrix announced four empty cells — the pay-basis depth and the experience
+   *  axis were unavailable to assistive tech entirely, and Lighthouse cannot
+   *  see that because there is no rule against a cell being empty. Adversarial
+   *  review, accessibility 1. */
+  label: string
+}) {
   return (
     <span style={{ display: 'inline-flex', gap: 2 }}>
+      <span className="sr-only">{label}</span>
       {Array.from({ length: of }, (_, i) => (
         <i key={i} aria-hidden="true" style={{
           width: 15, height: 7, borderRadius: 2,
@@ -191,6 +239,18 @@ function PublishedPay({ summary, meta, minN }: {
           <span style={{ fontSize: 'var(--text-lg)', fontWeight: 600 }}>{r.country}</span>
           <span style={{ fontSize: 'var(--text-lg)' }} className="tnum">
             ${Math.round(r.median_published_usd_year!).toLocaleString()}
+            {/* Most of GB, CA, FR and DE's inputs are converted at a
+              * neighbouring year's rate — 76-94% of them — which is why those
+              * four are publishable at all this package. A median resting
+              * mostly on substituted rates wears the same mark its inputs do.
+              * Adversarial review H2. */}
+            {(r.composition?.fx_estimated_pct ?? 0) >= 50 && (
+              <sup className="fx-estimate"
+                aria-label={`Estimated: ${r.composition!.fx_estimated_pct}% of the advertisements `
+                  + `behind this median were converted at a neighbouring year's rate`}
+                title={`${r.composition!.fx_estimated_pct}% of these were converted at a rate from `
+                  + `a neighbouring year — see the composition below`}>≈</sup>
+            )}
           </span>
           <span className="sub">
             95% CI ${Math.round(r.ci_lo_published_usd_year!).toLocaleString()}–$
@@ -200,21 +260,43 @@ function PublishedPay({ summary, meta, minN }: {
           </span>
         </div>
       ))}
-      {publishable[0]?.composition && (
-        <p className="sub" style={{ marginTop: 10 }}>
-          <b>What the {publishable[0]!.country} figure is made of.</b>{' '}
-          {Object.entries(publishable[0]!.composition!.by_year)
-            .map(([y, k]) => `${y}: ${k.toLocaleString()}`).join(' · ')}
-          {' — '}{publishable[0]!.composition!.share_from_latest_year_pct}% from the most recent
-          year, and {publishable[0]!.composition!.largest_provider_share_pct}% from a single source
-          ({publishable[0]!.composition!.largest_provider}). Restricting to recent postings also
-          removes US federal listings entirely, since every one of those is dated 2016–2018.
+      {/* EVERY publishable country's composition, not just the first. Five
+        * countries ship a composition block; this rendered only publishable[0]
+        * — the US — so GB, CA, FR and DE showed a headline median with no
+        * account of what it was made of, in the same package that made them
+        * publishable. Package 16's stated lesson was that a median with no
+        * description of its own composition is how the US figure came to be 77%
+        * nine-year-old federal listings without anyone noticing. The closing
+        * caveat is each country's OWN, computed server-side — the hardcoded
+        * sentence about US federal listings used to be printed under all five.
+        * Adversarial review H2. */}
+      {publishable.some((r) => r.composition) && (
+        <div style={{ marginTop: 10 }}>
+          {publishable.filter((r) => r.composition).map((r) => (
+            <p key={r.country} className="sub" style={{ marginTop: 8, maxWidth: '78ch' }}>
+              <b>What the {r.country} figure is made of.</b>{' '}
+              {Object.entries(r.composition!.by_year)
+                .map(([y, k]) => `${y}: ${k.toLocaleString()}`).join(' · ')}
+              {' — '}{r.composition!.share_from_latest_year_pct}% from the most recent year.{' '}
+              {/* The provider share is NOT repeated here: the caveat below
+                * opens with it, computed server-side, and printing both gave
+                * "96.7% from a single source (ashby). 97% of these
+                * advertisements come from one source (ashby)." */}
+              {r.composition!.caveat}
+            </p>
+          ))}
+        </div>
+      )}
+      {/* Conditional, because with nothing publishable this panel renders an
+        * <h2>, no median, and then a sentence about rounding a figure that is
+        * not there. Unreachable today at five publishable countries; it was one
+        * withheld country away from being reachable at one. Adversarial review D7. */}
+      {publishable.length > 0 && (
+        <p className="sub" style={{ marginTop: 8 }}>
+          Rounded to the nearest $1,000 because advertised pay is heaped to round thousands — 77.5%
+          of native annual minima end in 0 or 5 — so a median of it resolves no finer.
         </p>
       )}
-      <p className="sub" style={{ marginTop: 8 }}>
-        Rounded to the nearest $1,000 because advertised pay is heaped to round thousands — 77.5% of
-        native annual minima end in 0 or 5 — so a median of it resolves no finer.
-      </p>
       {withheld.length > 0 && (
         <div style={{ marginTop: 14 }}>
           <h3 style={{ fontSize: 'var(--text-sm)', margin: '0 0 6px' }}>Too few to quote a median</h3>
@@ -284,9 +366,11 @@ export function Work() {
   const loadError = wagesError ?? gradientError ?? occupationsError ?? postingsError
 
   const [display, setDisplay] = useState<DisplayCurrency>('native')
-  const crossRates = useMemo(() => Object.fromEntries(
-    Object.entries(postings?.display_fx?.rates ?? {}).map(([k, v]) => [k, v.rate]),
-  ), [postings])
+  // The whole rate object, not `.rate` — PostingPay matches each posting's own
+  // year against `by_year`. Mapping this down to one number is what made every
+  // cross-rate conversion silently use 2025.
+  const crossRates = postings?.display_fx?.rates
+  const fxMaxGap = postings?.display_fx?.max_gap_years ?? 0
   const byCountry = postings?.by_country ?? {}
 
   const wageByCountry = useMemo(() => {
@@ -314,18 +398,43 @@ export function Work() {
    * at all (Italy) are appended, because "no table" is itself an answer this
    * page owes the reader. */
   const sections = useMemo(() => {
-    const out: { key: string; cc: string; row: WageCountry | undefined }[] = []
+    const out: { key: string; cc: string; row: WageCountry | undefined; firstOfCountry: boolean }[] = []
     const seenFirst = new Set<string>()
     for (const row of wages?.countries ?? []) {
       const cc = row.country.split('-')[0]!
       if (!spine.includes(cc)) continue
       const first = !seenFirst.has(cc)
       seenFirst.add(cc)
-      out.push({ key: first && row.country !== cc ? `${cc}-first` : row.country, cc, row })
+      // The key is the wage row's OWN code and nothing else. An earlier version
+      // wrote `${cc}-first` here as a sentinel for "render the openings panel
+      // against this one", and it leaked straight into the visible heading:
+      // Canada's first section read "Canada · CA-first" while the row three
+      // lines below it read CA-21231. The sentinel is a boolean now, because
+      // that is what it always was. Adversarial review finding 5.
+      out.push({ key: row.country, cc, row, firstOfCountry: first })
     }
-    for (const cc of spine) if (!seenFirst.has(cc)) out.push({ key: cc, cc, row: undefined })
-    return out.sort((a, b) => a.cc.localeCompare(b.cc))
+    for (const cc of spine) if (!seenFirst.has(cc)) out.push({ key: cc, cc, row: undefined, firstOfCountry: true })
+    return out.sort((a, b) => a.cc.localeCompare(b.cc) || a.key.localeCompare(b.key))
   }, [wages, spine])
+
+  /** Where the coverage matrix's link for a country should land: its FIRST
+   *  section. Canada has two, and two sections cannot share one id — the
+   *  earlier `id={`c-${cc}`}` gave both of Canada's the same one. */
+  const anchorFor = useMemo(() => {
+    const m = new Map<string, string>()
+    for (const s of sections) if (!m.has(s.cc)) m.set(s.cc, s.key)
+    return m
+  }, [sections])
+
+  /** Each absent country's own stated reason, keyed by code. The wage build
+   *  records why a country has no row — "ISTAT publishes no occupation-level
+   *  (CP2011) earnings flow at all, per src_salary_it.py" — and the gap where
+   *  the table would be is the place a reader asks the question. */
+  const absentReason = useMemo(() => {
+    const m = new Map<string, string>()
+    for (const a of wages?.absent ?? []) m.set(a.country.split('-')[0]!, a.reason)
+    return m
+  }, [wages])
 
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
@@ -377,14 +486,22 @@ export function Work() {
           table's own median, shifted the same way — always labelled, never a source citation.
           Openings: real advertisements classified as software.
         </div>
-        {!wages || !gradient || !postings ? (
+        {/* The position half needs `wages` and `gradient`. It does NOT need the
+          * openings summary, and gating it on `postings` meant one failed fetch
+          * of a 150 KB convenience file replaced fifteen countries' positions
+          * with a skeleton that announced aria-busy forever — indistinguishable
+          * from still loading, on data that had already arrived. The openings
+          * half degrades on its own below. Adversarial review finding 4. */}
+        {!wages || !gradient ? (
           <ChartSkeleton height={320} />
         ) : !supported ? (
           <Gap title="No wage data resolved for this occupation yet" span="s6">
             <p>
-              Only software developers (ISCO-08 2512) has resolved wage data across the spine. The
-              openings below are unaffected — they are classified from job titles, not from the
-              occupation crosswalk.
+              Only software developers (ISCO-08 2512) has resolved wage data across the spine, so
+              there is no position to show for this one and no country sections below. Switch back
+              to Software developers to see real positions; the openings themselves are classified
+              from job titles rather than from the occupation crosswalk, so they are unaffected by
+              this and are listed in full on <Link to="/openings">Every opening</Link>.
             </p>
           </Gap>
         ) : (
@@ -413,6 +530,7 @@ export function Work() {
                   const named = { length: b?.named ?? 0 }
                   const reading = !row ? 'No wage table for this occupation'
                     : !d?.ranks ? 'No rank — only a central figure'
+                    : !postings ? 'Ranks; openings didn’t load'
                     : open.length === 0 ? 'Ranks; nothing open'
                     : named.length === 0 ? `Ranks; ${open.length} open, none name pay`
                     : `Ranks; ${named.length} of ${open.length} name pay`
@@ -420,23 +538,50 @@ export function Work() {
                     <tr key={cc}
                       >
                       <th scope="row" style={{ fontWeight: 'var(--weight-normal)' }}>
-                        <a href={`#c-${cc}`}
-                          style={{ background: 'none', border: 0, font: 'inherit',
+                        {/* A BUTTON, not an anchor. The routes are hash-based
+                          * (createHashRouter), so a bare `href="#c-DK"` does
+                          * not address a fragment — it replaces the router's
+                          * own hash, and all fifteen of these links landed on
+                          * "That page isn't here", taking the reader's profile
+                          * query string with them. The earlier target-size fix
+                          * made them a comfortable 187x31 and they still did
+                          * not work. Adversarial review finding 1. */}
+                        <button type="button"
+                          onClick={() => document.getElementById(`c-${anchorFor.get(cc) ?? cc}`)
+                            ?.scrollIntoView({
+                              // Smooth is the enhancement, not the mechanism —
+                              // the site zeroes every duration token under
+                              // reduced motion and this is the one animation
+                              // that does not route through them.
+                              behavior: typeof matchMedia === 'function'
+                                && matchMedia('(prefers-reduced-motion: reduce)').matches
+                                ? 'auto' : 'smooth',
+                              block: 'start',
+                            })}
+                          style={{ background: 'none', border: 0, font: 'inherit', width: '100%',
                             color: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center',
-                            gap: 6, textDecoration: 'none',
-                            // WCAG 2.5.8 target size — these links rendered 17px
-                            // tall and Lighthouse flagged all fifteen. Padding,
-                            // not a fixed height, so the cell grows only as far
-                            // as the target needs.
+                            gap: 6, textAlign: 'left',
+                            // WCAG 2.5.8 target size — these rendered 17px tall
+                            // and Lighthouse flagged all fifteen. Padding, not a
+                            // fixed height, so the cell grows only as far as the
+                            // target needs.
                             minHeight: 24, padding: '4px 2px' }}>
                           <Flag cc={cc} size={12} /> <b>{cc}</b>
                           <span className="sub">{countryName(cc)}</span>
-                        </a>
+                        </button>
                       </th>
-                      <td><Pips on={row ? 1 : 0} of={1} /></td>
-                      <td><Pips on={d?.pips ?? 0} of={3} /></td>
-                      <td><Pips on={cc === 'SE' || cc === 'NO' ? 1 : 0} of={1} faint /></td>
-                      <td><Pips on={open.length === 0 ? 0 : named.length === 0 ? 1 : named.length >= 10 ? 3 : 2} of={3} /></td>
+                      <td><Pips on={row ? 1 : 0} of={1}
+                        label={row ? 'Occupation code resolves' : 'No occupation code resolves'} /></td>
+                      <td><Pips on={d?.pips ?? 0} of={3}
+                        label={d?.label ?? 'no distribution published'} /></td>
+                      <td><Pips on={cc === 'SE' || cc === 'NO' ? 1 : 0} of={1} faint
+                        label={cc === 'SE' || cc === 'NO'
+                          ? 'Publishes an experience or age cross'
+                          : 'No experience or age cross published'} /></td>
+                      <td><Pips on={open.length === 0 ? 0 : named.length === 0 ? 1 : named.length >= 10 ? 3 : 2} of={3}
+                        label={!postings ? 'Openings did not load'
+                          : open.length === 0 ? 'No software openings'
+                          : `${named.length} of ${open.length} software openings name a figure`} /></td>
                       <td className="sub">{reading}</td>
                     </tr>
                   )
@@ -453,9 +598,9 @@ export function Work() {
               * with eleven checks failing because the Netherlands, Norway and
               * Canada's two NOC rows were no longer in the document at all.
               * The matrix is a summary of these, never a filter on them. */}
-            {sections.map(({ key, cc, row }) => {
+            {sections.map(({ key, cc, row, firstOfCountry }) => {
               return (
-                <section key={key} id={`c-${cc}`}
+                <section key={key} id={`c-${key}`}
                   style={{ borderTop: '1px solid var(--line)', paddingTop: 14, marginTop: 14 }}>
                   <h3 style={{ fontSize: 'var(--text-md)', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <Flag cc={cc} size={15} /> {countryName(cc)}
@@ -467,15 +612,41 @@ export function Work() {
                         Where you'd stand
                       </h4>
                       {row
-                        ? <CountryRow row={row} profile={profile} gradient={gradient} highlighted={false} />
+                        ? (
+                          <>
+                            {/* The two column labels the old /position carried.
+                              * Without them the row reads "US · P50 of 15-1252
+                              * · $135,980/year" with nothing saying which
+                              * number is the published position and which is
+                              * this site's estimate — the one distinction the
+                              * whole page is built on. Adversarial review D2. */}
+                            <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr 1fr', gap: 12,
+                              fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', paddingBottom: 4 }}>
+                              <span /><span>Position</span><span>Estimate</span>
+                            </div>
+                            <CountryRow row={row} profile={profile} gradient={gradient}
+                              highlighted={profile.country != null
+                                && row.country.split('-')[0] === profile.country} />
+                          </>
+                        )
                         : (
                           <Gap title={`No wage table for this occupation in ${countryName(cc)}`} span="s6">
                             <p>
-                              The site holds no published wage distribution for {countryName(cc)} at
-                              this occupation depth, so there is no table to rank inside. That is a
-                              gap in what the national office publishes at a comparable code, not a
-                              gap in {countryName(cc)}'s labour market. Nothing here is estimated
-                              from a neighbouring country.
+                              {/* The source's OWN reason, not a generic one. This
+                                * said "at this occupation depth", which for Italy
+                                * is not merely vague but wrong — ISTAT publishes
+                                * no occupation-level earnings flow at all, and
+                                * the accurate sentence was sitting in
+                                * wages.absent, rendered only in the coverage map
+                                * far below. Two explanations of one fact on one
+                                * page, the vaguer beside the gap itself.
+                                * Adversarial review D1. */}
+                              {absentReason.get(cc)
+                                ?? `The site holds no published wage distribution for ${countryName(cc)} at this occupation depth`}
+                              , so there is no table to rank inside. That is a gap in what the
+                              national office publishes at a comparable code, not a gap in{' '}
+                              {countryName(cc)}'s labour market. Nothing here is estimated from a
+                              neighbouring country.
                             </p>
                           </Gap>
                         )}
@@ -488,9 +659,10 @@ export function Work() {
                         * rows share one openings panel rather than double-counting
                         * the same advertisements. Rendered against the first of
                         * the pair only. */}
-                      {key === cc || key === `${cc}-first`
+                      {firstOfCountry
                         ? <Openings name={countryName(cc)} block={byCountry[cc]}
-                            display={display} crossRates={crossRates} />
+                            display={display} crossRates={crossRates} fxMaxGap={fxMaxGap}
+                            unavailable={!postings} />
                         : (
                           <p className="sub">
                             Shown once for {countryName(cc)}, above — these are the same
@@ -511,12 +683,21 @@ export function Work() {
           meta={postings.pay_summary_meta} minN={postings.pay_summary_min_n} />
       )}
 
-      {wages && gradient && (
-        <>
-          <PayVsCost profile={profile} wageByCountry={wageByCountry} gradient={gradient} />
-          <CoverageMap wages={wages} gradient={gradient} />
-        </>
+      {/* `supported` is not optional here, and dropping it in the merge was the
+        * worst thing this package did. computeEstimate() never reads
+        * profile.occupation — the gate was the ONLY thing stopping it — so
+        * without it /work?occupation=isco08:2511 printed "Your estimate ·
+        * $135,980/yr" for Systems analysts, from the US SOFTWARE DEVELOPER row,
+        * on the same screen that had just said no wage data resolves for that
+        * occupation. A fabricated figure under a shareable URL, which is the
+        * one thing this site exists not to do. Adversarial review finding 2. */}
+      {wages && gradient && supported && (
+        <PayVsCost profile={profile} wageByCountry={wageByCountry} gradient={gradient} />
       )}
+      {/* The coverage map describes what the site can answer at all, so it is
+        * still worth drawing when this occupation is not one of them — that is
+        * exactly when a reader needs it. It reads `wages`, never the profile. */}
+      {wages && gradient && <CoverageMap wages={wages} gradient={gradient} />}
 
       <p className="sub" style={{ marginTop: 14 }}>
         This page replaces <code>/position</code> and <code>/postings</code>; both still resolve

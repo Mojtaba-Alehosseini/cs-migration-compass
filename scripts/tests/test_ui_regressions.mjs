@@ -523,6 +523,134 @@ try {
 
   /* ==================================================================== */
   say('')
+  say('=== R22: the merged /work and the new /openings (package 17) ===')
+
+  // Until package 17's adversarial review this suite never loaded either of
+  // these routes -- it navigated to /position and relied on the redirect. That
+  // is why all fifteen coverage-matrix links shipped pointing at the 404 page,
+  // and why a fabricated pay figure for an unsupported occupation shipped
+  // beside a panel saying no data resolved for it.
+
+  await page.hashGo(`${BASE}#/work`, { waitMs: 3000 })
+
+  const secIds = await page.eval(
+    `JSON.stringify([...document.querySelectorAll('section[id^="c-"]')].map((s) => s.id))`)
+  const ids = JSON.parse(secIds)
+  check(ids.length >= 15, `R22: /work renders every country section (${ids.length})`)
+  check(new Set(ids).size === ids.length,
+    `R22: every section id is unique — Canada's two NOC rows shared id="c-CA" (${ids.length - new Set(ids).size} duplicate(s))`)
+  check(ids.includes('c-CA-21231') && ids.includes('c-CA-21232'),
+    'R22: both Canadian NOC codes get their own section, keyed by the real code')
+
+  const headings = await page.eval(
+    `JSON.stringify([...document.querySelectorAll('h3')].map((h) => h.textContent.trim()))`)
+  check(!/-first/.test(headings),
+    'R22: no internal "-first" render sentinel reaches a visible heading')
+  check(JSON.parse(headings).some((h) => h.includes('CA-21231')),
+    'R22: and Canada\'s first section names CA-21231, the code it erased')
+
+  // The matrix controls must not be bare-fragment anchors: under
+  // createHashRouter an href="#c-DK" replaces the ROUTE, landing on NotFound
+  // and destroying the profile query string with it.
+  const matrix = JSON.parse(await page.eval(`(() => {
+    const cells = [...document.querySelectorAll('.tbl th[scope="row"]')]
+    return JSON.stringify({
+      buttons: cells.filter((c) => c.querySelector('button')).length,
+      fragmentAnchors: cells.filter((c) => c.querySelector('a[href^="#c-"]')).length,
+    })
+  })()`))
+  check(matrix.fragmentAnchors === 0,
+    `R22: no coverage-matrix control is a bare-fragment anchor (${matrix.fragmentAnchors} found — each one 404s under a hash router)`)
+  check(matrix.buttons >= 15, `R22: all ${matrix.buttons} matrix controls scroll instead`)
+
+  const scrolled = JSON.parse(await page.eval(`(() => {
+    window.scrollTo(0, 0)
+    const calls = []
+    const orig = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = function (o) { calls.push(this.id); return orig.call(this, { block: 'start' }) }
+    const b = [...document.querySelectorAll('.tbl th[scope="row"] button')].find((x) => x.textContent.trim().startsWith('CA'))
+    b.click()
+    Element.prototype.scrollIntoView = orig
+    return JSON.stringify({ calls, y: Math.round(window.scrollY), h1: document.querySelector('h1').textContent.trim() })
+  })()`))
+  check(scrolled.calls[0] === 'c-CA-21231',
+    `R22: clicking the matrix's CA control targets its FIRST section (${scrolled.calls[0]})`)
+  check(scrolled.y > 0, `R22: and the page actually moves (scrollY ${scrolled.y})`)
+  check(scrolled.h1.startsWith('Where you'), 'R22: and the route survives the click')
+
+  // Every publishable country accounts for its own median, not just the first.
+  const comps = JSON.parse(await page.eval(
+    `JSON.stringify([...document.querySelectorAll('p.sub')].map((p) => p.textContent.trim()).filter((t) => t.startsWith('What the ')))`))
+  check(comps.length >= 5,
+    `R22: every publishable country renders its own composition paragraph (${comps.length})`)
+  check(!comps.some((t) => !t.startsWith('What the US') && /USAJOBS supplies \d+ US /.test(t)),
+    'R22: and no country carries the US federal-listings sentence as if it were its own')
+
+  // A fabricated figure for an occupation the site has just said it cannot answer.
+  await page.hashGo(`${BASE}#/work?occupation=isco08%3A2511&years=8`, { waitMs: 2600 })
+  const unsupported = await page.eval('document.body.innerText')
+  check(/No wage data resolved for this occupation yet/.test(unsupported),
+    'R22: an unsupported occupation says so')
+  check(!/Your estimate/.test(unsupported),
+    'R22: and renders NO "Your estimate" — computeEstimate never reads profile.occupation, so this gate is the only thing stopping a software-developer figure being labelled as another job')
+  check(!/Pay against cost/.test(unsupported),
+    'R22: and no pay-against-cost panel built on that estimate')
+
+  // /openings: the USD -> display leg is year-matched like the first leg.
+  await page.hashGo(`${BASE}#/openings`, { waitMs: 6000 })
+  const fx = JSON.parse(await page.eval(`(() => {
+    const setV = (el, v, proto) => { Object.getOwnPropertyDescriptor(proto.prototype, 'value').set.call(el, v); el.dispatchEvent(new Event(proto === HTMLSelectElement ? 'change' : 'input', { bubbles: true })) }
+    const search = document.querySelector('input[type="text"], input:not([type])')
+    const cur = [...document.querySelectorAll('select')].find((s) => [...s.options].some((o) => /Australian dollars/.test(o.textContent)))
+    setV(search, 'supervisory', HTMLInputElement)
+    setV(cur, 'AUD', HTMLSelectElement)
+    return JSON.stringify({ ok: true })
+  })()`))
+  check(fx.ok, 'R22: /openings accepts a title filter and a display currency')
+
+  const oldRow = JSON.parse(await page.eval(`(() => {
+    const tr = [...document.querySelectorAll('.tbl tbody tr')].find((r) => /Census Bureau/.test(r.textContent))
+    if (!tr) return JSON.stringify({ found: false })
+    const btn = tr.querySelector('button')
+    btn.click()
+    return JSON.stringify({ found: true, pay: btn.textContent.trim(),
+      marked: !!tr.querySelector('.fx-estimate') })
+  })()`))
+  check(oldRow.found, 'R22: the 2016 US federal listing is reachable in /openings')
+  // The method card mounts on click; read it on the NEXT round-trip, not in
+  // the same evaluation that opened it.
+  await sleep(700)
+  oldRow.year = await page.eval(
+    `(document.body.innerText.match(/USD → AUD at the (\\d{4}) rate/) || [])[1] || null`)
+  check(oldRow.year === '2016',
+    `R22: a 2016 posting shown in AUD converts at the 2016 cross-rate, not the series' latest (got ${oldRow.year}) — the latest-rate version put it 15.4% high`)
+  check(oldRow.marked === false,
+    'R22: and carries NO estimate marker, because 2016 is its own year — the marker means "reached", not "converted"')
+
+  // Clear the title filter first. With "supervisory" still applied every
+  // visible row is a 2016-2017 USAJOBS listing, which converts at its OWN
+  // year exactly and is therefore correctly unmarked — a zero here would mean
+  // the filter, not the marker.
+  await page.eval(`(() => {
+    const setV = (el, v, proto) => { Object.getOwnPropertyDescriptor(proto.prototype, 'value').set.call(el, v); el.dispatchEvent(new Event('input', { bubbles: true })) }
+    const search = document.querySelector('input[type="text"], input:not([type])')
+    setV(search, '', HTMLInputElement)
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+  })()`)
+  await sleep(900)
+  const recent = JSON.parse(await page.eval(`(() => {
+    const rows = [...document.querySelectorAll('.tbl tbody tr')]
+    const marked = rows.filter((r) => r.querySelector('.fx-estimate'))
+    return JSON.stringify({ n: rows.length, marked: marked.length,
+      title: marked[0] && marked[0].querySelector('.fx-estimate').getAttribute('title') })
+  })()`))
+  check(recent.marked > 0,
+    `R22: postings whose own year has no published rate DO carry the marker (${recent.marked}/${recent.n})`)
+  check(/USD→AUD at the \d{4} rate/.test(recent.title ?? ''),
+    `R22: and the marker names the cross-rate leg, which used to state no year at all (${recent.title})`)
+
+  /* ==================================================================== */
+  say('')
   const stray = (await page.eval('window.__errs.slice()')).filter((e) => !e.includes('distinct labels'))
   check(stray.length === 0, `no console errors beyond R2's deliberately provoked one (${stray.length})`)
   stray.forEach((e) => say(`    ${e}`))
@@ -534,5 +662,5 @@ try {
 
 say('')
 say('-'.repeat(70))
-say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13, R21)' : `${fails} check(s) FAILED`)
+say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13, R21, R22)' : `${fails} check(s) FAILED`)
 process.exitCode = fails ? 1 : 0

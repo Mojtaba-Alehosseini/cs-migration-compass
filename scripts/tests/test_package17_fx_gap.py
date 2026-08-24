@@ -49,11 +49,37 @@ class TestStrictByDefault(unittest.TestCase):
         self.assertIsNotNone(nm.fx_rate("GB", 2025))
 
     def test_the_wage_spine_never_passes_a_gap(self):
-        """Grep-level guard: if a future edit routes the wage spine through the
-        allowance, this fails. The spine converts survey figures whose year is
-        the whole point of them."""
-        src = (SCRIPTS / "build_wage_distribution.py").read_text(encoding="utf-8")
-        self.assertNotIn("max_gap_years", src)
+        """The spine converts survey figures whose year is the whole point of
+        them, so it must still REFUSE a year it has no rate for.
+
+        This asserts behaviour, not source text. An earlier version of this test
+        was `assertNotIn("max_gap_years", src)`, which adversarial review broke
+        in one line: build_wage_distribution.py calls `nm.to_usd(v, country,
+        year)` positionally, so `nm.to_usd(v, country, year, 2)` routes the
+        whole wage spine through the allowance without the string ever
+        appearing, and all fifteen tests stayed green. A guard that a positional
+        argument walks past is not a guard.
+
+        GB 2026 is the case that matters: no 2026 rate is published, a 2025 rate
+        is one year away and therefore reachable if anyone ever opts this path
+        in. The spine must decline it anyway."""
+        import build_wage_distribution as bwd
+
+        value = {f: 50_000 for f in bwd._FIELDS}
+        for cc, year in (("GB", 2026), ("DE", 2026), ("CA", 2026)):
+            with self.subTest(country=cc, year=year):
+                r = bwd._to_usd_all(value, cc, year, bwd._FIELDS[0])
+                self.assertFalse(
+                    r["ok"],
+                    f"the wage spine converted {cc} {year} — it has no {year} rate, so this "
+                    f"can only mean the spine now reaches for another year's")
+                self.assertIn("never substituted from a different year", r["reason"])
+
+        # Control: the same call for a year that DOES have a rate must succeed,
+        # or the assertion above would pass for the wrong reason.
+        ok = bwd._to_usd_all(value, "GB", 2025, bwd._FIELDS[0])
+        self.assertTrue(ok["ok"])
+        self.assertEqual(ok["fx_year"], 2025)
 
 
 class TestTheAllowance(unittest.TestCase):

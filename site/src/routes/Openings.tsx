@@ -12,14 +12,21 @@
  * never the download but 484ms of main-thread time parsing and filtering the
  * array fifteen times. NEEDS-DECISION #38.
  *
- * Nothing here is new. Every control, panel and disclosure is the one the old
- * /postings rendered, moved rather than rewritten.
+ * Every control, panel and disclosure here is the one the old /postings
+ * rendered. Four of them had to be brought back after the fact — the
+ * advertised-vs-paid boundary, the named source list, the pay-range percentage
+ * and the disclosed absence of a category filter all went missing in the move
+ * and were restored only when adversarial review itemised them (D3-D6). Two are
+ * genuinely rewritten rather than moved: the zero-result state, which was an
+ * <h3> under an <h1> and named filters the reader had not touched, and the
+ * map's accessible name, which asserted "0 countries with postings" whenever a
+ * filter matched a country the map holds no point for.
  */
 
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAsync } from '../components/explore/useAsync'
-import { Gap, ChartSkeleton } from '../components/explore/Controls'
+import { ChartSkeleton } from '../components/explore/Controls'
 import { Flag } from '../components/Flag'
 import { useData } from '../data/store'
 import { loadPostings, fmtCompany, PROVIDER_LABEL, type Posting } from '../data/postings'
@@ -80,9 +87,11 @@ export function Openings() {
   // on a screen and the rest is one click away.
   const [limit, setLimit] = useState(100)
 
-  const crossRates = useMemo(() => Object.fromEntries(
-    Object.entries(data?.display_fx?.rates ?? {}).map(([k, v]) => [k, v.rate]),
-  ), [data])
+  // The whole rate object, not `.rate` — PostingPay matches each posting's own
+  // year against `by_year`. Mapping this down to one number is what made every
+  // cross-rate conversion silently use 2025.
+  const crossRates = data?.display_fx?.rates
+  const fxMaxGap = data?.display_fx?.max_gap_years ?? 0
 
   const filtered = useMemo(() => {
     if (!data) return [] as Posting[]
@@ -95,6 +104,18 @@ export function Openings() {
       return true
     })
   }, [data, country, level, remoteOnly, query])
+
+  const withComp = useMemo(
+    () => (data?.postings ?? []).filter((p) => p.compensation).length, [data])
+
+  /** Which harvesters actually contributed to this payload, in payload order.
+   *  Named rather than counted: "6 sources" tells a reader nothing about
+   *  whether the ones they care about are in it. */
+  const providersAvailable = useMemo(() => {
+    const seen = new Set<string>()
+    for (const p of data?.postings ?? []) if (p.provider) seen.add(p.provider)
+    return [...seen].filter((k) => k in PROVIDER_LABEL).sort()
+  }, [data])
 
   const mapDots = useMemo(() => {
     if (view !== 'map') return []
@@ -144,6 +165,18 @@ export function Openings() {
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Every opening</h1>
       <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: '72ch' }}>
+        {/* The advertised-vs-paid boundary. This is the structural discipline
+          * data/postings.ts's own header names, and the merge left the page
+          * carrying 48,267 advertisements without it — no link to the wage
+          * spine, no statement that the two are different quantities.
+          * Adversarial review D3. */}
+        What employers <b>advertise</b> while hiring — not what this site's own wage spine (
+        <Link to="/explore/money">Explore · Money</Link>) says people are actually paid. Two
+        different quantities, never merged into one number: advertised ranges are wide, usually
+        exclude equity and bonus, and skew toward roles that are currently hard to fill.{' '}
+        <Link to="/data/postings-seed">Which companies, and why this skews where it does →</Link>
+      </p>
+      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '0 0 12px', maxWidth: '72ch' }}>
         The full harvest, filterable. For where you'd stand against a country's own wage table, and
         the openings that match a profile, see <Link to="/work">Position &amp; openings</Link>. This
         page loads the whole array on demand — it is the one page for which that is the right trade.
@@ -164,8 +197,14 @@ export function Openings() {
               {data.duplicate_summary
                 ? ` (${data.duplicate_summary.distinct_roles.toLocaleString()} distinct roles — ${data.duplicate_summary.re_listings.toLocaleString()} are re-listings)`
                 : ''}
-              , {Object.keys(data.seed_companies).length.toLocaleString()} companies.{' '}
-              {data.postings.filter((p) => p.compensation).length.toLocaleString()} state a real pay
+              {/* The source count and the pay-range PERCENTAGE both came off in
+                * the move. A count with no denominator — "16,407 state a real
+                * pay range" out of what? — is the shape this project treats as
+                * a defect everywhere else. Adversarial review D4, D5. */}
+              , {Object.keys(data.seed_companies).length.toLocaleString()} companies,{' '}
+              {providersAvailable.length} sources ({providersAvailable.map((k) => PROVIDER_LABEL[k]).join(', ')}).{' '}
+              {withComp.toLocaleString()} ({data.postings.length
+                ? Math.round((withComp / data.postings.length) * 100) : 0}%) state a real pay
               range.
               {outOfScope.length > 0 && (
                 <> The harvest also reaches <b>{outOfScope.length} countries this site does not
@@ -229,6 +268,15 @@ export function Openings() {
                   aria-pressed={view === 'map'} style={{ cursor: 'pointer' }}>Map</button>
               </div>
             </div>
+            {/* A disclosed limitation that became an undisclosed one in the
+              * move. The occupation classifier ships two classes and is not
+              * wired to a filter here; saying so is the difference between a
+              * known gap and a reader assuming these four controls are all
+              * there is. Adversarial review D6. */}
+            <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 8 }}>
+              "Category" (occupation) is not filterable yet — see the classifier's own status on{' '}
+              <Link to="/data/postings-seed">the seed-list page</Link>.
+            </p>
           </div>
 
           {view === 'map' ? (
@@ -245,11 +293,36 @@ export function Openings() {
                     {mapOmitted.largest.join(', ')}. They are still in the list and the counts above.
                   </>
                 )}
+                {/* The state nobody wrote copy for: a filter that selects real
+                  * postings in a country this map holds no point for draws an
+                  * empty world and says nothing, which reads as "no postings"
+                  * rather than "not drawable". Adversarial review, empty
+                  * states. */}
+                {mapDots.length === 0 && filtered.length > 0 && (
+                  <> {' '}<b>This filter matches {filtered.length.toLocaleString()} advertisement
+                    {filtered.length === 1 ? '' : 's'}, and the map has no point for
+                    {country ? ` ${country}` : ' any of their countries'}</b> — so it draws nothing.
+                    An empty map here means the coordinate table is missing a country, not that the
+                    filter found none. Switch to the list to see them.
+                  </>
+                )}
               </div>
               <svg viewBox={`0 0 ${MAP.W} ${MAP.H}`} style={{ width: '100%', height: 'auto', marginTop: 10 }}
                 role="img"
-                aria-label={`${mapDots.length} countries with postings, largest: ${
-                  mapDots.slice().sort((a, b) => b.count - a.count)[0]?.cc ?? 'none'}`}>
+                /* role="img" prunes the descendants, so the per-dot <title>s are
+                 * unreachable and this label is the ONLY thing a screen reader
+                 * gets. It therefore carries the ranking the dots carry, not
+                 * just their number — and says when it is drawing nothing
+                 * rather than asserting "0 countries with postings", which was
+                 * false whenever a filter matched an undrawable country. */
+                aria-label={mapDots.length === 0
+                  ? (filtered.length > 0
+                    ? `No map points for the ${filtered.length} matching advertisements — see the list view`
+                    : 'No advertisements match the current filters')
+                  : `${mapDots.length} countries with postings. `
+                    + mapDots.slice().sort((a, b) => b.count - a.count).slice(0, 8)
+                      .map((d) => `${d.cc} ${d.count}`).join(', ')
+                    + (mapDots.length > 8 ? `, and ${mapDots.length - 8} more` : '')}>
                 <path d={LAND_PATH} fill="var(--surface-raised)" stroke="var(--line)" strokeWidth={0.5} />
                 {mapDots.map((d) => (
                   <circle key={d.cc} cx={d.x} cy={d.y} r={3 + (d.count / maxDot) * 10}
@@ -260,9 +333,32 @@ export function Openings() {
               </svg>
             </div>
           ) : filtered.length === 0 ? (
-            <Gap title="No postings match these filters" span="s6">
-              <p>Try clearing the country or level filter.</p>
-            </Gap>
+            /* An <h2>, not a <Gap>. Gap renders an <h3>, and in this state it is
+             * the ONLY heading below the page's <h1> — so the empty result was
+             * the one reachable state on /openings with a skipped heading
+             * level, and it is not the state a11y was measured in. The copy
+             * also named the country and level filters unconditionally, which
+             * for a reader who only typed in the search box is advice about
+             * controls they never touched. Adversarial review finding 10. */
+            <div className="panel" style={{ marginTop: 12 }}>
+              <h2>No openings match</h2>
+              <p className="sub" style={{ marginTop: 8, maxWidth: '60ch' }}>
+                {[
+                  query.trim() && `“${query.trim()}” in the title`,
+                  country && `country ${country}`,
+                  level && `level ${LEVEL_LABEL[level as keyof typeof LEVEL_LABEL]}`,
+                  remoteOnly && 'remote only',
+                ].filter(Boolean).length === 0
+                  ? 'Nothing is filtered, and nothing matched — which should not happen; the harvest is not empty.'
+                  : <>Nothing in the harvest matches {[
+                      query.trim() && `“${query.trim()}” in the title`,
+                      country && `country ${country}`,
+                      level && `level ${LEVEL_LABEL[level as keyof typeof LEVEL_LABEL]}`,
+                      remoteOnly && 'remote only',
+                    ].filter(Boolean).join(' + ')}. Clearing the narrowest of those usually brings
+                    results back — this is a fact about the filters, not about the market.</>}
+              </p>
+            </div>
           ) : (
             <div className="panel" style={{ marginTop: 12, overflowX: 'auto' }}>
               <h2>{filtered.length.toLocaleString()} postings matching the current filters</h2>
@@ -292,7 +388,8 @@ export function Openings() {
                           : p.title}
                       </td>
                       <td className="sub">{p.location_raw ?? (p.remote ? 'Remote' : '—')}</td>
-                      <td><PostingPay comp={p.compensation} display={display} crossRates={crossRates} /></td>
+                      <td><PostingPay comp={p.compensation} display={display}
+                        crossRates={crossRates} maxGapYears={fxMaxGap} /></td>
                       <td className="sub" style={{ whiteSpace: 'nowrap' }}>{fmtDate(p.posted_at)}</td>
                     </tr>
                   ))}

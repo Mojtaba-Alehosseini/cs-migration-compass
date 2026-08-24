@@ -274,8 +274,10 @@ def _openings_summary(doc: dict) -> dict:
     it was parsing 24 MB and filtering it fifteen times on the main thread.
 
     So this ships what the page displays. The full list, its filters and its map
-    stay on /data/postings-seed, which loads the big file on demand — which is
-    the right place for it, because that page is *about* the list.
+    live on /openings, which loads the big file on demand — the right place for
+    it, because that page is *about* the list. (/data/postings-seed holds the
+    companies and sources behind the harvest, and never held the
+    advertisements themselves.)
     """
     data = doc.get("data") or {}
     rows = data.get("postings") or []
@@ -314,7 +316,7 @@ def _openings_summary(doc: dict) -> dict:
                            "medians are computed from), never re-derived from titles",
             "examples_are": "the most recent that state a pay range. NOT ranked, NOT scored, and "
                             "never a recommendation of which to apply for",
-            "full_list": "data/history/postings.json, loaded on demand by /data/postings-seed",
+            "full_list": "data/history/postings.json, loaded on demand by /openings",
         },
         "data": {
             "by_country": out,

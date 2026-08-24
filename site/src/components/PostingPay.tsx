@@ -61,22 +61,54 @@ export function fmtRange(min: number, max: number, currency: string, period: Com
     : `${money(min, currency)}–${money(max, currency)}${PERIOD[period]}`
 }
 
-/** Can this posting be shown in `want`? Native always can. */
-export function canShowIn(c: Compensation, want: DisplayCurrency): boolean {
-  if (want === 'native' || want === c.currency) return true
-  return Boolean(c.usd)          // everything else routes through USD
+/** One display currency's whole rate series, as `display_fx.rates[code]` ships
+ *  it. The series — not one rate — because a posting is converted at the rate
+ *  for ITS OWN year. */
+export interface CrossRate {
+  rate: number
+  year: number
+  by_year: Record<string, number>
+}
+
+/** The client half of `normalise.fx_rate_within`, and deliberately the same
+ *  rule: exact year if there is one, otherwise the nearest within `maxGap`,
+ *  preferring the past on a tie, and never silently exact when it reached.
+ *
+ *  This exists because the USD→display leg is a conversion like any other. The
+ *  first version of this component applied one 2025 rate to every posting
+ *  whatever its year, which put a 2016 listing 15.4% out at a nine-year gap
+ *  with no marker — the exact failure the native→USD leg was rebuilt to
+ *  prevent, reintroduced one line below it. */
+function rateWithin(series: Record<string, number> | undefined, year: number, maxGap: number) {
+  if (!series) return null
+  const exact = series[String(year)]
+  if (exact != null) return { rate: exact, year, gap: 0, estimated: false }
+  if (maxGap <= 0) return null
+  let best: { rate: number; year: number; gap: number } | null = null
+  for (const [ys, r] of Object.entries(series)) {
+    const y = Number(ys)
+    const gap = Math.abs(y - year)
+    if (gap > maxGap) continue
+    if (!best || gap < best.gap || (gap === best.gap && y < best.year)) best = { rate: r, year: y, gap }
+  }
+  return best ? { ...best, estimated: true } : null
 }
 
 interface Props {
   comp: Compensation | null
   display: DisplayCurrency
-  /** Cross-rates for display currencies other than USD, keyed by code. Absent
-   *  means only native and USD are offered, which is the honest fallback: the
-   *  site will not invent a EUR figure it cannot source a rate for. */
-  crossRates?: Record<string, number>
+  /** Cross-rate series for display currencies other than USD, keyed by code.
+   *  Absent means only native and USD are offered, which is the honest
+   *  fallback: the site will not invent a EUR figure it cannot source a rate
+   *  for, and will not reach across a decade to find one. */
+  crossRates?: Record<string, CrossRate>
+  /** How far the USD→display leg may reach for a rate. Ships in the payload as
+   *  `display_fx.max_gap_years` so the client cannot drift from the server's
+   *  ceiling; the default is the strict one, not the generous one. */
+  maxGapYears?: number
 }
 
-export function PostingPay({ comp, display, crossRates }: Props) {
+export function PostingPay({ comp, display, crossRates, maxGapYears = 0 }: Props) {
   if (!comp) return <span className="nodata">not stated</span>
 
   const native = fmtRange(comp.min, comp.max, comp.currency, comp.period)
@@ -101,25 +133,49 @@ export function PostingPay({ comp, display, crossRates }: Props) {
     )
   }
 
-  const rate = display === 'USD' ? 1 : crossRates?.[display]
-  if (!rate) {
+  // The posting's own year is what BOTH legs are matched against.
+  const wantYear = usd.fx_year_requested ?? usd.fx_year
+  const cross = display === 'USD'
+    ? { rate: 1, year: wantYear, gap: 0, estimated: false }
+    : rateWithin(crossRates?.[display]?.by_year, wantYear, maxGapYears)
+
+  if (!cross) {
+    // No rate for this currency within reach of this posting's year. The native
+    // figure still renders; what is refused is the invented one.
     return (
       <span className="tnum">
         {native}{' '}
-        <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>(no {display} rate)</span>
+        <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>
+          (no {display} rate for {wantYear})
+        </span>
       </span>
     )
   }
 
-  const lo = usd.min * rate
-  const hi = usd.max * rate
-  const estimated = Boolean(usd.estimated)
+  const lo = usd.min * cross.rate
+  const hi = usd.max * cross.rate
+  const estimated = Boolean(usd.estimated) || cross.estimated
+
+  const reached = [
+    usd.estimated ? `${comp.currency}→USD at the ${usd.fx_year} rate` : null,
+    cross.estimated ? `USD→${display} at the ${cross.year} rate` : null,
+  ].filter(Boolean).join(' and ')
 
   const chain = [
-    { op: 'advertised', detail: `${native} — the employer's own figure, unchanged` },
     {
+      op: 'advertised',
+      detail: comp.min === comp.max
+        ? `${native} — the employer's own figure, unchanged`
+        : `${native} — the employer's own figure, unchanged. The steps below trace the `
+          + `bottom of that range; the top converts the same way.`,
+    },
+    // A USD-advertised posting has no first leg. Rendering "USD → USD at the
+    // 2016 rate of 1 — the rate for this posting's own year" is a step that
+    // describes nothing, and a method chain with a no-op step in it teaches the
+    // reader to skim the steps.
+    ...(comp.currency === 'USD' ? [] : [{
       op: 'fx_convert',
-      detail: estimated
+      detail: usd.estimated
         ? `${comp.currency} → USD at the ${usd.fx_year} rate of ${usd.fx_rate}. `
           + `No ${usd.fx_year_requested} rate is published yet, so the ${usd.fx_year} rate was `
           + `used — a gap of ${usd.fx_gap_years} year${usd.fx_gap_years === 1 ? '' : 's'}. `
@@ -127,29 +183,33 @@ export function PostingPay({ comp, display, crossRates }: Props) {
           + `${comp.currency}, is exact.`
         : `${comp.currency} → USD at the ${usd.fx_year} rate of ${usd.fx_rate} — the rate for `
           + `this posting's own year.`,
-    },
+    }]),
     ...(display === 'USD' ? [] : [{
       op: 'fx_convert',
-      detail: `USD → ${display} at ${rate}.`,
+      detail: cross.estimated
+        ? `USD → ${display} at the ${cross.year} rate of ${cross.rate}. No ${wantYear} rate is `
+          + `published, so the ${cross.year} rate was used — a gap of ${cross.gap} `
+          + `year${cross.gap === 1 ? '' : 's'}. A second conversion is a conversion: it reaches `
+          + `no further than the first is allowed to, and it says so when it reaches.`
+        : `USD → ${display} at the ${cross.year} rate of ${cross.rate} — the rate for this `
+          + `posting's own year.`,
     }]),
   ]
 
   return (
     <Derived
       chain={chain}
-      native={{ value: comp.min, currency: comp.currency, period: comp.period,
-                year: usd.fx_year_requested ?? usd.fx_year }}
-      result={{ value: (lo + hi) / 2, currency: display }}
+      native={{ value: comp.min, currency: comp.currency, period: comp.period, year: wantYear }}
+      result={{ value: lo, currency: display }}
     >
       <span className="tnum">
         {fmtRange(lo, hi, display, comp.period)}
         {estimated && (
           <sup
             className="fx-estimate"
-            aria-label={`Estimated: converted at the ${usd.fx_year} rate because no `
-              + `${usd.fx_year_requested} rate is published yet`}
-            title={`Converted at the ${usd.fx_year} rate — no ${usd.fx_year_requested} rate `
-              + `is published yet`}
+            aria-label={`Estimated: no ${wantYear} rate is published, so this was converted `
+              + `${reached}`}
+            title={`Converted ${reached} — no ${wantYear} rate is published`}
           >≈</sup>
         )}
       </span>
