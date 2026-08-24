@@ -83,8 +83,17 @@ def _composition(source_id: str) -> dict | None:
 # 2026 it ends at 2025. Rule 1 (no nearby-year substitution) was written for a
 # HISTORICAL series, where pricing a 1968 London house at a 2026 rate would be a
 # lie of fifty-eight years. Applied to a job posted this month it discards the
-# posting to avoid an error of one or two percent — 88-92% of the annual-pay
-# postings for GB, CA, DE and FR, almost all of them 2026.
+# posting to avoid an error of a few percent — 88-92% of the annual-pay postings
+# for GB, CA, DE and FR, almost all of them 2026.
+#
+# "A few percent" is the honest phrasing and an earlier draft said "one or two",
+# which was the MEDIAN of the table below quoted as though it were the expected
+# error. Every substitution actually in this data is the 2025 rate standing in
+# for 2026, whose true error cannot be measured until 2026 is published; the
+# nearest proxy is the last observed one-year move, and that is EUR -4.2%,
+# SEK -7.1%, DKK -4.0%, INR +4.2%, NOK -3.3%, GBP -2.9%, CAD +2.1%. EUR carries
+# every one of France's rows. The median is a summary of the distribution, not a
+# forecast of the case in hand, and this comment now says which is which.
 #
 # Measured across all 20 currencies in fx_rates.json, restricted to 2015 onward
 # because that is the regime a current posting sits in:

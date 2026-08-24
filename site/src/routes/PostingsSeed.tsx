@@ -10,6 +10,7 @@
  */
 
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAsync } from '../components/explore/useAsync'
 import { Flag } from '../components/Flag'
 import { ChartSkeleton } from '../components/explore/Controls'
@@ -59,8 +60,9 @@ export function PostingsSeed() {
         built by probing real candidate tokens against each provider's live API and keeping only
         the ones that resolved with at least one real posting — every row below is a company this
         session actually verified, not a claim. <b>If this list would embarrass a country, that
-        country is not ready to show a number</b> — the panel's own filters (
-        <code>Postings</code>) reflect exactly this same set, nothing hidden or pre-filtered here.
+        country is not ready to show a number</b> — the filters on{' '}
+        <Link to="/openings">Every opening</Link> reflect exactly this same set, nothing hidden or
+        pre-filtered here.
       </p>
 
       {error && <div className="panel" style={{ borderColor: 'var(--warn)' }}><p>{error}</p></div>}

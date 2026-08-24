@@ -798,8 +798,12 @@ def convert_compensation_to_usd(comp: dict, effective_year: int) -> dict | None:
     #
     # The alternative was what the site did until now: discard the posting. For
     # GB, CA, DE and FR that meant discarding 88-92% of every annual-pay
-    # advertisement, nearly all of them dated this year, to avoid a median error
-    # of about 2%.
+    # advertisement, nearly all of them dated this year. The error avoided has a
+    # MEDIAN of about 2% at a one-year gap, which is not the same as the error in
+    # any given case: the last observed one-year move is -4.2% for EUR and -7.1%
+    # for SEK. That is why the converted figure is marked an estimate and opens
+    # a method card naming the year it used, rather than being presented as a
+    # small correction not worth mentioning.
     lo = normalise.to_usd(comp["min"], fx_country, effective_year,
                           max_gap_years=normalise.MAX_FX_GAP_YEARS)
     hi = normalise.to_usd(comp["max"], fx_country, effective_year,

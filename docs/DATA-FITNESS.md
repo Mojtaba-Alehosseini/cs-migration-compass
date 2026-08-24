@@ -31,7 +31,7 @@ instead of leaving the blanket claim above to cover it.
 
 | Claim | Verdict | Supported precision |
 |---|---|---|
-| Median advertised pay by country (`/postings`) | **Not supported as labelled** | 1 country, not 7; recent postings only; nearest $1,000 |
+| Median advertised pay by country (`/work`) | **Supported for five countries** | 5 countries, not 7; recent postings only; nearest $1,000 — see §1's package-17 update |
 | Years to own a home (city cards, `/compare`) | **Supported, but not to one decimal** | `~23 yrs`, never `22.6`; the rounding band is on the source card |
 | City salary bands (new-grad / mid / senior) | Supported | Nearest $1,000 |
 | Wage distribution panel (`/explore/money`) | Supported | As published — already median-based |
@@ -47,7 +47,8 @@ instead of leaving the blanket claim above to cover it.
 
 ## 1. "Median advertised pay by country" — not supported as labelled
 
-**What the page says.** A dotted-line chart on `/postings`, captioned *"Annual-salary postings only
+**What the page said** (the route is `/work` since package 17; `/postings` redirects there). A
+dotted-line chart, captioned *"Annual-salary postings only
 (5+ per country to appear), converted to USD at each posting's own year"*, showing a median for
 seven countries.
 
@@ -109,6 +110,28 @@ That is a real selection, disclosed on screen rather than absorbed.
 Every other country is below the sample floor, mostly for the FX reason above. **The remaining
 product decisions** — how wide the vintage window should be, and whether to publish anything for a
 country whose current year cannot be priced — are recorded in `NEEDS-DECISION.md`.
+
+**Update, package 17 — the FX artefact was the binding constraint, and four more countries clear
+the floor once it is lifted.** Problem 2 above identified the cause correctly: those countries were
+not data-poor, their recent data was unpriceable. `to_usd()` now takes a maximum gap
+(`MAX_FX_GAP_YEARS = 2`, chosen from this repo's own measured error table) which only the postings
+conversion passes; every historical series keeps exact year-matching. Software rows priced across
+the corpus go **1,864 → 2,168**, and **one publishable country becomes five**:
+
+| | US | GB | CA | FR | DE |
+|---|---:|---:|---:|---:|---:|
+| n (distinct software roles, 2024+) | 1,807 | 122 | 75 | 31 | 30 |
+| published median | $205,000 | $160,000 | $118,000 | $96,000 | $121,000 |
+| **share converted at a neighbouring year's rate** | **0.2%** | **89.3%** | **76.0%** | **93.5%** | **86.7%** |
+
+**That last row is the caveat, and it is now on screen.** Four of the five figures exist *because*
+the rule was relaxed and rest overwhelmingly on substituted rates — never more than one year away,
+but substituted. Each country's own `composition` block states its share, each median carries the
+same estimate marker its inputs carry, and the panel prints one composition paragraph per country
+rather than describing the US and leaving the other four to be assumed. The page is now honest
+about resting on an allowance; it is not the same claim as five independently well-sourced medians.
+
+The route is `/work`; `/postings` redirects there.
 
 ---
 

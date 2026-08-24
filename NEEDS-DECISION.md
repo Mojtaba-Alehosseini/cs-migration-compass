@@ -1566,7 +1566,7 @@ consistent bonus-inclusive OECD comparator per country, where the data exists to
 precision, or whether the current, safely-biased-toward-over-flagging version is good enough given
 its role is triggering human review, not an automated correction.
 
-## 38. `/postings` fails the work order's own Lighthouse performance gate — root cause found, not fully fixed
+## 38. `/postings` fails the work order's own Lighthouse performance gate — RESOLVED in package 17 (see the resolution at the end of this entry)
 
 Gate 11 requires Lighthouse performance >=90 on every route. Measured, retried three times (not
 noise — consistently reproduced): `/postings` best of three 0.80. Every other route measured
@@ -1645,6 +1645,28 @@ display bugs (overflow, mismatched rounding, collapsed axes — see `docs/REGRES
 **Decide:** whether to commission a proper postings-list pagination/lazy-load redesign (the real fix)
 as its own package, and separately, whether the `compensation.usd` field should be wired into the UI
 (a complementary, smaller follow-up) or left as a derived field available for a future package to use.
+
+**RESOLVED, package 17.** Both halves.
+
+The architectural fix turned out not to need pagination. The route was carrying the whole array
+because one page did two jobs: show fifteen countries' positions, and be the browsable list. Split
+apart, `/work` ships a 154 KB pre-computed per-country summary (counts plus eight examples each) and
+never fetches the full payload on any path — verified against the built chunk graph and the live
+network, not just the source. It measures **1.00 performance and 1.00 accessibility**, from 0.79.
+`/openings` is now the page that IS the list, still loads the full payload on demand, and still
+scores 0.76 — which is the honest cost of a page whose entire purpose is 48,267 advertisements, and
+is left as such rather than papered over. The two agree by construction: both counts are written by
+the same `build_site_data.py` pass over the same array, and both files are committed by the refresh
+workflow (they were not, until this package fixed that too).
+
+`compensation.usd` is wired in, via one component — `PostingPay` — which renders the employer's
+native figure first and never has a path that withholds it. The converted view is a `<Derived>` with
+its rate, its year, and an estimate marker where the rate came from a different year.
+
+*One correction to the record above, from package 17's own adversarial review: this entry's last
+line said `/postings` performance was "not fully fixed", and three code comments cited it as the
+standing record while a commit message claimed it resolved. Both were true of different moments and
+neither said so. It is resolved as described here.*
 
 ## 39. The OECD wage benchmark (item #35) compares a market-FX-converted published median against a PPP-adjusted OECD figure — two different currency bases, not one
 

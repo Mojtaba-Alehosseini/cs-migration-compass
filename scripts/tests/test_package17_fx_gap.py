@@ -4,7 +4,9 @@ Package 9 established: a figure with no matching-year rate is not converted.
 That is right for a historical series — pricing a 1968 London house at a 2026
 rate would be a lie of fifty-eight years. Applied to a job posted this month it
 threw away 88-92% of the annual-pay advertisements for GB, CA, DE and FR to
-avoid an error of about two percent.
+avoid an error whose MEDIAN is about two percent — not the same claim, and the
+last observed one-year move runs to -7.1%, which is why a substituted rate is
+marked rather than absorbed.
 
 The rule now takes a MAXIMUM GAP, defaulting to zero. Every existing caller
 keeps exact year-matching because none of them passes it; only the postings

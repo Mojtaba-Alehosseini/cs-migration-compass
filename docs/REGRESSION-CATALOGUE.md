@@ -510,6 +510,54 @@ Canada quorum-counting fix directly, at the Python level.
 
 ---
 
+## Package 17 — the merged page, and the routes the suite never loaded
+
+> **Route note for every R8–R21 entry above.** They say the test "loads `/position`".
+> It still does, and `/position` now redirects to `/work` — so those checks exercise
+> the redirect as well as the panel. That was not the plan; it is why the defects
+> below shipped. A suite that reaches a page only through a redirect never sees what
+> the page added.
+
+### R22. `/work` and `/openings` had no regression coverage at all, and four defects shipped through the gap
+
+**Wrong:** `/position` and `/postings` were merged into `/work`, with the browsable list
+moved to a new `/openings`, and the UI suite went on navigating to `/position`. Nothing
+ever loaded either new route. Four defects shipped:
+
+1. All fifteen coverage-matrix country links were `<a href="#c-DK">`. Under
+   `createHashRouter` a bare fragment replaces the ROUTE — every one landed on the
+   404 page and took the reader's profile query string with it. A commit had already
+   spent a WCAG 2.5.8 target-size fix on these links while they did not work at all.
+   The same root cause made the site-wide skip link — the first keyboard-reachable
+   control on every page — navigate to the 404.
+2. The merge dropped `supported` from `PayVsCost`'s render condition. `computeEstimate()`
+   never reads `profile.occupation`, so that gate was the only thing stopping it:
+   `/work?occupation=isco08:2511` printed "Your estimate · $135,980/yr" for Systems
+   analysts, taken from the US **software developer** row, directly beneath a panel
+   saying no wage data resolves for that occupation.
+3. Canada's two NOC sections shared one DOM `id`, and an internal `-first` render
+   sentinel reached the screen as the heading "Canada · CA-first" — erasing CA-21231,
+   the code that earns Canada two sections at all.
+4. The display-currency picker converted every posting at one latest-year rate while
+   the native→USD leg was year-matched with a stated two-year ceiling, and the estimate
+   flag was read from the first leg alone. A 2016 listing shown in Australian dollars
+   came out 15.4% high across a nine-year gap, unmarked.
+
+**Correct:** the matrix controls and the skip link are buttons that scroll and focus;
+`supported` gates the estimate again; sections are keyed by the wage row's own code and
+`firstOfCountry` is a boolean; and both FX legs obey one rule, with the payload shipping
+the whole rate series per display currency so the client can match a posting's own year.
+
+**Test:** `test_ui_regressions.mjs` R22 — twenty-two checks that load `/work` and
+`/openings` directly. Asserts unique section ids, both Canadian NOC codes present, no
+`-first` in any heading, zero bare-fragment anchors in the matrix, that clicking CA
+targets `c-CA-21231` and the route survives, that an unsupported occupation renders no
+estimate and no pay-against-cost panel, that a 2016 posting converts at the **2016**
+cross-rate and is unmarked, and that a 2026 posting is marked with both legs named.
+Verified failing against the pre-fix cross-rate before being relied on.
+
+---
+
 ## Findings considered and not made into a Tier-0 test, with the reason
 
 - **BLS `hourly_mean_usd` mislabelled as annual** (package 7) — fixed by re-fetching

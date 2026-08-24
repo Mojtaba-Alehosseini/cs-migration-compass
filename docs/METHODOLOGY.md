@@ -40,9 +40,16 @@ substituted silently.*
 
 That rule is right for a historical series and was wrong for a job posted this
 month. The World Bank series publishes with a lag — in August 2026 it ends at
-2025 — so every 2026 posting failed for want of a rate differing from 2025's by
-one or two percent. The site was discarding **88–92% of the annual-pay postings
-for Great Britain, Canada, Germany and France** to avoid a rounding-scale error.
+2025 — so every 2026 posting failed for want of a rate that, at a one-year gap,
+differs from its own year's by a **median of 2%**. The site was discarding
+**88–92% of the annual-pay postings for Great Britain, Canada, Germany and
+France** to avoid it.
+
+A median is not a forecast of any single case, and this page said "one or two
+percent" as though it were. The true 2025-vs-2026 error cannot be measured until
+2026 is published; the nearest proxy is the last observed one-year move, which
+runs from **−7.1% (SEK)** and **−4.2% (EUR)** to **+4.2% (INR)**. That is the
+reason a substituted conversion is **marked** rather than quietly absorbed.
 
 So `to_usd()` now takes a maximum gap, **defaulting to zero**. Only the postings
 conversion passes one. Every other caller — the wage spine, and every historical
