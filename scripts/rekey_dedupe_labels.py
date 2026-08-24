@@ -12,7 +12,9 @@ de-duplicator unrunnable in the pipeline it belongs to.
 WHAT THE KEY IS, and why it is not just the id. Posting `id` is nearly unique --
 48,264 distinct ids across 48,267 rows -- but three ids are carried by two rows each,
 and ONE LABELLED PAIR SITS ON EXACTLY THAT CASE. Pair 115 is rows 45826 and 46057,
-both `usajobs:464770500`, byte-identical down to the URL and posted_at, labelled
+both `usajobs:464770500`, identical in title, company, location, url and
+posted_at -- they differ only in `_series`, the USAJOBS occupational series code
+(2210 against 0854), which is one announcement filed under two series. Labelled
 `same_job: true` at cosine 1.0. The collision IS the duplicate the label describes.
 Keying on the id alone would resolve both endpoints to the same row, turning a
 labelled pair into a self-pair that is trivially "clustered together" at every
@@ -23,8 +25,12 @@ sharing that id, in corpus order. For 239 of 240 endpoints the occurrence is 0.
 WHAT THE DISPLAY STRING IS FOR. It stays, and it is NOT a key: the 240 endpoints use
 219 distinct display strings and 43 of those match more than one row, because
 near-duplicates share text -- which is the very thing these labels describe. It is
-corroboration. An id that resolves to a row whose text has changed is a different
-posting reusing an id, and the runtime guard treats that as fatal.
+corroboration: an id that resolves to a row whose text has materially changed has had
+its advert edited, so the pair leaves the sample. The runtime guard refuses only when
+too LARGE A SHARE of them have changed, which is what a provider recycling its id space
+would look like. See MAX_EDITED_ENDPOINT_FRACTION in dedupe_postings.py — treating a
+single edit as fatal was this package's own first mistake, and adversarial review priced
+it at roughly one blocked run in eleven.
 
     python scripts/rekey_dedupe_labels.py           # write the re-keyed file
     python scripts/rekey_dedupe_labels.py --check   # resolve and report, write nothing
@@ -153,8 +159,10 @@ def run(check_only: bool) -> int:
         "endpoints_resolved": 2 * stats["pairs_rekeyed"],
         "endpoints_on_a_colliding_id": stats["endpoints_on_a_colliding_id"],
         "collision_note": (
-            "pair 115 is rows 45826 and 46057, both id usajobs:464770500, byte-identical and "
-            "labelled same_job=true at cosine 1.0 -- the id collision IS the duplicate the label "
+            "pair 115 is rows 45826 and 46057, both id usajobs:464770500, identical in title, "
+            "company, location, url and posted_at and differing only in _series (2210 against "
+            "0854, one announcement filed under two USAJOBS occupational series), labelled "
+            "same_job=true at cosine 1.0 -- the id collision IS the duplicate the label "
             "describes, so the two endpoints are occurrence 0 and occurrence 1 of that id rather "
             "than one row twice."),
     }

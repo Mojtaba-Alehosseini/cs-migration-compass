@@ -1571,6 +1571,6 @@
   "against_corpus_rows": 48267,
   "endpoints_resolved": 240,
   "endpoints_on_a_colliding_id": 2,
-  "collision_note": "pair 115 is rows 45826 and 46057, both id usajobs:464770500, byte-identical and labelled same_job=true at cosine 1.0 -- the id collision IS the duplicate the label describes, so the two endpoints are occurrence 0 and occurrence 1 of that id rather than one row twice."
+  "collision_note": "pair 115 is rows 45826 and 46057, both id usajobs:464770500, identical in title, company, location, url and posted_at and differing only in _series (2210 against 0854, one announcement filed under two USAJOBS occupational series), labelled same_job=true at cosine 1.0 -- the id collision IS the duplicate the label describes, so the two endpoints are occurrence 0 and occurrence 1 of that id rather than one row twice."
  }
 }

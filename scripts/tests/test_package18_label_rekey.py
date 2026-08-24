@@ -53,9 +53,9 @@ class TestTheKeyItself(unittest.TestCase):
         post, gt = _corpus(), _labels()
         base, _, _ = dp.resolve_labels(post, gt)
         wrecked = {**gt, "pairs": [{**r, "i": -1, "j": 10 ** 9} for r in gt["pairs"]]}
-        after, expired, reused = dp.resolve_labels(post, wrecked)
+        after, expired, edited = dp.resolve_labels(post, wrecked)
         self.assertEqual(len(after), len(base))
-        self.assertEqual((len(expired), len(reused)), (0, 0))
+        self.assertEqual((len(expired), len(edited)), (0, 0))
         self.assertEqual([(r["_i"], r["_j"]) for r in after],
                          [(r["_i"], r["_j"]) for r in base])
 
@@ -82,21 +82,29 @@ class TestOrdinaryChurnMustNotFire(unittest.TestCase):
         self.n = len(self.gt["pairs"])
 
     def _all_survive(self, corpus, what):
-        s, expired, reused = dp.resolve_labels(corpus, self.gt)
-        self.assertEqual(len(reused), 0, f"{what}: reported id reuse")
+        s, expired, edited = dp.resolve_labels(corpus, self.gt)
+        self.assertEqual(len(edited), 0, f"{what}: reported an edited advert")
         self.assertEqual(len(expired), 0, f"{what}: reported expiry")
         self.assertEqual(len(s), self.n, f"{what}: only {len(s)} of {self.n} pairs survived")
         return s
 
+    # DISTINCT rows, not 500 copies of one. An earlier version injected 500
+    # identical postings, which generated 124,750 exact-key candidate pairs at
+    # cosine 1.0 and inflated the top band's candidate population 33x -- so the
+    # reweighted recall moved 0.678 -> 0.986 while the report claimed "every
+    # figure is identical". A real harvest adds distinct adverts. Adversarial
+    # review, package 18.
+    @staticmethod
+    def _fresh(n, tag):
+        return [{"id": f"{tag}:{i}", "title": f"{tag.title()} Specialist {i}",
+                 "company": f"{tag}co{i % 37}", "location_raw": f"City {i % 23}"}
+                for i in range(n)]
+
     def test_prepending_rows(self):
-        extra = [{"id": f"new:{i}", "title": "Warehouse Picker", "company": "Acme",
-                  "location_raw": "NY"} for i in range(500)]
-        self._all_survive(extra + self.post, "500 rows prepended")
+        self._all_survive(self._fresh(500, "new") + self.post, "500 distinct rows prepended")
 
     def test_appending_rows(self):
-        extra = [{"id": f"new:{i}", "title": "Barista", "company": "Cafe",
-                  "location_raw": "LA"} for i in range(500)]
-        self._all_survive(self.post + extra, "500 rows appended")
+        self._all_survive(self.post + self._fresh(500, "late"), "500 distinct rows appended")
 
     def test_reordering_the_whole_corpus(self):
         shuffled = list(self.post)
@@ -125,12 +133,13 @@ class TestOrdinaryChurnMustNotFire(unittest.TestCase):
         expire = set(rng.sample(labelled_ids, 12))          # 12 labelled postings close
         churned = [p for p in self.post
                    if p.get("id") not in expire and rng.random() > 0.05]
-        churned += [{"id": f"fresh:{i}", "title": "Software Engineer", "company": "NewCo",
-                     "location_raw": "Berlin"} for i in range(2000)]
+        churned += [{"id": f"fresh:{i}", "title": f"Software Engineer {i}",
+                     "company": f"NewCo{i % 61}", "location_raw": f"Berlin {i % 17}"}
+                    for i in range(2000)]
         rng.shuffle(churned)
 
-        s, expired, reused = dp.resolve_labels(churned, self.gt)
-        self.assertEqual(len(reused), 0, "ordinary churn must never look like id reuse")
+        s, expired, edited = dp.resolve_labels(churned, self.gt)
+        self.assertEqual(len(edited), 0, "ordinary churn must never look like an edited advert")
 
         # Which pairs SHOULD have dropped, derived from the churned corpus
         # rather than from the 12 ids deliberately expired -- the random 5%
@@ -153,16 +162,51 @@ class TestTheGuardCanStillFail(unittest.TestCase):
     """A guard that cannot fail is worse than none. Packages 15, 16 and 17 each
     shipped one, and package 17's own was this script's."""
 
-    def test_id_reuse_is_detected_and_the_pair_does_not_survive(self):
+    def test_an_edited_advert_drops_its_pair_and_does_not_abort_the_run(self):
+        """The employer edited a title. Measured on the two real consecutive
+        harvests, 8 of 19,399 surviving ids did exactly this in one week — all
+        benign. Treating it as fatal put the pipeline back where package 18
+        found it, so the pair leaves the sample and the run continues."""
         post, gt = _corpus(), _labels()
         victim = gt["pairs"][0]
         idx = next(i for i, p in enumerate(post) if p.get("id") == victim["id_a"])
         tampered = list(post)
-        tampered[idx] = {**post[idx], "title": "Chief Financial Officer"}
-        s, _, reused = dp.resolve_labels(tampered, gt)
-        self.assertEqual(len(reused), 1, "a changed title on a surviving id went undetected")
-        self.assertEqual(reused[0]["k"], victim["k"])
+        tampered[idx] = {**post[idx], "title": post[idx]["title"] + " Marketing"}
+        s, _, edited = dp.resolve_labels(tampered, gt)
+        self.assertEqual(len(edited), 1, "a materially changed title went undetected")
+        self.assertEqual(edited[0]["k"], victim["k"])
         self.assertNotIn(victim["k"], {r["k"] for r in s})
+        self.assertEqual(len(s), len(gt["pairs"]) - 1)
+        share = len(edited) / (2 * len(s) + len(edited))
+        self.assertLessEqual(share, dp.MAX_EDITED_ENDPOINT_FRACTION,
+                             "one edited advert must not reach the abort ceiling")
+
+    def test_a_formatting_only_edit_keeps_its_pair(self):
+        """`norm()` deliberately strips "(Full-Time)" and friends: this script's
+        whole thesis is that such differences do not change what a posting is.
+        Calling the same edit a broken identity would be incoherent."""
+        post, gt = _corpus(), _labels()
+        idx = next(i for i, p in enumerate(post) if p.get("id") == gt["pairs"][0]["id_a"])
+        tampered = list(post)
+        tampered[idx] = {**post[idx], "title": post[idx]["title"] + " (Full-Time)"}
+        s, expired, edited = dp.resolve_labels(tampered, gt)
+        self.assertEqual(len(edited), 0, "a formatting-only edit was treated as a changed posting")
+        self.assertEqual(len(s), len(gt["pairs"]))
+
+    def test_wholesale_id_reuse_is_still_fatal(self):
+        """The case the original guard was built for. One edit is noise; a
+        provider recycling its id space is not, and then the endpoints that did
+        NOT visibly change are suspect too."""
+        post, gt = _corpus(), _labels()
+        targets = {r[f"id_{s}"] for r in gt["pairs"] for s in ("a", "b")}
+        tampered = [{**p, "title": "Chief Financial Officer", "company": "Zzz",
+                     "company_slug": "zzz"} if p.get("id") in targets else p
+                    for p in post]
+        s, _, edited = dp.resolve_labels(tampered, gt)
+        share = len(edited) / (2 * len(s) + len(edited))
+        self.assertGreater(share, dp.MAX_EDITED_ENDPOINT_FRACTION,
+                           f"recycling every labelled id only reached {share:.0%}, "
+                           f"below the {dp.MAX_EDITED_ENDPOINT_FRACTION:.0%} abort ceiling")
 
     def test_a_below_floor_survivor_set_is_refused(self):
         post, gt = _corpus(), _labels()
@@ -188,6 +232,9 @@ class TestTheGuardCanStillFail(unittest.TestCase):
         self.assertEqual(stats["per_band"]["4"], 0)
 
     def test_a_one_sided_survivor_set_is_refused(self):
+        """Note which floor does the work here: the BAND floor. These sets are
+        also band-starved, so they do not demonstrate the class floor — see
+        test_the_class_floor_fires_on_its_own for that."""
         post, gt = _corpus(), _labels()
         s, _, _ = dp.resolve_labels(post, gt)
         for name, subset in (("all positive", [r for r in s if r["same_job"]]),
@@ -195,6 +242,41 @@ class TestTheGuardCanStillFail(unittest.TestCase):
             with self.subTest(subset=name):
                 ok, why, _ = dp.floor_verdict(subset)
                 self.assertFalse(ok, f"a {name} survivor set passed the floor")
+
+    def test_the_class_floor_fires_on_its_own(self):
+        """Every band full, only the class balance wrong. Without this,
+        disabling MIN_PAIRS_PER_CLASS entirely left every test green — the
+        one-sided sets above are caught by the band floor and their names took
+        the credit. Adversarial review, package 18."""
+        one_sided = []
+        for b, (lo, _hi) in enumerate(dp.GT_BANDS):
+            for n in range(24):
+                one_sided.append({"k": len(one_sided), "cosine": lo + 0.005,
+                                  "same_job": b == 0 and n < 8})
+        ok, why, stats = dp.floor_verdict(one_sided)
+        self.assertFalse(ok, "a set with every band full but 8 positives passed the floor")
+        self.assertEqual(len(why), 1, f"the band floor also fired, so this proves nothing: {why}")
+        self.assertIn("same_job=True", why[0])
+        self.assertTrue(all(v >= dp.MIN_PAIRS_PER_BAND for v in stats["per_band"].values()))
+
+    def test_the_class_floor_barely_binds_on_this_label_file(self):
+        """Stated because the code says so and a claim like that must be
+        checkable: with the band floor at 12 and package 15's stratification,
+        the class floor almost never binds. The worst constructible case
+        reaches 11 positives; random band-satisfying sets do not reach it."""
+        gt = _labels()
+        by_band = {}
+        for r in gt["pairs"]:
+            by_band.setdefault(dp._band_of(r["cosine"]), []).append(r)
+        worst = []
+        for b, rows in by_band.items():
+            worst += sorted(rows, key=lambda r: r["same_job"])[:dp.MIN_PAIRS_PER_BAND]
+        n_true = sum(1 for r in worst if r["same_job"])
+        self.assertLess(n_true, dp.MIN_PAIRS_PER_CLASS,
+                        "the constructed worst case no longer trips the class floor")
+        ok, why, _ = dp.floor_verdict(worst)
+        self.assertFalse(ok)
+        self.assertTrue(any("same_job=True" in w for w in why), why)
 
     def test_the_floor_is_not_satisfiable_by_duplicating_one_pair(self):
         """A degenerate set that meets every count without carrying any
@@ -204,6 +286,154 @@ class TestTheGuardCanStillFail(unittest.TestCase):
         s, _, _ = dp.resolve_labels(post, gt)
         ok, why, _ = dp.floor_verdict([dict(s[0]) for _ in range(1000)])
         self.assertFalse(ok, "1,000 copies of one pair satisfied the floor")
+
+
+class TestTheVerdictIsActuallyENFORCED(unittest.TestCase):
+    """floor_verdict() was thoroughly tested in isolation and the line that
+    makes its verdict matter was not covered at all — adversarial review
+    deleted `raise SystemExit(2)` from run() twice and from the edited-share
+    check once, and every test stayed green. These drive run() itself."""
+
+    def _refuses_with(self, corpus, labels, expected_phrase):
+        """Point run() at a constructed corpus and assert it refuses FOR THE
+        STATED REASON.
+
+        Asserting only `SystemExit(2)` is not enough and an earlier version of
+        these tests did exactly that: delete the floor's `raise` and the run
+        carries on to the threshold-stability check, which also exits 2, so the
+        test passes while the guard it names is gone. Adversarial review found
+        three such mutations surviving. The message is the path."""
+        import contextlib
+        import io
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            (tmp / "postings.json").write_text(
+                json.dumps({"data": {"postings": corpus}}), encoding="utf-8")
+            lab = tmp / "labels.json"
+            lab.write_text(json.dumps(labels), encoding="utf-8")
+            old_p, old_l = dp.PROCESSED, dp.LABELS
+            dp.PROCESSED, dp.LABELS = tmp, lab
+            buf = io.StringIO()
+            try:
+                with contextlib.redirect_stdout(buf):
+                    dp.run()
+            except SystemExit as e:
+                self.assertEqual(e.code, 2, buf.getvalue()[-800:])
+            else:
+                self.fail(f"run() did not refuse.\n{buf.getvalue()[-800:]}")
+            finally:
+                dp.PROCESSED, dp.LABELS = old_p, old_l
+            out = buf.getvalue()
+        # The LAST fatal is the one that stopped the run. Matching anywhere in
+        # the output is not enough: each guard logs before it raises, so
+        # deleting a `raise` leaves its message in the log while a later guard
+        # does the exiting — and the test passes over the hole. Adversarial
+        # review's `edited-share SystemExit deleted` mutation survived exactly
+        # that way.
+        fatals = [ln for ln in out.splitlines() if "FATAL:" in ln]
+        self.assertTrue(fatals, f"refused with no FATAL line.\n{out[-900:]}")
+        self.assertIn(expected_phrase, fatals[-1],
+                      f"refused, but the guard that stopped it was not the one under test.\n"
+                      f"last fatal: {fatals[-1]}\nall fatals: {fatals}")
+        return out
+
+    def _corpus_and_labels(self, n_per_band=24):
+        """A synthetic corpus whose labelled pairs sit at known cosines."""
+        corpus, pairs, k = [], [], 0
+        for b, (lo, _hi) in enumerate(dp.GT_BANDS):
+            for n in range(n_per_band):
+                a = {"id": f"a{k}", "title": f"Engineer {k}", "company": "Acme",
+                     "location_raw": "NY"}
+                bb = {"id": f"b{k}", "title": f"Engineer {k} Senior", "company": "Acme",
+                      "location_raw": "NY"}
+                corpus += [a, bb]
+                pairs.append({"k": k, "cosine": lo + 0.005, "same_job": b == 4,
+                              "i": 2 * k, "j": 2 * k + 1,
+                              "id_a": a["id"], "occ_a": 0, "id_b": bb["id"], "occ_b": 0,
+                              "a": dp.display_of(a), "b": dp.display_of(bb)})
+                k += 1
+        return corpus, {"n": len(pairs), "pairs": pairs}
+
+    def test_run_exits_two_when_the_floor_is_not_met(self):
+        corpus, labels = self._corpus_and_labels(n_per_band=24)
+        # remove every endpoint of one whole band: bands go 0/24/24/24/24
+        drop = {p["id_a"] for p in labels["pairs"] if dp._band_of(p["cosine"]) == 0}
+        drop |= {p["id_b"] for p in labels["pairs"] if dp._band_of(p["cosine"]) == 0}
+        starved = [r for r in corpus if r["id"] not in drop]
+        self._refuses_with(starved, labels, "too few labelled pairs survive")
+
+    def test_run_exits_two_when_too_many_endpoints_were_edited(self):
+        """Edited above the ceiling, but the survivors still clear BOTH floors —
+        otherwise the floor takes the credit and deleting this check changes
+        nothing, which is exactly what adversarial review demonstrated.
+
+        share = E / (240 - E) for E edits in E distinct pairs, so E must exceed
+        48 to pass 25%. 49 edits spread 10/10/10/10/9 leave bands at
+        14/14/14/14/15 and 15 positives."""
+        corpus, labels = self._corpus_and_labels(n_per_band=24)
+        per_band = {0: 10, 1: 10, 2: 10, 3: 10, 4: 9}
+        hit, seen = set(), Counter()
+        for p in labels["pairs"]:
+            b = dp._band_of(p["cosine"])
+            if seen[b] < per_band[b]:
+                seen[b] += 1
+                hit.add(p["id_a"])
+        self.assertEqual(len(hit), 49)
+        edited_corpus = [{**r, "title": "Chief Financial Officer"} if r["id"] in hit else r
+                         for r in corpus]
+        s, _, edited = dp.resolve_labels(edited_corpus, labels)
+        share = len(edited) / (2 * len(s) + len(edited))
+        self.assertGreater(share, dp.MAX_EDITED_ENDPOINT_FRACTION,
+                           f"only {share:.1%} edited — below the ceiling, so this proves nothing")
+        ok, why, _ = dp.floor_verdict(s)
+        self.assertTrue(ok, f"the survivors fail the floor, so the floor would take the credit: {why}")
+        self._refuses_with(edited_corpus, labels, "point at materially different content")
+
+    def test_run_exits_two_when_the_sample_selects_a_different_threshold(self):
+        """The consequence the floor exists to prevent: a survivor set that
+        picks a threshold other than the one the shipped clusters were built at
+        changes how many rows get removed. Constructed so that BOTH floors pass
+        — every band has 24, and the classes are 24 True / 96 False — leaving
+        the threshold check as the only thing that can refuse."""
+        _, labels = self._corpus_and_labels(n_per_band=24)
+        corpus = []
+        for p in labels["pairs"]:
+            # every labelled pair is an exact-key duplicate, so it is clustered
+            # together at EVERY threshold; only the top band is labelled a true
+            # duplicate, so the rest are false positives everywhere and no
+            # threshold can reach precision 0.95.
+            a = {"id": p["id_a"], "title": f"Engineer {p['k']}", "company": "Acme",
+                 "location_raw": "NY"}
+            b = {"id": p["id_b"], "title": f"Engineer {p['k']}", "company": "Acme",
+                 "location_raw": "NY"}
+            p["same_job"] = dp._band_of(p["cosine"]) == 4
+            p["a"], p["b"] = dp.display_of(a), dp.display_of(b)
+            corpus += [a, b]
+        out = self._refuses_with(corpus, labels, "selects threshold")
+        self.assertIn("not the 0.98", out)
+
+
+class TestThePerBandFloorIsNotJustATotal(unittest.TestCase):
+    """Adversarial review replaced the per-band check with a total-count check
+    of 12x5=60 and every test still passed. This is the case that separates
+    them: a set well above any total, with one band empty and both classes
+    healthy, so neither the total nor the class floor can take the credit."""
+
+    def test_a_set_above_the_equivalent_total_is_still_refused(self):
+        mixed = []
+        for b, (lo, _hi) in enumerate(dp.GT_BANDS):
+            for n in range(24):
+                mixed.append({"k": len(mixed), "cosine": lo + 0.005, "same_job": n % 2 == 0})
+        starved = [r for r in mixed if dp._band_of(r["cosine"]) != 0]
+        ok, why, stats = dp.floor_verdict(starved)
+        self.assertGreater(stats["n_surviving"], dp.MIN_PAIRS_PER_BAND * len(dp.GT_BANDS),
+                           "this set does not exceed the equivalent total, so it proves nothing")
+        self.assertGreaterEqual(stats["same_job_true"], dp.MIN_PAIRS_PER_CLASS)
+        self.assertGreaterEqual(stats["same_job_false"], dp.MIN_PAIRS_PER_CLASS)
+        self.assertFalse(ok, "a set with 96 pairs and one empty band passed the floor")
+        self.assertEqual(len(why), 1, f"another floor also fired, so this proves nothing: {why}")
+        self.assertIn("band", why[0])
 
 
 class TestTheReportedFiguresNameTheirN(unittest.TestCase):

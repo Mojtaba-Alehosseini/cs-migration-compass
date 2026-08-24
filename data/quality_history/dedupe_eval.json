@@ -107,7 +107,10 @@
   "n_pairs_labelled": 120,
   "n_pairs_surviving": 120,
   "n_expired_endpoints": 0,
-  "n_id_reuse": 0,
+  "n_edited_endpoints": 0,
+  "edited_share_of_resolved": 0.0,
+  "edited_ceiling": 0.25,
+  "edited_examples": [],
   "corpus_size_now": 48267,
   "per_band_surviving": {
    "0": 24,

@@ -111,16 +111,17 @@ jobs:
       # a slow provider. Letting one pass silently would put us back to a build
       # that cannot pass its own validator.
       #
-      # THIS DOES NOT YET MAKE THE REFRESH SHIP, and the run that proved these
-      # steps work is the run that proved it. Verified on workflow_dispatch
-      # 32751240590 against a fresh 48,708-row harvest: the harvesters, the
-      # merge, the occupation classifier and `classify_titles.py` all complete,
-      # and `dedupe_postings.py` then stops on its own integrity guard —
-      # "240 of 240 labelled endpoints no longer match the corpus". Its
-      # threshold is tuned against 120 pairs keyed by ARRAY INDEX, so any fresh
-      # harvest invalidates every one of them at once. The guard is correct and
-      # must not be weakened here; re-keying the labels is a methodology
-      # decision, recorded as NEEDS-DECISION #54.
+      # Package 17 verified these three on workflow_dispatch 32751240590 and
+      # `dedupe_postings.py` then stopped on its own integrity guard — "240 of
+      # 240 labelled endpoints no longer match the corpus" — because its 120
+      # labelled pairs were keyed by ARRAY INDEX and any fresh harvest moved
+      # every one of them at once. PACKAGE 18 RE-KEYED THEM to (id, occurrence)
+      # and made the guard proportional: an expired posting drops its pair, an
+      # edited advert drops its pair, and the run is refused only when too few
+      # pairs survive to tune on, when too large a share of ids point at
+      # different content, or when the surviving sample selects a different
+      # threshold than the shipped clusters were built at. NEEDS-DECISION #54,
+      # resolved.
       - name: Classify titles (offline, seeded — package 15's TF-IDF model)
         run: python scripts/classify_titles.py
 
@@ -159,7 +160,15 @@ jobs:
       - name: Snapshot drift (blocks the commit below on a real drop)
         run: python scripts/snapshot_stats.py
 
-      # history/openings.json is the 144 KB per-country summary /work renders;
+      # history/postings_seed_summary.json is written by build_site_data.py on
+      # EVERY run, is fetched by /data/postings-seed, and was not in this list.
+      # Its size is recorded in history-manifest.json, which IS committed — so
+      # every automated refresh shipped a manifest describing a file version
+      # that was not in the repo, and the seed-list page served the last
+      # successful refresh's data indefinitely. Nothing validates the manifest
+      # against the files it describes. Package 18, adversarial review.
+      #
+      # history/openings.json is the 150 KB per-country summary /work renders;
       # history/postings.json is the full list /openings renders. build_site_data.py
       # writes both from the same array on every run, so they agree by
       # construction — but only if both are COMMITTED. Committing one and not
@@ -171,9 +180,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/processed/postings*.json data/provenance.json data/raw/postings_seed_hints \
-            data/quality_history \
+            data/quality_history data/labels \
             site/public/data/history/postings.json site/public/data/history-manifest.json \
             site/public/data/history/openings.json \
+            site/public/data/history/postings_seed_summary.json \
             site/public/data/provenance.json
           git diff --staged --quiet && echo "no changes" && exit 0
           git commit -m "Weekly postings refresh (automated, github-actions[bot])"

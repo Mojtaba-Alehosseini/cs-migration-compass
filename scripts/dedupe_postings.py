@@ -74,28 +74,73 @@ def _band_of(score: float) -> int:
 # P=1.000 R=0.000, because 23 of the 32 same_job=True pairs live in that one
 # band. A total-count floor cannot see that, and would have passed it.
 #
-# Attrition constrained to keep at least this many in EVERY band, 400 trials
-# each, scored against the same clusterings:
+# PROCEDURE, stated so the table below is reproducible from this comment --
+# the first version of it was not, which is how the number below came to be
+# wrong. Survivor sets are drawn per band, keeping k_b ~ Uniform{N..24} from
+# each of the five bands independently; a set that fails the shipped floor is
+# discarded, because such a set is refused and never reaches the tuning; each
+# accepted set is scored against clusterings computed once per threshold from
+# the committed corpus, exactly as run() does. "Moved" means the selected
+# threshold differs from the full-sample 0.98.
 #
-#     per band   n range   tuned threshold moved   precision sd
-#         20      102-119           0.0%              0.012
-#         16       84-118           0.0%              0.018
-#         12       71-115           0.0%              0.025
-#         10       64-114           0.5%              0.030
-#          8       49-110           1.2%              0.036
-#          4       36-106           4.0%              0.057
+#     per band   accepted   tuned threshold moved   precision sd
+#         24      60,000            0.000%              0.000
+#         20      60,000            0.000%              0.013
+#         18      60,000            0.000%              0.016
+#         16      60,000            0.010%              0.020
+#         14      60,000            0.047%              0.023
+#         13      60,000            0.115%              0.025
+#         12      60,000            0.190%              0.026
 #
-# 12 -- half the design of 24 -- is the smallest floor at which the tuned
-# threshold did not move once in 400 trials. Below it the selection starts to
-# wobble, and uniform attrition to a comparable total (n=60) already moves it
-# 1.8% of the time with a precision floor of 0.536.
+# 20,000 trials x 3 seeds per level. AN EARLIER VERSION OF THIS COMMENT CLAIMED
+# 0.0% AT 12 AND CALLED 12 "the smallest floor at which the tuned threshold did
+# not move once in 400 trials". That was a 400-trial artifact: the true rate is
+# 0.19%, so P(zero moves in 400) is about 0.43 -- a coin flip that was observed
+# once and written down as a property. Adversarial review caught it, and it is
+# the same pattern this project has now recorded three times: a rule tuned on
+# the single run that produced it.
+#
+# 12 is kept, on a different and stated basis. The floor trades two failures
+# against each other: too high and an ordinary week is REFUSED, which is the
+# blocked pipeline this package exists to end -- measured, a week that expires
+# 15% of labelled postings leaves bands at 15/18/13/18/16, so a floor of 14 or
+# more would refuse it. Too low and the threshold is tuned on too little. At 12
+# the residual risk is 0.19%, and it is not left to chance either: the
+# threshold-stability check below refuses any run whose sample selects a
+# different threshold at all, which is the consequence that actually matters.
 MIN_PAIRS_PER_BAND = 12
 
+# The threshold this sample selects on the committed corpus. A survivor set that
+# selects a DIFFERENT one is not a smaller measurement of the same thing -- it
+# changes how many rows the de-duplicator removes. Measured: 0.98 -> 0.95 takes
+# removable rows from 2,884 to 3,622 (+25.6%, 5.98% -> 7.50%) at precision 0.75
+# instead of 0.958. That is a methodology change, and it must not happen
+# unattended in a workflow that pushes to main. It is rare -- 0.19% of survivor
+# sets at the floor -- so this costs roughly one blocked run in five hundred,
+# against silently deleting 738 more rows.
+EXPECTED_THRESHOLD = 0.98
+
 # And both classes must survive in usable numbers: precision needs negatives,
-# recall needs positives. The sample is 32 True against 88 False, so a survivor
-# set can satisfy a count floor and still be one-sided -- all-True scores
-# P=1.000 R=1.000 at threshold 0.70 with nothing to catch a false positive,
-# and all-False scores P=0.000. Both are meaningless and both are reachable.
+# recall needs positives. A one-sided survivor set is meaningless -- all-True
+# scores P=1.000 R=1.000 at threshold 0.70 with nothing able to catch a false
+# positive, all-False scores P=0.000.
+#
+# BE HONEST ABOUT WHAT THIS CURRENTLY GUARDS. Adversarial review found that with
+# MIN_PAIRS_PER_BAND = 12 and THIS label file's composition, the class floor
+# almost never binds. Measured over 4,000 random survivor sets that satisfy the
+# band floor: same_job=True ranged 13-32 and same_job=False ranged 44-87, so
+# neither floor fired once. Only a deliberately constructed worst case -- take
+# the 12 least-positive pairs in every band -- reaches True=11 and trips it, and
+# the False floor is not reachable at all (measured minimum 39 against a floor
+# of 12).
+#
+# It is kept anyway, and kept at 12, because it guards the composition rather
+# than this particular file: the band floor only implies a class balance while
+# the labels stay stratified the way package 15 drew them (band 0 all negative,
+# band 4 almost all positive). A re-labelling that spread the positives evenly
+# would break that implication silently. What it is NOT is a second independent
+# check on today's data, and an earlier draft of this package's report claimed
+# it was.
 MIN_PAIRS_PER_CLASS = 12
 
 # Tokens that are formatting rather than identity: two postings differing
@@ -205,10 +250,22 @@ def display_of(r: dict) -> str:
             f"/ {r.get('location_raw')}")
 
 
+# Above this share of the endpoints that still resolve having CHANGED CONTENT,
+# the identity scheme itself has broken rather than employers having edited
+# their adverts, and the run is refused. Measured on the only pair of real
+# consecutive automated harvests this repo has (34acb04 -> 7c2d03a): of 19,399
+# ids present in both, 8 changed their display string -- 0.041%. Every one was
+# the same employer editing a title ("Demand Generation Manager" -> "Demand
+# Generation Marketing Manager"). A provider actually recycling its id space
+# would show a rate near 100%, so 25% sits about 600x above the observed noise
+# and far below any systemic break.
+MAX_EDITED_ENDPOINT_FRACTION = 0.25
+
+
 def resolve_labels(post: list[dict], gt: dict) -> tuple[list[dict], list[dict], list[dict]]:
     """Resolve every labelled pair against THIS corpus by (id, occurrence).
 
-    Returns (survivors, expired, reused). A survivor carries `_i`/`_j`, its
+    Returns (survivors, expired, edited). A survivor carries `_i`/`_j`, its
     indices in the corpus passed in -- never the `i`/`j` it was labelled at.
 
     The labels used to store only ARRAY INDICES, and a re-harvest that added,
@@ -221,21 +278,36 @@ def resolve_labels(post: list[dict], gt: dict) -> tuple[list[dict], list[dict], 
     passed. Package 18 re-keyed the labels; `i`/`j` stay in the file as
     provenance and are deliberately not read here.
 
-    Three outcomes, and the difference between them is the whole point:
-      * an endpoint's id is GONE     -> that posting expired; the pair does not
-                                        survive. Ordinary churn.
-      * an id resolves, text CHANGED -> a different posting is reusing an id.
-                                        The key is lying. The caller treats this
-                                        as fatal -- it is the case the original
-                                        guard was built for.
-      * too few survivors            -> the caller refuses. See floor_verdict().
+    Outcomes, and the difference between them is the whole point:
+      * an endpoint's id is GONE      -> that posting expired; the pair does not
+                                         survive. Ordinary churn.
+      * the text differs only by the de-duplicator's OWN normalisation (a
+        "(Full-Time)" suffix, punctuation, case) -> the pair SURVIVES. This
+        script's whole thesis is that such differences do not change what a
+        posting is; it would be incoherent to call the same edit fatal here.
+      * the content materially changed -> the pair drops and is counted as
+                                          EDITED, not fatal on its own.
+      * too many edited at once        -> the caller refuses; see
+                                          MAX_EDITED_ENDPOINT_FRACTION.
+      * too few survivors              -> the caller refuses; see floor_verdict().
+
+    WHY A MATERIAL EDIT IS NOT FATAL BY ITSELF. It was, in the first version of
+    this package, and adversarial review priced that: across the two real
+    consecutive harvests, 8 of 19,399 surviving ids had their title edited by
+    the employer -- roughly a 9% chance per run that one of the 240 labelled
+    endpoints is touched, ~99% across a year, and PERMANENT, because the stored
+    strings are pinned to labelling time. That is the same failure this package
+    exists to remove, moved from the index key onto the display string. A pair
+    whose subject has been edited can no longer be trusted to describe the
+    comparison it was labelled for, so it leaves the sample -- and the floor,
+    not a hair trigger, decides when too much has left.
     """
     by_id: dict[str, list[int]] = defaultdict(list)
     for idx, row in enumerate(post):
         if row.get("id") is not None:
             by_id[row["id"]].append(idx)
 
-    survivors, expired, reused = [], [], []
+    survivors, expired, edited = [], [], []
     for r in gt["pairs"]:
         resolved, lost = {}, False
         for side in ("a", "b"):
@@ -249,14 +321,43 @@ def resolve_labels(post: list[dict], gt: dict) -> tuple[list[dict], list[dict], 
             idx = idxs[occ]
             stored = r.get(side)
             if stored is not None and display_of(post[idx]) != stored:
-                reused.append({"k": r.get("k"), "side": side, "id": pid, "index_now": idx,
-                               "labelled_as": stored, "now": display_of(post[idx])})
-                lost = True
-                continue
+                # Formatting-only, by this script's own definition of sameness?
+                # Then it is not a change at all. key_of() covers title
+                # normalisation, company and location together.
+                same_job = key_of(post[idx]) == key_of(_row_from_display(stored, post[idx]))
+                if not same_job:
+                    edited.append({"k": r.get("k"), "side": side, "id": pid, "index_now": idx,
+                                   "labelled_as": stored, "now": display_of(post[idx]),
+                                   "company_changed":
+                                       (post[idx].get("company_slug") or post[idx].get("company"))
+                                       != _company_from_display(stored)})
+                    lost = True
+                    continue
             resolved[side] = idx
         if not lost:
             survivors.append({**r, "_i": resolved["a"], "_j": resolved["b"]})
-    return survivors, expired, reused
+    return survivors, expired, edited
+
+
+def _company_from_display(s: str) -> str | None:
+    """The company out of a stored display string, which is
+    'title @ company / location'. Split on the LAST ' @ ' and the LAST ' / ',
+    because titles contain both characters and locations contain slashes."""
+    if s is None or " @ " not in s:
+        return None
+    rest = s.rsplit(" @ ", 1)[1]
+    return rest.rsplit(" / ", 1)[0] if " / " in rest else rest
+
+
+def _row_from_display(s: str, like: dict) -> dict:
+    """A synthetic row carrying what the stored display string says, so it can
+    be normalised by key_of() exactly as a real row would be."""
+    if s is None or " @ " not in s:
+        return dict(like)
+    title, rest = s.rsplit(" @ ", 1)
+    company, location = (rest.rsplit(" / ", 1) + [""])[:2] if " / " in rest else (rest, "")
+    return {"title": title, "company": company, "company_slug": company,
+            "location_raw": location}
 
 
 def floor_verdict(survivors: list[dict]) -> tuple[bool, list[str], dict]:
@@ -318,15 +419,25 @@ def run():
     label_check = None
     survivors: list[dict] = []
     if gt:
-        survivors, expired, reused = resolve_labels(post, gt)
+        survivors, expired, edited = resolve_labels(post, gt)
 
-        # A resolved id whose content changed means the identity itself is
-        # unreliable, and every other resolution in this run is then suspect.
-        if reused:
-            log(f"  FATAL: {len(reused)} labelled endpoint(s) resolved by id to a row whose "
-                f"content has changed -- a different posting is reusing an id, so the key cannot "
-                f"be trusted. Re-label before trusting any threshold. First: {reused[0]}")
+        # A handful of edited adverts is ordinary and costs those pairs. A large
+        # SHARE of them means the identity scheme itself broke -- a provider
+        # recycling its id space -- and then the pairs that did NOT visibly
+        # change are suspect too, so nothing here can be trusted.
+        n_resolved_endpoints = 2 * len(survivors) + len(edited)
+        edited_share = len(edited) / n_resolved_endpoints if n_resolved_endpoints else 0.0
+        if edited_share > MAX_EDITED_ENDPOINT_FRACTION:
+            log(f"  FATAL: {len(edited)} of {n_resolved_endpoints} endpoints that still resolve "
+                f"({edited_share:.1%}) point at materially different content -- above the "
+                f"{MAX_EDITED_ENDPOINT_FRACTION:.0%} ceiling, which means ids are being reused "
+                f"rather than adverts edited. Re-label before trusting any threshold. "
+                f"First: {edited[0]}")
             raise SystemExit(2)
+        if edited:
+            log(f"  {len(edited)} endpoint(s) were edited since labelling "
+                f"({edited_share:.2%}); their pairs leave the sample. "
+                f"First: k={edited[0]['k']} {edited[0]['labelled_as']!r} -> {edited[0]['now']!r}")
 
         ok, reasons, stats = floor_verdict(survivors)
         label_check = {
@@ -334,7 +445,10 @@ def run():
             "n_pairs_labelled": len(gt["pairs"]),
             "n_pairs_surviving": stats["n_surviving"],
             "n_expired_endpoints": len(expired),
-            "n_id_reuse": len(reused),
+            "n_edited_endpoints": len(edited),
+            "edited_share_of_resolved": round(edited_share, 5),
+            "edited_ceiling": MAX_EDITED_ENDPOINT_FRACTION,
+            "edited_examples": edited[:5],
             "corpus_size_now": N,
             "per_band_surviving": stats["per_band"],
             "same_job_true": stats["same_job_true"],
@@ -431,6 +545,14 @@ def run():
         log(f"    reweighted to the candidate-pair population: "
             f"P={best['precision_reweighted']:.3f} R={best['recall_reweighted']:.3f} "
             f"F1={best['f1_reweighted']:.3f}  (n={len(survivors)})")
+        if thr != EXPECTED_THRESHOLD:
+            log(f"  FATAL: this survivor set selects threshold {thr}, not the {EXPECTED_THRESHOLD} "
+                f"the shipped clusters were built at. That is not a smaller measurement of the "
+                f"same thing -- it changes how many rows are removed (0.98 -> 0.95 is +25.6% "
+                f"removable at precision 0.75 instead of 0.958). n={len(survivors)} pairs, "
+                f"per band {stats['per_band']}. Re-label, or change EXPECTED_THRESHOLD "
+                f"deliberately.")
+            raise SystemExit(2)
     else:
         thr = 0.90
         log(f"  no labelled pairs yet; using default threshold {thr}")
@@ -548,10 +670,16 @@ def run():
             # The n is derived, not written down. This string ships to the site
             # in provenance.json, and a hardcoded "120" would have been wrong
             # the first week a labelled posting expired.
-            f"Threshold {thr} tuned against {len(survivors)} hand-labelled pairs, stratified 24 "
-            f"per cosine band"
-            + (f" ({(gt or {}).get('n', 0)} labelled in total; the rest have left the corpus "
-               f"since labelling)" if gt and len(survivors) != gt.get("n") else "")
+            # The band breakdown is DERIVED too. An earlier version fixed the
+            # count and left "stratified 24 per cosine band" hardcoded beside
+            # it -- the same defect, in the same sentence, one clause over.
+            f"Threshold {thr} tuned against {len(survivors)} hand-labelled pairs, "
+            + ("/".join(str(Counter(_band_of(r["cosine"]) for r in survivors)[b])
+                        for b in range(len(GT_BANDS))) + " across the five cosine bands"
+               if gt else "no bands")
+            + (f" ({(gt or {}).get('n', 0)} labelled in total, 24 per band when drawn; the rest "
+               f"have left the corpus since labelling)" if gt and len(survivors) != gt.get("n")
+               else " (the full labelled set)")
             + " — data/labels/dedupe_pair_ground_truth.json; the de-duplicator's own precision "
               "and recall, with the n they were computed on, are in "
               "data/quality_history/dedupe_eval.json.",
@@ -674,12 +802,26 @@ def self_test():
     ck("emptying a band fails on the BAND floor alone, both classes healthy", not ok and len(why) == 1,
        f"n={st['n_surviving']}, True={st['same_job_true']} False={st['same_job_false']}, {why}")
 
+    # The CLASS floor firing on its own, with every band comfortably full --
+    # the mirror of the case above. Without this, disabling MIN_PAIRS_PER_CLASS
+    # entirely left both suites green, because the one-sided sets below are
+    # refused by the BAND floor and their names took the credit.
+    one_sided = []
+    for b, (lo, _hi) in enumerate(GT_BANDS):
+        for n in range(24):
+            one_sided.append({"k": len(one_sided), "cosine": lo + 0.005,
+                              "same_job": b == 0 and n < 8})
+    ok, why, st = floor_verdict(one_sided)
+    ck("the CLASS floor fires alone, every band full", not ok and len(why) == 1,
+       f"n={st['n_surviving']} bands {st['per_band']} True={st['same_job_true']} "
+       f"False={st['same_job_false']} -> {why}")
+
     ok, why, st = floor_verdict([r for r in _synth(24) if r["same_job"]])
-    ck("an all-positive survivor set FAILS (nothing to catch a false positive)", not ok,
-       "; ".join(why))
+    ck("an all-positive survivor set FAILS (band floor catches it first, not the class floor)",
+       not ok, "; ".join(why))
     ok, why, st = floor_verdict([r for r in _synth(24) if not r["same_job"]])
-    ck("an all-negative survivor set FAILS (nothing to measure recall on)", not ok,
-       "; ".join(why))
+    ck("an all-negative survivor set FAILS (band floor catches it first, not the class floor)",
+       not ok, "; ".join(why))
 
     fake = [{"title": "Sales Associate", "company": "Acme", "location_raw": "NY"},
             {"title": "Sales Associate (Part-Time)", "company": "Acme", "location_raw": "NY"},
