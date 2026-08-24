@@ -133,6 +133,33 @@ class TestPerProviderAndCountryDrift(unittest.TestCase):
         ss.compare_against_previous(current, previous)
         self.assertTrue(any("country 'US' dropped" in d for d in ss.DROPS), ss.DROPS)
 
+    def test_unresolved_FALLING_is_an_improvement_and_must_not_block(self):
+        """Package 18. "unresolved" is not a country, and the drop rule ran
+        backwards on it: a SMALLER unresolved bucket means country resolution
+        improved, which package 16 spent a tier achieving (12.1% -> 9.4%).
+
+        The first real refresh ever to reach this gate — run 32774223881, after
+        packages 17 and 18 cleared the four blockers in front of it — was
+        stopped by exactly this: "unresolved dropped 19.8% (5,824 -> 4,673)",
+        which is 1,151 postings that now resolve to a country. Nobody had seen
+        it because no refresh had ever got this far."""
+        previous = _snapshot({}, postings_by_country={"US": {"total": 30000, "stated_pay": 1},
+                                                      "unresolved": {"total": 5824, "stated_pay": 0}})
+        current = _snapshot({}, postings_by_country={"US": {"total": 30000, "stated_pay": 1},
+                                                     "unresolved": {"total": 4673, "stated_pay": 0}})
+        ss.compare_against_previous(current, previous)
+        self.assertEqual(ss.DROPS, [], "a shrinking unresolved bucket blocked the commit")
+        self.assertFalse(any("unresolved" in f for f in ss.FLAGS), ss.FLAGS)
+
+    def test_unresolved_RISING_is_the_regression_and_does_block(self):
+        """The direction the rule's own comment describes: postings moving out
+        of a real country and into the unresolved bucket. If only the fall is
+        exempted and the rise is not checked, the gate stops catching R14."""
+        previous = _snapshot({}, postings_by_country={"unresolved": {"total": 4673, "stated_pay": 0}})
+        current = _snapshot({}, postings_by_country={"unresolved": {"total": 5824, "stated_pay": 0}})
+        ss.compare_against_previous(current, previous)
+        self.assertTrue(any("unresolved postings ROSE" in d for d in ss.DROPS), ss.DROPS)
+
     def test_a_small_countrys_percentage_swing_is_flagged_not_dropped(self):
         # 5 -> 3 is a 40% drop by percentage but pure sample noise at n=5 —
         # below MIN_COUNTRY_COUNT_FOR_DROP, so it must not block a commit.

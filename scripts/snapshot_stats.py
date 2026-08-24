@@ -192,7 +192,34 @@ def compare_against_previous(current: dict, previous: dict | None) -> None:
                  f"({old_p['postings_count']} -> {new_count} postings) since the previous snapshot")
 
     MIN_COUNTRY_COUNT_FOR_DROP = 20  # below this, a 15% swing is sample noise, not signal
+
+    # "unresolved" is not a country and the rule above runs BACKWARDS on it.
+    # The regression this whole block exists to catch is postings moving OUT of
+    # a real country and INTO the unresolved bucket, so for that one key a RISE
+    # is the finding and a fall is the fix working -- package 16 spent a tier
+    # taking it from 12.1% to 9.4% on purpose. The first real refresh to reach
+    # this gate (run 32774223881) blocked on exactly that: "unresolved dropped
+    # 19.8% (5,824 -> 4,673)", which is 1,151 postings that now resolve to a
+    # country. Nobody had seen it because no refresh had ever got this far.
+    UNRESOLVED = "unresolved"
+    un_new = (current.get("postings_by_country", {}).get(UNRESOLVED) or {}).get("total")
+    un_old = (previous.get("postings_by_country", {}).get(UNRESOLVED) or {}).get("total")
+    # _pct_change() is not None-safe and every other call site guards before
+    # calling it; this one must too. A snapshot with no postings_by_country at
+    # all yields None on both sides.
+    un_change = _pct_change(un_old, un_new) if (un_old is not None and un_new is not None) else None
+    if un_change is not None:
+        if un_change > DROP_THRESHOLD_PCT:
+            drop(f"drift: unresolved postings ROSE {un_change:.1f}% ({un_old} -> {un_new}) since "
+                 f"the previous snapshot — postings that used to resolve to a country no longer "
+                 f"do, which is the country-resolution regression R14 fixed once already")
+        elif un_change < -DROP_THRESHOLD_PCT:
+            log(f"  unresolved postings fell {abs(un_change):.1f}% ({un_old} -> {un_new}) — "
+                f"country resolution improved, not a drop")
+
     for country, new_c in current.get("postings_by_country", {}).items():
+        if country == UNRESOLVED:
+            continue
         old_c = previous.get("postings_by_country", {}).get(country)
         if old_c is None:
             continue
