@@ -545,9 +545,16 @@ def run():
             "seniority or location, which distinguish genuinely different vacancies.",
             "Blocked by company, collapsed to distinct normalised keys, then TF-IDF char_wb(3,5) "
             "cosine within each block.",
-            f"Threshold {thr} tuned against 120 hand-labelled pairs sampled across the whole "
-            "cosine range (data/labels/dedupe_pair_ground_truth.json); the de-duplicator's own "
-            "precision and recall are in data/quality_history/dedupe_eval.json.",
+            # The n is derived, not written down. This string ships to the site
+            # in provenance.json, and a hardcoded "120" would have been wrong
+            # the first week a labelled posting expired.
+            f"Threshold {thr} tuned against {len(survivors)} hand-labelled pairs, stratified 24 "
+            f"per cosine band"
+            + (f" ({(gt or {}).get('n', 0)} labelled in total; the rest have left the corpus "
+               f"since labelling)" if gt and len(survivors) != gt.get("n") else "")
+            + " — data/labels/dedupe_pair_ground_truth.json; the de-duplicator's own precision "
+              "and recall, with the n they were computed on, are in "
+              "data/quality_history/dedupe_eval.json.",
             "Union-find clustering. Nothing is deleted from postings.json — this file records "
             "WHICH rows are duplicates so a consumer can choose.",
         ],
