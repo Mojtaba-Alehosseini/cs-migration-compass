@@ -110,6 +110,17 @@ jobs:
       # seed 15 — no API key, no network), so a failure here is a real bug, not
       # a slow provider. Letting one pass silently would put us back to a build
       # that cannot pass its own validator.
+      #
+      # THIS DOES NOT YET MAKE THE REFRESH SHIP, and the run that proved these
+      # steps work is the run that proved it. Verified on workflow_dispatch
+      # 32751240590 against a fresh 48,708-row harvest: the harvesters, the
+      # merge, the occupation classifier and `classify_titles.py` all complete,
+      # and `dedupe_postings.py` then stops on its own integrity guard —
+      # "240 of 240 labelled endpoints no longer match the corpus". Its
+      # threshold is tuned against 38 pairs keyed by ARRAY INDEX, so any fresh
+      # harvest invalidates every one of them at once. The guard is correct and
+      # must not be weakened here; re-keying the labels is a methodology
+      # decision, recorded as NEEDS-DECISION #54.
       - name: Classify titles (offline, seeded — package 15's TF-IDF model)
         run: python scripts/classify_titles.py
 

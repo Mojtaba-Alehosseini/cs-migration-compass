@@ -2078,3 +2078,78 @@ harvest also reaches N countries this site does not cover"), which package 17 re
 the honest disclosure that the harvest is wider), carry the same out-of-scope sentence `/openings`
 now carries, or separate in-scope from out-of-scope rows the way `/openings`' country dropdown
 already does.
+
+## 53. `levels.fyi` converts outside `normalise.py`, at a pinned rate with no year, and it renders on 57 city pages
+
+`normalise.py` opens by claiming that every wage-figure conversion in the pipeline goes through it
+and that no component converts inline. Package 17's adversarial review found that this is not true
+and was not true when written. `scripts/src_levels_fyi.py` defines a local `to_usd()` over
+`data/metrics.json`'s `fx_rates_usd_base` — a pinned snapshot whose own note reads *"Snapshot early
+2026… Comparisons robust to small FX drift"* — and the resulting `median_total_comp_usd` renders on
+**57 of 73** city pages via `registry.ts`.
+
+It obeys none of the seven rules: no year-matching (there is no year to match), no chain, no
+estimate marker, and no refusal path — a currency missing from the block silently yields `None`.
+This is exactly the shape of thing package 17 spent its Tier 1 fixing for postings, one module over.
+
+**Why it is not simply a bug.** The pinned block exists on purpose: it is shared across collection
+agents so that figures gathered by different agents on different days are mutually consistent.
+Moving one consumer onto the World Bank annual series would make that consumer inconsistent with
+every other user of the block, and would also expose levels.fyi captures to the same
+publication-lag problem package 17 has just spent a package bounding — with no posting date to
+match against, since a levels.fyi capture is a scrape of an aggregate, not a dated observation.
+
+**Decide:** (a) leave it, and keep `normalise.py`'s docstring narrowed the way package 17 narrowed
+it, so the claim matches the code; (b) migrate `src_levels_fyi.py` onto `normalise.to_usd()` with
+the capture date as the conversion year, accepting that it may then refuse figures it currently
+converts; or (c) keep the pinned block but route it through `normalise.py` as a named, dated source
+so the conversions at least carry a chain and appear in the same audit as everything else.
+
+Not attempted in package 17: it is outside the work order, it changes a value that renders on 57
+pages, and the trade it involves is a project decision rather than a defect.
+
+## 54. The de-duplicator's ground truth is keyed to array position, so it can only run on the corpus it was labelled against — and the weekly refresh changes that corpus by definition
+
+Package 17 found the weekly refresh workflow had never run `classify_titles.py`,
+`dedupe_postings.py` or `apply_postings_annotations.py`, while package 16's validator requires
+their output — so every scheduled run since package 16 has been blocked at Validate and committed
+nothing. Adding the three steps clears three of the four blockers. **It does not clear the fourth.**
+
+Run on a fresh 48,708-row harvest (workflow run 32751240590), `dedupe_postings.py` stops with:
+
+> `FATAL: 240 of 240 labelled endpoints no longer match the corpus -- postings.json has changed
+> since labelling. Re-label before trusting any threshold.`
+
+**The guard is right and should not be weakened.** Its threshold is tuned against 38 hand-labelled
+pairs, and a threshold tuned on labels that no longer point at the pairs they describe is worse
+than no threshold — the de-duplicator deletes rows, and package 15 measured its precision precisely
+so that it could not do so unmeasured. The comment above the check even anticipates corpus growth.
+
+**But the labels are keyed by array index** (`"i": 15125, "j": 15156`), and a harvest that adds,
+removes or reorders a single row invalidates all 240 endpoints at once. As written, the check can
+only ever pass on the exact `postings.json` the labels were built from. A weekly refresh changes
+that file every week, on purpose. So the guard does not merely detect drift — it makes the
+de-duplicator unrunnable in the pipeline it is part of.
+
+**Each label already carries the stable identity.** Alongside `i`/`j` it stores the display string
+the pair was labelled from (`"Program Manager, Capabilities @ hadrian-automation / Los Angeles,
+CA"`), which is exactly what the guard compares. Re-resolving each labelled endpoint by that string
+instead of by position would survive any re-harvest for as long as the posting is still in the
+corpus.
+
+**Decide:** (a) re-key the ground truth to the stored display strings (or to posting `id`), and
+have the check report *how many pairs survived* and refuse only below a stated floor — this is the
+real fix, and the decision it needs is what that floor should be, since expired postings shrink the
+sample every week and a threshold tuned on eleven surviving pairs is not the one package 15
+measured; (b) re-label on a schedule, which is manual work at whatever cadence the corpus drifts;
+or (c) freeze the clusters — run the de-duplicator only when re-labelled and let the refresh reuse
+the committed `postings_duplicate_clusters.json`, accepting that postings harvested since the last
+labelling are never de-duplicated and the re-listing rate drifts.
+
+Not attempted here. Any of the three changes what "the labelled sample" means and what the measured
+precision applies to, which is a methodology decision rather than a defect — and this is an
+unattended run.
+
+**Status of the refresh until this is decided: still blocked, one step later than before.** The
+harvesters, the merge, the occupation classifier and the title classifier all now run to completion
+on a fresh corpus; nothing is committed.

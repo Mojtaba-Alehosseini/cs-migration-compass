@@ -1,5 +1,18 @@
-"""The conversion module — every wage-figure conversion in this pipeline goes
-through here. No component converts inline, anywhere else.
+"""The conversion module — every wage-figure conversion in the SALARY SPINE and
+the postings pipeline goes through here, with one documented exception named
+below.
+
+THE EXCEPTION, stated because the previous version of this sentence read "every
+wage-figure conversion in this pipeline goes through here. No component converts
+inline, anywhere else", and that was not true when it was written.
+`scripts/src_levels_fyi.py` defines its own local `to_usd()` over a pinned
+`fx_rates_usd_base` snapshot in `data/metrics.json` — a rate block with no year
+concept at all — and its `median_total_comp_usd` renders on 57 of 73 city pages.
+It obeys none of the seven rules below, including rule 1. Package 17's
+adversarial review found it; migrating it is recorded as its own decision in
+NEEDS-DECISION.md because the pinned block is deliberately shared across
+collection agents for cross-agent consistency, and moving one consumer off it is
+a change to that arrangement rather than a bug fix.
 
 Seven rules (package 9's work order, Tier 5.1), each enforced by a function
 below, not by convention alone:
