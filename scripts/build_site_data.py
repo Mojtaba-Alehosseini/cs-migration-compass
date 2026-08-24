@@ -411,6 +411,23 @@ def main() -> int:
             log(f"  openings.json      {(HISTORY_DIR / 'openings.json').stat().st_size/1024:8.1f} KB  "
                 f"({len(small['data']['by_country'])} countries, "
                 f"{OPENINGS_PER_COUNTRY} examples each) — what /work loads instead of the full list")
+            # It goes in the manifest too. /work depends on this file, and a
+            # shipped dataset absent from the site's own dataset register is a
+            # register that does not describe the site. `derived` distinguishes
+            # it from the harvested sources around it: nothing sourced it, this
+            # build computed it from postings.json one line above.
+            manifest["openings"] = {
+                "theme": theme,
+                "file": "history/openings.json",
+                "kb": round((HISTORY_DIR / "openings.json").stat().st_size / 1024, 1),
+                "kind": "derived_summary",
+                "derived_from": "history/postings.json",
+                "confidence": doc.get("meta", {}).get("confidence"),
+                "institution": doc.get("meta", {}).get("institution"),
+                "attribution_chip": doc.get("meta", {}).get("attribution_chip"),
+                "status": doc.get("meta", {}).get("status", "ok"),
+                "empty": not small["data"]["by_country"],
+            }
         dest = HISTORY_DIR / f"{source_id}.json"
         dest.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         kb = dest.stat().st_size / 1024

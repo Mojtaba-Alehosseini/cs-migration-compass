@@ -153,6 +153,18 @@
   "status": "ok",
   "empty": false
  },
+ "openings": {
+  "theme": "jobs",
+  "file": "history/openings.json",
+  "kb": 150.4,
+  "kind": "derived_summary",
+  "derived_from": "history/postings.json",
+  "confidence": null,
+  "institution": null,
+  "attribution_chip": null,
+  "status": "ok",
+  "empty": false
+ },
  "postings": {
   "theme": "jobs",
   "file": "history/postings.json",

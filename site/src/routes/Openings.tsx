@@ -189,7 +189,27 @@ export function Openings() {
         </div>
       )}
 
-      {!data ? <div className="panel"><ChartSkeleton height={420} /></div> : (
+      {/* Two panels reserved, not one guessed number, and the same convention
+        * the old /postings used: height = rendered panel height - 34 (16+16
+        * padding, 1+1 border).
+        *
+        * The CONTROLS panel is the one that has to be exact. Everything below
+        * it moves when it resizes, and a single `height={420}` against a
+        * rendered 187 shifted the whole list by 233px on arrival. Measured at
+        * 1350px: controls 187 -> 153.
+        *
+        * The LIST panel is deliberately under-reserved at 460 against a
+        * rendered ~3,764. Nothing follows it, so shortfall below the fold
+        * shifts nothing — and reserving 3,764px would hold a four-screen blank
+        * open while the 24 MB payload parses, which is a worse page than a
+        * shift nobody can see. The old route made the same trade with the same
+        * number. Adversarial review D8, re-measured rather than asserted. */}
+      {!data ? (
+        <>
+          <div className="panel"><ChartSkeleton height={153} /></div>
+          <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={460} /></div>
+        </>
+      ) : (
         <>
           <div className="panel">
             <div className="sub">

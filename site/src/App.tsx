@@ -14,7 +14,7 @@ const NAV = [
 ]
 
 export function App() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
 
   // One selection for the whole session, mounted above both routes: dots picked
   // on the field are the same list as cards ticked in Compare.
@@ -24,8 +24,22 @@ export function App() {
   // users are not left at the top of a stale document.
   useEffect(() => {
     document.getElementById('main')?.focus({ preventScroll: true })
-    window.scrollTo(0, 0)
-  }, [pathname])
+    // A fragment on a hash route is a real destination, and this used to scroll
+    // unconditionally to the top and strand it. /position?years=8#c-DK
+    // redirects to /work carrying both — the query took effect and the fragment
+    // did nothing, so a shared deep link into a country section landed 9,600px
+    // above it. The target usually mounts after this effect (its data is still
+    // loading), so retry briefly rather than once.
+    if (!hash) { window.scrollTo(0, 0); return }
+    const id = hash.slice(1)
+    let tries = 0
+    const tick = () => {
+      const el = document.getElementById(id)
+      if (el) { el.scrollIntoView({ block: 'start' }); return }
+      if (++tries < 20) window.setTimeout(tick, 150)
+    }
+    tick()
+  }, [pathname, hash])
 
   // Compare's table header parks under this header while the table scrolls, so
   // it needs the header's real height. It is a wrapping flex row, so the height

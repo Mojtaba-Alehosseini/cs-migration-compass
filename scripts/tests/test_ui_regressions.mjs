@@ -578,7 +578,24 @@ try {
   check(scrolled.y > 0, `R22: and the page actually moves (scrollY ${scrolled.y})`)
   check(scrolled.h1.startsWith('Where you'), 'R22: and the route survives the click')
 
+  // A shared deep link into a country section. The redirect always carried the
+  // fragment; App.tsx then scrolled to the top unconditionally and stranded it,
+  // so the query took effect and the fragment did nothing.
+  await page.hashGo(`${BASE}#/position?years=8#c-DK`, { waitMs: 3200 })
+  const deep = JSON.parse(await page.eval(`(() => {
+    const el = document.getElementById('c-DK')
+    return JSON.stringify({ hash: location.hash, y: Math.round(window.scrollY),
+      top: el ? Math.round(el.getBoundingClientRect().top) : null,
+      years: document.querySelector('input[type="number"]') && document.querySelector('input[type="number"]').value })
+  })()`))
+  check(deep.hash === '#/work?years=8#c-DK',
+    `R22: /position?years=8#c-DK redirects carrying BOTH query and fragment (${deep.hash})`)
+  check(deep.years === '8', 'R22: and the query still takes effect')
+  check(deep.y > 0 && deep.top !== null && Math.abs(deep.top) < 120,
+    `R22: and the page scrolls to the fragment instead of the top (scrollY ${deep.y}, target at ${deep.top})`)
+
   // Every publishable country accounts for its own median, not just the first.
+  await page.hashGo(`${BASE}#/work`, { waitMs: 2600 })
   const comps = JSON.parse(await page.eval(
     `JSON.stringify([...document.querySelectorAll('p.sub')].map((p) => p.textContent.trim()).filter((t) => t.startsWith('What the ')))`))
   check(comps.length >= 5,

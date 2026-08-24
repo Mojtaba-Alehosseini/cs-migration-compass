@@ -2013,3 +2013,68 @@ point of the panel.
 
 Option (b) is the one that would make the panel work as designed. It is also the one that puts two
 FX sources in the same repo, which this project has so far avoided on purpose.
+
+**Package 17 update — (c) was implemented for the native figure, and a bounded version of the
+problem remains.** Every posting now renders in its employer's own currency, always, with no code
+path that withholds it; the converted view is a marked estimate reaching at most two years, and
+five countries publish where one did. That does not close this item. GB, CA, FR and DE's medians
+rest 76–94% on the 2025 rate standing in for 2026 — every one of them is an estimate wearing a
+national label, and they are only as good as the assumption that a year's FX drift is tolerable at
+this precision. The last observed one-year move is −4.2% for EUR and −7.1% for SEK. **Option (b)
+remains the only fix that makes the panel work as designed**, and the decision it needs — two FX
+sources in one repo — is unchanged.
+
+## 50. `/openings` is nearly unreachable, and `/postings` redirects to the page that is not the list
+
+Package 17 split the old `/postings` in two: `/work` (position + eight openings per country) and
+`/openings` (the whole browsable list, its filters and its map). `/postings` redirects to `/work`.
+
+Three things follow that were not deliberately chosen:
+
+* **`/openings` has no navigation entry.** The nav collapsed from two items to one (`Position &
+  openings` → `/work`), which was the work order's intent, but `/openings` was created afterwards
+  and never added. It has exactly two inbound links in the entire site, both inside `/work`'s prose.
+* **`/postings` was the browsable list, and now redirects to a page that is not.** A reader who
+  bookmarked `/postings` to search advertisements lands on a page showing eight per country. The
+  redirect preserves the query string, but `?country=DK&level=senior` means nothing to `/work`,
+  which has no such filters. `/postings → /openings` is arguably the honest redirect; `/work` is
+  arguably the better destination for someone who has forgotten what the page was.
+* **They cannot both be right.** Whichever way it points, one class of old link lands somewhere
+  its author did not mean.
+
+**Decide:** whether `/openings` earns a nav entry (a third item, against a nav deliberately kept to
+four), whether `/postings` should redirect to `/openings` instead, and whether the filter parameters
+the old route accepted should be forwarded to `/openings` rather than dropped on `/work`.
+
+## 51. The classifier's precision is now visible per country, and it is visibly imperfect
+
+Until this package the title classifier's output was an aggregate: a share, a count, a median. `/work`
+is the first surface that shows **individual classified rows under a country heading** — "N software
+openings in Canada" followed by the rows themselves. Today that renders *Wide Format & Zund Lead*
+(Canada), *Senior Venture Lead* and *QA Lead* (Germany), *Sr. Sales Engineer* (Australia).
+
+This is not a new defect. `title_classifier_eval.json` has always reported SW's precision honestly,
+and the classifier is the correct set to show: the page must count the same rows its published
+medians are computed from, or it contradicts itself — which is exactly why package 17 ships the `sw`
+flag rather than re-deriving software from titles in the browser. What changed is that the error rate
+is now legible to a reader rather than recorded in an evaluation file.
+
+**Decide:** (a) leave it — the set is the honest one and the eval is published; (b) raise the
+probability floor for the rows that are *displayed* while leaving the medians on the full shipped
+set, which makes the visible list cleaner than the counted one and must be captioned as such; or
+(c) caption the panel with the classifier's measured precision so a reader can price what they see.
+(b) is the tempting one and the one that reintroduces two different answers to "how many software
+openings", which is the disagreement this package's `sw` flag exists to prevent.
+
+## 52. `/work`'s published-pay panel names 49 countries on a page framed around fifteen
+
+The withheld table lists every country the harvest reached with any software row — 49, of which 35
+are outside the site's fifteen-country spine, including France, which is simultaneously shown as a
+**publishable** headline figure. The old `/postings` earned this with an explicit sentence ("the
+harvest also reaches N countries this site does not cover"), which package 17 restored to
+`/openings` but not to `/work`.
+
+**Decide:** whether `/work`'s withheld table should be restricted to the fifteen in scope (losing
+the honest disclosure that the harvest is wider), carry the same out-of-scope sentence `/openings`
+now carries, or separate in-scope from out-of-scope rows the way `/openings`' country dropdown
+already does.
