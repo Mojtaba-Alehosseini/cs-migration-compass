@@ -95,6 +95,30 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         continue-on-error: true
 
+      # Package 17 — these three ran only ever on a laptop, and that was the
+      # defect. Package 15 built the title classifier and the de-duplicator;
+      # package 16 joined their output into postings.json and taught
+      # validate_data.py to REQUIRE that join. The join was never added here, so
+      # the first scheduled run after package 16 landed (2026-08-24) harvested
+      # 48,724 postings, wrote none of their title_class or duplicate_of, and
+      # was correctly blocked by Validate below — permanently, since nothing in
+      # this workflow could ever satisfy the check. The refresh had silently
+      # stopped being able to ship.
+      #
+      # No continue-on-error, for the same reason Validate and Audit have none:
+      # all three are deterministic, offline and free (TF-IDF + a linear model,
+      # seed 15 — no API key, no network), so a failure here is a real bug, not
+      # a slow provider. Letting one pass silently would put us back to a build
+      # that cannot pass its own validator.
+      - name: Classify titles (offline, seeded — package 15's TF-IDF model)
+        run: python scripts/classify_titles.py
+
+      - name: De-duplicate postings
+        run: python scripts/dedupe_postings.py
+
+      - name: Join classes + clusters into postings.json, derive per-country pay
+        run: python scripts/apply_postings_annotations.py
+
       - name: Rebuild site data bundle
         run: python scripts/build_site_data.py
 
@@ -124,6 +148,13 @@ jobs:
       - name: Snapshot drift (blocks the commit below on a real drop)
         run: python scripts/snapshot_stats.py
 
+      # history/openings.json is the 144 KB per-country summary /work renders;
+      # history/postings.json is the full list /openings renders. build_site_data.py
+      # writes both from the same array on every run, so they agree by
+      # construction — but only if both are COMMITTED. Committing one and not
+      # the other is how the two pages come to show different counts for the
+      # same country, which is the exact disagreement package 17 shipped the
+      # classifier's own `sw` flag to prevent.
       - name: Commit refreshed data
         run: |
           git config user.name "github-actions[bot]"
@@ -131,6 +162,7 @@ jobs:
           git add data/processed/postings*.json data/provenance.json data/raw/postings_seed_hints \
             data/quality_history \
             site/public/data/history/postings.json site/public/data/history-manifest.json \
+            site/public/data/history/openings.json \
             site/public/data/provenance.json
           git diff --staged --quiet && echo "no changes" && exit 0
           git commit -m "Weekly postings refresh (automated, github-actions[bot])"
