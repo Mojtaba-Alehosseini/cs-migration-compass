@@ -1,6 +1,6 @@
 {
  "source_id": "postings_duplicate_clusters",
- "generated_at": "2026-08-24T20:20:27+00:00",
+ "generated_at": "2026-08-24T22:08:45+00:00",
  "meta": {
   "method": "TF-IDF char_wb(3,5) cosine over normalised title|company|location, blocked by company, union-find clustering",
   "threshold": 0.98,

@@ -307,6 +307,20 @@ def resolve_labels(post: list[dict], gt: dict) -> tuple[list[dict], list[dict], 
         if row.get("id") is not None:
             by_id[row["id"]].append(idx)
 
+    # A malformed label file must not degrade into "everything expired". A
+    # missing id, a non-integer occurrence or a negative one are all defects in
+    # the ground truth, and silently counting them as ordinary churn would let
+    # the sample shrink for a reason that has nothing to do with the corpus.
+    for r in gt["pairs"]:
+        for side in ("a", "b"):
+            pid, occ = r.get(f"id_{side}"), r.get(f"occ_{side}", 0)
+            if pid is None:
+                raise ValueError(f"labelled pair k={r.get('k')} side {side} has no id_{side} -- "
+                                 f"re-key the ground truth with rekey_dedupe_labels.py")
+            if not isinstance(occ, int) or isinstance(occ, bool) or occ < 0:
+                raise ValueError(f"labelled pair k={r.get('k')} side {side} has occurrence "
+                                 f"{occ!r}; it must be a non-negative integer")
+
     survivors, expired, edited = [], [], []
     for r in gt["pairs"]:
         resolved, lost = {}, False
@@ -420,6 +434,17 @@ def run():
     survivors: list[dict] = []
     if gt:
         survivors, expired, edited = resolve_labels(post, gt)
+
+        # Two survivors resolving to the SAME row pair would be counted twice in
+        # tuned_on_n_pairs while the tuning table -- keyed on (_i, _j) -- scored
+        # them once. n would then overstate the evidence behind every figure
+        # beside it, which is the one thing this package spent a gate on.
+        distinct = {(r["_i"], r["_j"]) for r in survivors}
+        if len(distinct) != len(survivors):
+            raise SystemExit(
+                f"FATAL: {len(survivors) - len(distinct)} labelled pair(s) resolve to a row pair "
+                f"another pair already claims. The tuning would score them once and n would "
+                f"report them twice. Re-key the ground truth.")
 
         # A handful of edited adverts is ordinary and costs those pairs. A large
         # SHARE of them means the identity scheme itself broke -- a provider

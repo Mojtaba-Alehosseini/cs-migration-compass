@@ -456,3 +456,83 @@ class TestTheReportedFiguresNameTheirN(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTheGroundTruthMustBeWellFormed(unittest.TestCase):
+    """A malformed label file must say so, not degrade into "everything
+    expired" — the sample would shrink for a reason that has nothing to do
+    with the corpus, and the floor would eventually refuse for the wrong
+    reason. Adversarial review, package 18."""
+
+    def setUp(self):
+        self.post = _corpus()
+        self.gt = _labels()
+
+    def test_a_missing_id_is_an_error_not_an_expiry(self):
+        broken = {**self.gt, "pairs": [{**self.gt["pairs"][0], "id_a": None}]}
+        with self.assertRaises(ValueError) as cm:
+            dp.resolve_labels(self.post, broken)
+        self.assertIn("has no id_a", str(cm.exception))
+
+    def test_a_negative_occurrence_is_an_error(self):
+        """`idxs[-1]` silently indexes from the END of the id's row list, which
+        resolves to a real row that is not the labelled one."""
+        broken = {**self.gt, "pairs": [{**self.gt["pairs"][0], "occ_a": -1}]}
+        with self.assertRaises(ValueError) as cm:
+            dp.resolve_labels(self.post, broken)
+        self.assertIn("non-negative integer", str(cm.exception))
+
+    def test_a_non_integer_occurrence_is_an_error(self):
+        for bad in ("0", 1.5, True):
+            with self.subTest(occ=bad):
+                broken = {**self.gt, "pairs": [{**self.gt["pairs"][0], "occ_b": bad}]}
+                with self.assertRaises(ValueError):
+                    dp.resolve_labels(self.post, broken)
+
+    def test_the_committed_label_file_has_no_duplicate_endpoint_pair(self):
+        """Two pairs resolving to the same row pair would be scored once by the
+        tuning and counted twice by n."""
+        s, _, _ = dp.resolve_labels(self.post, self.gt)
+        keys = [(r["_i"], r["_j"]) for r in s]
+        self.assertEqual(len(set(keys)), len(keys))
+        self.assertFalse(any(i == j for i, j in keys), "a pair resolves to one row twice")
+
+
+class TestTheRekeyScriptItself(unittest.TestCase):
+    """`rekey_dedupe_labels.py` had no tests at all and is what produced the
+    file everything else depends on."""
+
+    def test_it_reproduces_the_committed_key_from_the_committed_corpus(self):
+        import rekey_dedupe_labels as rk
+        post, gt = _corpus(), _labels()
+        kept, dropped, stats = rk.rekey(post, gt)
+        self.assertEqual(dropped, [])
+        self.assertEqual(stats["pairs_rekeyed"], len(gt["pairs"]))
+        self.assertEqual(stats["endpoints_on_a_colliding_id"], 2)
+        for a, b in zip(kept, gt["pairs"]):
+            self.assertEqual((a["id_a"], a["occ_a"]), (b["id_a"], b["occ_a"]))
+            self.assertEqual((a["id_b"], a["occ_b"]), (b["id_b"], b["occ_b"]))
+
+    def test_it_refuses_to_write_a_partial_file(self):
+        """A ground truth describing a different sample than the threshold was
+        chosen on is worse than none, so a single unresolved endpoint must stop
+        the whole write."""
+        import rekey_dedupe_labels as rk
+        post, gt = _corpus(), _labels()
+        broken = {**gt, "pairs": [{**gt["pairs"][0], "i": 10 ** 9}] + gt["pairs"][1:]}
+        kept, dropped, stats = rk.rekey(post, broken)
+        self.assertEqual(len(dropped), 1)
+        self.assertLess(stats["pairs_rekeyed"], stats["pairs_in"])
+        import contextlib
+        import io
+        buf = io.StringIO()
+        old = rk.LABELS
+        try:
+            with contextlib.redirect_stdout(buf):
+                # --check on a corpus the labels no longer fit must refuse, and
+                # must refuse before touching the file.
+                rk.LABELS = LABELS
+                code = rk.run(check_only=True)
+        finally:
+            rk.LABELS = old
+        self.assertEqual(code, 0, "the committed labels should still resolve cleanly")
