@@ -187,4 +187,31 @@ jobs:
             site/public/data/provenance.json
           git diff --staged --quiet && echo "no changes" && exit 0
           git commit -m "Weekly postings refresh (automated, github-actions[bot])"
-          git push
+
+          # Rebase onto whatever landed on main while this job was running, and
+          # retry. The job checks out main at minute zero and pushes over an
+          # hour later, so any human commit in between rejects the push and
+          # throws away the whole run -- which is exactly what happened to run
+          # 32783027532: every step green, 21 files committed, and
+          # "! [rejected] main -> main (fetch first)" at the last line.
+          #
+          # A conflict is NOT resolved automatically. These are generated data
+          # files, so "ours" would almost always be right, and that is precisely
+          # why it is the wrong default for a job that pushes to main
+          # unattended: if a human has edited the same file, a person should
+          # look. Three attempts, then fail loudly.
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "pushed on attempt $attempt"
+              exit 0
+            fi
+            echo "push rejected — rebasing onto origin/main (attempt $attempt)"
+            git pull --rebase origin main || {
+              git rebase --abort 2>/dev/null || true
+              echo "::error::rebase onto origin/main conflicted — a human has edited the same"
+              echo "::error::files this refresh regenerates. Resolve by hand; nothing was pushed."
+              exit 1
+            }
+          done
+          echo "::error::push still rejected after 3 rebase attempts"
+          exit 1
