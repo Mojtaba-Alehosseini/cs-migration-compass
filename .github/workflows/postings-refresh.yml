@@ -117,7 +117,7 @@ jobs:
       # merge, the occupation classifier and `classify_titles.py` all complete,
       # and `dedupe_postings.py` then stops on its own integrity guard —
       # "240 of 240 labelled endpoints no longer match the corpus". Its
-      # threshold is tuned against 38 pairs keyed by ARRAY INDEX, so any fresh
+      # threshold is tuned against 120 pairs keyed by ARRAY INDEX, so any fresh
       # harvest invalidates every one of them at once. The guard is correct and
       # must not be weakened here; re-keying the labels is a methodology
       # decision, recorded as NEEDS-DECISION #54.

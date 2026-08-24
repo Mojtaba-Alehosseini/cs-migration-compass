@@ -98,14 +98,31 @@
    "f1_reweighted": 0.7944
   }
  ],
- "stratified_sample_disclosure": "the 120 labelled pairs are 24 per cosine band, not a random sample of candidate pairs. 'precision'/'recall' are the figures ON THAT SAMPLE and are what the threshold was tuned on. '*_reweighted' rescales each labelled pair by its band's population/sample ratio and estimates what the de-duplicator achieves over all candidate pairs. At the shipped threshold precision is identical -- every true and false positive falls in the top band -- but recall is LOWER reweighted, because the misses sit in bands the sample deliberately over-represents. Quote the reweighted recall for the de-duplicator's real behaviour.",
+ "tuned_on_n_pairs": 120,
+ "tuned_on": "120 labelled pairs surviving this corpus of 120 labelled",
+ "stratified_sample_disclosure": "the labelled pairs are 24 per cosine band by design (120 in total); 120 of them survive THIS corpus and every figure in threshold_tuning is computed on those. They are not a random sample of candidate pairs. 'precision'/'recall' are the figures ON THAT SAMPLE and are what the threshold was tuned on. '*_reweighted' rescales each labelled pair by its band's population/sample ratio and estimates what the de-duplicator achieves over all candidate pairs. At the shipped threshold precision is identical -- every true and false positive falls in the top band -- but recall is LOWER reweighted, because the misses sit in bands the sample deliberately over-represents. Quote the reweighted recall for the de-duplicator's real behaviour.",
  "labelled_pairs": 120,
  "label_corpus_integrity": {
-  "n_pairs": 120,
-  "n_endpoints": 240,
-  "n_mismatched": 0,
+  "keyed_by": "(id, occurrence)",
+  "n_pairs_labelled": 120,
+  "n_pairs_surviving": 120,
+  "n_expired_endpoints": 0,
+  "n_id_reuse": 0,
   "corpus_size_now": 48267,
-  "examples": [],
+  "per_band_surviving": {
+   "0": 24,
+   "1": 24,
+   "2": 24,
+   "3": 24,
+   "4": 24
+  },
+  "same_job_true": 32,
+  "same_job_false": 88,
+  "floor": {
+   "per_band": 12,
+   "per_class": 12
+  },
+  "expired_examples": [],
   "valid": true
  },
  "recall_ceilings": {

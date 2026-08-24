@@ -51,6 +51,53 @@ OUT = PROCESSED / "postings_duplicate_clusters.json"
 EVAL = ROOT / "data" / "quality_history" / "dedupe_eval.json"
 LABELS = ROOT / "data" / "labels" / "dedupe_pair_ground_truth.json"
 
+# The cosine bands the 120 labels were stratified across, 24 per band. They are
+# named here rather than inside run() because the survivor floor is expressed
+# per band, and the floor is the reason the tuning can be trusted at all.
+GT_BANDS = [(0.60, 0.70), (0.70, 0.80), (0.80, 0.90), (0.90, 0.98), (0.98, 1.0001)]
+
+
+def _band_of(score: float) -> int:
+    for b, (lo, hi) in enumerate(GT_BANDS):
+        if lo <= score < hi:
+            return b
+    return len(GT_BANDS) - 1
+
+
+# HOW MANY LABELLED PAIRS MUST SURVIVE A HARVEST, and why the floor is per band
+# rather than a total. Package 18, measured on this corpus, not chosen by feel.
+#
+# A threshold tuned on 120 pairs does not become untrustworthy at 118. It does
+# become untrustworthy when a whole region of the decision space empties, and
+# THAT CAN HAPPEN AT A VERY HIGH SURVIVAL RATE. Measured: drop the [0.98,1.00]
+# band and 96 of 120 pairs remain -- 80% -- and the tuning reports
+# P=1.000 R=0.000, because 23 of the 32 same_job=True pairs live in that one
+# band. A total-count floor cannot see that, and would have passed it.
+#
+# Attrition constrained to keep at least this many in EVERY band, 400 trials
+# each, scored against the same clusterings:
+#
+#     per band   n range   tuned threshold moved   precision sd
+#         20      102-119           0.0%              0.012
+#         16       84-118           0.0%              0.018
+#         12       71-115           0.0%              0.025
+#         10       64-114           0.5%              0.030
+#          8       49-110           1.2%              0.036
+#          4       36-106           4.0%              0.057
+#
+# 12 -- half the design of 24 -- is the smallest floor at which the tuned
+# threshold did not move once in 400 trials. Below it the selection starts to
+# wobble, and uniform attrition to a comparable total (n=60) already moves it
+# 1.8% of the time with a precision floor of 0.536.
+MIN_PAIRS_PER_BAND = 12
+
+# And both classes must survive in usable numbers: precision needs negatives,
+# recall needs positives. The sample is 32 True against 88 False, so a survivor
+# set can satisfy a count floor and still be one-sided -- all-True scores
+# P=1.000 R=1.000 at threshold 0.70 with nothing to catch a false positive,
+# and all-False scores P=0.000. Both are meaningless and both are reachable.
+MIN_PAIRS_PER_CLASS = 12
+
 # Tokens that are formatting rather than identity: two postings differing
 # only by these are the same job. Deliberately NOT including seniority or
 # location words -- "Senior X" and "X" are different jobs, and so are the
@@ -149,6 +196,90 @@ def cluster(post, pairs, thr):
     return {r: g for r, g in groups.items() if len(g) > 1}
 
 
+
+def display_of(r: dict) -> str:
+    """The string the labels were built from. Company first, THEN the slug --
+    reversing that order makes 118 of 240 endpoints look wrong while nothing
+    is, which is how this check was first written."""
+    return (f"{r.get('title')} @ {r.get('company') or r.get('company_slug')} "
+            f"/ {r.get('location_raw')}")
+
+
+def resolve_labels(post: list[dict], gt: dict) -> tuple[list[dict], list[dict], list[dict]]:
+    """Resolve every labelled pair against THIS corpus by (id, occurrence).
+
+    Returns (survivors, expired, reused). A survivor carries `_i`/`_j`, its
+    indices in the corpus passed in -- never the `i`/`j` it was labelled at.
+
+    The labels used to store only ARRAY INDICES, and a re-harvest that added,
+    removed or reordered one row moved every one of them at once. That was
+    correctly detected -- a mismatch was fatal -- but the detection made this
+    script unrunnable in the pipeline it belongs to: workflow run 32751240590
+    against a fresh 48,708-row corpus reported 240 of 240 endpoints mismatched,
+    and the weekly refresh had not shipped since 16 August. A guard that fires
+    on every ordinary harvest is not measuring drift, it is measuring that time
+    passed. Package 18 re-keyed the labels; `i`/`j` stay in the file as
+    provenance and are deliberately not read here.
+
+    Three outcomes, and the difference between them is the whole point:
+      * an endpoint's id is GONE     -> that posting expired; the pair does not
+                                        survive. Ordinary churn.
+      * an id resolves, text CHANGED -> a different posting is reusing an id.
+                                        The key is lying. The caller treats this
+                                        as fatal -- it is the case the original
+                                        guard was built for.
+      * too few survivors            -> the caller refuses. See floor_verdict().
+    """
+    by_id: dict[str, list[int]] = defaultdict(list)
+    for idx, row in enumerate(post):
+        if row.get("id") is not None:
+            by_id[row["id"]].append(idx)
+
+    survivors, expired, reused = [], [], []
+    for r in gt["pairs"]:
+        resolved, lost = {}, False
+        for side in ("a", "b"):
+            pid, occ = r.get(f"id_{side}"), r.get(f"occ_{side}", 0)
+            idxs = by_id.get(pid, [])
+            if occ >= len(idxs):
+                expired.append({"k": r.get("k"), "side": side, "id": pid, "occurrence": occ,
+                                "rows_with_that_id_now": len(idxs)})
+                lost = True
+                continue
+            idx = idxs[occ]
+            stored = r.get(side)
+            if stored is not None and display_of(post[idx]) != stored:
+                reused.append({"k": r.get("k"), "side": side, "id": pid, "index_now": idx,
+                               "labelled_as": stored, "now": display_of(post[idx])})
+                lost = True
+                continue
+            resolved[side] = idx
+        if not lost:
+            survivors.append({**r, "_i": resolved["a"], "_j": resolved["b"]})
+    return survivors, expired, reused
+
+
+def floor_verdict(survivors: list[dict]) -> tuple[bool, list[str], dict]:
+    """Is this survivor set enough to tune a threshold on? Returns
+    (ok, reasons_it_is_not, stats). See MIN_PAIRS_PER_BAND for the measurement
+    behind the numbers."""
+    n_band = Counter(_band_of(r["cosine"]) for r in survivors)
+    n_true = sum(1 for r in survivors if r["same_job"])
+    n_false = len(survivors) - n_true
+    short = {b: n_band[b] for b in range(len(GT_BANDS)) if n_band[b] < MIN_PAIRS_PER_BAND}
+    reasons = []
+    if short:
+        reasons.append(f"cosine band(s) below {MIN_PAIRS_PER_BAND}: {short}")
+    if n_true < MIN_PAIRS_PER_CLASS:
+        reasons.append(f"only {n_true} same_job=True pair(s), need {MIN_PAIRS_PER_CLASS}")
+    if n_false < MIN_PAIRS_PER_CLASS:
+        reasons.append(f"only {n_false} same_job=False pair(s), need {MIN_PAIRS_PER_CLASS}")
+    stats = {"n_surviving": len(survivors),
+             "per_band": {str(b): n_band[b] for b in range(len(GT_BANDS))},
+             "same_job_true": n_true, "same_job_false": n_false}
+    return (not reasons), reasons, stats
+
+
 def run():
     post = json.loads((PROCESSED / "postings.json").read_text(encoding="utf-8"))["data"]["postings"]
     N = len(post)
@@ -164,38 +295,62 @@ def run():
 
     gt = json.loads(LABELS.read_text(encoding="utf-8")) if LABELS.exists() else None
 
-    # The labels store posting INDICES. If postings.json is re-harvested the
-    # rows behind those indices change and every number below silently becomes
-    # a measurement of different pairs -- not an error, just quietly wrong.
-    # This is not hypothetical: package 14 grew this corpus from 46,040 to
-    # 48,267. Each label also stores the display string it was labelled from,
-    # so the two are compared here and a mismatch is fatal rather than noted.
+    # The labels are resolved by (id, occurrence), NOT by array position.
+    #
+    # They used to store only posting INDICES, and a re-harvest that adds,
+    # removes or reorders one row moved every one of them at once. That was
+    # correctly detected -- a mismatch was fatal -- but the detection made this
+    # script unrunnable in the pipeline it belongs to: workflow run 32751240590
+    # against a fresh 48,708-row corpus reported 240 of 240 endpoints mismatched
+    # and the weekly refresh had not shipped since 16 August. A guard that fires
+    # on every ordinary harvest is not measuring drift, it is measuring that
+    # time passed. Package 18 re-keyed the labels; `i`/`j` remain in the file as
+    # provenance and are deliberately not read here.
+    #
+    # Three outcomes, and the difference between them is the whole point:
+    #   * an endpoint's id is GONE      -> that posting expired. The pair does
+    #                                      not survive. Ordinary churn.
+    #   * an id resolves, text CHANGED  -> a different posting is reusing an id.
+    #                                      The key is lying, so this stays FATAL,
+    #                                      which is the case the original guard
+    #                                      was built for.
+    #   * too few survivors             -> FATAL. See the floor below.
     label_check = None
+    survivors: list[dict] = []
     if gt:
-        def _disp(r):
-            # company first, then the slug -- the order the labels were built
-            # with. Reversing it makes 118 of 240 endpoints "mismatch" while
-            # nothing is actually wrong, which is how this check was first
-            # written and why it is worth stating the order explicitly.
-            return (f"{r.get('title')} @ {r.get('company') or r.get('company_slug')} "
-                    f"/ {r.get('location_raw')}")
-        bad = []
-        for r in gt["pairs"]:
-            for idx, stored in ((r["i"], r.get("a")), (r["j"], r.get("b"))):
-                if stored is None:
-                    continue
-                if not (0 <= idx < N) or _disp(post[idx]) != stored:
-                    bad.append({"index": idx, "labelled_as": stored,
-                                "now": _disp(post[idx]) if 0 <= idx < N else "OUT OF RANGE"})
-        label_check = {"n_pairs": len(gt["pairs"]), "n_endpoints": 2 * len(gt["pairs"]),
-                       "n_mismatched": len(bad), "corpus_size_now": N,
-                       "examples": bad[:5], "valid": not bad}
-        if bad:
-            log(f"  FATAL: {len(bad)} of {2*len(gt['pairs'])} labelled endpoints no longer match "
-                f"the corpus -- postings.json has changed since labelling. Re-label before "
-                f"trusting any threshold. First: {bad[0]}")
+        survivors, expired, reused = resolve_labels(post, gt)
+
+        # A resolved id whose content changed means the identity itself is
+        # unreliable, and every other resolution in this run is then suspect.
+        if reused:
+            log(f"  FATAL: {len(reused)} labelled endpoint(s) resolved by id to a row whose "
+                f"content has changed -- a different posting is reusing an id, so the key cannot "
+                f"be trusted. Re-label before trusting any threshold. First: {reused[0]}")
             raise SystemExit(2)
-        log(f"  labels verified against the corpus: {2*len(gt['pairs'])} endpoints, 0 mismatches")
+
+        ok, reasons, stats = floor_verdict(survivors)
+        label_check = {
+            "keyed_by": "(id, occurrence)",
+            "n_pairs_labelled": len(gt["pairs"]),
+            "n_pairs_surviving": stats["n_surviving"],
+            "n_expired_endpoints": len(expired),
+            "n_id_reuse": len(reused),
+            "corpus_size_now": N,
+            "per_band_surviving": stats["per_band"],
+            "same_job_true": stats["same_job_true"],
+            "same_job_false": stats["same_job_false"],
+            "floor": {"per_band": MIN_PAIRS_PER_BAND, "per_class": MIN_PAIRS_PER_CLASS},
+            "expired_examples": expired[:5],
+            "valid": ok,
+        }
+        log(f"  labels resolved by (id, occurrence): {stats['n_surviving']} of {len(gt['pairs'])} "
+            f"pairs survive this corpus ({len(expired)} endpoint(s) expired)")
+        log(f"    per band {stats['per_band']} · same_job True={stats['same_job_true']} "
+            f"False={stats['same_job_false']}")
+        if not ok:
+            log(f"  FATAL: too few labelled pairs survive to tune a threshold on -- "
+                f"{'; '.join(reasons)}. Re-label before trusting any threshold.")
+            raise SystemExit(2)
 
     tuning = []
     if gt:
@@ -226,20 +381,23 @@ def run():
         # reported. The sample figure is what the threshold was chosen on; the
         # reweighted one is what the de-duplicator achieves over all candidate
         # pairs, and it is the lower of the two on recall.
-        BANDS = [(0.60, 0.70), (0.70, 0.80), (0.80, 0.90), (0.90, 0.98), (0.98, 1.0001)]
-
-        def _band(s):
-            for b, (lo, hi) in enumerate(BANDS):
-                if lo <= s < hi:
-                    return b
-            return len(BANDS) - 1
+        # Everything below is computed on the SURVIVORS, resolved by (id,
+        # occurrence) above, and `_i`/`_j` are their indices in THIS corpus --
+        # never the `i`/`j` the pair was originally labelled at. The reweighting
+        # divides by the surviving per-band counts, not the design's 24, so a
+        # band that lost pairs has each remaining pair carry proportionally more
+        # weight. That is correct, and it is also why the floor is per band: the
+        # smaller smp_n[b] gets, the more a single surviving pair moves the
+        # population estimate.
+        BANDS = GT_BANDS
+        _band = _band_of
 
         pop_n = Counter(_band(s) for _, _, s in pairs)
-        smp_n = Counter(_band(r["cosine"]) for r in gt["pairs"])
+        smp_n = Counter(_band(r["cosine"]) for r in survivors)
         wgt = {b: (pop_n[b] / smp_n[b] if smp_n[b] else 0.0) for b in range(len(BANDS))}
-        band_of = {(r["i"], r["j"]): _band(r["cosine"]) for r in gt["pairs"]}
+        band_of = {(r["_i"], r["_j"]): _band(r["cosine"]) for r in survivors}
 
-        lut = {(r["i"], r["j"]): r["same_job"] for r in gt["pairs"]}
+        lut = {(r["_i"], r["_j"]): r["same_job"] for r in survivors}
         for thr in [0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 0.98]:
             lbl = {}
             for root, members in cluster(post, pairs, thr).items():
@@ -265,11 +423,14 @@ def run():
                            if wprec + wrec else 0.0})
         best = max(tuning, key=lambda r: (r["precision"] >= 0.95, r["f1"]))
         thr = best["threshold"]
+        # Every reported figure names the n it was computed on. A precision
+        # quoted without its sample size is the same claim whether it rests on
+        # 120 pairs or 61, and after a harvest it will not rest on 120.
         log(f"  tuned threshold {thr}: P={best['precision']:.3f} "
-            f"R={best['recall']:.3f} F1={best['f1']:.3f}")
+            f"R={best['recall']:.3f} F1={best['f1']:.3f}  (n={len(survivors)} labelled pairs)")
         log(f"    reweighted to the candidate-pair population: "
             f"P={best['precision_reweighted']:.3f} R={best['recall_reweighted']:.3f} "
-            f"F1={best['f1_reweighted']:.3f}")
+            f"F1={best['f1_reweighted']:.3f}  (n={len(survivors)})")
     else:
         thr = 0.90
         log(f"  no labelled pairs yet; using default threshold {thr}")
@@ -335,8 +496,18 @@ def run():
         "near_duplicate": {"threshold": thr, "clusters": len(groups), "removable": near_excess,
                            "removable_pct": round(100 * near_excess / N, 3)},
         "threshold_tuning": tuning,
+        # The n every figure in threshold_tuning rests on. It is a top-level
+        # field rather than a footnote because after a harvest it is no longer
+        # 120, and a precision quoted without it is the same sentence whether it
+        # rests on 120 pairs or 61.
+        "tuned_on_n_pairs": len(survivors) if gt else 0,
+        "tuned_on": (
+            f"{len(survivors)} labelled pairs surviving this corpus of "
+            f"{(gt or {}).get('n', 0)} labelled" if gt else "no labelled pairs"),
         "stratified_sample_disclosure": (
-            "the 120 labelled pairs are 24 per cosine band, not a random sample of candidate "
+            f"the labelled pairs are 24 per cosine band by design (120 in total); "
+            f"{len(survivors) if gt else 0} of them survive THIS corpus and every figure in "
+            "threshold_tuning is computed on those. They are not a random sample of candidate "
             "pairs. 'precision'/'recall' are the figures ON THAT SAMPLE and are what the "
             "threshold was tuned on. '*_reweighted' rescales each labelled pair by its band's "
             "population/sample ratio and estimates what the de-duplicator achieves over all "
@@ -408,25 +579,100 @@ def self_test():
        key_of({"title": "X", "company": "C", "location_raw": "Berlin"}) !=
        key_of({"title": "X", "company": "C", "location_raw": "Munich"}))
 
-    # The label/corpus integrity check reports clean on the real data, so it is
-    # shown FIRING here: a check never observed to fail is not evidence. The
-    # constructed violation is the one that actually happens -- the corpus is
-    # re-harvested and the row behind a stored index becomes a different job.
-    def _disp_t(r):
-        return (f"{r.get('title')} @ {r.get('company') or r.get('company_slug')} "
-                f"/ {r.get('location_raw')}")
-    corpus = [{"title": "Software Engineer", "company": "Acme", "location_raw": "NY"},
-              {"title": "Nurse Practitioner", "company": "Mercy", "location_raw": "LA"}]
-    lab = [{"i": 0, "j": 1, "a": _disp_t(corpus[0]), "b": _disp_t(corpus[1])}]
-    ck("label/corpus check passes on a corpus that has not moved",
-       all(_disp_t(corpus[p[k]]) == p[v] for p in lab for k, v in (("i", "a"), ("j", "b"))))
-    shifted = [{"title": "Warehouse Picker", "company": "Acme", "location_raw": "NY"}] + corpus
-    n_bad = sum(1 for p in lab for k, v in (("i", "a"), ("j", "b"))
-                if _disp_t(shifted[p[k]]) != p[v])
-    ck("label/corpus check FIRES when one row is prepended to the corpus",
-       n_bad == 2, f"{n_bad} of 2 endpoints detected as moved")
-    ck("label/corpus check FIRES on an out-of-range index",
-       not (0 <= 99 < len(shifted)))
+    # THE LABEL/CORPUS CHECK, exercised through resolve_labels() and
+    # floor_verdict() themselves -- not through a copy of their logic.
+    #
+    # The previous version of this section reimplemented the index comparison
+    # inline and asserted it fired when a row was prepended. It therefore tested
+    # a local copy rather than the shipped guard, and when package 18 re-keyed
+    # the labels the two assertions went on passing while asserting the exact
+    # behaviour the re-key removed. A test that reimplements the thing it tests
+    # cannot notice the thing it tests changing.
+    def _row(i, t, c, loc):
+        return {"id": i, "title": t, "company": c, "location_raw": loc}
+
+    corpus = [_row("p1", "Software Engineer", "Acme", "NY"),
+              _row("p2", "Nurse Practitioner", "Mercy", "LA")]
+    lab = {"pairs": [{"k": 0, "cosine": 0.99, "same_job": False,
+                      "i": 0, "j": 1, "id_a": "p1", "occ_a": 0, "id_b": "p2", "occ_b": 0,
+                      "a": display_of(corpus[0]), "b": display_of(corpus[1])}]}
+
+    s, e, ru = resolve_labels(corpus, lab)
+    ck("labels resolve against an unchanged corpus", len(s) == 1 and not e and not ru)
+
+    # The case the whole package exists for: ordinary churn must NOT fire.
+    shifted = [_row("new", "Warehouse Picker", "Acme", "NY")] + corpus
+    s, e, ru = resolve_labels(shifted, lab)
+    ck("a prepended row does NOT invalidate the labels (this is the fix)",
+       len(s) == 1 and not e and not ru and s[0]["_i"] == 1 and s[0]["_j"] == 2,
+       f"resolved to indices {s[0]['_i']},{s[0]['_j']} after the shift" if s else "no survivor")
+
+    reordered = [corpus[1], corpus[0]]
+    s, _, _ = resolve_labels(reordered, lab)
+    ck("reordering the corpus does NOT invalidate the labels",
+       len(s) == 1 and s[0]["_i"] == 1 and s[0]["_j"] == 0)
+
+    # Ordinary expiry: the pair drops, and it is reported as expired, not fatal.
+    s, e, ru = resolve_labels([corpus[0]], lab)
+    ck("an expired posting DROPS its pair rather than failing the run",
+       len(s) == 0 and len(e) == 1 and not ru and e[0]["id"] == "p2")
+
+    # VIOLATION 1 -- an id that resolves to different content. Still fatal.
+    reused_corpus = [corpus[0], _row("p2", "Chief Financial Officer", "Mercy", "LA")]
+    s, e, ru = resolve_labels(reused_corpus, lab)
+    ck("id REUSE is detected (id survives, content changed)",
+       len(ru) == 1 and len(s) == 0,
+       f"{ru[0]['labelled_as']!r} -> {ru[0]['now']!r}" if ru else "not detected")
+
+    # The occurrence ordinal, which is what pair 115 needs: two rows, one id.
+    twin = [_row("dup", "Computer Scientist", "AF", "Eglin AFB"),
+            _row("dup", "Computer Scientist", "AF", "Eglin AFB")]
+    twin_lab = {"pairs": [{"k": 0, "cosine": 1.0, "same_job": True, "i": 0, "j": 1,
+                           "id_a": "dup", "occ_a": 0, "id_b": "dup", "occ_b": 1,
+                           "a": display_of(twin[0]), "b": display_of(twin[1])}]}
+    s, _, _ = resolve_labels(twin, twin_lab)
+    ck("two rows sharing one id resolve to DIFFERENT indices, not the same row",
+       len(s) == 1 and s[0]["_i"] == 0 and s[0]["_j"] == 1,
+       f"_i={s[0]['_i']} _j={s[0]['_j']}" if s else "no survivor")
+    s, e, _ = resolve_labels(twin[:1], twin_lab)
+    ck("and if the second of the two is gone, the pair drops rather than pairing a row with itself",
+       len(s) == 0 and len(e) == 1)
+
+    # VIOLATION 2 -- too few survivors. Both the band floor and the class floor.
+    def _synth(n_per_band, true_in_top=True):
+        out, k = [], 0
+        for b, (lo, _hi) in enumerate(GT_BANDS):
+            for _ in range(n_per_band):
+                out.append({"k": k, "cosine": lo + 0.005, "same_job": b == 4 and true_in_top})
+                k += 1
+        return out
+
+    ok, why, st = floor_verdict(_synth(24))
+    ck("a full survivor set passes the floor", ok, f"n={st['n_surviving']}")
+    ok, why, st = floor_verdict(_synth(MIN_PAIRS_PER_BAND))
+    ck(f"exactly {MIN_PAIRS_PER_BAND} per band passes", ok, f"n={st['n_surviving']}")
+    ok, why, st = floor_verdict(_synth(MIN_PAIRS_PER_BAND - 1))
+    ck(f"{MIN_PAIRS_PER_BAND - 1} per band FAILS the floor", not ok, "; ".join(why))
+    # 96 of 120 survive -- 80% -- but one whole band is gone. A total-count
+    # floor passes this; the per-band floor is the only thing that catches it.
+    ok, why, st = floor_verdict([r for r in _synth(24) if r["cosine"] < 0.98])
+    ck("losing one whole band FAILS even at 80% survival", not ok,
+       f"n={st['n_surviving']} of 120, {'; '.join(why)}")
+    # The band floor firing ON ITS OWN, with both classes comfortably healthy --
+    # otherwise the case above would prove only that the class floor works.
+    mixed = _synth(24)
+    for i, r in enumerate(mixed):
+        r["same_job"] = (i % 2 == 0)
+    ok, why, st = floor_verdict([r for r in mixed if _band_of(r["cosine"]) != 0])
+    ck("emptying a band fails on the BAND floor alone, both classes healthy", not ok and len(why) == 1,
+       f"n={st['n_surviving']}, True={st['same_job_true']} False={st['same_job_false']}, {why}")
+
+    ok, why, st = floor_verdict([r for r in _synth(24) if r["same_job"]])
+    ck("an all-positive survivor set FAILS (nothing to catch a false positive)", not ok,
+       "; ".join(why))
+    ok, why, st = floor_verdict([r for r in _synth(24) if not r["same_job"]])
+    ck("an all-negative survivor set FAILS (nothing to measure recall on)", not ok,
+       "; ".join(why))
 
     fake = [{"title": "Sales Associate", "company": "Acme", "location_raw": "NY"},
             {"title": "Sales Associate (Part-Time)", "company": "Acme", "location_raw": "NY"},

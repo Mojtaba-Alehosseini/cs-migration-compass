@@ -27,7 +27,9 @@ HARNESSES = [
     ("profile_data", "distributional profiling: shape, tails, heaping, outlier-rule disagreement"),
     ("audit_statistical", "estimator error, BCa bootstrap, Bland-Altman, Deming, injected-noise, Benford"),
     ("classify_titles", "title classifier, including the label-permutation leakage control"),
-    ("dedupe_postings", "near-duplicate normalisation and blocking"),
+    ("dedupe_postings", "near-duplicate normalisation and blocking, and — package 18 — label "
+                        "resolution by (id, occurrence): churn must not fire, id reuse and a "
+                        "below-floor survivor set must"),
     ("rederive_postings_pay", "software-only re-derivation and bootstrap CI"),
     # Package 16 — same contract, same reason. These three make claims about the
     # site's live numbers (the classifier/de-dup join, the 22-dataset sweep, and

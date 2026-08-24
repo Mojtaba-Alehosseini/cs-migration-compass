@@ -288,6 +288,16 @@ true and false positive falls in the top band) but recall drops to **0.678**, be
 in bands the sample over-represents. **0.678 is the figure to quote for real behaviour;** 0.719 is
 the figure the threshold was selected on.
 
+**These figures rest on the pairs that survive the corpus they are measured against, and that
+number changes with every harvest.** The labels are keyed by `(id, occurrence)` since package 18;
+postings expire, and a pair whose posting has left the corpus is not scored. The figures above were
+computed on **120 of 120** surviving, which is the state of the committed corpus. The live count is
+`tuned_on_n_pairs` in `data/quality_history/dedupe_eval.json` — read it there rather than assuming
+120, and quote precision with the n it was computed on. `dedupe_postings.py` refuses to tune at all
+below **12 surviving pairs in any cosine band, or 12 of either same_job class**: measured, dropping
+one whole band leaves 96 of 120 pairs — an 80% survival rate — and reports precision 1.000 with
+recall 0.000, because 23 of the 32 positive pairs live in a single band.
+
 **The company count is not affected.** De-duplication loses exactly **zero** companies: 1,960
 distinct employers before and 1,960 after, and not one of the 2,384 clusters spans more than one
 company - which is by construction, since blocking is *by* company. An earlier draft of this

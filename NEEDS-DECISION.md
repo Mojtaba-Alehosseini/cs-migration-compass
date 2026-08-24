@@ -2120,7 +2120,7 @@ Run on a fresh 48,708-row harvest (workflow run 32751240590), `dedupe_postings.p
 > `FATAL: 240 of 240 labelled endpoints no longer match the corpus -- postings.json has changed
 > since labelling. Re-label before trusting any threshold.`
 
-**The guard is right and should not be weakened.** Its threshold is tuned against 38 hand-labelled
+**The guard is right and should not be weakened.** Its threshold is tuned against 120 hand-labelled
 pairs, and a threshold tuned on labels that no longer point at the pairs they describe is worse
 than no threshold — the de-duplicator deletes rows, and package 15 measured its precision precisely
 so that it could not do so unmeasured. The comment above the check even anticipates corpus growth.
