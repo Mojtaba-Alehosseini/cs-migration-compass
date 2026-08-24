@@ -114,7 +114,14 @@
 
   --ink-1: #191813;   /* 15.8:1 on paper */
   --ink-2: #55524a;   /*  7.4:1 — body and labels */
-  --ink-3: #74705f;   /*  4.6:1 — the quietest text allowed on paper */
+  /* Package 17 — was #74705f, whose comment claimed 4.6:1 on paper and measured
+     4.485:1: under the 4.5 AA bar for normal text, in the DEFAULT theme and the
+     DEFAULT mode. One step darker clears it on both backgrounds and is a change
+     no eye can see. It matters more than it did, because .fx-estimate — the
+     marker on a converted figure whose rate came from another year — is
+     --ink-3 at 0.72em, well inside "normal text". Measured, not eyeballed:
+     4.551:1 on --paper, 5.043:1 on --surface. */
+  --ink-3: #736f5e;   /*  4.55:1 on paper — the quietest text allowed there */
 
   --line: #e2ded2;
   --line-strong: #cdc7b6;
