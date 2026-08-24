@@ -46,7 +46,21 @@ export function App() {
   return (
     <SelectionContext.Provider value={selection}>
     <ToastHost>
-      <a className="skip-link" href="#main">Skip to content</a>
+      {/* A BUTTON, not `href="#main"`. The router is a hash router, so a bare
+        * fragment does not address an element — it replaces the route, and the
+        * first keyboard-reachable control on every page of this site landed on
+        * "That page isn't here". <main> already carries tabIndex={-1} for the
+        * route-change focus move above, so focusing it is all this ever needed
+        * to do. Adversarial review, package 17. */}
+      <button
+        type="button"
+        className="skip-link"
+        onClick={() => {
+          const m = document.getElementById('main')
+          m?.focus()
+          m?.scrollIntoView({ block: 'start' })
+        }}
+      >Skip to content</button>
 
       <header
         ref={headerRef}

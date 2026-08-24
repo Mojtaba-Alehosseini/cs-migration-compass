@@ -180,15 +180,24 @@ export function ChartTable({ caption, head, rows }: {
 
 /** A hole in the data, with its reason and where it is tracked. Never a blank
  *  panel: a visitor cannot tell a deliberate absence from a broken pipeline. */
-export function Gap({ title, children, where, span = 's2' }: {
+export function Gap({ title, children, where, span = 's2', level = 3 }: {
   title: string
   children: ReactNode
   where?: ReactNode
   span?: string
+  /** Heading level for this gap's title. Default 3, which is right when a Gap
+   *  sits directly under a panel's <h2>. On /work a Gap sits INSIDE a country
+   *  section's <h4> column, where an <h3> reads to a screen reader navigating
+   *  by heading as the start of a new top-level section rather than a note
+   *  about the column it is in — Italy rendered h3, h4, h3, h4 down one
+   *  section. axe does not flag a level DECREASE, so nothing caught it.
+   *  Adversarial review, package 17. */
+  level?: 3 | 4 | 5
 }) {
+  const H = `h${level}` as 'h3' | 'h4' | 'h5'
   return (
     <div className={`gap ${span}`}>
-      <h3>{title}</h3>
+      <H>{title}</H>
       {children}
       {where && <div className="where">{where}</div>}
     </div>

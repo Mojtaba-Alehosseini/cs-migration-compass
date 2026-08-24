@@ -66,7 +66,7 @@ function Openings({ name, block, display, crossRates, fxMaxGap, unavailable }: {
 }) {
   if (unavailable) {
     return (
-      <Gap title="Openings didn't load" span="s6">
+      <Gap title="Openings didn't load" span="s6" level={5}>
         <p>
           The position beside this is unaffected — it comes from the national wage table, which
           loaded. What failed is the openings summary; reloading usually fixes it, and the full
@@ -86,7 +86,7 @@ function Openings({ name, block, display, crossRates, fxMaxGap, unavailable }: {
 
   if (software.length === 0) {
     return (
-      <Gap title={`Nothing open in ${name} right now`} span="s6">
+      <Gap title={`Nothing open in ${name} right now`} span="s6" level={5}>
         <p>
           The harvest reaches {all.length.toLocaleString()} advertisement
           {all.length === 1 ? '' : 's'} in {name} and none of them classifies as software. That is
@@ -99,7 +99,8 @@ function Openings({ name, block, display, crossRates, fxMaxGap, unavailable }: {
 
   if (named.length === 0) {
     return (
-      <Gap title={`${software.length} software openings in ${name}, and none names a figure`} span="s6">
+      <Gap title={`${software.length} software openings in ${name}, and none names a figure`}
+             span="s6" level={5}>
         <p>
           Employers in {name} rarely publish pay in job advertisements. All {software.length} software
           openings here — of {all.length.toLocaleString()} advertisements the harvest reaches in{' '}
@@ -630,7 +631,8 @@ export function Work() {
                           </>
                         )
                         : (
-                          <Gap title={`No wage table for this occupation in ${countryName(cc)}`} span="s6">
+                          <Gap title={`No wage table for this occupation in ${countryName(cc)}`}
+                            span="s6" level={5}>
                             <p>
                               {/* The source's OWN reason, not a generic one. This
                                 * said "at this occupation depth", which for Italy

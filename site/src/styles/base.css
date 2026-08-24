@@ -72,6 +72,12 @@ a { color: var(--ink-2); }
   color: var(--paper);
   padding: var(--space-3) var(--space-4);
   border-radius: 0 0 var(--radius-md) 0;
+  /* It is a <button> now — an href="#main" under a hash router replaced the
+     route instead of addressing the element. These three keep it looking
+     exactly like the anchor it replaced. */
+  border: 0;
+  font: inherit;
+  cursor: pointer;
 }
 .skip-link:focus { left: 0; }
 

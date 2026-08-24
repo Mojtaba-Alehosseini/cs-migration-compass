@@ -812,9 +812,17 @@ def convert_compensation_to_usd(comp: dict, effective_year: int) -> dict | None:
         "fx_country_used": fx_country,
         # Carried per posting, not inferred later: a consumer that renders the
         # converted figure has to be able to mark it without re-deriving why.
-        "estimated": bool(lo.get("estimated")),
-        "fx_gap_years": lo.get("fx_gap_years", 0),
-        "fx_year_requested": lo.get("fx_year_requested", effective_year),
+        #
+        # These three READ the key rather than defaulting it. `bool(lo.get(
+        # "estimated"))` and `lo.get("fx_gap_years", 0)` failed OPEN — rename
+        # the field upstream, or drop it in a refactor, and every posting ships
+        # `estimated: false, gap 0`, which is precisely the claim this flag
+        # exists to prevent being made falsely. For the one field whose purpose
+        # is that a substituted rate can never arrive looking exact, the safe
+        # default is no default. Adversarial review L1.
+        "estimated": bool(lo["estimated"]),
+        "fx_gap_years": lo["fx_gap_years"],
+        "fx_year_requested": lo["fx_year_requested"],
     }
 
 

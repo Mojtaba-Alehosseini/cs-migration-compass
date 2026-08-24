@@ -42,11 +42,11 @@ export const DISPLAY_CURRENCY_LABEL: Record<DisplayCurrency, string> = {
 
 const PERIOD: Record<Compensation['period'], string> = { year: '/yr', month: '/mo', hour: '/hr' }
 
-function money(v: number, currency: string): string {
+function money(v: number, currency: string, compact = v >= 10_000): string {
   try {
     return new Intl.NumberFormat('en-US', {
       style: 'currency', currency, maximumFractionDigits: 0,
-      notation: v >= 10_000 ? 'compact' : 'standard',
+      notation: compact ? 'compact' : 'standard',
     }).format(v)
   } catch {
     // An unmapped currency code still renders — as the number and the code,
@@ -56,9 +56,14 @@ function money(v: number, currency: string): string {
 }
 
 export function fmtRange(min: number, max: number, currency: string, period: Compensation['period']) {
-  return min === max
-    ? `${money(min, currency)}${PERIOD[period]}`
-    : `${money(min, currency)}–${money(max, currency)}${PERIOD[period]}`
+  if (min === max) return `${money(min, currency)}${PERIOD[period]}`
+  // ONE notation for the whole range. Chosen per value, a range straddling
+  // 10,000 rendered "$8,000–$12K" — two different number formats inside one
+  // figure, which reads as a typo rather than a range. 23 ranges in the
+  // shipped payload do this. The larger end decides, so the pair is compact
+  // whenever either end would have been.
+  const compact = max >= 10_000
+  return `${money(min, currency, compact)}–${money(max, currency, compact)}${PERIOD[period]}`
 }
 
 /** One display currency's whole rate series, as `display_fx.rates[code]` ships

@@ -132,6 +132,15 @@ def fx_rate_within(country: str, year: int, max_gap_years: int) -> dict | None:
     that it was substituted. There is no code path that returns a substituted
     rate looking like an exact one.
     """
+    # MAX_FX_GAP_YEARS is a ceiling, and a ceiling a caller can step over by
+    # passing a bigger number is a suggestion. Adversarial review reached
+    # gap_years=75 with to_usd(1000, "GB", 2100, 100); nothing in the pipeline
+    # does that, but nothing stopped it either, and the whole argument for
+    # relaxing rule 1 rests on the bound being real. The year is coerced too:
+    # a float year produced a float gap and rendered as "a gap of
+    # 1.400000000000091 years".
+    year = int(year)
+    max_gap_years = min(int(max_gap_years), MAX_FX_GAP_YEARS)
     exact = fx_rate(country, year)
     if exact:
         return {**exact, "gap_years": 0, "estimated": False}
@@ -183,7 +192,13 @@ def to_usd(value: float, country: str, year: int, max_gap_years: int = 0) -> dic
             "chain": [{"op": "fx_convert",
                        "detail": f"{value} USD is already USD — identity, no rate applied"}],
             "fx_rate": 1.0, "fx_year": year, "fx_source": "identity (USD to USD)",
-            "estimated": False, "fx_gap_years": 0,
+            # fx_year_requested belongs here too. Both successful return paths
+            # must carry the SAME keys, or a caller that reads them without a
+            # default — which is the only safe way to read the estimate flag —
+            # works for one currency and raises for another. Found by making
+            # postings_common.py fail closed: the identity path had quietly
+            # omitted this since the field was introduced.
+            "estimated": False, "fx_gap_years": 0, "fx_year_requested": int(year),
         }
     rate = fx_rate_within(country, year, max_gap_years)
     if rate is None:

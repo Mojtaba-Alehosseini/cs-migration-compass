@@ -116,10 +116,47 @@ class TestTheAllowance(unittest.TestCase):
                         self.assertIn("estimated", r)
                         self.assertEqual(r["estimated"], r["fx_year"] != year)
 
-    def test_the_nearest_year_wins_and_ties_prefer_the_published_past(self):
+    def test_the_nearest_year_wins(self):
         got = nm.fx_rate_within("GB", 2026, 2)
         self.assertEqual(got["year"], 2025)          # 1 back beats 2 back
         self.assertEqual(got["gap_years"], 1)
+
+    def test_a_tie_prefers_the_published_past(self):
+        """The documented tie-break, exercised against a series built to
+        produce a tie.
+
+        The previous version of this asserted fx_rate_within("GB", 2026, 2) ==
+        2025, which is decided by GAP (1 beats 2) and never reaches the
+        tie-break at all — inverting the comparison left all fifteen tests
+        green. The corpus cannot exercise it either: across every (country,
+        year) pair in fx_rates.json there is not one case where two candidate
+        years sit at equal distance within the ceiling. A documented rule that
+        neither the tests nor the data can reach is a rule nobody is keeping,
+        so the series is supplied here."""
+        series = [{"year": 2020, "value": 1.10}, {"year": 2022, "value": 9.90}]
+        real = nm._fx_series
+        nm._fx_series = lambda cc: series if cc == "ZZ" else real(cc)
+        try:
+            # 2021 is exactly one year from each. The past must win.
+            got = nm.fx_rate_within("ZZ", 2021, 2)
+            self.assertIsNotNone(got)
+            self.assertEqual(got["year"], 2020, "a tie resolved to the future rate")
+            self.assertEqual(got["rate"], 1.10)
+            self.assertEqual(got["gap_years"], 1)
+            self.assertTrue(got["estimated"])
+        finally:
+            nm._fx_series = real
+
+    def test_the_ceiling_cannot_be_argued_past(self):
+        """MAX_FX_GAP_YEARS is a ceiling, not a default. A caller asking for
+        more gets the ceiling, not what it asked for — reachable before this
+        as to_usd(1000, "GB", 2100, 100) -> gap_years 75, ok True."""
+        self.assertIsNone(nm.fx_rate_within("GB", 2100, 100))
+        r = nm.to_usd(1000, "GB", 2100, max_gap_years=100)
+        self.assertFalse(r["ok"])
+        # And a float year cannot produce a float gap to render.
+        got = nm.fx_rate_within("GB", 2026.4, nm.MAX_FX_GAP_YEARS)
+        self.assertIsInstance(got["gap_years"], int)
 
     def test_a_mid_series_hole_too_wide_to_bridge_is_still_refused(self):
         """Cambodia has no published rate for 1974-1989. A two-year allowance
