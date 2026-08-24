@@ -2108,7 +2108,7 @@ so the conversions at least carry a chain and appear in the same audit as everyt
 Not attempted in package 17: it is outside the work order, it changes a value that renders on 57
 pages, and the trade it involves is a project decision rather than a defect.
 
-## 54. The de-duplicator's ground truth is keyed to array position, so it can only run on the corpus it was labelled against — and the weekly refresh changes that corpus by definition
+## 54. The de-duplicator's ground truth is keyed to array position — RESOLVED in package 18
 
 Package 17 found the weekly refresh workflow had never run `classify_titles.py`,
 `dedupe_postings.py` or `apply_postings_annotations.py`, while package 16's validator requires
@@ -2150,6 +2150,43 @@ Not attempted here. Any of the three changes what "the labelled sample" means an
 precision applies to, which is a methodology decision rather than a defect — and this is an
 unattended run.
 
-**Status of the refresh until this is decided: still blocked, one step later than before.** The
-harvesters, the merge, the occupation classifier and the title classifier all now run to completion
-on a fresh corpus; nothing is committed.
+**RESOLVED, package 18 — option (a), with the floor chosen from measurement and one thing option
+(a) did not anticipate.**
+
+The labels are keyed by `(id, occurrence)`. Not by `id` alone: three ids are carried by two rows
+each and **one labelled pair sits on exactly that case** — pair 115 is two rows of
+`usajobs:464770500`, one announcement filed under two occupational series, labelled `same_job=true`
+at cosine 1.0. Keying on the id would have paired a row with itself, a true positive no threshold
+could ever fail. The display string is kept as corroboration and explicitly rejected as a key: 240
+endpoints use 219 distinct strings and 43 of those match more than one row, because near-duplicates
+share text, which is what these labels describe.
+
+**The floor is per band, not a total, and the reason is measured.** Drop the `[0.98,1.00]` band and
+96 of 120 pairs remain — an 80% survival rate — and the tuning reports precision 1.000 recall 0.000,
+because 23 of the 32 positive pairs live in that band. A total-count floor passes that. The floor is
+**12 surviving pairs in every cosine band and 12 of each `same_job` class**, and the class half is
+documented as guarding a future re-labelling rather than today's data: over 4,000 band-satisfying
+survivor sets it never once fired.
+
+**What option (a) did not anticipate: an expired posting is not the only way a pair leaves.** The
+first implementation treated any id that resolved to changed text as fatal, on the reasoning that it
+meant id reuse. Run 32765692993 disproved that in production — the re-key took 240 mismatches down
+to **3**, and the run died anyway on three employer title edits (`Sr. Product Designer` → `Staff
+Product Designer`). Measured across real consecutive harvests, 0.041%–0.536% of surviving ids have
+their display string change each run, and most of those are USAJOBS *locations* drifting because
+`positionlocations[0]` picks one of several. So an edited advert now drops its pair like an expired
+one; a formatting-only edit does not even do that; and the run is refused only when the edited share
+exceeds 25%, which is what a provider recycling its id space looks like.
+
+**A third guard was added, because the floor alone guards the wrong thing.** What matters is not
+that the threshold is selected from a smaller sample but that a *different* threshold changes how
+many rows are deleted — 0.98 → 0.95 takes removable rows from 2,884 to 3,622. `EXPECTED_THRESHOLD`
+refuses any run whose survivor set selects a different threshold at all.
+
+**The remaining risk, stated rather than closed.** All 120 labelled pairs are intra-company across
+80 companies, and the one pre-package-14 refresh in this repo's history lost 55% of its ids by
+losing whole employers at once. Simulated, the floor survives company truncation to about 30% and
+refuses at 55%. Package 14's additive company ledger and reclaim bucket exist to stop that
+recurring, and the fresh harvest in run 32765692993 returned 48,691 rows against 48,267 committed —
+no truncation. If it does recur, the refresh stops with a clear message instead of tuning a
+threshold on a quarter of its sample, which is the right failure.
