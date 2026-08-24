@@ -59,17 +59,40 @@ export async function launch({ port = 9333 } = {}) {
     // Chrome is an acceptable, common CI trade-off for.
     '--no-sandbox',
     'about:blank',
-  ], { stdio: 'ignore', detached: false })
+  ], { stdio: ['ignore', 'ignore', 'pipe'], detached: false })
 
+  // Keep Chrome's own stderr. With stdio ignored the only symptom of a
+  // missing binary, a broken shared library or a refused profile directory
+  // was "did not expose a debugging port" — true, unactionable, and identical
+  // for every cause. CI hit exactly that and the log said nothing else.
+  let stderr = ''
+  child.stderr?.on('data', (d) => { stderr += d.toString().slice(0, 2000) })
+  let spawnErr = null
+  child.on('error', (e) => { spawnErr = e })
+  let exited = null
+  child.on('exit', (code, signal) => { exited = signal ? `signal ${signal}` : `code ${code}` })
+
+  // 30s, not 15. A cold Chrome start on a loaded CI runner is slow, and the
+  // old budget (100 x 150ms) sat close enough to the real start time that a
+  // busy runner failed the whole suite before a single check ran.
   let version = null
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 200; i++) {
+    if (spawnErr || exited) break
     try {
       const res = await fetch(`http://127.0.0.1:${port}/json/version`)
       if (res.ok) { version = await res.json(); break }
     } catch { /* not up yet */ }
     await sleep(150)
   }
-  if (!version) throw new Error('headless Chrome did not expose a debugging port')
+  if (!version) {
+    const why = spawnErr ? `could not be started (${spawnErr.message})`
+      : exited ? `exited early with ${exited}`
+      : 'did not expose a debugging port within 30s'
+    throw new Error(
+      `headless Chrome ${why}\n  binary: ${CHROME}\n`
+      + `  set CHROME_PATH to override\n`
+      + (stderr ? `  chrome stderr:\n${stderr.split('\n').map((l) => `    ${l}`).join('\n')}` : ''))
+  }
 
   return {
     port,
