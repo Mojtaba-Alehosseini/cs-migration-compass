@@ -82,12 +82,28 @@ def rekey(post: list[dict], gt: dict) -> tuple[list[dict], list[dict], dict]:
     for r in gt["pairs"]:
         out = dict(r)
         problems = []
-        for side, idx, stored in (("a", r["i"], r.get("a")), ("b", r["j"], r.get("b"))):
-            if not (0 <= idx < len(post)):
-                problems.append(f"{side}: index {idx} out of range"); continue
+        for side, stored in (("a", r.get("a")), ("b", r.get("b"))):
+            # ID FIRST, index only as the v1 fallback. Re-running this against a
+            # refreshed corpus used to be impossible: `i`/`j` are the array
+            # positions the pair was labelled at, and after one harvest they
+            # point at unrelated rows. Once a file has been re-keyed the id is
+            # the identity, so the migration becomes re-runnable — which is what
+            # a future re-labelling will need.
+            pid_stored, occ_stored = r.get(f"id_{side}"), r.get(f"occ_{side}", 0)
+            if pid_stored is not None:
+                idxs = by_id.get(pid_stored, [])
+                if occ_stored >= len(idxs):
+                    problems.append(f"{side}: id {pid_stored!r} occurrence {occ_stored} is not in "
+                                    f"this corpus ({len(idxs)} row(s) carry that id)")
+                    continue
+                idx = idxs[occ_stored]
+            else:
+                idx = r["i"] if side == "a" else r["j"]
+                if not (0 <= idx < len(post)):
+                    problems.append(f"{side}: index {idx} out of range"); continue
+                if idx not in where:
+                    problems.append(f"{side}: row {idx} has no id"); continue
             row = post[idx]
-            if idx not in where:
-                problems.append(f"{side}: row {idx} has no id"); continue
             pid, occ = where[idx]
             if len(by_id[pid]) > 1:
                 n_on_collision += 1

@@ -53,9 +53,10 @@ class TestTheKeyItself(unittest.TestCase):
         post, gt = _corpus(), _labels()
         base, _, _ = dp.resolve_labels(post, gt)
         wrecked = {**gt, "pairs": [{**r, "i": -1, "j": 10 ** 9} for r in gt["pairs"]]}
+        base_exp, base_ed = dp.resolve_labels(post, gt)[1:]
         after, expired, edited = dp.resolve_labels(post, wrecked)
         self.assertEqual(len(after), len(base))
-        self.assertEqual((len(expired), len(edited)), (0, 0))
+        self.assertEqual((len(expired), len(edited)), (len(base_exp), len(base_ed)))
         self.assertEqual([(r["_i"], r["_j"]) for r in after],
                          [(r["_i"], r["_j"]) for r in base])
 
@@ -74,18 +75,32 @@ class TestTheKeyItself(unittest.TestCase):
 
 
 class TestOrdinaryChurnMustNotFire(unittest.TestCase):
-    """The failure this package exists to remove."""
+    """The failure this package exists to remove.
+
+    Everything here is measured AGAINST THE BASELINE resolution of the committed
+    corpus, never against 120. The committed corpus is refreshed weekly by the
+    workflow this package unblocked, and after the first such refresh landed it
+    resolved 109 of 120 — so ten tests that asserted "all 120 survive" went red
+    on data that was completely healthy. A test that only passes on the corpus
+    it was written against is the same defect as a label keyed to array
+    position, one level up."""
 
     def setUp(self):
         self.post = _corpus()
         self.gt = _labels()
         self.n = len(self.gt["pairs"])
+        base, base_exp, base_ed = dp.resolve_labels(self.post, self.gt)
+        self.base = base
+        self.base_keys = {r["k"] for r in base}
+        self.base_expired, self.base_edited = len(base_exp), len(base_ed)
 
     def _all_survive(self, corpus, what):
+        """Churn must not change WHICH pairs resolve, whatever the baseline is."""
         s, expired, edited = dp.resolve_labels(corpus, self.gt)
-        self.assertEqual(len(edited), 0, f"{what}: reported an edited advert")
-        self.assertEqual(len(expired), 0, f"{what}: reported expiry")
-        self.assertEqual(len(s), self.n, f"{what}: only {len(s)} of {self.n} pairs survived")
+        self.assertEqual(len(edited), self.base_edited, f"{what}: edited count moved")
+        self.assertEqual(len(expired), self.base_expired, f"{what}: expiry count moved")
+        self.assertEqual({r["k"] for r in s}, self.base_keys,
+                         f"{what}: {len(s)} pairs survived against a baseline of {len(self.base)}")
         return s
 
     # DISTINCT rows, not 500 copies of one. An earlier version injected 500
@@ -139,20 +154,21 @@ class TestOrdinaryChurnMustNotFire(unittest.TestCase):
         rng.shuffle(churned)
 
         s, expired, edited = dp.resolve_labels(churned, self.gt)
-        self.assertEqual(len(edited), 0, "ordinary churn must never look like an edited advert")
+        self.assertEqual(len(edited), self.base_edited,
+                         "ordinary churn must not change how many adverts look edited")
 
         # Which pairs SHOULD have dropped, derived from the churned corpus
         # rather than from the 12 ids deliberately expired -- the random 5%
         # takes labelled rows too, and an earlier version of this test counted
         # only the deliberate ones and blamed the difference on the code.
         have = Counter(p.get("id") for p in churned)
-        gone = {r["k"] for r in self.gt["pairs"]
-                if have[r["id_a"]] <= r["occ_a"] or have[r["id_b"]] <= r["occ_b"]}
-        self.assertTrue(gone, "the churn removed no labelled endpoint at all — not a real test")
-        self.assertEqual({r["k"] for r in self.gt["pairs"]} - {r["k"] for r in s}, gone,
+        newly_gone = {r["k"] for r in self.base
+                      if have[r["id_a"]] <= r["occ_a"] or have[r["id_b"]] <= r["occ_b"]}
+        self.assertTrue(newly_gone, "the churn removed no labelled endpoint at all — not a real test")
+        self.assertEqual(self.base_keys - {r["k"] for r in s}, newly_gone,
                          "the pairs that dropped are not exactly the ones whose postings left")
-        self.assertEqual(len(s), self.n - len(gone))
-        self.assertGreater(len(expired), 0)
+        self.assertEqual(len(s), len(self.base) - len(newly_gone))
+        self.assertGreater(len(expired), self.base_expired)
 
         ok, why, stats = dp.floor_verdict(s)
         self.assertTrue(ok, f"a realistic week of churn broke the floor: {why} ({stats})")
@@ -168,15 +184,16 @@ class TestTheGuardCanStillFail(unittest.TestCase):
         benign. Treating it as fatal put the pipeline back where package 18
         found it, so the pair leaves the sample and the run continues."""
         post, gt = _corpus(), _labels()
-        victim = gt["pairs"][0]
+        base, _, base_ed = dp.resolve_labels(post, gt)
+        victim = next(r for r in base)          # a pair that still resolves today
         idx = next(i for i, p in enumerate(post) if p.get("id") == victim["id_a"])
         tampered = list(post)
         tampered[idx] = {**post[idx], "title": post[idx]["title"] + " Marketing"}
         s, _, edited = dp.resolve_labels(tampered, gt)
-        self.assertEqual(len(edited), 1, "a materially changed title went undetected")
-        self.assertEqual(edited[0]["k"], victim["k"])
+        self.assertEqual(len(edited), len(base_ed) + 1, "a materially changed title went undetected")
+        self.assertIn(victim["k"], {e["k"] for e in edited})
         self.assertNotIn(victim["k"], {r["k"] for r in s})
-        self.assertEqual(len(s), len(gt["pairs"]) - 1)
+        self.assertEqual(len(s), len(base) - 1)
         share = len(edited) / (2 * len(s) + len(edited))
         self.assertLessEqual(share, dp.MAX_EDITED_ENDPOINT_FRACTION,
                              "one edited advert must not reach the abort ceiling")
@@ -186,12 +203,14 @@ class TestTheGuardCanStillFail(unittest.TestCase):
         whole thesis is that such differences do not change what a posting is.
         Calling the same edit a broken identity would be incoherent."""
         post, gt = _corpus(), _labels()
-        idx = next(i for i, p in enumerate(post) if p.get("id") == gt["pairs"][0]["id_a"])
+        base, _, base_ed = dp.resolve_labels(post, gt)
+        idx = next(i for i, p in enumerate(post) if p.get("id") == base[0]["id_a"])
         tampered = list(post)
         tampered[idx] = {**post[idx], "title": post[idx]["title"] + " (Full-Time)"}
         s, expired, edited = dp.resolve_labels(tampered, gt)
-        self.assertEqual(len(edited), 0, "a formatting-only edit was treated as a changed posting")
-        self.assertEqual(len(s), len(gt["pairs"]))
+        self.assertEqual(len(edited), len(base_ed),
+                         "a formatting-only edit was treated as a changed posting")
+        self.assertEqual(len(s), len(base))
 
     def test_wholesale_id_reuse_is_still_fatal(self):
         """The case the original guard was built for. One edit is noise; a
@@ -502,37 +521,47 @@ class TestTheRekeyScriptItself(unittest.TestCase):
     """`rekey_dedupe_labels.py` had no tests at all and is what produced the
     file everything else depends on."""
 
-    def test_it_reproduces_the_committed_key_from_the_committed_corpus(self):
+    def test_it_reproduces_the_key_for_every_pair_that_still_resolves(self):
+        """Re-running the migration must be idempotent for the pairs still in
+        the corpus. It resolves by id first now — `i`/`j` are the array
+        positions the pair was labelled at and point at unrelated rows after a
+        single harvest, which made the script un-rerunnable the moment the
+        weekly refresh started working."""
         import rekey_dedupe_labels as rk
         post, gt = _corpus(), _labels()
         kept, dropped, stats = rk.rekey(post, gt)
-        self.assertEqual(dropped, [])
-        self.assertEqual(stats["pairs_rekeyed"], len(gt["pairs"]))
-        self.assertEqual(stats["endpoints_on_a_colliding_id"], 2)
-        for a, b in zip(kept, gt["pairs"]):
+        by_k = {r["k"]: r for r in gt["pairs"]}
+        self.assertTrue(kept)
+        for a in kept:
+            b = by_k[a["k"]]
             self.assertEqual((a["id_a"], a["occ_a"]), (b["id_a"], b["occ_a"]))
             self.assertEqual((a["id_b"], a["occ_b"]), (b["id_b"], b["occ_b"]))
+        # whatever it kept must be exactly what the runtime guard keeps
+        survivors, _, _ = dp.resolve_labels(post, gt)
+        self.assertEqual({r["k"] for r in kept}, {r["k"] for r in survivors})
+        self.assertEqual(stats["pairs_rekeyed"] + stats["pairs_dropped"], stats["pairs_in"])
 
     def test_it_refuses_to_write_a_partial_file(self):
         """A ground truth describing a different sample than the threshold was
         chosen on is worse than none, so a single unresolved endpoint must stop
         the whole write."""
-        import rekey_dedupe_labels as rk
-        post, gt = _corpus(), _labels()
-        broken = {**gt, "pairs": [{**gt["pairs"][0], "i": 10 ** 9}] + gt["pairs"][1:]}
-        kept, dropped, stats = rk.rekey(post, broken)
-        self.assertEqual(len(dropped), 1)
-        self.assertLess(stats["pairs_rekeyed"], stats["pairs_in"])
         import contextlib
         import io
+        import rekey_dedupe_labels as rk
+        post, gt = _corpus(), _labels()
+        broken = {**gt, "pairs": [{**gt["pairs"][0], "id_a": "does:not:exist"}] + gt["pairs"][1:]}
+        kept, dropped, stats = rk.rekey(post, broken)
+        self.assertTrue(any(d["k"] == gt["pairs"][0]["k"] for d in dropped))
+        self.assertLess(stats["pairs_rekeyed"], stats["pairs_in"])
+
+        # and run() must refuse rather than write, on any corpus where a label
+        # no longer resolves — which is every corpus after a refresh
+        survivors, _, _ = dp.resolve_labels(post, gt)
         buf = io.StringIO()
-        old = rk.LABELS
-        try:
-            with contextlib.redirect_stdout(buf):
-                # --check on a corpus the labels no longer fit must refuse, and
-                # must refuse before touching the file.
-                rk.LABELS = LABELS
-                code = rk.run(check_only=True)
-        finally:
-            rk.LABELS = old
-        self.assertEqual(code, 0, "the committed labels should still resolve cleanly")
+        with contextlib.redirect_stdout(buf):
+            code = rk.run(check_only=True)
+        if len(survivors) == len(gt["pairs"]):
+            self.assertEqual(code, 0, buf.getvalue()[-400:])
+        else:
+            self.assertEqual(code, 2, "it wrote a partial ground truth")
+            self.assertIn("REFUSING to write", buf.getvalue())

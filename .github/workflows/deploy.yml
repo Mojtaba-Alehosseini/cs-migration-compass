@@ -4,6 +4,20 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # The weekly refresh's commit CANNOT trigger this on its own. GitHub
+  # deliberately does not start workflows from a push made with the default
+  # GITHUB_TOKEN, to stop a job triggering itself forever — so "Refresh postings
+  # panel" pushed b5d3abb, 21 files of fresh data, and nothing deployed. The
+  # data was in the repo and the live site went on serving 16 August's, which is
+  # the exact symptom packages 17 and 18 exist to fix, arriving one step past
+  # where anyone was looking.
+  #
+  # workflow_run is the supported way to chain: it fires on the OTHER workflow
+  # completing, regardless of who pushed. The job below guards on its
+  # conclusion, because a refresh that failed must not publish anything.
+  workflow_run:
+    workflows: ["Refresh postings panel"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -18,7 +32,15 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # A refresh that failed must not publish. On a push or a manual dispatch
+    # there is no workflow_run context, so this is true and the behaviour is
+    # unchanged.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     steps:
+      # workflow_run checks out the default branch's HEAD, which is what the
+      # refresh just pushed — exactly the commit that needs publishing.
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
