@@ -29,6 +29,7 @@
  * change happened to leave the primary assertion true by coincidence.
  */
 
+import { readFileSync } from 'node:fs'
 import { launch, openPage, sleep } from './cdp.mjs'
 
 const BASE = process.env.BASE ?? 'http://localhost:4173/'
@@ -595,12 +596,36 @@ try {
     `R22: and the page scrolls to the fragment instead of the top (scrollY ${deep.y}, target at ${deep.top})`)
 
   // Every publishable country accounts for its own median, not just the first.
+  //
+  // The expected count is DERIVED from the payload, not written down. It was
+  // `>= 5`, which was true of the corpus the test was written against and false
+  // the first time the weekly refresh actually ran: DE and FR came back with 29
+  // software rows each, one short of the 30-row floor, so three countries
+  // publish rather than five. That is the floor working, and a test that reads
+  // it as a regression is pinned to a snapshot — the same defect as a label
+  // keyed to array position. Package 18.
   await page.hashGo(`${BASE}#/work`, { waitMs: 2600 })
-  const comps = JSON.parse(await page.eval(
-    `JSON.stringify([...document.querySelectorAll('p.sub')].map((p) => p.textContent.trim()).filter((t) => t.startsWith('What the ')))`))
-  check(comps.length >= 5,
-    `R22: every publishable country renders its own composition paragraph (${comps.length})`)
-  check(!comps.some((t) => !t.startsWith('What the US') && /USAJOBS supplies \d+ US /.test(t)),
+  // Read the payload the built site serves, in Node — page.eval() does not
+  // await, so an async fetch inside it returns a Promise, not JSON.
+  const payload = JSON.parse(readFileSync(
+    new URL('../../site/dist/data/history/openings.json', import.meta.url), 'utf8'))
+  const publishable = payload.data.pay_summary_by_country.filter((x) => x.publishable)
+  const compData = {
+    publishable: publishable.map((x) => x.country),
+    withComposition: publishable.filter((x) => x.composition).map((x) => x.country),
+    rendered: JSON.parse(await page.eval(
+      `JSON.stringify([...document.querySelectorAll('p.sub')].map((p) => p.textContent.trim())`
+      + `.filter((t) => t.startsWith('What the ')).map((t) => t.slice(9, 11)))`)),
+  }
+  check(compData.publishable.length > 0,
+    `R22: the payload publishes at least one country (${compData.publishable.join(',') || 'none'})`)
+  check(JSON.stringify(compData.rendered) === JSON.stringify(compData.withComposition),
+    `R22: every publishable country renders its own composition paragraph — `
+    + `payload ${compData.withComposition.join(',')} vs rendered ${compData.rendered.join(',')}`)
+  const compText = JSON.parse(await page.eval(
+    `JSON.stringify([...document.querySelectorAll('p.sub')].map((p) => p.textContent.trim())`
+    + `.filter((t) => t.startsWith('What the ')))`))
+  check(!compText.some((t) => !t.startsWith('What the US') && /USAJOBS supplies \d+ US /.test(t)),
     'R22: and no country carries the US federal-listings sentence as if it were its own')
 
   // A fabricated figure for an occupation the site has just said it cannot answer.
