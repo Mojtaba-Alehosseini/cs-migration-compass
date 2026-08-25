@@ -316,21 +316,21 @@
   "SVC"
  ],
  "corpus": {
-  "n_distinct_titles": 30528,
-  "n_postings": 48267,
+  "n_distinct_titles": 30599,
+  "n_postings": 48758,
   "distinct_title_class_counts": {
-   "unclassified": 15507,
-   "SW": 8421,
-   "SALES": 4839,
-   "HEALTH": 1761
+   "unclassified": 15597,
+   "SW": 8391,
+   "SALES": 4845,
+   "HEALTH": 1766
   },
   "posting_class_counts": {
-   "unclassified": 24474,
-   "SW": 13463,
-   "SALES": 7148,
-   "HEALTH": 3182
+   "unclassified": 24748,
+   "SW": 13503,
+   "SALES": 7270,
+   "HEALTH": 3237
   },
-  "software_share_of_postings_pct": 27.89,
-  "unclassified_share_of_postings_pct": 50.71
+  "software_share_of_postings_pct": 27.69,
+  "unclassified_share_of_postings_pct": 50.76
  }
 }

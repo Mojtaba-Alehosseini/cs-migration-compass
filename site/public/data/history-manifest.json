@@ -156,7 +156,7 @@
  "openings": {
   "theme": "jobs",
   "file": "history/openings.json",
-  "kb": 150.4,
+  "kb": 150.1,
   "kind": "derived_summary",
   "derived_from": "history/postings.json",
   "confidence": null,
@@ -168,7 +168,7 @@
  "postings": {
   "theme": "jobs",
   "file": "history/postings.json",
-  "kb": 23382.9,
+  "kb": 23633.2,
   "kind": null,
   "confidence": null,
   "institution": null,
@@ -179,7 +179,7 @@
  "postings_seed_summary": {
   "theme": "jobs",
   "file": "history/postings_seed_summary.json",
-  "kb": 171.6,
+  "kb": 173.4,
   "kind": null,
   "confidence": null,
   "institution": null,

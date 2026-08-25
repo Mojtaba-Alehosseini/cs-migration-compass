@@ -1,53 +1,53 @@
 {
  "source_id": "postings_seed_summary",
- "generated_at": "2026-08-23T13:40:01+00:00",
+ "generated_at": "2026-08-25T01:03:19+00:00",
  "meta": {
-  "seed_companies_count": 1723,
+  "seed_companies_count": 1738,
   "derived_from": "data/processed/postings.json"
  },
  "data": {
   "provider_summary": {
    "ashby": {
     "available": true,
-    "postings_count": 19715,
-    "compensation_present_count": 7654,
-    "compensation_converted_to_usd_count": 7572,
-    "generated_at": "2026-08-21T17:18:38+00:00"
+    "postings_count": 19914,
+    "compensation_present_count": 7723,
+    "compensation_converted_to_usd_count": 7638,
+    "generated_at": "2026-08-24T23:35:53+00:00"
    },
    "greenhouse": {
     "available": true,
-    "postings_count": 14015,
-    "compensation_present_count": 971,
+    "postings_count": 14134,
+    "compensation_present_count": 970,
     "compensation_converted_to_usd_count": 963,
-    "generated_at": "2026-08-21T17:33:58+00:00"
+    "generated_at": "2026-08-25T00:54:18+00:00"
    },
    "lever": {
     "available": true,
-    "postings_count": 10238,
-    "compensation_present_count": 3724,
-    "compensation_converted_to_usd_count": 3701,
-    "generated_at": "2026-08-21T17:45:14+00:00"
+    "postings_count": 10413,
+    "compensation_present_count": 3856,
+    "compensation_converted_to_usd_count": 3834,
+    "generated_at": "2026-08-25T01:00:42+00:00"
    },
    "teamtailor": {
     "available": true,
-    "postings_count": 56,
+    "postings_count": 55,
     "compensation_present_count": 0,
     "compensation_converted_to_usd_count": 0,
-    "generated_at": "2026-08-21T17:45:41+00:00"
+    "generated_at": "2026-08-25T01:01:10+00:00"
    },
    "usajobs": {
     "available": true,
     "postings_count": 4000,
     "compensation_present_count": 3984,
     "compensation_converted_to_usd_count": 3984,
-    "generated_at": "2026-08-21T17:48:02+00:00"
+    "generated_at": "2026-08-25T01:02:39+00:00"
    },
    "hn": {
     "available": true,
-    "postings_count": 243,
-    "compensation_present_count": 74,
-    "compensation_converted_to_usd_count": 74,
-    "generated_at": "2026-08-21T17:52:29+00:00"
+    "postings_count": 242,
+    "compensation_present_count": 73,
+    "compensation_converted_to_usd_count": 73,
+    "generated_at": "2026-08-25T01:03:12+00:00"
    }
   },
   "seed_companies": {
@@ -55,7 +55,7 @@
     "provider": "ashby",
     "company_slug": "0g",
     "company": null,
-    "job_count": 3
+    "job_count": 7
    },
    "ashby:10xteam": {
     "provider": "ashby",
@@ -73,19 +73,19 @@
     "provider": "ashby",
     "company_slug": "1password",
     "company": null,
-    "job_count": 61
+    "job_count": 64
    },
    "ashby:3y-health": {
     "provider": "ashby",
     "company_slug": "3y-health",
     "company": null,
-    "job_count": 83
+    "job_count": 80
    },
    "ashby:42dot": {
     "provider": "ashby",
     "company_slug": "42dot",
     "company": null,
-    "job_count": 114
+    "job_count": 112
    },
    "ashby:8fleet-inc": {
     "provider": "ashby",
@@ -103,7 +103,7 @@
     "provider": "ashby",
     "company_slug": "8vc",
     "company": null,
-    "job_count": 4
+    "job_count": 3
    },
    "ashby:9-mothers": {
     "provider": "ashby",
@@ -115,13 +115,13 @@
     "provider": "ashby",
     "company_slug": "9fin",
     "company": null,
-    "job_count": 35
+    "job_count": 40
    },
    "ashby:a-place-for-mom": {
     "provider": "ashby",
     "company_slug": "a-place-for-mom",
     "company": null,
-    "job_count": 61
+    "job_count": 60
    },
    "ashby:a-team": {
     "provider": "ashby",
@@ -133,43 +133,43 @@
     "provider": "ashby",
     "company_slug": "abacum",
     "company": null,
-    "job_count": 18
+    "job_count": 16
    },
    "ashby:abby-care": {
     "provider": "ashby",
     "company_slug": "abby-care",
     "company": null,
-    "job_count": 40
+    "job_count": 35
    },
    "ashby:abound": {
     "provider": "ashby",
     "company_slug": "abound",
     "company": null,
-    "job_count": 23
+    "job_count": 21
    },
    "ashby:abridge": {
     "provider": "ashby",
     "company_slug": "abridge",
     "company": null,
-    "job_count": 45
+    "job_count": 46
    },
    "ashby:absorblms": {
     "provider": "ashby",
     "company_slug": "absorblms",
     "company": null,
-    "job_count": 40
+    "job_count": 36
    },
    "ashby:accord": {
     "provider": "ashby",
     "company_slug": "accord",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "ashby:accurx": {
     "provider": "ashby",
     "company_slug": "accurx",
     "company": null,
-    "job_count": 17
+    "job_count": 16
    },
    "ashby:ace-1-media": {
     "provider": "ashby",
@@ -205,31 +205,31 @@
     "provider": "ashby",
     "company_slug": "acquisition",
     "company": null,
-    "job_count": 14
+    "job_count": 13
    },
    "ashby:adaption": {
     "provider": "ashby",
     "company_slug": "adaption",
     "company": null,
-    "job_count": 7
+    "job_count": 9
    },
    "ashby:adaptive": {
     "provider": "ashby",
     "company_slug": "adaptive",
     "company": null,
-    "job_count": 13
+    "job_count": 12
    },
    "ashby:adaptivesecurity": {
     "provider": "ashby",
     "company_slug": "adaptivesecurity",
     "company": null,
-    "job_count": 18
+    "job_count": 16
    },
    "ashby:adaptyv": {
     "provider": "ashby",
     "company_slug": "adaptyv",
     "company": null,
-    "job_count": 34
+    "job_count": 36
    },
    "ashby:addi": {
     "provider": "ashby",
@@ -247,25 +247,25 @@
     "provider": "ashby",
     "company_slug": "adthena",
     "company": null,
-    "job_count": 11
+    "job_count": 10
    },
    "ashby:aegis-ai": {
     "provider": "ashby",
     "company_slug": "aegis-ai",
     "company": null,
-    "job_count": 10
+    "job_count": 22
    },
    "ashby:aerovect": {
     "provider": "ashby",
     "company_slug": "aerovect",
     "company": null,
-    "job_count": 38
+    "job_count": 39
    },
    "ashby:aescape": {
     "provider": "ashby",
     "company_slug": "aescape",
     "company": null,
-    "job_count": 6
+    "job_count": 5
    },
    "ashby:agavegames": {
     "provider": "ashby",
@@ -277,19 +277,19 @@
     "provider": "ashby",
     "company_slug": "agent",
     "company": null,
-    "job_count": 23
+    "job_count": 27
    },
    "ashby:agentio": {
     "provider": "ashby",
     "company_slug": "agentio",
     "company": null,
-    "job_count": 18
+    "job_count": 17
    },
    "ashby:agentis-capital-advisors": {
     "provider": "ashby",
     "company_slug": "agentis-capital-advisors",
     "company": null,
-    "job_count": 28
+    "job_count": 29
    },
    "ashby:agentmail": {
     "provider": "ashby",
@@ -313,13 +313,13 @@
     "provider": "ashby",
     "company_slug": "aibidia",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:aidkit": {
     "provider": "ashby",
     "company_slug": "aidkit",
     "company": null,
-    "job_count": 1
+    "job_count": 2
    },
    "ashby:aim4hire": {
     "provider": "ashby",
@@ -331,43 +331,43 @@
     "provider": "ashby",
     "company_slug": "airbyte",
     "company": null,
-    "job_count": 10
+    "job_count": 11
    },
    "ashby:airgarage": {
     "provider": "ashby",
     "company_slug": "airgarage",
     "company": null,
-    "job_count": 6
+    "job_count": 5
    },
    "ashby:airops": {
     "provider": "ashby",
     "company_slug": "airops",
     "company": null,
-    "job_count": 11
+    "job_count": 10
    },
    "ashby:airtasker": {
     "provider": "ashby",
     "company_slug": "airtasker",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "ashby:airwallex": {
     "provider": "ashby",
     "company_slug": "airwallex",
     "company": null,
-    "job_count": 620
+    "job_count": 609
    },
    "ashby:aisle": {
     "provider": "ashby",
     "company_slug": "aisle",
     "company": null,
-    "job_count": 7
+    "job_count": 5
    },
    "ashby:aiwyn": {
     "provider": "ashby",
     "company_slug": "aiwyn",
     "company": null,
-    "job_count": 8
+    "job_count": 9
    },
    "ashby:ajax": {
     "provider": "ashby",
@@ -385,13 +385,13 @@
     "provider": "ashby",
     "company_slug": "akur8",
     "company": null,
-    "job_count": 10
+    "job_count": 11
    },
    "ashby:alan": {
     "provider": "ashby",
     "company_slug": "alan",
     "company": null,
-    "job_count": 90
+    "job_count": 89
    },
    "ashby:alcazar-energy": {
     "provider": "ashby",
@@ -409,19 +409,19 @@
     "provider": "ashby",
     "company_slug": "alembic",
     "company": null,
-    "job_count": 10
+    "job_count": 9
    },
    "ashby:aleph": {
     "provider": "ashby",
     "company_slug": "aleph",
     "company": null,
-    "job_count": 9
+    "job_count": 8
    },
    "ashby:alephalpha": {
     "provider": "ashby",
     "company_slug": "alephalpha",
     "company": null,
-    "job_count": 2
+    "job_count": 1
    },
    "ashby:algo1": {
     "provider": "ashby",
@@ -433,13 +433,13 @@
     "provider": "ashby",
     "company_slug": "allarahealth",
     "company": null,
-    "job_count": 177
+    "job_count": 171
    },
    "ashby:allica-bank": {
     "provider": "ashby",
     "company_slug": "allica-bank",
     "company": null,
-    "job_count": 33
+    "job_count": 42
    },
    "ashby:allium": {
     "provider": "ashby",
@@ -475,25 +475,25 @@
     "provider": "ashby",
     "company_slug": "almedia",
     "company": null,
-    "job_count": 57
+    "job_count": 56
    },
    "ashby:alotten-inc": {
     "provider": "ashby",
     "company_slug": "alotten-inc",
     "company": null,
-    "job_count": 1
+    "job_count": 2
    },
    "ashby:alpacahealth": {
     "provider": "ashby",
     "company_slug": "alpacahealth",
     "company": null,
-    "job_count": 260
+    "job_count": 332
    },
    "ashby:alternativepayments": {
     "provider": "ashby",
     "company_slug": "alternativepayments",
     "company": null,
-    "job_count": 14
+    "job_count": 16
    },
    "ashby:altimate": {
     "provider": "ashby",
@@ -505,37 +505,37 @@
     "provider": "ashby",
     "company_slug": "altura",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:amber": {
     "provider": "ashby",
     "company_slug": "amber",
     "company": null,
-    "job_count": 22
+    "job_count": 23
    },
    "ashby:ambiencehealthcare": {
     "provider": "ashby",
     "company_slug": "ambiencehealthcare",
     "company": null,
-    "job_count": 21
+    "job_count": 18
    },
    "ashby:amboss": {
     "provider": "ashby",
     "company_slug": "amboss",
     "company": null,
-    "job_count": 23
+    "job_count": 24
    },
    "ashby:ambral": {
     "provider": "ashby",
     "company_slug": "ambral",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:ambrook": {
     "provider": "ashby",
     "company_slug": "ambrook",
     "company": null,
-    "job_count": 13
+    "job_count": 15
    },
    "ashby:ameba": {
     "provider": "ashby",
@@ -547,13 +547,13 @@
     "provider": "ashby",
     "company_slug": "american-housing",
     "company": null,
-    "job_count": 15
+    "job_count": 14
    },
    "ashby:americanoperator": {
     "provider": "ashby",
     "company_slug": "americanoperator",
     "company": null,
-    "job_count": 14
+    "job_count": 8
    },
    "ashby:amo": {
     "provider": "ashby",
@@ -565,7 +565,7 @@
     "provider": "ashby",
     "company_slug": "amperos",
     "company": null,
-    "job_count": 18
+    "job_count": 19
    },
    "ashby:ampersand": {
     "provider": "ashby",
@@ -595,13 +595,13 @@
     "provider": "ashby",
     "company_slug": "andela",
     "company": null,
-    "job_count": 19
+    "job_count": 17
    },
    "ashby:andotechnologies": {
     "provider": "ashby",
     "company_slug": "andotechnologies",
     "company": null,
-    "job_count": 1
+    "job_count": 4
    },
    "ashby:andromeda": {
     "provider": "ashby",
@@ -613,7 +613,7 @@
     "provider": "ashby",
     "company_slug": "anglehealth",
     "company": null,
-    "job_count": 2
+    "job_count": 1
    },
    "ashby:anima": {
     "provider": "ashby",
@@ -637,7 +637,7 @@
     "provider": "ashby",
     "company_slug": "annaautismcare",
     "company": null,
-    "job_count": 18
+    "job_count": 17
    },
    "ashby:anon": {
     "provider": "ashby",
@@ -649,7 +649,7 @@
     "provider": "ashby",
     "company_slug": "anrok",
     "company": null,
-    "job_count": 19
+    "job_count": 21
    },
    "ashby:ansiblehealth": {
     "provider": "ashby",
@@ -673,7 +673,7 @@
     "provider": "ashby",
     "company_slug": "antares",
     "company": null,
-    "job_count": 49
+    "job_count": 55
    },
    "ashby:anterior": {
     "provider": "ashby",
@@ -703,7 +703,7 @@
     "provider": "ashby",
     "company_slug": "anyscale",
     "company": null,
-    "job_count": 16
+    "job_count": 14
    },
    "ashby:anything": {
     "provider": "ashby",
@@ -715,7 +715,7 @@
     "provider": "ashby",
     "company_slug": "anyvan",
     "company": null,
-    "job_count": 19
+    "job_count": 18
    },
    "ashby:apella": {
     "provider": "ashby",
@@ -727,7 +727,7 @@
     "provider": "ashby",
     "company_slug": "apex-technology-inc",
     "company": null,
-    "job_count": 77
+    "job_count": 90
    },
    "ashby:apexgrowth": {
     "provider": "ashby",
@@ -739,7 +739,7 @@
     "provider": "ashby",
     "company_slug": "apify",
     "company": null,
-    "job_count": 13
+    "job_count": 11
    },
    "ashby:apolink": {
     "provider": "ashby",
@@ -757,7 +757,7 @@
     "provider": "ashby",
     "company_slug": "apollo-information-systems",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "ashby:appliedlabs": {
     "provider": "ashby",
@@ -769,13 +769,13 @@
     "provider": "ashby",
     "company_slug": "april",
     "company": null,
-    "job_count": 17
+    "job_count": 16
    },
    "ashby:apron": {
     "provider": "ashby",
     "company_slug": "apron",
     "company": null,
-    "job_count": 5
+    "job_count": 4
    },
    "ashby:aptosfoundation": {
     "provider": "ashby",
@@ -799,13 +799,13 @@
     "provider": "ashby",
     "company_slug": "arago",
     "company": null,
-    "job_count": 14
+    "job_count": 16
    },
    "ashby:arb-interactive": {
     "provider": "ashby",
     "company_slug": "arb-interactive",
     "company": null,
-    "job_count": 5
+    "job_count": 7
    },
    "ashby:arbiter-ai": {
     "provider": "ashby",
@@ -835,13 +835,13 @@
     "provider": "ashby",
     "company_slug": "arcade-ai",
     "company": null,
-    "job_count": 8
+    "job_count": 7
    },
    "ashby:arcadeai": {
     "provider": "ashby",
     "company_slug": "arcadeai",
     "company": null,
-    "job_count": 12
+    "job_count": 6
    },
    "ashby:archive": {
     "provider": "ashby",
@@ -877,7 +877,7 @@
     "provider": "ashby",
     "company_slug": "arlo",
     "company": null,
-    "job_count": 12
+    "job_count": 11
    },
    "ashby:arrakis": {
     "provider": "ashby",
@@ -889,13 +889,13 @@
     "provider": "ashby",
     "company_slug": "array-behavioral-care",
     "company": null,
-    "job_count": 28
+    "job_count": 29
    },
    "ashby:artafinance": {
     "provider": "ashby",
     "company_slug": "artafinance",
     "company": null,
-    "job_count": 10
+    "job_count": 11
    },
    "ashby:artemisanalytics": {
     "provider": "ashby",
@@ -925,19 +925,19 @@
     "provider": "ashby",
     "company_slug": "artsy",
     "company": null,
-    "job_count": 12
+    "job_count": 8
    },
    "ashby:ascertain": {
     "provider": "ashby",
     "company_slug": "ascertain",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:ashby": {
     "provider": "ashby",
     "company_slug": "ashby",
     "company": null,
-    "job_count": 60
+    "job_count": 59
    },
    "ashby:ashgro": {
     "provider": "ashby",
@@ -955,25 +955,25 @@
     "provider": "ashby",
     "company_slug": "assembledhq",
     "company": null,
-    "job_count": 24
+    "job_count": 22
    },
    "ashby:assorthealth": {
     "provider": "ashby",
     "company_slug": "assorthealth",
     "company": null,
-    "job_count": 32
+    "job_count": 31
    },
    "ashby:assured": {
     "provider": "ashby",
     "company_slug": "assured",
     "company": null,
-    "job_count": 34
+    "job_count": 36
    },
    "ashby:astera": {
     "provider": "ashby",
     "company_slug": "astera",
     "company": null,
-    "job_count": 41
+    "job_count": 50
    },
    "ashby:asteriai": {
     "provider": "ashby",
@@ -985,7 +985,7 @@
     "provider": "ashby",
     "company_slug": "astra",
     "company": null,
-    "job_count": 8
+    "job_count": 9
    },
    "ashby:astro-mechanica": {
     "provider": "ashby",
@@ -997,7 +997,7 @@
     "provider": "ashby",
     "company_slug": "astronomer",
     "company": null,
-    "job_count": 27
+    "job_count": 23
    },
    "ashby:asula": {
     "provider": "ashby",
@@ -1009,7 +1009,7 @@
     "provider": "ashby",
     "company_slug": "ataraxis-ai",
     "company": null,
-    "job_count": 11
+    "job_count": 12
    },
    "ashby:atg": {
     "provider": "ashby",
@@ -1021,13 +1021,13 @@
     "provider": "ashby",
     "company_slug": "atlan",
     "company": null,
-    "job_count": 5
+    "job_count": 4
    },
    "ashby:atlas": {
     "provider": "ashby",
     "company_slug": "atlas",
     "company": null,
-    "job_count": 6
+    "job_count": 7
    },
    "ashby:atlasonc": {
     "provider": "ashby",
@@ -1039,13 +1039,13 @@
     "provider": "ashby",
     "company_slug": "atob",
     "company": null,
-    "job_count": 13
+    "job_count": 12
    },
    "ashby:atolio": {
     "provider": "ashby",
     "company_slug": "atolio",
     "company": null,
-    "job_count": 5
+    "job_count": 4
    },
    "ashby:atomic": {
     "provider": "ashby",
@@ -1057,7 +1057,7 @@
     "provider": "ashby",
     "company_slug": "atomic-financial",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:atomic-invest": {
     "provider": "ashby",
@@ -1081,13 +1081,13 @@
     "provider": "ashby",
     "company_slug": "atticus",
     "company": null,
-    "job_count": 11
+    "job_count": 10
    },
    "ashby:attio": {
     "provider": "ashby",
     "company_slug": "attio",
     "company": null,
-    "job_count": 37
+    "job_count": 44
    },
    "ashby:auctor": {
     "provider": "ashby",
@@ -1099,7 +1099,7 @@
     "provider": "ashby",
     "company_slug": "aufinity-group-gmbh",
     "company": null,
-    "job_count": 18
+    "job_count": 16
    },
    "ashby:augmodo": {
     "provider": "ashby",
@@ -1123,19 +1123,19 @@
     "provider": "ashby",
     "company_slug": "aurelian",
     "company": null,
-    "job_count": 13
+    "job_count": 11
    },
    "ashby:aureliussystems": {
     "provider": "ashby",
     "company_slug": "aureliussystems",
     "company": null,
-    "job_count": 17
+    "job_count": 18
    },
    "ashby:aurorasolar": {
     "provider": "ashby",
     "company_slug": "aurorasolar",
     "company": null,
-    "job_count": 7
+    "job_count": 9
    },
    "ashby:authzed": {
     "provider": "ashby",
@@ -1159,7 +1159,7 @@
     "provider": "ashby",
     "company_slug": "ava-labs",
     "company": null,
-    "job_count": 6
+    "job_count": 5
    },
    "ashby:avala": {
     "provider": "ashby",
@@ -1171,7 +1171,7 @@
     "provider": "ashby",
     "company_slug": "avelios-medical",
     "company": null,
-    "job_count": 53
+    "job_count": 55
    },
    "ashby:aven": {
     "provider": "ashby",
@@ -1189,25 +1189,25 @@
     "provider": "ashby",
     "company_slug": "avoca",
     "company": null,
-    "job_count": 24
+    "job_count": 23
    },
    "ashby:avra": {
     "provider": "ashby",
     "company_slug": "avra",
     "company": null,
-    "job_count": 4
+    "job_count": 5
    },
    "ashby:away": {
     "provider": "ashby",
     "company_slug": "away",
     "company": null,
-    "job_count": 17
+    "job_count": 18
    },
    "ashby:axelera": {
     "provider": "ashby",
     "company_slug": "axelera",
     "company": null,
-    "job_count": 14
+    "job_count": 9
    },
    "ashby:axiom": {
     "provider": "ashby",
@@ -1231,19 +1231,19 @@
     "provider": "ashby",
     "company_slug": "axion",
     "company": null,
-    "job_count": 10
+    "job_count": 9
    },
    "ashby:axle-careers": {
     "provider": "ashby",
     "company_slug": "axle-careers",
     "company": null,
-    "job_count": 13
+    "job_count": 12
    },
    "ashby:axle-health": {
     "provider": "ashby",
     "company_slug": "axle-health",
     "company": null,
-    "job_count": 5
+    "job_count": 4
    },
    "ashby:axle-mobility": {
     "provider": "ashby",
@@ -1255,7 +1255,7 @@
     "provider": "ashby",
     "company_slug": "backflip",
     "company": null,
-    "job_count": 4
+    "job_count": 2
    },
    "ashby:backmarket": {
     "provider": "ashby",
@@ -1267,7 +1267,7 @@
     "provider": "ashby",
     "company_slug": "bankjoy",
     "company": null,
-    "job_count": 7
+    "job_count": 8
    },
    "ashby:bantamcommunications": {
     "provider": "ashby",
@@ -1279,13 +1279,13 @@
     "provider": "ashby",
     "company_slug": "barkbus",
     "company": null,
-    "job_count": 18
+    "job_count": 17
    },
    "ashby:barnes": {
     "provider": "ashby",
     "company_slug": "barnes",
     "company": null,
-    "job_count": 86
+    "job_count": 87
    },
    "ashby:basata": {
     "provider": "ashby",
@@ -1297,31 +1297,31 @@
     "provider": "ashby",
     "company_slug": "base-operations",
     "company": null,
-    "job_count": 4
+    "job_count": 1
    },
    "ashby:base-power": {
     "provider": "ashby",
     "company_slug": "base-power",
     "company": null,
-    "job_count": 172
+    "job_count": 179
    },
    "ashby:baseten": {
     "provider": "ashby",
     "company_slug": "baseten",
     "company": null,
-    "job_count": 71
+    "job_count": 74
    },
    "ashby:basiccapital": {
     "provider": "ashby",
     "company_slug": "basiccapital",
     "company": null,
-    "job_count": 18
+    "job_count": 19
    },
    "ashby:basis-ai": {
     "provider": "ashby",
     "company_slug": "basis-ai",
     "company": null,
-    "job_count": 37
+    "job_count": 38
    },
    "ashby:basis-research": {
     "provider": "ashby",
@@ -1333,13 +1333,13 @@
     "provider": "ashby",
     "company_slug": "bastion",
     "company": null,
-    "job_count": 6
+    "job_count": 8
    },
    "ashby:baton": {
     "provider": "ashby",
     "company_slug": "baton",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "ashby:batoncorporation": {
     "provider": "ashby",
@@ -1357,7 +1357,7 @@
     "provider": "ashby",
     "company_slug": "bayesianhealth",
     "company": null,
-    "job_count": 11
+    "job_count": 10
    },
    "ashby:beaconai": {
     "provider": "ashby",
@@ -1375,13 +1375,13 @@
     "provider": "ashby",
     "company_slug": "beam-up",
     "company": null,
-    "job_count": 21
+    "job_count": 20
    },
    "ashby:beamery": {
     "provider": "ashby",
     "company_slug": "beamery",
     "company": null,
-    "job_count": 7
+    "job_count": 8
    },
    "ashby:beamimpact": {
     "provider": "ashby",
@@ -1393,13 +1393,13 @@
     "provider": "ashby",
     "company_slug": "bedrock-robotics",
     "company": null,
-    "job_count": 33
+    "job_count": 34
    },
    "ashby:bedrockocean": {
     "provider": "ashby",
     "company_slug": "bedrockocean",
     "company": null,
-    "job_count": 1
+    "job_count": 2
    },
    "ashby:believer": {
     "provider": "ashby",
@@ -1411,7 +1411,7 @@
     "provider": "ashby",
     "company_slug": "belvo",
     "company": null,
-    "job_count": 5
+    "job_count": 6
    },
    "ashby:bem": {
     "provider": "ashby",
@@ -1429,13 +1429,13 @@
     "provider": "ashby",
     "company_slug": "benchling",
     "company": null,
-    "job_count": 50
+    "job_count": 54
    },
    "ashby:benepass": {
     "provider": "ashby",
     "company_slug": "benepass",
     "company": null,
-    "job_count": 13
+    "job_count": 12
    },
    "ashby:beside": {
     "provider": "ashby",
@@ -1453,7 +1453,7 @@
     "provider": "ashby",
     "company_slug": "bestow",
     "company": null,
-    "job_count": 18
+    "job_count": 22
    },
    "ashby:bettercloud": {
     "provider": "ashby",
@@ -1465,7 +1465,7 @@
     "provider": "ashby",
     "company_slug": "bettermile",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "ashby:bettermoney": {
     "provider": "ashby",
@@ -1477,7 +1477,7 @@
     "provider": "ashby",
     "company_slug": "betterup",
     "company": null,
-    "job_count": 34
+    "job_count": 11
    },
    "ashby:bevel": {
     "provider": "ashby",
@@ -1519,19 +1519,19 @@
     "provider": "ashby",
     "company_slug": "billups",
     "company": null,
-    "job_count": 9
+    "job_count": 10
    },
    "ashby:binalyze": {
     "provider": "ashby",
     "company_slug": "binalyze",
     "company": null,
-    "job_count": 2
+    "job_count": 1
    },
    "ashby:binti": {
     "provider": "ashby",
     "company_slug": "binti",
     "company": null,
-    "job_count": 13
+    "job_count": 11
    },
    "ashby:bio": {
     "provider": "ashby",
@@ -1543,7 +1543,7 @@
     "provider": "ashby",
     "company_slug": "biofire",
     "company": null,
-    "job_count": 8
+    "job_count": 9
    },
    "ashby:bioptimizers": {
     "provider": "ashby",
@@ -1573,13 +1573,13 @@
     "provider": "ashby",
     "company_slug": "bjakcareer",
     "company": null,
-    "job_count": 1626
+    "job_count": 1726
    },
    "ashby:blackbird-labs-inc": {
     "provider": "ashby",
     "company_slug": "blackbird-labs-inc",
     "company": null,
-    "job_count": 8
+    "job_count": 7
    },
    "ashby:blackbox-strategies": {
     "provider": "ashby",
@@ -1597,37 +1597,37 @@
     "provider": "ashby",
     "company_slug": "bland",
     "company": null,
-    "job_count": 16
+    "job_count": 18
    },
    "ashby:blank-metal": {
     "provider": "ashby",
     "company_slug": "blank-metal",
     "company": null,
-    "job_count": 11
+    "job_count": 10
    },
    "ashby:blink": {
     "provider": "ashby",
     "company_slug": "blink",
     "company": null,
-    "job_count": 7
+    "job_count": 1
    },
    "ashby:bliro": {
     "provider": "ashby",
     "company_slug": "bliro",
     "company": null,
-    "job_count": 5
+    "job_count": 6
    },
    "ashby:blissway": {
     "provider": "ashby",
     "company_slug": "blissway",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "ashby:block-labs": {
     "provider": "ashby",
     "company_slug": "block-labs",
     "company": null,
-    "job_count": 4
+    "job_count": 5
    },
    "ashby:blockdaemon": {
     "provider": "ashby",
@@ -1651,7 +1651,7 @@
     "provider": "ashby",
     "company_slug": "blockstream",
     "company": null,
-    "job_count": 47
+    "job_count": 54
    },
    "ashby:blockworks": {
     "provider": "ashby",
@@ -1663,7 +1663,7 @@
     "provider": "ashby",
     "company_slug": "blossom-health",
     "company": null,
-    "job_count": 5
+    "job_count": 8
    },
    "ashby:blp-digital": {
     "provider": "ashby",
@@ -1675,7 +1675,7 @@
     "provider": "ashby",
     "company_slug": "blue-energy",
     "company": null,
-    "job_count": 18
+    "job_count": 19
    },
    "ashby:blueberrypediatrics": {
     "provider": "ashby",
@@ -1699,19 +1699,19 @@
     "provider": "ashby",
     "company_slug": "boam",
     "company": null,
-    "job_count": 5
+    "job_count": 6
    },
    "ashby:bobyard": {
     "provider": "ashby",
     "company_slug": "bobyard",
     "company": null,
-    "job_count": 27
+    "job_count": 29
    },
    "ashby:boon": {
     "provider": "ashby",
     "company_slug": "boon",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:botanictonics": {
     "provider": "ashby",
@@ -1723,7 +1723,7 @@
     "provider": "ashby",
     "company_slug": "bounce",
     "company": null,
-    "job_count": 14
+    "job_count": 10
    },
    "ashby:braiins": {
     "provider": "ashby",
@@ -1735,7 +1735,7 @@
     "provider": "ashby",
     "company_slug": "brainco",
     "company": null,
-    "job_count": 37
+    "job_count": 32
    },
    "ashby:brainly": {
     "provider": "ashby",
@@ -1747,7 +1747,7 @@
     "provider": "ashby",
     "company_slug": "braintrust",
     "company": null,
-    "job_count": 23
+    "job_count": 24
    },
    "ashby:brale": {
     "provider": "ashby",
@@ -1759,13 +1759,13 @@
     "provider": "ashby",
     "company_slug": "branchinsurance",
     "company": null,
-    "job_count": 6
+    "job_count": 4
    },
    "ashby:branchlab": {
     "provider": "ashby",
     "company_slug": "branchlab",
     "company": null,
-    "job_count": 7
+    "job_count": 9
    },
    "ashby:brandlight": {
     "provider": "ashby",
@@ -1777,13 +1777,13 @@
     "provider": "ashby",
     "company_slug": "bratte",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:bravehealth": {
     "provider": "ashby",
     "company_slug": "bravehealth",
     "company": null,
-    "job_count": 39
+    "job_count": 44
    },
    "ashby:breaker": {
     "provider": "ashby",
@@ -1795,19 +1795,19 @@
     "provider": "ashby",
     "company_slug": "breakmark",
     "company": null,
-    "job_count": 3
+    "job_count": 5
    },
    "ashby:bree": {
     "provider": "ashby",
     "company_slug": "bree",
     "company": null,
-    "job_count": 11
+    "job_count": 9
    },
    "ashby:brellium": {
     "provider": "ashby",
     "company_slug": "brellium",
     "company": null,
-    "job_count": 10
+    "job_count": 8
    },
    "ashby:brettonai": {
     "provider": "ashby",
@@ -1819,13 +1819,13 @@
     "provider": "ashby",
     "company_slug": "brightwheel",
     "company": null,
-    "job_count": 16
+    "job_count": 19
    },
    "ashby:brigit": {
     "provider": "ashby",
     "company_slug": "brigit",
     "company": null,
-    "job_count": 22
+    "job_count": 21
    },
    "ashby:brimstone": {
     "provider": "ashby",
@@ -1837,31 +1837,31 @@
     "provider": "ashby",
     "company_slug": "brinc",
     "company": null,
-    "job_count": 29
+    "job_count": 30
    },
    "ashby:brisk-teaching": {
     "provider": "ashby",
     "company_slug": "brisk-teaching",
     "company": null,
-    "job_count": 6
+    "job_count": 5
    },
    "ashby:broccoli": {
     "provider": "ashby",
     "company_slug": "broccoli",
     "company": null,
-    "job_count": 44
+    "job_count": 45
    },
    "ashby:brooklyn-health": {
     "provider": "ashby",
     "company_slug": "brooklyn-health",
     "company": null,
-    "job_count": 11
+    "job_count": 19
    },
    "ashby:browserbase": {
     "provider": "ashby",
     "company_slug": "browserbase",
     "company": null,
-    "job_count": 8
+    "job_count": 10
    },
    "ashby:bubble": {
     "provider": "ashby",
@@ -1873,7 +1873,7 @@
     "provider": "ashby",
     "company_slug": "buena",
     "company": null,
-    "job_count": 16
+    "job_count": 14
    },
    "ashby:buffer": {
     "provider": "ashby",
@@ -1927,19 +1927,19 @@
     "provider": "ashby",
     "company_slug": "burklandassociates",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:butterflymx": {
     "provider": "ashby",
     "company_slug": "butterflymx",
     "company": null,
-    "job_count": 19
+    "job_count": 20
    },
    "ashby:bynder": {
     "provider": "ashby",
     "company_slug": "bynder",
     "company": null,
-    "job_count": 21
+    "job_count": 22
    },
    "ashby:c1": {
     "provider": "ashby",
@@ -1987,13 +1987,13 @@
     "provider": "ashby",
     "company_slug": "campus",
     "company": null,
-    "job_count": 17
+    "job_count": 16
    },
    "ashby:camunda": {
     "provider": "ashby",
     "company_slug": "camunda",
     "company": null,
-    "job_count": 30
+    "job_count": 32
    },
    "ashby:canals": {
     "provider": "ashby",
@@ -2005,7 +2005,7 @@
     "provider": "ashby",
     "company_slug": "candidhealth",
     "company": null,
-    "job_count": 33
+    "job_count": 35
    },
    "ashby:candidintelligence": {
     "provider": "ashby",
@@ -2017,7 +2017,7 @@
     "provider": "ashby",
     "company_slug": "cantina",
     "company": null,
-    "job_count": 21
+    "job_count": 20
    },
    "ashby:canvas-medical": {
     "provider": "ashby",
@@ -2035,13 +2035,13 @@
     "provider": "ashby",
     "company_slug": "cape",
     "company": null,
-    "job_count": 24
+    "job_count": 22
    },
    "ashby:capimoney": {
     "provider": "ashby",
     "company_slug": "capimoney",
     "company": null,
-    "job_count": 10
+    "job_count": 11
    },
    "ashby:capsule": {
     "provider": "ashby",
@@ -2053,7 +2053,7 @@
     "provider": "ashby",
     "company_slug": "cardless",
     "company": null,
-    "job_count": 24
+    "job_count": 25
    },
    "ashby:careerstrengo": {
     "provider": "ashby",
@@ -2077,7 +2077,7 @@
     "provider": "ashby",
     "company_slug": "caribou",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:carnot-ai": {
     "provider": "ashby",
@@ -2089,13 +2089,13 @@
     "provider": "ashby",
     "company_slug": "cartesia",
     "company": null,
-    "job_count": 30
+    "job_count": 31
    },
    "ashby:carwow": {
     "provider": "ashby",
     "company_slug": "carwow",
     "company": null,
-    "job_count": 32
+    "job_count": 31
    },
    "ashby:cas": {
     "provider": "ashby",
@@ -2167,7 +2167,7 @@
     "provider": "ashby",
     "company_slug": "cellular-intelligence",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:centari": {
     "provider": "ashby",
@@ -2179,13 +2179,13 @@
     "provider": "ashby",
     "company_slug": "centerfield",
     "company": null,
-    "job_count": 16
+    "job_count": 17
    },
    "ashby:centivo": {
     "provider": "ashby",
     "company_slug": "centivo",
     "company": null,
-    "job_count": 14
+    "job_count": 16
    },
    "ashby:centreforeffectivealtruism": {
     "provider": "ashby",
@@ -2209,7 +2209,7 @@
     "provider": "ashby",
     "company_slug": "chainalysis-careers",
     "company": null,
-    "job_count": 43
+    "job_count": 42
    },
    "ashby:chalice": {
     "provider": "ashby",
@@ -2221,7 +2221,7 @@
     "provider": "ashby",
     "company_slug": "chambercardio",
     "company": null,
-    "job_count": 6
+    "job_count": 3
    },
    "ashby:change": {
     "provider": "ashby",
@@ -2257,7 +2257,7 @@
     "provider": "ashby",
     "company_slug": "checkatrade",
     "company": null,
-    "job_count": 23
+    "job_count": 24
    },
    "ashby:checkly": {
     "provider": "ashby",
@@ -2299,7 +2299,7 @@
     "provider": "ashby",
     "company_slug": "cinder",
     "company": null,
-    "job_count": 7
+    "job_count": 8
    },
    "ashby:circuithub": {
     "provider": "ashby",
@@ -2383,7 +2383,7 @@
     "provider": "ashby",
     "company_slug": "claritypay",
     "company": null,
-    "job_count": 25
+    "job_count": 27
    },
    "ashby:claritypediatrics": {
     "provider": "ashby",
@@ -2395,7 +2395,7 @@
     "provider": "ashby",
     "company_slug": "clarium",
     "company": null,
-    "job_count": 8
+    "job_count": 6
    },
    "ashby:clasp": {
     "provider": "ashby",
@@ -2407,19 +2407,19 @@
     "provider": "ashby",
     "company_slug": "clasp-group",
     "company": null,
-    "job_count": 10
+    "job_count": 11
    },
    "ashby:classdojo": {
     "provider": "ashby",
     "company_slug": "classdojo",
     "company": null,
-    "job_count": 13
+    "job_count": 12
    },
    "ashby:claylabs": {
     "provider": "ashby",
     "company_slug": "claylabs",
     "company": null,
-    "job_count": 71
+    "job_count": 66
    },
    "ashby:clearbank": {
     "provider": "ashby",
@@ -2449,7 +2449,7 @@
     "provider": "ashby",
     "company_slug": "clickup",
     "company": null,
-    "job_count": 70
+    "job_count": 69
    },
    "ashby:climate-finance-solutions": {
     "provider": "ashby",
@@ -2473,7 +2473,7 @@
     "provider": "ashby",
     "company_slug": "clipboard",
     "company": null,
-    "job_count": 34
+    "job_count": 33
    },
    "ashby:clipbook": {
     "provider": "ashby",
@@ -2509,7 +2509,7 @@
     "provider": "ashby",
     "company_slug": "clubhouse",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:cluely": {
     "provider": "ashby",
@@ -2521,7 +2521,7 @@
     "provider": "ashby",
     "company_slug": "coastal",
     "company": null,
-    "job_count": 14
+    "job_count": 13
    },
    "ashby:cobot": {
     "provider": "ashby",
@@ -2557,7 +2557,7 @@
     "provider": "ashby",
     "company_slug": "coderabbit",
     "company": null,
-    "job_count": 48
+    "job_count": 47
    },
    "ashby:codes-health": {
     "provider": "ashby",
@@ -2581,25 +2581,25 @@
     "provider": "ashby",
     "company_slug": "cogent-security",
     "company": null,
-    "job_count": 25
+    "job_count": 27
    },
    "ashby:cognition": {
     "provider": "ashby",
     "company_slug": "cognition",
     "company": null,
-    "job_count": 84
+    "job_count": 86
    },
    "ashby:cohere": {
     "provider": "ashby",
     "company_slug": "cohere",
     "company": null,
-    "job_count": 151
+    "job_count": 148
    },
    "ashby:coinhako": {
     "provider": "ashby",
     "company_slug": "coinhako",
     "company": null,
-    "job_count": 10
+    "job_count": 11
    },
    "ashby:cointracker": {
     "provider": "ashby",
@@ -2611,7 +2611,7 @@
     "provider": "ashby",
     "company_slug": "collective",
     "company": null,
-    "job_count": 16
+    "job_count": 14
    },
    "ashby:colonist": {
     "provider": "ashby",
@@ -2635,7 +2635,7 @@
     "provider": "ashby",
     "company_slug": "comind",
     "company": null,
-    "job_count": 12
+    "job_count": 11
    },
    "ashby:comity": {
     "provider": "ashby",
@@ -2659,7 +2659,7 @@
     "provider": "ashby",
     "company_slug": "commure",
     "company": null,
-    "job_count": 72
+    "job_count": 71
    },
    "ashby:compa": {
     "provider": "ashby",
@@ -2671,7 +2671,7 @@
     "provider": "ashby",
     "company_slug": "compass-surgical-partners",
     "company": null,
-    "job_count": 36
+    "job_count": 37
    },
    "ashby:complement": {
     "provider": "ashby",
@@ -2779,7 +2779,7 @@
     "provider": "ashby",
     "company_slug": "console",
     "company": null,
-    "job_count": 16
+    "job_count": 15
    },
    "ashby:contentoo": {
     "provider": "ashby",
@@ -2803,7 +2803,7 @@
     "provider": "ashby",
     "company_slug": "conveo",
     "company": null,
-    "job_count": 19
+    "job_count": 18
    },
    "ashby:conversion": {
     "provider": "ashby",
@@ -2821,7 +2821,7 @@
     "provider": "ashby",
     "company_slug": "convey",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "ashby:coperniq": {
     "provider": "ashby",
@@ -2887,7 +2887,7 @@
     "provider": "ashby",
     "company_slug": "counsel",
     "company": null,
-    "job_count": 16
+    "job_count": 15
    },
    "ashby:coursecareers": {
     "provider": "ashby",
@@ -2941,7 +2941,7 @@
     "provider": "ashby",
     "company_slug": "creatoriq",
     "company": null,
-    "job_count": 23
+    "job_count": 22
    },
    "ashby:credal": {
     "provider": "ashby",
@@ -2965,7 +2965,7 @@
     "provider": "ashby",
     "company_slug": "crispgrowth",
     "company": null,
-    "job_count": 9
+    "job_count": 7
    },
    "ashby:critical-energy": {
     "provider": "ashby",
@@ -2977,7 +2977,7 @@
     "provider": "ashby",
     "company_slug": "criticalloop",
     "company": null,
-    "job_count": 8
+    "job_count": 7
    },
    "ashby:crogl": {
     "provider": "ashby",
@@ -3001,13 +3001,13 @@
     "provider": "ashby",
     "company_slug": "crusoe",
     "company": null,
-    "job_count": 366
+    "job_count": 368
    },
    "ashby:cruxclimate": {
     "provider": "ashby",
     "company_slug": "cruxclimate",
     "company": null,
-    "job_count": 15
+    "job_count": 16
    },
    "ashby:cryptio": {
     "provider": "ashby",
@@ -3025,7 +3025,7 @@
     "provider": "ashby",
     "company_slug": "cube",
     "company": null,
-    "job_count": 27
+    "job_count": 29
    },
    "ashby:cubesoftware": {
     "provider": "ashby",
@@ -3037,7 +3037,7 @@
     "provider": "ashby",
     "company_slug": "cubic3",
     "company": null,
-    "job_count": 6
+    "job_count": 7
    },
    "ashby:cursor": {
     "provider": "ashby",
@@ -3049,13 +3049,13 @@
     "provider": "ashby",
     "company_slug": "cybcube",
     "company": null,
-    "job_count": 1
+    "job_count": 2
    },
    "ashby:cyberhaven": {
     "provider": "ashby",
     "company_slug": "cyberhaven",
     "company": null,
-    "job_count": 13
+    "job_count": 18
    },
    "ashby:cybret": {
     "provider": "ashby",
@@ -3073,13 +3073,13 @@
     "provider": "ashby",
     "company_slug": "d-matrix",
     "company": null,
-    "job_count": 39
+    "job_count": 38
    },
    "ashby:dailypay": {
     "provider": "ashby",
     "company_slug": "dailypay",
     "company": null,
-    "job_count": 24
+    "job_count": 22
    },
    "ashby:dakota": {
     "provider": "ashby",
@@ -3097,7 +3097,7 @@
     "provider": "ashby",
     "company_slug": "dandy",
     "company": null,
-    "job_count": 88
+    "job_count": 86
    },
    "ashby:dapper": {
     "provider": "ashby",
@@ -3109,7 +3109,7 @@
     "provider": "ashby",
     "company_slug": "darkroom",
     "company": null,
-    "job_count": 23
+    "job_count": 25
    },
    "ashby:darwin": {
     "provider": "ashby",
@@ -3121,7 +3121,7 @@
     "provider": "ashby",
     "company_slug": "dash0",
     "company": null,
-    "job_count": 43
+    "job_count": 45
    },
    "ashby:datafold": {
     "provider": "ashby",
@@ -3157,7 +3157,7 @@
     "provider": "ashby",
     "company_slug": "datatonic",
     "company": null,
-    "job_count": 20
+    "job_count": 19
    },
    "ashby:datologyai": {
     "provider": "ashby",
@@ -3169,19 +3169,19 @@
     "provider": "ashby",
     "company_slug": "dave",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "ashby:davidenergy": {
     "provider": "ashby",
     "company_slug": "davidenergy",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:davistechnologymanagement": {
     "provider": "ashby",
     "company_slug": "davistechnologymanagement",
     "company": null,
-    "job_count": 9
+    "job_count": 5
    },
    "ashby:daydream": {
     "provider": "ashby",
@@ -3193,7 +3193,7 @@
     "provider": "ashby",
     "company_slug": "decagon",
     "company": null,
-    "job_count": 136
+    "job_count": 137
    },
    "ashby:decimal": {
     "provider": "ashby",
@@ -3211,7 +3211,7 @@
     "provider": "ashby",
     "company_slug": "deepgram",
     "company": null,
-    "job_count": 83
+    "job_count": 90
    },
    "ashby:deepjudge": {
     "provider": "ashby",
@@ -3259,13 +3259,13 @@
     "provider": "ashby",
     "company_slug": "delinea",
     "company": null,
-    "job_count": 95
+    "job_count": 96
    },
    "ashby:deliveroo": {
     "provider": "ashby",
     "company_slug": "deliveroo",
     "company": null,
-    "job_count": 179
+    "job_count": 181
    },
    "ashby:delphi": {
     "provider": "ashby",
@@ -3289,7 +3289,7 @@
     "provider": "ashby",
     "company_slug": "dentology",
     "company": null,
-    "job_count": 2
+    "job_count": 1
    },
    "ashby:deposco": {
     "provider": "ashby",
@@ -3313,7 +3313,7 @@
     "provider": "ashby",
     "company_slug": "develop-health",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:devsavant": {
     "provider": "ashby",
@@ -3343,7 +3343,7 @@
     "provider": "ashby",
     "company_slug": "directive",
     "company": null,
-    "job_count": 72
+    "job_count": 74
    },
    "ashby:dispatch": {
     "provider": "ashby",
@@ -3361,7 +3361,7 @@
     "provider": "ashby",
     "company_slug": "distyl",
     "company": null,
-    "job_count": 25
+    "job_count": 26
    },
    "ashby:ditto": {
     "provider": "ashby",
@@ -3373,7 +3373,7 @@
     "provider": "ashby",
     "company_slug": "dittoai",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:divineresearch": {
     "provider": "ashby",
@@ -3385,19 +3385,19 @@
     "provider": "ashby",
     "company_slug": "docebo",
     "company": null,
-    "job_count": 48
+    "job_count": 45
    },
    "ashby:docker": {
     "provider": "ashby",
     "company_slug": "docker",
     "company": null,
-    "job_count": 59
+    "job_count": 58
    },
    "ashby:docplanner": {
     "provider": "ashby",
     "company_slug": "docplanner",
     "company": null,
-    "job_count": 36
+    "job_count": 37
    },
    "ashby:doctronic": {
     "provider": "ashby",
@@ -3409,7 +3409,7 @@
     "provider": "ashby",
     "company_slug": "doinstruct",
     "company": null,
-    "job_count": 10
+    "job_count": 8
    },
    "ashby:doji": {
     "provider": "ashby",
@@ -3421,13 +3421,13 @@
     "provider": "ashby",
     "company_slug": "doppel",
     "company": null,
-    "job_count": 18
+    "job_count": 19
    },
    "ashby:doppler": {
     "provider": "ashby",
     "company_slug": "doppler",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "ashby:doss": {
     "provider": "ashby",
@@ -3469,13 +3469,13 @@
     "provider": "ashby",
     "company_slug": "dovetail",
     "company": null,
-    "job_count": 4
+    "job_count": 5
    },
    "ashby:drata": {
     "provider": "ashby",
     "company_slug": "drata",
     "company": null,
-    "job_count": 52
+    "job_count": 49
    },
    "ashby:dryft": {
     "provider": "ashby",
@@ -3511,7 +3511,7 @@
     "provider": "ashby",
     "company_slug": "duffel",
     "company": null,
-    "job_count": 12
+    "job_count": 11
    },
    "ashby:duna": {
     "provider": "ashby",
@@ -3565,7 +3565,7 @@
     "provider": "ashby",
     "company_slug": "easygenerator",
     "company": null,
-    "job_count": 18
+    "job_count": 17
    },
    "ashby:echotwin": {
     "provider": "ashby",
@@ -3577,13 +3577,13 @@
     "provider": "ashby",
     "company_slug": "edia",
     "company": null,
-    "job_count": 6
+    "job_count": 7
    },
    "ashby:ediphi": {
     "provider": "ashby",
     "company_slug": "ediphi",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:edited": {
     "provider": "ashby",
@@ -3601,7 +3601,7 @@
     "provider": "ashby",
     "company_slug": "edsights",
     "company": null,
-    "job_count": 4
+    "job_count": 3
    },
    "ashby:educationsuperhighway": {
     "provider": "ashby",
@@ -3643,7 +3643,7 @@
     "provider": "ashby",
     "company_slug": "electronx",
     "company": null,
-    "job_count": 4
+    "job_count": 3
    },
    "ashby:element451": {
     "provider": "ashby",
@@ -3661,7 +3661,7 @@
     "provider": "ashby",
     "company_slug": "elevenlabs",
     "company": null,
-    "job_count": 255
+    "job_count": 251
    },
    "ashby:eli": {
     "provider": "ashby",
@@ -3679,7 +3679,7 @@
     "provider": "ashby",
     "company_slug": "eliseai",
     "company": null,
-    "job_count": 105
+    "job_count": 108
    },
    "ashby:ellamind": {
     "provider": "ashby",
@@ -3703,7 +3703,7 @@
     "provider": "ashby",
     "company_slug": "ello",
     "company": null,
-    "job_count": 4
+    "job_count": 5
    },
    "ashby:eloquentai": {
     "provider": "ashby",
@@ -3739,7 +3739,7 @@
     "provider": "ashby",
     "company_slug": "emidat",
     "company": null,
-    "job_count": 4
+    "job_count": 3
    },
    "ashby:empirical": {
     "provider": "ashby",
@@ -3769,7 +3769,7 @@
     "provider": "ashby",
     "company_slug": "endgame",
     "company": null,
-    "job_count": 5
+    "job_count": 4
    },
    "ashby:engflow": {
     "provider": "ashby",
@@ -3781,7 +3781,7 @@
     "provider": "ashby",
     "company_slug": "enode",
     "company": null,
-    "job_count": 8
+    "job_count": 9
    },
    "ashby:enter-ai": {
     "provider": "ashby",
@@ -3835,7 +3835,7 @@
     "provider": "ashby",
     "company_slug": "equip",
     "company": null,
-    "job_count": 65
+    "job_count": 66
    },
    "ashby:espresso": {
     "provider": "ashby",
@@ -3847,7 +3847,7 @@
     "provider": "ashby",
     "company_slug": "etched",
     "company": null,
-    "job_count": 106
+    "job_count": 105
    },
    "ashby:ethereum-foundation": {
     "provider": "ashby",
@@ -3883,13 +3883,13 @@
     "provider": "ashby",
     "company_slug": "eventualcomputing",
     "company": null,
-    "job_count": 6
+    "job_count": 4
    },
    "ashby:everai": {
     "provider": "ashby",
     "company_slug": "everai",
     "company": null,
-    "job_count": 63
+    "job_count": 65
    },
    "ashby:everfield": {
     "provider": "ashby",
@@ -3919,7 +3919,7 @@
     "provider": "ashby",
     "company_slug": "exa",
     "company": null,
-    "job_count": 50
+    "job_count": 51
    },
    "ashby:exegy": {
     "provider": "ashby",
@@ -3955,7 +3955,7 @@
     "provider": "ashby",
     "company_slug": "eyebot",
     "company": null,
-    "job_count": 1
+    "job_count": 2
    },
    "ashby:f2-ai": {
     "provider": "ashby",
@@ -3985,13 +3985,13 @@
     "provider": "ashby",
     "company_slug": "factory",
     "company": null,
-    "job_count": 49
+    "job_count": 50
    },
    "ashby:faculty": {
     "provider": "ashby",
     "company_slug": "faculty",
     "company": null,
-    "job_count": 67
+    "job_count": 66
    },
    "ashby:falconer": {
     "provider": "ashby",
@@ -4003,13 +4003,13 @@
     "provider": "ashby",
     "company_slug": "farmersd40",
     "company": null,
-    "job_count": 39
+    "job_count": 44
    },
    "ashby:farsight": {
     "provider": "ashby",
     "company_slug": "farsight",
     "company": null,
-    "job_count": 11
+    "job_count": 10
    },
    "ashby:featherlessai": {
     "provider": "ashby",
@@ -4033,19 +4033,19 @@
     "provider": "ashby",
     "company_slug": "felix",
     "company": null,
-    "job_count": 33
+    "job_count": 34
    },
    "ashby:fetch-pet-health": {
     "provider": "ashby",
     "company_slug": "fetch-pet-health",
     "company": null,
-    "job_count": 7
+    "job_count": 8
    },
    "ashby:fiddler-ai": {
     "provider": "ashby",
     "company_slug": "fiddler-ai",
     "company": null,
-    "job_count": 8
+    "job_count": 7
    },
    "ashby:fiducial": {
     "provider": "ashby",
@@ -4063,7 +4063,7 @@
     "provider": "ashby",
     "company_slug": "filigran",
     "company": null,
-    "job_count": 20
+    "job_count": 19
    },
    "ashby:filmhub": {
     "provider": "ashby",
@@ -4105,7 +4105,7 @@
     "provider": "ashby",
     "company_slug": "finni-health",
     "company": null,
-    "job_count": 116
+    "job_count": 119
    },
    "ashby:finout": {
     "provider": "ashby",
@@ -4141,7 +4141,7 @@
     "provider": "ashby",
     "company_slug": "firsthand",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "ashby:firstround": {
     "provider": "ashby",
@@ -4159,19 +4159,19 @@
     "provider": "ashby",
     "company_slug": "fitt",
     "company": null,
-    "job_count": 12
+    "job_count": 11
    },
    "ashby:fizz": {
     "provider": "ashby",
     "company_slug": "fizz",
     "company": null,
-    "job_count": 4
+    "job_count": 5
    },
    "ashby:flaglerhealth": {
     "provider": "ashby",
     "company_slug": "flaglerhealth",
     "company": null,
-    "job_count": 20
+    "job_count": 18
    },
    "ashby:flai": {
     "provider": "ashby",
@@ -4183,7 +4183,7 @@
     "provider": "ashby",
     "company_slug": "fleek",
     "company": null,
-    "job_count": 11
+    "job_count": 9
    },
    "ashby:fleetpulse": {
     "provider": "ashby",
@@ -4195,13 +4195,13 @@
     "provider": "ashby",
     "company_slug": "fleetworks",
     "company": null,
-    "job_count": 7
+    "job_count": 9
    },
    "ashby:flink": {
     "provider": "ashby",
     "company_slug": "flink",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:flint": {
     "provider": "ashby",
@@ -4213,7 +4213,7 @@
     "provider": "ashby",
     "company_slug": "flipper",
     "company": null,
-    "job_count": 6
+    "job_count": 7
    },
    "ashby:flipturn": {
     "provider": "ashby",
@@ -4225,13 +4225,13 @@
     "provider": "ashby",
     "company_slug": "float",
     "company": null,
-    "job_count": 29
+    "job_count": 28
    },
    "ashby:floatme": {
     "provider": "ashby",
     "company_slug": "floatme",
     "company": null,
-    "job_count": 10
+    "job_count": 9
    },
    "ashby:flosports": {
     "provider": "ashby",
@@ -4255,7 +4255,7 @@
     "provider": "ashby",
     "company_slug": "fluidstack",
     "company": null,
-    "job_count": 247
+    "job_count": 256
    },
    "ashby:flutterflow": {
     "provider": "ashby",
@@ -4285,13 +4285,13 @@
     "provider": "ashby",
     "company_slug": "focus",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:focused": {
     "provider": "ashby",
     "company_slug": "focused",
     "company": null,
-    "job_count": 30
+    "job_count": 31
    },
    "ashby:foley": {
     "provider": "ashby",
@@ -4321,7 +4321,7 @@
     "provider": "ashby",
     "company_slug": "forma",
     "company": null,
-    "job_count": 2
+    "job_count": 1
    },
    "ashby:formal": {
     "provider": "ashby",
@@ -4339,7 +4339,7 @@
     "provider": "ashby",
     "company_slug": "formenergy",
     "company": null,
-    "job_count": 183
+    "job_count": 184
    },
    "ashby:forto": {
     "provider": "ashby",
@@ -4357,7 +4357,7 @@
     "provider": "ashby",
     "company_slug": "forum-ventures",
     "company": null,
-    "job_count": 16
+    "job_count": 14
    },
    "ashby:found": {
     "provider": "ashby",
@@ -4375,13 +4375,13 @@
     "provider": "ashby",
     "company_slug": "foundational",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "ashby:foundationhealthcareers": {
     "provider": "ashby",
     "company_slug": "foundationhealthcareers",
     "company": null,
-    "job_count": 14
+    "job_count": 15
    },
    "ashby:foundry-for-good": {
     "provider": "ashby",
@@ -4411,7 +4411,7 @@
     "provider": "ashby",
     "company_slug": "foxglove",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "ashby:freed": {
     "provider": "ashby",
@@ -4435,7 +4435,7 @@
     "provider": "ashby",
     "company_slug": "frontcareers",
     "company": null,
-    "job_count": 27
+    "job_count": 23
    },
    "ashby:fs-studio": {
     "provider": "ashby",
@@ -4477,7 +4477,7 @@
     "provider": "ashby",
     "company_slug": "fundingcircle",
     "company": null,
-    "job_count": 25
+    "job_count": 23
    },
    "ashby:fundwell": {
     "provider": "ashby",
@@ -4531,7 +4531,7 @@
     "provider": "ashby",
     "company_slug": "fyxer",
     "company": null,
-    "job_count": 1
+    "job_count": 2
    },
    "ashby:g2": {
     "provider": "ashby",
@@ -4561,7 +4561,7 @@
     "provider": "ashby",
     "company_slug": "galvany",
     "company": null,
-    "job_count": 21
+    "job_count": 22
    },
    "ashby:gamechanger": {
     "provider": "ashby",
@@ -4573,7 +4573,7 @@
     "provider": "ashby",
     "company_slug": "gamma",
     "company": null,
-    "job_count": 32
+    "job_count": 33
    },
    "ashby:garage": {
     "provider": "ashby",
@@ -4591,7 +4591,7 @@
     "provider": "ashby",
     "company_slug": "gecko-robotics",
     "company": null,
-    "job_count": 18
+    "job_count": 17
    },
    "ashby:gelato": {
     "provider": "ashby",
@@ -4603,13 +4603,13 @@
     "provider": "ashby",
     "company_slug": "gem-technologies",
     "company": null,
-    "job_count": 52
+    "job_count": 50
    },
    "ashby:general-medicine": {
     "provider": "ashby",
     "company_slug": "general-medicine",
     "company": null,
-    "job_count": 15
+    "job_count": 13
    },
    "ashby:generalintelligencecompany": {
     "provider": "ashby",
@@ -4681,7 +4681,7 @@
     "provider": "ashby",
     "company_slug": "getground",
     "company": null,
-    "job_count": 10
+    "job_count": 9
    },
    "ashby:gigaml": {
     "provider": "ashby",
@@ -4693,7 +4693,7 @@
     "provider": "ashby",
     "company_slug": "gimlet",
     "company": null,
-    "job_count": 10
+    "job_count": 9
    },
    "ashby:gitbook": {
     "provider": "ashby",
@@ -4723,7 +4723,7 @@
     "provider": "ashby",
     "company_slug": "glia",
     "company": null,
-    "job_count": 30
+    "job_count": 28
    },
    "ashby:glide": {
     "provider": "ashby",
@@ -4735,7 +4735,7 @@
     "provider": "ashby",
     "company_slug": "glimp-se",
     "company": null,
-    "job_count": 4
+    "job_count": 3
    },
    "ashby:glimpse": {
     "provider": "ashby",
@@ -4753,7 +4753,7 @@
     "provider": "ashby",
     "company_slug": "go-nimbly",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:goanagram": {
     "provider": "ashby",
@@ -4783,7 +4783,7 @@
     "provider": "ashby",
     "company_slug": "gooddata",
     "company": null,
-    "job_count": 6
+    "job_count": 7
    },
    "ashby:goodie-ai": {
     "provider": "ashby",
@@ -4801,7 +4801,7 @@
     "provider": "ashby",
     "company_slug": "goodparty",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:goodship": {
     "provider": "ashby",
@@ -4819,7 +4819,7 @@
     "provider": "ashby",
     "company_slug": "goody",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:gorgias": {
     "provider": "ashby",
@@ -4873,7 +4873,7 @@
     "provider": "ashby",
     "company_slug": "gptzero",
     "company": null,
-    "job_count": 9
+    "job_count": 8
    },
    "ashby:gradient": {
     "provider": "ashby",
@@ -4909,7 +4909,7 @@
     "provider": "ashby",
     "company_slug": "granted",
     "company": null,
-    "job_count": 6
+    "job_count": 7
    },
    "ashby:graphite": {
     "provider": "ashby",
@@ -4957,7 +4957,7 @@
     "provider": "ashby",
     "company_slug": "gridcare",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "ashby:gridunity": {
     "provider": "ashby",
@@ -4975,7 +4975,7 @@
     "provider": "ashby",
     "company_slug": "griffin",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "ashby:groundnews": {
     "provider": "ashby",
@@ -5011,7 +5011,7 @@
     "provider": "ashby",
     "company_slug": "guild",
     "company": null,
-    "job_count": 2
+    "job_count": 1
    },
    "ashby:gumloop": {
     "provider": "ashby",
@@ -5029,7 +5029,7 @@
     "provider": "ashby",
     "company_slug": "h3x-technologies",
     "company": null,
-    "job_count": 13
+    "job_count": 12
    },
    "ashby:haast": {
     "provider": "ashby",
@@ -5047,7 +5047,7 @@
     "provider": "ashby",
     "company_slug": "hadrian-automation",
     "company": null,
-    "job_count": 137
+    "job_count": 141
    },
    "ashby:halliday": {
     "provider": "ashby",
@@ -5065,7 +5065,7 @@
     "provider": "ashby",
     "company_slug": "halter",
     "company": null,
-    "job_count": 232
+    "job_count": 231
    },
    "ashby:hamilton-ai": {
     "provider": "ashby",
@@ -5083,7 +5083,7 @@
     "provider": "ashby",
     "company_slug": "handshake",
     "company": null,
-    "job_count": 69
+    "job_count": 68
    },
    "ashby:handspring": {
     "provider": "ashby",
@@ -5113,13 +5113,13 @@
     "provider": "ashby",
     "company_slug": "harmattan-ai",
     "company": null,
-    "job_count": 164
+    "job_count": 169
    },
    "ashby:harmonic": {
     "provider": "ashby",
     "company_slug": "harmonic",
     "company": null,
-    "job_count": 9
+    "job_count": 10
    },
    "ashby:harperinsure": {
     "provider": "ashby",
@@ -5137,13 +5137,13 @@
     "provider": "ashby",
     "company_slug": "harvey",
     "company": null,
-    "job_count": 367
+    "job_count": 360
    },
    "ashby:hatch": {
     "provider": "ashby",
     "company_slug": "hatch",
     "company": null,
-    "job_count": 9
+    "job_count": 11
    },
    "ashby:hauler-hero": {
     "provider": "ashby",
@@ -5155,7 +5155,7 @@
     "provider": "ashby",
     "company_slug": "haus",
     "company": null,
-    "job_count": 15
+    "job_count": 11
    },
    "ashby:havocai": {
     "provider": "ashby",
@@ -5173,13 +5173,13 @@
     "provider": "ashby",
     "company_slug": "hawkeyeinnovations",
     "company": null,
-    "job_count": 47
+    "job_count": 41
    },
    "ashby:haydenai": {
     "provider": "ashby",
     "company_slug": "haydenai",
     "company": null,
-    "job_count": 14
+    "job_count": 16
    },
    "ashby:haystacknews": {
     "provider": "ashby",
@@ -5257,7 +5257,7 @@
     "provider": "ashby",
     "company_slug": "heliux",
     "company": null,
-    "job_count": 8
+    "job_count": 9
    },
    "ashby:hellobrightline": {
     "provider": "ashby",
@@ -5269,7 +5269,7 @@
     "provider": "ashby",
     "company_slug": "hellohera",
     "company": null,
-    "job_count": 9
+    "job_count": 10
    },
    "ashby:hellopatient": {
     "provider": "ashby",
@@ -5305,7 +5305,7 @@
     "provider": "ashby",
     "company_slug": "hexa",
     "company": null,
-    "job_count": 22
+    "job_count": 23
    },
    "ashby:heymilo": {
     "provider": "ashby",
@@ -5323,19 +5323,19 @@
     "provider": "ashby",
     "company_slug": "higgsfieldai",
     "company": null,
-    "job_count": 69
+    "job_count": 70
    },
    "ashby:higharc": {
     "provider": "ashby",
     "company_slug": "higharc",
     "company": null,
-    "job_count": 22
+    "job_count": 18
    },
    "ashby:highbeam": {
     "provider": "ashby",
     "company_slug": "highbeam",
     "company": null,
-    "job_count": 6
+    "job_count": 7
    },
    "ashby:highlightai": {
     "provider": "ashby",
@@ -5347,7 +5347,7 @@
     "provider": "ashby",
     "company_slug": "highlightta",
     "company": null,
-    "job_count": 17
+    "job_count": 21
    },
    "ashby:hiive": {
     "provider": "ashby",
@@ -5365,7 +5365,7 @@
     "provider": "ashby",
     "company_slug": "hilberts",
     "company": null,
-    "job_count": 11
+    "job_count": 12
    },
    "ashby:hims-and-hers": {
     "provider": "ashby",
@@ -5377,7 +5377,7 @@
     "provider": "ashby",
     "company_slug": "hinge-health",
     "company": null,
-    "job_count": 71
+    "job_count": 73
    },
    "ashby:hipeople-official": {
     "provider": "ashby",
@@ -5389,13 +5389,13 @@
     "provider": "ashby",
     "company_slug": "hirehangar",
     "company": null,
-    "job_count": 102
+    "job_count": 104
    },
    "ashby:hivemq": {
     "provider": "ashby",
     "company_slug": "hivemq",
     "company": null,
-    "job_count": 4
+    "job_count": 5
    },
    "ashby:hiverge": {
     "provider": "ashby",
@@ -5413,7 +5413,7 @@
     "provider": "ashby",
     "company_slug": "hiya",
     "company": null,
-    "job_count": 17
+    "job_count": 18
    },
    "ashby:hockeystack": {
     "provider": "ashby",
@@ -5479,7 +5479,7 @@
     "provider": "ashby",
     "company_slug": "horizon3ai",
     "company": null,
-    "job_count": 82
+    "job_count": 83
    },
    "ashby:hoxhunt": {
     "provider": "ashby",
@@ -5491,7 +5491,7 @@
     "provider": "ashby",
     "company_slug": "hud",
     "company": null,
-    "job_count": 11
+    "job_count": 12
    },
    "ashby:hudu": {
     "provider": "ashby",
@@ -5515,7 +5515,7 @@
     "provider": "ashby",
     "company_slug": "human",
     "company": null,
-    "job_count": 10
+    "job_count": 9
    },
    "ashby:humanly": {
     "provider": "ashby",
@@ -5533,7 +5533,7 @@
     "provider": "ashby",
     "company_slug": "humatahealth",
     "company": null,
-    "job_count": 2
+    "job_count": 4
    },
    "ashby:hyperbolic": {
     "provider": "ashby",
@@ -5545,7 +5545,7 @@
     "provider": "ashby",
     "company_slug": "hyperexponential",
     "company": null,
-    "job_count": 22
+    "job_count": 23
    },
    "ashby:hyperhug": {
     "provider": "ashby",
@@ -5569,19 +5569,19 @@
     "provider": "ashby",
     "company_slug": "i3d",
     "company": null,
-    "job_count": 11
+    "job_count": 10
    },
    "ashby:iambic-therapeutics": {
     "provider": "ashby",
     "company_slug": "iambic-therapeutics",
     "company": null,
-    "job_count": 19
+    "job_count": 17
    },
    "ashby:iceye": {
     "provider": "ashby",
     "company_slug": "iceye",
     "company": null,
-    "job_count": 184
+    "job_count": 187
    },
    "ashby:icon": {
     "provider": "ashby",
@@ -5611,7 +5611,7 @@
     "provider": "ashby",
     "company_slug": "idler",
     "company": null,
-    "job_count": 4
+    "job_count": 2
    },
    "ashby:ignite-reading": {
     "provider": "ashby",
@@ -5623,25 +5623,25 @@
     "provider": "ashby",
     "company_slug": "ignition",
     "company": null,
-    "job_count": 6
+    "job_count": 8
    },
    "ashby:illumio": {
     "provider": "ashby",
     "company_slug": "illumio",
     "company": null,
-    "job_count": 73
+    "job_count": 69
    },
    "ashby:immersivelabs": {
     "provider": "ashby",
     "company_slug": "immersivelabs",
     "company": null,
-    "job_count": 9
+    "job_count": 10
    },
    "ashby:imprint": {
     "provider": "ashby",
     "company_slug": "imprint",
     "company": null,
-    "job_count": 27
+    "job_count": 25
    },
    "ashby:improbable": {
     "provider": "ashby",
@@ -5689,7 +5689,7 @@
     "provider": "ashby",
     "company_slug": "industrious",
     "company": null,
-    "job_count": 66
+    "job_count": 67
    },
    "ashby:ineffable": {
     "provider": "ashby",
@@ -5743,7 +5743,7 @@
     "provider": "ashby",
     "company_slug": "infisical",
     "company": null,
-    "job_count": 6
+    "job_count": 7
    },
    "ashby:inflectionio": {
     "provider": "ashby",
@@ -5839,7 +5839,7 @@
     "provider": "ashby",
     "company_slug": "interplay",
     "company": null,
-    "job_count": 13
+    "job_count": 16
    },
    "ashby:intrinsic-safety": {
     "provider": "ashby",
@@ -5881,7 +5881,7 @@
     "provider": "ashby",
     "company_slug": "ironcladhq",
     "company": null,
-    "job_count": 28
+    "job_count": 27
    },
    "ashby:irregular": {
     "provider": "ashby",
@@ -5899,7 +5899,7 @@
     "provider": "ashby",
     "company_slug": "iverify",
     "company": null,
-    "job_count": 4
+    "job_count": 5
    },
    "ashby:iyo": {
     "provider": "ashby",
@@ -5923,7 +5923,7 @@
     "provider": "ashby",
     "company_slug": "jane",
     "company": null,
-    "job_count": 25
+    "job_count": 26
    },
    "ashby:january": {
     "provider": "ashby",
@@ -5947,7 +5947,7 @@
     "provider": "ashby",
     "company_slug": "jellyfishcareers",
     "company": null,
-    "job_count": 55
+    "job_count": 56
    },
    "ashby:jitter-video": {
     "provider": "ashby",
@@ -5959,7 +5959,7 @@
     "provider": "ashby",
     "company_slug": "jobber",
     "company": null,
-    "job_count": 35
+    "job_count": 37
    },
    "ashby:jobs-page-4dc2685b-eb82-46d1-a3f9-1f0764dba814": {
     "provider": "ashby",
@@ -5989,7 +5989,7 @@
     "provider": "ashby",
     "company_slug": "joko",
     "company": null,
-    "job_count": 52
+    "job_count": 51
    },
    "ashby:joor": {
     "provider": "ashby",
@@ -6001,7 +6001,7 @@
     "provider": "ashby",
     "company_slug": "josys",
     "company": null,
-    "job_count": 25
+    "job_count": 28
    },
    "ashby:joyfulhealth": {
     "provider": "ashby",
@@ -6031,7 +6031,7 @@
     "provider": "ashby",
     "company_slug": "juicebox",
     "company": null,
-    "job_count": 20
+    "job_count": 19
    },
    "ashby:julius": {
     "provider": "ashby",
@@ -6049,7 +6049,7 @@
     "provider": "ashby",
     "company_slug": "jump-app",
     "company": null,
-    "job_count": 11
+    "job_count": 10
    },
    "ashby:junction": {
     "provider": "ashby",
@@ -6085,7 +6085,7 @@
     "provider": "ashby",
     "company_slug": "kaizenlabs",
     "company": null,
-    "job_count": 14
+    "job_count": 16
    },
    "ashby:kale": {
     "provider": "ashby",
@@ -6103,7 +6103,7 @@
     "provider": "ashby",
     "company_slug": "kalshi",
     "company": null,
-    "job_count": 45
+    "job_count": 46
    },
    "ashby:katana": {
     "provider": "ashby",
@@ -6121,7 +6121,7 @@
     "provider": "ashby",
     "company_slug": "kayak",
     "company": null,
-    "job_count": 44
+    "job_count": 47
    },
    "ashby:keep": {
     "provider": "ashby",
@@ -6133,7 +6133,7 @@
     "provider": "ashby",
     "company_slug": "kernel",
     "company": null,
-    "job_count": 6
+    "job_count": 4
    },
    "ashby:kestra": {
     "provider": "ashby",
@@ -6145,7 +6145,7 @@
     "provider": "ashby",
     "company_slug": "kevins-natural-foods",
     "company": null,
-    "job_count": 16
+    "job_count": 17
    },
    "ashby:keycard-labs": {
     "provider": "ashby",
@@ -6169,7 +6169,7 @@
     "provider": "ashby",
     "company_slug": "kindred",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "ashby:kingdom": {
     "provider": "ashby",
@@ -6211,13 +6211,13 @@
     "provider": "ashby",
     "company_slug": "kit",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "ashby:kittl": {
     "provider": "ashby",
     "company_slug": "kittl",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "ashby:kiwi-com": {
     "provider": "ashby",
@@ -6259,7 +6259,7 @@
     "provider": "ashby",
     "company_slug": "knowledge-road",
     "company": null,
-    "job_count": 39
+    "job_count": 27
    },
    "ashby:known": {
     "provider": "ashby",
@@ -6307,13 +6307,13 @@
     "provider": "ashby",
     "company_slug": "kognity",
     "company": null,
-    "job_count": 5
+    "job_count": 4
    },
    "ashby:koho": {
     "provider": "ashby",
     "company_slug": "koho",
     "company": null,
-    "job_count": 10
+    "job_count": 9
    },
    "ashby:kojo": {
     "provider": "ashby",
@@ -6331,7 +6331,7 @@
     "provider": "ashby",
     "company_slug": "kong",
     "company": null,
-    "job_count": 81
+    "job_count": 76
    },
    "ashby:konvu": {
     "provider": "ashby",
@@ -6379,7 +6379,7 @@
     "provider": "ashby",
     "company_slug": "kyra",
     "company": null,
-    "job_count": 10
+    "job_count": 13
    },
    "ashby:lai": {
     "provider": "ashby",
@@ -6391,7 +6391,7 @@
     "provider": "ashby",
     "company_slug": "lambda",
     "company": null,
-    "job_count": 77
+    "job_count": 78
    },
    "ashby:lancedb": {
     "provider": "ashby",
@@ -6403,7 +6403,7 @@
     "provider": "ashby",
     "company_slug": "langchain",
     "company": null,
-    "job_count": 105
+    "job_count": 107
    },
    "ashby:langdock": {
     "provider": "ashby",
@@ -6439,7 +6439,7 @@
     "provider": "ashby",
     "company_slug": "latamcent",
     "company": null,
-    "job_count": 18
+    "job_count": 21
    },
    "ashby:latent": {
     "provider": "ashby",
@@ -6469,13 +6469,13 @@
     "provider": "ashby",
     "company_slug": "laurel",
     "company": null,
-    "job_count": 17
+    "job_count": 16
    },
    "ashby:lavendo": {
     "provider": "ashby",
     "company_slug": "lavendo",
     "company": null,
-    "job_count": 13
+    "job_count": 11
    },
    "ashby:lawhive": {
     "provider": "ashby",
@@ -6499,13 +6499,13 @@
     "provider": "ashby",
     "company_slug": "leadbank",
     "company": null,
-    "job_count": 17
+    "job_count": 16
    },
    "ashby:leandata": {
     "provider": "ashby",
     "company_slug": "leandata",
     "company": null,
-    "job_count": 13
+    "job_count": 15
    },
    "ashby:leanlayer": {
     "provider": "ashby",
@@ -6519,23 +6519,71 @@
     "company": null,
     "job_count": 2
    },
+   "ashby:0x": {
+    "provider": "ashby",
+    "company_slug": "0x",
+    "company": null,
+    "job_count": 1
+   },
+   "ashby:amplo": {
+    "provider": "ashby",
+    "company_slug": "amplo",
+    "company": null,
+    "job_count": 1
+   },
+   "ashby:delian": {
+    "provider": "ashby",
+    "company_slug": "delian",
+    "company": null,
+    "job_count": 1
+   },
+   "ashby:diffit": {
+    "provider": "ashby",
+    "company_slug": "diffit",
+    "company": null,
+    "job_count": 1
+   },
+   "ashby:embeddable": {
+    "provider": "ashby",
+    "company_slug": "embeddable",
+    "company": null,
+    "job_count": 1
+   },
+   "ashby:greptile": {
+    "provider": "ashby",
+    "company_slug": "greptile",
+    "company": null,
+    "job_count": 17
+   },
+   "ashby:hubstaff": {
+    "provider": "ashby",
+    "company_slug": "hubstaff",
+    "company": null,
+    "job_count": 1
+   },
+   "ashby:jamssoftware": {
+    "provider": "ashby",
+    "company_slug": "jamssoftware",
+    "company": null,
+    "job_count": 1
+   },
    "greenhouse:103644278": {
     "provider": "greenhouse",
     "company_slug": "103644278",
     "company": "Lume Deodorant",
-    "job_count": 16
+    "job_count": 14
    },
    "greenhouse:10alabs": {
     "provider": "greenhouse",
     "company_slug": "10alabs",
     "company": "10a Labs",
-    "job_count": 19
+    "job_count": 17
    },
    "greenhouse:10beauty": {
     "provider": "greenhouse",
     "company_slug": "10beauty",
     "company": "10Beauty",
-    "job_count": 14
+    "job_count": 12
    },
    "greenhouse:12jlkfsk": {
     "provider": "greenhouse",
@@ -6547,7 +6595,7 @@
     "provider": "greenhouse",
     "company_slug": "12twenty",
     "company": "12twenty",
-    "job_count": 4
+    "job_count": 6
    },
    "greenhouse:143studiosinc": {
     "provider": "greenhouse",
@@ -6571,7 +6619,7 @@
     "provider": "greenhouse",
     "company_slug": "1800contacts",
     "company": "1-800 Contacts",
-    "job_count": 10
+    "job_count": 12
    },
    "greenhouse:1910genetics": {
     "provider": "greenhouse",
@@ -6583,7 +6631,7 @@
     "provider": "greenhouse",
     "company_slug": "1stdibscom",
     "company": "1stdibs.com",
-    "job_count": 4
+    "job_count": 3
    },
    "greenhouse:1uphealth": {
     "provider": "greenhouse",
@@ -6600,7 +6648,7 @@
    "greenhouse:21shares": {
     "provider": "greenhouse",
     "company_slug": "21shares",
-    "company": "21Shares",
+    "company": "21shares",
     "job_count": 1
    },
    "greenhouse:240certification": {
@@ -6613,7 +6661,7 @@
     "provider": "greenhouse",
     "company_slug": "2k",
     "company": "2K",
-    "job_count": 114
+    "job_count": 115
    },
    "greenhouse:2kczech": {
     "provider": "greenhouse",
@@ -6631,43 +6679,43 @@
     "provider": "greenhouse",
     "company_slug": "2u",
     "company": "2U",
-    "job_count": 7
+    "job_count": 6
    },
    "greenhouse:2uinlinepromotions": {
     "provider": "greenhouse",
     "company_slug": "2uinlinepromotions",
     "company": "CO/ NJ Internal Job Board",
-    "job_count": 4
+    "job_count": 2
    },
    "greenhouse:30thstreetanimalhospital": {
     "provider": "greenhouse",
     "company_slug": "30thstreetanimalhospital",
     "company": "30th Street Animal Hospital ",
-    "job_count": 4
+    "job_count": 3
    },
    "greenhouse:31stunion": {
     "provider": "greenhouse",
     "company_slug": "31stunion",
     "company": "31st Union",
-    "job_count": 5
+    "job_count": 7
    },
    "greenhouse:3cloud": {
     "provider": "greenhouse",
     "company_slug": "3cloud",
     "company": "3Cloud",
-    "job_count": 49
+    "job_count": 42
    },
    "greenhouse:3dayblindssales": {
     "provider": "greenhouse",
     "company_slug": "3dayblindssales",
     "company": "3 Day Blinds (Sales)",
-    "job_count": 53
+    "job_count": 55
    },
    "greenhouse:3mgroofing": {
     "provider": "greenhouse",
     "company_slug": "3mgroofing",
     "company": "3MG Roofing & Solar",
-    "job_count": 30
+    "job_count": 32
    },
    "greenhouse:3redpartners": {
     "provider": "greenhouse",
@@ -6679,25 +6727,25 @@
     "provider": "greenhouse",
     "company_slug": "4dmoleculartherapeutics",
     "company": "4D Molecular Therapeutics",
-    "job_count": 13
+    "job_count": 10
    },
    "greenhouse:4lu44n1n37w012k": {
     "provider": "greenhouse",
     "company_slug": "4lu44n1n37w012k",
     "company": "Alumni Network Job Board",
-    "job_count": 12
+    "job_count": 14
    },
    "greenhouse:5280": {
     "provider": "greenhouse",
     "company_slug": "5280",
     "company": "5280 Veterinary Care",
-    "job_count": 3
+    "job_count": 5
    },
    "greenhouse:540": {
     "provider": "greenhouse",
     "company_slug": "540",
     "company": "540",
-    "job_count": 15
+    "job_count": 21
    },
    "greenhouse:541": {
     "provider": "greenhouse",
@@ -6721,37 +6769,37 @@
     "provider": "greenhouse",
     "company_slug": "5wpr",
     "company": "5WPR",
-    "job_count": 9
+    "job_count": 7
    },
    "greenhouse:617mediagroup": {
     "provider": "greenhouse",
     "company_slug": "617mediagroup",
     "company": "617MediaGroup",
-    "job_count": 10
+    "job_count": 9
    },
    "greenhouse:66degrees": {
     "provider": "greenhouse",
     "company_slug": "66degrees",
     "company": "66degrees",
-    "job_count": 28
+    "job_count": 24
    },
    "greenhouse:6sense": {
     "provider": "greenhouse",
     "company_slug": "6sense",
     "company": "6sense",
-    "job_count": 28
+    "job_count": 31
    },
    "greenhouse:7shifts": {
     "provider": "greenhouse",
     "company_slug": "7shifts",
     "company": "7shifts",
-    "job_count": 12
+    "job_count": 13
    },
    "greenhouse:8451": {
     "provider": "greenhouse",
     "company_slug": "8451",
     "company": "84.51° ",
-    "job_count": 15
+    "job_count": 20
    },
    "greenhouse:8thlightrebuild": {
     "provider": "greenhouse",
@@ -6763,25 +6811,25 @@
     "provider": "greenhouse",
     "company_slug": "9thwayinsignia",
     "company": "9th Way Insignia",
-    "job_count": 14
+    "job_count": 13
    },
    "greenhouse:a16z": {
     "provider": "greenhouse",
     "company_slug": "a16z",
     "company": "a16z",
-    "job_count": 15
+    "job_count": 16
    },
    "greenhouse:a1msolutions": {
     "provider": "greenhouse",
     "company_slug": "a1msolutions",
     "company": "A1M Solutions",
-    "job_count": 5
+    "job_count": 4
    },
    "greenhouse:a24": {
     "provider": "greenhouse",
     "company_slug": "a24",
     "company": "A24",
-    "job_count": 7
+    "job_count": 6
    },
    "greenhouse:a3c41b8b71eff8c4": {
     "provider": "greenhouse",
@@ -6793,13 +6841,13 @@
     "provider": "greenhouse",
     "company_slug": "aacpnw",
     "company": "AAC Pacific Northwest",
-    "job_count": 43
+    "job_count": 42
    },
    "greenhouse:aalphabio": {
     "provider": "greenhouse",
     "company_slug": "aalphabio",
     "company": "A-Alpha Bio",
-    "job_count": 1
+    "job_count": 2
    },
    "greenhouse:abacusinsights": {
     "provider": "greenhouse",
@@ -6829,25 +6877,25 @@
     "provider": "greenhouse",
     "company_slug": "abcellera",
     "company": "AbCellera",
-    "job_count": 19
+    "job_count": 28
    },
    "greenhouse:abclegalservices": {
     "provider": "greenhouse",
     "company_slug": "abclegalservices",
     "company": "ABC Legal Services",
-    "job_count": 102
+    "job_count": 112
    },
    "greenhouse:abilitypath": {
     "provider": "greenhouse",
     "company_slug": "abilitypath",
     "company": "AbilityPath",
-    "job_count": 10
+    "job_count": 9
    },
    "greenhouse:abinbev": {
     "provider": "greenhouse",
     "company_slug": "abinbev",
     "company": "AB InBev  | Growth Group",
-    "job_count": 60
+    "job_count": 69
    },
    "greenhouse:abiologics": {
     "provider": "greenhouse",
@@ -6859,19 +6907,19 @@
     "provider": "greenhouse",
     "company_slug": "able",
     "company": "Able",
-    "job_count": 5
+    "job_count": 6
    },
    "greenhouse:ably30": {
     "provider": "greenhouse",
     "company_slug": "ably30",
     "company": "Ably (UK)",
-    "job_count": 7
+    "job_count": 8
    },
    "greenhouse:abnormalsecurity": {
     "provider": "greenhouse",
     "company_slug": "abnormalsecurity",
     "company": "Abnormal",
-    "job_count": 68
+    "job_count": 77
    },
    "greenhouse:abrightbeginnings": {
     "provider": "greenhouse",
@@ -6889,13 +6937,13 @@
     "provider": "greenhouse",
     "company_slug": "acadianassetmanagementllc",
     "company": "Acadian Asset Management LLC",
-    "job_count": 14
+    "job_count": 12
    },
    "greenhouse:acadiapharmaceuticals": {
     "provider": "greenhouse",
     "company_slug": "acadiapharmaceuticals",
     "company": "Acadia Pharmaceuticals Inc.",
-    "job_count": 45
+    "job_count": 51
    },
    "greenhouse:accela": {
     "provider": "greenhouse",
@@ -6919,25 +6967,25 @@
     "provider": "greenhouse",
     "company_slug": "accelschools",
     "company": "ACCEL Schools",
-    "job_count": 234
+    "job_count": 245
    },
    "greenhouse:accenturefederalservices": {
     "provider": "greenhouse",
     "company_slug": "accenturefederalservices",
     "company": "Accenture Federal Services",
-    "job_count": 623
+    "job_count": 640
    },
    "greenhouse:accessholdingsmanagementfirm": {
     "provider": "greenhouse",
     "company_slug": "accessholdingsmanagementfirm",
     "company": "Access Holdings ",
-    "job_count": 3
+    "job_count": 4
    },
    "greenhouse:accesso": {
     "provider": "greenhouse",
     "company_slug": "accesso",
     "company": "accesso",
-    "job_count": 5
+    "job_count": 4
    },
    "greenhouse:accordion": {
     "provider": "greenhouse",
@@ -6961,7 +7009,7 @@
     "provider": "greenhouse",
     "company_slug": "accuweather",
     "company": "AccuWeather Careers",
-    "job_count": 27
+    "job_count": 33
    },
    "greenhouse:aceable": {
     "provider": "greenhouse",
@@ -6979,25 +7027,25 @@
     "provider": "greenhouse",
     "company_slug": "achievementfirstnetworksupportcareers",
     "company": "Achievement First Network Support",
-    "job_count": 8
+    "job_count": 9
    },
    "greenhouse:achieversearlycollegeprep": {
     "provider": "greenhouse",
     "company_slug": "achieversearlycollegeprep",
     "company": "Achievers Early College Prep",
-    "job_count": 21
+    "job_count": 19
    },
    "greenhouse:acilearning": {
     "provider": "greenhouse",
     "company_slug": "acilearning",
     "company": "ACI Learning",
-    "job_count": 4
+    "job_count": 3
    },
    "greenhouse:aclu": {
     "provider": "greenhouse",
     "company_slug": "aclu",
     "company": "ACLU - National Office",
-    "job_count": 32
+    "job_count": 24
    },
    "greenhouse:acluinternships": {
     "provider": "greenhouse",
@@ -7009,7 +7057,7 @@
     "provider": "greenhouse",
     "company_slug": "aclunc",
     "company": "ACLU of Northern California",
-    "job_count": 4
+    "job_count": 6
    },
    "greenhouse:aclunj": {
     "provider": "greenhouse",
@@ -7027,49 +7075,49 @@
     "provider": "greenhouse",
     "company_slug": "acommerce",
     "company": "aCommerce",
-    "job_count": 65
+    "job_count": 68
    },
    "greenhouse:acornhealth": {
     "provider": "greenhouse",
     "company_slug": "acornhealth",
     "company": "Acorn Health",
-    "job_count": 126
+    "job_count": 116
    },
    "greenhouse:acplastics": {
     "provider": "greenhouse",
     "company_slug": "acplastics",
     "company": "A&C Plastics",
-    "job_count": 5
+    "job_count": 4
    },
    "greenhouse:acquia": {
     "provider": "greenhouse",
     "company_slug": "acquia",
     "company": "Acquia",
-    "job_count": 12
+    "job_count": 11
    },
    "greenhouse:acryldata": {
     "provider": "greenhouse",
     "company_slug": "acryldata",
     "company": "DataHub",
-    "job_count": 11
+    "job_count": 10
    },
    "greenhouse:actblue": {
     "provider": "greenhouse",
     "company_slug": "actblue",
     "company": "ActBlue",
-    "job_count": 6
+    "job_count": 8
    },
    "greenhouse:activate": {
     "provider": "greenhouse",
     "company_slug": "activate",
     "company": "Activate Global, Inc",
-    "job_count": 6
+    "job_count": 5
    },
    "greenhouse:actpowerservices": {
     "provider": "greenhouse",
     "company_slug": "actpowerservices",
     "company": "ACT Power Services ",
-    "job_count": 59
+    "job_count": 62
    },
    "greenhouse:acuitymd": {
     "provider": "greenhouse",
@@ -7081,7 +7129,7 @@
     "provider": "greenhouse",
     "company_slug": "acumen",
     "company": "Acumen",
-    "job_count": 6
+    "job_count": 4
    },
    "greenhouse:acurussolutions": {
     "provider": "greenhouse",
@@ -7099,19 +7147,19 @@
     "provider": "greenhouse",
     "company_slug": "ada18",
     "company": "Ada",
-    "job_count": 9
+    "job_count": 8
    },
    "greenhouse:adamsclinical": {
     "provider": "greenhouse",
     "company_slug": "adamsclinical",
     "company": "Adams Clinical",
-    "job_count": 40
+    "job_count": 39
    },
    "greenhouse:adamsstreetpartners": {
     "provider": "greenhouse",
     "company_slug": "adamsstreetpartners",
     "company": "Adams Street Partners",
-    "job_count": 15
+    "job_count": 17
    },
    "greenhouse:adamsstreetpartnersearlycareers": {
     "provider": "greenhouse",
@@ -7129,7 +7177,7 @@
     "provider": "greenhouse",
     "company_slug": "adaptivebiotechnologies",
     "company": "Adaptive Biotechnologies",
-    "job_count": 18
+    "job_count": 17
    },
    "greenhouse:adaptivewater": {
     "provider": "greenhouse",
@@ -7159,7 +7207,7 @@
     "provider": "greenhouse",
     "company_slug": "addepar1",
     "company": "Addepar",
-    "job_count": 121
+    "job_count": 116
    },
    "greenhouse:adeedo": {
     "provider": "greenhouse",
@@ -7177,7 +7225,7 @@
     "provider": "greenhouse",
     "company_slug": "adicettherapeuticsinc",
     "company": "Adicet Bio",
-    "job_count": 3
+    "job_count": 2
    },
    "greenhouse:aditumbio": {
     "provider": "greenhouse",
@@ -7195,7 +7243,7 @@
     "provider": "greenhouse",
     "company_slug": "administrative",
     "company": "WellPower - Administrative",
-    "job_count": 3
+    "job_count": 4
    },
    "greenhouse:admios": {
     "provider": "greenhouse",
@@ -7207,19 +7255,19 @@
     "provider": "greenhouse",
     "company_slug": "adswerveinc",
     "company": "Adswerve, Inc",
-    "job_count": 8
+    "job_count": 9
    },
    "greenhouse:advancedmd": {
     "provider": "greenhouse",
     "company_slug": "advancedmd",
     "company": "AdvancedMD",
-    "job_count": 3
+    "job_count": 5
    },
    "greenhouse:advancedspace": {
     "provider": "greenhouse",
     "company_slug": "advancedspace",
     "company": "Advanced Space",
-    "job_count": 11
+    "job_count": 17
    },
    "greenhouse:advancedtechnologyservices": {
     "provider": "greenhouse",
@@ -7231,19 +7279,19 @@
     "provider": "greenhouse",
     "company_slug": "advertisingspecialtyinstitute",
     "company": "Advertising Specialty Institute",
-    "job_count": 4
+    "job_count": 5
    },
    "greenhouse:advocatesforchildrenofnewyork": {
     "provider": "greenhouse",
     "company_slug": "advocatesforchildrenofnewyork",
     "company": "Advocates for Children of New York",
-    "job_count": 3
+    "job_count": 2
    },
    "greenhouse:adyen": {
     "provider": "greenhouse",
     "company_slug": "adyen",
     "company": "Adyen",
-    "job_count": 222
+    "job_count": 224
    },
    "greenhouse:aechelontechnology": {
     "provider": "greenhouse",
@@ -7255,13 +7303,13 @@
     "provider": "greenhouse",
     "company_slug": "aegisventures",
     "company": "Aegis Ventures",
-    "job_count": 9
+    "job_count": 11
    },
    "greenhouse:aegworldwide": {
     "provider": "greenhouse",
     "company_slug": "aegworldwide",
     "company": "AEG Worldwide",
-    "job_count": 177
+    "job_count": 180
    },
    "greenhouse:aestudio": {
     "provider": "greenhouse",
@@ -7273,73 +7321,73 @@
     "provider": "greenhouse",
     "company_slug": "aevexaerospace",
     "company": "AEVEX",
-    "job_count": 62
+    "job_count": 63
    },
    "greenhouse:aeyeinc": {
     "provider": "greenhouse",
     "company_slug": "aeyeinc",
     "company": "AEye, Inc",
-    "job_count": 3
+    "job_count": 4
    },
    "greenhouse:affinidi": {
     "provider": "greenhouse",
     "company_slug": "affinidi",
     "company": "Affinidi",
-    "job_count": 8
+    "job_count": 9
    },
    "greenhouse:affinipay1": {
     "provider": "greenhouse",
     "company_slug": "affinipay1",
     "company": "8am",
-    "job_count": 18
+    "job_count": 26
    },
    "greenhouse:affinitiv": {
     "provider": "greenhouse",
     "company_slug": "affinitiv",
     "company": "Affinitiv",
-    "job_count": 10
+    "job_count": 9
    },
    "greenhouse:affirm": {
     "provider": "greenhouse",
     "company_slug": "affirm",
     "company": "Affirm",
-    "job_count": 194
+    "job_count": 208
    },
    "greenhouse:affirmedrxpbc": {
     "provider": "greenhouse",
     "company_slug": "affirmedrxpbc",
     "company": "AffirmedRx, PBC",
-    "job_count": 9
+    "job_count": 6
    },
    "greenhouse:afresh": {
     "provider": "greenhouse",
     "company_slug": "afresh",
     "company": "Afresh",
-    "job_count": 19
+    "job_count": 18
    },
    "greenhouse:aftership": {
     "provider": "greenhouse",
     "company_slug": "aftership",
     "company": "AfterShip",
-    "job_count": 19
+    "job_count": 22
    },
    "greenhouse:ag1": {
     "provider": "greenhouse",
     "company_slug": "ag1",
     "company": "AG1",
-    "job_count": 8
+    "job_count": 7
    },
    "greenhouse:agebold": {
     "provider": "greenhouse",
     "company_slug": "agebold",
     "company": "Age Bold",
-    "job_count": 4
+    "job_count": 5
    },
    "greenhouse:agecareers": {
     "provider": "greenhouse",
     "company_slug": "agecareers",
     "company": "AGE Solutions",
-    "job_count": 59
+    "job_count": 54
    },
    "greenhouse:agency": {
     "provider": "greenhouse",
@@ -7363,13 +7411,13 @@
     "provider": "greenhouse",
     "company_slug": "agibank",
     "company": "Agibank",
-    "job_count": 200
+    "job_count": 177
    },
    "greenhouse:agilesix": {
     "provider": "greenhouse",
     "company_slug": "agilesix",
     "company": "Agile Six Applications",
-    "job_count": 3
+    "job_count": 2
    },
    "greenhouse:agilisys": {
     "provider": "greenhouse",
@@ -7381,19 +7429,19 @@
     "provider": "greenhouse",
     "company_slug": "agilityrobotics",
     "company": "Agility Robotics",
-    "job_count": 62
+    "job_count": 61
    },
    "greenhouse:agilize": {
     "provider": "greenhouse",
     "company_slug": "agilize",
     "company": "Agilize",
-    "job_count": 7
+    "job_count": 8
    },
    "greenhouse:agoda": {
     "provider": "greenhouse",
     "company_slug": "agoda",
     "company": "Agoda",
-    "job_count": 286
+    "job_count": 284
    },
    "greenhouse:agodasandbox": {
     "provider": "greenhouse",
@@ -7411,7 +7459,7 @@
     "provider": "greenhouse",
     "company_slug": "agwestfarmcredit",
     "company": "AgWest Farm Credit",
-    "job_count": 14
+    "job_count": 13
    },
    "greenhouse:ahrefsjobs": {
     "provider": "greenhouse",
@@ -7423,7 +7471,7 @@
     "provider": "greenhouse",
     "company_slug": "aidashinc",
     "company": "AiDASH, Inc.",
-    "job_count": 7
+    "job_count": 6
    },
    "greenhouse:aiedu": {
     "provider": "greenhouse",
@@ -7447,7 +7495,7 @@
     "provider": "greenhouse",
     "company_slug": "airbnb",
     "company": "Airbnb",
-    "job_count": 186
+    "job_count": 195
    },
    "greenhouse:aircapture": {
     "provider": "greenhouse",
@@ -7471,19 +7519,19 @@
     "provider": "greenhouse",
     "company_slug": "airnorth",
     "company": "Air North",
-    "job_count": 12
+    "job_count": 11
    },
    "greenhouse:airsculpt": {
     "provider": "greenhouse",
     "company_slug": "airsculpt",
     "company": "AirSculpt",
-    "job_count": 22
+    "job_count": 18
    },
    "greenhouse:airship": {
     "provider": "greenhouse",
     "company_slug": "airship",
     "company": "Airship",
-    "job_count": 13
+    "job_count": 12
    },
    "greenhouse:airspace": {
     "provider": "greenhouse",
@@ -7495,7 +7543,7 @@
     "provider": "greenhouse",
     "company_slug": "airtable",
     "company": "Airtable",
-    "job_count": 17
+    "job_count": 16
    },
    "greenhouse:airtamejobs": {
     "provider": "greenhouse",
@@ -7507,19 +7555,19 @@
     "provider": "greenhouse",
     "company_slug": "airtrunk",
     "company": "AirTrunk",
-    "job_count": 78
+    "job_count": 74
    },
    "greenhouse:airup": {
     "provider": "greenhouse",
     "company_slug": "airup",
     "company": "air up ",
-    "job_count": 3
+    "job_count": 5
    },
    "greenhouse:aisi": {
     "provider": "greenhouse",
     "company_slug": "aisi",
     "company": "AI Security Institute",
-    "job_count": 8
+    "job_count": 7
    },
    "greenhouse:aisquared": {
     "provider": "greenhouse",
@@ -7531,7 +7579,7 @@
     "provider": "greenhouse",
     "company_slug": "aiven36",
     "company": "Aiven",
-    "job_count": 35
+    "job_count": 38
    },
    "greenhouse:aiviq": {
     "provider": "greenhouse",
@@ -7543,7 +7591,7 @@
     "provider": "greenhouse",
     "company_slug": "aizerhealth",
     "company": "Aizer Health",
-    "job_count": 22
+    "job_count": 21
    },
    "greenhouse:ajboggs": {
     "provider": "greenhouse",
@@ -7555,7 +7603,7 @@
     "provider": "greenhouse",
     "company_slug": "ajtutoring",
     "company": "AJ Tutoring",
-    "job_count": 22
+    "job_count": 24
    },
    "greenhouse:akayshaenergy": {
     "provider": "greenhouse",
@@ -7567,7 +7615,7 @@
     "provider": "greenhouse",
     "company_slug": "akidolabs",
     "company": "Akido",
-    "job_count": 16
+    "job_count": 19
    },
    "greenhouse:akko": {
     "provider": "greenhouse",
@@ -7585,13 +7633,13 @@
     "provider": "greenhouse",
     "company_slug": "akqa",
     "company": "AKQA",
-    "job_count": 53
+    "job_count": 52
    },
    "greenhouse:akuity": {
     "provider": "greenhouse",
     "company_slug": "akuity",
     "company": "Akuity",
-    "job_count": 6
+    "job_count": 8
    },
    "greenhouse:akunacapital": {
     "provider": "greenhouse",
@@ -7603,7 +7651,7 @@
     "provider": "greenhouse",
     "company_slug": "alabamatitleloansinc",
     "company": "Alabama Title Loans, Inc",
-    "job_count": 10
+    "job_count": 13
    },
    "greenhouse:alaika": {
     "provider": "greenhouse",
@@ -7615,49 +7663,49 @@
     "provider": "greenhouse",
     "company_slug": "alamarbiosciences",
     "company": "Alamar Biosciences",
-    "job_count": 22
+    "job_count": 27
    },
    "greenhouse:alarmcom": {
     "provider": "greenhouse",
     "company_slug": "alarmcom",
     "company": "Alarm.com",
-    "job_count": 89
+    "job_count": 86
    },
    "greenhouse:alayacare": {
     "provider": "greenhouse",
     "company_slug": "alayacare",
     "company": "AlayaCare",
-    "job_count": 19
+    "job_count": 17
    },
    "greenhouse:alertmedia": {
     "provider": "greenhouse",
     "company_slug": "alertmedia",
     "company": "AlertMedia",
-    "job_count": 20
+    "job_count": 19
    },
    "greenhouse:alethea": {
     "provider": "greenhouse",
     "company_slug": "alethea",
     "company": "Alethea",
-    "job_count": 2
+    "job_count": 3
    },
    "greenhouse:alfredbeneschco": {
     "provider": "greenhouse",
     "company_slug": "alfredbeneschco",
     "company": "Benesch",
-    "job_count": 94
+    "job_count": 90
    },
    "greenhouse:algolia": {
     "provider": "greenhouse",
     "company_slug": "algolia",
     "company": "Algolia",
-    "job_count": 34
+    "job_count": 32
    },
    "greenhouse:align": {
     "provider": "greenhouse",
     "company_slug": "align",
     "company": "A-LIGN External",
-    "job_count": 22
+    "job_count": 25
    },
    "greenhouse:align46": {
     "provider": "greenhouse",
@@ -7675,19 +7723,19 @@
     "provider": "greenhouse",
     "company_slug": "alku",
     "company": "ALKU",
-    "job_count": 14
+    "job_count": 16
    },
    "greenhouse:alkujobs": {
     "provider": "greenhouse",
     "company_slug": "alkujobs",
     "company": "ALKU - Apply Today!",
-    "job_count": 17
+    "job_count": 13
    },
    "greenhouse:allcareers": {
     "provider": "greenhouse",
     "company_slug": "allcareers",
     "company": "Cortica - Neurodevelopmental",
-    "job_count": 108
+    "job_count": 107
    },
    "greenhouse:allencontrolsystems": {
     "provider": "greenhouse",
@@ -7699,13 +7747,13 @@
     "provider": "greenhouse",
     "company_slug": "allenintegratedsolutions",
     "company": "Allen Integrated Solutions",
-    "job_count": 98
+    "job_count": 102
    },
    "greenhouse:alliancedefendingfreedom": {
     "provider": "greenhouse",
     "company_slug": "alliancedefendingfreedom",
     "company": "Alliance Defending Freedom",
-    "job_count": 28
+    "job_count": 36
    },
    "greenhouse:allianceus": {
     "provider": "greenhouse",
@@ -7717,13 +7765,13 @@
     "provider": "greenhouse",
     "company_slug": "allinc",
     "company": "Aspire Living & Learning ",
-    "job_count": 43
+    "job_count": 42
    },
    "greenhouse:alloy": {
     "provider": "greenhouse",
     "company_slug": "alloy",
     "company": "Alloy",
-    "job_count": 22
+    "job_count": 25
    },
    "greenhouse:alltrna": {
     "provider": "greenhouse",
@@ -7753,13 +7801,13 @@
     "provider": "greenhouse",
     "company_slug": "alohacollection",
     "company": "ALOHA Collection Inc.",
-    "job_count": 3
+    "job_count": 1
    },
    "greenhouse:aloyoga": {
     "provider": "greenhouse",
     "company_slug": "aloyoga",
     "company": " ALO",
-    "job_count": 779
+    "job_count": 762
    },
    "greenhouse:alpaca": {
     "provider": "greenhouse",
@@ -7783,13 +7831,13 @@
     "provider": "greenhouse",
     "company_slug": "alphafmcroles",
     "company": "Alpha Financial Markets Consulting",
-    "job_count": 78
+    "job_count": 77
    },
    "greenhouse:alphagrepsecurities": {
     "provider": "greenhouse",
     "company_slug": "alphagrepsecurities",
     "company": "AlphaGrep Securities",
-    "job_count": 16
+    "job_count": 14
    },
    "greenhouse:alphalion": {
     "provider": "greenhouse",
@@ -7801,13 +7849,13 @@
     "provider": "greenhouse",
     "company_slug": "alphapublicschools",
     "company": "Alpha Public Schools",
-    "job_count": 6
+    "job_count": 7
    },
    "greenhouse:alphasense": {
     "provider": "greenhouse",
     "company_slug": "alphasense",
     "company": "AlphaSense",
-    "job_count": 228
+    "job_count": 236
    },
    "greenhouse:alphasensehelsinki": {
     "provider": "greenhouse",
@@ -7819,19 +7867,19 @@
     "provider": "greenhouse",
     "company_slug": "alphasenseindia",
     "company": "AlphaSense India",
-    "job_count": 49
+    "job_count": 48
    },
    "greenhouse:alphasights": {
     "provider": "greenhouse",
     "company_slug": "alphasights",
     "company": "AlphaSights",
-    "job_count": 87
+    "job_count": 85
    },
    "greenhouse:alphasightsresumedrop": {
     "provider": "greenhouse",
     "company_slug": "alphasightsresumedrop",
     "company": "AlphaSights Campus Recruiting",
-    "job_count": 19
+    "job_count": 20
    },
    "greenhouse:alphataraxia": {
     "provider": "greenhouse",
@@ -7849,7 +7897,7 @@
     "provider": "greenhouse",
     "company_slug": "alpineinvestors",
     "company": "Alpine Investors",
-    "job_count": 2
+    "job_count": 1
    },
    "greenhouse:alt": {
     "provider": "greenhouse",
@@ -7867,37 +7915,37 @@
     "provider": "greenhouse",
     "company_slug": "altamiratechnologies",
     "company": "Altamira.ai",
-    "job_count": 6
+    "job_count": 7
    },
    "greenhouse:altanaai": {
     "provider": "greenhouse",
     "company_slug": "altanaai",
     "company": "Altana ",
-    "job_count": 17
+    "job_count": 12
    },
    "greenhouse:altentechnologyusa": {
     "provider": "greenhouse",
     "company_slug": "altentechnologyusa",
     "company": "ALTEN Technology USA",
-    "job_count": 168
+    "job_count": 172
    },
    "greenhouse:altoslabs": {
     "provider": "greenhouse",
     "company_slug": "altoslabs",
     "company": "Altos Labs",
-    "job_count": 23
+    "job_count": 21
    },
    "greenhouse:altruist": {
     "provider": "greenhouse",
     "company_slug": "altruist",
     "company": "Altruist",
-    "job_count": 48
+    "job_count": 46
    },
    "greenhouse:alu": {
     "provider": "greenhouse",
     "company_slug": "alu",
     "company": "ALU",
-    "job_count": 15
+    "job_count": 16
    },
    "greenhouse:aluinternalopenings": {
     "provider": "greenhouse",
@@ -7909,13 +7957,13 @@
     "provider": "greenhouse",
     "company_slug": "alumis",
     "company": "Alumis",
-    "job_count": 16
+    "job_count": 15
    },
    "greenhouse:alumniventures": {
     "provider": "greenhouse",
     "company_slug": "alumniventures",
     "company": "Alumni Ventures",
-    "job_count": 11
+    "job_count": 13
    },
    "greenhouse:alvys": {
     "provider": "greenhouse",
@@ -7927,25 +7975,25 @@
     "provider": "greenhouse",
     "company_slug": "alxafrica",
     "company": "ALX Africa",
-    "job_count": 13
+    "job_count": 14
    },
    "greenhouse:amaehealth": {
     "provider": "greenhouse",
     "company_slug": "amaehealth",
     "company": "Amae Health",
-    "job_count": 34
+    "job_count": 30
    },
    "greenhouse:amarok": {
     "provider": "greenhouse",
     "company_slug": "amarok",
     "company": "AMAROK",
-    "job_count": 17
+    "job_count": 18
    },
    "greenhouse:ambercharterschools": {
     "provider": "greenhouse",
     "company_slug": "ambercharterschools",
     "company": "Amber Charter Schools",
-    "job_count": 9
+    "job_count": 10
    },
    "greenhouse:ambiententerprises": {
     "provider": "greenhouse",
@@ -7957,13 +8005,13 @@
     "provider": "greenhouse",
     "company_slug": "ambiqmicroinc",
     "company": "Ambiq Micro, Inc.",
-    "job_count": 44
+    "job_count": 45
    },
    "greenhouse:amdaris": {
     "provider": "greenhouse",
     "company_slug": "amdaris",
     "company": "Amdaris",
-    "job_count": 17
+    "job_count": 15
    },
    "greenhouse:ameelio": {
     "provider": "greenhouse",
@@ -7975,13 +8023,13 @@
     "provider": "greenhouse",
     "company_slug": "amendconsulting",
     "company": "AMEND Consulting",
-    "job_count": 14
+    "job_count": 12
    },
    "greenhouse:americancapitalgroup": {
     "provider": "greenhouse",
     "company_slug": "americancapitalgroup",
     "company": "American Capital Group",
-    "job_count": 4
+    "job_count": 5
    },
    "greenhouse:americanfloodcoalition": {
     "provider": "greenhouse",
@@ -7993,13 +8041,13 @@
     "provider": "greenhouse",
     "company_slug": "americaninstitutesforresearch",
     "company": "American Institutes for Research",
-    "job_count": 19
+    "job_count": 17
    },
    "greenhouse:americanmarketingassociation": {
     "provider": "greenhouse",
     "company_slug": "americanmarketingassociation",
     "company": "American Marketing Association",
-    "job_count": 2
+    "job_count": 1
    },
    "greenhouse:americaspromisealliance": {
     "provider": "greenhouse",
@@ -8017,31 +8065,31 @@
     "provider": "greenhouse",
     "company_slug": "amnh",
     "company": "American Museum of Natural History",
-    "job_count": 2
+    "job_count": 1
    },
    "greenhouse:amoriabond": {
     "provider": "greenhouse",
     "company_slug": "amoriabond",
     "company": "Amoria Group",
-    "job_count": 40
+    "job_count": 42
    },
    "greenhouse:amount": {
     "provider": "greenhouse",
     "company_slug": "amount",
     "company": "FIS® Amount™",
-    "job_count": 4
+    "job_count": 3
    },
    "greenhouse:amperesand": {
     "provider": "greenhouse",
     "company_slug": "amperesand",
     "company": "Amperesand",
-    "job_count": 29
+    "job_count": 33
    },
    "greenhouse:amperity": {
     "provider": "greenhouse",
     "company_slug": "amperity",
     "company": "Amperity",
-    "job_count": 17
+    "job_count": 18
    },
    "greenhouse:amperon": {
     "provider": "greenhouse",
@@ -8053,7 +8101,7 @@
     "provider": "greenhouse",
     "company_slug": "amplemarket",
     "company": "Amplemarket",
-    "job_count": 13
+    "job_count": 15
    },
    "greenhouse:ampliform": {
     "provider": "greenhouse",
@@ -8065,37 +8113,37 @@
     "provider": "greenhouse",
     "company_slug": "amplitude",
     "company": "Amplitude ",
-    "job_count": 31
+    "job_count": 33
    },
    "greenhouse:ampsortation": {
     "provider": "greenhouse",
     "company_slug": "ampsortation",
     "company": "AMP: AI-Powered Sortation for Waste and Recycling",
-    "job_count": 11
+    "job_count": 12
    },
    "greenhouse:amtechsoftware": {
     "provider": "greenhouse",
     "company_slug": "amtechsoftware",
     "company": "Amtech Software",
-    "job_count": 21
+    "job_count": 31
    },
    "greenhouse:amwell": {
     "provider": "greenhouse",
     "company_slug": "amwell",
     "company": "Amwell",
-    "job_count": 12
+    "job_count": 10
    },
    "greenhouse:amylyx": {
     "provider": "greenhouse",
     "company_slug": "amylyx",
     "company": "Amylyx Pharmaceuticals",
-    "job_count": 32
+    "job_count": 29
    },
    "greenhouse:amyrisinc": {
     "provider": "greenhouse",
     "company_slug": "amyrisinc",
     "company": "Amyris, Inc.",
-    "job_count": 13
+    "job_count": 11
    },
    "greenhouse:analyst1": {
     "provider": "greenhouse",
@@ -8107,19 +8155,19 @@
     "provider": "greenhouse",
     "company_slug": "analyticservicesinc",
     "company": "Analytic Services Inc",
-    "job_count": 79
+    "job_count": 83
    },
    "greenhouse:anaplan": {
     "provider": "greenhouse",
     "company_slug": "anaplan",
     "company": "Anaplan",
-    "job_count": 173
+    "job_count": 161
    },
    "greenhouse:anchanto": {
     "provider": "greenhouse",
     "company_slug": "anchanto",
     "company": "Anchanto",
-    "job_count": 42
+    "job_count": 14
    },
    "greenhouse:anchorhealthct": {
     "provider": "greenhouse",
@@ -8131,7 +8179,7 @@
     "provider": "greenhouse",
     "company_slug": "anderscpasadvisors",
     "company": "Anders",
-    "job_count": 18
+    "job_count": 17
    },
    "greenhouse:andesite": {
     "provider": "greenhouse",
@@ -8143,7 +8191,7 @@
     "provider": "greenhouse",
     "company_slug": "andurilindustries",
     "company": "Anduril Industries",
-    "job_count": 2205
+    "job_count": 2219
    },
    "greenhouse:anellophotonics": {
     "provider": "greenhouse",
@@ -8167,31 +8215,31 @@
     "provider": "greenhouse",
     "company_slug": "animalmedicalcenter",
     "company": "Schwarzman Animal Medical Center",
-    "job_count": 40
+    "job_count": 38
    },
    "greenhouse:aninebing": {
     "provider": "greenhouse",
     "company_slug": "aninebing",
     "company": "ANINE BING",
-    "job_count": 17
+    "job_count": 12
    },
    "greenhouse:annexonbioscience": {
     "provider": "greenhouse",
     "company_slug": "annexonbioscience",
     "company": "Annexon Biosciences",
-    "job_count": 14
+    "job_count": 13
    },
    "greenhouse:annexushealth": {
     "provider": "greenhouse",
     "company_slug": "annexushealth",
     "company": "Annexus Health",
-    "job_count": 3
+    "job_count": 2
    },
    "greenhouse:anodize": {
     "provider": "greenhouse",
     "company_slug": "anodize",
     "company": "Anodize",
-    "job_count": 4
+    "job_count": 6
    },
    "greenhouse:ansa": {
     "provider": "greenhouse",
@@ -8203,7 +8251,7 @@
     "provider": "greenhouse",
     "company_slug": "ansabiotechnologies",
     "company": "Ansa Biotechnologies",
-    "job_count": 8
+    "job_count": 6
    },
    "greenhouse:answerrocket": {
     "provider": "greenhouse",
@@ -8221,13 +8269,13 @@
     "provider": "greenhouse",
     "company_slug": "antenna",
     "company": "Antenna",
-    "job_count": 8
+    "job_count": 7
    },
    "greenhouse:anteriad": {
     "provider": "greenhouse",
     "company_slug": "anteriad",
     "company": "Anteriad ",
-    "job_count": 6
+    "job_count": 7
    },
    "greenhouse:antheia": {
     "provider": "greenhouse",
@@ -8245,7 +8293,7 @@
     "provider": "greenhouse",
     "company_slug": "anthropic",
     "company": "Anthropic",
-    "job_count": 441
+    "job_count": 535
    },
    "greenhouse:antora": {
     "provider": "greenhouse",
@@ -8257,7 +8305,7 @@
     "provider": "greenhouse",
     "company_slug": "anydesk",
     "company": "AnyDesk",
-    "job_count": 13
+    "job_count": 12
    },
    "greenhouse:aon3d": {
     "provider": "greenhouse",
@@ -8275,7 +8323,7 @@
     "provider": "greenhouse",
     "company_slug": "apaleo",
     "company": "Apaleo",
-    "job_count": 8
+    "job_count": 7
    },
    "greenhouse:apartmentiq": {
     "provider": "greenhouse",
@@ -8293,31 +8341,31 @@
     "provider": "greenhouse",
     "company_slug": "aperaaiinc",
     "company": "Apera AI Inc",
-    "job_count": 7
+    "job_count": 8
    },
    "greenhouse:aperiasolutions": {
     "provider": "greenhouse",
     "company_slug": "aperiasolutions",
     "company": "Aperia",
-    "job_count": 15
+    "job_count": 11
    },
    "greenhouse:aperiatechnologies": {
     "provider": "greenhouse",
     "company_slug": "aperiatechnologies",
     "company": "Aperia Technologies, Inc",
-    "job_count": 3
+    "job_count": 2
    },
    "greenhouse:apexcompanies": {
     "provider": "greenhouse",
     "company_slug": "apexcompanies",
     "company": "Apex Companies",
-    "job_count": 182
+    "job_count": 187
    },
    "greenhouse:apexcompaniescsw": {
     "provider": "greenhouse",
     "company_slug": "apexcompaniescsw",
     "company": "Apex Companies - CSW",
-    "job_count": 52
+    "job_count": 56
    },
    "greenhouse:apiiro": {
     "provider": "greenhouse",
@@ -8341,19 +8389,19 @@
     "provider": "greenhouse",
     "company_slug": "apolloio",
     "company": "Apollo.io",
-    "job_count": 43
+    "job_count": 42
    },
    "greenhouse:apothecom": {
     "provider": "greenhouse",
     "company_slug": "apothecom",
     "company": "ApotheCom",
-    "job_count": 11
+    "job_count": 12
    },
    "greenhouse:apparatus": {
     "provider": "greenhouse",
     "company_slug": "apparatus",
     "company": "APPARATUS",
-    "job_count": 3
+    "job_count": 4
    },
    "greenhouse:appdirect": {
     "provider": "greenhouse",
@@ -8365,13 +8413,13 @@
     "provider": "greenhouse",
     "company_slug": "appian",
     "company": "Appian Corporation ",
-    "job_count": 183
+    "job_count": 175
    },
    "greenhouse:appier": {
     "provider": "greenhouse",
     "company_slug": "appier",
     "company": "Appier",
-    "job_count": 88
+    "job_count": 83
    },
    "greenhouse:appletreeprep": {
     "provider": "greenhouse",
@@ -8401,7 +8449,7 @@
     "provider": "greenhouse",
     "company_slug": "applovin",
     "company": "AppLovin",
-    "job_count": 26
+    "job_count": 29
    },
    "greenhouse:applytoaktos": {
     "provider": "greenhouse",
@@ -8455,19 +8503,19 @@
     "provider": "greenhouse",
     "company_slug": "appnovation",
     "company": "Appnovation Technologies",
-    "job_count": 24
+    "job_count": 52
    },
    "greenhouse:appodeal": {
     "provider": "greenhouse",
     "company_slug": "appodeal",
     "company": "Appodeal",
-    "job_count": 13
+    "job_count": 12
    },
    "greenhouse:appsflyer": {
     "provider": "greenhouse",
     "company_slug": "appsflyer",
     "company": "AppsFlyer",
-    "job_count": 42
+    "job_count": 46
    },
    "greenhouse:appspace": {
     "provider": "greenhouse",
@@ -8485,13 +8533,13 @@
     "provider": "greenhouse",
     "company_slug": "apptronik",
     "company": "Apptronik",
-    "job_count": 79
+    "job_count": 78
    },
    "greenhouse:appviewx": {
     "provider": "greenhouse",
     "company_slug": "appviewx",
     "company": "AppViewX",
-    "job_count": 22
+    "job_count": 20
    },
    "greenhouse:aptitude8": {
     "provider": "greenhouse",
@@ -8527,13 +8575,13 @@
     "provider": "greenhouse",
     "company_slug": "arborenergy",
     "company": "Arbor Energy",
-    "job_count": 15
+    "job_count": 14
    },
    "greenhouse:arcadiacareers": {
     "provider": "greenhouse",
     "company_slug": "arcadiacareers",
     "company": "Arcadia",
-    "job_count": 15
+    "job_count": 16
    },
    "greenhouse:arcaea": {
     "provider": "greenhouse",
@@ -8551,7 +8599,7 @@
     "provider": "greenhouse",
     "company_slug": "arcboatcompany",
     "company": "Arc Boat Company",
-    "job_count": 34
+    "job_count": 35
    },
    "greenhouse:arceeai": {
     "provider": "greenhouse",
@@ -8563,19 +8611,19 @@
     "provider": "greenhouse",
     "company_slug": "arcesiumllc",
     "company": "Arcesium LLC",
-    "job_count": 38
+    "job_count": 36
    },
    "greenhouse:archer56": {
     "provider": "greenhouse",
     "company_slug": "archer56",
     "company": "Archer",
-    "job_count": 168
+    "job_count": 162
    },
    "greenhouse:archera": {
     "provider": "greenhouse",
     "company_slug": "archera",
     "company": "Archera",
-    "job_count": 11
+    "job_count": 14
    },
    "greenhouse:archrival": {
     "provider": "greenhouse",
@@ -8587,13 +8635,13 @@
     "provider": "greenhouse",
     "company_slug": "arcinstitute",
     "company": "Arc Institute",
-    "job_count": 21
+    "job_count": 22
    },
    "greenhouse:arcoeducacao": {
     "provider": "greenhouse",
     "company_slug": "arcoeducacao",
     "company": "Arco Educação ",
-    "job_count": 84
+    "job_count": 86
    },
    "greenhouse:arcotech": {
     "provider": "greenhouse",
@@ -8611,13 +8659,13 @@
     "provider": "greenhouse",
     "company_slug": "ardentmc",
     "company": "Ardent",
-    "job_count": 82
+    "job_count": 83
    },
    "greenhouse:arevonenergyimpltest": {
     "provider": "greenhouse",
     "company_slug": "arevonenergyimpltest",
     "company": "Arevon",
-    "job_count": 13
+    "job_count": 10
    },
    "greenhouse:arielalternatives": {
     "provider": "greenhouse",
@@ -8665,19 +8713,19 @@
     "provider": "greenhouse",
     "company_slug": "arkoselabs",
     "company": "Arkose Labs",
-    "job_count": 4
+    "job_count": 5
    },
    "greenhouse:arlosolutionsllc": {
     "provider": "greenhouse",
     "company_slug": "arlosolutionsllc",
     "company": "Arlo Solutions LLC",
-    "job_count": 42
+    "job_count": 40
    },
    "greenhouse:armada": {
     "provider": "greenhouse",
     "company_slug": "armada",
     "company": "Armada",
-    "job_count": 59
+    "job_count": 58
    },
    "greenhouse:armamentsresearchcompany": {
     "provider": "greenhouse",
@@ -8689,7 +8737,7 @@
     "provider": "greenhouse",
     "company_slug": "armissecurity",
     "company": "Armis Security",
-    "job_count": 18
+    "job_count": 16
    },
    "greenhouse:armorcode": {
     "provider": "greenhouse",
@@ -8707,13 +8755,13 @@
     "provider": "greenhouse",
     "company_slug": "array",
     "company": "Array",
-    "job_count": 17
+    "job_count": 16
    },
    "greenhouse:arspharmaceuticalsoperationsinc": {
     "provider": "greenhouse",
     "company_slug": "arspharmaceuticalsoperationsinc",
     "company": "ARS Pharmaceuticals Operations, Inc.",
-    "job_count": 6
+    "job_count": 5
    },
    "greenhouse:arsys": {
     "provider": "greenhouse",
@@ -8725,7 +8773,7 @@
     "provider": "greenhouse",
     "company_slug": "artefact",
     "company": "Artefact",
-    "job_count": 131
+    "job_count": 128
    },
    "greenhouse:artefactjobs": {
     "provider": "greenhouse",
@@ -8737,13 +8785,49 @@
     "provider": "greenhouse",
     "company_slug": "artefactlinkedin",
     "company": "LinkedIn Job Wrapping",
-    "job_count": 114
+    "job_count": 111
    },
    "greenhouse:articlegroup": {
     "provider": "greenhouse",
     "company_slug": "articlegroup",
     "company": "Article Group",
     "job_count": 2
+   },
+   "greenhouse:3dayblindscorporate": {
+    "provider": "greenhouse",
+    "company_slug": "3dayblindscorporate",
+    "company": "3 Day Blinds (Corporate)",
+    "job_count": 3
+   },
+   "greenhouse:afcvolunteers": {
+    "provider": "greenhouse",
+    "company_slug": "afcvolunteers",
+    "company": "Advocates for Children - Interns and Volunteers",
+    "job_count": 1
+   },
+   "greenhouse:akerotherapeutics": {
+    "provider": "greenhouse",
+    "company_slug": "akerotherapeutics",
+    "company": "Akero Therapeutics",
+    "job_count": 1
+   },
+   "greenhouse:altisales": {
+    "provider": "greenhouse",
+    "company_slug": "altisales",
+    "company": "AltiSales",
+    "job_count": 4
+   },
+   "greenhouse:apercenpartnersllc": {
+    "provider": "greenhouse",
+    "company_slug": "apercenpartnersllc",
+    "company": "Apercen Partners LLC",
+    "job_count": 2
+   },
+   "greenhouse:arenaim": {
+    "provider": "greenhouse",
+    "company_slug": "arenaim",
+    "company": "Arena.im",
+    "job_count": 6
    },
    "lever:15five": {
     "provider": "lever",
@@ -8755,13 +8839,13 @@
     "provider": "lever",
     "company_slug": "1inch",
     "company": null,
-    "job_count": 9
+    "job_count": 7
    },
    "lever:21hhs": {
     "provider": "lever",
     "company_slug": "21hhs",
     "company": null,
-    "job_count": 321
+    "job_count": 327
    },
    "lever:2brains": {
     "provider": "lever",
@@ -8773,19 +8857,19 @@
     "provider": "lever",
     "company_slug": "360learning",
     "company": null,
-    "job_count": 30
+    "job_count": 28
    },
    "lever:3pillarglobal": {
     "provider": "lever",
     "company_slug": "3pillarglobal",
     "company": null,
-    "job_count": 58
+    "job_count": 53
    },
    "lever:4front": {
     "provider": "lever",
     "company_slug": "4front",
     "company": null,
-    "job_count": 2
+    "job_count": 6
    },
    "lever:5amventures": {
     "provider": "lever",
@@ -8803,7 +8887,7 @@
     "provider": "lever",
     "company_slug": "ableserve",
     "company": null,
-    "job_count": 54
+    "job_count": 68
    },
    "lever:abovelending": {
     "provider": "lever",
@@ -8815,31 +8899,31 @@
     "provider": "lever",
     "company_slug": "abt",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "lever:acceldata": {
     "provider": "lever",
     "company_slug": "acceldata",
     "company": null,
-    "job_count": 44
+    "job_count": 46
    },
    "lever:accesssoftek": {
     "provider": "lever",
     "company_slug": "accesssoftek",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "lever:acds": {
     "provider": "lever",
     "company_slug": "acds",
     "company": null,
-    "job_count": 18
+    "job_count": 15
    },
    "lever:achievers": {
     "provider": "lever",
     "company_slug": "achievers",
     "company": null,
-    "job_count": 22
+    "job_count": 18
    },
    "lever:acselhealth": {
     "provider": "lever",
@@ -8851,13 +8935,13 @@
     "provider": "lever",
     "company_slug": "actian",
     "company": null,
-    "job_count": 17
+    "job_count": 15
    },
    "lever:actionlife": {
     "provider": "lever",
     "company_slug": "actionlife",
     "company": null,
-    "job_count": 48
+    "job_count": 39
    },
    "lever:activecampaign": {
     "provider": "lever",
@@ -8899,13 +8983,13 @@
     "provider": "lever",
     "company_slug": "advancedagrilytics",
     "company": null,
-    "job_count": 3
+    "job_count": 5
    },
    "lever:adventus": {
     "provider": "lever",
     "company_slug": "adventus",
     "company": null,
-    "job_count": 23
+    "job_count": 22
    },
    "lever:adverum": {
     "provider": "lever",
@@ -8917,7 +9001,7 @@
     "provider": "lever",
     "company_slug": "advocate",
     "company": null,
-    "job_count": 6
+    "job_count": 4
    },
    "lever:ae-2": {
     "provider": "lever",
@@ -8935,7 +9019,7 @@
     "provider": "lever",
     "company_slug": "aero",
     "company": null,
-    "job_count": 12
+    "job_count": 8
    },
    "lever:aerostrat": {
     "provider": "lever",
@@ -8953,7 +9037,7 @@
     "provider": "lever",
     "company_slug": "aeva",
     "company": null,
-    "job_count": 44
+    "job_count": 45
    },
    "lever:afero": {
     "provider": "lever",
@@ -8965,25 +9049,25 @@
     "provider": "lever",
     "company_slug": "agatesoftware",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "lever:agicap": {
     "provider": "lever",
     "company_slug": "agicap",
     "company": null,
-    "job_count": 34
+    "job_count": 32
    },
    "lever:agile-defense": {
     "provider": "lever",
     "company_slug": "agile-defense",
     "company": null,
-    "job_count": 95
+    "job_count": 102
    },
    "lever:agiloft": {
     "provider": "lever",
     "company_slug": "agiloft",
     "company": null,
-    "job_count": 9
+    "job_count": 7
    },
    "lever:agtonomy": {
     "provider": "lever",
@@ -9019,13 +9103,13 @@
     "provider": "lever",
     "company_slug": "air-tek",
     "company": null,
-    "job_count": 12
+    "job_count": 14
    },
    "lever:airalo": {
     "provider": "lever",
     "company_slug": "airalo",
     "company": null,
-    "job_count": 14
+    "job_count": 19
    },
    "lever:aircall": {
     "provider": "lever",
@@ -9037,13 +9121,13 @@
     "provider": "lever",
     "company_slug": "airdna",
     "company": null,
-    "job_count": 6
+    "job_count": 5
    },
    "lever:airslate": {
     "provider": "lever",
     "company_slug": "airslate",
     "company": null,
-    "job_count": 11
+    "job_count": 13
    },
    "lever:airtm": {
     "provider": "lever",
@@ -9055,13 +9139,13 @@
     "provider": "lever",
     "company_slug": "aizon",
     "company": null,
-    "job_count": 5
+    "job_count": 3
    },
    "lever:ajax": {
     "provider": "lever",
     "company_slug": "ajax",
     "company": null,
-    "job_count": 209
+    "job_count": 202
    },
    "lever:ajccanada": {
     "provider": "lever",
@@ -9079,37 +9163,37 @@
     "provider": "lever",
     "company_slug": "aldar",
     "company": null,
-    "job_count": 43
+    "job_count": 44
    },
    "lever:alector": {
     "provider": "lever",
     "company_slug": "alector",
     "company": null,
-    "job_count": 2
+    "job_count": 1
    },
    "lever:aledade": {
     "provider": "lever",
     "company_slug": "aledade",
     "company": null,
-    "job_count": 38
+    "job_count": 32
    },
    "lever:aleph": {
     "provider": "lever",
     "company_slug": "aleph",
     "company": null,
-    "job_count": 94
+    "job_count": 101
    },
    "lever:alertus": {
     "provider": "lever",
     "company_slug": "alertus",
     "company": null,
-    "job_count": 23
+    "job_count": 21
    },
    "lever:alice-bob": {
     "provider": "lever",
     "company_slug": "alice-bob",
     "company": null,
-    "job_count": 22
+    "job_count": 24
    },
    "lever:alifsemi": {
     "provider": "lever",
@@ -9127,25 +9211,25 @@
     "provider": "lever",
     "company_slug": "allears-vet",
     "company": null,
-    "job_count": 1
+    "job_count": 3
    },
    "lever:allegiantair": {
     "provider": "lever",
     "company_slug": "allegiantair",
     "company": null,
-    "job_count": 41
+    "job_count": 54
    },
    "lever:alliedreit": {
     "provider": "lever",
     "company_slug": "alliedreit",
     "company": null,
-    "job_count": 22
+    "job_count": 19
    },
    "lever:alloy": {
     "provider": "lever",
     "company_slug": "alloy",
     "company": null,
-    "job_count": 9
+    "job_count": 5
    },
    "lever:alltrails": {
     "provider": "lever",
@@ -9175,19 +9259,19 @@
     "provider": "lever",
     "company_slug": "altaml",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "lever:altarum": {
     "provider": "lever",
     "company_slug": "altarum",
     "company": null,
-    "job_count": 6
+    "job_count": 7
    },
    "lever:amanotes": {
     "provider": "lever",
     "company_slug": "amanotes",
     "company": null,
-    "job_count": 46
+    "job_count": 42
    },
    "lever:amberelectric": {
     "provider": "lever",
@@ -9217,19 +9301,19 @@
     "provider": "lever",
     "company_slug": "amityfdn",
     "company": null,
-    "job_count": 116
+    "job_count": 126
    },
    "lever:ampd-energy": {
     "provider": "lever",
     "company_slug": "ampd-energy",
     "company": null,
-    "job_count": 9
+    "job_count": 10
    },
    "lever:ampeco-global": {
     "provider": "lever",
     "company_slug": "ampeco-global",
     "company": null,
-    "job_count": 7
+    "job_count": 11
    },
    "lever:amtengineering": {
     "provider": "lever",
@@ -9241,7 +9325,7 @@
     "provider": "lever",
     "company_slug": "ana-corp",
     "company": null,
-    "job_count": 14
+    "job_count": 18
    },
    "lever:analogfolk": {
     "provider": "lever",
@@ -9253,37 +9337,37 @@
     "provider": "lever",
     "company_slug": "analyticpartners",
     "company": null,
-    "job_count": 14
+    "job_count": 18
    },
    "lever:anavationllc": {
     "provider": "lever",
     "company_slug": "anavationllc",
     "company": null,
-    "job_count": 59
+    "job_count": 62
    },
    "lever:anchorage": {
     "provider": "lever",
     "company_slug": "anchorage",
     "company": null,
-    "job_count": 39
+    "job_count": 32
    },
    "lever:andersencorp": {
     "provider": "lever",
     "company_slug": "andersencorp",
     "company": null,
-    "job_count": 125
+    "job_count": 123
    },
    "lever:andersgroup": {
     "provider": "lever",
     "company_slug": "andersgroup",
     "company": null,
-    "job_count": 4
+    "job_count": 3
    },
    "lever:angellist": {
     "provider": "lever",
     "company_slug": "angellist",
     "company": null,
-    "job_count": 23
+    "job_count": 27
    },
    "lever:animocabrands": {
     "provider": "lever",
@@ -9295,13 +9379,13 @@
     "provider": "lever",
     "company_slug": "anomali",
     "company": null,
-    "job_count": 10
+    "job_count": 11
    },
    "lever:anotherco": {
     "provider": "lever",
     "company_slug": "anotherco",
     "company": null,
-    "job_count": 20
+    "job_count": 24
    },
    "lever:ansatzcapital": {
     "provider": "lever",
@@ -9313,7 +9397,7 @@
     "provider": "lever",
     "company_slug": "anybotics",
     "company": null,
-    "job_count": 22
+    "job_count": 17
    },
    "lever:anyroad": {
     "provider": "lever",
@@ -9331,7 +9415,7 @@
     "provider": "lever",
     "company_slug": "apex-ai",
     "company": null,
-    "job_count": 8
+    "job_count": 7
    },
    "lever:apexpi": {
     "provider": "lever",
@@ -9349,7 +9433,7 @@
     "provider": "lever",
     "company_slug": "apolloresearch",
     "company": null,
-    "job_count": 11
+    "job_count": 8
    },
    "lever:appcues-2": {
     "provider": "lever",
@@ -9361,7 +9445,7 @@
     "provider": "lever",
     "company_slug": "appen",
     "company": null,
-    "job_count": 36
+    "job_count": 32
    },
    "lever:appen-2": {
     "provider": "lever",
@@ -9373,7 +9457,7 @@
     "provider": "lever",
     "company_slug": "appfollow",
     "company": null,
-    "job_count": 3
+    "job_count": 1
    },
    "lever:applydigital": {
     "provider": "lever",
@@ -9385,7 +9469,7 @@
     "provider": "lever",
     "company_slug": "appnation",
     "company": null,
-    "job_count": 11
+    "job_count": 9
    },
    "lever:appsamurai": {
     "provider": "lever",
@@ -9397,25 +9481,25 @@
     "provider": "lever",
     "company_slug": "appzen",
     "company": null,
-    "job_count": 20
+    "job_count": 18
    },
    "lever:aquabyte": {
     "provider": "lever",
     "company_slug": "aquabyte",
     "company": null,
-    "job_count": 6
+    "job_count": 5
    },
    "lever:arable": {
     "provider": "lever",
     "company_slug": "arable",
     "company": null,
-    "job_count": 4
+    "job_count": 5
    },
    "lever:arbitalhealth": {
     "provider": "lever",
     "company_slug": "arbitalhealth",
     "company": null,
-    "job_count": 6
+    "job_count": 9
    },
    "lever:arbitrumfoundation": {
     "provider": "lever",
@@ -9427,31 +9511,31 @@
     "provider": "lever",
     "company_slug": "arcadia",
     "company": null,
-    "job_count": 15
+    "job_count": 20
    },
    "lever:arootah": {
     "provider": "lever",
     "company_slug": "arootah",
     "company": null,
-    "job_count": 36
+    "job_count": 42
    },
    "lever:arrivelogistics": {
     "provider": "lever",
     "company_slug": "arrivelogistics",
     "company": null,
-    "job_count": 87
+    "job_count": 76
    },
    "lever:arsenalbio": {
     "provider": "lever",
     "company_slug": "arsenalbio",
     "company": null,
-    "job_count": 2
+    "job_count": 1
    },
    "lever:arsiem": {
     "provider": "lever",
     "company_slug": "arsiem",
     "company": null,
-    "job_count": 81
+    "job_count": 77
    },
    "lever:artbio": {
     "provider": "lever",
@@ -9469,7 +9553,7 @@
     "provider": "lever",
     "company_slug": "artera-2",
     "company": null,
-    "job_count": 7
+    "job_count": 9
    },
    "lever:articulate": {
     "provider": "lever",
@@ -9481,19 +9565,19 @@
     "provider": "lever",
     "company_slug": "asapp-2",
     "company": null,
-    "job_count": 9
+    "job_count": 10
    },
    "lever:ashoka": {
     "provider": "lever",
     "company_slug": "ashoka",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "lever:askfavor": {
     "provider": "lever",
     "company_slug": "askfavor",
     "company": null,
-    "job_count": 9
+    "job_count": 10
    },
    "lever:ataccama": {
     "provider": "lever",
@@ -9511,19 +9595,19 @@
     "provider": "lever",
     "company_slug": "athletetoathlete",
     "company": null,
-    "job_count": 2
+    "job_count": 4
    },
    "lever:atmosera": {
     "provider": "lever",
     "company_slug": "atmosera",
     "company": null,
-    "job_count": 10
+    "job_count": 11
    },
    "lever:atomcomputing": {
     "provider": "lever",
     "company_slug": "atomcomputing",
     "company": null,
-    "job_count": 23
+    "job_count": 26
    },
    "lever:atomi": {
     "provider": "lever",
@@ -9535,13 +9619,13 @@
     "provider": "lever",
     "company_slug": "attovia-therapeutics",
     "company": null,
-    "job_count": 5
+    "job_count": 4
    },
    "lever:audinate": {
     "provider": "lever",
     "company_slug": "audinate",
     "company": null,
-    "job_count": 6
+    "job_count": 8
    },
    "lever:aurora-dev": {
     "provider": "lever",
@@ -9559,7 +9643,7 @@
     "provider": "lever",
     "company_slug": "autofi",
     "company": null,
-    "job_count": 2
+    "job_count": 1
    },
    "lever:automatiq": {
     "provider": "lever",
@@ -9589,13 +9673,13 @@
     "provider": "lever",
     "company_slug": "avalerehealth",
     "company": null,
-    "job_count": 43
+    "job_count": 41
    },
    "lever:avante": {
     "provider": "lever",
     "company_slug": "avante",
     "company": null,
-    "job_count": 9
+    "job_count": 6
    },
    "lever:aventon": {
     "provider": "lever",
@@ -9607,7 +9691,7 @@
     "provider": "lever",
     "company_slug": "avertium",
     "company": null,
-    "job_count": 7
+    "job_count": 11
    },
    "lever:aviahealth": {
     "provider": "lever",
@@ -9619,13 +9703,13 @@
     "provider": "lever",
     "company_slug": "aviyatech",
     "company": null,
-    "job_count": 10
+    "job_count": 9
    },
    "lever:azul": {
     "provider": "lever",
     "company_slug": "azul",
     "company": null,
-    "job_count": 12
+    "job_count": 13
    },
    "lever:balbix": {
     "provider": "lever",
@@ -9637,13 +9721,13 @@
     "provider": "lever",
     "company_slug": "bamko",
     "company": null,
-    "job_count": 6
+    "job_count": 3
    },
    "lever:bannerbank": {
     "provider": "lever",
     "company_slug": "bannerbank",
     "company": null,
-    "job_count": 65
+    "job_count": 70
    },
    "lever:baoinc": {
     "provider": "lever",
@@ -9661,31 +9745,31 @@
     "provider": "lever",
     "company_slug": "baselane",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "lever:basis": {
     "provider": "lever",
     "company_slug": "basis",
     "company": null,
-    "job_count": 6
+    "job_count": 4
    },
    "lever:bazaarvoice": {
     "provider": "lever",
     "company_slug": "bazaarvoice",
     "company": null,
-    "job_count": 24
+    "job_count": 28
    },
    "lever:beautybarrage": {
     "provider": "lever",
     "company_slug": "beautybarrage",
     "company": null,
-    "job_count": 149
+    "job_count": 140
    },
    "lever:beaverprocess": {
     "provider": "lever",
     "company_slug": "beaverprocess",
     "company": null,
-    "job_count": 12
+    "job_count": 11
    },
    "lever:bedrockenergy": {
     "provider": "lever",
@@ -9697,13 +9781,13 @@
     "provider": "lever",
     "company_slug": "bee-talents",
     "company": null,
-    "job_count": 23
+    "job_count": 24
    },
    "lever:beedie": {
     "provider": "lever",
     "company_slug": "beedie",
     "company": null,
-    "job_count": 12
+    "job_count": 11
    },
    "lever:beegreen": {
     "provider": "lever",
@@ -9715,13 +9799,13 @@
     "provider": "lever",
     "company_slug": "beghouconsulting",
     "company": null,
-    "job_count": 72
+    "job_count": 75
    },
    "lever:bekk": {
     "provider": "lever",
     "company_slug": "bekk",
     "company": null,
-    "job_count": 22
+    "job_count": 21
    },
    "lever:belkins": {
     "provider": "lever",
@@ -9733,19 +9817,19 @@
     "provider": "lever",
     "company_slug": "bellese",
     "company": null,
-    "job_count": 11
+    "job_count": 7
    },
    "lever:bellotalabs": {
     "provider": "lever",
     "company_slug": "bellotalabs",
     "company": null,
-    "job_count": 11
+    "job_count": 10
    },
    "lever:bellwetheram-2": {
     "provider": "lever",
     "company_slug": "bellwetheram-2",
     "company": null,
-    "job_count": 19
+    "job_count": 22
    },
    "lever:belvederetrading": {
     "provider": "lever",
@@ -9769,37 +9853,37 @@
     "provider": "lever",
     "company_slug": "bespokepost",
     "company": null,
-    "job_count": 1
+    "job_count": 2
    },
    "lever:betr": {
     "provider": "lever",
     "company_slug": "betr",
     "company": null,
-    "job_count": 13
+    "job_count": 11
    },
    "lever:bfsaul": {
     "provider": "lever",
     "company_slug": "bfsaul",
     "company": null,
-    "job_count": 19
+    "job_count": 13
    },
    "lever:bfsaulhotels": {
     "provider": "lever",
     "company_slug": "bfsaulhotels",
     "company": null,
-    "job_count": 120
+    "job_count": 127
    },
    "lever:bhg-inc": {
     "provider": "lever",
     "company_slug": "bhg-inc",
     "company": null,
-    "job_count": 5
+    "job_count": 8
    },
    "lever:bhhc": {
     "provider": "lever",
     "company_slug": "bhhc",
     "company": null,
-    "job_count": 56
+    "job_count": 45
    },
    "lever:bhvr": {
     "provider": "lever",
@@ -9811,13 +9895,13 @@
     "provider": "lever",
     "company_slug": "bigblue",
     "company": null,
-    "job_count": 34
+    "job_count": 35
    },
    "lever:biggie": {
     "provider": "lever",
     "company_slug": "biggie",
     "company": null,
-    "job_count": 14
+    "job_count": 16
    },
    "lever:bighealth": {
     "provider": "lever",
@@ -9829,13 +9913,13 @@
     "provider": "lever",
     "company_slug": "binance",
     "company": null,
-    "job_count": 272
+    "job_count": 275
    },
    "lever:bioagilytix": {
     "provider": "lever",
     "company_slug": "bioagilytix",
     "company": null,
-    "job_count": 8
+    "job_count": 10
    },
    "lever:biodigital": {
     "provider": "lever",
@@ -9847,7 +9931,7 @@
     "provider": "lever",
     "company_slug": "biointellisense",
     "company": null,
-    "job_count": 4
+    "job_count": 3
    },
    "lever:biorender": {
     "provider": "lever",
@@ -9859,13 +9943,13 @@
     "provider": "lever",
     "company_slug": "bis",
     "company": null,
-    "job_count": 8
+    "job_count": 6
    },
    "lever:bisnow": {
     "provider": "lever",
     "company_slug": "bisnow",
     "company": null,
-    "job_count": 39
+    "job_count": 35
    },
    "lever:bkln": {
     "provider": "lever",
@@ -9877,13 +9961,13 @@
     "provider": "lever",
     "company_slug": "blablacar",
     "company": null,
-    "job_count": 15
+    "job_count": 10
    },
    "lever:blackbirdinteractive": {
     "provider": "lever",
     "company_slug": "blackbirdinteractive",
     "company": null,
-    "job_count": 20
+    "job_count": 16
    },
    "lever:blencorp": {
     "provider": "lever",
@@ -9895,25 +9979,25 @@
     "provider": "lever",
     "company_slug": "blinkux",
     "company": null,
-    "job_count": 6
+    "job_count": 3
    },
    "lever:blinq": {
     "provider": "lever",
     "company_slug": "blinq",
     "company": null,
-    "job_count": 6
+    "job_count": 5
    },
    "lever:bloom": {
     "provider": "lever",
     "company_slug": "bloom",
     "company": null,
-    "job_count": 8
+    "job_count": 10
    },
    "lever:bloomon": {
     "provider": "lever",
     "company_slug": "bloomon",
     "company": null,
-    "job_count": 10
+    "job_count": 11
    },
    "lever:bloomwellcare": {
     "provider": "lever",
@@ -9931,43 +10015,43 @@
     "provider": "lever",
     "company_slug": "bluebottlecoffee",
     "company": null,
-    "job_count": 64
+    "job_count": 62
    },
    "lever:bluecatnetworks": {
     "provider": "lever",
     "company_slug": "bluecatnetworks",
     "company": null,
-    "job_count": 12
+    "job_count": 18
    },
    "lever:bluecoding": {
     "provider": "lever",
     "company_slug": "bluecoding",
     "company": null,
-    "job_count": 1
+    "job_count": 3
    },
    "lever:blueengine": {
     "provider": "lever",
     "company_slug": "blueengine",
     "company": null,
-    "job_count": 1
+    "job_count": 8
    },
    "lever:blueland": {
     "provider": "lever",
     "company_slug": "blueland",
     "company": null,
-    "job_count": 5
+    "job_count": 6
    },
    "lever:bluelightconsulting": {
     "provider": "lever",
     "company_slug": "bluelightconsulting",
     "company": null,
-    "job_count": 715
+    "job_count": 816
    },
    "lever:bluesight": {
     "provider": "lever",
     "company_slug": "bluesight",
     "company": null,
-    "job_count": 7
+    "job_count": 11
    },
    "lever:bogaardgroup": {
     "provider": "lever",
@@ -9979,7 +10063,7 @@
     "provider": "lever",
     "company_slug": "bolster",
     "company": null,
-    "job_count": 2
+    "job_count": 3
    },
    "lever:boltjobs": {
     "provider": "lever",
@@ -9991,7 +10075,7 @@
     "provider": "lever",
     "company_slug": "bonedry",
     "company": null,
-    "job_count": 84
+    "job_count": 83
    },
    "lever:bosonai": {
     "provider": "lever",
@@ -10003,7 +10087,7 @@
     "provider": "lever",
     "company_slug": "boston-materials",
     "company": null,
-    "job_count": 9
+    "job_count": 11
    },
    "lever:bostonimaging": {
     "provider": "lever",
@@ -10015,7 +10099,7 @@
     "provider": "lever",
     "company_slug": "bounteous",
     "company": null,
-    "job_count": 29
+    "job_count": 23
    },
    "lever:boxbot": {
     "provider": "lever",
@@ -10027,19 +10111,19 @@
     "provider": "lever",
     "company_slug": "boxlunch",
     "company": null,
-    "job_count": 3588
+    "job_count": 3642
    },
    "lever:bpmcpa": {
     "provider": "lever",
     "company_slug": "bpmcpa",
     "company": null,
-    "job_count": 60
+    "job_count": 68
    },
    "lever:brafton": {
     "provider": "lever",
     "company_slug": "brafton",
     "company": null,
-    "job_count": 19
+    "job_count": 21
    },
    "lever:brainchildbio": {
     "provider": "lever",
@@ -10063,31 +10147,31 @@
     "provider": "lever",
     "company_slug": "brevo",
     "company": null,
-    "job_count": 19
+    "job_count": 18
    },
    "lever:bricknetworks": {
     "provider": "lever",
     "company_slug": "bricknetworks",
     "company": null,
-    "job_count": 22
+    "job_count": 24
    },
    "lever:brighte": {
     "provider": "lever",
     "company_slug": "brighte",
     "company": null,
-    "job_count": 3
+    "job_count": 4
    },
    "lever:brightedge": {
     "provider": "lever",
     "company_slug": "brightedge",
     "company": null,
-    "job_count": 23
+    "job_count": 24
    },
    "lever:brightmachines": {
     "provider": "lever",
     "company_slug": "brightmachines",
     "company": null,
-    "job_count": 14
+    "job_count": 12
    },
    "lever:brightonjones": {
     "provider": "lever",
@@ -10105,13 +10189,13 @@
     "provider": "lever",
     "company_slug": "brillio-2",
     "company": null,
-    "job_count": 112
+    "job_count": 123
    },
    "lever:brindleyengineering": {
     "provider": "lever",
     "company_slug": "brindleyengineering",
     "company": null,
-    "job_count": 22
+    "job_count": 23
    },
    "lever:britecore": {
     "provider": "lever",
@@ -10123,7 +10207,7 @@
     "provider": "lever",
     "company_slug": "brooksrunning",
     "company": null,
-    "job_count": 56
+    "job_count": 55
    },
    "lever:brotherhoodcrusade": {
     "provider": "lever",
@@ -10135,37 +10219,37 @@
     "provider": "lever",
     "company_slug": "buckmason",
     "company": null,
-    "job_count": 250
+    "job_count": 242
    },
    "lever:bumbleinc": {
     "provider": "lever",
     "company_slug": "bumbleinc",
     "company": null,
-    "job_count": 23
+    "job_count": 26
    },
    "lever:burga": {
     "provider": "lever",
     "company_slug": "burga",
     "company": null,
-    "job_count": 34
+    "job_count": 37
    },
    "lever:businesswire": {
     "provider": "lever",
     "company_slug": "businesswire",
     "company": null,
-    "job_count": 5
+    "job_count": 4
    },
    "lever:bv": {
     "provider": "lever",
     "company_slug": "bv",
     "company": null,
-    "job_count": 24
+    "job_count": 26
    },
    "lever:c12qe": {
     "provider": "lever",
     "company_slug": "c12qe",
     "company": null,
-    "job_count": 7
+    "job_count": 9
    },
    "lever:cabonorte": {
     "provider": "lever",
@@ -10195,7 +10279,7 @@
     "provider": "lever",
     "company_slug": "calstart",
     "company": null,
-    "job_count": 12
+    "job_count": 7
    },
    "lever:cambiumnetworks": {
     "provider": "lever",
@@ -10207,13 +10291,13 @@
     "provider": "lever",
     "company_slug": "campusworksinc",
     "company": null,
-    "job_count": 20
+    "job_count": 21
    },
    "lever:canarytechnologies": {
     "provider": "lever",
     "company_slug": "canarytechnologies",
     "company": null,
-    "job_count": 33
+    "job_count": 32
    },
    "lever:candlinspection": {
     "provider": "lever",
@@ -10255,7 +10339,7 @@
     "provider": "lever",
     "company_slug": "captivateiq",
     "company": null,
-    "job_count": 23
+    "job_count": 25
    },
    "lever:cardiologs": {
     "provider": "lever",
@@ -10267,7 +10351,7 @@
     "provider": "lever",
     "company_slug": "careernowbrands",
     "company": null,
-    "job_count": 1
+    "job_count": 2
    },
    "lever:carewest": {
     "provider": "lever",
@@ -10285,7 +10369,7 @@
     "provider": "lever",
     "company_slug": "carolinacenterforaba",
     "company": null,
-    "job_count": 52
+    "job_count": 49
    },
    "lever:cartrawler": {
     "provider": "lever",
@@ -10297,7 +10381,7 @@
     "provider": "lever",
     "company_slug": "carusoaffiliated",
     "company": null,
-    "job_count": 3
+    "job_count": 2
    },
    "lever:cascade-climate": {
     "provider": "lever",
@@ -10309,13 +10393,13 @@
     "provider": "lever",
     "company_slug": "caseware",
     "company": null,
-    "job_count": 46
+    "job_count": 47
    },
    "lever:caslservice": {
     "provider": "lever",
     "company_slug": "caslservice",
     "company": null,
-    "job_count": 7
+    "job_count": 6
    },
    "lever:catalist": {
     "provider": "lever",
@@ -10351,19 +10435,25 @@
     "provider": "lever",
     "company_slug": "celerion",
     "company": null,
-    "job_count": 33
+    "job_count": 32
+   },
+   "lever:bizlibrary": {
+    "provider": "lever",
+    "company_slug": "bizlibrary",
+    "company": null,
+    "job_count": 1
    },
    "teamtailor:nordicknotsab": {
     "provider": "teamtailor",
     "company_slug": "nordicknotsab",
     "company": "Nordic Knots AB",
-    "job_count": 15
+    "job_count": 19
    },
    "teamtailor:ictnordics": {
     "provider": "teamtailor",
     "company_slug": "ictnordics",
     "company": "ICT Nordics",
-    "job_count": 8
+    "job_count": 10
    },
    "teamtailor:nordtechgroup": {
     "provider": "teamtailor",
@@ -10375,96 +10465,123 @@
     "provider": "teamtailor",
     "company_slug": "polestar",
     "company": "Polestar",
-    "job_count": 27
+    "job_count": 24
    },
    "teamtailor:hemnet": {
     "provider": "teamtailor",
     "company_slug": "hemnet",
     "company": "Hemnet",
-    "job_count": 5
+    "job_count": 2
    },
    "teamtailor:mathem": {
     "provider": "teamtailor",
     "company_slug": "mathem",
     "company": "Mathem",
-    "job_count": 1
+    "job_count": 0
    }
   },
   "country_counts": {
-   "unresolved": 5824,
-   "PL": 281,
-   "NL": 307,
-   "IE": 169,
-   "DE": 724,
-   "GB": 2116,
-   "ES": 344,
-   "PT": 121,
+   "SG": 587,
+   "unresolved": 4674,
+   "PL": 285,
+   "NL": 319,
+   "IE": 166,
+   "DE": 727,
+   "GB": 2148,
+   "ES": 345,
+   "PT": 118,
    "BE": 86,
-   "FR": 686,
-   "AT": 51,
+   "FR": 687,
+   "AT": 52,
    "SE": 157,
    "IT": 129,
-   "RO": 40,
-   "US": 28730,
-   "CA": 1273,
-   "KR": 314,
-   "VN": 146,
-   "AR": 134,
-   "PH": 202,
-   "CN": 277,
-   "AU": 363,
-   "CH": 244,
-   "CO": 149,
-   "MX": 344,
-   "BR": 506,
-   "DK": 27,
-   "HK": 222,
-   "SG": 581,
-   "LT": 36,
-   "MY": 166,
+   "RO": 39,
+   "US": 29681,
+   "CA": 1304,
+   "KR": 338,
+   "VN": 138,
+   "AR": 143,
+   "CN": 274,
+   "AU": 369,
+   "CH": 243,
+   "CO": 163,
+   "MX": 395,
+   "PH": 221,
+   "SV": 31,
+   "BR": 612,
+   "DK": 29,
+   "HK": 230,
+   "LT": 40,
    "JP": 320,
-   "NZ": 86,
-   "AE": 190,
-   "CZ": 92,
+   "NZ": 84,
+   "MY": 162,
+   "AE": 178,
+   "CZ": 90,
    "MK": 5,
-   "EG": 36,
-   "RS": 14,
-   "IN": 1051,
-   "PE": 90,
-   "KE": 6,
-   "TH": 348,
-   "ZA": 96,
-   "IL": 56,
-   "GR": 30,
-   "TW": 204,
-   "TR": 36,
-   "ID": 141,
-   "HU": 52,
-   "CL": 62,
-   "PK": 20,
-   "SK": 11,
+   "EG": 34,
+   "RS": 15,
+   "IN": 1022,
+   "PE": 100,
+   "CR": 61,
+   "KE": 5,
+   "TH": 351,
+   "ZA": 98,
+   "IL": 53,
+   "GR": 31,
+   "KH": 2,
+   "TW": 199,
+   "TR": 35,
+   "ID": 146,
+   "HU": 55,
+   "CL": 69,
+   "PK": 19,
+   "SK": 10,
    "SI": 12,
-   "BG": 21,
-   "LU": 13,
-   "SA": 32,
-   "FI": 138,
-   "BD": 9,
-   "EE": 14,
-   "NO": 40,
-   "HR": 11,
+   "BG": 20,
+   "LU": 14,
+   "SA": 29,
+   "JM": 27,
+   "FI": 141,
+   "BD": 8,
+   "EE": 15,
+   "NO": 38,
+   "HR": 10,
+   "KW": 8,
    "MT": 4,
    "CY": 11,
-   "UA": 176,
+   "UA": 170,
    "LV": 5,
-   "KZ": 48,
-   "QA": 12,
-   "NP": 4,
-   "NG": 4,
+   "UY": 32,
+   "KZ": 50,
+   "EC": 29,
+   "DO": 3,
+   "ET": 1,
+   "NI": 37,
+   "BO": 46,
+   "HN": 28,
+   "QA": 10,
+   "OM": 1,
+   "NP": 5,
+   "NG": 3,
    "BA": 4,
+   "DZ": 7,
+   "UG": 2,
+   "TZ": 2,
+   "GH": 3,
+   "PY": 25,
    "IS": 1,
+   "CM": 1,
+   "ZM": 1,
+   "RW": 13,
    "MD": 11,
+   "MA": 18,
+   "GT": 28,
    "AZ": 1,
-   "LK": 1
+   "LK": 1,
+   "LA": 1,
+   "MM": 1,
+   "XK": 1,
+   "BH": 6
   }
  }
 }

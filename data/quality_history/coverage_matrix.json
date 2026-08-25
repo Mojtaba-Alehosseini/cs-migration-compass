@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T18:00:45.516916+00:00",
+  "generated_at": "2026-08-25T01:05:18.899527+00:00",
   "matrix": {
     "AE": {
       "comparable": true,
@@ -11,8 +11,8 @@
         "usd_regular_pay": false,
         "usd_total_earnings": false
       },
-      "postings_count": 190,
-      "postings_stated_pay_rate_pct": 1.1
+      "postings_count": 178,
+      "postings_stated_pay_rate_pct": 0.6
     },
     "AU": {
       "comparable": true,
@@ -24,8 +24,8 @@
         "usd_regular_pay": false,
         "usd_total_earnings": true
       },
-      "postings_count": 363,
-      "postings_stated_pay_rate_pct": 11.6
+      "postings_count": 369,
+      "postings_stated_pay_rate_pct": 11.1
     },
     "CA-21231": {
       "comparable": true,
@@ -37,8 +37,8 @@
         "usd_regular_pay": false,
         "usd_total_earnings": false
       },
-      "postings_count": 1273,
-      "postings_stated_pay_rate_pct": 31.8
+      "postings_count": 1304,
+      "postings_stated_pay_rate_pct": 29.9
     },
     "CA-21232": {
       "comparable": true,
@@ -50,8 +50,8 @@
         "usd_regular_pay": false,
         "usd_total_earnings": false
       },
-      "postings_count": 1273,
-      "postings_stated_pay_rate_pct": 31.8
+      "postings_count": 1304,
+      "postings_stated_pay_rate_pct": 29.9
     },
     "DE": {
       "comparable": true,
@@ -63,8 +63,8 @@
         "usd_regular_pay": true,
         "usd_total_earnings": true
       },
-      "postings_count": 724,
-      "postings_stated_pay_rate_pct": 15.9
+      "postings_count": 727,
+      "postings_stated_pay_rate_pct": 15.5
     },
     "DK": {
       "comparable": true,
@@ -76,8 +76,8 @@
         "usd_regular_pay": true,
         "usd_total_earnings": true
       },
-      "postings_count": 27,
-      "postings_stated_pay_rate_pct": 3.7
+      "postings_count": 29,
+      "postings_stated_pay_rate_pct": 3.4
     },
     "ES": {
       "comparable": true,
@@ -89,8 +89,8 @@
         "usd_regular_pay": false,
         "usd_total_earnings": true
       },
-      "postings_count": 344,
-      "postings_stated_pay_rate_pct": 12.8
+      "postings_count": 345,
+      "postings_stated_pay_rate_pct": 13.3
     },
     "FI": {
       "comparable": true,
@@ -102,8 +102,8 @@
         "usd_regular_pay": true,
         "usd_total_earnings": true
       },
-      "postings_count": 138,
-      "postings_stated_pay_rate_pct": 5.8
+      "postings_count": 141,
+      "postings_stated_pay_rate_pct": 5.7
     },
     "GB": {
       "comparable": true,
@@ -115,8 +115,8 @@
         "usd_regular_pay": false,
         "usd_total_earnings": true
       },
-      "postings_count": 2116,
-      "postings_stated_pay_rate_pct": 16.4
+      "postings_count": 2148,
+      "postings_stated_pay_rate_pct": 15.9
     },
     "IE": {
       "comparable": true,
@@ -128,16 +128,16 @@
         "usd_regular_pay": true,
         "usd_total_earnings": false
       },
-      "postings_count": 169,
-      "postings_stated_pay_rate_pct": 11.2
+      "postings_count": 166,
+      "postings_stated_pay_rate_pct": 10.8
     },
     "NL": {
       "comparable": false,
       "experience_cross": false,
       "occupation_depth": null,
       "pay_basis_if_comparable": {},
-      "postings_count": 307,
-      "postings_stated_pay_rate_pct": 12.1
+      "postings_count": 319,
+      "postings_stated_pay_rate_pct": 11.9
     },
     "NO": {
       "comparable": true,
@@ -149,8 +149,8 @@
         "usd_regular_pay": true,
         "usd_total_earnings": true
       },
-      "postings_count": 40,
-      "postings_stated_pay_rate_pct": 2.5
+      "postings_count": 38,
+      "postings_stated_pay_rate_pct": 2.6
     },
     "QA": {
       "comparable": true,
@@ -162,8 +162,8 @@
         "usd_regular_pay": false,
         "usd_total_earnings": false
       },
-      "postings_count": 12,
-      "postings_stated_pay_rate_pct": 16.7
+      "postings_count": 10,
+      "postings_stated_pay_rate_pct": 20.0
     },
     "SE": {
       "comparable": true,
@@ -188,8 +188,8 @@
         "usd_regular_pay": true,
         "usd_total_earnings": false
       },
-      "postings_count": 28730,
-      "postings_stated_pay_rate_pct": 46.1
+      "postings_count": 29681,
+      "postings_stated_pay_rate_pct": 46.3
     }
   }
 }

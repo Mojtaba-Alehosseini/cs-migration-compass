@@ -1,131 +1,195 @@
 {
  "schema": "package-15 dedupe evaluation v1",
- "n_postings": 48267,
+ "n_postings": 48758,
  "normalised_exact": {
-  "groups": 2258,
-  "removable": 2702,
-  "removable_pct": 5.598
+  "groups": 2319,
+  "removable": 2750,
+  "removable_pct": 5.64
  },
  "near_duplicate": {
   "threshold": 0.98,
-  "clusters": 2384,
-  "removable": 2884,
-  "removable_pct": 5.975
+  "clusters": 2438,
+  "removable": 2922,
+  "removable_pct": 5.993
  },
  "threshold_tuning": [
   {
    "threshold": 0.7,
-   "tp": 32,
-   "fp": 71,
+   "tp": 31,
+   "fp": 64,
    "fn": 0,
-   "precision": 0.3107,
+   "precision": 0.3263,
    "recall": 1.0,
-   "f1": 0.4741,
-   "precision_reweighted": 0.2318,
+   "f1": 0.4921,
+   "precision_reweighted": 0.2303,
    "recall_reweighted": 1.0,
-   "f1_reweighted": 0.3763
+   "f1_reweighted": 0.3743
   },
   {
    "threshold": 0.75,
-   "tp": 32,
-   "fp": 58,
-   "fn": 0,
-   "precision": 0.3556,
-   "recall": 1.0,
-   "f1": 0.5246,
-   "precision_reweighted": 0.3013,
-   "recall_reweighted": 1.0,
-   "f1_reweighted": 0.463
+   "tp": 30,
+   "fp": 56,
+   "fn": 1,
+   "precision": 0.3488,
+   "recall": 0.9677,
+   "f1": 0.5128,
+   "precision_reweighted": 0.2627,
+   "recall_reweighted": 0.9277,
+   "f1_reweighted": 0.4094
   },
   {
    "threshold": 0.8,
-   "tp": 30,
-   "fp": 48,
+   "tp": 29,
+   "fp": 42,
    "fn": 2,
-   "precision": 0.3846,
-   "recall": 0.9375,
-   "f1": 0.5455,
-   "precision_reweighted": 0.342,
-   "recall_reweighted": 0.8764,
-   "f1_reweighted": 0.492
+   "precision": 0.4085,
+   "recall": 0.9355,
+   "f1": 0.5686,
+   "precision_reweighted": 0.3629,
+   "recall_reweighted": 0.8555,
+   "f1_reweighted": 0.5096
   },
   {
    "threshold": 0.85,
-   "tp": 30,
-   "fp": 34,
+   "tp": 29,
+   "fp": 31,
    "fn": 2,
-   "precision": 0.4688,
-   "recall": 0.9375,
-   "f1": 0.625,
-   "precision_reweighted": 0.4819,
-   "recall_reweighted": 0.8764,
-   "f1_reweighted": 0.6219
+   "precision": 0.4833,
+   "recall": 0.9355,
+   "f1": 0.6374,
+   "precision_reweighted": 0.4932,
+   "recall_reweighted": 0.8555,
+   "f1_reweighted": 0.6257
   },
   {
    "threshold": 0.9,
-   "tp": 27,
-   "fp": 23,
+   "tp": 26,
+   "fp": 22,
    "fn": 5,
-   "precision": 0.54,
-   "recall": 0.8438,
-   "f1": 0.6585,
-   "precision_reweighted": 0.5967,
-   "recall_reweighted": 0.7595,
-   "f1_reweighted": 0.6683
+   "precision": 0.5417,
+   "recall": 0.8387,
+   "f1": 0.6582,
+   "precision_reweighted": 0.5926,
+   "recall_reweighted": 0.7297,
+   "f1_reweighted": 0.6541
   },
   {
    "threshold": 0.95,
-   "tp": 24,
+   "tp": 23,
    "fp": 8,
    "fn": 8,
-   "precision": 0.75,
-   "recall": 0.75,
-   "f1": 0.75,
-   "precision_reweighted": 0.8029,
-   "recall_reweighted": 0.6986,
-   "f1_reweighted": 0.7471
+   "precision": 0.7419,
+   "recall": 0.7419,
+   "f1": 0.7419,
+   "precision_reweighted": 0.7949,
+   "recall_reweighted": 0.6684,
+   "f1_reweighted": 0.7262
   },
   {
    "threshold": 0.98,
-   "tp": 23,
+   "tp": 22,
    "fp": 1,
    "fn": 9,
-   "precision": 0.9583,
-   "recall": 0.7188,
-   "f1": 0.8214,
-   "precision_reweighted": 0.9583,
-   "recall_reweighted": 0.6783,
-   "f1_reweighted": 0.7944
+   "precision": 0.9565,
+   "recall": 0.7097,
+   "f1": 0.8148,
+   "precision_reweighted": 0.9565,
+   "recall_reweighted": 0.6479,
+   "f1_reweighted": 0.7726
   }
  ],
- "tuned_on_n_pairs": 120,
- "tuned_on": "120 labelled pairs surviving this corpus of 120 labelled",
- "stratified_sample_disclosure": "the labelled pairs are 24 per cosine band by design (120 in total); 120 of them survive THIS corpus and every figure in threshold_tuning is computed on those. They are not a random sample of candidate pairs. 'precision'/'recall' are the figures ON THAT SAMPLE and are what the threshold was tuned on. '*_reweighted' rescales each labelled pair by its band's population/sample ratio and estimates what the de-duplicator achieves over all candidate pairs. At the shipped threshold precision is identical -- every true and false positive falls in the top band -- but recall is LOWER reweighted, because the misses sit in bands the sample deliberately over-represents. Quote the reweighted recall for the de-duplicator's real behaviour.",
+ "tuned_on_n_pairs": 109,
+ "tuned_on": "109 labelled pairs surviving this corpus of 120 labelled",
+ "stratified_sample_disclosure": "the labelled pairs are 24 per cosine band by design (120 in total); 109 of them survive THIS corpus and every figure in threshold_tuning is computed on those. They are not a random sample of candidate pairs. 'precision'/'recall' are the figures ON THAT SAMPLE and are what the threshold was tuned on. '*_reweighted' rescales each labelled pair by its band's population/sample ratio and estimates what the de-duplicator achieves over all candidate pairs. At the shipped threshold precision is identical -- every true and false positive falls in the top band -- but recall is LOWER reweighted, because the misses sit in bands the sample deliberately over-represents. Quote the reweighted recall for the de-duplicator's real behaviour.",
  "labelled_pairs": 120,
  "label_corpus_integrity": {
   "keyed_by": "(id, occurrence)",
   "n_pairs_labelled": 120,
-  "n_pairs_surviving": 120,
-  "n_expired_endpoints": 0,
-  "n_edited_endpoints": 0,
-  "edited_share_of_resolved": 0.0,
+  "n_pairs_surviving": 109,
+  "n_expired_endpoints": 11,
+  "n_edited_endpoints": 3,
+  "edited_share_of_resolved": 0.01357,
   "edited_ceiling": 0.25,
-  "edited_examples": [],
-  "corpus_size_now": 48267,
+  "edited_examples": [
+   {
+    "k": 10,
+    "side": "b",
+    "id": "ashby:hinge-health:b7e7a706-2ac2-4ad1-adec-5c8550e2d01e",
+    "index_now": 17123,
+    "labelled_as": "Sr. Product Designer, New Programs  @ hinge-health / San Francisco-HQ",
+    "now": "Staff Product Designer, New Programs  @ hinge-health / San Francisco-HQ",
+    "company_changed": false
+   },
+   {
+    "k": 113,
+    "side": "a",
+    "id": "usajobs:463223300",
+    "index_now": 44815,
+    "labelled_as": "Information Technology Specialist @ Air Force Personnel Center / Andrews AFB, Maryland",
+    "now": "Information Technology Specialist @ Air Force Personnel Center / Hanscom AFB, Massachusetts",
+    "company_changed": true
+   },
+   {
+    "k": 113,
+    "side": "b",
+    "id": "usajobs:463560400",
+    "index_now": 44864,
+    "labelled_as": "Information Technology Specialist @ Air Force Personnel Center / Andrews AFB, Maryland",
+    "now": "Information Technology Specialist @ Air Force Personnel Center / Linthicum Heights, Maryland",
+    "company_changed": true
+   }
+  ],
+  "corpus_size_now": 48758,
   "per_band_surviving": {
-   "0": 24,
-   "1": 24,
-   "2": 24,
-   "3": 24,
-   "4": 24
+   "0": 21,
+   "1": 20,
+   "2": 22,
+   "3": 23,
+   "4": 23
   },
-  "same_job_true": 32,
-  "same_job_false": 88,
+  "same_job_true": 31,
+  "same_job_false": 78,
   "floor": {
    "per_band": 12,
    "per_class": 12
   },
-  "expired_examples": [],
+  "expired_examples": [
+   {
+    "k": 6,
+    "side": "b",
+    "id": "ashby:alan:cd5ce637-e6a3-4744-b851-7adf9ed199a9",
+    "occurrence": 0,
+    "rows_with_that_id_now": 0
+   },
+   {
+    "k": 14,
+    "side": "a",
+    "id": "greenhouse:alfredbeneschco:4971330007",
+    "occurrence": 0,
+    "rows_with_that_id_now": 0
+   },
+   {
+    "k": 26,
+    "side": "a",
+    "id": "greenhouse:anaplan:8636271002",
+    "occurrence": 0,
+    "rows_with_that_id_now": 0
+   },
+   {
+    "k": 26,
+    "side": "b",
+    "id": "greenhouse:anaplan:8634033002",
+    "occurrence": 0,
+    "rows_with_that_id_now": 0
+   },
+   {
+    "k": 29,
+    "side": "a",
+    "id": "lever:21hhs:b090046c-f091-4b6a-bba9-456fb46ea1a9",
+    "occurrence": 0,
+    "rows_with_that_id_now": 0
+   }
+  ],
   "valid": true
  },
  "recall_ceilings": {
@@ -133,15 +197,15 @@
   "oversized_blocks_skipped": [
    {
     "company": "bjakcareer",
-    "distinct_keys": 1355
+    "distinct_keys": 1423
    },
    {
     "company": "anduril industries",
-    "distinct_keys": 2110
+    "distinct_keys": 2131
    },
    {
     "company": "boxlunch",
-    "distinct_keys": 2486
+    "distinct_keys": 2521
    }
   ],
   "labelled_pairs_not_directly_compared": "15 of the 120 labelled pairs are emitted as no candidate pair in either orientation, and 38 involve a posting that is not its key group's representative. They are still scored, because the table above evaluates cluster co-membership, which is what the script ships.",
