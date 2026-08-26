@@ -1,8 +1,10 @@
 # Data fitness for purpose
 
-_Packages 15 and 16. For every claim the site makes on screen: what the evidence actually
+_Packages 15, 16 and 19. For every claim the site makes on screen: what the evidence actually
 supports, at what precision, and — where it falls short — the corrected form. Package 15 measured;
-package 16 applied the corrections and swept the datasets package 15 never reached (§10)._
+package 16 applied the corrections and swept the datasets package 15 never reached (§10); package 19
+fixed the PDF extraction defect §10 had already found in `wipo_gii` and swept every other document-
+or web-page-derived source for the same class of failure (§11)._
 
 This is not a validation report. `make validate` and `make audit` already answer "is this value
 legal?". This answers a different question: **is the data fit for the claim the page makes on it?**
@@ -494,7 +496,7 @@ design and is recorded here so it is never mistaken for a defect:
 | `eurostat_total_employment` | 9/15 | **Correct.** Eurostat covers the EU/EEA; AE, AU, CA, QA, US are out of scope and GB left after Brexit. |
 | `oecd_indicators`, `oecd_economic_outlook`, `wikipedia_english_speakers` | 13/15 | **Correct.** AE and QA are not OECD members. |
 | `mipex` | 9/15 | **Correct.** MIPEX publishes a fixed country set; AE, AU, GB, NO, QA and US are not in it. |
-| `wipo_gii` | 13/15 | **A real gap, already disclosed, now diagnosed.** US and NL are in the Global Innovation Index but missing here. The cause is visible in the stored `source_line`: the source PDF prints *two countries per line* ("23 Australia 48.1 22 6 90 Cabo Verde 22.3 13 4") and the extractor reads only the first. Not fixed — there is no cached raw and re-fetching a PDF for two index values is out of proportion — but it is an extraction bug, not an absence in the source. |
+| `wipo_gii` | 15/15 (was 13/15) | **Fixed, package 19.** US and NL were in the Global Innovation Index but missing here because the extractor flattened the PDF's page to text, which interleaves side-by-side columns onto one line ("23 Australia 48.1 22 6 90 Cabo Verde 22.3 13 4") and reads only the first country on it. Re-extracted from the PDF's own word geometry instead of flattened text (`pdf_table.py`); every one of the publication's 139 rows is now parsed and self-checked against the publisher's own row count, range and rank sequence. See `REPORT-P19.md`. |
 | `climate_normals` | 21/73 cities | Partial by construction; the fetch is rate-limited and was never completed. |
 | `bls_oews`, `indeed_hiring_lab_job_postings` | 30/73 cities | **Correct.** Both are US-only sources. |
 | `levels_fyi` | 63/73 cities | Ten cities hold too few self-reports to publish a band; each records its own `unavailable_reason`. |
@@ -506,3 +508,119 @@ Two datasets are *forecasts*, not stale data: `un_wpp` runs to 2100 and
 observation (`validate_data.py`'s own forecast check) and this sweep confirms
 nothing else projects past its generation year. Everything else sits within two
 years of when it was generated.
+
+---
+
+## 11. Document- and web-page-derived sources — extraction method and failure mode
+
+Package 19. Every other source in this pipeline reads a stable, structured format — a JSON or CSV
+API keyed by field name, robust to the publisher reordering columns. Five sources instead read a
+PDF's visual layout, an HTML page's rendered structure, or (one case) a human's own reading of a
+page — which makes them fragile in a way nothing else here is: the extractor can keep running, keep
+returning HTTP 200, and still silently misread what changed. This section states each one's method,
+its specific failure mode, and what protects against it today.
+
+### `wipo_gii`, `ef_epi` — PDF column-table layout (fixed this package)
+
+Covered in full above (§0 of `REPORT-P19.md`, and the corrected `wipo_gii` row in §10's coverage
+table). Both extractors were reading `page.extract_text()`, which flattens side-by-side PDF columns
+onto one interleaved line — losing the US and the Netherlands from `wipo_gii` outright and gluing
+EF EPI's rank onto the country name with no space to split on. Rewritten to parse word geometry
+(`pdf_table.py`) and to extract the FULL published table (139 rows / 123 rows) so it validates
+itself against the publisher's own row count, range and rank sequence — see
+`audit_data.py`'s `check_full_table_self_consistency()`.
+
+### `numbeo_history` — live HTML table scrape (made self-checking this package)
+
+**Method.** BeautifulSoup selects Numbeo's country cost-of-living ranking table (`id` matching
+`t2`/`rankings`, or `class="stripe"` as a fallback) from `rankings_by_country.jsp?title=<year>`,
+reads column headers from `<thead>`, and matches each `<tbody>` row's first three cells against our
+15 ISO2 codes.
+
+**Failure mode.** Two distinct ways a layout change breaks this silently: the selector stops
+matching the real table at all (previously returned an empty dict with no warning — indistinguishable
+from "no data this year"); or the selector matches something, but a redesign shrinks or restructures
+the table (a "top 5" widget, a partial paywalled table, a split-by-region layout) — every row still
+"successfully" parses, just from the wrong table.
+
+**What protects against it now.** `country_year()` reports the table's TOTAL row count, not just
+rows matching our 15 countries. Numbeo's country ranking has covered 130+ countries for years
+(115-155 across the 12 years this pipeline actually fetched, checked while writing this); a table
+that still matches the selector but returns fewer than 50 rows is recorded in `table_shape_warnings`
+even in a year where every one of our countries still happens to resolve. This is the Tier 2
+principle applied in the coarser form the source allows: Numbeo does not publish a fixed country
+count to check an exact row count against the way WIPO and EF do, so the check is a plausibility
+floor on the table's own shape rather than an exact match. See
+`scripts/tests/test_package19_numbeo_shape_check.py` for the constructed-violation proof (a
+shrunken table is flagged; a normal one is not).
+
+**What a failure would look like today.** A `!! country <year>: table selector matched but only N
+row(s) found` log line, `table_shape_warnings` non-empty in `data/processed/numbeo_history.json`'s
+`meta`, and — per source — fewer countries resolved that year. Visible, not silent.
+
+**Not covered, named rather than fixed.** The header-to-value mapping is still positional
+(`headers[i]` paired with `cells[i]`) — a column that changes MEANING without changing its header
+text would not be caught by any check here or anywhere else in this pipeline. There is no
+independent second source for this table to check the mapping against.
+
+### `wikipedia_english_speakers` — live HTML table scrape (not self-checkable; named plainly)
+
+**Method.** BeautifulSoup scans every `table.wikitable` on one Wikipedia article whose header
+mentions "english", takes the first cell as the country name, and takes the first percentage or
+first large integer found anywhere else in the row.
+
+**Failure mode.** The "first number in the row" heuristic is the same shape of bug this whole
+package was written to fix in the PDFs: if the article gains a new leading column (e.g. a
+population column ahead of the percentage column), or a second, unrelated table also matches the
+"mentions english" filter, a value from the wrong column or the wrong table would be read as this
+country's figure — with no exception and no output that looks obviously wrong, just a plausible
+number that is not the right one.
+
+**Why this is not made self-checking.** Tier 2's principle needs a publisher-stated total to check
+the extracted row count against. This page is a single snapshot with no analogous headline figure —
+there is no "N countries" to validate a count against, and the underlying numbers are already
+mixed-vintage national censuses the article itself never reconciles into one table with a stated
+total. The existing `snapshot_only` flag and vintage caveat are the honest handling already in
+place; this package adds no new check here because nothing about the source is shaped like the PDF
+tables' self-validating structure. Said plainly rather than forcing a check that would not mean
+anything: this is the work order's own explicit case for naming a weakness instead of manufacturing
+a fix for it.
+
+**What a failure would look like.** A plausible but wrong percentage or count for one or more
+countries, undetectable by this pipeline's existing checks unless the value happens to also fail
+`audit_data.py`'s general magnitude-plausibility band. Spot-checking against the live article is the
+only real defence today.
+
+### `levels_fyi` — not live-scraped; a one-time human capture, a different fragility entirely
+
+**Method.** levels.fyi's metro pages are JavaScript-rendered, so nothing in this pipeline fetches
+them automatically. A human read the site in a real browser and saved the values verbatim into
+`data/raw/levels_fyi/capture_2026-08-04.json`, which is committed to the repo as an explicit
+exception to the "`data/raw/` is a disposable cache" rule (see `.gitignore`'s own comment on that
+exception). `src_levels_fyi.py` only does the deterministic part — FX conversion and reshaping into
+`cities.json` — against that static file.
+
+**Failure mode.** Not a layout-change risk at all, since there is no live parse left to break. The
+real risk is staleness with no automatic re-fetch: the capture is a snapshot from one date, and if
+levels.fyi's published bands move, nothing in this pipeline notices until a human re-captures by
+hand. This is a fundamentally different failure mode from the three sources above and should not be
+described the same way.
+
+**What protects against it now.** `audit_data.py`'s `check_refresh_intervals()` already checks every
+`data/provenance.json` entry, including this one, against an expected refresh interval generically —
+this is not a new gap Tier 4 needs to close, just one worth naming so "not scraped" is not mistaken
+for "cannot go stale".
+
+**What a failure would look like.** No error, no warning from any layout check — `check_refresh_
+intervals()` flagging the entry as past its expected interval is the only signal that would ever
+fire.
+
+### Summary
+
+| Source | Method | Self-checkable (Tier 2 principle)? | Status after package 19 |
+|---|---|---|---|
+| `wipo_gii` | PDF column-table layout | Yes — full 139-row table validated against the publisher's own count, range and rank sequence | Fixed & self-checking |
+| `ef_epi` | PDF column-table layout | Yes — full 123-row table validated the same way | Fixed & self-checking |
+| `numbeo_history` | Live HTML table scrape | Partial — row-count floor; no exact published total exists to match | Made self-checking (coarse) |
+| `wikipedia_english_speakers` | Live HTML table scrape | No — no publisher-stated total exists | Named plainly, not fixable this way |
+| `levels_fyi` | One-time human browser capture | N/A — not a live parse | Staleness already covered generically; not a layout risk |

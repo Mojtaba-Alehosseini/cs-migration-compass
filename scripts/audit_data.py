@@ -37,6 +37,10 @@ does not do:
   * every data/provenance.json entry is checked against an expected refresh
     interval and reported (not failed — see check_refresh_intervals's own
     docstring) if stale
+  * a source that extracts a PDF's ENTIRE ranking table (meta.full_table)
+    matches the publisher's own row count, its own stated range, and a
+    complete tie-aware rank sequence — generic over any source shaped this
+    way, see check_full_table_self_consistency()
 
 Exit code 1 on any ERROR. Warnings/flags are reported but do not fail the
 build — matching validate_data.py's own severity split.
@@ -1056,6 +1060,84 @@ def check_postings_annualised_plausibility(processed_dir: Path = PROCESSED) -> N
         f"conversion available (unmapped currency or no FX rate for that year — not counted either way)")
 
 
+def check_full_table_self_consistency(processed_dir: Path = PROCESSED) -> None:
+    """Package 19 -- a source that extracts a PDF's ENTIRE ranking table (not
+    just our 15 countries), like ef_epi.json and wipo_gii.json, can validate
+    itself against the publication's own structure instead of trusting the
+    parse blind. A source opts in by carrying meta.full_table (every row)
+    and meta.full_table_stats (published_total, range) -- see
+    src_pdf_indices.py. Generic over any source shaped this way, not a
+    one-off check tied to these two files.
+
+    Four checks:
+      * row count matches what the publisher itself states;
+      * every score falls inside the publisher's own stated range;
+      * the rank sequence is complete and tie-aware -- competition ranking
+        (1, 2, 2, 4, ...) is how these tables are actually published, so a
+        rank that repeats with the SAME score is a legitimate tie and the
+        next distinct rank is expected to skip accordingly, never an error.
+        Package 18 wasted a whole check on exactly this mistake, flagging
+        Sweden and Australia's identical 7.284 as if it were a defect;
+      * a rank that repeats with a DIFFERENT score is not a tie -- it is two
+        rows read as the same rank -- and IS an error.
+    """
+    log("· a full extracted PDF table (meta.full_table) matches the publisher's own row count, "
+        "range and rank sequence — ties allowed, conflicts are not")
+    sources_checked = 0
+    for path in sorted(processed_dir.glob("*.json")):
+        doc = _load(path)
+        if not doc:
+            continue
+        meta = doc.get("meta") or {}
+        table = meta.get("full_table")
+        stats = meta.get("full_table_stats")
+        if not table or not stats:
+            continue
+        sources_checked += 1
+        source = path.name
+
+        rows = sorted(
+            ((r["rank"], r["name"], r["score"]) for r in table if "rank" in r and "score" in r),
+            key=lambda r: r[0],
+        )
+
+        expected_total = stats.get("published_total")
+        if expected_total is not None and len(rows) != expected_total:
+            err(f"{source}: full_table has {len(rows)} rows, publisher states {expected_total}")
+
+        rng = stats.get("range")
+        if rng and len(rng) == 2:
+            lo, hi = rng
+            for rank, name, score in rows:
+                if not (lo <= score <= hi):
+                    err(f"{source}: {name!r} (rank {rank}) score {score} is outside the "
+                        f"publisher's own range [{lo}, {hi}]")
+
+        by_rank: dict[int, list[tuple[int, str, float]]] = {}
+        for r in rows:
+            by_rank.setdefault(r[0], []).append(r)
+
+        expected_next = 1
+        for rank in sorted(by_rank):
+            entries = by_rank[rank]
+            distinct_scores = {round(e[2], 6) for e in entries}
+            if len(distinct_scores) > 1:
+                err(f"{source}: rank {rank} has conflicting scores {sorted(distinct_scores)} across "
+                    f"{[e[1] for e in entries]} — not a tie, a parse conflict")
+            if rank != expected_next:
+                err(f"{source}: rank sequence gap — expected {expected_next}, found {rank}")
+            expected_next = rank + len(entries)
+
+        prev_rank = prev_score = None
+        for rank, name, score in rows:
+            if prev_score is not None and rank != prev_rank and score > prev_score + 1e-9:
+                err(f"{source}: {name!r} (rank {rank}, score {score}) scores higher than "
+                    f"rank {prev_rank}'s {prev_score} — ranking is not monotonic")
+            prev_rank, prev_score = rank, score
+
+    log(f"  {sources_checked} source(s) with a self-checking full table")
+
+
 # ---------------------------------------------------------------------------
 
 def main() -> int:
@@ -1073,6 +1155,7 @@ def main() -> int:
     check_postings_merge_is_current()
     check_oecd_wage_benchmark()
     check_postings_annualised_plausibility()
+    check_full_table_self_consistency()
 
     log("")
     if FLAGS:

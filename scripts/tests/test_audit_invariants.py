@@ -24,8 +24,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import audit_data as ad  # noqa: E402
 
 
-def _envelope(source_id: str, data: dict) -> dict:
-    return {"source_id": source_id, "generated_at": "2026-01-01T00:00:00Z", "meta": {}, "data": data}
+def _envelope(source_id: str, data: dict, meta: dict | None = None) -> dict:
+    return {"source_id": source_id, "generated_at": "2026-01-01T00:00:00Z", "meta": meta or {}, "data": data}
 
 
 class AuditInvariantTestCase(unittest.TestCase):
@@ -37,8 +37,9 @@ class AuditInvariantTestCase(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmp, ignore_errors=True)
 
-    def _write(self, name: str, source_id: str, data: dict) -> None:
-        (self.tmp / f"{name}.json").write_text(json.dumps(_envelope(source_id, data)), encoding="utf-8")
+    def _write(self, name: str, source_id: str, data: dict, meta: dict | None = None) -> None:
+        (self.tmp / f"{name}.json").write_text(
+            json.dumps(_envelope(source_id, data, meta)), encoding="utf-8")
 
 
 class TestPercentilesMonotonic(AuditInvariantTestCase):
@@ -430,6 +431,70 @@ class TestPostingsAnnualisedPlausibility(AuditInvariantTestCase):
         }])
         ad.check_postings_annualised_plausibility(self.tmp)
         self.assertEqual(ad.FLAGS, [])
+
+
+def _full_table_meta(rows: list[tuple[int, str, float]], *, published_total: int,
+                      rng: tuple[float, float] = (0.0, 100.0)) -> dict:
+    return {
+        "full_table": [{"rank": r, "name": n, "score": s} for r, n, s in rows],
+        "full_table_stats": {"published_total": published_total, "range": list(rng)},
+    }
+
+
+class TestFullTableSelfConsistency(AuditInvariantTestCase):
+    """Package 19, Tier 5 gate 4 evidence — each test below is the constructed
+    violation named in check_full_table_self_consistency's own docstring,
+    plus the tie case it exists specifically to NOT flag (package 18's own
+    mistake, made generic and regression-tested here)."""
+
+    CLEAN = [(1, "Alpha", 90.0), (2, "Beta", 80.0), (3, "Gamma", 70.0)]
+
+    def test_passes_on_a_clean_complete_table(self):
+        self._write("good", "good", {}, meta=_full_table_meta(self.CLEAN, published_total=3))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertEqual(ad.ERRORS, [])
+
+    def test_a_legitimate_tie_is_not_flagged(self):
+        rows = [(1, "Alpha", 90.0), (2, "Beta", 80.0), (2, "Gamma", 80.0), (4, "Delta", 70.0)]
+        self._write("good", "good", {}, meta=_full_table_meta(rows, published_total=4))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertEqual(ad.ERRORS, [])
+
+    def test_fails_on_row_count_not_matching_published_total(self):
+        self._write("bad", "bad", {}, meta=_full_table_meta(self.CLEAN, published_total=4))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("publisher states 4" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_fails_on_a_score_outside_the_published_range(self):
+        rows = [(1, "Alpha", 999.0), (2, "Beta", 80.0)]
+        self._write("bad", "bad", {}, meta=_full_table_meta(rows, published_total=2))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("outside the publisher's own range" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_fails_on_an_unexplained_rank_gap(self):
+        rows = [(1, "Alpha", 90.0), (3, "Gamma", 70.0)]  # rank 2 missing, no tie explains it
+        self._write("bad", "bad", {}, meta=_full_table_meta(rows, published_total=2))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("rank sequence gap" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_fails_on_the_same_rank_with_two_different_scores(self):
+        # Not a tie -- a tie shares a score. Two different scores at one rank
+        # is two rows misread as the same rank.
+        rows = [(1, "Alpha", 90.0), (2, "Beta", 80.0), (2, "Gamma", 75.0)]
+        self._write("bad", "bad", {}, meta=_full_table_meta(rows, published_total=3))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("not a tie, a parse conflict" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_fails_on_a_monotonicity_inversion(self):
+        rows = [(1, "Alpha", 70.0), (2, "Beta", 90.0)]  # worse rank, higher score
+        self._write("bad", "bad", {}, meta=_full_table_meta(rows, published_total=2))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("ranking is not monotonic" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_a_source_without_full_table_is_skipped_not_crashed(self):
+        self._write("plain", "plain", {"AU": {"score": 1}})  # no meta.full_table at all
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertEqual(ad.ERRORS, [])
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 {
  "source_id": "numbeo_history",
- "generated_at": "2026-08-04T19:54:24+00:00",
+ "generated_at": "2026-08-26T04:59:43+00:00",
  "meta": {
   "confidence": "crowd",
   "level": "country + city",
@@ -96,7 +96,8 @@
   "city_history_probe": "Probe returned navigation chrome only: Numbeo renders city price history client-side, so no year/value pairs exist in the served HTML (?itemId has no effect). No per-city crawl was performed.",
   "crowd_caveat": "Numbeo is crowd-sourced. Solid for large cities, thin for small ones (Halifax, Aarhus, Tampere, Gold Coast, Detroit are known-thin in this dataset). Indices are relative to Numbeo's own base, so compare shape, not absolute level.",
   "city_fallback_rule": "Cities with no usable history are listed above. Where the UI substitutes a country trend for them it must say 'city estimate = current value x country trend'.",
-  "failures": []
+  "failures": [],
+  "table_shape_warnings": []
  },
  "data": {
   "by_country_year": {

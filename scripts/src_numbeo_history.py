@@ -33,6 +33,16 @@ CITY_URL = "https://www.numbeo.com/cost-of-living/city-history/in/{slug}"
 YEARS = list(range(2015, 2027))
 DELAY = 1.5  # seconds between requests — be a good citizen
 
+# Numbeo's country cost-of-living ranking has covered 130+ countries for
+# years. A page that still matches our table selector but returns far fewer
+# rows means the table's SHAPE changed (a redesign, a split table, a new
+# grouping row) even though nothing raised an exception -- exactly the kind
+# of silent failure package 19 exists to stop shipping (see pdf_table.py).
+# Not tuned to Numbeo's exact current count on purpose: this is a floor for
+# "the selector found something, but not a real rankings table", not a
+# tight bound on ordinary year-to-year coverage change.
+MIN_PLAUSIBLE_ROWS = 50
+
 
 def _f(t: str) -> float | None:
     t = (t or "").strip().replace(",", "")
@@ -42,15 +52,20 @@ def _f(t: str) -> float | None:
         return None
 
 
-def country_year(year: int) -> dict[str, dict]:
+def country_year(year: int) -> tuple[dict[str, dict], int]:
+    """Returns (our 15 countries' records, total rows the table itself had)
+    -- the total is the self-check signal: it exists whether or not any of
+    it belongs to our 15 countries, so a table that changed shape shows up
+    even in a year where every one of our countries still happens to match."""
     html = fetch_text(COUNTRY_URL.format(year=year), dest=RAW / SOURCE_ID / f"country_{year}.html", retries=2)
     soup = BeautifulSoup(html, "lxml")
     table = soup.find("table", id=re.compile("t2|rankings")) or soup.find("table", class_="stripe")
     if table is None:
-        return {}
+        return {}, 0
     headers = [th.get_text(" ", strip=True).lower() for th in table.select("thead th")]
+    rows = table.select("tbody tr")
     out: dict[str, dict] = {}
-    for tr in table.select("tbody tr"):
+    for tr in rows:
         cells = [td.get_text(" ", strip=True) for td in tr.find_all("td")]
         if len(cells) < 3:
             continue
@@ -65,7 +80,7 @@ def country_year(year: int) -> dict[str, dict]:
                     rec[headers[i].replace(" ", "_")[:40]] = v
         if rec:
             out[iso2] = rec
-    return out
+    return out, len(rows)
 
 
 def run() -> None:
@@ -73,17 +88,23 @@ def run() -> None:
     countries: dict[int, dict] = {}
     urls: list[str] = []
     failures: list[str] = []
+    shape_warnings: list[str] = []
 
     for year in YEARS:
         try:
-            got = country_year(year)
+            got, total_rows = country_year(year)
         except Exception as exc:  # noqa: BLE001
             failures.append(f"country {year}: {type(exc).__name__}")
             continue
+        if total_rows < MIN_PLAUSIBLE_ROWS:
+            msg = (f"country {year}: table selector matched but only {total_rows} row(s) found "
+                   f"(expected {MIN_PLAUSIBLE_ROWS}+) — the table's shape may have changed")
+            shape_warnings.append(msg)
+            log(f"    !! {msg}")
         if got:
             countries[year] = got
             urls.append(COUNTRY_URL.format(year=year))
-            log(f"    country {year}: {len(got)} of our countries")
+            log(f"    country {year}: {len(got)} of our countries ({total_rows} rows in table)")
         time.sleep(DELAY)
 
     # --- city-level history: probe once, then stop -------------------------
@@ -152,6 +173,7 @@ def run() -> None:
                 "trend for them it must say 'city estimate = current value x country trend'."
             ),
             "failures": failures,
+            "table_shape_warnings": shape_warnings,
         },
     )
     record_provenance(
@@ -169,12 +191,16 @@ def run() -> None:
             "navigation chrome because Numbeo renders the price series client-side (verified for "
             "itemIds 1/26/27/105). The finding is recorded; no data was invented from it.",
             f"Rate-limited to one request per {DELAY}s.",
+            f"Self-check: each year's table is required to have {MIN_PLAUSIBLE_ROWS}+ rows total "
+            "(not just rows matching our 15 countries), so a page redesign that still matches the "
+            "table selector but returns a shrunken or different table is caught, not silently zeroed.",
         ],
         output=f"data/processed/{SOURCE_ID}.json",
         rows=sum(len(v) for v in countries.values()) + sum(len(c["series"]) for c in cities.values()),
         coverage=f"{len(countries)} country-years, {len(cities)}/73 city histories",
         status="ok" if (countries or cities) else "failed",
-        notes="Crowd-sourced; thin for small cities and labelled as such everywhere it appears.",
+        notes="Crowd-sourced; thin for small cities and labelled as such everywhere it appears."
+              + (f" {len(shape_warnings)} year(s) failed the table-shape self-check." if shape_warnings else ""),
         redistribution="derived aggregates committed (Numbeo terms restrict bulk redistribution)",
     )
 

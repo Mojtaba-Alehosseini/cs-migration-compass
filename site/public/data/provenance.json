@@ -104,21 +104,22 @@
       "urls": [
         "https://www.ef.com/assetscdn/WIBIwq6RdJvcD9bc8RMd/cefcom-epi-site/reports/2025/ef-epi-2025-english.pdf"
       ],
-      "fetched_at": "2026-08-04T19:46:08+00:00",
+      "fetched_at": "2026-08-26T04:52:38+00:00",
       "license": "EF publishes the EPI report freely; cite EF Education First, EF English Proficiency Index 2025.",
       "redistribution": "raw committed",
       "transforms": [
         "Downloaded the published PDF with a browser User-Agent (both hosts 403 otherwise).",
-        "Extracted text from the first 60 pages with pdfplumber.",
-        "For each country, took the first line containing its name and a number in (300.0, 750.0).",
-        "Recorded the originating line with every value for auditability.",
+        "Extracted word geometry from page 5 with pdfplumber.extract_words().",
+        "Reconstructed the table's column groups from repeated word x-positions, then parsed each column group independently so a neighbouring column's digits can never be read as this column's score (see pdf_table.py).",
+        "Extracted all 123 published rows, not just our 15 countries, so the table validates itself against the publisher's own row count, rank sequence and range.",
+        "Matched each row's name to our 15 countries with the shared to_iso2() resolver.",
         "Countries not confidently matched are omitted rather than guessed."
       ],
       "output": "data/processed/ef_epi.json",
       "status": "ok",
       "rows": 10,
       "coverage": "10/15 countries",
-      "notes": "PDF scraping is fragile by nature; every value carries its source line."
+      "notes": "Full table: 123/123 rows extracted. PDF parsing is fragile by nature; every value carries its source line."
     },
     {
       "source_id": "eurostat_ict_specialists",
@@ -367,14 +368,15 @@
         "https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2019",
         "https://www.numbeo.com/cost-of-living/rankings_by_country.jsp?title=2020"
       ],
-      "fetched_at": "2026-08-04T19:54:24+00:00",
+      "fetched_at": "2026-08-26T04:59:43+00:00",
       "license": "Numbeo data is crowd-sourced and its terms restrict bulk redistribution. We commit the derived per-year/per-city aggregates and the fetch script, and cite Numbeo on every figure.",
       "redistribution": "derived aggregates committed (Numbeo terms restrict bulk redistribution)",
       "transforms": [
         "Requested country ranking pages for 2015-2026 via the ?title=YYYY parameter.",
         "Parsed the rankings table, resolving country labels to our ISO2 set.",
         "Probed ONE city-history page rather than crawling all 73: the served HTML contains only navigation chrome because Numbeo renders the price series client-side (verified for itemIds 1/26/27/105). The finding is recorded; no data was invented from it.",
-        "Rate-limited to one request per 1.5s."
+        "Rate-limited to one request per 1.5s.",
+        "Self-check: each year's table is required to have 50+ rows total (not just rows matching our 15 countries), so a page redesign that still matches the table selector but returns a shrunken or different table is caught, not silently zeroed."
       ],
       "output": "data/processed/numbeo_history.json",
       "status": "ok",
@@ -1121,25 +1123,26 @@
     },
     {
       "source_id": "wipo_gii",
-      "name": "WIPO Global Innovation Index 2024",
+      "name": "WIPO Global Innovation Index 2025",
       "urls": [
-        "https://tind.wipo.int/record/50062/files/wipo-pub-2000-2024-en-global-innovation-index-2024-17th-edition.pdf"
+        "https://tind.wipo.int/record/58864/files/wipo-pub-2000-2025-en-global-innovation-index-2025-innovation-at-a-crossroads.pdf"
       ],
-      "fetched_at": "2026-08-04T19:46:34+00:00",
-      "license": "WIPO publishes the GII under CC BY 4.0 (some content excepted); cite WIPO, Global Innovation Index 2024.",
+      "fetched_at": "2026-08-26T04:53:16+00:00",
+      "license": "WIPO publishes the GII under CC BY 4.0 (some content excepted); cite WIPO, Global Innovation Index 2025.",
       "redistribution": "raw committed",
       "transforms": [
         "Downloaded the published PDF with a browser User-Agent (both hosts 403 otherwise).",
-        "Extracted text from the first 60 pages with pdfplumber.",
-        "For each country, took the first line containing its name and a number in (5.0, 80.0).",
-        "Recorded the originating line with every value for auditability.",
+        "Extracted word geometry from page 18 with pdfplumber.extract_words().",
+        "Reconstructed the table's column groups from repeated word x-positions, then parsed each column group independently so a neighbouring column's digits can never be read as this column's score (see pdf_table.py).",
+        "Extracted all 139 published rows, not just our 15 countries, so the table validates itself against the publisher's own row count, rank sequence and range.",
+        "Matched each row's name to our 15 countries with the shared to_iso2() resolver.",
         "Countries not confidently matched are omitted rather than guessed."
       ],
       "output": "data/processed/wipo_gii.json",
       "status": "ok",
-      "rows": 13,
-      "coverage": "13/15 countries",
-      "notes": "PDF scraping is fragile by nature; every value carries its source line."
+      "rows": 15,
+      "coverage": "15/15 countries",
+      "notes": "Full table: 139/139 rows extracted. PDF parsing is fragile by nature; every value carries its source line."
     },
     {
       "source_id": "world_bank",
@@ -1210,5 +1213,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-25T01:04:42+00:00"
+  "updated_at": "2026-08-26T04:59:43+00:00"
 }
