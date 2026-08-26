@@ -1062,15 +1062,19 @@ def check_postings_annualised_plausibility(processed_dir: Path = PROCESSED) -> N
 
 def check_full_table_self_consistency(processed_dir: Path = PROCESSED) -> None:
     """Package 19 (tightened by its own adversarial review) -- a source that
-    extracts a PDF's ENTIRE ranking table (not just our 15 countries), like
-    ef_epi.json and wipo_gii.json, can validate itself against the
-    publication's own structure instead of trusting the parse blind. A
-    source opts in by carrying meta.full_table (every row) and
-    meta.full_table_stats (published_total, range, and optionally
-    higher_is_better -- defaults True) -- see src_pdf_indices.py. Generic
-    over any RANKING table shaped this way (one row per entity, a rank and
-    a score moving together in a stated direction), not a one-off check
-    tied to these two files -- but not generic beyond that shape, and the
+    extracts a publication's ENTIRE ranking table (not just our 15
+    countries), like ef_epi.json and wipo_gii.json, can validate itself
+    against the publication's own structure instead of trusting the parse
+    blind. Format-agnostic on purpose: ef_epi.json is still a PDF parse
+    (src_ef_epi.py), wipo_gii.json became a CSV parse in package 20
+    (src_wipo_gii.py) once WIPO's own data endpoint was found -- this check
+    reads meta.full_table/meta.full_table_stats the same way regardless of
+    what produced them. A source opts in by carrying meta.full_table (every
+    row) and meta.full_table_stats (published_total, range, and optionally
+    higher_is_better -- defaults True). Generic over any RANKING table
+    shaped this way (one row per entity, a rank and a score moving together
+    in a stated direction), not a one-off check tied to these two files --
+    but not generic beyond that shape, and the
     monotonicity direction must be told which way "better" points for a
     lower-is-better index, or every row would read as an inversion.
 
@@ -1104,7 +1108,7 @@ def check_full_table_self_consistency(processed_dir: Path = PROCESSED) -> None:
     what Gate 5's spot-checks against the publisher's own page are for, not
     this function.
     """
-    log("· a full extracted PDF table (meta.full_table) matches the publisher's own row count, "
+    log("· a full extracted ranking table (meta.full_table) matches the publisher's own row count, "
         "range, rank sequence and name uniqueness — ties allowed, conflicts are not")
     sources_checked = 0
     for path in sorted(processed_dir.glob("*.json")):

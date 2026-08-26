@@ -1,6 +1,6 @@
 {
  "source_id": "ef_epi",
- "generated_at": "2026-08-26T05:42:57+00:00",
+ "generated_at": "2026-08-26T22:02:18+00:00",
  "meta": {
   "definition": "EF EPI score (roughly 400-700); higher = stronger English proficiency among non-native speakers.",
   "confidence": "index",
@@ -14,7 +14,7 @@
    "IE"
   ],
   "countries_without_data_note": "EF EPI only scores countries where English is NOT a native language, so Australia, the US, Canada, the UK and Ireland are absent BY DESIGN, not through a failed extraction. For those countries the site shows 'English is the native language' instead of a score.",
-  "fragility_caveat": "Extracted from a PDF's own layout, not a data file. The FULL published table is parsed (not just our 15 countries) and kept below in full_table/full_table_stats so it can be checked against the publisher's own row count, rank sequence and range -- see audit_data.py's check_full_table_self_consistency(). 'source_line' on each of our 15 countries names the exact rank and page it came from for manual audit.",
+  "fragility_caveat": "Extracted from a PDF's own layout, not a data file. The FULL published table is parsed (not just our 15 countries) and kept below in full_table/full_table_stats so it can be checked against the publisher's own row count, rank sequence and range -- see audit_data.py's check_full_table_self_consistency(). 'source_line' on each of our 15 countries names the exact rank and page it came from for manual audit. (WIPO GII moved off this PDF-parsing pattern in package 20 once its own CSV was found -- see src_wipo_gii.py.)",
   "full_table": [
    {
     "rank": 1,

@@ -2191,7 +2191,7 @@ recurring, and the fresh harvest in run 32765692993 returned 48,691 rows against
 no truncation. If it does recur, the refresh stops with a clear message instead of tuning a
 threshold on a quarter of its sample, which is the right failure.
 
-## 55. WIPO's PDF delivery now sits behind a JS challenge on every URL shape tried — the next unattended re-fetch of `wipo_gii` will find nothing
+## 55. WIPO's PDF delivery now sits behind a JS challenge on every URL shape tried — RESOLVED in package 20
 
 Package 19 fixed the actual defect this source shipped with — flattened-text extraction losing the
 US and the Netherlands (see `REPORT-P19.md`, `docs/DATA-FITNESS.md` §11). Getting a current PDF to
@@ -2261,3 +2261,30 @@ history never shrinks even if the file is later removed) — the kind of call th
 preflight reserves for the owner rather than a package unilaterally deciding it. Recorded so the
 choice is made once, deliberately, rather than by whichever future package next needs this source to
 actually refresh.
+
+**RESOLVED, package 20 — a fourth option, found by reading what WIPO's own ranking page requests
+rather than what its PDF-delivery endpoints do.** `wipo.int/gii-ranking/en/` is a Nuxt app, and it
+loads its own ranking table client-side from a plain CSV:
+
+```
+https://www.wipo.int/gii-ranking/data/bc_results_gii_2025.csv
+```
+
+Verified directly, outside a browser: HTTP 200, 29,225 bytes, 140 lines (139 economies), no WAF, no
+JS challenge, no cookie, a plain `urllib`/`requests` call with a browser User-Agent. It carries
+`iso3` (`CHE`, `SWE`, `USA`, ...), so the extraction now matches on an exact ISO3 code instead of a
+free-text country name — removing the mechanism that cost the Netherlands its row in the first
+place, not just working around WIPO's PDF delivery. All 15 site countries' rank and score match the
+values package 19's PDF parser had already shipped, checked before writing any code and again after
+(`scripts/tests/test_package20_wipo_csv.py`) — two independent extraction paths (word-geometry PDF
+parsing, CSV) agreeing on all 15 rows, which is also a second, independent confirmation that package
+19's parser was correct.
+
+None of options (a)/(b)/(c) were needed. No PDF is committed to the repo (`data/raw/wipo_gii/` holds
+only the CSV now, still gitignored, still a disposable cache — not an exception like `levels_fyi`'s).
+`scripts/pdf_table.py` is unaffected and unremoved: EF EPI still needs it (checked in package 20,
+Tier 2 — EF EPI's own ranking page has no equivalent public data file, see `src_ef_epi.py`'s own
+docstring for exactly what was checked). `wipo_gii` moved from `src_pdf_indices.py` (now deleted) to
+its own `src_wipo_gii.py`; the fetch is unattended-safe end to end, and the underlying problem —
+"WIPO's PDF cannot be fetched without a browser" — is gone rather than mitigated, because `wipo_gii`
+no longer fetches a PDF at all.

@@ -1,10 +1,11 @@
 # Data fitness for purpose
 
-_Packages 15, 16 and 19. For every claim the site makes on screen: what the evidence actually
+_Packages 15, 16, 19 and 20. For every claim the site makes on screen: what the evidence actually
 supports, at what precision, and — where it falls short — the corrected form. Package 15 measured;
 package 16 applied the corrections and swept the datasets package 15 never reached (§10); package 19
 fixed the PDF extraction defect §10 had already found in `wipo_gii` and swept every other document-
-or web-page-derived source for the same class of failure (§11)._
+or web-page-derived source for the same class of failure (§11); package 20 found `wipo_gii` did not
+need PDF parsing at all and moved it to WIPO's own CSV (§11)._
 
 This is not a validation report. `make validate` and `make audit` already answer "is this value
 legal?". This answers a different question: **is the data fit for the claim the page makes on it?**
@@ -514,11 +515,17 @@ years of when it was generated.
 ## 11. Document- and web-page-derived sources — extraction method and failure mode
 
 Package 19. Most other sources in this pipeline read a stable, structured format — a JSON or CSV API
-keyed by field name, robust to the publisher reordering columns. Five sources instead read a PDF's
+keyed by field name, robust to the publisher reordering columns. Four sources instead read a PDF's
 visual layout, an HTML page's rendered structure, or (one case) a human's own reading of a page —
 which makes them fragile in a way nothing else here is: the extractor can keep running, keep
 returning HTTP 200, and still silently misread what changed. This section states each one's method,
 its specific failure mode, and what protects against it today.
+
+**`wipo_gii` graduated out of this section in package 20.** It was a PDF column-table layout parse
+through package 19; package 20 found that `wipo.int/gii-ranking/en/` itself loads its ranking table
+from a plain CSV endpoint and switched to it (`src_wipo_gii.py`) — no layout parsing, no name
+matching, keyed on `iso3`. It now belongs with the "most other sources" in this section's opening
+sentence, not in the table below. See `REPORT-P20.md` and `NEEDS-DECISION.md` #55 (resolved).
 
 **This list was built by scanning `scripts/src_*.py` for `pdfplumber`/`bs4` imports, and that
 screen has a blind spot, found by this package's own adversarial review (see `REPORT-P19.md` Gate
@@ -530,15 +537,23 @@ found, loud) rather than silently returning a wrong data value, which is why it 
 than folded into the table — the property this section exists to establish (a loud failure, not a
 silent one) already holds for it without a new check.
 
-### `wipo_gii`, `ef_epi` — PDF column-table layout (fixed this package)
+### `ef_epi` — PDF column-table layout (fixed package 19; still the extraction path)
 
-Covered in full above (§0 of `REPORT-P19.md`, and the corrected `wipo_gii` row in §10's coverage
-table). Both extractors were reading `page.extract_text()`, which flattens side-by-side PDF columns
-onto one interleaved line — losing the US and the Netherlands from `wipo_gii` outright and gluing
-EF EPI's rank onto the country name with no space to split on. Rewritten to parse word geometry
-(`pdf_table.py`) and to extract the FULL published table (139 rows / 123 rows) so it validates
-itself against the publisher's own row count, range and rank sequence — see
-`audit_data.py`'s `check_full_table_self_consistency()`.
+Covered in full in `REPORT-P19.md` §0 and `REPORT-P20.md`. `page.extract_text()` flattened
+side-by-side PDF columns onto one interleaved line, gluing EF EPI's Germany rank onto the country
+name with no space to split on ("04Germany"). Rewritten to parse word geometry (`pdf_table.py`) and
+to extract the FULL published table (123 rows) so it validates itself against the publisher's own
+row count, range and rank sequence — see `audit_data.py`'s `check_full_table_self_consistency()`.
+
+### `wipo_gii` — now a CSV, not a document-derived source (package 20)
+
+No longer belongs in this section's fragile-extraction category. `wipo.int/gii-ranking/en/`'s own
+Nuxt front end loads its table from `wipo.int/gii-ranking/data/bc_results_gii_2025.csv` — a plain,
+unattended-fetchable file keyed on `iso3`, no layout parsing, no free-text name matching. See
+`REPORT-P20.md` and `NEEDS-DECISION.md` #55 for the full account, including the one real parsing
+gotcha (the CSV formats decimals with a comma, e.g. `"65,96195221"`, handled explicitly rather than
+via a bare `float()` cast) and the edition-currency safeguard (`giiyr` column checked against the
+requested edition, flagged — not silently trusted — on a majority mismatch).
 
 ### `numbeo_history` — live HTML table scrape (made self-checking this package)
 
@@ -627,10 +642,10 @@ fire.
 
 ### Summary
 
-| Source | Method | Self-checkable (Tier 2 principle)? | Status after package 19 |
+| Source | Method | Self-checkable (Tier 2 principle)? | Status after package 20 |
 |---|---|---|---|
-| `wipo_gii` | PDF column-table layout | Yes — full 139-row table validated against the publisher's own count, range and rank sequence | Fixed & self-checking |
-| `ef_epi` | PDF column-table layout | Yes — full 123-row table validated the same way | Fixed & self-checking |
+| `wipo_gii` | **CSV, keyed on iso3** (was PDF column-table layout through package 19) | Yes — full 139-row table validated against the publisher's own count, range and rank sequence; same check, now format-agnostic | **Graduated out of this category — package 20** |
+| `ef_epi` | PDF column-table layout | Yes — full 123-row table validated the same way | Fixed & self-checking (package 19) |
 | `numbeo_history` | Live HTML table scrape | Partial — row-count floor; no exact published total exists to match | Made self-checking (coarse) |
 | `wikipedia_english_speakers` | Live HTML table scrape | No — no publisher-stated total exists | Named plainly, not fixable this way |
 | `levels_fyi` | One-time human browser capture | N/A — not a live parse | Staleness already covered generically; not a layout risk |

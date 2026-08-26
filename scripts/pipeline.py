@@ -57,7 +57,8 @@ SOURCES: list[tuple[str, str]] = [
     ("src_mipex", "MIPEX integration policy"),
     ("src_rsf_press_freedom", "RSF press freedom"),
     ("src_wikipedia_english", "Wikipedia English speakers"),
-    ("src_pdf_indices", "EF EPI + WIPO GII"),
+    ("src_ef_epi", "EF English Proficiency Index (PDF)"),
+    ("src_wipo_gii", "WIPO Global Innovation Index (CSV)"),
     ("src_numbeo_history", "Numbeo cost-of-living history"),
     # institutional forecasts
     ("src_oecd_economic_outlook", "OECD Economic Outlook (forecast)"),

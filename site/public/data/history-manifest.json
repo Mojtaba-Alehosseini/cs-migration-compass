@@ -212,7 +212,7 @@
  "wipo_gii": {
   "theme": "jobs",
   "file": "history/wipo_gii.json",
-  "kb": 8.7,
+  "kb": 10.1,
   "kind": null,
   "confidence": "index",
   "institution": null,
@@ -256,7 +256,7 @@
  "ef_epi": {
   "theme": "people",
   "file": "history/ef_epi.json",
-  "kb": 7.4,
+  "kb": 7.5,
   "kind": null,
   "confidence": "index",
   "institution": null,

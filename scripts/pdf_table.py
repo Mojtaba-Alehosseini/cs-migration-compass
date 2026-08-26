@@ -1,14 +1,27 @@
 """Column-table reconstruction for PDF ranking tables laid out in repeating
-(rank, name, score) column groups -- EF EPI and WIPO GII both use this shape.
+(rank, name, score) column groups.
 
-Both sources were previously read with `page.extract_text()`, which flattens
-a page's columns into one stream of lines and interleaves them wherever two
-columns share a physical line -- "23 Australia 48.1 22 6 90 Cabo Verde 22.3
-13 4" is one flattened line carrying two unrelated countries' rows spliced
-together. That silently drops countries whose true score is not the first
-number after their name (WIPO GII lost the US and the Netherlands this way)
-and glues a rank onto the next column's name when nothing but pixel position
-ever separated them ("04Germany" -- rank 4, but no space to split on).
+Built in package 19 for two PDF-only indices, EF EPI and WIPO GII, both laid
+out this way. WIPO GII moved off PDF parsing entirely in package 20 once its
+own CSV data endpoint was found (see src_wipo_gii.py) -- this module now
+serves EF EPI alone (src_ef_epi.py), kept as its own module rather than
+folded back in because the column-reconstruction technique is the reusable
+part, independent of which publisher currently needs it.
+
+EF EPI (and WIPO GII, while it was still read this way) was previously read
+with `page.extract_text()`, which flattens a page's columns into one stream
+of lines and interleaves them wherever two columns share a physical line --
+"23 Australia 48.1 22 6 90 Cabo Verde 22.3 13 4" is one flattened line
+carrying two unrelated countries' rows spliced together, a real, demonstrated
+hazard: it is exactly how EF EPI's Germany lost its rank ("04Germany" gluing
+a rank onto the next column's name with no space to split on). Package 19's
+own adversarial review found WIPO GII's part of this story less clean than
+first drafted -- re-running the OLD flattened-text scraper against the
+CURRENT GII PDF recovered the US correctly, and only the Netherlands failed,
+for a name-form mismatch rather than a flattening one (see REPORT-P19.md
+S0). Read this module's value as removing a real, demonstrated flattening
+hazard, not as a settled claim about which specific country loss on which
+specific PDF it explains.
 
 This module works from `page.extract_words()` instead: every word's own
 bounding box (`x0`, `top`) is real geometry, so a table's column structure

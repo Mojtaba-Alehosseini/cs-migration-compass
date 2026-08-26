@@ -1,709 +1,710 @@
 {
  "source_id": "wipo_gii",
- "generated_at": "2026-08-26T05:43:31+00:00",
+ "generated_at": "2026-08-26T21:49:24+00:00",
  "meta": {
   "definition": "GII overall innovation score (0-100) and rank; higher = stronger innovation ecosystem.",
   "confidence": "index",
   "level": "country",
-  "extraction": "PDF word-geometry column parsing (pdf_table.py)",
+  "extraction": "CSV, keyed on iso3 (csv.DictReader + decimal-comma fixup)",
   "countries_without_data": [],
-  "countries_without_data_note": "A country is missing here only if the full 139-row table (see full_table below) contains no row whose name resolves to it via _common.to_iso2() -- as of this edition all 15 of our countries resolve. (An earlier version of this extraction flattened the PDF's two side-by-side columns into one text stream, which interleaved unrelated countries' rows onto the same line and lost the US and the Netherlands outright; that is fixed by parsing column geometry instead of flattened text -- see pdf_table.py.)",
-  "fragility_caveat": "Extracted from a PDF's own layout, not a data file. The FULL published table is parsed (not just our 15 countries) and kept below in full_table/full_table_stats so it can be checked against the publisher's own row count, rank sequence and range -- see audit_data.py's check_full_table_self_consistency(). 'source_line' on each of our 15 countries names the exact rank and page it came from for manual audit.",
+  "countries_without_data_note": "A country is missing here only if the full 139-row table (see full_table below) contains no row whose iso3 resolves to it via _common.to_iso2() -- as of this edition all 15 of our countries resolve. (Package 19's PDF extraction lost the US and the Netherlands to flattened-text column interleaving and name-form mismatches; keying on the CSV's own iso3 field removes name matching from this source entirely, not just the specific mismatch that caused it.)",
+  "edition_mismatch": null,
+  "fragility_caveat": "Extracted from a data file this time, not a PDF layout -- but still checked the same way, on purpose: the FULL published table is parsed (not just our 15 countries) and kept below in full_table/full_table_stats so it validates against the publisher's own row count, rank sequence and range -- see audit_data.py's check_full_table_self_consistency(). 'source_line' on each of our 15 countries names the exact iso3 key and rank it came from for manual audit.",
   "full_table": [
    {
     "rank": 1,
     "name": "Switzerland",
-    "score": 66.0
+    "score": 65.96195221
    },
    {
     "rank": 2,
     "name": "Sweden",
-    "score": 62.6
+    "score": 62.57818985
    },
    {
     "rank": 3,
-    "name": "United States",
-    "score": 61.7
+    "name": "United States of America",
+    "score": 61.6892128
    },
    {
     "rank": 4,
     "name": "Republic of Korea",
-    "score": 60.0
+    "score": 59.99763489
    },
    {
     "rank": 5,
     "name": "Singapore",
-    "score": 59.9
+    "score": 59.94342041
    },
    {
     "rank": 6,
     "name": "United Kingdom",
-    "score": 59.1
+    "score": 59.11537552
    },
    {
     "rank": 7,
     "name": "Finland",
-    "score": 57.7
+    "score": 57.70636368
    },
    {
     "rank": 8,
     "name": "Netherlands (Kingdom of the)",
-    "score": 57.0
+    "score": 57.03549194
    },
    {
     "rank": 9,
     "name": "Denmark",
-    "score": 56.9
+    "score": 56.91491699
    },
    {
     "rank": 10,
     "name": "China",
-    "score": 56.6
+    "score": 56.55514526
    },
    {
     "rank": 11,
     "name": "Germany",
-    "score": 55.5
+    "score": 55.45535278
    },
    {
     "rank": 12,
     "name": "Japan",
-    "score": 53.6
+    "score": 53.55656815
    },
    {
     "rank": 13,
     "name": "France",
-    "score": 53.4
+    "score": 53.41567993
    },
    {
     "rank": 14,
     "name": "Israel",
-    "score": 52.3
+    "score": 52.24996948
    },
    {
     "rank": 15,
     "name": "Hong Kong, China",
-    "score": 51.5
+    "score": 51.46395493
    },
    {
     "rank": 16,
     "name": "Estonia",
-    "score": 51.1
+    "score": 51.09197998
    },
    {
     "rank": 17,
     "name": "Canada",
-    "score": 51.1
+    "score": 51.06435394
    },
    {
     "rank": 18,
     "name": "Ireland",
-    "score": 50.4
+    "score": 50.35122681
    },
    {
     "rank": 19,
     "name": "Austria",
-    "score": 50.1
+    "score": 50.09675598
    },
    {
     "rank": 20,
     "name": "Norway",
-    "score": 49.2
+    "score": 49.23780823
    },
    {
     "rank": 21,
     "name": "Belgium",
-    "score": 48.5
+    "score": 48.46334076
    },
    {
     "rank": 22,
     "name": "Australia",
-    "score": 48.0
+    "score": 48.00581741
    },
    {
     "rank": 23,
     "name": "Luxembourg",
-    "score": 47.3
+    "score": 47.26522827
    },
    {
     "rank": 24,
     "name": "Iceland",
-    "score": 47.0
+    "score": 47.01720047
    },
    {
     "rank": 25,
     "name": "Cyprus",
-    "score": 45.5
+    "score": 45.4989357
    },
    {
     "rank": 26,
     "name": "New Zealand",
-    "score": 45.5
+    "score": 45.4891777
    },
    {
     "rank": 27,
     "name": "Malta",
-    "score": 45.4
+    "score": 45.34728622
    },
    {
     "rank": 28,
     "name": "Italy",
-    "score": 44.9
+    "score": 44.9447403
    },
    {
     "rank": 29,
     "name": "Spain",
-    "score": 44.6
+    "score": 44.60703659
    },
    {
     "rank": 30,
     "name": "United Arab Emirates",
-    "score": 44.2
+    "score": 44.15448761
    },
    {
     "rank": 31,
     "name": "Portugal",
-    "score": 43.9
+    "score": 43.85769272
    },
    {
     "rank": 32,
     "name": "Czech Republic",
-    "score": 42.0
+    "score": 42.03575897
    },
    {
     "rank": 33,
     "name": "Lithuania",
-    "score": 40.8
+    "score": 40.78905487
    },
    {
     "rank": 34,
     "name": "Malaysia",
-    "score": 40.6
+    "score": 40.58148956
    },
    {
     "rank": 35,
     "name": "Slovenia",
-    "score": 40.1
+    "score": 40.10457611
    },
    {
     "rank": 36,
     "name": "Hungary",
-    "score": 40.0
+    "score": 39.99437332
    },
    {
     "rank": 37,
     "name": "Bulgaria",
-    "score": 39.1
+    "score": 39.09276199
    },
    {
     "rank": 38,
     "name": "India",
-    "score": 38.2
+    "score": 38.19981384
    },
    {
     "rank": 39,
     "name": "Poland",
-    "score": 37.7
+    "score": 37.70803452
    },
    {
     "rank": 40,
     "name": "Croatia",
-    "score": 37.7
+    "score": 37.67944717
    },
    {
     "rank": 41,
     "name": "Latvia",
-    "score": 37.5
+    "score": 37.52711487
    },
    {
     "rank": 42,
     "name": "Greece",
-    "score": 37.4
+    "score": 37.34679794
    },
    {
     "rank": 43,
-    "name": "Türkiye",
-    "score": 37.2
+    "name": "TÃ¼rkiye",
+    "score": 37.20171738
    },
    {
     "rank": 44,
     "name": "Viet Nam",
-    "score": 37.1
+    "score": 37.07996368
    },
    {
     "rank": 45,
     "name": "Thailand",
-    "score": 36.7
+    "score": 36.67229843
    },
    {
     "rank": 46,
     "name": "Saudi Arabia",
-    "score": 36.0
+    "score": 36.04481888
    },
    {
     "rank": 47,
     "name": "Slovakia",
-    "score": 35.5
+    "score": 35.50790024
    },
    {
     "rank": 48,
     "name": "Qatar",
-    "score": 34.6
+    "score": 34.56176758
    },
    {
     "rank": 49,
     "name": "Romania",
-    "score": 34.3
+    "score": 34.26435471
    },
    {
     "rank": 50,
     "name": "Philippines",
-    "score": 33.6
+    "score": 33.59391403
    },
    {
     "rank": 51,
     "name": "Chile",
-    "score": 33.1
+    "score": 33.06609344
    },
    {
     "rank": 52,
     "name": "Brazil",
-    "score": 32.9
+    "score": 32.86899948
    },
    {
     "rank": 53,
     "name": "Mauritius",
-    "score": 32.5
+    "score": 32.50305939
    },
    {
     "rank": 54,
     "name": "Serbia",
-    "score": 31.7
+    "score": 31.74345589
    },
    {
     "rank": 55,
     "name": "Indonesia",
-    "score": 31.3
+    "score": 31.30502129
    },
    {
     "rank": 56,
     "name": "Georgia",
-    "score": 31.2
+    "score": 31.21479225
    },
    {
     "rank": 57,
     "name": "Morocco",
-    "score": 31.1
+    "score": 31.04794693
    },
    {
     "rank": 58,
     "name": "Mexico",
-    "score": 30.5
+    "score": 30.51271629
    },
    {
     "rank": 59,
     "name": "Armenia",
-    "score": 30.5
+    "score": 30.44819069
    },
    {
     "rank": 60,
     "name": "Russian Federation",
-    "score": 30.3
+    "score": 30.26407433
    },
    {
     "rank": 61,
     "name": "South Africa",
-    "score": 30.1
+    "score": 30.13827896
    },
    {
     "rank": 62,
     "name": "Bahrain",
-    "score": 30.0
+    "score": 30.01576614
    },
    {
     "rank": 63,
     "name": "North Macedonia",
-    "score": 29.8
+    "score": 29.79066467
    },
    {
     "rank": 64,
     "name": "Montenegro",
-    "score": 29.8
+    "score": 29.75278473
    },
    {
     "rank": 65,
     "name": "Jordan",
-    "score": 29.7
+    "score": 29.69361115
    },
    {
     "rank": 66,
     "name": "Ukraine",
-    "score": 29.7
+    "score": 29.69101143
    },
    {
     "rank": 67,
     "name": "Albania",
-    "score": 29.6
+    "score": 29.60708427
    },
    {
     "rank": 68,
     "name": "Uruguay",
-    "score": 28.8
+    "score": 28.83790398
    },
    {
     "rank": 69,
     "name": "Oman",
-    "score": 28.7
+    "score": 28.64909744
    },
    {
     "rank": 70,
     "name": "Iran (Islamic Republic of)",
-    "score": 28.5
+    "score": 28.52097321
    },
    {
     "rank": 71,
     "name": "Colombia",
-    "score": 28.5
+    "score": 28.48028374
    },
    {
     "rank": 72,
     "name": "Costa Rica",
-    "score": 28.4
+    "score": 28.35890198
    },
    {
     "rank": 73,
     "name": "Kuwait",
-    "score": 28.2
+    "score": 28.21430206
    },
    {
     "rank": 74,
     "name": "Republic of Moldova",
-    "score": 27.4
+    "score": 27.36750412
    },
    {
     "rank": 75,
     "name": "Seychelles",
-    "score": 27.2
+    "score": 27.16261292
    },
    {
     "rank": 76,
     "name": "Tunisia",
-    "score": 27.0
+    "score": 26.98679161
    },
    {
     "rank": 77,
     "name": "Argentina",
-    "score": 26.8
+    "score": 26.7779541
    },
    {
     "rank": 78,
     "name": "Mongolia",
-    "score": 26.7
+    "score": 26.69455338
    },
    {
     "rank": 79,
     "name": "Uzbekistan",
-    "score": 26.5
+    "score": 26.49755287
    },
    {
     "rank": 80,
     "name": "Peru",
-    "score": 26.5
+    "score": 26.46604538
    },
    {
     "rank": 81,
     "name": "Kazakhstan",
-    "score": 26.3
+    "score": 26.34120941
    },
    {
     "rank": 82,
     "name": "Panama",
-    "score": 25.9
+    "score": 25.87986755
    },
    {
     "rank": 83,
     "name": "Jamaica",
-    "score": 25.2
+    "score": 25.23137283
    },
    {
     "rank": 84,
     "name": "Barbados",
-    "score": 25.1
+    "score": 25.12503052
    },
    {
     "rank": 85,
     "name": "Belarus",
-    "score": 25.1
+    "score": 25.09902763
    },
    {
     "rank": 86,
     "name": "Egypt",
-    "score": 24.7
+    "score": 24.71222878
    },
    {
     "rank": 87,
     "name": "Botswana",
-    "score": 24.6
+    "score": 24.63146782
    },
    {
     "rank": 88,
     "name": "Brunei Darussalam",
-    "score": 24.5
+    "score": 24.46344948
    },
    {
     "rank": 89,
     "name": "Senegal",
-    "score": 23.8
+    "score": 23.83653641
    },
    {
     "rank": 90,
     "name": "Lebanon",
-    "score": 23.6
+    "score": 23.61202621
    },
    {
     "rank": 91,
     "name": "Namibia",
-    "score": 23.5
+    "score": 23.47568893
    },
    {
     "rank": 92,
     "name": "Bosnia and Herzegovina",
-    "score": 23.4
+    "score": 23.42970657
    },
    {
     "rank": 93,
     "name": "Sri Lanka",
-    "score": 22.9
+    "score": 22.90527725
    },
    {
     "rank": 94,
     "name": "Azerbaijan",
-    "score": 22.9
+    "score": 22.86946678
    },
    {
     "rank": 95,
     "name": "Cabo Verde",
-    "score": 22.6
+    "score": 22.590168
    },
    {
     "rank": 96,
     "name": "Kyrgyzstan",
-    "score": 22.6
+    "score": 22.5707531
    },
    {
     "rank": 97,
     "name": "Dominican Republic",
-    "score": 22.6
+    "score": 22.56846237
    },
    {
     "rank": 98,
     "name": "El Salvador",
-    "score": 22.2
+    "score": 22.24051476
    },
    {
     "rank": 99,
     "name": "Pakistan",
-    "score": 22.1
+    "score": 22.0640831
    },
    {
     "rank": 100,
     "name": "Cambodia",
-    "score": 22.0
+    "score": 21.96328735
    },
    {
     "rank": 101,
     "name": "Ghana",
-    "score": 21.9
+    "score": 21.85353661
    },
    {
     "rank": 102,
     "name": "Kenya",
-    "score": 21.4
+    "score": 21.37911415
    },
    {
     "rank": 103,
     "name": "Paraguay",
-    "score": 21.4
+    "score": 21.35781479
    },
    {
     "rank": 104,
     "name": "Rwanda",
-    "score": 21.1
+    "score": 21.10355949
    },
    {
     "rank": 105,
     "name": "Nigeria",
-    "score": 21.1
+    "score": 21.08152008
    },
    {
     "rank": 106,
     "name": "Bangladesh",
-    "score": 21.0
+    "score": 20.9510479
    },
    {
     "rank": 107,
     "name": "Nepal",
-    "score": 20.2
+    "score": 20.20617676
    },
    {
     "rank": 108,
     "name": "Tajikistan",
-    "score": 20.2
+    "score": 20.17492294
    },
    {
     "rank": 109,
     "name": "Lao People's Democratic Republic",
-    "score": 20.1
+    "score": 20.11882401
    },
    {
     "rank": 110,
-    "name": "Côte d'Ivoire",
-    "score": 19.7
+    "name": "CÃ´te d'Ivoire",
+    "score": 19.73189163
    },
    {
     "rank": 111,
     "name": "Bolivia (Plurinational State of)",
-    "score": 19.6
+    "score": 19.63551521
    },
    {
     "rank": 112,
     "name": "Zambia",
-    "score": 19.6
+    "score": 19.57858849
    },
    {
     "rank": 113,
     "name": "Ecuador",
-    "score": 19.5
+    "score": 19.5397644
    },
    {
     "rank": 114,
     "name": "Trinidad and Tobago",
-    "score": 19.3
+    "score": 19.25097084
    },
    {
     "rank": 115,
     "name": "Algeria",
-    "score": 18.9
+    "score": 18.90146446
    },
    {
     "rank": 116,
     "name": "Cameroon",
-    "score": 18.2
+    "score": 18.18438721
    },
    {
     "rank": 117,
     "name": "Togo",
-    "score": 18.1
+    "score": 18.07082558
    },
    {
     "rank": 118,
     "name": "Benin",
-    "score": 17.8
+    "score": 17.81319618
    },
    {
     "rank": 119,
     "name": "Honduras",
-    "score": 17.7
+    "score": 17.65535736
    },
    {
     "rank": 120,
     "name": "Madagascar",
-    "score": 17.6
+    "score": 17.56108475
    },
    {
     "rank": 121,
     "name": "United Republic of Tanzania",
-    "score": 17.5
+    "score": 17.45213127
    },
    {
     "rank": 122,
     "name": "Myanmar",
-    "score": 17.3
+    "score": 17.30460548
    },
    {
     "rank": 123,
     "name": "Guatemala",
-    "score": 17.1
+    "score": 17.06826782
    },
    {
     "rank": 124,
     "name": "Uganda",
-    "score": 17.1
+    "score": 17.06727028
    },
    {
     "rank": 125,
     "name": "Malawi",
-    "score": 16.0
+    "score": 15.98773003
    },
    {
     "rank": 126,
     "name": "Burkina Faso",
-    "score": 15.9
+    "score": 15.87765789
    },
    {
     "rank": 127,
     "name": "Burundi",
-    "score": 15.8
+    "score": 15.76369858
    },
    {
     "rank": 128,
     "name": "Mozambique",
-    "score": 15.4
+    "score": 15.39059162
    },
    {
     "rank": 129,
     "name": "Zimbabwe",
-    "score": 15.4
+    "score": 15.37756729
    },
    {
     "rank": 130,
     "name": "Nicaragua",
-    "score": 15.4
+    "score": 15.37312984
    },
    {
     "rank": 131,
     "name": "Mauritania",
-    "score": 15.4
+    "score": 15.36607265
    },
    {
     "rank": 132,
     "name": "Lesotho",
-    "score": 14.9
+    "score": 14.93377399
    },
    {
     "rank": 133,
     "name": "Guinea",
-    "score": 14.9
+    "score": 14.91313362
    },
    {
     "rank": 134,
     "name": "Ethiopia",
-    "score": 14.4
+    "score": 14.42105293
    },
    {
     "rank": 135,
     "name": "Mali",
-    "score": 14.0
+    "score": 13.96713448
    },
    {
     "rank": 136,
     "name": "Venezuela (Bolivarian Republic of)",
-    "score": 13.7
+    "score": 13.7306118
    },
    {
     "rank": 137,
     "name": "Congo",
-    "score": 13.6
+    "score": 13.6151886
    },
    {
     "rank": 138,
     "name": "Angola",
-    "score": 13.0
+    "score": 13.02609062
    },
    {
     "rank": 139,
     "name": "Niger",
-    "score": 11.9
+    "score": 11.9449625
    }
   ],
   "full_table_stats": {
@@ -714,84 +715,99 @@
     100.0
    ],
    "higher_is_better": true,
-   "extraction": "page 18 (1-indexed), 5 fields per column group, pdf_table.parse_table()"
+   "extraction": "csv.DictReader over the WIPO GII ranking-data CSV, keyed on iso3"
   }
  },
  "data": {
   "SE": {
-   "score": 62.6,
+   "score": 62.57818985,
    "rank": 2,
-   "source_line": "page 18, rank 2/139: Sweden = 62.6"
+   "iso3": "SWE",
+   "source_line": "iso3=SWE, rank 2/139: Sweden = 62.57818985"
   },
   "US": {
-   "score": 61.7,
+   "score": 61.6892128,
    "rank": 3,
-   "source_line": "page 18, rank 3/139: United States = 61.7"
+   "iso3": "USA",
+   "source_line": "iso3=USA, rank 3/139: United States of America = 61.6892128"
   },
   "GB": {
-   "score": 59.1,
+   "score": 59.11537552,
    "rank": 6,
-   "source_line": "page 18, rank 6/139: United Kingdom = 59.1"
+   "iso3": "GBR",
+   "source_line": "iso3=GBR, rank 6/139: United Kingdom = 59.11537552"
   },
   "FI": {
-   "score": 57.7,
+   "score": 57.70636368,
    "rank": 7,
-   "source_line": "page 18, rank 7/139: Finland = 57.7"
+   "iso3": "FIN",
+   "source_line": "iso3=FIN, rank 7/139: Finland = 57.70636368"
   },
   "NL": {
-   "score": 57.0,
+   "score": 57.03549194,
    "rank": 8,
-   "source_line": "page 18, rank 8/139: Netherlands (Kingdom of the) = 57.0"
+   "iso3": "NLD",
+   "source_line": "iso3=NLD, rank 8/139: Netherlands (Kingdom of the) = 57.03549194"
   },
   "DK": {
-   "score": 56.9,
+   "score": 56.91491699,
    "rank": 9,
-   "source_line": "page 18, rank 9/139: Denmark = 56.9"
+   "iso3": "DNK",
+   "source_line": "iso3=DNK, rank 9/139: Denmark = 56.91491699"
   },
   "DE": {
-   "score": 55.5,
+   "score": 55.45535278,
    "rank": 11,
-   "source_line": "page 18, rank 11/139: Germany = 55.5"
+   "iso3": "DEU",
+   "source_line": "iso3=DEU, rank 11/139: Germany = 55.45535278"
   },
   "CA": {
-   "score": 51.1,
+   "score": 51.06435394,
    "rank": 17,
-   "source_line": "page 18, rank 17/139: Canada = 51.1"
+   "iso3": "CAN",
+   "source_line": "iso3=CAN, rank 17/139: Canada = 51.06435394"
   },
   "IE": {
-   "score": 50.4,
+   "score": 50.35122681,
    "rank": 18,
-   "source_line": "page 18, rank 18/139: Ireland = 50.4"
+   "iso3": "IRL",
+   "source_line": "iso3=IRL, rank 18/139: Ireland = 50.35122681"
   },
   "NO": {
-   "score": 49.2,
+   "score": 49.23780823,
    "rank": 20,
-   "source_line": "page 18, rank 20/139: Norway = 49.2"
+   "iso3": "NOR",
+   "source_line": "iso3=NOR, rank 20/139: Norway = 49.23780823"
   },
   "AU": {
-   "score": 48.0,
+   "score": 48.00581741,
    "rank": 22,
-   "source_line": "page 18, rank 22/139: Australia = 48.0"
+   "iso3": "AUS",
+   "source_line": "iso3=AUS, rank 22/139: Australia = 48.00581741"
   },
   "IT": {
-   "score": 44.9,
+   "score": 44.9447403,
    "rank": 28,
-   "source_line": "page 18, rank 28/139: Italy = 44.9"
+   "iso3": "ITA",
+   "source_line": "iso3=ITA, rank 28/139: Italy = 44.9447403"
   },
   "ES": {
-   "score": 44.6,
+   "score": 44.60703659,
    "rank": 29,
-   "source_line": "page 18, rank 29/139: Spain = 44.6"
+   "iso3": "ESP",
+   "source_line": "iso3=ESP, rank 29/139: Spain = 44.60703659"
   },
   "AE": {
-   "score": 44.2,
+   "score": 44.15448761,
    "rank": 30,
-   "source_line": "page 18, rank 30/139: United Arab Emirates = 44.2"
+   "iso3": "ARE",
+   "source_line": "iso3=ARE, rank 30/139: United Arab Emirates = 44.15448761"
   },
   "QA": {
-   "score": 34.6,
+   "score": 34.56176758,
    "rank": 48,
-   "source_line": "page 18, rank 48/139: Qatar = 34.6"
+   "iso3": "QAT",
+   "source_line": "iso3=QAT, rank 48/139: Qatar = 34.56176758"
   }
  }
 }
