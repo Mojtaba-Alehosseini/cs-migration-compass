@@ -1,6 +1,6 @@
 {
  "source_id": "ef_epi",
- "generated_at": "2026-08-26T04:52:38+00:00",
+ "generated_at": "2026-08-26T05:42:57+00:00",
  "meta": {
   "definition": "EF EPI score (roughly 400-700); higher = stronger English proficiency among non-native speakers.",
   "confidence": "index",
@@ -639,6 +639,7 @@
     300.0,
     750.0
    ],
+   "higher_is_better": true,
    "extraction": "page 5 (1-indexed), 3 fields per column group, pdf_table.parse_table()"
   }
  },

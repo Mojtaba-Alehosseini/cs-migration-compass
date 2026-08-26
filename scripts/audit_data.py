@@ -1061,16 +1061,32 @@ def check_postings_annualised_plausibility(processed_dir: Path = PROCESSED) -> N
 
 
 def check_full_table_self_consistency(processed_dir: Path = PROCESSED) -> None:
-    """Package 19 -- a source that extracts a PDF's ENTIRE ranking table (not
-    just our 15 countries), like ef_epi.json and wipo_gii.json, can validate
-    itself against the publication's own structure instead of trusting the
-    parse blind. A source opts in by carrying meta.full_table (every row)
-    and meta.full_table_stats (published_total, range) -- see
-    src_pdf_indices.py. Generic over any source shaped this way, not a
-    one-off check tied to these two files.
+    """Package 19 (tightened by its own adversarial review) -- a source that
+    extracts a PDF's ENTIRE ranking table (not just our 15 countries), like
+    ef_epi.json and wipo_gii.json, can validate itself against the
+    publication's own structure instead of trusting the parse blind. A
+    source opts in by carrying meta.full_table (every row) and
+    meta.full_table_stats (published_total, range, and optionally
+    higher_is_better -- defaults True) -- see src_pdf_indices.py. Generic
+    over any RANKING table shaped this way (one row per entity, a rank and
+    a score moving together in a stated direction), not a one-off check
+    tied to these two files -- but not generic beyond that shape, and the
+    monotonicity direction must be told which way "better" points for a
+    lower-is-better index, or every row would read as an inversion.
 
-    Four checks:
-      * row count matches what the publisher itself states;
+    Six checks:
+      * a source carrying ONLY ONE of full_table/full_table_stats is
+        malformed metadata, not an opt-out -- reported, not skipped;
+      * row count matches what the publisher itself states -- including an
+        EMPTY table when a positive total was expected: this is the
+        specific failure this check exists to catch (a page-index shift
+        producing zero rows), so an empty full_table is never treated the
+        same as a source that never opted in at all;
+      * every row carries a name, and no two rows carry the SAME name --
+        this is the one thing the other five checks cannot see: they
+        validate the rank/score skeleton and would pass a table whose
+        names were all blank, all identical, or shifted onto the wrong
+        row, because none of them ever compare a name to anything;
       * every score falls inside the publisher's own stated range;
       * the rank sequence is complete and tie-aware -- competition ranking
         (1, 2, 2, 4, ...) is how these tables are actually published, so a
@@ -1080,9 +1096,16 @@ def check_full_table_self_consistency(processed_dir: Path = PROCESSED) -> None:
         Sweden and Australia's identical 7.284 as if it were a defect;
       * a rank that repeats with a DIFFERENT score is not a tie -- it is two
         rows read as the same rank -- and IS an error.
+
+    What this still cannot catch: a row whose NAME and SCORE were both
+    swapped consistently with another row (e.g. two adjacent countries'
+    entire records transposed) satisfies every check here, because nothing
+    cross-checks a name against an externally-known value for it -- that is
+    what Gate 5's spot-checks against the publisher's own page are for, not
+    this function.
     """
     log("· a full extracted PDF table (meta.full_table) matches the publisher's own row count, "
-        "range and rank sequence — ties allowed, conflicts are not")
+        "range, rank sequence and name uniqueness — ties allowed, conflicts are not")
     sources_checked = 0
     for path in sorted(processed_dir.glob("*.json")):
         doc = _load(path)
@@ -1091,19 +1114,48 @@ def check_full_table_self_consistency(processed_dir: Path = PROCESSED) -> None:
         meta = doc.get("meta") or {}
         table = meta.get("full_table")
         stats = meta.get("full_table_stats")
-        if not table or not stats:
+        if table is None and stats is None:
+            continue  # this source never opted into the full-table pattern at all
+        source = path.name
+        if table is None or stats is None:
+            err(f"{source}: carries only one of meta.full_table / meta.full_table_stats — "
+                "both or neither are expected; this is malformed metadata, not an opt-out")
             continue
         sources_checked += 1
-        source = path.name
+
+        malformed = [r for r in table if not ("rank" in r and "name" in r and "score" in r)]
+        if malformed:
+            err(f"{source}: {len(malformed)} full_table row(s) missing rank/name/score "
+                "entirely — malformed extraction output")
 
         rows = sorted(
-            ((r["rank"], r["name"], r["score"]) for r in table if "rank" in r and "score" in r),
+            ((r["rank"], r["name"], r["score"]) for r in table
+             if "rank" in r and "name" in r and "score" in r),
             key=lambda r: r[0],
         )
 
+        # An EMPTY table is not skipped here: if the publisher's own total is
+        # positive, len(rows) != expected_total fires below exactly as it
+        # would for any other row-count mismatch. Treating "zero rows" the
+        # same as "never opted in" was the actual hole an adversarial review
+        # found -- a page-index shift that collapses the whole parse to
+        # nothing produced a clean pass, the one failure mode the module's
+        # own docstring claimed this check would catch.
         expected_total = stats.get("published_total")
         if expected_total is not None and len(rows) != expected_total:
             err(f"{source}: full_table has {len(rows)} rows, publisher states {expected_total}")
+
+        blank = [rank for rank, name, _ in rows if not name or not name.strip()]
+        if blank:
+            err(f"{source}: {len(blank)} row(s) have a blank name (ranks: {blank[:10]})")
+        name_counts: dict[str, int] = {}
+        for _, name, _ in rows:
+            if name and name.strip():
+                name_counts[name] = name_counts.get(name, 0) + 1
+        repeated = {n: c for n, c in name_counts.items() if c > 1}
+        if repeated:
+            err(f"{source}: {len(repeated)} name(s) appear on more than one row — "
+                f"{list(repeated.items())[:5]} — a ranking table has one row per entity")
 
         rng = stats.get("range")
         if rng and len(rng) == 2:
@@ -1128,11 +1180,21 @@ def check_full_table_self_consistency(processed_dir: Path = PROCESSED) -> None:
                 err(f"{source}: rank sequence gap — expected {expected_next}, found {rank}")
             expected_next = rank + len(entries)
 
+        # A lower-is-better index (published rank 1 = smallest score) would
+        # read every single row as an inversion under a hardcoded
+        # higher-is-better assumption -- both current sources are
+        # higher-is-better, but the direction is a fact about the SOURCE,
+        # not a fact this function is entitled to assume for any future one.
+        higher_is_better = stats.get("higher_is_better", True)
         prev_rank = prev_score = None
         for rank, name, score in rows:
-            if prev_score is not None and rank != prev_rank and score > prev_score + 1e-9:
-                err(f"{source}: {name!r} (rank {rank}, score {score}) scores higher than "
-                    f"rank {prev_rank}'s {prev_score} — ranking is not monotonic")
+            if prev_score is not None and rank != prev_rank:
+                inverted = (score > prev_score + 1e-9) if higher_is_better \
+                    else (score < prev_score - 1e-9)
+                if inverted:
+                    direction = "higher" if higher_is_better else "lower"
+                    err(f"{source}: {name!r} (rank {rank}, score {score}) scores {direction} than "
+                        f"rank {prev_rank}'s {prev_score} — ranking is not monotonic")
             prev_rank, prev_score = rank, score
 
     log(f"  {sources_checked} source(s) with a self-checking full table")

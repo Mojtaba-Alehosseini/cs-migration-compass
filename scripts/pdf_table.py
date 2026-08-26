@@ -116,6 +116,19 @@ def find_columns(words: list[dict], min_top: float = 0, min_count: int = 10,
     anchors = sorted(
         sum(c) / len(c) for c in clusters if len(c) >= min_count
     )
+    # A leftover anchor after chunking fields_per_group at a time does not
+    # mean "one field short" -- it means an anchor exists that should not
+    # (a caption or legend block that happened to clear min_count), and
+    # every group from that point on is silently built from the WRONG
+    # words, because chunking is purely positional (found by an
+    # adversarial review: five extra words at one existing sub-threshold
+    # cluster position took a real 139/139 parse to 0). Refusing to guess
+    # which anchor is the impostor is the safe failure here: an empty
+    # result is a table this module could not confidently structure, and
+    # the caller's own row-count self-check (audit_data.py) reports that
+    # loudly rather than accepting a table built from misaligned columns.
+    if fields_per_group == 0 or len(anchors) % fields_per_group != 0:
+        return []
     groups: list[tuple[float, ...]] = []
     i = 0
     while i + fields_per_group <= len(anchors):

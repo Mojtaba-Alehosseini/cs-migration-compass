@@ -75,6 +75,20 @@ class TestFindColumns(unittest.TestCase):
         groups = pt.find_columns(words, fields_per_group=3)
         self.assertEqual(groups, [(40.0, 80.0, 160.0)])
 
+    def test_a_stray_anchor_that_clears_min_count_refuses_rather_than_misaligns(self):
+        # Found by an adversarial review: a caption/legend block that happens
+        # to clear min_count adds ONE extra anchor. Silently chunking
+        # fields_per_group at a time then builds every group from the wrong
+        # words from that point on -- on the real WIPO page, five extra
+        # words at one existing sub-threshold cluster position took a
+        # 139/139 parse to 0 *wrong* rows. Refusing (empty groups) is the
+        # safe failure: the caller's row-count self-check reports an empty
+        # table loudly instead of accepting a misaligned one silently.
+        words = self._clean_table()  # -> exactly 3 clean anchors, 40/80/160
+        words += [w(f"note{i}", 5.0, 700.0 + 9.0 * i) for i in range(10)]  # a 4th anchor
+        groups = pt.find_columns(words, fields_per_group=3)
+        self.assertEqual(groups, [])
+
 
 class TestParseTable(unittest.TestCase):
     GROUPS = [(40.0, 80.0, 160.0)]

@@ -496,6 +496,59 @@ class TestFullTableSelfConsistency(AuditInvariantTestCase):
         ad.check_full_table_self_consistency(self.tmp)
         self.assertEqual(ad.ERRORS, [])
 
+    def test_an_empty_table_with_a_positive_published_total_is_an_error_not_a_skip(self):
+        # The hole an adversarial review found: a page-index shift that
+        # collapses the whole parse to zero rows must NOT read the same as
+        # "this source never opted in" -- it opted in (full_table_stats is
+        # present) and produced nothing, which is exactly what this check
+        # exists to catch.
+        self._write("bad", "bad", {}, meta=_full_table_meta([], published_total=139))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("139" in e and "0 rows" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_only_one_of_full_table_and_full_table_stats_present_is_flagged(self):
+        self._write("bad", "bad", {}, meta={"full_table": [{"rank": 1, "name": "A", "score": 90.0}]})
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("only one of" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_fails_on_a_blank_name(self):
+        rows = [(1, "Alpha", 90.0), (2, "", 80.0)]
+        self._write("bad", "bad", {}, meta=_full_table_meta(rows, published_total=2))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("blank name" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_fails_on_a_name_repeated_across_two_different_rows(self):
+        # This is the one the other checks cannot see at all: rank and score
+        # both form a perfectly valid sequence, only the identity is wrong --
+        # the same country's name attached to two different ranks/scores.
+        rows = [(1, "Alpha", 90.0), (2, "Alpha", 80.0), (3, "Gamma", 70.0)]
+        self._write("bad", "bad", {}, meta=_full_table_meta(rows, published_total=3))
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("more than one row" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_a_row_missing_the_name_key_entirely_is_reported_not_a_crash(self):
+        meta = _full_table_meta([(1, "Alpha", 90.0)], published_total=2)
+        meta["full_table"].append({"rank": 2, "score": 80.0})  # no "name" key at all
+        self._write("bad", "bad", {}, meta=meta)
+        ad.check_full_table_self_consistency(self.tmp)  # must not raise KeyError
+        self.assertTrue(any("malformed extraction output" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_a_lower_is_better_index_is_not_flagged_for_scores_that_correctly_decrease(self):
+        rows = [(1, "Alpha", 10.0), (2, "Beta", 20.0), (3, "Gamma", 30.0)]  # rank 1 = lowest score
+        meta = _full_table_meta(rows, published_total=3)
+        meta["full_table_stats"]["higher_is_better"] = False
+        self._write("good", "good", {}, meta=meta)
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertEqual(ad.ERRORS, [])
+
+    def test_a_lower_is_better_index_still_catches_a_real_inversion(self):
+        rows = [(1, "Alpha", 30.0), (2, "Beta", 20.0)]  # rank 2 should be LOWER, is higher
+        meta = _full_table_meta(rows, published_total=2)
+        meta["full_table_stats"]["higher_is_better"] = False
+        self._write("bad", "bad", {}, meta=meta)
+        ad.check_full_table_self_consistency(self.tmp)
+        self.assertTrue(any("scores lower than" in e for e in ad.ERRORS), ad.ERRORS)
+
 
 if __name__ == "__main__":
     unittest.main()

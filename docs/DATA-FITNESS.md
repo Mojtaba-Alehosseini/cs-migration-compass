@@ -513,12 +513,22 @@ years of when it was generated.
 
 ## 11. Document- and web-page-derived sources — extraction method and failure mode
 
-Package 19. Every other source in this pipeline reads a stable, structured format — a JSON or CSV
-API keyed by field name, robust to the publisher reordering columns. Five sources instead read a
-PDF's visual layout, an HTML page's rendered structure, or (one case) a human's own reading of a
-page — which makes them fragile in a way nothing else here is: the extractor can keep running, keep
+Package 19. Most other sources in this pipeline read a stable, structured format — a JSON or CSV API
+keyed by field name, robust to the publisher reordering columns. Five sources instead read a PDF's
+visual layout, an HTML page's rendered structure, or (one case) a human's own reading of a page —
+which makes them fragile in a way nothing else here is: the extractor can keep running, keep
 returning HTTP 200, and still silently misread what changed. This section states each one's method,
 its specific failure mode, and what protects against it today.
+
+**This list was built by scanning `scripts/src_*.py` for `pdfplumber`/`bs4` imports, and that
+screen has a blind spot, found by this package's own adversarial review (see `REPORT-P19.md` Gate
+8/11): `scripts/src_worldbank_gep.py` imports neither library, so it never matched the scan, but it
+scrapes a download link off the World Bank GEP landing page with a bare regex over fetched HTML
+(`re.findall(r'href="([^"]+\.(?:xlsx|xls|csv))"', html, ...)`). It is layout-dependent in the same
+family as the five below, narrower in consequence: a layout change breaks the *fetch* (no file
+found, loud) rather than silently returning a wrong data value, which is why it is named here rather
+than folded into the table — the property this section exists to establish (a loud failure, not a
+silent one) already holds for it without a new check.
 
 ### `wipo_gii`, `ef_epi` — PDF column-table layout (fixed this package)
 

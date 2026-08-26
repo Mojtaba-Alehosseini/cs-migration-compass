@@ -1,6 +1,6 @@
 {
  "source_id": "wipo_gii",
- "generated_at": "2026-08-26T04:53:15+00:00",
+ "generated_at": "2026-08-26T05:43:31+00:00",
  "meta": {
   "definition": "GII overall innovation score (0-100) and rank; higher = stronger innovation ecosystem.",
   "confidence": "index",
@@ -710,9 +710,10 @@
    "row_count": 139,
    "published_total": 139,
    "range": [
-    5.0,
-    80.0
+    0.0,
+    100.0
    ],
+   "higher_is_better": true,
    "extraction": "page 18 (1-indexed), 5 fields per column group, pdf_table.parse_table()"
   }
  },

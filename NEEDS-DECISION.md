@@ -2190,3 +2190,74 @@ refuses at 55%. Package 14's additive company ledger and reclaim bucket exist to
 recurring, and the fresh harvest in run 32765692993 returned 48,691 rows against 48,267 committed —
 no truncation. If it does recur, the refresh stops with a clear message instead of tuning a
 threshold on a quarter of its sample, which is the right failure.
+
+## 55. WIPO's PDF delivery now sits behind a JS challenge on every URL shape tried — the next unattended re-fetch of `wipo_gii` will find nothing
+
+Package 19 fixed the actual defect this source shipped with — flattened-text extraction losing the
+US and the Netherlands (see `REPORT-P19.md`, `docs/DATA-FITNESS.md` §11). Getting a current PDF to
+parse turned up a second, unrelated problem: **there is currently no way to fetch the WIPO GII PDF
+with a plain unattended HTTP request, on either URL shape this repo has ever used.**
+
+**Evidence.** The 2024-edition URL this source shipped with
+(`tind.wipo.int/record/50062/files/...`) is simply dead now — an empty response body, not a 404,
+exactly what this package's own work order predicted might have happened by now ("It is now August
+2026 — a newer GII almost certainly exists"). The current
+2025 edition lives at `tind.wipo.int/record/58864/files/wipo-pub-2000-2025-...-crossroads.pdf` (found
+via the 2024 PDF's own DOI, `10.34667/tind.58864`, resolved through `doi.org`) — but a plain
+`requests.get()` with the same browser User-Agent that has always worked for this host gets **HTTP
+202, `x-amzn-waf-action: challenge`, an empty body**, not the PDF. So does the newer
+`www.wipo.int/web-publications/...` asset path. Both are the identical AWS WAF JS challenge,
+confirmed from the response headers on both — this is not one broken URL, it is WIPO's delivery as a
+whole now gating PDF downloads behind a challenge only a real browser session can solve.
+
+**What unblocked it for this package.** Navigating to a WIPO page in an interactive browser solves
+the challenge silently and sets an `aws-waf-token` cookie; replaying that cookie via `requests`
+then fetches the PDF normally (28,547,423 bytes, 27.2 MB, verified as the real 2025 edition). That is how the file
+`src_pdf_indices.py` now parses was obtained. It is a one-time, by-hand step — there is no automated
+substitute for it in this repo today, and a scheduled job has no browser session to solve the
+challenge with.
+
+**This is a real gap, but it is not an active outage.** `wipo_gii` is part of the wage-spine pipeline
+(`make pipeline`), which — unlike `postings-refresh.yml` — runs only when a human or a work order
+triggers it, never on a schedule; there is no `data-refresh.yml` this repo runs weekly against it.
+`fetch()` also reuses an existing non-empty `data/raw/<source>/` file before ever attempting the
+network (`scripts/_common.py`'s own caching), so **today's committed `data/processed/wipo_gii.json`
+is correct and current** (2025 edition, all 139 rows, all 15 of our countries verified against WIPO's
+own published summary) precisely because it was built from that manually-fetched, locally-cached
+file. The gap only bites the *next* time someone runs the full pipeline from a clean checkout with no
+local cache — `make pipeline-fresh`, or any CI job that did start refreshing this source in the
+future — at which point `wipo_gii` would fail closed exactly as EF EPI already does on a genuine
+outage: `write_processed(source_id, {}, ...)`, `status: "unavailable"`, 0/15 countries, loud in the
+log and in provenance, never a stale or silently wrong number.
+
+**Decide:** three ways to close the gap, in ascending cost:
+
+(a) **Commit the fetched PDF as an explicit input, the same way `levels_fyi`'s capture already is.**
+`.gitignore` already carries that exact exception with its own stated reasoning ("this one is an
+INPUT, not a cache... nothing re-downloads it, so dropping it would make that step unreproducible")
+— WIPO GII would be the second case of it, not a new pattern. Cheapest change (one `.gitignore`
+line, ~27 MB in the repo), and matches GII's real publication cadence: it is an annual report, so
+"a human re-fetches it by hand once a year when a new edition drops" is not a heavier burden than
+this source already carries today. The `data/raw/wipo_gii/wipo-gii-2025.pdf` this package fetched is
+sitting ready for this if chosen.
+
+(b) **Leave it uncommitted, documented.** No repo-size cost, but the *next* clean-checkout full
+pipeline run silently loses this one source until someone notices the "unavailable" status and
+re-runs the browser-cookie-harvest step by hand. Since nothing currently schedules that full
+pipeline run automatically, this may simply be acceptable — but it means "re-fetch `wipo_gii`" joins
+the list of manual steps a future work order needs to know about, same as `levels_fyi`'s capture
+already is.
+
+(c) **Build unattended WAF-solving into the pipeline** (a headless browser, e.g. Playwright, to
+solve the challenge and extract cookies without a human). Ruled out here as disproportionate to what
+this package was asked to fix — a new, heavy dependency for two PDF values, on a source that is not
+even scheduled — and not guaranteed to work besides: WAF vendors specifically target headless/
+datacenter traffic, so there is no assurance this would succeed where a plain browser-UA request
+already fails.
+
+**Not decided here.** (a) is the smallest change and follows an existing precedent exactly, but
+committing ~27 MB of binary PDF to git history is a repo-hygiene call with its own cost (that
+history never shrinks even if the file is later removed) — the kind of call this work order's own
+preflight reserves for the owner rather than a package unilaterally deciding it. Recorded so the
+choice is made once, deliberately, rather than by whichever future package next needs this source to
+actually refresh.

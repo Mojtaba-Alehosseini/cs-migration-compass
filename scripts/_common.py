@@ -210,7 +210,12 @@ def record_provenance(
     prov["entries"].append(entry)
     prov["entries"].sort(key=lambda e: e["source_id"])
     prov["updated_at"] = _now()
-    PROVENANCE.write_text(json.dumps(prov, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    # newline="\n": without it, Python's text-mode write translates \n -> \r\n on
+    # Windows, so a run on Windows against a file last written by Linux CI flips
+    # every line ending and buries a handful of real entry changes in a
+    # thousands-of-lines diff (found via package 19's adversarial review).
+    PROVENANCE.write_text(json.dumps(prov, indent=2, ensure_ascii=False) + "\n",
+                           encoding="utf-8", newline="\n")
     log(f"    provenance recorded ({status})")
 
 
@@ -223,7 +228,8 @@ def write_processed(source_id: str, payload: Any, *, meta: dict | None = None) -
         "meta": meta or {},
         "data": payload,
     }
-    out.write_text(json.dumps(envelope, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    out.write_text(json.dumps(envelope, indent=1, ensure_ascii=False) + "\n",
+                    encoding="utf-8", newline="\n")
     log(f"    wrote   {out.relative_to(ROOT)}")
     return out
 

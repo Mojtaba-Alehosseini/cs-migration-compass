@@ -45,10 +45,19 @@ EF_URL = ("https://www.ef.com/assetscdn/WIBIwq6RdJvcD9bc8RMd/cefcom-epi-site/rep
 GII_URL = ("https://tind.wipo.int/record/58864/files/"
            "wipo-pub-2000-2025-en-global-innovation-index-2025-innovation-at-a-crossroads.pdf")
 
-# EF EPI scores cluster 300-750; GII scores are 0-70 (both per the publisher's
-# own stated scale -- not a fitted range, see full_table_stats below).
+# GII's composite score is WIPO's own defined 0-100 scale (their methodology
+# combines many 0-100 sub-indicators into one 0-100 index) -- a genuine
+# publisher-stated bound, not fitted to what this repo happens to observe.
+# EF EPI has no equivalent publicly fixed theoretical bound; EF_RANGE is
+# honestly a plausibility band, not a publisher scale -- generous headroom
+# on both sides of the observed 2025 data (390.0-624.0) so it still catches
+# a genuine parsing error (e.g. a rank number landing in the score field)
+# without pretending to be authoritative the way GII_RANGE is. Both are
+# read into full_table_stats["range"] below and checked in
+# audit_data.py's check_full_table_self_consistency(), never used to filter
+# rows during extraction -- the full table is kept regardless of range.
 EF_RANGE = (300.0, 750.0)
-GII_RANGE = (5.0, 80.0)
+GII_RANGE = (0.0, 100.0)
 
 
 def extract_full_table(blob: bytes, *, page_index: int, fields_per_group: int
@@ -137,6 +146,7 @@ def one(source_id: str, name: str, url: str, filename: str, rng: tuple[float, fl
                 "row_count": len(full_rows),
                 "published_total": published_total,
                 "range": list(rng),
+                "higher_is_better": True,  # both sources: rank 1 = highest score
                 "extraction": (
                     f"page {page_index + 1} (1-indexed), {fields_per_group} fields per column group, "
                     "pdf_table.parse_table()"
