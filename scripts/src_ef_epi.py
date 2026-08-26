@@ -182,6 +182,11 @@ def run() -> None:
         status="ok" if out else "partial",
         notes=f"Full table: {len(full_rows)}/{PUBLISHED_TOTAL} rows extracted. "
               "PDF parsing is fragile by nature; every value carries its source line.",
+        redistribution=(
+            f"processed derivative only -- the raw PDF is cached under data/raw/{SOURCE_ID}/ but that "
+            "directory is gitignored, so this repo does not redistribute it. Only the 15-country "
+            f"slice and the full extracted table are committed, in data/processed/{SOURCE_ID}.json."
+        ),
     )
 
 

@@ -521,11 +521,20 @@ which makes them fragile in a way nothing else here is: the extractor can keep r
 returning HTTP 200, and still silently misread what changed. This section states each one's method,
 its specific failure mode, and what protects against it today.
 
-**`wipo_gii` graduated out of this section in package 20.** It was a PDF column-table layout parse
-through package 19; package 20 found that `wipo.int/gii-ranking/en/` itself loads its ranking table
-from a plain CSV endpoint and switched to it (`src_wipo_gii.py`) — no layout parsing, no name
-matching, keyed on `iso3`. It now belongs with the "most other sources" in this section's opening
-sentence, not in the table below. See `REPORT-P20.md` and `NEEDS-DECISION.md` #55 (resolved).
+**`wipo_gii` graduated out of the LAYOUT-fragile part of this category in package 20, but not out of
+"could keep returning HTTP 200 and silently misread what changed" entirely.** It was a PDF
+column-table layout parse through package 19; package 20 found that `wipo.int/gii-ranking/en/`
+itself loads its ranking table from a plain CSV endpoint and switched to it (`src_wipo_gii.py`) — no
+layout parsing, no name matching, keyed on `iso3`. That part of this section's opening sentence no
+longer applies to it. What still could: the URL is year-stamped
+(`bc_results_gii_2025.csv`) with no guarantee WIPO retires it when a newer edition ships — an
+adversarial review found an earlier draft of this package asserted a stale URL would "almost
+certainly" 404, reasoning by analogy from the PDF path's own dead 2024 URL, without establishing
+that a static CSV asset behaves the same way. It probably does not: publishers commonly leave prior
+years' data files in place rather than deleting them, which would make this URL silently keep
+serving 2025 data forever with no error of any kind. Mitigated, not eliminated: `src_wipo_gii.py`
+now probes whether a next-year URL already exists and flags loudly if so — see its own subsection
+below and `REPORT-P20.md` Gate 11.
 
 **This list was built by scanning `scripts/src_*.py` for `pdfplumber`/`bs4` imports, and that
 screen has a blind spot, found by this package's own adversarial review (see `REPORT-P19.md` Gate
@@ -551,15 +560,30 @@ whatever holds the full dataset client-side is not a discoverable public endpoin
 chunk contains it either. `pdf_table.py` and this extraction path stay; see `src_ef_epi.py`'s own
 docstring for exactly what was checked, so a future package does not have to redo it.
 
-### `wipo_gii` — now a CSV, not a document-derived source (package 20)
+### `wipo_gii` — a CSV now, no longer layout-fragile, but still edition-pinned (package 20)
 
-No longer belongs in this section's fragile-extraction category. `wipo.int/gii-ranking/en/`'s own
+No longer belongs in this section's LAYOUT-extraction category. `wipo.int/gii-ranking/en/`'s own
 Nuxt front end loads its table from `wipo.int/gii-ranking/data/bc_results_gii_2025.csv` — a plain,
-unattended-fetchable file keyed on `iso3`, no layout parsing, no free-text name matching. See
-`REPORT-P20.md` and `NEEDS-DECISION.md` #55 for the full account, including the one real parsing
-gotcha (the CSV formats decimals with a comma, e.g. `"65,96195221"`, handled explicitly rather than
-via a bare `float()` cast) and the edition-currency safeguard (`giiyr` column checked against the
-requested edition, flagged — not silently trusted — on a majority mismatch).
+unattended-fetchable file keyed on `iso3`, no layout parsing, no free-text name matching. Two real
+parsing gotchas, both found and both handled: the CSV formats decimals with a comma (`"65,96195221"`,
+handled explicitly rather than via a bare `float()` cast, checked adversarially against ~30
+constructed inputs), and two economy names — Türkiye and Côte d'Ivoire — arrive double-UTF-8-encoded
+in WIPO's own published bytes (`_fix_double_utf8()`, found only because an adversarial review
+checked all 139 rows rather than the 15 this site tracks, all of which happen to be ASCII-only
+names).
+
+**What is not fixed, only made visible.** The URL is year-stamped with no evidence WIPO retires a
+prior year's file — a static CSV going stale by simply sitting unchanged is the more likely
+publisher behaviour than the dead-URL pattern the PDF path showed, not the same thing. Two
+safeguards, neither a full fix: the `giiyr` column's full breakdown is always recorded in
+`meta.edition_counts` (not just a pass/fail against the majority, so a growing minority of
+non-conforming rows is visible before it ever flips the majority verdict — one economy, Venezuela,
+already carries `giiyr="NA"` in a genuinely current file, which is why this is majority-based rather
+than strict); and a lightweight probe checks whether `bc_results_gii_2026.csv` already exists and
+flags loudly (`meta.newer_edition_available`) if so. Neither can catch WIPO quietly revising this
+*same* year's file's content without changing `giiyr`, and the probe depends on next year's file
+following the same naming pattern. `EDITION_YEAR` still needs a human to update when a new edition
+ships, exactly as the PDF's own `page_index`/`published_total` constants did in package 19.
 
 ### `numbeo_history` — live HTML table scrape (made self-checking this package)
 
@@ -650,7 +674,7 @@ fire.
 
 | Source | Method | Self-checkable (Tier 2 principle)? | Status after package 20 |
 |---|---|---|---|
-| `wipo_gii` | **CSV, keyed on iso3** (was PDF column-table layout through package 19) | Yes — full 139-row table validated against the publisher's own count, range and rank sequence; same check, now format-agnostic | **Graduated out of this category — package 20** |
+| `wipo_gii` | **CSV, keyed on iso3** (was PDF column-table layout through package 19) | Yes — full 139-row table validated against the publisher's own count, range and rank sequence; same check, now format-agnostic | **No longer layout-fragile (package 20); a different risk remains — a year-pinned URL with no confirmed retirement behaviour — mitigated by a next-edition probe, not eliminated** |
 | `ef_epi` | PDF column-table layout | Yes — full 123-row table validated the same way | Fixed & self-checking (package 19); checked for a CSV escape hatch and found none (package 20) |
 | `numbeo_history` | Live HTML table scrape | Partial — row-count floor; no exact published total exists to match | Made self-checking (coarse) |
 | `wikipedia_english_speakers` | Live HTML table scrape | No — no publisher-stated total exists | Named plainly, not fixable this way |

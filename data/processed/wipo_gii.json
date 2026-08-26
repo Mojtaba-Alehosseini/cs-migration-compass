@@ -1,710 +1,855 @@
 {
  "source_id": "wipo_gii",
- "generated_at": "2026-08-26T21:49:24+00:00",
+ "generated_at": "2026-08-26T22:34:37+00:00",
  "meta": {
   "definition": "GII overall innovation score (0-100) and rank; higher = stronger innovation ecosystem.",
   "confidence": "index",
   "level": "country",
   "extraction": "CSV, keyed on iso3 (csv.DictReader + decimal-comma fixup)",
   "countries_without_data": [],
-  "countries_without_data_note": "A country is missing here only if the full 139-row table (see full_table below) contains no row whose iso3 resolves to it via _common.to_iso2() -- as of this edition all 15 of our countries resolve. (Package 19's PDF extraction lost the US and the Netherlands to flattened-text column interleaving and name-form mismatches; keying on the CSV's own iso3 field removes name matching from this source entirely, not just the specific mismatch that caused it.)",
+  "countries_without_data_note": "A country is missing here either because the full 139-row table (see full_table below) contains no row whose iso3 resolves to it via _common.to_iso2(), or because that row's iso3 and economy_name columns resolved to two DIFFERENT countries (see cross_check_disagreements) and was excluded rather than guessed -- as of this edition all 15 of our countries resolve cleanly with no disagreement. (Package 19's PDF extraction lost the US and the Netherlands to flattened-text column interleaving and name-form mismatches; keying on the CSV's own iso3 field removes name matching from this source entirely, not just the specific mismatch that caused it.)",
+  "edition_counts": {
+   "2025": 138,
+   "NA": 1
+  },
   "edition_mismatch": null,
-  "fragility_caveat": "Extracted from a data file this time, not a PDF layout -- but still checked the same way, on purpose: the FULL published table is parsed (not just our 15 countries) and kept below in full_table/full_table_stats so it validates against the publisher's own row count, rank sequence and range -- see audit_data.py's check_full_table_self_consistency(). 'source_line' on each of our 15 countries names the exact iso3 key and rank it came from for manual audit.",
+  "newer_edition_available": null,
+  "cross_check_disagreements": [],
+  "fragility_caveat": "Extracted from a data file this time, not a PDF layout -- but still checked the same way, on purpose: the FULL published table is parsed (not just our 15 countries) and kept below in full_table/full_table_stats so it validates against the publisher's own row count, rank sequence and range -- see audit_data.py's check_full_table_self_consistency(). 'source_line' on each of our 15 countries names the exact iso3 key and rank it came from for manual audit. Every row is also matched twice, once by iso3 and once by name, and excluded from the 15-country slice (not guessed) if the two disagree -- see cross_check_disagreements above.",
   "full_table": [
    {
     "rank": 1,
     "name": "Switzerland",
-    "score": 65.96195221
+    "score": 65.96195221,
+    "iso3": "CHE"
    },
    {
     "rank": 2,
     "name": "Sweden",
-    "score": 62.57818985
+    "score": 62.57818985,
+    "iso3": "SWE"
    },
    {
     "rank": 3,
     "name": "United States of America",
-    "score": 61.6892128
+    "score": 61.6892128,
+    "iso3": "USA"
    },
    {
     "rank": 4,
     "name": "Republic of Korea",
-    "score": 59.99763489
+    "score": 59.99763489,
+    "iso3": "KOR"
    },
    {
     "rank": 5,
     "name": "Singapore",
-    "score": 59.94342041
+    "score": 59.94342041,
+    "iso3": "SGP"
    },
    {
     "rank": 6,
     "name": "United Kingdom",
-    "score": 59.11537552
+    "score": 59.11537552,
+    "iso3": "GBR"
    },
    {
     "rank": 7,
     "name": "Finland",
-    "score": 57.70636368
+    "score": 57.70636368,
+    "iso3": "FIN"
    },
    {
     "rank": 8,
     "name": "Netherlands (Kingdom of the)",
-    "score": 57.03549194
+    "score": 57.03549194,
+    "iso3": "NLD"
    },
    {
     "rank": 9,
     "name": "Denmark",
-    "score": 56.91491699
+    "score": 56.91491699,
+    "iso3": "DNK"
    },
    {
     "rank": 10,
     "name": "China",
-    "score": 56.55514526
+    "score": 56.55514526,
+    "iso3": "CHN"
    },
    {
     "rank": 11,
     "name": "Germany",
-    "score": 55.45535278
+    "score": 55.45535278,
+    "iso3": "DEU"
    },
    {
     "rank": 12,
     "name": "Japan",
-    "score": 53.55656815
+    "score": 53.55656815,
+    "iso3": "JPN"
    },
    {
     "rank": 13,
     "name": "France",
-    "score": 53.41567993
+    "score": 53.41567993,
+    "iso3": "FRA"
    },
    {
     "rank": 14,
     "name": "Israel",
-    "score": 52.24996948
+    "score": 52.24996948,
+    "iso3": "ISR"
    },
    {
     "rank": 15,
     "name": "Hong Kong, China",
-    "score": 51.46395493
+    "score": 51.46395493,
+    "iso3": "HKG"
    },
    {
     "rank": 16,
     "name": "Estonia",
-    "score": 51.09197998
+    "score": 51.09197998,
+    "iso3": "EST"
    },
    {
     "rank": 17,
     "name": "Canada",
-    "score": 51.06435394
+    "score": 51.06435394,
+    "iso3": "CAN"
    },
    {
     "rank": 18,
     "name": "Ireland",
-    "score": 50.35122681
+    "score": 50.35122681,
+    "iso3": "IRL"
    },
    {
     "rank": 19,
     "name": "Austria",
-    "score": 50.09675598
+    "score": 50.09675598,
+    "iso3": "AUT"
    },
    {
     "rank": 20,
     "name": "Norway",
-    "score": 49.23780823
+    "score": 49.23780823,
+    "iso3": "NOR"
    },
    {
     "rank": 21,
     "name": "Belgium",
-    "score": 48.46334076
+    "score": 48.46334076,
+    "iso3": "BEL"
    },
    {
     "rank": 22,
     "name": "Australia",
-    "score": 48.00581741
+    "score": 48.00581741,
+    "iso3": "AUS"
    },
    {
     "rank": 23,
     "name": "Luxembourg",
-    "score": 47.26522827
+    "score": 47.26522827,
+    "iso3": "LUX"
    },
    {
     "rank": 24,
     "name": "Iceland",
-    "score": 47.01720047
+    "score": 47.01720047,
+    "iso3": "ISL"
    },
    {
     "rank": 25,
     "name": "Cyprus",
-    "score": 45.4989357
+    "score": 45.4989357,
+    "iso3": "CYP"
    },
    {
     "rank": 26,
     "name": "New Zealand",
-    "score": 45.4891777
+    "score": 45.4891777,
+    "iso3": "NZL"
    },
    {
     "rank": 27,
     "name": "Malta",
-    "score": 45.34728622
+    "score": 45.34728622,
+    "iso3": "MLT"
    },
    {
     "rank": 28,
     "name": "Italy",
-    "score": 44.9447403
+    "score": 44.9447403,
+    "iso3": "ITA"
    },
    {
     "rank": 29,
     "name": "Spain",
-    "score": 44.60703659
+    "score": 44.60703659,
+    "iso3": "ESP"
    },
    {
     "rank": 30,
     "name": "United Arab Emirates",
-    "score": 44.15448761
+    "score": 44.15448761,
+    "iso3": "ARE"
    },
    {
     "rank": 31,
     "name": "Portugal",
-    "score": 43.85769272
+    "score": 43.85769272,
+    "iso3": "PRT"
    },
    {
     "rank": 32,
     "name": "Czech Republic",
-    "score": 42.03575897
+    "score": 42.03575897,
+    "iso3": "CZE"
    },
    {
     "rank": 33,
     "name": "Lithuania",
-    "score": 40.78905487
+    "score": 40.78905487,
+    "iso3": "LTU"
    },
    {
     "rank": 34,
     "name": "Malaysia",
-    "score": 40.58148956
+    "score": 40.58148956,
+    "iso3": "MYS"
    },
    {
     "rank": 35,
     "name": "Slovenia",
-    "score": 40.10457611
+    "score": 40.10457611,
+    "iso3": "SVN"
    },
    {
     "rank": 36,
     "name": "Hungary",
-    "score": 39.99437332
+    "score": 39.99437332,
+    "iso3": "HUN"
    },
    {
     "rank": 37,
     "name": "Bulgaria",
-    "score": 39.09276199
+    "score": 39.09276199,
+    "iso3": "BGR"
    },
    {
     "rank": 38,
     "name": "India",
-    "score": 38.19981384
+    "score": 38.19981384,
+    "iso3": "IND"
    },
    {
     "rank": 39,
     "name": "Poland",
-    "score": 37.70803452
+    "score": 37.70803452,
+    "iso3": "POL"
    },
    {
     "rank": 40,
     "name": "Croatia",
-    "score": 37.67944717
+    "score": 37.67944717,
+    "iso3": "HRV"
    },
    {
     "rank": 41,
     "name": "Latvia",
-    "score": 37.52711487
+    "score": 37.52711487,
+    "iso3": "LVA"
    },
    {
     "rank": 42,
     "name": "Greece",
-    "score": 37.34679794
+    "score": 37.34679794,
+    "iso3": "GRC"
    },
    {
     "rank": 43,
-    "name": "TÃ¼rkiye",
-    "score": 37.20171738
+    "name": "Türkiye",
+    "score": 37.20171738,
+    "iso3": "TUR"
    },
    {
     "rank": 44,
     "name": "Viet Nam",
-    "score": 37.07996368
+    "score": 37.07996368,
+    "iso3": "VNM"
    },
    {
     "rank": 45,
     "name": "Thailand",
-    "score": 36.67229843
+    "score": 36.67229843,
+    "iso3": "THA"
    },
    {
     "rank": 46,
     "name": "Saudi Arabia",
-    "score": 36.04481888
+    "score": 36.04481888,
+    "iso3": "SAU"
    },
    {
     "rank": 47,
     "name": "Slovakia",
-    "score": 35.50790024
+    "score": 35.50790024,
+    "iso3": "SVK"
    },
    {
     "rank": 48,
     "name": "Qatar",
-    "score": 34.56176758
+    "score": 34.56176758,
+    "iso3": "QAT"
    },
    {
     "rank": 49,
     "name": "Romania",
-    "score": 34.26435471
+    "score": 34.26435471,
+    "iso3": "ROU"
    },
    {
     "rank": 50,
     "name": "Philippines",
-    "score": 33.59391403
+    "score": 33.59391403,
+    "iso3": "PHL"
    },
    {
     "rank": 51,
     "name": "Chile",
-    "score": 33.06609344
+    "score": 33.06609344,
+    "iso3": "CHL"
    },
    {
     "rank": 52,
     "name": "Brazil",
-    "score": 32.86899948
+    "score": 32.86899948,
+    "iso3": "BRA"
    },
    {
     "rank": 53,
     "name": "Mauritius",
-    "score": 32.50305939
+    "score": 32.50305939,
+    "iso3": "MUS"
    },
    {
     "rank": 54,
     "name": "Serbia",
-    "score": 31.74345589
+    "score": 31.74345589,
+    "iso3": "SRB"
    },
    {
     "rank": 55,
     "name": "Indonesia",
-    "score": 31.30502129
+    "score": 31.30502129,
+    "iso3": "IDN"
    },
    {
     "rank": 56,
     "name": "Georgia",
-    "score": 31.21479225
+    "score": 31.21479225,
+    "iso3": "GEO"
    },
    {
     "rank": 57,
     "name": "Morocco",
-    "score": 31.04794693
+    "score": 31.04794693,
+    "iso3": "MAR"
    },
    {
     "rank": 58,
     "name": "Mexico",
-    "score": 30.51271629
+    "score": 30.51271629,
+    "iso3": "MEX"
    },
    {
     "rank": 59,
     "name": "Armenia",
-    "score": 30.44819069
+    "score": 30.44819069,
+    "iso3": "ARM"
    },
    {
     "rank": 60,
     "name": "Russian Federation",
-    "score": 30.26407433
+    "score": 30.26407433,
+    "iso3": "RUS"
    },
    {
     "rank": 61,
     "name": "South Africa",
-    "score": 30.13827896
+    "score": 30.13827896,
+    "iso3": "ZAF"
    },
    {
     "rank": 62,
     "name": "Bahrain",
-    "score": 30.01576614
+    "score": 30.01576614,
+    "iso3": "BHR"
    },
    {
     "rank": 63,
     "name": "North Macedonia",
-    "score": 29.79066467
+    "score": 29.79066467,
+    "iso3": "MKD"
    },
    {
     "rank": 64,
     "name": "Montenegro",
-    "score": 29.75278473
+    "score": 29.75278473,
+    "iso3": "MNE"
    },
    {
     "rank": 65,
     "name": "Jordan",
-    "score": 29.69361115
+    "score": 29.69361115,
+    "iso3": "JOR"
    },
    {
     "rank": 66,
     "name": "Ukraine",
-    "score": 29.69101143
+    "score": 29.69101143,
+    "iso3": "UKR"
    },
    {
     "rank": 67,
     "name": "Albania",
-    "score": 29.60708427
+    "score": 29.60708427,
+    "iso3": "ALB"
    },
    {
     "rank": 68,
     "name": "Uruguay",
-    "score": 28.83790398
+    "score": 28.83790398,
+    "iso3": "URY"
    },
    {
     "rank": 69,
     "name": "Oman",
-    "score": 28.64909744
+    "score": 28.64909744,
+    "iso3": "OMN"
    },
    {
     "rank": 70,
     "name": "Iran (Islamic Republic of)",
-    "score": 28.52097321
+    "score": 28.52097321,
+    "iso3": "IRN"
    },
    {
     "rank": 71,
     "name": "Colombia",
-    "score": 28.48028374
+    "score": 28.48028374,
+    "iso3": "COL"
    },
    {
     "rank": 72,
     "name": "Costa Rica",
-    "score": 28.35890198
+    "score": 28.35890198,
+    "iso3": "CRI"
    },
    {
     "rank": 73,
     "name": "Kuwait",
-    "score": 28.21430206
+    "score": 28.21430206,
+    "iso3": "KWT"
    },
    {
     "rank": 74,
     "name": "Republic of Moldova",
-    "score": 27.36750412
+    "score": 27.36750412,
+    "iso3": "MDA"
    },
    {
     "rank": 75,
     "name": "Seychelles",
-    "score": 27.16261292
+    "score": 27.16261292,
+    "iso3": "SYC"
    },
    {
     "rank": 76,
     "name": "Tunisia",
-    "score": 26.98679161
+    "score": 26.98679161,
+    "iso3": "TUN"
    },
    {
     "rank": 77,
     "name": "Argentina",
-    "score": 26.7779541
+    "score": 26.7779541,
+    "iso3": "ARG"
    },
    {
     "rank": 78,
     "name": "Mongolia",
-    "score": 26.69455338
+    "score": 26.69455338,
+    "iso3": "MNG"
    },
    {
     "rank": 79,
     "name": "Uzbekistan",
-    "score": 26.49755287
+    "score": 26.49755287,
+    "iso3": "UZB"
    },
    {
     "rank": 80,
     "name": "Peru",
-    "score": 26.46604538
+    "score": 26.46604538,
+    "iso3": "PER"
    },
    {
     "rank": 81,
     "name": "Kazakhstan",
-    "score": 26.34120941
+    "score": 26.34120941,
+    "iso3": "KAZ"
    },
    {
     "rank": 82,
     "name": "Panama",
-    "score": 25.87986755
+    "score": 25.87986755,
+    "iso3": "PAN"
    },
    {
     "rank": 83,
     "name": "Jamaica",
-    "score": 25.23137283
+    "score": 25.23137283,
+    "iso3": "JAM"
    },
    {
     "rank": 84,
     "name": "Barbados",
-    "score": 25.12503052
+    "score": 25.12503052,
+    "iso3": "BRB"
    },
    {
     "rank": 85,
     "name": "Belarus",
-    "score": 25.09902763
+    "score": 25.09902763,
+    "iso3": "BLR"
    },
    {
     "rank": 86,
     "name": "Egypt",
-    "score": 24.71222878
+    "score": 24.71222878,
+    "iso3": "EGY"
    },
    {
     "rank": 87,
     "name": "Botswana",
-    "score": 24.63146782
+    "score": 24.63146782,
+    "iso3": "BWA"
    },
    {
     "rank": 88,
     "name": "Brunei Darussalam",
-    "score": 24.46344948
+    "score": 24.46344948,
+    "iso3": "BRN"
    },
    {
     "rank": 89,
     "name": "Senegal",
-    "score": 23.83653641
+    "score": 23.83653641,
+    "iso3": "SEN"
    },
    {
     "rank": 90,
     "name": "Lebanon",
-    "score": 23.61202621
+    "score": 23.61202621,
+    "iso3": "LBN"
    },
    {
     "rank": 91,
     "name": "Namibia",
-    "score": 23.47568893
+    "score": 23.47568893,
+    "iso3": "NAM"
    },
    {
     "rank": 92,
     "name": "Bosnia and Herzegovina",
-    "score": 23.42970657
+    "score": 23.42970657,
+    "iso3": "BIH"
    },
    {
     "rank": 93,
     "name": "Sri Lanka",
-    "score": 22.90527725
+    "score": 22.90527725,
+    "iso3": "LKA"
    },
    {
     "rank": 94,
     "name": "Azerbaijan",
-    "score": 22.86946678
+    "score": 22.86946678,
+    "iso3": "AZE"
    },
    {
     "rank": 95,
     "name": "Cabo Verde",
-    "score": 22.590168
+    "score": 22.590168,
+    "iso3": "CPV"
    },
    {
     "rank": 96,
     "name": "Kyrgyzstan",
-    "score": 22.5707531
+    "score": 22.5707531,
+    "iso3": "KGZ"
    },
    {
     "rank": 97,
     "name": "Dominican Republic",
-    "score": 22.56846237
+    "score": 22.56846237,
+    "iso3": "DOM"
    },
    {
     "rank": 98,
     "name": "El Salvador",
-    "score": 22.24051476
+    "score": 22.24051476,
+    "iso3": "SLV"
    },
    {
     "rank": 99,
     "name": "Pakistan",
-    "score": 22.0640831
+    "score": 22.0640831,
+    "iso3": "PAK"
    },
    {
     "rank": 100,
     "name": "Cambodia",
-    "score": 21.96328735
+    "score": 21.96328735,
+    "iso3": "KHM"
    },
    {
     "rank": 101,
     "name": "Ghana",
-    "score": 21.85353661
+    "score": 21.85353661,
+    "iso3": "GHA"
    },
    {
     "rank": 102,
     "name": "Kenya",
-    "score": 21.37911415
+    "score": 21.37911415,
+    "iso3": "KEN"
    },
    {
     "rank": 103,
     "name": "Paraguay",
-    "score": 21.35781479
+    "score": 21.35781479,
+    "iso3": "PRY"
    },
    {
     "rank": 104,
     "name": "Rwanda",
-    "score": 21.10355949
+    "score": 21.10355949,
+    "iso3": "RWA"
    },
    {
     "rank": 105,
     "name": "Nigeria",
-    "score": 21.08152008
+    "score": 21.08152008,
+    "iso3": "NGA"
    },
    {
     "rank": 106,
     "name": "Bangladesh",
-    "score": 20.9510479
+    "score": 20.9510479,
+    "iso3": "BGD"
    },
    {
     "rank": 107,
     "name": "Nepal",
-    "score": 20.20617676
+    "score": 20.20617676,
+    "iso3": "NPL"
    },
    {
     "rank": 108,
     "name": "Tajikistan",
-    "score": 20.17492294
+    "score": 20.17492294,
+    "iso3": "TJK"
    },
    {
     "rank": 109,
     "name": "Lao People's Democratic Republic",
-    "score": 20.11882401
+    "score": 20.11882401,
+    "iso3": "LAO"
    },
    {
     "rank": 110,
-    "name": "CÃ´te d'Ivoire",
-    "score": 19.73189163
+    "name": "Côte d'Ivoire",
+    "score": 19.73189163,
+    "iso3": "CIV"
    },
    {
     "rank": 111,
     "name": "Bolivia (Plurinational State of)",
-    "score": 19.63551521
+    "score": 19.63551521,
+    "iso3": "BOL"
    },
    {
     "rank": 112,
     "name": "Zambia",
-    "score": 19.57858849
+    "score": 19.57858849,
+    "iso3": "ZMB"
    },
    {
     "rank": 113,
     "name": "Ecuador",
-    "score": 19.5397644
+    "score": 19.5397644,
+    "iso3": "ECU"
    },
    {
     "rank": 114,
     "name": "Trinidad and Tobago",
-    "score": 19.25097084
+    "score": 19.25097084,
+    "iso3": "TTO"
    },
    {
     "rank": 115,
     "name": "Algeria",
-    "score": 18.90146446
+    "score": 18.90146446,
+    "iso3": "DZA"
    },
    {
     "rank": 116,
     "name": "Cameroon",
-    "score": 18.18438721
+    "score": 18.18438721,
+    "iso3": "CMR"
    },
    {
     "rank": 117,
     "name": "Togo",
-    "score": 18.07082558
+    "score": 18.07082558,
+    "iso3": "TGO"
    },
    {
     "rank": 118,
     "name": "Benin",
-    "score": 17.81319618
+    "score": 17.81319618,
+    "iso3": "BEN"
    },
    {
     "rank": 119,
     "name": "Honduras",
-    "score": 17.65535736
+    "score": 17.65535736,
+    "iso3": "HND"
    },
    {
     "rank": 120,
     "name": "Madagascar",
-    "score": 17.56108475
+    "score": 17.56108475,
+    "iso3": "MDG"
    },
    {
     "rank": 121,
     "name": "United Republic of Tanzania",
-    "score": 17.45213127
+    "score": 17.45213127,
+    "iso3": "TZA"
    },
    {
     "rank": 122,
     "name": "Myanmar",
-    "score": 17.30460548
+    "score": 17.30460548,
+    "iso3": "MMR"
    },
    {
     "rank": 123,
     "name": "Guatemala",
-    "score": 17.06826782
+    "score": 17.06826782,
+    "iso3": "GTM"
    },
    {
     "rank": 124,
     "name": "Uganda",
-    "score": 17.06727028
+    "score": 17.06727028,
+    "iso3": "UGA"
    },
    {
     "rank": 125,
     "name": "Malawi",
-    "score": 15.98773003
+    "score": 15.98773003,
+    "iso3": "MWI"
    },
    {
     "rank": 126,
     "name": "Burkina Faso",
-    "score": 15.87765789
+    "score": 15.87765789,
+    "iso3": "BFA"
    },
    {
     "rank": 127,
     "name": "Burundi",
-    "score": 15.76369858
+    "score": 15.76369858,
+    "iso3": "BDI"
    },
    {
     "rank": 128,
     "name": "Mozambique",
-    "score": 15.39059162
+    "score": 15.39059162,
+    "iso3": "MOZ"
    },
    {
     "rank": 129,
     "name": "Zimbabwe",
-    "score": 15.37756729
+    "score": 15.37756729,
+    "iso3": "ZWE"
    },
    {
     "rank": 130,
     "name": "Nicaragua",
-    "score": 15.37312984
+    "score": 15.37312984,
+    "iso3": "NIC"
    },
    {
     "rank": 131,
     "name": "Mauritania",
-    "score": 15.36607265
+    "score": 15.36607265,
+    "iso3": "MRT"
    },
    {
     "rank": 132,
     "name": "Lesotho",
-    "score": 14.93377399
+    "score": 14.93377399,
+    "iso3": "LSO"
    },
    {
     "rank": 133,
     "name": "Guinea",
-    "score": 14.91313362
+    "score": 14.91313362,
+    "iso3": "GIN"
    },
    {
     "rank": 134,
     "name": "Ethiopia",
-    "score": 14.42105293
+    "score": 14.42105293,
+    "iso3": "ETH"
    },
    {
     "rank": 135,
     "name": "Mali",
-    "score": 13.96713448
+    "score": 13.96713448,
+    "iso3": "MLI"
    },
    {
     "rank": 136,
     "name": "Venezuela (Bolivarian Republic of)",
-    "score": 13.7306118
+    "score": 13.7306118,
+    "iso3": "VEN"
    },
    {
     "rank": 137,
     "name": "Congo",
-    "score": 13.6151886
+    "score": 13.6151886,
+    "iso3": "COG"
    },
    {
     "rank": 138,
     "name": "Angola",
-    "score": 13.02609062
+    "score": 13.02609062,
+    "iso3": "AGO"
    },
    {
     "rank": 139,
     "name": "Niger",
-    "score": 11.9449625
+    "score": 11.9449625,
+    "iso3": "NER"
    }
   ],
   "full_table_stats": {

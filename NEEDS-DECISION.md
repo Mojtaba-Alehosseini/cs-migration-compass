@@ -2275,10 +2275,14 @@ JS challenge, no cookie, a plain `urllib`/`requests` call with a browser User-Ag
 `iso3` (`CHE`, `SWE`, `USA`, ...), so the extraction now matches on an exact ISO3 code instead of a
 free-text country name — removing the mechanism that cost the Netherlands its row in the first
 place, not just working around WIPO's PDF delivery. All 15 site countries' rank and score match the
-values package 19's PDF parser had already shipped, checked before writing any code and again after
-(`scripts/tests/test_package20_wipo_csv.py`) — two independent extraction paths (word-geometry PDF
-parsing, CSV) agreeing on all 15 rows, which is also a second, independent confirmation that package
-19's parser was correct.
+values package 19's PDF parser had already shipped, checked once by hand before writing any code
+(exploratory CSV fetch) and once more programmatically after (`REPORT-P20.md` Gate 3, comparing the
+real committed pre-package-20 file against the real committed post-package-20 file) — two
+independent extraction paths (word-geometry PDF parsing, CSV) agreeing on all 15 rows, which is also
+a second, independent confirmation that package 19's parser was correct. That comparison is a
+one-time verification, not a standing test: a permanent test asserting "matches these exact values"
+would itself become the [[feedback-tests-pinned-to-a-snapshot]] mistake the moment GII publishes a
+2026 edition and these numbers correctly change.
 
 None of options (a)/(b)/(c) were needed. No PDF is committed to the repo (`data/raw/wipo_gii/` holds
 only the CSV now, still gitignored, still a disposable cache — not an exception like `levels_fyi`'s).
@@ -2288,3 +2292,14 @@ docstring for exactly what was checked). `wipo_gii` moved from `src_pdf_indices.
 its own `src_wipo_gii.py`; the fetch is unattended-safe end to end, and the underlying problem —
 "WIPO's PDF cannot be fetched without a browser" — is gone rather than mitigated, because `wipo_gii`
 no longer fetches a PDF at all.
+
+**Traded one visible problem for a quieter one, stated plainly rather than left implicit.** The PDF
+URL failed loudly (a WAF challenge, an obvious non-200). The CSV URL is year-stamped with no
+confirmed retirement behaviour, so the more likely failure mode now is the URL quietly continuing to
+serve 2025 data after a 2026 edition exists elsewhere, with no error at all — found by this
+package's own adversarial review, which also found an earlier draft of `src_wipo_gii.py` had
+asserted (not established) that a stale CSV would 404 the way the dead 2024 PDF URL did. Mitigated,
+not eliminated: the script now probes for next year's URL and flags loudly if it already exists (see
+`REPORT-P20.md` Gate 11, `docs/DATA-FITNESS.md` §11). `EDITION_YEAR` still needs a human to update
+when WIPO ships a new edition — this closes the fetch-mechanism problem #55 was about, not the
+separate, ongoing need for someone to notice when GII's edition changes.

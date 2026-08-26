@@ -104,9 +104,9 @@
       "urls": [
         "https://www.ef.com/assetscdn/WIBIwq6RdJvcD9bc8RMd/cefcom-epi-site/reports/2025/ef-epi-2025-english.pdf"
       ],
-      "fetched_at": "2026-08-26T22:03:48+00:00",
+      "fetched_at": "2026-08-26T22:06:29+00:00",
       "license": "EF publishes the EPI report freely; cite EF Education First, EF English Proficiency Index 2025.",
-      "redistribution": "raw committed",
+      "redistribution": "processed derivative only -- the raw PDF is cached under data/raw/ef_epi/ but that directory is gitignored, so this repo does not redistribute it. Only the 15-country slice and the full extracted table are committed, in data/processed/ef_epi.json.",
       "transforms": [
         "Downloaded the published PDF with a browser User-Agent (ef.com 403s otherwise).",
         "Extracted word geometry from page 5 with pdfplumber.extract_words().",
@@ -1127,16 +1127,17 @@
       "urls": [
         "https://www.wipo.int/gii-ranking/data/bc_results_gii_2025.csv"
       ],
-      "fetched_at": "2026-08-26T21:49:24+00:00",
+      "fetched_at": "2026-08-26T22:34:37+00:00",
       "license": "WIPO publishes the GII under CC BY 4.0 (some content excepted); cite WIPO, Global Innovation Index 2025.",
-      "redistribution": "raw committed",
+      "redistribution": "processed derivative only -- the raw CSV is cached under data/raw/wipo_gii/ but that directory is gitignored, so this repo does not redistribute it (CC BY 4.0 would permit it; the repo simply doesn't). Only the 15-country slice and the full extracted table are committed, in data/processed/wipo_gii.json.",
       "transforms": [
         "URL found by inspecting what wipo.int/gii-ranking/en/ (a Nuxt app) itself requests to render its own ranking table -- a direct CSV data endpoint, not the rendered page.",
         "Fetched the CSV with a browser User-Agent (unattended: plain HTTP, no WAF challenge, no cookie, no browser session -- unlike the PDF path it replaces).",
-        "Parsed with csv.DictReader, keyed on the iso3 column -- exact ISO3 matching, not the free-text name matching that previously lost the Netherlands to a name-form mismatch.",
+        "Parsed with csv.DictReader, keyed on the iso3 column -- exact ISO3 matching, not the free-text name matching that previously lost the Netherlands to a name-form mismatch. Every row is matched a second, independent time by economy_name and the two are required to agree; a disagreement excludes that row rather than trusting either column.",
         "Decimal fields use a comma separator and are quoted (e.g. \"65,96195221\"); converted explicitly rather than relying on a bare float() cast, which raises on that string.",
+        "A CSV that fetches successfully but parses to zero rows is treated as a failure, not an empty-but-valid result -- it raises before reaching any downstream check, so a prior run's processed file is never silently left in place under a fresh 'ok' status.",
         "Extracted all 139 published rows, not just our 15 countries, so the table validates itself against the publisher's own row count, rank sequence and range.",
-        "Countries not confidently matched are omitted rather than guessed."
+        "Countries not confidently matched, or matched inconsistently across iso3 and name, are omitted rather than guessed."
       ],
       "output": "data/processed/wipo_gii.json",
       "status": "ok",
@@ -1213,5 +1214,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-26T22:03:48+00:00"
+  "updated_at": "2026-08-26T22:34:37+00:00"
 }
