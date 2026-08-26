@@ -2,8 +2,23 @@
 
 Split out of the former src_pdf_indices.py in package 20, which moved
 wipo_gii to WIPO's own CSV endpoint (see src_wipo_gii.py) once one was
-found -- this file is the unchanged EF EPI half, still a PDF parse pending
-package 20 Tier 2's own check for an equivalent EF data file.
+found. ef.com/wwen/epi/ was checked for the same trick (package 20, Tier 2)
+and does not have one, so this stays a PDF parse. What was actually
+checked, so a future package does not have to redo it from scratch: the
+page is a Next.js/Storyblok app; its `__NEXT_DATA__` SSR payload was
+inspected in full and carries only CMS layout config for the ranking
+section (271 bytes -- titles, spacing, background colour, no scores);
+clicking "Load more" reveals additional rows with ZERO new network
+requests, meaning the full dataset is already resident client-side by the
+time the page loads, not fetched from a discoverable public endpoint on
+demand; every loaded JS chunk was searched for the ranking data directly
+(using "Zimbabwe" as a marker distinctive enough not to appear in
+boilerplate) and the one hit found was an unrelated generic
+country-calling-code list, not ranking data. However the full table
+actually reaches the client, it is not doing so via a plain,
+fetchable-outside-a-browser data file the way WIPO's CSV does -- the PDF
+stays the extraction path here, verified against 123/123 published rows
+(REPORT-P19.md).
 
 The extraction is made to check itself: EVERY country in the table is
 extracted, not just the 15 this site needs, which turns the parse into a
@@ -132,7 +147,8 @@ def run() -> None:
                 "see audit_data.py's check_full_table_self_consistency(). 'source_line' on each of our "
                 "15 countries names the exact rank and page it came from for manual audit. (WIPO GII "
                 "moved off this PDF-parsing pattern in package 20 once its own CSV was found -- see "
-                "src_wipo_gii.py.)"
+                "src_wipo_gii.py. EF EPI was checked for an equivalent data file the same package and "
+                "does not have one -- see this file's own module docstring for what was checked.)"
             ),
             "full_table": [{"rank": r, "name": n, "score": s} for r, n, s, _gi in full_rows],
             "full_table_stats": {

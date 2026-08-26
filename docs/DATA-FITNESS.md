@@ -544,6 +544,12 @@ side-by-side PDF columns onto one interleaved line, gluing EF EPI's Germany rank
 name with no space to split on ("04Germany"). Rewritten to parse word geometry (`pdf_table.py`) and
 to extract the FULL published table (123 rows) so it validates itself against the publisher's own
 row count, range and rank sequence — see `audit_data.py`'s `check_full_table_self_consistency()`.
+Package 20 (Tier 2) checked `ef.com/wwen/epi/` for the same CSV-endpoint escape hatch that moved
+`wipo_gii` off this pattern and found none — the page's own SSR payload carries no ranking data, no
+network request fetches it (a "Load more" click reveals more rows with zero new requests, so
+whatever holds the full dataset client-side is not a discoverable public endpoint), and no loaded JS
+chunk contains it either. `pdf_table.py` and this extraction path stay; see `src_ef_epi.py`'s own
+docstring for exactly what was checked, so a future package does not have to redo it.
 
 ### `wipo_gii` — now a CSV, not a document-derived source (package 20)
 
@@ -645,7 +651,7 @@ fire.
 | Source | Method | Self-checkable (Tier 2 principle)? | Status after package 20 |
 |---|---|---|---|
 | `wipo_gii` | **CSV, keyed on iso3** (was PDF column-table layout through package 19) | Yes — full 139-row table validated against the publisher's own count, range and rank sequence; same check, now format-agnostic | **Graduated out of this category — package 20** |
-| `ef_epi` | PDF column-table layout | Yes — full 123-row table validated the same way | Fixed & self-checking (package 19) |
+| `ef_epi` | PDF column-table layout | Yes — full 123-row table validated the same way | Fixed & self-checking (package 19); checked for a CSV escape hatch and found none (package 20) |
 | `numbeo_history` | Live HTML table scrape | Partial — row-count floor; no exact published total exists to match | Made self-checking (coarse) |
 | `wikipedia_english_speakers` | Live HTML table scrape | No — no publisher-stated total exists | Named plainly, not fixable this way |
 | `levels_fyi` | One-time human browser capture | N/A — not a live parse | Staleness already covered generically; not a layout risk |

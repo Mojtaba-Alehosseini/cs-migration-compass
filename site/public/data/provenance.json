@@ -104,7 +104,7 @@
       "urls": [
         "https://www.ef.com/assetscdn/WIBIwq6RdJvcD9bc8RMd/cefcom-epi-site/reports/2025/ef-epi-2025-english.pdf"
       ],
-      "fetched_at": "2026-08-26T22:02:18+00:00",
+      "fetched_at": "2026-08-26T22:03:48+00:00",
       "license": "EF publishes the EPI report freely; cite EF Education First, EF English Proficiency Index 2025.",
       "redistribution": "raw committed",
       "transforms": [
@@ -1213,5 +1213,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-26T22:02:18+00:00"
+  "updated_at": "2026-08-26T22:03:48+00:00"
 }
