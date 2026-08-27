@@ -640,15 +640,33 @@ try {
 
   // /openings: the USD -> display leg is year-matched like the first leg.
   await page.hashGo(`${BASE}#/openings`, { waitMs: 6000 })
-  const fx = JSON.parse(await page.eval(`(() => {
+  const fx = JSON.parse(await page.eval(`(async () => {
     const setV = (el, v, proto) => { Object.getOwnPropertyDescriptor(proto.prototype, 'value').set.call(el, v); el.dispatchEvent(new Event(proto === HTMLSelectElement ? 'change' : 'input', { bubbles: true })) }
-    const search = document.querySelector('input[type="text"], input:not([type])')
-    const cur = [...document.querySelectorAll('select')].find((s) => [...s.options].some((o) => /Australian dollars/.test(o.textContent)))
-    setV(search, 'supervisory', HTMLInputElement)
-    setV(cur, 'AUD', HTMLSelectElement)
+    const findEls = () => ({
+      search: document.querySelector('input[type="text"], input:not([type])'),
+      cur: [...document.querySelectorAll('select')].find((s) => [...s.options].some((o) => /Australian dollars/.test(o.textContent))),
+    })
+    // Found live: this page's own ~48k-row dataset can still be rendering
+    // its filter controls at the fixed 6000ms mark above under real-world
+    // load, at which point search/cur are null and the native value
+    // setter below throws the opaque "Illegal invocation" (calling it with
+    // a null receiver) rather than a message that says what's actually
+    // wrong. Poll a further 6s for both controls to exist before touching
+    // them; a genuine regression still fails, just with a legible reason.
+    let els = findEls()
+    for (let i = 0; i < 24 && (!els.search || !els.cur); i++) {
+      await new Promise((r) => setTimeout(r, 250))
+      els = findEls()
+    }
+    if (!els.search || !els.cur) {
+      return JSON.stringify({ ok: false,
+        reason: 'search=' + !!els.search + ' cur=' + !!els.cur + ' never both appeared' })
+    }
+    setV(els.search, 'supervisory', HTMLInputElement)
+    setV(els.cur, 'AUD', HTMLSelectElement)
     return JSON.stringify({ ok: true })
-  })()`))
-  check(fx.ok, 'R22: /openings accepts a title filter and a display currency')
+  })()`, { awaitPromise: true }))
+  check(fx.ok, `R22: /openings accepts a title filter and a display currency${fx.reason ? ` (${fx.reason})` : ''}`)
 
   const oldRow = JSON.parse(await page.eval(`(() => {
     const tr = [...document.querySelectorAll('.tbl tbody tr')].find((r) => /Census Bureau/.test(r.textContent))
