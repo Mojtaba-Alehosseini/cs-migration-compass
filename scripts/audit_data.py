@@ -130,7 +130,23 @@ _QUALIFIER_RE = re.compile(r"^_(low|high|q1|q3)(?=_|$)", re.I)
 # COEFFICIENTS (unitless, -1 to 1) -- not a pay figure, no currency to
 # disclose, found live by this exact check on the first audit run after
 # that file existed.
-_NOT_A_WAGE_CONTAINER_RE = re.compile(r"coefficient_of_variation|null_test", re.I)
+#
+# Scoped per-FILE, not applied blanket to every container everywhere: the
+# same reasoning as _NOT_A_WAGE_FILE below applies here too (adversarial
+# review, package 21) -- an unscoped "null_test" or "coefficient_of_
+# variation" match would also silently exempt a container of that name in
+# some FUTURE file that genuinely does carry a pay figure needing
+# disclosure. Each pattern is paired with the one file it was actually
+# found needed in.
+_NOT_A_WAGE_CONTAINER_BY_FILE: dict[str, re.Pattern] = {
+    "salary_uk.json": re.compile(r"coefficient_of_variation", re.I),
+    "teranet_smoothed.json": re.compile(r"null_test", re.I),
+}
+
+
+def _is_not_a_wage_container(file_name: str, own_key_name: str) -> bool:
+    pat = _NOT_A_WAGE_CONTAINER_BY_FILE.get(file_name)
+    return bool(pat and pat.search(own_key_name))
 
 # Files with no pay data at all, whose OWN fields still happen to match the
 # mean/median/p10.. vocabulary for an unrelated concept -- climate_normals
@@ -238,7 +254,8 @@ def _resolve_unit(prefix: str, suffix: str, container: dict, ancestors: list[dic
     return currency, period
 
 
-def _find_families(obj, path: str, out: list[dict], ancestors: list[dict] | None = None) -> None:
+def _find_families(obj, path: str, out: list[dict], file_name: str,
+                    ancestors: list[dict] | None = None) -> None:
     """Recursively find every dict whose own keys include >=1 member of a
     single (prefix, suffix) wage family, and record {path, prefix, suffix,
     values: {token: (field_name, value)}, currency, period} — the last two
@@ -270,7 +287,7 @@ def _find_families(obj, path: str, out: list[dict], ancestors: list[dict] | None
                 prefix, token, suffix = fam
                 groups.setdefault((prefix, suffix), {})[token] = (str(k), leaf)
         own_key_name = path.rsplit(".", 1)[-1]
-        is_wage_container = not _NOT_A_WAGE_CONTAINER_RE.search(own_key_name)
+        is_wage_container = not _is_not_a_wage_container(file_name, own_key_name)
         if is_wage_container:
             for (prefix, suffix), members in groups.items():
                 if len(members) >= 1:
@@ -278,10 +295,10 @@ def _find_families(obj, path: str, out: list[dict], ancestors: list[dict] | None
                     out.append({"path": path, "prefix": prefix, "suffix": suffix, "values": members,
                                 "currency": currency, "period": period})
         for k, v in obj.items():
-            _find_families(v, f"{path}.{k}", out, ancestors + [obj])
+            _find_families(v, f"{path}.{k}", out, file_name, ancestors + [obj])
     elif isinstance(obj, list):
         for i, item in enumerate(obj):
-            _find_families(item, f"{path}[{i}]", out, ancestors)
+            _find_families(item, f"{path}[{i}]", out, file_name, ancestors)
 
 
 def _all_families(processed_dir: Path = PROCESSED) -> list[tuple[Path, dict]]:
@@ -293,7 +310,7 @@ def _all_families(processed_dir: Path = PROCESSED) -> list[tuple[Path, dict]]:
         if doc is None:
             continue
         families: list[dict] = []
-        _find_families(doc.get("data"), "data", families)
+        _find_families(doc.get("data"), "data", families, p.name)
         for fam in families:
             out.append((p, fam))
     return out
@@ -466,7 +483,7 @@ def check_pay_fields_disclose_currency_and_period(processed_dir: Path = PROCESSE
             # currency/period disclosure at all; not just "checked and
             # passing", genuinely out of scope for this rule.
             own_key_name = ctx_path.rsplit(".", 1)[-1]
-            if _NOT_A_WAGE_CONTAINER_RE.search(own_key_name):
+            if _is_not_a_wage_container(path.name, own_key_name):
                 return
             for k, v in obj.items():
                 if isinstance(v, (int, float)):

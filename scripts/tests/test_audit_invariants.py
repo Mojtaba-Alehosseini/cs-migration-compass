@@ -113,7 +113,14 @@ class TestUnitDisclosure(AuditInvariantTestCase):
     def test_coefficient_of_variation_is_exempt_not_flagged(self):
         # Confirms the exclusion (found live against salary_uk.json) stays
         # narrow -- a genuine CV% block must NOT be flagged as unit-less.
-        self._write("uk_like", "uk_like", {"occupations": {"1": {
+        # The file name itself matters here, not just the container name:
+        # adversarial review (package 21) found the exemption was originally
+        # unanchored to any specific FILE, which would have silently
+        # exempted a same-named container in an unrelated file too -- see
+        # TestUnitDisclosureExemptionsAreFileScoped below for that guard.
+        # Written as "salary_uk", the real file this was found against, so
+        # this test still exercises the real exemption after that fix.
+        self._write("salary_uk", "salary_uk", {"occupations": {"1": {
             "mean_gbp_year": 80000,
             "coefficient_of_variation_pct": {"mean": 5.6, "p10": 14, "p25": 5.2},
         }}})
@@ -125,13 +132,41 @@ class TestUnitDisclosure(AuditInvariantTestCase):
         # Monte Carlo null distribution's mean CORRELATION (unitless, -1 to
         # 1), reusing the mean/p95 vocabulary for a non-pay concept, the
         # same shape of false match coefficient_of_variation already covers.
-        self._write("teranet_like", "teranet_like", {"cities": {"toronto": {
+        # Written as "teranet_smoothed", the real file, for the same reason
+        # as the CV test above -- the exemption is file-scoped now.
+        self._write("teranet_smoothed", "teranet_smoothed", {"cities": {"toronto": {
             "trend_pct_per_year": 4.9,
             "validation": {"null_test": {"n_draws": 500, "null_mean": 0.03, "null_sd": 0.43,
                                           "null_p95": 0.74, "p_value": 0.0}},
         }}})
         ad.check_pay_fields_disclose_currency_and_period(self.tmp)
         self.assertEqual(ad.ERRORS, [])
+
+
+class TestUnitDisclosureExemptionsAreFileScoped(AuditInvariantTestCase):
+    """Adversarial review, package 21: the two exemptions above were
+    originally a bare regex matched against ANY file's own container names,
+    which would silently exempt a same-named container in a future,
+    unrelated file that genuinely needed the disclosure check. Fixed by
+    scoping each pattern to the one file it was actually found needed in
+    (`_NOT_A_WAGE_CONTAINER_BY_FILE`). These two tests prove the fix
+    actually narrows the exemption, not just that the two real files above
+    still work -- a same-named container in a DIFFERENT file must still be
+    flagged."""
+
+    def test_a_null_test_container_in_an_unrelated_file_is_still_flagged(self):
+        self._write("some_other_source", "some_other_source", {"occupations": {"1": {
+            "null_test": {"mean": 80000, "median": 70000},
+        }}})
+        ad.check_pay_fields_disclose_currency_and_period(self.tmp)
+        self.assertTrue(any("missing its own currency and period" in e for e in ad.ERRORS), ad.ERRORS)
+
+    def test_a_coefficient_of_variation_container_in_an_unrelated_file_is_still_flagged(self):
+        self._write("some_other_source", "some_other_source", {"occupations": {"1": {
+            "coefficient_of_variation_pct": {"mean": 80000, "median": 70000},
+        }}})
+        ad.check_pay_fields_disclose_currency_and_period(self.tmp)
+        self.assertTrue(any("missing its own currency and period" in e for e in ad.ERRORS), ad.ERRORS)
 
 
 class TestMagnitudePlausibility(AuditInvariantTestCase):
