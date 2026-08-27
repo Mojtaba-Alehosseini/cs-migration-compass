@@ -114,19 +114,34 @@ interface Props {
 }
 
 /** NEEDS-DECISION #29 — "keep gig/hourly postings in the listing, marked."
- *  Verified directly against the committed corpus before building this: the
- *  3,314 postings matching common gig/freelance title keywords are already
- *  excluded from every pay STATISTIC (pay_summary_by_country only draws from
- *  period=='year' rows) — 3,308 of them (99.8%) because they are paid
- *  hourly, the rest because they are not classified as software titles. A
- *  keyword filter was prototyped and rejected: of the 6 keyword-matching
- *  rows that DO reach the software+annual pool, all 6 are false positives
- *  ("Smart Contract Engineer" — blockchain, not gig; "Contract to Hire" — a
- *  salaried role) that a title-text filter would have wrongly excluded,
- *  while catching zero real gig postings that were not already excluded by
- *  the period gate. So the marker here rides the STRUCTURED period field,
- *  never a title guess — a non-annual period is the actual, precise reason
- *  a posting cannot be salary-comparable, independent of what its title says. */
+ *
+ *  CORRECTED, adversarial review, package 21: an earlier version of this
+ *  comment claimed "3,308 of 3,314 gig-keyword postings (99.8%) are excluded
+ *  because they are paid hourly" — arithmetically impossible against the
+ *  corpus (it holds only 3,626 hourly rows in total) and not reproducible
+ *  under any keyword set tested. Re-verified directly, with anchored
+ *  whole-word matching (the earlier unanchored scan also inflated the
+ *  keyword-hit count itself — "contract" matched "Contractor Program
+ *  Security Officer", "intern" matched "Internal"): of 4,680 postings
+ *  matching common gig/freelance title words, 67.6% state NO compensation
+ *  at all, 28.3% are hourly, 3.5% are annual. The dominant real reason
+ *  gig-keyword postings never reach the pay pool is that most never state
+ *  pay at all — that is not a gig filter and would not hold in a corpus
+ *  where gig postings DO state annual-equivalent pay.
+ *
+ *  What the gate actually protects, re-checked directly: of the postings
+ *  that ARE annual-period AND software-classified (the real candidate
+ *  pool), the keyword-matching ones are internships (Software Engineer
+ *  Intern, PALACE ACQUIRE INTERN — a real USAF program), blockchain
+ *  "Smart Contract Engineer" roles, and "Contract to Hire" salaried
+ *  positions — none of them gig/freelance work in the sense this item
+ *  means. A keyword filter was prototyped and rejected: it would exclude
+ *  these genuine roles while not being the actual reason gig postings are
+ *  absent from the pool in the first place. So the marker here rides the
+ *  STRUCTURED period field, never a title guess — a non-annual period is
+ *  the real, verifiable, precise reason a posting cannot be
+ *  salary-comparable, independent of what its title says or how completely
+ *  a keyword scan can characterise the corpus. */
 function PeriodNote({ period }: { period: Compensation['period'] }) {
   if (period === 'year') return null
   return (
