@@ -13,12 +13,13 @@
  */
 
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Chart } from '../chart/Chart'
-import type { ChartCfg, ChartHandle } from '../chart/engine'
+import type { ChartCfg, ChartHandle, Series } from '../chart/engine'
+import { Derived } from '../Derived'
+import { PICK_COLORS } from '../../data/questions'
 import { Picker, ChartFoot, ChartTable, Gap, ThemeSkeleton, type HeroStat } from './Controls'
 import { useAsync } from './useAsync'
-import { loadHousing, type HousingData, type Pair } from '../../data/explore'
+import { loadHousing, TERANET_CITY_IDS, type HousingData, type Pair, type TeranetCityId } from '../../data/explore'
 
 const cc = (c: string) => `var(--c-${c})`
 const last = <T,>(a: T[]) => a[a.length - 1]!
@@ -49,6 +50,7 @@ export function HousingTheme() {
   return (
     <>
       <BisPanel data={data} />
+      <TeranetPanel data={data} />
       <CityRibbons data={data} />
       <Gap title="Why no city rent history"
         where={<>Rule §2c of the build brief · <a href="#/data">Data page →</a></>}>
@@ -177,47 +179,159 @@ function BisPanel({ data }: { data: HousingData }) {
   )
 }
 
+const TERANET_LABEL: Record<TeranetCityId, string> = {
+  toronto: 'Toronto', vancouver: 'Vancouver', montreal: 'Montreal',
+  ottawa: 'Ottawa', calgary: 'Calgary', halifax: 'Halifax',
+}
+const teranetColor = (id: TeranetCityId) => PICK_COLORS[TERANET_CITY_IDS.indexOf(id)] ?? 'var(--pick-rest)'
+
+/** NEEDS-DECISION #43, closed package 21 — the recovered signal, not the
+ *  raw-only "direction only" disclosure package 16 shipped.
+ *
+ *  Toronto's month-over-month lag-1 autocorrelation (-0.43) matches the
+ *  theoretical -0.5 signature of a smooth trend plus independent additive
+ *  noise once differenced -- meaning the trend is recoverable with a proper
+ *  noise model, not just discardable, which is further than package 16's own
+ *  "no single value, monthly or annual" conclusion needed to go.
+ *  scripts/derive_teranet_smoothed.py fits a Kalman-smoothed local linear
+ *  trend per city and validates it against OECD's own independent Canadian
+ *  house-price index (quarter-over-quarter CHANGES, not levels -- a levels-
+ *  based first version of that validation was proven unsafe by direct
+ *  adversarial testing, see that script's own module docstring) before a
+ *  city earns a band here at all. All 6 Teranet cities passed this run.
+ *
+ *  What survives is a MONTHLY trend with an honest 95% band, not a precise
+ *  level: even Toronto's best case recovers only 0.07% of month-to-month
+ *  RAW variance as genuine signal -- the band you see is wide because the
+ *  noise really is that large, and the chart does not pretend otherwise. */
+function TeranetPanel({ data }: { data: HousingData }) {
+  const available = TERANET_CITY_IDS.filter((c) => data.teranet[c])
+  const [picks, setPicks] = useState<TeranetCityId[]>(
+    (['toronto', 'vancouver'] as const).filter((c) => available.includes(c)),
+  )
+
+  const cfg = useMemo<ChartCfg>(() => {
+    const series: Series[] = []
+    const bands: NonNullable<ChartCfg['bands']> = []
+    let xMin = Infinity
+    let xMax = -Infinity
+    let yMin = Infinity
+    let yMax = -Infinity
+    for (const c of picks) {
+      const city = data.teranet[c]
+      if (!city) continue
+      const color = teranetColor(c)
+      series.push({ key: `${c}_mid`, label: TERANET_LABEL[c], color, pts: city.smoothed,
+        hoverLabel: `${TERANET_LABEL[c]} (smoothed)` })
+      series.push({ key: `${c}_hi`, color, mode: 'lo', pts: city.hi95, noRead: true })
+      series.push({ key: `${c}_lo`, color, mode: 'lo', pts: city.lo95, noRead: true })
+      bands.push({ hi: `${c}_hi`, lo: `${c}_lo`, color })
+      for (const [x, v] of city.hi95) { if (x < xMin) xMin = x; if (x > xMax) xMax = x; if (v! > yMax) yMax = v! }
+      for (const [, v] of city.lo95) { if (v! < yMin) yMin = v! }
+    }
+    if (!Number.isFinite(xMin)) { xMin = 1998; xMax = 2026; yMin = 0; yMax = 400 }
+    const x0 = Math.floor(xMin)
+    const x1 = Math.ceil(xMax)
+    const pad = (yMax - yMin) * 0.05 || 10
+    const yTickStep = Math.round((yMax - yMin) / 4 / 25) * 25 || 50
+    const yTicks: [number, string][] = []
+    for (let v = Math.ceil((yMin - pad) / yTickStep) * yTickStep; v <= yMax + pad; v += yTickStep) {
+      yTicks.push([v, String(v)])
+    }
+    const xTicks: [number, string][] = []
+    const xStep = Math.max(4, Math.round((x1 - x0) / 6 / 4) * 4)
+    for (let y = Math.ceil(x0 / xStep) * xStep; y <= x1; y += xStep) xTicks.push([y, String(y)])
+    return {
+      aria: `Kalman-smoothed Teranet house price index with 95% band, ${picks.map((c) => TERANET_LABEL[c]).join(', ')}`,
+      padT: 30,
+      x: { min: x0, max: x1, ticks: xTicks },
+      y: { min: yMin - pad, max: yMax + pad, ticks: yTicks },
+      series,
+      bands,
+      fmtX: (v) => String(Math.round(v)),
+      fmtV: (p, s) => `${(p[1] ?? 0).toFixed(1)}${s.key.endsWith('_hi') || s.key.endsWith('_lo') ? ' (95% band edge)' : ''}`,
+    }
+  }, [data, picks])
+
+  const csv = picks.flatMap((c) => {
+    const city = data.teranet[c]
+    if (!city) return []
+    const rawByX = new Map(city.raw.map(([x, v]) => [x, v]))
+    return city.smoothed.map(([x, smoothed], i) => ({
+      city: TERANET_LABEL[c],
+      year_frac: x.toFixed(4),
+      raw_index: rawByX.get(x) ?? '',
+      smoothed_index: smoothed.toFixed(2),
+      lo95: city.lo95[i]?.[1]?.toFixed(2) ?? '',
+      hi95: city.hi95[i]?.[1]?.toFixed(2) ?? '',
+    }))
+  })
+
+  return (
+    <div className="panel s6">
+      <h2>Toronto to Halifax, the trend recovered from the noise</h2>
+      <div className="sub">
+        Teranet's raw monthly index carries noise larger than the trend it describes — package 16's
+        own finding. What that finding did not settle is whether the trend is <i>recoverable</i>. A
+        state-space model (Kalman smoother) fit per city, then checked against OECD's own
+        independent Canadian index, says yes for all six: the smoothed line below is the recovered
+        trend, the shaded band its own honest uncertainty — wide, because the underlying noise
+        really is that large.
+      </div>
+      <div className="crail">
+        <span className="lbl">cities</span>
+        <Picker label="Teranet cities"
+          items={TERANET_CITY_IDS.map((c) => ({ k: c, label: TERANET_LABEL[c] }))}
+          active={picks} onChange={(update) => setPicks(update(picks) as TeranetCityId[])} />
+      </div>
+      <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
+        {picks.map((c) => {
+          const city = data.teranet[c]
+          if (!city) return null
+          const trend = city.trendPctPerYear
+          return (
+            <p key={c} className="insight" style={{ margin: 0 }}>
+              <b style={{ color: teranetColor(c) }}>{TERANET_LABEL[c]}</b>{': '}
+              <Derived
+                chain={[
+                  { op: 'raw', detail: `Teranet's own raw monthly index — noisy: only `
+                    + `${city.signalSharePct.toFixed(2)}% of month-to-month movement is genuine trend, `
+                    + `the rest is per-observation noise this pipeline does not control.` },
+                  { op: 'smooth', detail: 'Kalman-smoothed (state-space local linear trend, '
+                    + 'statsmodels.UnobservedComponents) — noise and trend-innovation variances '
+                    + 'estimated from the data by MLE, never assumed.' },
+                  { op: 'validate', detail: `Validated against OECD's independent Canadian house-price `
+                    + `index: quarter-over-quarter CHANGE correlation ${city.validation.corrDiff?.toFixed(3) ?? '—'} `
+                    + `over ${city.validation.nQuarters} quarters. A Monte Carlo null test (pure noise, `
+                    + `same length and scale, run through the identical pipeline) puts the chance of this `
+                    + `happening by noise alone at p=${city.validation.pValue?.toFixed(3) ?? '—'} — clears the `
+                    + `5% bar this required to earn a band at all.` },
+                ]}
+              >
+                {trend != null ? `≈${trend >= 0 ? '+' : ''}${trend.toFixed(1)}%/yr` : 'trend unavailable'}, band shown
+              </Derived>
+            </p>
+          )
+        })}
+      </div>
+      <div style={{ marginTop: 10 }}>
+        <Chart id="ex-teranet" cfg={cfg} transition="morph" />
+      </div>
+      <ChartFoot csv={{ name: 'compass-teranet-smoothed.csv', rows: csv }}>
+        <span className="chip chip-ok">● Teranet–National Bank, smoothed and OECD-validated</span>
+        <span className="chip chip-quiet">Raw monthly values in the CSV — never plotted directly, the noise they carry is the whole reason this exists</span>
+      </ChartFoot>
+    </div>
+  )
+}
+
 /** Where a country publishes true city-level history, this is it — never a
- *  country trend wearing a city's name. */
+ *  country trend wearing a city's name. Toronto/Vancouver (and the rest of
+ *  Teranet's cities) moved out to their own panel, TeranetPanel above —
+ *  package 21 recovered a real monthly trend from them, which this file's
+ *  own hand-rolled annual sparkline was never built to show. */
 function CityRibbons({ data }: { data: HousingData }) {
   const mult = (p: Pair[]) => (p.length ? `×${(last(p)[1] / p[0]![1]).toFixed(1)}` : 'no data')
-
-  /* Package 16 — docs/DATA-FITNESS.md §5 rules the Teranet series
-   * "multi-year direction only — no single value, monthly or annual".
-   * `mult()` is an ENDPOINT RATIO: it divides one year's value by another's,
-   * so it inherits the error in both. Package 15 measured that error as
-   * 4.9–6.2% per annual point after averaging, against a real trend of only
-   * 3.1–4.1%/yr — the noise is larger than the signal it would be reporting.
-   *
-   * A log-linear slope over the whole series is the honest alternative and the
-   * reason is the defect itself: the noise is independent per observation, so
-   * a regression over ~28 points averages it down, while a ratio of two points
-   * averages nothing. This reports a DIRECTION, which is exactly what the
-   * fitness verdict says survives, and never a level. */
-  /** The first year a series actually has, so a trend is never labelled with a
-   *  window it was not fitted to. Toronto starts 1998 and Vancouver 1990; both
-   *  were captioned "since 1998", and Vancouver's real 1998-onward slope is
-   *  +5.6%/yr against the +4.4% shown. The sparkline draws from 1998, so the
-   *  eight invisible years were also setting the y-scale. */
-  const firstYear = (p: Pair[]): number | null =>
-    (p.length ? Math.round(Math.min(...p.map(([x]) => x))) : null)
-
-  const trendPctPerYear = (p: Pair[]): string => {
-    const pts = p.filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y) && y > 0)
-    if (pts.length < 8) return 'too short to read a trend'
-    const n = pts.length
-    const mx = pts.reduce((s, [x]) => s + x, 0) / n
-    const my = pts.reduce((s, [, y]) => s + Math.log(y), 0) / n
-    let num = 0
-    let den = 0
-    for (const [x, y] of pts) {
-      num += (x - mx) * (Math.log(y) - my)
-      den += (x - mx) ** 2
-    }
-    if (den === 0) return 'too short to read a trend'
-    const pct = (Math.exp(num / den) - 1) * 100
-    return `${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%/yr`
-  }
   const gbp = (v: number) => `£${Math.round(v / 1000)}k`
 
   const spark = (lines: { pts: Pair[]; color: string; dash?: boolean }[], x0: number, x1: number, title: string) => {
@@ -242,8 +356,8 @@ function CityRibbons({ data }: { data: HousingData }) {
     <div className="panel s4">
       <h2>Real city series, where they exist</h2>
       <div className="sub">
-        Three countries publish true city-level history. These are the real
-        series — never a country trend applied to a city.
+        Two more countries publish true city-level history, beside the recovered Teranet trend
+        above. These are the real series — never a country trend applied to a city.
       </div>
       <div className="ribbons">
         <div className="ribbon">
@@ -256,26 +370,6 @@ function CityRibbons({ data }: { data: HousingData }) {
           <div className="unit">FHFA all-transactions index · solid Detroit, dashed SF Bay</div>
         </div>
         <div className="ribbon">
-          <div className="rh"><b>Toronto · Vancouver</b>
-            <span>
-              ≈{trendPctPerYear(data.teranet.toronto)} since {firstYear(data.teranet.toronto)} ·{' '}
-              ≈{trendPctPerYear(data.teranet.vancouver)} since {firstYear(data.teranet.vancouver)}
-            </span></div>
-          {spark([
-            { pts: data.teranet.toronto, color: cc('CA') },
-            { pts: data.teranet.vancouver, color: cc('CA'), dash: true },
-          ], Math.min(firstYear(data.teranet.toronto) ?? 1998,
-                      firstYear(data.teranet.vancouver) ?? 1998), 2026,
-          'Toronto and Vancouver house price index')}
-          <div className="unit">
-            Teranet–National Bank repeat-sales index — <b>direction only</b>. This series carries
-            per-observation noise larger than the trend it describes (residual autocorrelation
-            0.11–0.27 against 0.985 for the two real published indices beside it), so no single
-            value on it is interpretable, monthly or annual. The shape shows where prices went;
-            do not read a level off it. <Link to="/data">Why →</Link>
-          </div>
-        </div>
-        <div className="ribbon">
           <div className="rh"><b>London</b>
             <span>{data.london.length ? `${gbp(data.london[0]![1])} → ${gbp(last(data.london)[1])} since 1968` : 'no data'}</span></div>
           {spark([{ pts: data.london, color: cc('GB') }], 1968, 2026, 'London average sale price since 1968')}
@@ -283,7 +377,7 @@ function CityRibbons({ data }: { data: HousingData }) {
         </div>
       </div>
       <ChartFoot>
-        <span className="chip chip-ok">● FHFA · Teranet · HM Land Registry</span>
+        <span className="chip chip-ok">● FHFA · HM Land Registry</span>
         <span className="chip chip-quiet">London stays in pounds — one 2026 FX rate across 1968→2026 would lie</span>
       </ChartFoot>
     </div>

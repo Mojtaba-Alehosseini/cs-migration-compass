@@ -120,6 +120,19 @@ class TestUnitDisclosure(AuditInvariantTestCase):
         ad.check_pay_fields_disclose_currency_and_period(self.tmp)
         self.assertEqual(ad.ERRORS, [])
 
+    def test_null_test_is_exempt_not_flagged(self):
+        # Package 21 -- teranet_smoothed.json's own null_test.null_mean is a
+        # Monte Carlo null distribution's mean CORRELATION (unitless, -1 to
+        # 1), reusing the mean/p95 vocabulary for a non-pay concept, the
+        # same shape of false match coefficient_of_variation already covers.
+        self._write("teranet_like", "teranet_like", {"cities": {"toronto": {
+            "trend_pct_per_year": 4.9,
+            "validation": {"null_test": {"n_draws": 500, "null_mean": 0.03, "null_sd": 0.43,
+                                          "null_p95": 0.74, "p_value": 0.0}},
+        }}})
+        ad.check_pay_fields_disclose_currency_and_period(self.tmp)
+        self.assertEqual(ad.ERRORS, [])
+
 
 class TestMagnitudePlausibility(AuditInvariantTestCase):
     """check_magnitude_plausibility() prefers a family's own non-mean

@@ -292,18 +292,63 @@ export async function loadJobs(): Promise<JobsData> {
 
 /* -------------------------------------------------------------- housing --- */
 
+export const TERANET_CITY_IDS = ['toronto', 'vancouver', 'montreal', 'ottawa', 'calgary', 'halifax'] as const
+export type TeranetCityId = (typeof TERANET_CITY_IDS)[number]
+
+/** Package 21, Tier 1, item #43 — the recovered signal, not the raw ribbon.
+ *  `derive_teranet_smoothed.py` fits a Kalman-smoothed local linear trend per
+ *  city and validates it against OECD's independent index; a city only
+ *  carries a band here if that validation PASSED (`data/processed/
+ *  teranet_smoothed.json`'s own `validation.passed`) -- one that failed would
+ *  fall back to raw-only disclosure instead (none did, this run: 6/6). */
+export interface TeranetCity {
+  areaName: string
+  /** Monthly, x = year + (month-1)/12 -- a continuous numeric axis, same
+   *  convention the chart kit already uses for Weather's month index. */
+  smoothed: Pair[]
+  lo95: Pair[]
+  hi95: Pair[]
+  /** The untouched raw monthly series, same axis -- "raw observations
+   *  available" without plotting 337 noisy points on top of the trend they
+   *  motivated smoothing to recover. */
+  raw: Pair[]
+  signalSharePct: number
+  trendPctPerYear: number | null
+  validation: { corrDiff: number | null; pValue: number | null; nQuarters: number }
+}
+
 export interface HousingData {
   bis: Record<string, Pair[]>
   fhfa: Record<'detroit' | 'sf_bay_area', Pair[]>
-  teranet: Record<'toronto' | 'vancouver', Pair[]>
+  teranet: Partial<Record<TeranetCityId, TeranetCity>>
   london: Pair[]
 }
 
+const monthlyPairs = <T,>(rows: T[], date: (r: T) => string, value: (r: T) => number | null): Pair[] =>
+  rows.map((r) => {
+    const d = date(r)
+    const y = Number(d.slice(0, 4))
+    const m = Number(d.slice(5, 7))
+    return [y + (m - 1) / 12, value(r)] as [number, number]
+  }).filter(([, v]) => v != null)
+
 export async function loadHousing(): Promise<HousingData> {
-  const [bis, fhfa, ter, uk] = await Promise.all([
+  const [bis, fhfa, ter, terSmooth, uk] = await Promise.all([
     loadHistory<Record<string, { real_index: { period: string; value: number }[] }>>('bis_property_prices'),
     loadHistory<Record<string, { series: { year: number; quarter: number; index: number }[] }>>('fhfa_hpi_metro'),
     loadHistory<{ cities: Record<string, { series: { date: string; index: number }[] }> }>('teranet_national_bank_hpi'),
+    loadHistory<{ cities: Record<string, {
+      area_name: string
+      series: { date: string; smoothed: number; lo95: number; hi95: number }[]
+      noise: { signal_share_pct: number }
+      trend_pct_per_year: number | null
+      validation: {
+        passed: boolean
+        corr_smoothed_vs_oecd_diff: number | null
+        null_test: { p_value: number | null } | null
+        n_quarters_overlap: number
+      }
+    }> }>('teranet_smoothed'),
     loadHistory<Record<string, { series: { month: string; avg_price_gbp: number | null }[] }>>('uk_hpi'),
   ])
 
@@ -319,10 +364,30 @@ export async function loadHousing(): Promise<HousingData> {
     fhfaOut[m] = lastPerYear(rows, (r) => r.year, (r) => r.index)
   }
 
-  const terOut = {} as HousingData['teranet']
-  for (const c of ['toronto', 'vancouver'] as const) {
-    const rows = ter.data.cities?.[c]?.series ?? []
-    terOut[c] = meanPerYear(rows, (r) => Number(r.date.slice(0, 4)), (r) => r.index)
+  // Raw stays raw: teranet_national_bank_hpi.json is read here exactly as
+  // package 16 left it, never modified -- the smoothed layer is additive.
+  const terOut: HousingData['teranet'] = {}
+  for (const c of TERANET_CITY_IDS) {
+    const smoothBlock = terSmooth.data.cities?.[c]
+    const rawRows = ter.data.cities?.[c]?.series ?? []
+    // A city without a passed validation is not shipped with a band at all
+    // -- the package-16 raw-only ribbon is the honest fallback, not a
+    // smoothed line nothing corroborates. All 6 passed this run.
+    if (!smoothBlock || !smoothBlock.validation.passed) continue
+    terOut[c] = {
+      areaName: smoothBlock.area_name,
+      smoothed: monthlyPairs(smoothBlock.series, (r) => r.date, (r) => r.smoothed),
+      lo95: monthlyPairs(smoothBlock.series, (r) => r.date, (r) => r.lo95),
+      hi95: monthlyPairs(smoothBlock.series, (r) => r.date, (r) => r.hi95),
+      raw: monthlyPairs(rawRows, (r) => r.date, (r) => r.index),
+      signalSharePct: smoothBlock.noise.signal_share_pct,
+      trendPctPerYear: smoothBlock.trend_pct_per_year,
+      validation: {
+        corrDiff: smoothBlock.validation.corr_smoothed_vs_oecd_diff,
+        pValue: smoothBlock.validation.null_test?.p_value ?? null,
+        nQuarters: smoothBlock.validation.n_quarters_overlap,
+      },
+    }
   }
 
   const lonRows = (uk.data.london?.series ?? []).filter((r) => r.avg_price_gbp != null)

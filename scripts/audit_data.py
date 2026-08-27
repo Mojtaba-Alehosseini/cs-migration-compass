@@ -123,7 +123,14 @@ _QUALIFIER_RE = re.compile(r"^_(low|high|q1|q3)(?=_|$)", re.I)
 # the more densely-populated median, which is the opposite ordering pay
 # itself follows) and no reason to carry a currency (it's a percentage, and
 # its parent key already says so via its own "_pct" suffix).
-_NOT_A_WAGE_CONTAINER_RE = re.compile(r"coefficient_of_variation", re.I)
+#
+# teranet_smoothed.json's own null_test (package 21) is the same shape of
+# false match: null_mean/null_sd/null_p95 are the mean, standard deviation
+# and 95th percentile of a MONTE CARLO NULL DISTRIBUTION OF CORRELATION
+# COEFFICIENTS (unitless, -1 to 1) -- not a pay figure, no currency to
+# disclose, found live by this exact check on the first audit run after
+# that file existed.
+_NOT_A_WAGE_CONTAINER_RE = re.compile(r"coefficient_of_variation|null_test", re.I)
 
 # Files with no pay data at all, whose OWN fields still happen to match the
 # mean/median/p10.. vocabulary for an unrelated concept -- climate_normals

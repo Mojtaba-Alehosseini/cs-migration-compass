@@ -38,7 +38,7 @@ instead of leaving the blanket claim above to cover it.
 | Years to own a home (city cards, `/compare`) | **Supported, but not to one decimal** | `~23 yrs`, never `22.6`; the rounding band is on the source card |
 | City salary bands (new-grad / mid / senior) | Supported | Nearest $1,000 |
 | Wage distribution panel (`/explore/money`) | Supported | As published — already median-based |
-| Canadian house-price trend (Teranet) | **Multi-year direction only** | No single value, monthly *or* annual |
+| Canadian house-price trend (Teranet) | **Raw: multi-year direction only.** Smoothed + OECD-validated trend now published alongside it | Raw: no single value, monthly or annual. Smoothed: a monthly trend with its own 95% band — see §5's package-21 update |
 | Cost-of-living and rent inputs | Supported | As published |
 | "N postings, M companies" counts | Posting count includes re-listings (~6%); **company count sound** | Distinct roles vs raw rows |
 | Cross-source salary agreement | Supported as *correlation*, not as *agreement* | Never blended |
@@ -248,6 +248,62 @@ unchanged on either estimator — noise still exceeds trend.)*
 Only the multi-year direction survives, and only qualitatively. The honest options are to disclose
 this on the chart, drop the series, or raise it with the publisher; that is a product decision and
 is recorded in `NEEDS-DECISION.md` #43.
+
+**Update, package 21 — the trend is recoverable, and NEEDS-DECISION #43 is closed on that basis.**
+The finding above is about the RAW series and stands unchanged: no raw monthly or annual Teranet
+value is interpretable on its own. What it does not settle is whether a properly-noise-modelled
+trend can be recovered from it. Two things pointed toward yes: the month-over-month autocorrelation
+column above (-0.40 to -0.47) sits close to the theoretical **-0.5** signature of a smooth trend
+plus independent additive noise once differenced — exactly the noise model this section already
+diagnoses, not a different one assumed for convenience.
+
+`scripts/derive_teranet_smoothed.py` fits that model directly: a state-space local linear trend
+(Kalman smoother, `statsmodels.tsa.UnobservedComponents`), with the observation and innovation
+variances estimated from the data by MLE, never assumed. Recovering a signal this way is only as
+good as its validation, so each city's smoothed trend is checked against an INDEPENDENT source —
+OECD's own Canadian house-price index — before it is trusted:
+
+- **Levels-correlation was tried first, and rejected by direct adversarial testing.** Correlating
+  the smoothed monthly level (aggregated to quarters) against OECD's level scored 0.90-0.99 for all
+  six cities — but substituting PURE NOISE for a city's own raw series and smoothing it the same
+  way still scored 0.9+ against the same OECD series for 5 of 6 cities, one landing positive (would
+  have "passed"). Two series that each drift slowly correlate at the level whether or not the drift
+  shares a cause — the textbook spurious-regression problem — so this was never a safe test.
+- **The real check: quarter-over-quarter CHANGES, not levels, plus a Monte Carlo null.** Differencing
+  removes the shared trend structure; a city passes only if its differenced correlation against
+  OECD's own differenced series is positive, does not underperform the same statistic on the raw
+  series, and — the decisive test — a 500-to-5,000-draw null (pure noise, matched to that city's own
+  length/mean/sd, run through the identical smoothing-and-validation pipeline against the SAME real
+  OECD series) shows a correlation this large occurring by chance no more than 5% of the time.
+
+| City | Differenced corr. vs OECD | Monte Carlo p-value | Trend (smoothed) | Signal share of raw MoM variance |
+|---|---:|---:|---:|---:|
+| Toronto | 0.481 | <0.001 | +4.9%/yr | 0.069% |
+| Vancouver | 0.391 | <0.001 | +4.4%/yr | 0.179% |
+| Ottawa | 0.227 | 0.004 | +4.1%/yr | 0.033% |
+| Halifax | 0.226 | <0.001 | +3.4%/yr | 0.070% |
+| Montreal | 0.118 | 0.043 (5,000-draw refined) | +3.6%/yr | 0.047% |
+| Calgary | 0.151 | 0.044 (5,000-draw refined) | +3.1%/yr | 0.101% |
+
+**All six cities pass.** Montreal and Calgary landed close enough to the 5% line at 500 draws (p ≈
+0.046 and 0.050) that the Monte Carlo estimate's own sampling error (≈0.01 at that draw count) could
+not distinguish them from the boundary — both were re-measured at 5,000 draws before being trusted,
+resolving cleanly below 5%. The recovered trend range (3.1-4.9%/yr) matches this section's own
+CAGR-superseding log-linear estimate (3.1-4.9%/yr) closely, which is corroborating, not circular —
+that estimate was computed on ANNUAL MEANS of the raw series, a different reduction of different
+input than the monthly Kalman smoother, arriving at the same range independently.
+
+**What still holds, and what changed.** The signal share column is the honest headline: even
+Toronto's best case recovers only 0.07% of month-to-month raw VARIANCE as genuine trend — the
+smoothed line's own 95% band is wide, because the noise really is that large. This is not a
+reversal of the finding above; it is the same noise, with a model fit to it and validated
+independently rather than left undiagnosed. The site now publishes the smoothed trend with its own
+uncertainty band (`site/src/components/explore/Housing.tsx`'s `TeranetPanel`, `/explore/housing`),
+labelled as smoothed, alongside the noise disclosure and a link to the raw values via CSV — raw
+`data/processed/teranet_national_bank_hpi.json` is read by the derivation script, never written to.
+`NEEDS-DECISION.md` #43 is closed: option (a), keep a multi-year direction with a chart-level note,
+is superseded by a stronger, still-honest option this package's own validation work made available —
+a monthly trend with its own uncertainty, not just a qualitative direction.
 
 ---
 

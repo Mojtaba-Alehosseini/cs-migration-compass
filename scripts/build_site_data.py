@@ -37,6 +37,7 @@ HISTORY_SETS = {
     "fhfa_hpi_metro": "housing",
     "uk_hpi": "housing",
     "teranet_national_bank_hpi": "housing",
+    "teranet_smoothed": "housing",
     "numbeo_history": "housing",
     "eurostat_ict_specialists": "jobs",
     "eurostat_total_employment": "jobs",
