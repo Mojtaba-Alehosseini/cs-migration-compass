@@ -87,6 +87,28 @@ class TestCountryResolution(unittest.TestCase):
         territorial status unasked); the owner has now been asked."""
         self.assertEqual(country_from_location("San Juan, Puerto Rico"), "PR")
 
+    def test_puerto_rican_municipalities_abbreviated_as_pr_also_resolve(self):
+        """Adversarial review, package 21: 46 real postings read "{municipality},
+        PR" (the US-postal-abbreviation form), not the spelled-out "Puerto
+        Rico" the test above covers -- PR is not a US state code and not in
+        the country-name table, so these resolved to nothing at all until a
+        dedicated check existed. See NEEDS-DECISION #47's own residual note."""
+        for muni in ("Caguas", "San Juan", "Barceloneta", "Carolina", "Ponce", "Bayamon", "Mayaguez"):
+            self.assertEqual(country_from_location(f"{muni}, PR"), "PR", muni)
+
+    def test_a_brazilian_parana_posting_does_not_collide_with_the_pr_municipality_check(self):
+        """PR is ALSO Brazil's own Parana state code -- the check above is
+        keyed on specific known Puerto Rican municipality names co-occurring
+        with ", PR", deliberately not a bare abbreviation rule, precisely to
+        avoid this collision. Curitiba is Parana's own capital."""
+        self.assertNotEqual(country_from_location("Curitiba, PR"), "PR")
+
+    def test_carolina_alone_does_not_falsely_resolve_to_puerto_rico(self):
+        """The ", PR" suffix is required, not just the municipality name --
+        "Carolina" alone is a real US place-name fragment (North/South
+        Carolina) and must not be coerced into Puerto Rico without it."""
+        self.assertNotEqual(country_from_location("Carolina"), "PR")
+
     # The four correction groups package 16 made deliberately, and the ONLY
     # disagreements with the pre-package-16 answer that are allowed to exist.
     # Keyed on a location PREFIX because one of them is a 400-character list of

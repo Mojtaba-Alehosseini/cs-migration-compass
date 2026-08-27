@@ -88,12 +88,25 @@ RECLAIM_CAP = 5000
 
 def reclaim_cycle_key(today: dt.date | None = None) -> int:
     """Which reclaim_cap-sized slice of the reclaim bucket a run should cover
-    -- the ISO week number, the natural rotation unit for a workflow that
+    -- a plain week counter, the natural rotation unit for a workflow that
     runs weekly (postings-refresh.yml: Monday 06:17 UTC). Across
     ceil(bucket_size / RECLAIM_CAP) consecutive weeks, every previously-
     verified company is reclaimed exactly once; `today` is a parameter,
-    not read internally, so a caller (or a test) can pin it."""
-    return (today or dt.date.today()).isocalendar()[1]
+    not read internally, so a caller (or a test) can pin it.
+
+    `date.toordinal() // 7`, not `isocalendar()[1]` (an earlier version):
+    the ISO week number RESETS to 1 every year, and adversarial review
+    (package 21) found that reset is not a clean "+1" step the way every
+    other week-to-week step is -- `% n_chunks` in build_probe_order() skips
+    a chunk at that boundary as often as it repeats one, depending on
+    n_chunks and whether the outgoing year has 52 or 53 ISO weeks. Verified
+    live against a real 53-week year: 2026-12-28 (ISO week 53) to
+    2027-01-04 (ISO week 1, the following Monday) is a discontinuous step
+    for every n_chunks checked (2, 3, 5, 7). toordinal() is a plain day
+    count with no year-relative reset, so it increases by EXACTLY 7 every
+    7 days -- floor division by 7 increases by exactly 1 every week, with
+    no exception at any year boundary, leap year or not."""
+    return (today or dt.date.today()).toordinal() // 7
 
 
 def _now_iso() -> str:
@@ -194,8 +207,18 @@ def build_probe_order(candidates: list[str], already_cached: set[str],
         ordered = sorted(set(reclaim_full))
         n = len(ordered)
         n_chunks = -(-n // reclaim_cap)  # ceil(n / reclaim_cap)
-        start = (reclaim_cycle_key % n_chunks) * reclaim_cap
+        chunk = reclaim_cycle_key % n_chunks
+        start = chunk * reclaim_cap
         reclaim = ordered[start:start + reclaim_cap]
+        # Adversarial review, package 21: the cap's own deferral was
+        # entirely silent -- nothing in a run's own log said how many
+        # previously-verified companies sat OUT this week, so a real drop
+        # in reclaim coverage would look identical to a quiet, healthy run.
+        # Not today's scale (RECLAIM_CAP's own comment has the headroom
+        # math) but cheap to log unconditionally now, before it is.
+        log(f"    reclaim cap engaged: {n} previously-verified companies pending, "
+            f"probing slice {chunk + 1}/{n_chunks} this run ({len(reclaim)} companies), "
+            f"{n - len(reclaim)} deferred to a later week")
     else:
         reclaim = reclaim_full
     fresh = [c for c in candidates if c not in already_cached and c not in previously_verified]
@@ -569,7 +592,10 @@ def country_from_location(location_raw: str | None) -> str | None:
     """Best-effort ISO2 from a free-text location string. Order: an exact
     ISO2/ISO3/name match (_common.py's own to_iso2); a full US state name;
     an exact country-name match (this module's own wide table, deliberately
-    broader than to_iso2's 15 countries); a bare US state code; a known
+    broader than to_iso2's 15 countries); a known Puerto Rican municipality
+    co-occurring with a ", PR" suffix (package 21 -- PR is not a US state
+    code and not in the country-name table, so it resolved to nothing at
+    all until this check existed); a bare US state code; a known
     city name. Every match uses whole-word containment (`_word_match`), not
     a bare substring test -- an earlier version used plain substring
     matching and silently misassigned "Atlanta, Georgia" to Georgia the
@@ -595,6 +621,23 @@ def country_from_location(location_raw: str | None) -> str | None:
     for name, iso2 in _COUNTRY_NAMES_WIDE.items():
         if _word_match(name, low):
             return iso2
+    # NEEDS-DECISION #47's own residual, adversarial review package 21: 46
+    # postings read "{municipality}, PR" (Caguas, San Juan, Barceloneta,
+    # Carolina, Ponce, Bayamon, Mayaguez), none of them resolving -- "PR" is
+    # not a US state code (correctly; Puerto Rico is not a US state) so the
+    # bare-2-letter-code check below never sees it, and none of these
+    # municipality names are in the country-name table above. Keyed on the
+    # SPECIFIC known municipality name co-occurring with a ", PR" suffix,
+    # deliberately not a bare "PR" abbreviation rule: "PR" is also Brazil's
+    # own Parana state code, and a bare-abbreviation rule would risk exactly
+    # the "China Lake, CA" class of collision this function's own docstring
+    # already names (checked live: the real corpus's own "Curitiba" rows --
+    # Parana's capital -- never carry a trailing ", PR", but a generic rule
+    # would still be one real Brazilian posting away from misassigning one).
+    if re.search(r",\s*PR\b", location_raw):
+        for muni in ("caguas", "san juan", "barceloneta", "carolina", "ponce", "bayamon", "mayaguez"):
+            if _word_match(muni, low):
+                return "PR"
     US_STATES = {
         "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA",
         "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",

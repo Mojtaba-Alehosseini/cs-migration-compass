@@ -131,10 +131,31 @@ class TestReclaimCap(unittest.TestCase):
                                max_new_per_run=0, reclaim_cap=10, reclaim_cycle_key=2)
         self.assertEqual(a, b)
 
-    def test_reclaim_cycle_key_is_the_iso_week_number(self):
-        # 2026-08-27 is ISO week 35 -- pinned via the `today` parameter, not
-        # the real clock, so this test is not calendar-dependent.
-        self.assertEqual(reclaim_cycle_key(_dt.date(2026, 8, 27)), 35)
+    def test_reclaim_cycle_key_increments_by_exactly_one_every_week(self):
+        # Not the ISO week number (an earlier version) -- see
+        # reclaim_cycle_key's own docstring for why that resets at each
+        # year boundary in a way that breaks round-robin `% n_chunks`
+        # coverage. A plain week counter must never skip or repeat across
+        # ANY Monday-to-Monday step, including a real 52/53-week year
+        # boundary.
+        a = reclaim_cycle_key(_dt.date(2026, 12, 28))
+        b = reclaim_cycle_key(_dt.date(2027, 1, 4))  # the following Monday
+        self.assertEqual(b, a + 1)
+
+    def test_the_iso_week_number_would_have_broken_rotation_at_this_boundary(self):
+        # The regression the test above exists to catch, demonstrated
+        # directly: ISO week 53 of 2026 falls on 2026-12-28, ISO week 1 of
+        # 2027 the following Monday -- a real, not synthetic, year boundary
+        # where the two are not consecutive integers, so `% n_chunks` after
+        # the reset does not equal `% n_chunks` before it plus one for
+        # several realistic chunk counts. This is exactly the discontinuity
+        # the fixed reclaim_cycle_key() (above) no longer has.
+        last_iso_week = _dt.date(2026, 12, 28).isocalendar()[1]
+        first_iso_week = _dt.date(2027, 1, 4).isocalendar()[1]
+        self.assertNotEqual(first_iso_week, last_iso_week + 1,
+                             "the ISO week number turned out to be consecutive across this "
+                             "boundary after all -- this fixture no longer demonstrates the bug "
+                             "the fix (toordinal() // 7) guards against")
 
 
 class TestMergeVerifiedCompanies(unittest.TestCase):
