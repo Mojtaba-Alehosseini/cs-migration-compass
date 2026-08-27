@@ -129,16 +129,22 @@ export const METRICS: MetricDef[] = [
     source: (_c, k) => ({
       name: 'OECD Taxing Wages + national calculators',
       // NEEDS-DECISION #22 — net_pct is ONE flat scalar per city, calibrated
-      // against that city's own published salary bands. Real income tax
-      // is progressive, so this understates the true net figure by an
-      // unmeasured amount for any salary above the band it was calibrated
-      // against — including a Budget override, which can run to +36% above
-      // that band. Not shipped as a fix (modelling real bracket schedules
-      // for fifteen countries is a genuine harvesting effort); disclosed
-      // here instead, on every figure this scalar feeds.
+      // against that city's own published MID-band salary. Real income tax
+      // is progressive: a higher gross salary is taxed at a higher EFFECTIVE
+      // rate, so the share that survives as net actually FALLS as salary
+      // rises above the band this rate was calibrated against — applying
+      // the mid-calibrated (higher) survival share to a higher gross
+      // therefore OVERSTATES what a real progressive system would leave
+      // them, never understates it. Adversarial review, package 21: the
+      // first version of this note stated the direction backwards
+      // ("understates"), the exact opposite of what a rising effective tax
+      // rate implies. Not shipped as a fix (modelling real bracket
+      // schedules for fifteen countries is a genuine harvesting effort);
+      // disclosed here instead, on every figure this scalar feeds.
       what: `${k?.tax.net_note ?? 'Single person at a mid-level developer salary.'} A single flat `
-        + `rate for the whole city — real tax is progressive, so this understates the true net `
-        + `figure the further a salary sits above what this rate was calibrated against.`,
+        + `rate for the whole city, calibrated at the mid-level salary — real tax is progressive, `
+        + `so this OVERSTATES the true net figure the further a salary sits above what this rate `
+        + `was calibrated against (a real progressive system would keep less, not more).`,
     }),
   },
   {
