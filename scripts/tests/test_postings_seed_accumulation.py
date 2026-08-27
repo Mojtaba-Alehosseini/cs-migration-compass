@@ -18,8 +18,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from postings_common import (  # noqa: E402
-    DEFAULT_MAX_CONSECUTIVE_FAILURES, build_probe_order, merge_verified_companies,
+    DEFAULT_MAX_CONSECUTIVE_FAILURES, build_probe_order, merge_verified_companies, reclaim_cycle_key,
 )
+import datetime as _dt  # noqa: E402
 
 
 class TestBuildProbeOrder(unittest.TestCase):
@@ -69,6 +70,71 @@ class TestBuildProbeOrder(unittest.TestCase):
                                    max_new_per_run=0)
         self.assertIn("orphan", order)
         self.assertEqual(len(order), len(set(order)))  # still no duplicates once reclaimed
+
+    def test_reclaim_cap_none_is_the_default_and_stays_uncapped(self):
+        # Every existing caller passes no reclaim_cap at all -- confirms the
+        # new parameter cannot silently change anyone's behaviour who has
+        # not opted in.
+        candidates = [f"co{i}" for i in range(10)]
+        previously_verified = {f"co{i}" for i in range(10)}
+        order = build_probe_order(candidates, already_cached=set(), previously_verified=previously_verified,
+                                   max_new_per_run=0)
+        self.assertEqual(set(order), previously_verified)
+
+
+class TestReclaimCap(unittest.TestCase):
+    """NEEDS-DECISION #41, closed package 21 -- a ROTATING cap, not a flat
+    first-N truncation. The property that matters is the one a flat cap
+    would fail: every previously-verified company gets reclaimed somewhere
+    across a full cycle of keys, not just the ones that happen to sort
+    first forever."""
+
+    def test_a_single_run_never_exceeds_the_cap(self):
+        previously_verified = {f"co{i}" for i in range(50)}
+        order = build_probe_order([], already_cached=set(), previously_verified=previously_verified,
+                                   max_new_per_run=0, reclaim_cap=10, reclaim_cycle_key=3)
+        self.assertEqual(len(order), 10)
+        self.assertTrue(set(order) <= previously_verified)
+
+    def test_a_bucket_at_or_under_the_cap_is_not_truncated(self):
+        previously_verified = {f"co{i}" for i in range(8)}
+        order = build_probe_order([], already_cached=set(), previously_verified=previously_verified,
+                                   max_new_per_run=0, reclaim_cap=10, reclaim_cycle_key=0)
+        self.assertEqual(set(order), previously_verified)
+
+    def test_every_company_is_reclaimed_exactly_once_across_a_full_cycle(self):
+        # THE property a flat cap cannot have: cycle through every key from
+        # 0 to ceil(n/cap)-1 and confirm the union covers everyone, with no
+        # company appearing in two different weeks' slices.
+        previously_verified = {f"co{i}" for i in range(97)}  # deliberately not a multiple of the cap
+        cap = 10
+        seen: list[str] = []
+        n_cycles = -(-len(previously_verified) // cap)  # ceil
+        for key in range(n_cycles):
+            order = build_probe_order([], already_cached=set(), previously_verified=previously_verified,
+                                       max_new_per_run=0, reclaim_cap=cap, reclaim_cycle_key=key)
+            self.assertLessEqual(len(order), cap)
+            seen.extend(order)
+        self.assertEqual(len(seen), len(set(seen)),
+                          "a company was reclaimed in more than one week's slice")
+        self.assertEqual(set(seen), previously_verified,
+                          "a company was never reclaimed in any week's slice")
+
+    def test_the_same_key_always_selects_the_same_slice(self):
+        # Determinism matters here specifically because Python set iteration
+        # order is not guaranteed stable across processes -- the cap sorts
+        # before slicing for exactly this reason.
+        previously_verified = {f"co{i}" for i in range(40)}
+        a = build_probe_order([], already_cached=set(), previously_verified=previously_verified,
+                               max_new_per_run=0, reclaim_cap=10, reclaim_cycle_key=2)
+        b = build_probe_order([], already_cached=set(), previously_verified=set(previously_verified),
+                               max_new_per_run=0, reclaim_cap=10, reclaim_cycle_key=2)
+        self.assertEqual(a, b)
+
+    def test_reclaim_cycle_key_is_the_iso_week_number(self):
+        # 2026-08-27 is ISO week 35 -- pinned via the `today` parameter, not
+        # the real clock, so this test is not calendar-dependent.
+        self.assertEqual(reclaim_cycle_key(_dt.date(2026, 8, 27)), 35)
 
 
 class TestMergeVerifiedCompanies(unittest.TestCase):

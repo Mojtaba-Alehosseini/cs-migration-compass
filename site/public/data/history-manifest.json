@@ -65,6 +65,17 @@
   "status": "ok",
   "empty": false
  },
+ "teranet_smoothed": {
+  "theme": "housing",
+  "file": "history/teranet_smoothed.json",
+  "kb": 162.8,
+  "kind": "derived",
+  "confidence": "index",
+  "institution": null,
+  "attribution_chip": null,
+  "status": "ok",
+  "empty": false
+ },
  "numbeo_history": {
   "theme": "housing",
   "file": "history/numbeo_history.json",
@@ -156,7 +167,7 @@
  "openings": {
   "theme": "jobs",
   "file": "history/openings.json",
-  "kb": 150.1,
+  "kb": 151.0,
   "kind": "derived_summary",
   "derived_from": "history/postings.json",
   "confidence": null,
@@ -168,7 +179,7 @@
  "postings": {
   "theme": "jobs",
   "file": "history/postings.json",
-  "kb": 23633.2,
+  "kb": 23633.5,
   "kind": null,
   "confidence": null,
   "institution": null,

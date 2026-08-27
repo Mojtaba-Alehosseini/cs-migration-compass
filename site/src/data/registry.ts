@@ -128,7 +128,17 @@ export const METRICS: MetricDef[] = [
     confidence: 'official',
     source: (_c, k) => ({
       name: 'OECD Taxing Wages + national calculators',
-      what: k?.tax.net_note ?? 'Single person at a mid-level developer salary.',
+      // NEEDS-DECISION #22 — net_pct is ONE flat scalar per city, calibrated
+      // against that city's own published salary bands. Real income tax
+      // is progressive, so this understates the true net figure by an
+      // unmeasured amount for any salary above the band it was calibrated
+      // against — including a Budget override, which can run to +36% above
+      // that band. Not shipped as a fix (modelling real bracket schedules
+      // for fifteen countries is a genuine harvesting effort); disclosed
+      // here instead, on every figure this scalar feeds.
+      what: `${k?.tax.net_note ?? 'Single person at a mid-level developer salary.'} A single flat `
+        + `rate for the whole city — real tax is progressive, so this understates the true net `
+        + `figure the further a salary sits above what this rate was calibrated against.`,
     }),
   },
   {

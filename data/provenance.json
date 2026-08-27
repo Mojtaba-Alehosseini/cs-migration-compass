@@ -436,20 +436,20 @@
       "source_id": "postings",
       "name": "Job postings (merged ATS providers, classified and de-duplicated)",
       "urls": [],
-      "fetched_at": "2026-08-25T01:04:42+00:00",
+      "fetched_at": "2026-08-27T00:45:52+00:00",
       "license": "derived; each provider's own provenance entry carries its API, its licence and its fetch date",
       "redistribution": "derived — nothing is fetched by this step",
       "transforms": [
         "merged every postings_<provider>.json (build_postings.py)",
         "joined postings_title_classes.json as title_class; only classes whose F1 95% CI lies entirely above 0.70 ship, the rest are emitted as unclassified",
         "joined postings_duplicate_clusters.json as duplicate_of; no row removed",
-        "re-derived pay_summary_by_country on distinct roles, software titles only, posted 2024 or later, with bootstrap CIs, a 30-posting floor and $1,000 rounding"
+        "re-derived pay_summary_by_country on distinct roles, software titles only, posted 2025 or later, with bootstrap CIs, a 30-posting floor and $1,000 rounding"
       ],
       "output": "data/processed/postings.json",
       "status": "ok",
       "rows": 48758,
       "coverage": "1,738 companies across 6 providers",
-      "notes": "45,836 distinct roles among 48,758 raw rows; 3 of 49 countries clear the publication floor"
+      "notes": "45,836 distinct roles among 48,758 raw rows; 3 of 50 countries clear the publication floor"
     },
     {
       "source_id": "postings_ashby",
@@ -1016,6 +1016,26 @@
       "notes": "Real city-level history for Canada."
     },
     {
+      "source_id": "teranet_smoothed",
+      "name": "Teranet–National Bank HPI, Kalman-smoothed with OECD cross-validation",
+      "urls": [],
+      "fetched_at": "2026-08-27T01:09:55+00:00",
+      "license": "Derived entirely from two already-committed processed files (teranet_national_bank_hpi, oecd_indicators); no new fetch.",
+      "redistribution": "derived output committed; no raw third-party payload involved",
+      "transforms": [
+        "Fit statsmodels.tsa.UnobservedComponents(level='local linear trend') per city, MLE for observation/innovation variances.",
+        "Computed a 95% CI band from the Kalman smoother's own state covariance.",
+        "Computed two SNR-style summaries per city: Harvey's q (sigma2_level / sigma2_irregular) and a variance-share metric (var(diff(smoothed)) / var(diff(raw))).",
+        "Validated by aggregating to quarterly means, DIFFERENCING, and correlating against OECD's independent CA house-price index (same treatment), compared against the raw series' own differenced correlation AND a Monte Carlo null (noise matched to each city, run through the identical pipeline) -- a levels-based version of this check was tried first and proven unsafe by direct adversarial testing.",
+        "No rebasing of the underlying index; no modification of the raw input file."
+      ],
+      "output": "data/processed/teranet_smoothed.json",
+      "status": "ok",
+      "rows": 2303,
+      "coverage": "6/6 Canadian cities pass independent OECD validation",
+      "notes": "Recovers a monthly trend + uncertainty band from Teranet's noisy raw series; falls back per-city (not site-wide) if a city fails validation."
+    },
+    {
       "source_id": "uk_hpi",
       "name": "UK House Price Index — full file (HM Land Registry)",
       "urls": [
@@ -1214,5 +1234,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-26T22:34:37+00:00"
+  "updated_at": "2026-08-27T01:09:55+00:00"
 }

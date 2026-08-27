@@ -75,6 +75,26 @@ POSTINGS_RAW = DATA / "raw" / "postings"
 # from scratch every run with no memory of the prior commit) looks like.
 DEFAULT_MAX_CONSECUTIVE_FAILURES = 3
 
+# NEEDS-DECISION #41, closed package 21. The actual scale checked live: 961
+# verified Ashby companies today (the largest of the three), each costing
+# roughly one request plus a 0.15s polite-pacing sleep -- the whole bucket
+# runs in 8-12 CPU-minutes, nowhere near this workflow's 120-minute timeout.
+# 5,000 is not today's number: it is a ceiling comfortably above it (>5x),
+# so the cap does not engage at today's scale for any of the three
+# providers, while still bounding the previously-uncapped growth this item
+# raised, once it actually gets there.
+RECLAIM_CAP = 5000
+
+
+def reclaim_cycle_key(today: dt.date | None = None) -> int:
+    """Which reclaim_cap-sized slice of the reclaim bucket a run should cover
+    -- the ISO week number, the natural rotation unit for a workflow that
+    runs weekly (postings-refresh.yml: Monday 06:17 UTC). Across
+    ceil(bucket_size / RECLAIM_CAP) consecutive weeks, every previously-
+    verified company is reclaimed exactly once; `today` is a parameter,
+    not read internally, so a caller (or a test) can pin it."""
+    return (today or dt.date.today()).isocalendar()[1]
+
 
 def _now_iso() -> str:
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
@@ -93,7 +113,8 @@ def load_previously_verified(source_id: str) -> dict[str, dict]:
 
 
 def build_probe_order(candidates: list[str], already_cached: set[str],
-                       previously_verified: set[str], max_new_per_run: int) -> list[str]:
+                       previously_verified: set[str], max_new_per_run: int,
+                       reclaim_cap: int | None = None, reclaim_cycle_key: int = 0) -> list[str]:
     """Package 14, Tier 0.1/0.2 fix. Three buckets, in priority order, each
     disjoint by construction (no token appears twice):
 
@@ -138,12 +159,45 @@ def build_probe_order(candidates: list[str], already_cached: set[str],
     CURRENT hint file still mentions it -- a company this pipeline once
     independently verified earns continued re-checking on its own record,
     not on a third-party list's own, uncontrolled churn.
+
+    NEEDS-DECISION #41, closed package 21: bucket 2 is now capped, ROTATING
+    rather than a flat first-N truncation. A flat cap reintroduces a milder
+    version of the exact bug this docstring already describes above -- a
+    company sitting past position `reclaim_cap` in whatever order the set
+    happens to iterate in would never get its turn, which is functionally
+    the same as never being reclaimed at all. `reclaim_cycle_key` (the
+    caller's own choice -- src_postings_*.py passes the ISO week number,
+    since postings-refresh.yml runs weekly) selects which `reclaim_cap`-
+    sized slice of a STABLE, SORTED ordering runs this time; sorted so the
+    slice boundaries are identical for every reader (a Python set's
+    iteration order is not guaranteed stable across runs or processes) and
+    so the same key always selects the same slice. Across `ceil(n /
+    reclaim_cap)` consecutive keys, every company is reclaimed exactly once
+    -- capped worst-case cost per run, with no company permanently skipped.
+    `reclaim_cap=None` (the default) keeps every existing caller's current,
+    uncapped behaviour unchanged unless it opts in.
     """
     cached = [c for c in candidates if c in already_cached]
-    reclaim = (
+    reclaim_full = (
         [c for c in candidates if c not in already_cached and c in previously_verified]
         + [c for c in previously_verified if c not in already_cached and c not in candidates]
     )
+    if reclaim_cap is not None and len(reclaim_full) > reclaim_cap:
+        # A partition into ceil(n/cap) disjoint chunks, not per-element
+        # modulo wrapping -- that first version overlapped: for n=97,
+        # cap=10 (10 chunks needed), the LAST chunk's wrap grabbed indices
+        # 0-2 to pad itself back up to 10, re-including 3 companies chunk 0
+        # already covered. Chunk sizes here are uneven instead (nine chunks
+        # of 10, one of 7) and Python's own slice truncation is what
+        # produces that -- deliberately, not a bug: an uneven last chunk
+        # covers everyone once; a wrapped, evenly-sized one double-covers.
+        ordered = sorted(set(reclaim_full))
+        n = len(ordered)
+        n_chunks = -(-n // reclaim_cap)  # ceil(n / reclaim_cap)
+        start = (reclaim_cycle_key % n_chunks) * reclaim_cap
+        reclaim = ordered[start:start + reclaim_cap]
+    else:
+        reclaim = reclaim_full
     fresh = [c for c in candidates if c not in already_cached and c not in previously_verified]
     return cached + reclaim + fresh[:max_new_per_run]
 
@@ -496,13 +550,15 @@ _COUNTRY_NAMES_WIDE.update({
     "morocco": "MA", "maroc": "MA", "uruguay": "UY", "bolivia": "BO", "nicaragua": "NI",
     "el salvador": "SV", "honduras": "HN", "guatemala": "GT", "paraguay": "PY", "ecuador": "EC",
     "dominican republic": "DO", "jamaica": "JM", "ghana": "GH",
-    # Puerto Rico is a US territory, so it maps to US, not to its own ISO2. That
-    # resolves 13 rows reading "San Juan, Puerto Rico" without this pipeline
-    # taking a position on territorial status, and it leaves the 9 USAJOBS
-    # federal postings there labelled US, which is what they already were. If
-    # the site ever wants territories broken out, that is a product decision,
-    # not a parser default. See NEEDS-DECISION.md.
-    "puerto rico": "US",
+    # NEEDS-DECISION #47, closed package 21: Puerto Rico gets its own code,
+    # PR, not US. It was mapped to US through package 20 specifically to
+    # avoid this pipeline taking a position on territorial status without
+    # being asked -- the owner was asked, this is the answer. PR is not one
+    # of the site's 15 tracked countries, so this affects only the postings
+    # panel's country counts (the "beyond our fifteen" section, NEEDS-
+    # DECISION #45/#52) and how many rows count toward the US population,
+    # never a headline comparison figure.
+    "puerto rico": "PR",
     "algeria": "DZ", "ethiopia": "ET", "uganda": "UG", "tanzania": "TZ", "zambia": "ZM",
     "cameroon": "CM", "rwanda": "RW", "kuwait": "KW", "bahrain": "BH", "oman": "OM",
     "cambodia": "KH", "laos": "LA", "myanmar": "MM", "kosovo": "XK", "méxico": "MX",

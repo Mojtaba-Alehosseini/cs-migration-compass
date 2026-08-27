@@ -39,8 +39,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import FetchError, banner, fetch_json, log, main_guard, record_provenance, write_processed  # noqa: E402
 from postings_common import (  # noqa: E402
-    POSTINGS_RAW, SEED_HINTS, build_probe_order, country_from_location, dedupe_seed,
-    load_previously_verified, log_provider_summary, merge_verified_companies, reinterpret_implausible_year,
+    POSTINGS_RAW, RECLAIM_CAP, SEED_HINTS, build_probe_order, country_from_location, dedupe_seed,
+    load_previously_verified, log_provider_summary, merge_verified_companies, reclaim_cycle_key,
+    reinterpret_implausible_year,
 )
 
 SOURCE_ID = "postings_ashby"
@@ -167,7 +168,8 @@ def run() -> None:
 
     previous = load_previously_verified(SOURCE_ID)
     already_cached = {p.stem for p in OUT_DIR.glob("*.json")}
-    to_probe = build_probe_order(candidates, already_cached, set(previous.keys()), MAX_NEW_PER_RUN)
+    to_probe = build_probe_order(candidates, already_cached, set(previous.keys()), MAX_NEW_PER_RUN,
+                                  reclaim_cap=RECLAIM_CAP, reclaim_cycle_key=reclaim_cycle_key())
     log(f"    {len(already_cached)} already cached from prior runs, {len(previous)} previously "
         f"committed as verified, probing {len(to_probe)} this run (cap {MAX_NEW_PER_RUN} new)")
 

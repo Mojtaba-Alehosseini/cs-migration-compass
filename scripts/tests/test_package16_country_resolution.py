@@ -81,9 +81,11 @@ class TestCountryResolution(unittest.TestCase):
         self.assertEqual(country_from_location("West Jordan, UT"), "US")
         self.assertEqual(country_from_location("South Jordan, UT"), "US")
 
-    def test_puerto_rico_maps_to_us_not_to_its_own_code(self):
-        """A territorial-status question this pipeline does not answer. See #47."""
-        self.assertEqual(country_from_location("San Juan, Puerto Rico"), "US")
+    def test_puerto_rico_maps_to_its_own_code_not_us(self):
+        """NEEDS-DECISION #47, closed package 21: PR gets its own code. Was US
+        through package 20 (deliberately, to avoid taking a position on
+        territorial status unasked); the owner has now been asked."""
+        self.assertEqual(country_from_location("San Juan, Puerto Rico"), "PR")
 
     # The four correction groups package 16 made deliberately, and the ONLY
     # disagreements with the pre-package-16 answer that are allowed to exist.
@@ -100,6 +102,18 @@ class TestCountryResolution(unittest.TestCase):
         # US-government postings physically located abroad; the text names the country
         ("Bahrain Island", "US", "BH"),
         ("Kuwait", "US", "KW"),
+        # NEEDS-DECISION #47, closed package 21: Puerto Rico gets its own code.
+        # Listed individually, not by a shared prefix -- unlike the Brasil group
+        # above these seven don't share one (they start with seven different
+        # city names), and a test nobody can read is a test nobody maintains
+        # applies here too.
+        ("Arecibo, Puerto Rico", "US", "PR"),
+        ("CBP Puerto Rico/Virgin Islands", "US", "PR"),
+        ("Carolina, Puerto Rico", "US", "PR"),
+        ("Guaynabo, Puerto Rico", "US", "PR"),
+        ("Juana Diaz, Puerto Rico", "US", "PR"),
+        ("Puerta De Tierra, Puerto Rico", "US", "PR"),
+        ("San Juan, Puerto Rico", "US", "PR"),
     ]
 
     def test_the_widening_never_reassigns_a_committed_country(self):

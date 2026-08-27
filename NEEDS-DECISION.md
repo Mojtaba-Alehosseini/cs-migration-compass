@@ -23,6 +23,12 @@ is missing is the time axis.
 a UI one, and it is the single change that would turn this panel from a snapshot
 into the site's best time series about pay.
 
+**CLOSED, package 21 — ruling: yes, worth a package, not built here.** Recorded as the agreed next
+data package. Reason: Stack Overflow is the only source in this pipeline measuring professional
+experience DIRECTLY, rather than through the age proxy item #24 already names as this site's own
+known weakness in the position feature. Not built this package — a data-pipeline effort of its own,
+outside Tier 1/2's scope.
+
 ## 2. Indeed: eight metros drawn, thirty in the file
 
 The work order says to "use whatever `indeed_hiring_lab_job_postings` actually
@@ -90,6 +96,13 @@ tracked. No panel is blank anywhere on Explore.
 **Decide:** whether any of the four is worth a fetch strategy of its own — the
 IMF parser is written and would run the day the block lifts.
 
+**CLOSED, package 21 (Rule A — blocked source keeps its honest gap).** Re-checked live:
+`imf_weo` still `status: blocked` (403 from every `imf.org` host), `worldbank_gep` still
+`status: unavailable`, `numbeo_history.data.by_city` still `{}`. Nothing changed, nothing
+in this package's own scope touches any of the four. Stays a documented backlog item —
+the IMF parser stays written and ready for the day the block lifts, not rewritten or
+removed.
+
 ---
 
 # Package 4 — Compare
@@ -106,6 +119,10 @@ is exactly as designed and the undrawn extras follow it.
 
 **Decide:** keep them where they are, fold them into the design properly, or drop
 them.
+
+**CLOSED, package 21 — ruling: keep them.** The owner's own words: keep them where they sit, and
+fold them into the design properly when Compare is next revisited. Not touched this package —
+recorded here as the decision, not deferred as an open question.
 
 ## 7. The copy-link toast claims a preview image that does not exist
 
@@ -169,6 +186,15 @@ Binding note 13 keeps metric selection out of package 4, so the rows are still
 
 **Decide:** if the mockup's illustrative set was meant as the new default, that
 is a change to `headline: true` in the registry.
+
+**CLOSED, package 21 — ruling: pay leads.** Checked `registry.ts` directly before changing anything:
+`salary_gross` was ALREADY first in `METRICS` and the first `headline: true` entry, so `HEADLINE_KEYS`
+(and Compare's default metric set) already led with salary — no change needed there. The real gap was
+Home's own default question: `QUESTIONS[0]` was `'home'` (years to a home), not `'pay'`. Fixed by
+reordering `QUESTIONS` in `questions.ts` so `'pay'` is first — Home.tsx's `useState(0)` and the pill
+row both key off array order, so one reorder satisfies "default question" and "lead" together, with
+no separate index to keep in sync. Verified no URL/deep-link scheme keys off question index (none
+exists — `qi` is local component state only), so this is not a breaking change for any shared link.
 
 ## 11. Missing-input wording comes from `compute.ts`, not the mockup
 
@@ -305,6 +331,10 @@ question (it is not "which domain" but genuinely "which path/version") without
 answering it.
 
 **Decide (superseded by package 9 below — kept for history).**
+
+**CLOSED, package 21 (Rule D — already resolved on record).** Closed by item #19's own
+package-11 resolution below ("this closes items #14, #15 and #19"). This heading stays
+as history, not re-opened.
 
 ---
 
@@ -466,6 +496,10 @@ genuine account/table-entitlement issue on the Destatis side worth Destatis's ow
 support contact (`destatis.de/DE/Service/Kontakt/Genesis/Servicekontakt-GENESIS.html`,
 found in the guide's own contact section) — a materially different, better-evidenced
 next step than "try another URL."
+
+**CLOSED, package 21 (Rule D — already resolved on record).** Closed by item #19's own
+package-11 resolution below ("this closes items #14, #15 and #19"). This heading stays
+as history, not re-opened.
 
 ## 16. `phase-4-salary-and-cv-plan.md` assigns package 9 a `stabilityOf()` extension this package's own work order never mentions
 
@@ -776,6 +810,9 @@ live call logged that response before anyone expected it to contain the token �
 Item #21 (Norway/Finland's opposite native-basis convention) now has a genuine third data point to
 consider Germany against, not decided here.
 
+**CLOSED, package 21 (Rule D — documentation of an already-made decision).** Formalising the
+closure this text already states. #14 and #19 stand closed on this record.
+
 ## 20. How "the position" can be both experience-linked and `<Figure>`-sourced — the reading this package committed to
 
 Tier 2's text names a worked example ("P60 of DISCO-08 2512 in Denmark") that implies the position
@@ -919,6 +956,9 @@ at a bachelor's degree) — see item #24 below for the full account and what wou
 `ASSUMED_CAREER_START_AGE` should vary (by country's typical university length, or by an education
 level the profile form doesn't currently collect), covered in #24.
 
+**CLOSED, package 21 (Rule D — shipped state confirmed).** Re-read against the live site: still
+shipped as described, no regression. Nothing in this package's own scope touches it further.
+
 ## 21. Norway's, Finland's, and Germany's own "native" wage figures use opposite conventions for which basis they represent
 
 Package 10's adversarial review (finding F12) found that `_extract_no()` (Denmark's own tier-0.3
@@ -974,6 +1014,12 @@ each native figure actually represents, or whether unifying every source onto on
 the cost of some sources no longer showing their own most naturally "native" figure) is the better
 fix.
 
+**STAYS OPEN, package 21.** Not touched by this package's Tier 1/2 items, and not closeable under
+any of the four Tier 3 rules — it is a genuine site-wide design choice (a new UI vocabulary item vs.
+a data-convention migration across four sources), not a blocked source, a disagreement between two
+methods this package can adjudicate, an indefensible number, or an internal note. Belongs with a
+future package that owns a Compare/Explore design pass, the same reasoning item #6 was given.
+
 ## 22. A flat net-take-home percentage is applied to a salary that can range 2.5x under a user-chosen percentile
 
 `compute.ts`'s `netFor()` applies one `net_pct` scalar per city (e.g. Valencia 72%, Copenhagen 64%)
@@ -999,6 +1045,15 @@ disclosure note on `Budget.salaryUsdYearOverride`-driven figures ("net percentag
 against this city's own published salary, not yours") is the more proportionate fix in the
 meantime.
 
+**CLOSED, package 21 — the disclosure note, the more proportionate fix.** `registry.ts`'s
+`salary_net` metric now states the limitation directly in its own source disclosure, wherever the
+figure renders: "a single flat rate for the whole city — real tax is progressive, so this
+understates the true net figure the further a salary sits above what this rate was calibrated
+against." Applies whether or not a Budget override is active, since even a city's own three
+default bands are not perfectly tuned to any one of them either. A progressive-tax model stays a
+future package's scope — modelling bracket schedules for fifteen countries remains a real
+harvesting effort, not attempted here.
+
 ## 23. `_verify_mdrsnit_reconciliation()` re-proves the STAND/MDRSNIT identity against whatever data the harvester actually used this run — cached bytes included
 
 Item #17's tier-0.2 resolution says `scripts/src_salary_dk.py` "re-proves the reconciliation on
@@ -1021,6 +1076,8 @@ makes.
 remembering if `data/raw/salary_dk/` is ever cleared as part of a scheduled re-verification: that is
 the specific circumstance under which this check would catch a genuine DST revision, not merely a
 pipeline regression.
+
+**CLOSED, package 21 (Rule D — internal note, not a decision).**
 
 ## 24. Converting years of professional experience to an assumed age for Sweden's and Norway's own age-banded crosses — `ASSUMED_CAREER_START_AGE`
 
@@ -1065,6 +1122,10 @@ sourced data behind it (no OECD/national completion-age figures fetched), and (c
 with a natural, obvious revisit point (whenever package 12's own CV path ships) — closer to a
 tracked TODO than a live decision.
 
+**CLOSED, package 21 (Rule D — tracked TODO, not a live decision).** Package 12 has since shipped
+(the postings panel), but its own occupation classifier (#30) carries no `education_level` field —
+option (c)'s own precondition still isn't met. Option (a) stands.
+
 ## 25. `DESTATIS_TOKEN` may have been exposed in this session's own tool-call transcript — consider rotating it
 
 Package 11's own work order relaxed the environment-only rule for this one credential, explicitly
@@ -1100,6 +1161,16 @@ narrow — a read-only credential against a public government statistics API, no
 an account with write access to anything — but the decision to accept that risk or not belongs to
 the account holder, not this pipeline. The user was told directly, in-session, at the moment this was
 found, not just here.
+
+**CLOSED, package 21 — checked plainly, as asked, without printing the value.** Compared the token
+value (by hash, never printed) across every local runner file that carries it: `prompts/run-
+package-9.cmd`, `run-package-9-resume.cmd`, `run-package-10.cmd` and `run-package-11.cmd` all still
+carry the byte-identical value — **the exact credential that leaked has not been rotated.** The
+current package's own runner (`run-package-21.cmd`) does not reference `DESTATIS_TOKEN` at all, and
+the variable is unset in this session's own environment. None of these files are tracked by git
+(`prompts/` is gitignored) — the exposure stays confined to this session's local disk and its own
+transcript, never reached GitHub. Stated plainly, as asked: **the value is unrotated.** The decision
+to rotate it remains the account holder's, not this pipeline's.
 
 ---
 
@@ -1148,6 +1219,10 @@ for the first two, and BambooHR needs real customer subdomains found first). Job
 NOT included in this question — see item #27, they are confirmed not usable at scale, not merely
 unbuilt.
 
+**CLOSED, package 21 (Rule D — backlog scoping note).** Not touched — the existing six harvesters
+already carry the postings panel well past its original coverage target, and none of this package's
+own Tier 1/2 items ask for a seventh provider. Stays a recorded option for a future package.
+
 ## 27. Jobvite and JazzHR — confirmed not usable at scale, not merely unprobed
 
 Distinct from item #26 above: these two were probed and the answer is a real "no," not "not yet."
@@ -1159,6 +1234,10 @@ require a customer-specific key. Neither has a path to bulk, unauthenticated, cr
 harvesting the way Ashby/Greenhouse/Lever/Teamtailor/SmartRecruiters/Workable/BambooHR/Workday all
 do. Not re-probed in a future package unless a company-specific key becomes available through some
 other channel — this is a structural "no," not a session budget limit.
+
+**CLOSED, package 21 (Rule A — blocked source, disclosed).** Both genuinely require an
+authentication path this pipeline does not have and correctly does not attempt to bypass. Nothing to
+decide unless a customer-specific key becomes available.
 
 ## 28. Greenhouse's own `pay_input_ranges` has no period field — this pipeline infers hourly vs. annual from magnitude
 
@@ -1190,6 +1269,10 @@ them" case, and the decision above is still open. `scripts/tests/test_pay_period
 pinning the CURRENT, disclosed boundary behaviour (so a future change to the $1,000 threshold is a
 deliberate, visible diff, not a silent one) rather than a fix to the heuristic itself.
 
+**CLOSED, package 21 (Rule D — tracked, tested placeholder, no live case observed).** Re-checked
+against the current corpus: no posting in the $1,000-$5,000 ambiguous band observed live. The
+$1,000 threshold stands, pinned by its own test.
+
 ## 29. Gig-platform / part-time-freelance postings appear in the panel alongside full-time roles — is that the right scope?
 
 The seed-hint candidate list (github.com/Feashliaa/job-board-aggregator) surfaced at least one
@@ -1206,6 +1289,19 @@ posting's own title.
 place in software/ICT categories be dropped from the panel entirely, kept but visually distinguished,
 or left as-is (the panel's own "Search title" filter already lets a reader exclude them by keyword,
 imperfectly)? A product/scope call, not a data one.
+
+**CLOSED, package 21 — ruling: filter from pay statistics, keep and mark in the listing.** Verified
+directly against the committed corpus before implementing anything: the pay-statistics candidate pool
+(SW-classified, `period=='year'`) already excludes gig/freelance postings STRUCTURALLY — of 3,314
+postings matching common gig/freelance title keywords, 3,308 (99.8%) are paid hourly and never enter
+that pool; the 6 that do are false-positive keyword matches ("Smart Contract Engineer" — blockchain,
+not gig; "Contract to Hire" — a salaried role), which a naive title filter would have wrongly excluded
+while catching zero real gig postings. **Rule used: the existing structural gate (period=='year' +
+SW classification) already implements the ruling; no new filter was built, because building one on
+title text would have removed genuine roles and none of the postings it should catch.** For the
+listing: `PostingPay.tsx`'s new `PeriodNote` marks every non-annual-period posting "not annual" with
+a tooltip explaining it is excluded from every salary median, wherever pay renders (`/openings` and
+`/work` both).
 
 ## 30. Occupation classification (tier 3) is built but was not run this session — no `GEMINI_API_KEY` in this environment — RESOLVED, the "no code change needed" claim below was wrong when first written
 
@@ -1243,6 +1339,10 @@ originally (incorrectly) promised. The postings panel's own "Category" filter UI
 built — occupation data merging in is necessary but not sufficient for that; a real follow-up, not
 attempted here since there is no live classified data this session to build or test it against.
 
+**CLOSED, package 21 (Rule A — blocked credential, disclosed).** `GEMINI_API_KEY` is still absent
+from this session's environment — checked directly, not assumed. The merge code is real and tested;
+the remaining gap is the credential itself, whose absence stays disclosed rather than worked around.
+
 ## 31. YC's Work at a Startup and Wellfound (tier 1.3) — both probed live, both closed, neither wired
 
 The work order's own §1.3 named these alongside USAJOBS and HN as supplementary sources to probe,
@@ -1275,6 +1375,10 @@ attempted here since the existing seed hints already carry the harvest well past
 as one more Tier-2 seed-hint source (still re-verified live per-token before counting, same as every
 other seed hint) — low cost, uncertain incremental yield since YC companies large enough to run their
 own ATS board are likely already reachable through the existing aggregator-based hints.
+
+**CLOSED, package 21 (Rule A for Wellfound/WaaS, Rule D for the YC-companies idea).** Wellfound and
+Work at a Startup remain genuinely auth-gated, correctly not bypassed. The companies-API seed-hint
+idea stays a recorded, low-priority backlog option.
 
 ## 32. 16 of 14,813 postings-with-compensation (0.11%) carry an implausible min/max ratio — traced to the SOURCE ATS's own structured field, not this pipeline's parsing
 
@@ -1340,6 +1444,10 @@ Also add the new `_word_match()`-ordering residual (item #33 below) as a small, 
 question worth deciding together with this one, since both are "this pipeline's own checking order,
 not a missing signal, occasionally picks the less-likely of two real answers" cases at a similarly
 small scale.
+
+**CLOSED, package 21 (Rule D — small, tracked residual, not a live defect).** 0.11% of postings-
+with-compensation, disclosed via hover title, no fabricated correction. Stays as-is; #33's own
+residual below is closed the same way, for the same reason.
 
 ## 33. `country_from_location()` used unanchored substring matching — real postings were misassigned to the wrong country, including onto the new advertised-pay chart's own displayed numbers — RESOLVED, fixed this package
 
@@ -1417,6 +1525,10 @@ own framing of a small residual not being worth new scope on its own. Separately
 always resolves to US" should be revisited if this pipeline's own provider mix ever grows real
 Tbilisi-based coverage (none observed as of this package).
 
+**CLOSED, package 21 (Rule D — small, tracked residual, not a live defect).** Same reasoning as
+#32: 0.023% of postings, disclosed, no fabricated correction, stays as-is. No Tbilisi-based coverage
+observed this package either.
+
 ---
 
 # Package 14 — fixing what the external data-science audit found
@@ -1460,6 +1572,10 @@ occupation-specific wage growth this pipeline cannot verify.
 **Decide:** whether a genuinely occupation-matched wage-growth series (not the national `avg_wages`
 average) is worth sourcing specifically to support a deflator lens in a future package — this package's
 own conclusion is that the CURRENT proxy is not defensible, not that no deflator could ever be.
+
+**CLOSED, package 21 (Rule D — decision already made; sourcing question is backlog).** The decline
+stands. An occupation-matched wage-growth series remains unsourced and is a future package's scope
+call, not a live defect in this one.
 
 ## 35. The new OECD wage-benchmark invariant (Tier 1, Finding 1) is a FLAG, not an ERROR — by design, not oversight
 
@@ -1510,6 +1626,10 @@ check's own docstring — because coupling the benchmark's pass/fail to the char
 risks the check silently "resolving" itself the moment the chart hides a country, which is closer to
 silencing the check than reporting on it independently).
 
+**CLOSED, package 21 (Rule D — deliberate design choice, documented).** FLAG stands. Nothing in
+this package's own scope asks for stricter CI on an already-investigated, already-disclosed,
+structurally-unfixable-by-a-number-change condition.
+
 ## 36. Postings currency conversion (Tier 3.1) covers 14 currencies, not every currency observed live
 
 `postings_common.CURRENCY_TO_FX_COUNTRY` converts USD, EUR, GBP, CAD, SGD, JPY, KHR, INR, AMD (Finding
@@ -1535,6 +1655,9 @@ published (historically, early the following year), with no code change needed.
 currencies' countries (Philippines, Poland, China, Hungary, Thailand, Mexico, Brazil, Czechia, South
 Korea, Romania, Switzerland, Malaysia, Hong Kong, Taiwan, Argentina) is worth a future package's scope,
 given each is a small fraction of total postings today.
+
+**CLOSED, package 21 (Rule D — backlog scoping note).** Not extended — each currency remains a small
+fraction of total postings, disclosed via a null `compensation.usd`, never estimated.
 
 ## 37. The OECD wage benchmark (item #35) compares whichever pay basis a country happens to publish, not a composition-matched one
 
@@ -1565,6 +1688,9 @@ this mismatch to a country that SHOULD fail silently passing — at most, one th
 consistent bonus-inclusive OECD comparator per country, where the data exists to do so) for
 precision, or whether the current, safely-biased-toward-over-flagging version is good enough given
 its role is triggering human review, not an automated correction.
+
+**CLOSED, package 21 (Rule D — safe-direction bias, documented, not urgent).** The bias only ever
+pushes toward MORE flagging, never a false pass, on a FLAG-only check. Left as-is.
 
 ## 38. `/postings` fails the work order's own Lighthouse performance gate — RESOLVED in package 17 (see the resolution at the end of this entry)
 
@@ -1717,6 +1843,10 @@ dataflow publishes a native-currency (`XDC`) series at all for this specific ind
 it in and switch this check to a same-currency ratio, removing the PPP/FX question entirely; if no:
 this disclosure is the durable answer, not a placeholder for a fix that isn't there to make).
 
+**CLOSED, package 21 (Rule D — documented open investigation, not urgent).** Not investigated this
+package — the check is FLAG-only and does not gate anything published. Stays a recorded backlog
+question.
+
 ## 40. Position.tsx still reads the pairwise `crosswalk` verdict — CoverageMap is correct by design, "Pay against cost" is a real, only partly-mitigated gap
 
 An independent adversarial review (M7) flagged that `Position.tsx`/`CountryProfile.tsx` still use
@@ -1761,6 +1891,9 @@ WagePanel's own exclusion model when enough of the user's OWN selected cities sh
 depth (an open design question — quorum semantics don't obviously translate to an arbitrary,
 often-small, user-chosen set the way they do to a fixed 15-country editorial panel).
 
+**CLOSED, package 21 (Rule D — shipped partial mitigation stands).** Option (a) — the current
+shipped state — stands. (b)/(c) are a future design call this package's own items don't touch.
+
 ## 41. `postings-refresh.yml`'s reclaim bucket is uncapped and grows every run — a workflow timeout was added as a cheap safety net; whether to cap the bucket itself is still open
 
 An independent adversarial review (L3) flagged that `build_probe_order`'s own docstring
@@ -1791,6 +1924,21 @@ version of the exact destructive-refresh problem Tier 0.2 just fixed (a company 
 turn in a capped rotation is functionally the same as one silently dropped), so this needs real design
 attention when the scale actually warrants it, not a number picked defensively today against a
 problem that is not yet present.
+
+**CLOSED, package 21 — the bucket is now capped, with the exact risk this item warned against
+avoided by design.** `build_probe_order()` gained `reclaim_cap`/`reclaim_cycle_key`: a ROTATING
+partition (ISO week number selects which `reclaim_cap`-sized slice of a sorted ordering runs this
+week), not a flat first-N truncation — a flat cap would have reintroduced a milder version of the
+same destructive-refresh bug Tier 0.2 fixed, and a first implementation of the rotation itself had
+exactly that overlap bug (caught by this package's own test before shipping: modulo-wrapping the
+last, partial chunk re-included items the first chunk already covered). Fixed with a proper
+ceil-division partition; a test now proves every company is reclaimed exactly once across a full
+cycle of keys. `RECLAIM_CAP = 5,000` — checked against today's real scale (Ashby's own 961 verified
+companies, the largest of the three providers) and set comfortably above it (>5x), so the cap does
+not engage today for any provider; it exists for the growth this item warned about, not today's
+load. Wired into all three harvesters (Ashby, Greenhouse, Lever) via a shared helper keyed on the
+real ISO week, since `postings-refresh.yml` runs weekly. 17 tests, including the exact
+overlap-regression case.
 
 ## 42. `/postings` "Median advertised pay by country" supports one country, not seven — how should it be shown?
 
@@ -1834,6 +1982,16 @@ did not make it unilaterally. Everything needed to implement any of the three is
 `data/quality_history/postings_pay_rederived.json` (per-country re-derived medians with CIs and a
 representativeness score against Eurostat ICT employment).
 
+**STAYS OPEN, package 21 — not in the work order's own 29-item Tier 3 list, flagged rather than
+silently skipped.** This item sits directly downstream of #48 (the pay window) and #49 (FX substitution), both
+explicitly re-derived this package. The chart this item describes IS effectively what's shipped: the
+current, live figure — US $205,000, 95% CI $202,000-$210,000, n=1,783 (moved from n=1,807 by this
+package's own #48/#49 re-derivation; the median itself held steady) — already matches option (a),
+one country, interval shown. That reads as an implicit resolution of this item's own three-way
+choice, not a coincidence: options (b) and (c) were never chosen, (a) is what the panel already does.
+Left open formally, since no work order text explicitly ratified (a) over (b)/(c) for this specific
+item — but the current shipped state and option (a) are the same thing.
+
 ## 43. Teranet's monthly index carries injected per-observation noise — disclose, aggregate, or drop?
 
 All six Teranet cities show residual autocorrelation of **+0.113 to +0.268** about a
@@ -1861,6 +2019,22 @@ individual Teranet value is interpretable; (b) drop Teranet and rely on the othe
 evidence; or (c) raise it with the publisher. This is a sharper choice than it first appeared -
 option (a) is no longer "add a footnote about monthly values", it is "stop plotting a level".
 
+**CLOSED, package 21 — recovered a signal instead of dropping it.** The owner's own instruction:
+"fix the noise, and use the data, act as a data scientist." A state-space local linear trend
+(`scripts/derive_teranet_smoothed.py`, Kalman smoother) was fit per city, and validated against
+OECD's own independent Canadian house-price index before being trusted at all — a levels-based
+first version of that validation was proven unsafe by direct adversarial testing (smoothed pure
+noise scored 0.9+ against the real OECD series for 5 of 6 cities), so the real test is the
+quarter-over-quarter DIFFERENCED correlation plus a Monte Carlo null test. **All six cities passed**
+— Toronto and Vancouver decisively (p<0.001), Ottawa and Halifax clearly (p≤0.004), Montreal and
+Calgary at a margin that needed a 5,000-draw refinement to trust (first-pass p≈0.046/0.050, within
+the 500-draw estimate's own sampling error of the boundary; refined to p=0.043/0.044). Full evidence
+in `docs/DATA-FITNESS.md` §5's own package-21 update. Published with its own uncertainty band,
+labelled smoothed, raw values available via CSV — never as a replacement for
+`data/processed/teranet_national_bank_hpi.json`, which this package reads and never writes.
+No city needed the fallback disclosure; had one failed validation, it would have kept package 16's
+raw-only treatment individually, not been forced into the recovered treatment regardless.
+
 ## 44. Percentile transfer is not currently testable, and therefore not defensible
 
 The site intends to infer pay for countries where employers do not publish ranges, by transferring a
@@ -1879,6 +2053,10 @@ the assumption becomes testable. Note that the same audit measured the panel as 
 exactly those countries: against each country's share of European ICT specialist headcount, Italy
 sits at 0.28x, Denmark 0.30x, Norway 0.45x, Sweden 0.64x and Germany 0.60x, while Great Britain is
 over-represented at 2.26x.
+
+**CLOSED, package 21 (Rule A — blocked by data scarcity, correctly shelved).** Still only the US
+clears the sample-size floor after this package's own 2-year window narrowing (#48) — narrower, not
+wider. Transfer stays shelved (option a); percentile transfer is not shipped anywhere on the site.
 
 ## 45. The postings panel covers 85 countries the site does not — scope expansion, or noise?
 
@@ -1920,6 +2098,16 @@ Package 16 did **not** choose. It made the current state legible instead: the co
 separates "countries this site covers" from "also in the harvest", so nobody reads the second group
 as coverage. That is a stopgap, not the decision.
 
+**CLOSED, package 21 — ruling: option (b), scoped for every derived figure and default view, rest
+behind a clearly separated section.** `/openings`'s own optgroup split (package 16) already did this
+for the country filter. The gap was `/work`'s `PublishedPay` panel (see item #52): it showed
+`publishable` countries as headline chips with NO scope filtering at all — France, outside the
+fifteen, would clear the same statistical bar as US/GB/CA with nothing distinguishing it. Fixed:
+`PublishedPay` now splits both its publishable and withheld rows into in-scope and a new "Beyond our
+fifteen" section, using the same `core.citiesByCountry` spine `/openings` and `/work`'s own section
+loop already use. Nothing outside the fifteen reaches a headline figure without saying so, anywhere
+on the site, verified by reading the actual data flow, not assumed from the UI alone.
+
 ## 46. Three country names are deliberately unparsed, because the checking order would misassign a US place
 
 `country_from_location()` checks, in order: exact ISO match, full US state name, the wide country-name
@@ -1948,6 +2136,9 @@ entrench it.
 gets both right, which is the correct fix and the most work; or (c) leave the order alone and accept
 that three country names stay unparsed. Package 16 took (c) and disclosed it.
 
+**CLOSED, package 21 (Rule D — deliberate, disclosed choice stands).** Option (c) stands. Options
+(a)/(b) remain a future package's scope call if the collision cost ever grows.
+
 ## 47. Puerto Rico is mapped to the US, not to its own ISO code
 
 `"puerto rico"` resolves to **US**. Thirteen postings read "San Juan, Puerto Rico", "Arecibo, Puerto
@@ -1963,6 +2154,14 @@ question is where the job IS, not who signs the cheque.
 **Decide:** whether territories should ever appear separately from their sovereign state. It affects
 nothing today — PR is not in the 15 either way — but it will the moment anyone counts "countries in
 the panel".
+
+**CLOSED, package 21 — ruling: give it its own code, PR.** `"puerto rico"` now maps to `PR`, not
+`US`, in `postings_common.py`. Re-derived against the real corpus: 13 postings moved from US to PR
+(matching this item's own count exactly). Effect on the US published median: **none** — re-ran
+`apply_postings_annotations.py` and the US figure held at $205,000 (n unchanged in the software+2024
+window before this move; the 13 PR rows were never in that population, all pre-dating the pay window
+or non-software). PR itself: 6 postings with compensation, 0 software-classified, correctly withheld
+— appears only in `/work`'s new "Beyond our fifteen" section (item #45/#52), never a headline figure.
 
 ## 48. How wide should the advertised-pay window be? Package 16 chose three years without authority to
 
@@ -1986,6 +2185,14 @@ provider concentration gets worse, not better; (c) publish two figures, federal 
 stop pretending one median covers a labour market that pays $87,000 and $217,000 for the same
 title; or (d) deflate the older postings to current prices and pool them, which needs a deflator
 this repo does not currently hold and would mix an index into an advertised-pay figure.
+
+**CLOSED, package 21 — ruling: two years, not three.** `PUBLISH_FROM_YEAR` moved from 2024 (three
+years: current + two behind) to 2025 (two years: current + one behind). Re-derived every affected
+figure: US $205,000 unchanged (n 1,810→1,783); GB $165,000 unchanged (n 123→122); CA $118,000→
+$119,000 (+0.8%, n 67→64). No publishable country dropped below the 30-posting floor from the
+narrower window — the five already-withheld countries (DE/FR/AU/SG/IT) stay withheld, unchanged.
+Every figure moved by at most one rounding step or held exactly steady; none of the underlying
+claims in item #48's own text (the bimodal-mixture risk this window exists to prevent) changed.
 
 ## 49. The current year cannot be priced for any country except the US
 
@@ -2024,6 +2231,15 @@ this precision. The last observed one-year move is −4.2% for EUR and −7.1% f
 remains the only fix that makes the panel work as designed**, and the decision it needs — two FX
 sources in one repo — is unchanged.
 
+**CLOSED, package 21 (Rule A — blocked source keeps its honest gap).** Re-checked with fresh
+evidence, not assumed unchanged: after this package's own re-derivation (Puerto Rico #47, two-year
+window #48), GB's published median still rests **90.2%** on FX-estimated (substituted-year) rates,
+CA **78.1%** — both at or above package 17's own 76-94% figure, confirming the World Bank's rate
+series still ends at 2025 and nothing has improved on its own. Option (b) (a second FX source)
+remains the only real fix and is not built this package — a genuine infrastructure decision outside
+this package's own Tier 1/2 scope, correctly left open rather than worked around with option (c)'s
+own comparability cost or a silent substitution this pipeline's own rules already forbid.
+
 ## 50. `/openings` is nearly unreachable, and `/postings` redirects to the page that is not the list
 
 Package 17 split the old `/postings` in two: `/work` (position + eight openings per country) and
@@ -2046,6 +2262,14 @@ Three things follow that were not deliberately chosen:
 four), whether `/postings` should redirect to `/openings` instead, and whether the filter parameters
 the old route accepted should be forwarded to `/openings` rather than dropped on `/work`.
 
+**CLOSED, package 21 — ruling: fix it, `/postings` should reach the postings.** `main.tsx`'s
+`/postings` route now redirects to `/openings` (the real browsable list), not `/work`. `/work`
+already carries a real `<Link to="/openings">` in its closing paragraph — kept, not rebuilt. Residual,
+disclosed rather than fixed: `Openings.tsx` does not read `country`/`level` from the URL to
+pre-populate its filters (they are local component state), so the query string a stale `/postings`
+link carries still goes unused on arrival — a distinct gap from which PAGE the link lands on, which
+is what this closes.
+
 ## 51. The classifier's precision is now visible per country, and it is visibly imperfect
 
 Until this package the title classifier's output was an aggregate: a share, a count, a median. `/work`
@@ -2066,6 +2290,16 @@ set, which makes the visible list cleaner than the counted one and must be capti
 (b) is the tempting one and the one that reintroduces two different answers to "how many software
 openings", which is the disagreement this package's `sw` flag exists to prevent.
 
+**CLOSED, package 21 — ruling: option (c), caption with the measured precision.** `Work.tsx`'s
+per-country `Openings` component now shows the classifier's own out-of-fold F1 and 95% CI (0.82,
+CI 0.76–0.87, against 116 hand-labelled titles) beside the "N software openings in {country}" count,
+on both the empty-figures and the has-figures rendering paths. Sourced from `title_class_summary.
+class_decisions.SW`, already present in the committed pipeline data and already passed through into
+the slim `openings.json` `/work` loads — the only gap was the TypeScript type never naming the field,
+now added. F1 (not raw precision) is the number used: it is the classifier-quality metric this
+codebase already ships with its own CI, and building a new fetch just for a marginally different
+statistic was not worth the added surface area.
+
 ## 52. `/work`'s published-pay panel names 49 countries on a page framed around fifteen
 
 The withheld table lists every country the harvest reached with any software row — 49, of which 35
@@ -2078,6 +2312,13 @@ harvest also reaches N countries this site does not cover"), which package 17 re
 the honest disclosure that the harvest is wider), carry the same out-of-scope sentence `/openings`
 now carries, or separate in-scope from out-of-scope rows the way `/openings`' country dropdown
 already does.
+
+**CLOSED, package 21 — ruling: separate in-scope from out-of-scope, matching `/openings`.** Closed
+together with #45 above (`PublishedPay`'s new split covers both the headline/publishable rows this
+item names as the sharper problem — France reaching a headline number — and the withheld table).
+France specifically: still publishable on the current corpus, now renders only in the "Beyond our
+fifteen" section with an explicit "outside the site's scope" label on every line, never beside the
+fifteen's own headline chips.
 
 ## 53. `levels.fyi` converts outside `normalise.py`, at a pinned rate with no year, and it renders on 57 city pages
 
@@ -2107,6 +2348,10 @@ so the conversions at least carry a chain and appear in the same audit as everyt
 
 Not attempted in package 17: it is outside the work order, it changes a value that renders on 57
 pages, and the trade it involves is a project decision rather than a defect.
+
+**CLOSED, package 21 (Rule D — deliberate design tension, documented).** Not attempted here either
+— same reasoning: it changes a value rendering on 57 pages, and none of this package's own Tier 1/2
+items ask for it. Option (a)/(b)/(c) remain a future package's choice.
 
 ## 54. The de-duplicator's ground truth is keyed to array position — RESOLVED in package 18
 
