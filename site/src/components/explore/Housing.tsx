@@ -198,14 +198,22 @@ const teranetColor = (id: TeranetCityId) => PICK_COLORS[TERANET_CITY_IDS.indexOf
  *  house-price index (quarter-over-quarter CHANGES, not levels -- a levels-
  *  based first version of that validation was proven unsafe by direct
  *  adversarial testing, see that script's own module docstring) before a
- *  city earns a band here at all. All 6 Teranet cities passed this run.
+ *  city earns a band here at all. A city that does not clear that bar is
+ *  not on this chart's own picker -- it still ships, raw-only, in
+ *  CityRibbons below (see explore.ts's own `passed` field).
  *
  *  What survives is a MONTHLY trend with an honest 95% band, not a precise
- *  level: even Toronto's best case recovers only 0.07% of month-to-month
- *  RAW variance as genuine signal -- the band you see is wide because the
- *  noise really is that large, and the chart does not pretend otherwise. */
+ *  level: even a passing city's best case recovers a small single-digit-
+ *  percent share of month-to-month RAW variance as genuine signal -- the
+ *  band you see is wide because the noise really is that large, and the
+ *  chart does not pretend otherwise. */
 function TeranetPanel({ data }: { data: HousingData }) {
-  const available = TERANET_CITY_IDS.filter((c) => data.teranet[c])
+  // Only cities that CLEARED validation are chart-pickable -- a failing
+  // city contributes nothing to this chart (explore.ts ships it with empty
+  // smoothed/lo95/hi95), so listing it here would be a picker entry that
+  // visibly does nothing when clicked. Its own raw disclosure lives in
+  // CityRibbons instead, unconditionally, not picker-gated.
+  const available = TERANET_CITY_IDS.filter((c) => data.teranet[c]?.passed)
   const [picks, setPicks] = useState<TeranetCityId[]>(
     (['toronto', 'vancouver'] as const).filter((c) => available.includes(c)),
   )
@@ -274,14 +282,15 @@ function TeranetPanel({ data }: { data: HousingData }) {
         Teranet's raw monthly index carries noise larger than the trend it describes — package 16's
         own finding. What that finding did not settle is whether the trend is <i>recoverable</i>. A
         state-space model (Kalman smoother) fit per city, then checked against OECD's own
-        independent Canadian index, says yes for all six: the smoothed line below is the recovered
-        trend, the shaded band its own honest uncertainty — wide, because the underlying noise
-        really is that large.
+        independent Canadian index, says yes for {available.length} of {TERANET_CITY_IDS.length}: the
+        smoothed line below is the recovered trend, the shaded band its own honest uncertainty — wide,
+        because the underlying noise really is that large. {available.length < TERANET_CITY_IDS.length
+          && "The rest didn't clear that bar and stay raw-only, in the ribbon further down the page."}
       </div>
       <div className="crail">
         <span className="lbl">cities</span>
         <Picker label="Teranet cities"
-          items={TERANET_CITY_IDS.map((c) => ({ k: c, label: TERANET_LABEL[c] }))}
+          items={available.map((c) => ({ k: c, label: TERANET_LABEL[c] }))}
           active={picks} onChange={(update) => setPicks(update(picks) as TeranetCityId[])} />
       </div>
       <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -327,12 +336,18 @@ function TeranetPanel({ data }: { data: HousingData }) {
 
 /** Where a country publishes true city-level history, this is it — never a
  *  country trend wearing a city's name. Toronto/Vancouver (and the rest of
- *  Teranet's cities) moved out to their own panel, TeranetPanel above —
- *  package 21 recovered a real monthly trend from them, which this file's
- *  own hand-rolled annual sparkline was never built to show. */
+ *  Teranet's cities that CLEAR validation) moved out to their own panel,
+ *  TeranetPanel above — package 21 recovered a real monthly trend from
+ *  them, which this file's own hand-rolled annual sparkline was never
+ *  built to show. A Teranet city that does NOT clear validation stays
+ *  here instead, raw only -- adversarial review, package 21: an earlier
+ *  version dropped that city from the entire site once its own sparkline
+ *  moved out above, silently contradicting explore.ts's own "the honest
+ *  fallback" comment, which described a ribbon that no longer existed. */
 function CityRibbons({ data }: { data: HousingData }) {
   const mult = (p: Pair[]) => (p.length ? `×${(last(p)[1] / p[0]![1]).toFixed(1)}` : 'no data')
   const gbp = (v: number) => `£${Math.round(v / 1000)}k`
+  const failingTeranet = TERANET_CITY_IDS.filter((c) => data.teranet[c] && !data.teranet[c]!.passed)
 
   const spark = (lines: { pts: Pair[]; color: string; dash?: boolean }[], x0: number, x1: number, title: string) => {
     const all = lines.flatMap((l) => l.pts.map((p) => p[1]))
@@ -356,8 +371,11 @@ function CityRibbons({ data }: { data: HousingData }) {
     <div className="panel s4">
       <h2>Real city series, where they exist</h2>
       <div className="sub">
-        Two more countries publish true city-level history, beside the recovered Teranet trend
-        above. These are the real series — never a country trend applied to a city.
+        Detroit, SF Bay and London publish true city-level history beside the recovered Teranet
+        trend above — the real series, never a country trend applied to a city.
+        {failingTeranet.length > 0 && ` ${failingTeranet.length} Teranet ${failingTeranet.length === 1
+          ? 'city' : 'cities'} that did not clear this run's OECD validation join them here too, `
+          + `raw only — see TeranetPanel above for why.`}
       </div>
       <div className="ribbons">
         <div className="ribbon">
@@ -375,10 +393,28 @@ function CityRibbons({ data }: { data: HousingData }) {
           {spark([{ pts: data.london, color: cc('GB') }], 1968, 2026, 'London average sale price since 1968')}
           <div className="unit">HM Land Registry average sale price — in pounds, deliberately</div>
         </div>
+        {failingTeranet.map((c) => {
+          const city = data.teranet[c]!
+          const xs = city.raw.map(([x]) => x)
+          const x0 = xs.length ? Math.floor(Math.min(...xs)) : 1999
+          const x1 = xs.length ? Math.ceil(Math.max(...xs)) : 2026
+          return (
+            <div className="ribbon" key={c}>
+              <div className="rh"><b>{TERANET_LABEL[c]}</b>
+                <span>{mult(city.raw)} · raw only</span></div>
+              {spark([{ pts: city.raw, color: teranetColor(c) }], x0, x1,
+                `${TERANET_LABEL[c]} raw house price index, not independently validated this run`)}
+              <div className="unit">Teranet–National Bank, raw — did not clear OECD validation this
+                run (p={city.validation.pValue?.toFixed(3) ?? '—'}), so no smoothed trend is claimed</div>
+            </div>
+          )
+        })}
       </div>
       <ChartFoot>
         <span className="chip chip-ok">● FHFA · HM Land Registry</span>
         <span className="chip chip-quiet">London stays in pounds — one 2026 FX rate across 1968→2026 would lie</span>
+        {failingTeranet.length > 0
+          && <span className="chip chip-quiet">Teranet raw-only entries: validation failed this run, not a data gap</span>}
       </ChartFoot>
     </div>
   )

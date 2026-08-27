@@ -134,7 +134,22 @@ same estimate marker its inputs carry, and the panel prints one composition para
 rather than describing the US and leaving the other four to be assumed. The page is now honest
 about resting on an allowance; it is not the same claim as five independently well-sourced medians.
 
-The route is `/work`; `/postings` redirects there.
+**Update, package 21 — the window narrowed from three years to two (NEEDS-DECISION #48), Puerto
+Rico moved off the US population (#47); the US figure held.** `PUBLISH_FROM_YEAR` moved 2024→2025.
+Re-derived directly, not assumed:
+
+> Median advertised pay, software roles only — United States: **$205,000** (95% CI
+> $202,000-$210,000, n = 1,783 distinct software roles posted 2025 or later).
+> 2025: 212 · 2026: 1,571 — 88.1% from the most recent year, and 91% from a single provider.
+
+The US and GB medians held exactly steady across both changes; Canada moved $118,000→$119,000
+(+0.8%). No country crossed the 30-posting publish floor in either direction from the narrower
+window. *(Adversarial review found this doc's own worked example above — the n=1,807/"2024 or
+later" figures — had gone stale after package 21's own commit changed the window without touching
+the paragraph that names it. Left as history, corrected here rather than silently edited in place.)*
+
+Route correction: `/postings` now redirects to `/openings` (the browsable list), not `/work` —
+package 21, NEEDS-DECISION #50. `/work` is still where this panel itself renders.
 
 ---
 
@@ -249,13 +264,13 @@ Only the multi-year direction survives, and only qualitatively. The honest optio
 this on the chart, drop the series, or raise it with the publisher; that is a product decision and
 is recorded in `NEEDS-DECISION.md` #43.
 
-**Update, package 21 — the trend is recoverable, and NEEDS-DECISION #43 is closed on that basis.**
-The finding above is about the RAW series and stands unchanged: no raw monthly or annual Teranet
-value is interpretable on its own. What it does not settle is whether a properly-noise-modelled
-trend can be recovered from it. Two things pointed toward yes: the month-over-month autocorrelation
-column above (-0.40 to -0.47) sits close to the theoretical **-0.5** signature of a smooth trend
-plus independent additive noise once differenced — exactly the noise model this section already
-diagnoses, not a different one assumed for convenience.
+**Update, package 21 — the trend is recoverable for four of six cities, and NEEDS-DECISION #43 is
+closed on that basis.** The finding above is about the RAW series and stands unchanged: no raw
+monthly or annual Teranet value is interpretable on its own. What it does not settle is whether a
+properly-noise-modelled trend can be recovered from it. Two things pointed toward yes: the
+month-over-month autocorrelation column above (-0.40 to -0.47) sits close to the theoretical **-0.5**
+signature of a smooth trend plus independent additive noise once differenced — exactly the noise
+model this section already diagnoses, not a different one assumed for convenience.
 
 `scripts/derive_teranet_smoothed.py` fits that model directly: a state-space local linear trend
 (Kalman smoother, `statsmodels.tsa.UnobservedComponents`), with the observation and innovation
@@ -271,39 +286,56 @@ OECD's own Canadian house-price index — before it is trusted:
   shares a cause — the textbook spurious-regression problem — so this was never a safe test.
 - **The real check: quarter-over-quarter CHANGES, not levels, plus a Monte Carlo null.** Differencing
   removes the shared trend structure; a city passes only if its differenced correlation against
-  OECD's own differenced series is positive, does not underperform the same statistic on the raw
-  series, and — the decisive test — a 500-to-5,000-draw null (pure noise, matched to that city's own
-  length/mean/sd, run through the identical smoothing-and-validation pipeline against the SAME real
-  OECD series) shows a correlation this large occurring by chance no more than 5% of the time.
+  OECD's own differenced series clears a null test (pure noise, matched to that city's own fitted
+  scale, run through the identical smoothing-and-validation pipeline against the SAME real OECD
+  series) at p<0.05.
+- **The null itself went through two rounds of adversarial correction before being trusted.** A
+  first version fit the model to i.i.d. noise per draw — MLE-fitting a local-linear-trend model to
+  pure noise drives its own level and trend innovation variances toward zero, collapsing the "null"
+  to a near-deterministic line with almost no real variability, too weak to mean anything. The fix —
+  a parametric bootstrap from each city's OWN fitted noise variances — carried a second,
+  independently-found defect: simulating from an unanchored starting state let the model's double
+  integration (a local linear trend's slope is itself a random walk) explode over the full monthly
+  history, producing synthetic series reaching the hundreds of thousands against a real index that
+  runs 80-430, which made the null artificially easy to beat. Anchoring every simulated draw to the
+  real fit's own starting level and slope fixed both defects — verified directly, not just argued:
+  it changed Montreal's own verdict from a pass to a fail, which is why the numbers below differ
+  from an earlier draft of this section.
 
-| City | Differenced corr. vs OECD | Monte Carlo p-value | Trend (smoothed) | Signal share of raw MoM variance |
-|---|---:|---:|---:|---:|
-| Toronto | 0.481 | <0.001 | +4.9%/yr | 0.069% |
-| Vancouver | 0.391 | <0.001 | +4.4%/yr | 0.179% |
-| Ottawa | 0.227 | 0.004 | +4.1%/yr | 0.033% |
-| Halifax | 0.226 | <0.001 | +3.4%/yr | 0.070% |
-| Montreal | 0.118 | 0.043 (5,000-draw refined) | +3.6%/yr | 0.047% |
-| Calgary | 0.151 | 0.044 (5,000-draw refined) | +3.1%/yr | 0.101% |
+| City | Differenced corr. vs OECD | Monte Carlo p-value | Trend (smoothed) | Signal share of raw MoM variance | Result |
+|---|---:|---:|---:|---:|---|
+| Toronto | 0.481 | 0.002 | +4.9%/yr | 0.069% | Recovered |
+| Vancouver | 0.391 | 0.002 | +4.4%/yr | 0.179% | Recovered |
+| Halifax | 0.226 | 0.014 | +3.4%/yr | 0.070% | Recovered |
+| Ottawa | 0.227 | 0.022 | +4.1%/yr | 0.033% | Recovered |
+| Calgary | 0.151 | 0.110 | — | 0.101% | Raw only — did not clear p<0.05 |
+| Montreal | 0.118 | 0.126 | — | 0.047% | Raw only — did not clear p<0.05 |
 
-**All six cities pass.** Montreal and Calgary landed close enough to the 5% line at 500 draws (p ≈
-0.046 and 0.050) that the Monte Carlo estimate's own sampling error (≈0.01 at that draw count) could
-not distinguish them from the boundary — both were re-measured at 5,000 draws before being trusted,
-resolving cleanly below 5%. The recovered trend range (3.1-4.9%/yr) matches this section's own
-CAGR-superseding log-linear estimate (3.1-4.9%/yr) closely, which is corroborating, not circular —
-that estimate was computed on ANNUAL MEANS of the raw series, a different reduction of different
-input than the monthly Kalman smoother, arriving at the same range independently.
+(500 draws resolved every city cleanly this run — none landed close enough to the 5% line to need
+the 5,000-draw refinement pass the pipeline carries for exactly that case.)
 
-**What still holds, and what changed.** The signal share column is the honest headline: even
-Toronto's best case recovers only 0.07% of month-to-month raw VARIANCE as genuine trend — the
-smoothed line's own 95% band is wide, because the noise really is that large. This is not a
-reversal of the finding above; it is the same noise, with a model fit to it and validated
-independently rather than left undiagnosed. The site now publishes the smoothed trend with its own
-uncertainty band (`site/src/components/explore/Housing.tsx`'s `TeranetPanel`, `/explore/housing`),
-labelled as smoothed, alongside the noise disclosure and a link to the raw values via CSV — raw
-`data/processed/teranet_national_bank_hpi.json` is read by the derivation script, never written to.
-`NEEDS-DECISION.md` #43 is closed: option (a), keep a multi-year direction with a chart-level note,
-is superseded by a stronger, still-honest option this package's own validation work made available —
-a monthly trend with its own uncertainty, not just a qualitative direction.
+**Four of six cities pass; Calgary and Montreal do not, and stay on raw-only disclosure — the
+fallback path NEEDS-DECISION #43 always intended, not a hypothetical that happened to go unused.**
+The recovered trend range for the four that pass (3.4-4.9%/yr) sits close to, though not identical
+to, this section's own CAGR-superseding log-linear estimate (3.1-4.9%/yr, computed across all six
+cities from ANNUAL MEANS of the raw series) — a different reduction of different input than the
+monthly Kalman smoother, so rough agreement is corroborating, not circular.
+
+**What still holds, and what changed.** The signal share column is the honest headline: even the
+strongest of the four validated cities (Vancouver) recovers only 0.18% of month-to-month raw
+VARIANCE as genuine trend — the smoothed line's own 95% band is wide, because the noise really is
+that large. This is not a reversal of the finding above; it is the same noise, with a model fit to
+it and validated independently rather than left undiagnosed. The site publishes the smoothed trend
+with its own uncertainty band for the four cities that clear validation
+(`site/src/components/explore/Housing.tsx`'s `TeranetPanel`, `/explore/housing`), labelled as
+smoothed; Calgary and Montreal render instead in `CityRibbons` further down the same page, raw only,
+with a note explaining why — never silently dropped from the site. Raw values for every city remain
+available via CSV regardless of validation outcome; `data/processed/teranet_national_bank_hpi.json`
+is read by the derivation script, never written to. `NEEDS-DECISION.md` #43 is closed: option (a),
+keep a multi-year direction with a chart-level note, is superseded — for the four cities that clear
+validation — by a stronger, still-honest option this package's own validation work made available: a
+monthly trend with its own uncertainty, not just a qualitative direction. For Calgary and Montreal,
+option (a) is exactly what still applies.
 
 ---
 

@@ -436,7 +436,7 @@
       "source_id": "postings",
       "name": "Job postings (merged ATS providers, classified and de-duplicated)",
       "urls": [],
-      "fetched_at": "2026-08-27T00:45:52+00:00",
+      "fetched_at": "2026-08-27T02:24:47+00:00",
       "license": "derived; each provider's own provenance entry carries its API, its licence and its fetch date",
       "redistribution": "derived — nothing is fetched by this step",
       "transforms": [
@@ -1019,7 +1019,7 @@
       "source_id": "teranet_smoothed",
       "name": "Teranet–National Bank HPI, Kalman-smoothed with OECD cross-validation",
       "urls": [],
-      "fetched_at": "2026-08-27T01:09:55+00:00",
+      "fetched_at": "2026-08-27T03:05:05+00:00",
       "license": "Derived entirely from two already-committed processed files (teranet_national_bank_hpi, oecd_indicators); no new fetch.",
       "redistribution": "derived output committed; no raw third-party payload involved",
       "transforms": [
@@ -1032,7 +1032,7 @@
       "output": "data/processed/teranet_smoothed.json",
       "status": "ok",
       "rows": 2303,
-      "coverage": "6/6 Canadian cities pass independent OECD validation",
+      "coverage": "4/6 Canadian cities pass independent OECD validation",
       "notes": "Recovers a monthly trend + uncertainty band from Teranet's noisy raw series; falls back per-city (not site-wide) if a city fails validation."
     },
     {
@@ -1234,5 +1234,5 @@
       "notes": "No parseable GEP data file was discoverable at build time. The forecast layer does not depend on it — OECD EO and UN WPP supply attributed projections."
     }
   ],
-  "updated_at": "2026-08-27T01:09:55+00:00"
+  "updated_at": "2026-08-27T03:05:05+00:00"
 }

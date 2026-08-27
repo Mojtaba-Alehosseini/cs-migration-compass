@@ -1,23 +1,23 @@
 {
  "source_id": "teranet_smoothed",
- "generated_at": "2026-08-27T01:09:55+00:00",
+ "generated_at": "2026-08-27T03:05:05+00:00",
  "meta": {
   "kind": "derived",
   "confidence": "index",
   "method": "State-space local linear trend (Kalman smoother), fit per city via statsmodels.tsa.UnobservedComponents(level='local linear trend'); observation and innovation variances estimated by MLE from the data, not assumed.",
   "input_source": "teranet_national_bank_hpi",
   "input_generated_at": "2026-08-04T19:16:10+00:00",
-  "validation_method": "The smoothed monthly level, aggregated to quarterly means and then DIFFERENCED (quarter-over-quarter change, not level), correlated against the same treatment of OECD's independently-published Canadian house-price index (oecd_indicators.json, data.CA.house_prices.HPI_YDH_IX). Differencing first is deliberate: an earlier levels-based version of this check was proven unsafe by direct adversarial testing -- smoothed pure noise showed 0.9+ LEVEL correlation with this same OECD series for 5 of 6 cities (one landed positive and would have 'passed' outright), the textbook spurious-regression problem for two series that both drift. A city passes only if the differenced correlation is positive, does not fall more than 0.02 below the same differenced correlation on the raw series, AND a 500-draw Monte Carlo null test (pure noise matched to the city's own mean/sd/length, run through the identical pipeline) shows a correlation this large occurring by chance no more than 5% of the time.",
+  "validation_method": "The smoothed monthly level, aggregated to quarterly means and then DIFFERENCED (quarter-over-quarter change, not level), correlated against the same treatment of OECD's independently-published Canadian house-price index (oecd_indicators.json, data.CA.house_prices.HPI_YDH_IX). Differencing first is deliberate: an earlier levels-based version of this check was proven unsafe by direct adversarial testing -- smoothed pure noise showed 0.9+ LEVEL correlation with this same OECD series for 5 of 6 cities (one landed positive and would have 'passed' outright), the textbook spurious-regression problem for two series that both drift. A city passes only if the differenced correlation is positive, does not fall more than 0.02 below the same differenced correlation on the raw series, AND a 500-draw Monte Carlo null test (a parametric bootstrap FROM THE CITY'S OWN FITTED NOISE MODEL -- genuine trend-wandering at this city's own measured scale, but unrelated to OECD -- run through the identical pipeline; an earlier i.i.d.-noise version of this null was proven too weak by the same adversarial process, see _null_pvalue's own docstring) shows a correlation this large occurring by chance no more than 5% of the time.",
   "band_note": "lo95/hi95 are the Kalman smoother's own 95% interval on the SMOOTHED level (smoothed_state_cov) -- the model's own uncertainty about the trend, not a prediction interval for next month's raw reading.",
   "raw_series_unmodified": "data/processed/teranet_national_bank_hpi.json is read here, never written -- this file is an additional derived layer, not a replacement.",
-  "cities_passed_validation": 6,
+  "cities_passed_validation": 4,
   "cities_total": 6
  },
  "data": {
   "cities": {
    "calgary": {
     "area_name": "Calgary",
-    "null_draws_used": 5000,
+    "null_draws_used": 500,
     "mle_converged": true,
     "noise": {
      "sigma2_irregular": 806.0850861757007,
@@ -26,7 +26,9 @@
      "harvey_q": 0.025666862812632137,
      "harvey_q_note": "sigma2_level / sigma2_irregular -- the standard structural-time-series signal-to-noise ratio; small q means the level barely moves relative to observation noise.",
      "signal_share_pct": 0.10081251660521734,
-     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- the share of raw month-to-month VARIANCE attributable to genuine trend movement rather than noise. The complement is what the raw monthly print is noise."
+     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- a CONSERVATIVE, SHRUNK estimate of the share of raw month-to-month VARIANCE attributable to genuine trend movement: the Kalman SMOOTHER itself dampens the estimated trend to avoid overfitting single noisy points, so this reads lower than the model's own implied share (model_implied_signal_share_pct below) -- never higher. Adversarial review, package 21: an earlier version of this note did not say 'conservative', which read as a precise figure when it is a lower bound.",
+     "model_implied_signal_share_pct": 1.2670821290423728,
+     "model_implied_signal_share_note": "sigma2_level / (sigma2_level + 2*sigma2_irregular) x 100 -- the share of raw month-to-month VARIANCE the fitted model itself implies is genuine trend movement (var(diff(raw)) ~= sigma2_level + 2*sigma2_irregular for a local-linear-trend process), before the smoother's own shrinkage. Typically several times signal_share_pct, not a contradiction of it -- the two answer 'how much trend does the fitted MODEL say is there' vs 'how much trend did the smoothed OUTPUT actually keep'."
     },
     "validation": {
      "n_quarters_overlap": 110,
@@ -37,13 +39,13 @@
      "corr_raw_vs_oecd_diff": 0.013310242412910959,
      "diff_note": "Correlation of QUARTER-OVER-QUARTER CHANGES, not levels -- removes the shared trend structure that makes levels-correlation spurious-prone on two series that both drift.",
      "null_test": {
-      "n_draws": 4998,
-      "null_mean": -0.0012230275051980518,
-      "null_sd": 0.08624358816455097,
-      "null_p95": 0.1447522423053906,
-      "p_value": 0.044017607042817125
+      "n_draws": 500,
+      "null_mean": -0.003970464968253188,
+      "null_sd": 0.12291042604193712,
+      "null_p95": 0.18975810366984525,
+      "p_value": 0.10978043912175649
      },
-     "passed": true
+     "passed": false
     },
     "trend_pct_per_year": 3.064758042226634,
     "series": [
@@ -2040,7 +2042,9 @@
      "harvey_q": 0.01902418764666557,
      "harvey_q_note": "sigma2_level / sigma2_irregular -- the standard structural-time-series signal-to-noise ratio; small q means the level barely moves relative to observation noise.",
      "signal_share_pct": 0.07029321985985393,
-     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- the share of raw month-to-month VARIANCE attributable to genuine trend movement rather than noise. The complement is what the raw monthly print is noise."
+     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- a CONSERVATIVE, SHRUNK estimate of the share of raw month-to-month VARIANCE attributable to genuine trend movement: the Kalman SMOOTHER itself dampens the estimated trend to avoid overfitting single noisy points, so this reads lower than the model's own implied share (model_implied_signal_share_pct below) -- never higher. Adversarial review, package 21: an earlier version of this note did not say 'conservative', which read as a precise figure when it is a lower bound.",
+     "model_implied_signal_share_pct": 0.9422466438522357,
+     "model_implied_signal_share_note": "sigma2_level / (sigma2_level + 2*sigma2_irregular) x 100 -- the share of raw month-to-month VARIANCE the fitted model itself implies is genuine trend movement (var(diff(raw)) ~= sigma2_level + 2*sigma2_irregular for a local-linear-trend process), before the smoother's own shrinkage. Typically several times signal_share_pct, not a contradiction of it -- the two answer 'how much trend does the fitted MODEL say is there' vs 'how much trend did the smoothed OUTPUT actually keep'."
     },
     "validation": {
      "n_quarters_overlap": 145,
@@ -2052,10 +2056,10 @@
      "diff_note": "Correlation of QUARTER-OVER-QUARTER CHANGES, not levels -- removes the shared trend structure that makes levels-correlation spurious-prone on two series that both drift.",
      "null_test": {
       "n_draws": 500,
-      "null_mean": -0.003932260282615175,
-      "null_sd": 0.058731860114523436,
-      "null_p95": 0.10313239722984884,
-      "p_value": 0.0
+      "null_mean": 0.007880472291908264,
+      "null_sd": 0.10206806705499528,
+      "null_p95": 0.16687193831097688,
+      "p_value": 0.013972055888223553
      },
      "passed": true
     },
@@ -4663,7 +4667,7 @@
    },
    "montreal": {
     "area_name": "Montréal",
-    "null_draws_used": 5000,
+    "null_draws_used": 500,
     "mle_converged": true,
     "noise": {
      "sigma2_irregular": 825.7730237497152,
@@ -4672,7 +4676,9 @@
      "harvey_q": 0.012276737079356774,
      "harvey_q_note": "sigma2_level / sigma2_irregular -- the standard structural-time-series signal-to-noise ratio; small q means the level barely moves relative to observation noise.",
      "signal_share_pct": 0.047165023842980554,
-     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- the share of raw month-to-month VARIANCE attributable to genuine trend movement rather than noise. The complement is what the raw monthly print is noise."
+     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- a CONSERVATIVE, SHRUNK estimate of the share of raw month-to-month VARIANCE attributable to genuine trend movement: the Kalman SMOOTHER itself dampens the estimated trend to avoid overfitting single noisy points, so this reads lower than the model's own implied share (model_implied_signal_share_pct below) -- never higher. Adversarial review, package 21: an earlier version of this note did not say 'conservative', which read as a precise figure when it is a lower bound.",
+     "model_implied_signal_share_pct": 0.6100918851338202,
+     "model_implied_signal_share_note": "sigma2_level / (sigma2_level + 2*sigma2_irregular) x 100 -- the share of raw month-to-month VARIANCE the fitted model itself implies is genuine trend movement (var(diff(raw)) ~= sigma2_level + 2*sigma2_irregular for a local-linear-trend process), before the smoother's own shrinkage. Typically several times signal_share_pct, not a contradiction of it -- the two answer 'how much trend does the fitted MODEL say is there' vs 'how much trend did the smoothed OUTPUT actually keep'."
     },
     "validation": {
      "n_quarters_overlap": 145,
@@ -4683,13 +4689,13 @@
      "corr_raw_vs_oecd_diff": 0.020431012850963715,
      "diff_note": "Correlation of QUARTER-OVER-QUARTER CHANGES, not levels -- removes the shared trend structure that makes levels-correlation spurious-prone on two series that both drift.",
      "null_test": {
-      "n_draws": 4998,
-      "null_mean": 0.0014172306009330648,
-      "null_sd": 0.062256628353927125,
-      "null_p95": 0.1116439417616313,
-      "p_value": 0.042817126850740295
+      "n_draws": 500,
+      "null_mean": -0.005767197075693301,
+      "null_sd": 0.10362664099015036,
+      "null_p95": 0.1635763231743698,
+      "p_value": 0.12574850299401197
      },
-     "passed": true
+     "passed": false
     },
     "trend_pct_per_year": 3.5919862385739076,
     "series": [
@@ -7304,7 +7310,9 @@
      "harvey_q": 0.012635847249499333,
      "harvey_q_note": "sigma2_level / sigma2_irregular -- the standard structural-time-series signal-to-noise ratio; small q means the level barely moves relative to observation noise.",
      "signal_share_pct": 0.03344547963776789,
-     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- the share of raw month-to-month VARIANCE attributable to genuine trend movement rather than noise. The complement is what the raw monthly print is noise."
+     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- a CONSERVATIVE, SHRUNK estimate of the share of raw month-to-month VARIANCE attributable to genuine trend movement: the Kalman SMOOTHER itself dampens the estimated trend to avoid overfitting single noisy points, so this reads lower than the model's own implied share (model_implied_signal_share_pct below) -- never higher. Adversarial review, package 21: an earlier version of this note did not say 'conservative', which read as a precise figure when it is a lower bound.",
+     "model_implied_signal_share_pct": 0.6278258069768401,
+     "model_implied_signal_share_note": "sigma2_level / (sigma2_level + 2*sigma2_irregular) x 100 -- the share of raw month-to-month VARIANCE the fitted model itself implies is genuine trend movement (var(diff(raw)) ~= sigma2_level + 2*sigma2_irregular for a local-linear-trend process), before the smoother's own shrinkage. Typically several times signal_share_pct, not a contradiction of it -- the two answer 'how much trend does the fitted MODEL say is there' vs 'how much trend did the smoothed OUTPUT actually keep'."
     },
     "validation": {
      "n_quarters_overlap": 113,
@@ -7315,11 +7323,11 @@
      "corr_raw_vs_oecd_diff": 0.08570220496366078,
      "diff_note": "Correlation of QUARTER-OVER-QUARTER CHANGES, not levels -- removes the shared trend structure that makes levels-correlation spurious-prone on two series that both drift.",
      "null_test": {
-      "n_draws": 499,
-      "null_mean": 0.0002053407507636367,
-      "null_sd": 0.07910757911176894,
-      "null_p95": 0.08490503989537032,
-      "p_value": 0.004008016032064128
+      "n_draws": 500,
+      "null_mean": 0.004996449378288991,
+      "null_sd": 0.11712427702972861,
+      "null_p95": 0.1958477249703408,
+      "p_value": 0.021956087824351298
      },
      "passed": true
     },
@@ -9360,7 +9368,9 @@
      "harvey_q": 0.016107654222045437,
      "harvey_q_note": "sigma2_level / sigma2_irregular -- the standard structural-time-series signal-to-noise ratio; small q means the level barely moves relative to observation noise.",
      "signal_share_pct": 0.06880939066890923,
-     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- the share of raw month-to-month VARIANCE attributable to genuine trend movement rather than noise. The complement is what the raw monthly print is noise."
+     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- a CONSERVATIVE, SHRUNK estimate of the share of raw month-to-month VARIANCE attributable to genuine trend movement: the Kalman SMOOTHER itself dampens the estimated trend to avoid overfitting single noisy points, so this reads lower than the model's own implied share (model_implied_signal_share_pct below) -- never higher. Adversarial review, package 21: an earlier version of this note did not say 'conservative', which read as a precise figure when it is a lower bound.",
+     "model_implied_signal_share_pct": 0.7989481210645416,
+     "model_implied_signal_share_note": "sigma2_level / (sigma2_level + 2*sigma2_irregular) x 100 -- the share of raw month-to-month VARIANCE the fitted model itself implies is genuine trend movement (var(diff(raw)) ~= sigma2_level + 2*sigma2_irregular for a local-linear-trend process), before the smoother's own shrinkage. Typically several times signal_share_pct, not a contradiction of it -- the two answer 'how much trend does the fitted MODEL say is there' vs 'how much trend did the smoothed OUTPUT actually keep'."
     },
     "validation": {
      "n_quarters_overlap": 113,
@@ -9372,10 +9382,10 @@
      "diff_note": "Correlation of QUARTER-OVER-QUARTER CHANGES, not levels -- removes the shared trend structure that makes levels-correlation spurious-prone on two series that both drift.",
      "null_test": {
       "n_draws": 500,
-      "null_mean": 0.0027976742079094453,
-      "null_sd": 0.08413026552769914,
-      "null_p95": 0.11533803517334364,
-      "p_value": 0.0
+      "null_mean": -0.0023349679593130616,
+      "null_sd": 0.11574994021501372,
+      "null_p95": 0.17558401191661954,
+      "p_value": 0.001996007984031936
      },
      "passed": true
     },
@@ -11416,7 +11426,9 @@
      "harvey_q": 0.036607352036459345,
      "harvey_q_note": "sigma2_level / sigma2_irregular -- the standard structural-time-series signal-to-noise ratio; small q means the level barely moves relative to observation noise.",
      "signal_share_pct": 0.17928395492920207,
-     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- the share of raw month-to-month VARIANCE attributable to genuine trend movement rather than noise. The complement is what the raw monthly print is noise."
+     "signal_share_note": "var(diff(smoothed)) / var(diff(raw)) x 100 -- a CONSERVATIVE, SHRUNK estimate of the share of raw month-to-month VARIANCE attributable to genuine trend movement: the Kalman SMOOTHER itself dampens the estimated trend to avoid overfitting single noisy points, so this reads lower than the model's own implied share (model_implied_signal_share_pct below) -- never higher. Adversarial review, package 21: an earlier version of this note did not say 'conservative', which read as a precise figure when it is a lower bound.",
+     "model_implied_signal_share_pct": 1.7974673419426996,
+     "model_implied_signal_share_note": "sigma2_level / (sigma2_level + 2*sigma2_irregular) x 100 -- the share of raw month-to-month VARIANCE the fitted model itself implies is genuine trend movement (var(diff(raw)) ~= sigma2_level + 2*sigma2_irregular for a local-linear-trend process), before the smoother's own shrinkage. Typically several times signal_share_pct, not a contradiction of it -- the two answer 'how much trend does the fitted MODEL say is there' vs 'how much trend did the smoothed OUTPUT actually keep'."
     },
     "validation": {
      "n_quarters_overlap": 145,
@@ -11428,10 +11440,10 @@
      "diff_note": "Correlation of QUARTER-OVER-QUARTER CHANGES, not levels -- removes the shared trend structure that makes levels-correlation spurious-prone on two series that both drift.",
      "null_test": {
       "n_draws": 500,
-      "null_mean": 0.004346907817217617,
-      "null_sd": 0.06386305361988964,
-      "null_p95": 0.10544391184604443,
-      "p_value": 0.0
+      "null_mean": -0.0016585858011629018,
+      "null_sd": 0.10071904910494515,
+      "null_p95": 0.15805848016058394,
+      "p_value": 0.001996007984031936
      },
      "passed": true
     },

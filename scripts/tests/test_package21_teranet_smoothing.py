@@ -223,10 +223,143 @@ class TestZeroVarianceReferenceIsGuardedNotNaN(unittest.TestCase):
         dates = _dates(n, 2000)
         straight_trend = 100 + 0.5 * np.arange(n, dtype=float)
         oecd = dts._quarterly_mean(dates, straight_trend)
-        result = dts._null_pvalue(dates, np.random.default_rng(6).normal(200, 25, n),
-                                   oecd, observed_diff_corr=0.9, seed=1, n_draws=20)
+        fitted_params = {"sigma2.irregular": 20.0, "sigma2.level": 5.0, "sigma2.trend": 0.01}
+        initial_state = np.array([straight_trend[0], 0.5])
+        result = dts._null_pvalue(dates, n, fitted_params, initial_state, oecd,
+                                   observed_diff_corr=0.9, seed=1, n_draws=20)
         self.assertEqual(result["n_draws"], 0)
         self.assertIsNone(result["p_value"])
+
+
+class TestNullIsAParametricBootstrapNotIidNoise(unittest.TestCase):
+    """Adversarial review, package 21, found TWO independent ways this null
+    could be too weak to mean anything -- both verified live against the six
+    real cities before being fixed, both encoded here so neither can
+    silently reappear:
+
+    (1) The FIRST version simulated i.i.d. noise and fit the model to it --
+    MLE-fitting a local-linear-trend model to i.i.d. noise drives BOTH
+    sigma2.level and sigma2.trend to ~0 (no genuine level-shaped or
+    trend-shaped structure in pure noise for the model to find; verified
+    live -- fitting this exact model to pure i.i.d. noise gives
+    sigma2.level ~1e-10, only sigma2.irregular absorbs anything), so the
+    "smoothed" fit collapsed to a dead-straight line. That produced a null
+    with almost no real variability: its own reported standard deviation
+    sat BELOW the elementary large-sample benchmark for two INDEPENDENT
+    series of the same length (1/sqrt(k-1)) for every one of the six real
+    cities.
+
+    (2) The SECOND version (a genuine parametric bootstrap from the city's
+    own fitted variances) simulated from an UNANCHORED initial state, which
+    let the model's own double integration (level absorbs slope, slope is
+    itself a random walk) explode over 300-430 steps -- verified live,
+    Montreal's own synthetic draws ranged into the hundreds of thousands
+    against a real index that runs 80-430. Those explosive draws correlate
+    with OECD as near-pure noise, making the null artificially EASY to beat
+    -- the opposite failure from (1), and it flipped Montreal's own verdict
+    (unanchored: passes; anchored to the real fit's own starting level and
+    slope: fails). Fixed by anchoring every draw's `initial_state`.
+
+    A THIRD finding, made while re-deriving the benchmark test below after
+    (2) was fixed: the naive "two independent series" bound from (1) is a
+    fact about the FIRST, now-deleted design, not a property of the CURRENT
+    (anchored, parametric-bootstrap) one. Anchoring deliberately makes
+    every draw start from the real fit's own point and share its model
+    class -- a MORE CONSTRAINED null than "two unrelated series" by design
+    (see _null_pvalue's own docstring) -- and verified live, even genuinely
+    healthy, real-city-fitted parameters (sigma2.level 10-32 across all six
+    committed cities) now sit below that same naive bound too. A test that
+    required clearing it would fail on a CORRECT null exactly as readily as
+    a collapsed one. What actually separates healthy from collapsed under
+    the current design is sigma2.level specifically: holding
+    sigma2.irregular fixed, a healthy vs. a collapsed sigma2.level
+    reproducibly separates null_sd by roughly 2-2.5x (checked across five
+    seeds while deriving the replacement test below).
+    """
+
+    def test_null_sd_is_meaningfully_wider_for_a_healthy_fit_than_a_collapsed_one(self):
+        # Not a fixed external benchmark -- the class docstring's third
+        # finding explains why 1/sqrt(k-1) does not apply to this (anchored)
+        # design, even for a genuinely healthy fit. This is a relative
+        # comparison against the SAME pipeline given a genuinely collapsed
+        # input instead, holding sigma2.irregular fixed so only the
+        # level/trend collapse (the actual signature of fitting this model
+        # to pure i.i.d. noise, verified live) differs between the two.
+        n = 150
+        dates = _dates(n, 2000)
+        rng = np.random.default_rng(9)
+        true_level = 100 + 0.3 * np.arange(n, dtype=float) + 4 * np.sin(np.arange(n) / 9)
+        oecd = dts._quarterly_mean(dates, true_level + rng.normal(0, 8, n))
+        initial_state = np.array([true_level[0], 0.3])
+        # sigma2.level=20 is in the real cities' own committed range (10-32);
+        # sigma2.level=1e-10 matches what fitting this exact model to pure
+        # i.i.d. noise actually produces (verified live), not a guess.
+        healthy = {"sigma2.irregular": 200.0, "sigma2.level": 20.0, "sigma2.trend": 0.02}
+        collapsed = {"sigma2.irregular": 200.0, "sigma2.level": 1e-10, "sigma2.trend": 1e-11}
+        r_healthy = dts._null_pvalue(dates, n, healthy, initial_state, oecd, observed_diff_corr=0.9,
+                                      seed=42, n_draws=150)
+        r_collapsed = dts._null_pvalue(dates, n, collapsed, initial_state, oecd, observed_diff_corr=0.9,
+                                        seed=42, n_draws=150)
+        self.assertIsNotNone(r_healthy["null_sd"])
+        self.assertIsNotNone(r_collapsed["null_sd"])
+        # Observed ratio was 2.0-2.5x across five seeds (1, 2, 42, 99, 123)
+        # while deriving this test; 1.5x leaves real margin without being a
+        # tight, flaky bound.
+        self.assertGreater(r_healthy["null_sd"], 1.5 * r_collapsed["null_sd"],
+                            f"healthy null_sd={r_healthy['null_sd']} is not meaningfully wider than "
+                            f"collapsed null_sd={r_collapsed['null_sd']} -- the null may not be "
+                            "responding to genuine level/trend variation at all")
+
+    def test_null_draws_are_not_all_identical(self):
+        # A degenerate (collapsed-to-a-line) null would produce near-identical
+        # correlations draw to draw; a real parametric bootstrap should not.
+        n = 150
+        dates = _dates(n, 2000)
+        true_level = 100 + 0.4 * np.arange(n, dtype=float) + 5 * np.sin(np.arange(n) / 8)
+        oecd = dts._quarterly_mean(dates, true_level)
+        fitted_params = {"sigma2.irregular": 150.0, "sigma2.level": 15.0, "sigma2.trend": 0.015}
+        initial_state = np.array([true_level[0], 0.4])
+        result = dts._null_pvalue(dates, n, fitted_params, initial_state, oecd, observed_diff_corr=0.9,
+                                   seed=7, n_draws=100)
+        self.assertIsNotNone(result["null_sd"])
+        self.assertGreater(result["null_sd"], 0.02, "null draws read as suspiciously uniform")
+
+    def test_an_unanchored_simulation_would_explode_and_this_one_does_not(self):
+        # The specific regression this test exists to catch: simulate WITHOUT
+        # anchoring (bypassing _null_pvalue's own fix, to prove the fixture
+        # below would actually detect the bug if it came back) and confirm
+        # it produces a wildly unrealistic range; then confirm the real
+        # function, on the identical inputs, does not.
+        import statsmodels.api as sm
+        n = 300
+        dates = _dates(n, 1995)
+        fitted_params = {"sigma2.irregular": 800.0, "sigma2.level": 14.0, "sigma2.trend": 0.01}
+        real_start_level = 90.0
+        params = np.array([fitted_params["sigma2.irregular"], fitted_params["sigma2.level"],
+                            fitted_params["sigma2.trend"]])
+        template = sm.tsa.UnobservedComponents(np.zeros(n), level="local linear trend")
+
+        rng = np.random.default_rng(3)
+        unanchored_ranges = []
+        for _ in range(5):
+            sim = np.asarray(template.simulate(params, nsimulations=n))
+            unanchored_ranges.append(float(np.abs(sim).max()))
+        # Real Teranet indices run 80-430 -- anything reaching 10x that from
+        # an unanchored start demonstrates the failure mode this guards against.
+        self.assertTrue(any(r > 5000 for r in unanchored_ranges),
+                         f"the unanchored simulation did not explode with this seed/params "
+                         f"({unanchored_ranges}) -- the fixture, not the fix, may need attention")
+
+        oecd = dts._quarterly_mean(dates, real_start_level + 0.3 * np.arange(n, dtype=float))
+        initial_state = np.array([real_start_level, 0.3])
+        result = dts._null_pvalue(dates, n, fitted_params, initial_state, oecd, observed_diff_corr=0.9,
+                                   seed=3, n_draws=40)
+        # A null built from realistic (anchored) draws should show sensible
+        # quarterly-index-level differences, not the six-figure swings an
+        # unanchored simulation produces.
+        self.assertIsNotNone(result["null_sd"])
+        self.assertLess(result["null_sd"], 50, f"null_sd={result['null_sd']} reads as if built from "
+                         "unrealistic, unanchored simulated series")
 
 
 class TestFitCityLevelsCorrelationAloneIsUnsafe(unittest.TestCase):

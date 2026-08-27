@@ -298,19 +298,23 @@ export type TeranetCityId = (typeof TERANET_CITY_IDS)[number]
 /** Package 21, Tier 1, item #43 — the recovered signal, not the raw ribbon.
  *  `derive_teranet_smoothed.py` fits a Kalman-smoothed local linear trend per
  *  city and validates it against OECD's independent index; a city only
- *  carries a band here if that validation PASSED (`data/processed/
- *  teranet_smoothed.json`'s own `validation.passed`) -- one that failed would
- *  fall back to raw-only disclosure instead (none did, this run: 6/6). */
+ *  carries a `smoothed`/`lo95`/`hi95` BAND here if that validation PASSED
+ *  (`data/processed/teranet_smoothed.json`'s own `validation.passed`, mirrored
+ *  as `passed` below) -- one that failed still ships (`raw` is never gated on
+ *  validation), just without a smoothed line nothing corroborates. See
+ *  TeranetPanel's own handling of `passed === false`. */
 export interface TeranetCity {
   areaName: string
+  passed: boolean
   /** Monthly, x = year + (month-1)/12 -- a continuous numeric axis, same
-   *  convention the chart kit already uses for Weather's month index. */
+   *  convention the chart kit already uses for Weather's month index.
+   *  Empty when `passed` is false -- see the interface's own doc comment. */
   smoothed: Pair[]
   lo95: Pair[]
   hi95: Pair[]
   /** The untouched raw monthly series, same axis -- "raw observations
    *  available" without plotting 337 noisy points on top of the trend they
-   *  motivated smoothing to recover. */
+   *  motivated smoothing to recover. Always populated, `passed` or not. */
   raw: Pair[]
   signalSharePct: number
   trendPctPerYear: number | null
@@ -370,15 +374,22 @@ export async function loadHousing(): Promise<HousingData> {
   for (const c of TERANET_CITY_IDS) {
     const smoothBlock = terSmooth.data.cities?.[c]
     const rawRows = ter.data.cities?.[c]?.series ?? []
-    // A city without a passed validation is not shipped with a band at all
-    // -- the package-16 raw-only ribbon is the honest fallback, not a
-    // smoothed line nothing corroborates. All 6 passed this run.
-    if (!smoothBlock || !smoothBlock.validation.passed) continue
+    if (!smoothBlock || !rawRows.length) continue
+    const passed = smoothBlock.validation.passed
+    // A city without a passed validation ships WITHOUT a smoothed line or
+    // band -- adversarial review, package 21: an earlier version dropped
+    // the whole city instead, and nothing replaced the package-16 raw
+    // ribbon this comment already claimed was "the honest fallback" once
+    // that ribbon moved into this same panel (see TeranetPanel's own
+    // handling of `passed === false`) -- a city that fails validation was
+    // silently absent from the entire site, not "falling back to raw
+    // disclosure" as documented. `raw` itself is never gated on `passed`.
     terOut[c] = {
       areaName: smoothBlock.area_name,
-      smoothed: monthlyPairs(smoothBlock.series, (r) => r.date, (r) => r.smoothed),
-      lo95: monthlyPairs(smoothBlock.series, (r) => r.date, (r) => r.lo95),
-      hi95: monthlyPairs(smoothBlock.series, (r) => r.date, (r) => r.hi95),
+      passed,
+      smoothed: passed ? monthlyPairs(smoothBlock.series, (r) => r.date, (r) => r.smoothed) : [],
+      lo95: passed ? monthlyPairs(smoothBlock.series, (r) => r.date, (r) => r.lo95) : [],
+      hi95: passed ? monthlyPairs(smoothBlock.series, (r) => r.date, (r) => r.hi95) : [],
       raw: monthlyPairs(rawRows, (r) => r.date, (r) => r.index),
       signalSharePct: smoothBlock.noise.signal_share_pct,
       trendPctPerYear: smoothBlock.trend_pct_per_year,

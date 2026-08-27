@@ -68,7 +68,7 @@
  "teranet_smoothed": {
   "theme": "housing",
   "file": "history/teranet_smoothed.json",
-  "kb": 162.8,
+  "kb": 168.2,
   "kind": "derived",
   "confidence": "index",
   "institution": null,
