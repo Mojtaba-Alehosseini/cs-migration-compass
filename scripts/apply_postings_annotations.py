@@ -83,11 +83,21 @@ PAY_SUMMARY_CLASS = "SW"
 # of. Nothing on screen carried a date, which breaks this project's own standing
 # rule that every published number carries a source, a date and a denominator.
 #
-# Three years: the current year and two behind it. Wide enough to hold a usable
-# sample, narrow enough that nominal pay has not moved much across it. Rows with
-# no posted_at are excluded from the published figure -- an undated row cannot be
-# placed in or out of the window, and 8.4% of the US subset is undated.
-PUBLISH_FROM_YEAR = 2024
+# NEEDS-DECISION #48, closed package 21: two years, not three. Package 16's
+# three-year choice was its own judgement call, made "without authority to" by
+# its own admission -- nothing in the data picked it, and package 17's own
+# evidence (item #48's update) showed the window still has a real, one-sided
+# cost: every USAJOBS federal row is dated 2016-2018, so ANY window this
+# recent excludes federal listings entirely and leaves the published figure
+# resting on private ATS boards (91.3% from a single provider). A NARROWER
+# window does not fix that; it was never going to. What it does do is keep the
+# window from re-admitting the exact bimodal-mixture problem this constant
+# exists to prevent as one more stale year rolls in behind it every rebuild.
+#
+# Two years: the current year and one behind it. Rows with no posted_at are
+# excluded from the published figure -- an undated row cannot be placed in or
+# out of the window, and 8.4% of the US subset is undated.
+PUBLISH_FROM_YEAR = 2025
 
 # The same absolute annual band audit_data.py uses (_ABSOLUTE_SANITY_BANDS).
 # Package 14 established that an implausible posting is FLAGGED, never deleted,

@@ -50,13 +50,33 @@ import { ProfileForm, CountryRow, PayVsCost, CoverageMap } from './Position'
 
 /* ---------------------------------------------------------------- openings --- */
 
+/** NEEDS-DECISION #51 — "the site already publishes every other error rate."
+ *  This is the classifier's: out-of-fold F1 with its own 95% CI, captioned
+ *  beside the "software openings" count it qualifies rather than left in an
+ *  evaluation file nobody reading this panel would ever open. */
+function ClassifierCaption({ d }: { d: { f1: number; ci95: [number, number]; n_true: number } }) {
+  return (
+    <>
+      {' '}The "software" label itself is a classifier's guess, measured at F1{' '}
+      <b className="tnum">{d.f1.toFixed(2)}</b> (95% CI {d.ci95[0].toFixed(2)}–{d.ci95[1].toFixed(2)},
+      against {d.n_true} hand-labelled titles) — the same set every published median on this page
+      is drawn from, not a different, cleaner one.
+    </>
+  )
+}
+
 /** Software openings for one country, and — where employers named a figure —
  *  the employer's own range. Never a per-posting estimate, never ranked. */
-function Openings({ name, block, display, crossRates, fxMaxGap, unavailable }: {
+function Openings({ name, block, display, crossRates, fxMaxGap, unavailable, classDecision }: {
   name: string
   block: OpeningsData['by_country'][string] | undefined
   display: DisplayCurrency
   crossRates: Record<string, CrossRate> | undefined
+  /** NEEDS-DECISION #51 — the classifier's own measured F1 (out-of-fold, with
+   *  its 95% CI) for the SW class, the same set these rows and every
+   *  published median are drawn from. "Show it beside the figures it
+   *  qualifies" was the ruling; this is the figure it qualifies. */
+  classDecision?: { f1: number; ci95: [number, number]; n_true: number }
   fxMaxGap: number
   /** The openings summary did not load. Distinct from "nothing is open",
    *  which is a fact about the harvest — this is a fact about the fetch, and
@@ -107,6 +127,7 @@ function Openings({ name, block, display, crossRates, fxMaxGap, unavailable }: {
           {name} — are real and current; not one states a range. That is a fact about advertising
           convention, not about the jobs. The position beside this does not depend on it: it comes
           from the national wage table, which is published whether or not employers advertise pay.
+          {classDecision && <ClassifierCaption d={classDecision} />}
         </p>
       </Gap>
     )
@@ -124,6 +145,7 @@ function Openings({ name, block, display, crossRates, fxMaxGap, unavailable }: {
             {' '}marks one whose rate came from a different year, and opens the method that says
             which.</>
         )}
+        {classDecision && <ClassifierCaption d={classDecision} />}
       </div>
       <table className="tbl" style={{ marginTop: 8 }}>
         <caption className="sr-only">
@@ -214,14 +236,28 @@ const DIST_PIPS: Record<string, { pips: number; label: string; ranks: boolean }>
  *  because it belongs beside the position: they are the two answers to "what
  *  does this country pay", one from a national wage table and one from what
  *  employers advertise, and they must never be blended. */
-function PublishedPay({ summary, meta, minN }: {
+function PublishedPay({ summary, meta, minN, spine }: {
   summary: NonNullable<OpeningsData['pay_summary_by_country']>
   meta: OpeningsData['pay_summary_meta']
   minN: number
+  /** The site's own fifteen-country scope (core.citiesByCountry.keys()) --
+   *  NEEDS-DECISION #52: this panel's summary carries every country the
+   *  harvest reached (49, 35 of them outside the fifteen — France among
+   *  them, clearing the same publish bar as the site's own headline
+   *  figures with nothing to say it isn't one). Split the same way
+   *  /openings' own country dropdown already separates "this site covers"
+   *  from "also in the harvest," so nothing outside the fifteen reaches a
+   *  headline number or a comparison without saying so. */
+  spine: string[]
 }) {
+  const inScope = new Set(spine)
   const publishable = summary.filter((r) => r.publishable && r.median_published_usd_year != null)
   const withheld = summary.filter((r) => !r.publishable)
     .sort((a, b) => b.n_as_published - a.n_as_published)
+  const publishableIn = publishable.filter((r) => inScope.has(r.country))
+  const publishableOut = publishable.filter((r) => !inScope.has(r.country))
+  const withheldIn = withheld.filter((r) => inScope.has(r.country))
+  const withheldOut = withheld.filter((r) => !inScope.has(r.country))
   if (publishable.length === 0 && withheld.length === 0) return null
   return (
     <div className="panel" style={{ marginTop: 12 }}>
@@ -234,7 +270,7 @@ function PublishedPay({ summary, meta, minN }: {
         comparable to them, because each posting contributes the <i>midpoint of an advertised
         range</i> rather than a salary anyone is paid.
       </div>
-      {publishable.map((r) => (
+      {publishableIn.map((r) => (
         <div key={r.country} style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginTop: 10 }}>
           <Flag cc={r.country} size={13} />
           <span style={{ fontSize: 'var(--text-lg)', fontWeight: 600 }}>{r.country}</span>
@@ -271,9 +307,9 @@ function PublishedPay({ summary, meta, minN }: {
         * caveat is each country's OWN, computed server-side — the hardcoded
         * sentence about US federal listings used to be printed under all five.
         * Adversarial review H2. */}
-      {publishable.some((r) => r.composition) && (
+      {publishableIn.some((r) => r.composition) && (
         <div style={{ marginTop: 10 }}>
-          {publishable.filter((r) => r.composition).map((r) => (
+          {publishableIn.filter((r) => r.composition).map((r) => (
             <p key={r.country} className="sub" style={{ marginTop: 8, maxWidth: '78ch' }}>
               <b>What the {r.country} figure is made of.</b>{' '}
               {Object.entries(r.composition!.by_year)
@@ -292,13 +328,13 @@ function PublishedPay({ summary, meta, minN }: {
         * <h2>, no median, and then a sentence about rounding a figure that is
         * not there. Unreachable today at five publishable countries; it was one
         * withheld country away from being reachable at one. Adversarial review D7. */}
-      {publishable.length > 0 && (
+      {publishableIn.length > 0 && (
         <p className="sub" style={{ marginTop: 8 }}>
           Rounded to the nearest $1,000 because advertised pay is heaped to round thousands — 77.5%
           of native annual minima end in 0 or 5 — so a median of it resolves no finer.
         </p>
       )}
-      {withheld.length > 0 && (
+      {withheldIn.length > 0 && (
         <div style={{ marginTop: 14 }}>
           <h3 style={{ fontSize: 'var(--text-sm)', margin: '0 0 6px' }}>Too few to quote a median</h3>
           <div className="sub" style={{ marginBottom: 8 }}>
@@ -322,7 +358,7 @@ function PublishedPay({ summary, meta, minN }: {
                 </tr>
               </thead>
               <tbody>
-                {withheld.map((r) => (
+                {withheldIn.map((r) => (
                   <tr key={r.country}>
                     <th scope="row">{r.country}</th>
                     <td style={{ textAlign: 'right' }}>{r.n_as_published.toLocaleString()}</td>
@@ -337,6 +373,67 @@ function PublishedPay({ summary, meta, minN }: {
         </div>
       )}
       {meta?.vintage_cost && <p className="sub" style={{ marginTop: 8 }}>{meta.vintage_cost}</p>}
+
+      {/* NEEDS-DECISION #45/#52 — everything the harvest reached outside the
+        * site's fifteen, kept separate the same way /openings' own country
+        * dropdown already separates "this site covers" from "also in the
+        * harvest." publishableOut in particular matters: France clears the
+        * same statistical bar as the headline figures above, and had nothing
+        * distinguishing it from them until this section existed. */}
+      {(publishableOut.length > 0 || withheldOut.length > 0) && (
+        <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px dashed var(--ink-3)' }}>
+          <h3 style={{ fontSize: 'var(--text-sm)', margin: '0 0 6px' }}>Beyond our fifteen</h3>
+          <div className="sub" style={{ marginBottom: 8 }}>
+            The harvest reaches {publishableOut.length + withheldOut.length} countries this site
+            does not cover — no cost-of-living, tax or housing data, so nothing here joins a
+            comparison or a headline count above. Shown because the numbers are real, not because
+            they are part of this site's fifteen.
+          </div>
+          {publishableOut.map((r) => (
+            <div key={r.country} style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginTop: 8, opacity: 0.85 }}>
+              <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>{r.country}</span>
+              <span style={{ fontSize: 'var(--text-sm)' }} className="tnum">
+                ${Math.round(r.median_published_usd_year!).toLocaleString()}
+              </span>
+              <span className="sub">
+                95% CI ${Math.round(r.ci_lo_published_usd_year!).toLocaleString()}–$
+                {Math.round(r.ci_hi_published_usd_year!).toLocaleString()} · n ={' '}
+                {r.n_software_only.toLocaleString()} distinct software roles · outside the site's scope
+              </span>
+            </div>
+          ))}
+          {withheldOut.length > 0 && (
+            <div style={{ maxHeight: 200, overflowY: 'auto', marginTop: 10 }} tabIndex={0} role="region"
+              aria-label="Countries outside the site's scope, too few advertisements for a median">
+              <table className="tbl">
+                <caption className="sr-only">
+                  Countries outside the site's fifteen, too few advertisements for a median
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Country</th>
+                    <th scope="col" style={{ textAlign: 'right' }}>Annual pay, priced in USD</th>
+                    <th scope="col" style={{ textAlign: 'right' }}>…once per role</th>
+                    <th scope="col" style={{ textAlign: 'right' }}>…software, recent</th>
+                    <th scope="col">Why withheld</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {withheldOut.map((r) => (
+                    <tr key={r.country}>
+                      <th scope="row">{r.country}</th>
+                      <td style={{ textAlign: 'right' }}>{r.n_as_published.toLocaleString()}</td>
+                      <td style={{ textAlign: 'right' }}>{r.n_deduped.toLocaleString()}</td>
+                      <td style={{ textAlign: 'right' }}>{r.n_software_only.toLocaleString()}</td>
+                      <td className="sub">{r.withheld_reason}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -664,7 +761,8 @@ export function Work() {
                       {firstOfCountry
                         ? <Openings name={countryName(cc)} block={byCountry[cc]}
                             display={display} crossRates={crossRates} fxMaxGap={fxMaxGap}
-                            unavailable={!postings} />
+                            unavailable={!postings}
+                            classDecision={postings?.title_class_summary?.class_decisions?.SW} />
                         : (
                           <p className="sub">
                             Shown once for {countryName(cc)}, above — these are the same
@@ -682,7 +780,7 @@ export function Work() {
 
       {postings?.pay_summary_by_country && (
         <PublishedPay summary={postings.pay_summary_by_country}
-          meta={postings.pay_summary_meta} minN={postings.pay_summary_min_n} />
+          meta={postings.pay_summary_meta} minN={postings.pay_summary_min_n} spine={spine} />
       )}
 
       {/* `supported` is not optional here, and dropping it in the merge was the

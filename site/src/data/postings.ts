@@ -204,6 +204,12 @@ export interface PostingsData {
     shipped_classes: string[]
     counts: Record<string, number>
     caveat: string
+    /** NEEDS-DECISION #51 — the classifier's own measured quality per class,
+     *  evaluated out-of-fold, F1 with its 95% CI. Was always in
+     *  data/processed/postings.json (build_site_data.py copies the whole
+     *  title_class_summary object through unmodified); this type just never
+     *  named the field, so nothing on the site ever read it. */
+    class_decisions?: Record<string, { f1: number; ci95: [number, number]; n_true: number }>
   }
   display_fx?: {
     pivot: string

@@ -113,6 +113,38 @@ interface Props {
   maxGapYears?: number
 }
 
+/** NEEDS-DECISION #29 — "keep gig/hourly postings in the listing, marked."
+ *  Verified directly against the committed corpus before building this: the
+ *  3,314 postings matching common gig/freelance title keywords are already
+ *  excluded from every pay STATISTIC (pay_summary_by_country only draws from
+ *  period=='year' rows) — 3,308 of them (99.8%) because they are paid
+ *  hourly, the rest because they are not classified as software titles. A
+ *  keyword filter was prototyped and rejected: of the 6 keyword-matching
+ *  rows that DO reach the software+annual pool, all 6 are false positives
+ *  ("Smart Contract Engineer" — blockchain, not gig; "Contract to Hire" — a
+ *  salaried role) that a title-text filter would have wrongly excluded,
+ *  while catching zero real gig postings that were not already excluded by
+ *  the period gate. So the marker here rides the STRUCTURED period field,
+ *  never a title guess — a non-annual period is the actual, precise reason
+ *  a posting cannot be salary-comparable, independent of what its title says. */
+function PeriodNote({ period }: { period: Compensation['period'] }) {
+  if (period === 'year') return null
+  return (
+    <>
+      {/* A literal space text node, not just CSS margin -- margin does not
+        * insert a text-level boundary, so the chip ran directly into the
+        * preceding "/hr"/"/mo" suffix with no space at all in the
+        * extracted/accessible text ("...$180/hrnot annual"), found live by
+        * reading the rendered page, not by inspecting the JSX. */}
+      {' '}
+      <span className="chip chip-quiet" style={{ fontSize: 'var(--text-2xs)' }}
+        title="Paid by the hour or month, not the year — not counted in any salary median on this site">
+        not annual
+      </span>
+    </>
+  )
+}
+
 export function PostingPay({ comp, display, crossRates, maxGapYears = 0 }: Props) {
   if (!comp) return <span className="nodata">not stated</span>
 
@@ -121,7 +153,7 @@ export function PostingPay({ comp, display, crossRates, maxGapYears = 0 }: Props
   // Native, or a posting already advertised in the requested currency: no
   // calculation happened, so this is a plain figure with no method to show.
   if (display === 'native' || display === comp.currency) {
-    return <span className="tnum">{native}</span>
+    return <span className="tnum">{native}<PeriodNote period={comp.period} /></span>
   }
 
   const usd = comp.usd
@@ -134,6 +166,7 @@ export function PostingPay({ comp, display, crossRates, maxGapYears = 0 }: Props
         <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>
           (no {display} rate for {comp.currency})
         </span>
+        <PeriodNote period={comp.period} />
       </span>
     )
   }
@@ -153,6 +186,7 @@ export function PostingPay({ comp, display, crossRates, maxGapYears = 0 }: Props
         <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>
           (no {display} rate for {wantYear})
         </span>
+        <PeriodNote period={comp.period} />
       </span>
     )
   }
@@ -202,22 +236,25 @@ export function PostingPay({ comp, display, crossRates, maxGapYears = 0 }: Props
   ]
 
   return (
-    <Derived
-      chain={chain}
-      native={{ value: comp.min, currency: comp.currency, period: comp.period, year: wantYear }}
-      result={{ value: lo, currency: display }}
-    >
-      <span className="tnum">
-        {fmtRange(lo, hi, display, comp.period)}
-        {estimated && (
-          <sup
-            className="fx-estimate"
-            aria-label={`Estimated: no ${wantYear} rate is published, so this was converted `
-              + `${reached}`}
-            title={`Converted ${reached} — no ${wantYear} rate is published`}
-          >≈</sup>
-        )}
-      </span>
-    </Derived>
+    <>
+      <Derived
+        chain={chain}
+        native={{ value: comp.min, currency: comp.currency, period: comp.period, year: wantYear }}
+        result={{ value: lo, currency: display }}
+      >
+        <span className="tnum">
+          {fmtRange(lo, hi, display, comp.period)}
+          {estimated && (
+            <sup
+              className="fx-estimate"
+              aria-label={`Estimated: no ${wantYear} rate is published, so this was converted `
+                + `${reached}`}
+              title={`Converted ${reached} — no ${wantYear} rate is published`}
+            >≈</sup>
+          )}
+        </span>
+      </Derived>
+      <PeriodNote period={comp.period} />
+    </>
   )
 }

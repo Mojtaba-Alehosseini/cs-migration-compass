@@ -71,7 +71,16 @@ const router = createHashRouter([
       // page is the one for which parsing the whole array is the right trade.
       { path: 'openings', element: lazyRoute(<Openings />) },
       { path: 'position', element: <KeepQuery to="/work" /> },
-      { path: 'postings', element: <KeepQuery to="/work" /> },
+      // NEEDS-DECISION #50, closed package 21: /postings was the browsable
+      // list, and redirecting it to /work (eight examples per country, no
+      // filters, no map) sent a reader looking for the list to a page that
+      // is not one. /openings IS the list this route used to be -- the
+      // honest redirect. KeepQuery still preserves the query string, though
+      // Openings.tsx does not yet read country/level params from the URL to
+      // pre-populate its filters (its filters are local component state) --
+      // a real gap, but a distinct one from which PAGE a stale /postings
+      // link should land on, which is what this fixes.
+      { path: 'postings', element: <KeepQuery to="/openings" /> },
       { path: 'data/postings-seed', element: lazyRoute(<PostingsSeed />) },
       { path: 'explore', element: lazyRoute(<Explore />) },
       { path: 'explore/:theme', element: lazyRoute(<Explore />) },

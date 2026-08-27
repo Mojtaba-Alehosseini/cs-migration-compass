@@ -71,7 +71,40 @@ export function xYears(v: number): number {
 
 const clamp = (v: number) => Math.max(2, Math.min(97, v))
 
+// NEEDS-DECISION #10, closed package 21 -- "Who pays the most? is best for
+// first eye" (the owner's own words). Pay leads the array, not the home
+// question -- Home.tsx's default index is QUESTIONS[0], and the pills render
+// in array order, so this single reorder satisfies both "default question on
+// the home field" and "lead" at once, with no separate index to keep in sync.
 export const QUESTIONS: Question[] = [
+  {
+    id: 'pay',
+    q: 'Who pays the most?',
+    sub: 'gross mid-level developer salary · USD per year · two-tier where noted',
+    kind: 'swarm',
+    axisL: '$30k',
+    axisR: '$280k',
+    dir: 'more →',
+    xLabel: 'gross salary',
+    value: (c) => c.salary_usd_year.mid,
+    scale: (v) => clamp(4 + ((v - 30000) / 250000) * 91),
+    ticks: [[50000, '$50k'], [100000, '$100k'], [150000, '$150k'], [200000, '$200k'], [250000, '$250k']],
+    fmt: (v) => (v == null ? 'no data' : moneyShort(v)),
+    secondAxes: [{
+      id: 'monthly_cost',
+      label: 'total monthly cost',
+      axisLabel: 'rent + living costs, per month',
+      hint: 'rent and living costs combined',
+      value: (c) =>
+        c.rent_1br_outside_usd_month == null || c.col_single_no_rent_usd_month == null
+          ? null
+          : c.rent_1br_outside_usd_month + c.col_single_no_rent_usd_month,
+      // Real range: $1,650–$4,620 a month.
+      scale: (v) => clamp(((v - 1500) / 3300) * 100),
+      ticks: [[2000, '$2k'], [3000, '$3k'], [4000, '$4k']],
+      fmt: (v) => (v == null ? 'no data' : `${money(v)}/mo`),
+    }],
+  },
   {
     id: 'home',
     q: 'Where can you actually buy a home?',
@@ -102,34 +135,6 @@ export const QUESTIONS: Question[] = [
       scale: (v) => clamp(((v - 1000) / 8200) * 100),
       ticks: [[2000, '$2k'], [4000, '$4k'], [6000, '$6k'], [8000, '$8k']],
       fmt: (v) => (v == null ? 'no data' : `${money(v)}/m²`),
-    }],
-  },
-  {
-    id: 'pay',
-    q: 'Who pays the most?',
-    sub: 'gross mid-level developer salary · USD per year · two-tier where noted',
-    kind: 'swarm',
-    axisL: '$30k',
-    axisR: '$280k',
-    dir: 'more →',
-    xLabel: 'gross salary',
-    value: (c) => c.salary_usd_year.mid,
-    scale: (v) => clamp(4 + ((v - 30000) / 250000) * 91),
-    ticks: [[50000, '$50k'], [100000, '$100k'], [150000, '$150k'], [200000, '$200k'], [250000, '$250k']],
-    fmt: (v) => (v == null ? 'no data' : moneyShort(v)),
-    secondAxes: [{
-      id: 'monthly_cost',
-      label: 'total monthly cost',
-      axisLabel: 'rent + living costs, per month',
-      hint: 'rent and living costs combined',
-      value: (c) =>
-        c.rent_1br_outside_usd_month == null || c.col_single_no_rent_usd_month == null
-          ? null
-          : c.rent_1br_outside_usd_month + c.col_single_no_rent_usd_month,
-      // Real range: $1,650–$4,620 a month.
-      scale: (v) => clamp(((v - 1500) / 3300) * 100),
-      ticks: [[2000, '$2k'], [3000, '$3k'], [4000, '$4k']],
-      fmt: (v) => (v == null ? 'no data' : `${money(v)}/mo`),
     }],
   },
   {
