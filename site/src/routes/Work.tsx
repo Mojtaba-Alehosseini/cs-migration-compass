@@ -242,12 +242,17 @@ function PublishedPay({ summary, meta, minN, spine }: {
   minN: number
   /** The site's own fifteen-country scope (core.citiesByCountry.keys()) --
    *  NEEDS-DECISION #52: this panel's summary carries every country the
-   *  harvest reached (49, 35 of them outside the fifteen — France among
-   *  them, clearing the same publish bar as the site's own headline
-   *  figures with nothing to say it isn't one). Split the same way
-   *  /openings' own country dropdown already separates "this site covers"
-   *  from "also in the harvest," so nothing outside the fifteen reaches a
-   *  headline number or a comparison without saying so. */
+   *  harvest reached (50, 36 of them outside the fifteen). None of the 36
+   *  currently clears the 30-posting publish floor (France is closest, at
+   *  29 — checked directly against the committed corpus, not assumed; an
+   *  earlier version of this comment claimed France WAS currently
+   *  publishable, which adversarial review found false, so the
+   *  publishableOut branch below is not exercised by today's data). The
+   *  split exists for the moment an out-of-scope country DOES clear the
+   *  floor, which is only ever a few postings away — without it, that
+   *  country would silently render as a headline chip beside the fifteen's
+   *  own. Split the same way /openings' own country dropdown already
+   *  separates "this site covers" from "also in the harvest." */
   spine: string[]
 }) {
   const inScope = new Set(spine)
@@ -377,9 +382,17 @@ function PublishedPay({ summary, meta, minN, spine }: {
       {/* NEEDS-DECISION #45/#52 — everything the harvest reached outside the
         * site's fifteen, kept separate the same way /openings' own country
         * dropdown already separates "this site covers" from "also in the
-        * harvest." publishableOut in particular matters: France clears the
-        * same statistical bar as the headline figures above, and had nothing
-        * distinguishing it from them until this section existed. */}
+        * harvest." publishableOut exists for the moment an out-of-scope
+        * country DOES clear the 30-posting publish floor (none does on the
+        * current corpus, checked directly — France is closest at 29, an
+        * earlier version of this comment wrongly claimed it already
+        * cleared the bar, adversarial review caught it against the real
+        * data) — without this branch, that country would render as an
+        * undifferentiated headline chip beside the fifteen's own the day it
+        * crosses 30. Carries the same disclosure the in-scope rows above
+        * do (FX-estimate marker, publish window, rounding note) so crossing
+        * that floor doesn't also mean crossing into a LESS disclosed
+        * treatment than the fifteen get. */}
       {(publishableOut.length > 0 || withheldOut.length > 0) && (
         <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px dashed var(--ink-3)' }}>
           <h3 style={{ fontSize: 'var(--text-sm)', margin: '0 0 6px' }}>Beyond our fifteen</h3>
@@ -394,14 +407,29 @@ function PublishedPay({ summary, meta, minN, spine }: {
               <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>{r.country}</span>
               <span style={{ fontSize: 'var(--text-sm)' }} className="tnum">
                 ${Math.round(r.median_published_usd_year!).toLocaleString()}
+                {(r.composition?.fx_estimated_pct ?? 0) >= 50 && (
+                  <sup className="fx-estimate"
+                    aria-label={`Estimated: ${r.composition!.fx_estimated_pct}% of the advertisements `
+                      + `behind this median were converted at a neighbouring year's rate`}
+                    title={`${r.composition!.fx_estimated_pct}% of these were converted at a rate from `
+                      + `a neighbouring year`}>≈</sup>
+                )}
               </span>
               <span className="sub">
                 95% CI ${Math.round(r.ci_lo_published_usd_year!).toLocaleString()}–$
                 {Math.round(r.ci_hi_published_usd_year!).toLocaleString()} · n ={' '}
-                {r.n_software_only.toLocaleString()} distinct software roles · outside the site's scope
+                {r.n_software_only.toLocaleString()} distinct software roles
+                {r.published_from_year ? `, posted ${r.published_from_year} or later` : ''}
+                {' · outside the site\'s scope'}
               </span>
             </div>
           ))}
+          {publishableOut.length > 0 && (
+            <p className="sub" style={{ marginTop: 8 }}>
+              Rounded to the nearest $1,000 because advertised pay is heaped to round thousands — the
+              same rounding the fifteen's own figures above use.
+            </p>
+          )}
           {withheldOut.length > 0 && (
             <div style={{ maxHeight: 200, overflowY: 'auto', marginTop: 10 }} tabIndex={0} role="region"
               aria-label="Countries outside the site's scope, too few advertisements for a median">
