@@ -1292,16 +1292,23 @@ imperfectly)? A product/scope call, not a data one.
 
 **CLOSED, package 21 — ruling: filter from pay statistics, keep and mark in the listing.** Verified
 directly against the committed corpus before implementing anything: the pay-statistics candidate pool
-(SW-classified, `period=='year'`) already excludes gig/freelance postings STRUCTURALLY — of 3,314
-postings matching common gig/freelance title keywords, 3,308 (99.8%) are paid hourly and never enter
-that pool; the 6 that do are false-positive keyword matches ("Smart Contract Engineer" — blockchain,
-not gig; "Contract to Hire" — a salaried role), which a naive title filter would have wrongly excluded
-while catching zero real gig postings. **Rule used: the existing structural gate (period=='year' +
-SW classification) already implements the ruling; no new filter was built, because building one on
-title text would have removed genuine roles and none of the postings it should catch.** For the
-listing: `PostingPay.tsx`'s new `PeriodNote` marks every non-annual-period posting "not annual" with
-a tooltip explaining it is excluded from every salary median, wherever pay renders (`/openings` and
-`/work` both).
+(SW-classified, `period=='year'`) already excludes gig/freelance postings STRUCTURALLY. **Correction
+(adversarial review):** this entry originally claimed "3,308 of 3,314 (99.8%) are excluded because
+they are paid hourly" — arithmetically impossible against the corpus (only 3,626 hourly rows exist in
+total) and not reproducible under any keyword set tested. Re-verified with anchored whole-word
+matching (the original unanchored scan also inflated the keyword-hit count — "contract" matched
+"Contractor Program Security Officer"): of 4,680 postings matching common gig/freelance title words,
+67.6% state no compensation at all, 28.3% are hourly, 3.5% are annual. The dominant real reason
+gig-keyword postings never reach the pay pool is that most never state pay at all, not that they are
+paid hourly. What the gate does verifiably protect: the postings that ARE annual+software-classified
+and match a gig keyword are internships (a real USAF program among them), blockchain "Smart Contract
+Engineer" roles, and "Contract to Hire" salaried positions — none of them gig/freelance work, and a
+title filter would have wrongly excluded all of them. **Rule used: the existing structural gate
+(period=='year' + SW classification) already implements the ruling; no new filter was built, because
+building one on title text would remove genuine roles without being the mechanism that actually keeps
+gig postings out.** For the listing: `PostingPay.tsx`'s new `PeriodNote` marks every non-annual-period
+posting "not annual" with a tooltip explaining it is excluded from every salary median, wherever pay
+renders (`/openings` and `/work` both).
 
 ## 30. Occupation classification (tier 3) is built but was not run this session — no `GEMINI_API_KEY` in this environment — RESOLVED, the "no code change needed" claim below was wrong when first written
 
@@ -2019,21 +2026,36 @@ individual Teranet value is interpretable; (b) drop Teranet and rely on the othe
 evidence; or (c) raise it with the publisher. This is a sharper choice than it first appeared -
 option (a) is no longer "add a footnote about monthly values", it is "stop plotting a level".
 
-**CLOSED, package 21 — recovered a signal instead of dropping it.** The owner's own instruction:
-"fix the noise, and use the data, act as a data scientist." A state-space local linear trend
+**CLOSED, package 21 — recovered a signal for four of six cities, and fell back honestly for the
+other two, instead of dropping either outcome.** The owner's own instruction: "fix the noise, and
+use the data, act as a data scientist." A state-space local linear trend
 (`scripts/derive_teranet_smoothed.py`, Kalman smoother) was fit per city, and validated against
 OECD's own independent Canadian house-price index before being trusted at all — a levels-based
 first version of that validation was proven unsafe by direct adversarial testing (smoothed pure
 noise scored 0.9+ against the real OECD series for 5 of 6 cities), so the real test is the
-quarter-over-quarter DIFFERENCED correlation plus a Monte Carlo null test. **All six cities passed**
-— Toronto and Vancouver decisively (p<0.001), Ottawa and Halifax clearly (p≤0.004), Montreal and
-Calgary at a margin that needed a 5,000-draw refinement to trust (first-pass p≈0.046/0.050, within
-the 500-draw estimate's own sampling error of the boundary; refined to p=0.043/0.044). Full evidence
-in `docs/DATA-FITNESS.md` §5's own package-21 update. Published with its own uncertainty band,
-labelled smoothed, raw values available via CSV — never as a replacement for
+quarter-over-quarter DIFFERENCED correlation plus a Monte Carlo null test.
+
+The null test itself needed two further, independently-found corrections before its p-values could
+be trusted. A first version fit the model to i.i.d. noise per draw, which collapses the model's own
+level and trend innovation variances toward zero — a null with almost no real variability, too weak
+to mean anything. The fix (a parametric bootstrap from each city's own fitted noise variances)
+carried a second defect: simulating from an unanchored starting state let the model's own double
+integration explode over the full monthly history, producing synthetic draws in the hundreds of
+thousands against a real index that runs 80-430 — a null made artificially EASY to beat, the
+opposite failure. Anchoring every simulated draw to the real fit's own starting level and slope
+fixed both; verified directly by re-running the corrected pipeline, which is why the result below
+differs from an earlier draft of this closure.
+
+**Four of six cities passed: Toronto and Vancouver decisively (p=0.002), Halifax and Ottawa clearly
+(p=0.014, 0.022).** Calgary and Montreal did not (p=0.110, 0.126) and remain on package 16's
+raw-only treatment — the fallback path this decision always described, not a hypothetical that
+happened to go unused. Full evidence, including the two null-test corrections, in
+`docs/DATA-FITNESS.md` §5's own package-21 update. The four passing cities publish with their own
+uncertainty band, labelled smoothed (`site/src/components/explore/Housing.tsx`'s `TeranetPanel`);
+Calgary and Montreal render raw-only in the same file's `CityRibbons`, with the reason stated
+inline, not silently absent from the site. Raw values for every city remain available via CSV
+regardless of outcome — never a replacement for
 `data/processed/teranet_national_bank_hpi.json`, which this package reads and never writes.
-No city needed the fallback disclosure; had one failed validation, it would have kept package 16's
-raw-only treatment individually, not been forced into the recovered treatment regardless.
 
 ## 44. Percentile transfer is not currently testable, and therefore not defensible
 
@@ -2101,12 +2123,16 @@ as coverage. That is a stopgap, not the decision.
 **CLOSED, package 21 — ruling: option (b), scoped for every derived figure and default view, rest
 behind a clearly separated section.** `/openings`'s own optgroup split (package 16) already did this
 for the country filter. The gap was `/work`'s `PublishedPay` panel (see item #52): it showed
-`publishable` countries as headline chips with NO scope filtering at all — France, outside the
-fifteen, would clear the same statistical bar as US/GB/CA with nothing distinguishing it. Fixed:
-`PublishedPay` now splits both its publishable and withheld rows into in-scope and a new "Beyond our
-fifteen" section, using the same `core.citiesByCountry` spine `/openings` and `/work`'s own section
-loop already use. Nothing outside the fifteen reaches a headline figure without saying so, anywhere
-on the site, verified by reading the actual data flow, not assumed from the UI alone.
+`publishable` countries as headline chips with NO scope filtering at all — a single-posting swing on
+any out-of-scope country (France sits closest, at 29 against the 30-posting floor, checked directly)
+would have rendered it as an undifferentiated headline chip beside US/GB/CA the moment it crossed.
+Fixed: `PublishedPay` now splits both its publishable and withheld rows into in-scope and a new
+"Beyond our fifteen" section, using the same `core.citiesByCountry` spine `/openings` and `/work`'s
+own section loop already use, with the same disclosure (FX marker, publish window, rounding note)
+the fifteen's own rows carry. Nothing outside the fifteen can reach a headline figure without saying
+so — including the branch that isn't exercised by today's data, verified directly rather than left
+untested because nothing currently triggers it (adversarial review: an earlier draft of this closure
+claimed France already cleared the bar, which was checked against the real corpus and found false).
 
 ## 46. Three country names are deliberately unparsed, because the checking order would misassign a US place
 
@@ -2162,6 +2188,17 @@ the panel".
 window before this move; the 13 PR rows were never in that population, all pre-dating the pay window
 or non-software). PR itself: 6 postings with compensation, 0 software-classified, correctly withheld
 — appears only in `/work`'s new "Beyond our fifteen" section (item #45/#52), never a headline figure.
+
+**Correction (adversarial review): the spelled-out-name fix was only half the picture.** 46 further
+postings read `"{municipality}, PR"` (the US-postal-abbreviation form — Caguas, San Juan,
+Barceloneta, Carolina, Ponce, Bayamon, Mayaguez) and stayed unresolved, because `PR` is neither a US
+state code nor in the country-name table. Fixed the same way, narrowly: a dedicated check keyed on
+these seven SPECIFIC known municipality names co-occurring with a `, PR` suffix, deliberately not a
+bare abbreviation rule — `PR` is also Brazil's own Parana state code (Curitiba is its capital), and a
+generic rule would risk exactly the substring-collision class this pipeline has been bitten by
+before. Re-derived: PR's own resolved count moved 13 → 59 (46 filled, 0 reassigned — these were
+blanks, not corrections), all still non-software / no compensation, so this also changes no
+published figure. Now genuinely complete for the two location formats this corpus actually uses.
 
 ## 48. How wide should the advertised-pay window be? Package 16 chose three years without authority to
 
@@ -2315,10 +2352,15 @@ already does.
 
 **CLOSED, package 21 — ruling: separate in-scope from out-of-scope, matching `/openings`.** Closed
 together with #45 above (`PublishedPay`'s new split covers both the headline/publishable rows this
-item names as the sharper problem — France reaching a headline number — and the withheld table).
-France specifically: still publishable on the current corpus, now renders only in the "Beyond our
-fifteen" section with an explicit "outside the site's scope" label on every line, never beside the
-fifteen's own headline chips.
+item names as the sharper problem and the withheld table). **Correction (adversarial review):** this
+entry originally claimed France was "still publishable on the current corpus" — checked directly
+against the committed data and found false: France sits at 29 distinct software roles, one short of
+the 30-posting publish floor, and is not currently publishable at all (it appears only in the
+withheld/"too few" table, both in-scope-equivalent and beyond-our-fifteen). Zero out-of-scope
+countries currently clear the publish floor. The split itself is not therefore untested busywork:
+it exists for the moment one does, which the panel's own numbers put a handful of postings away —
+verified the branch renders correctly (FX-estimate marker, publish-window text, rounding note, all
+matching the fifteen's own disclosure) rather than trusting it unexercised.
 
 ## 53. `levels.fyi` converts outside `normalise.py`, at a pinned rate with no year, and it renders on 57 city pages
 
