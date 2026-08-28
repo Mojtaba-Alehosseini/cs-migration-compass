@@ -67,6 +67,14 @@ function redactLikelyNameLine(text: string): { text: string; redaction: PiiRedac
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!.trim()
     if (!line) continue
+    // A purely decorative line (a rule of dashes/equals, a bare bullet) has
+    // no letters at all -- skip past it rather than stopping the whole
+    // scan here, since a template that opens with a divider line would
+    // otherwise put the real name permanently out of reach. Found live:
+    // "=====\nJane Doe" left the name unredacted under the first version
+    // of this function, which stopped at the FIRST non-empty line
+    // unconditionally.
+    if (!/[a-zA-Z]/.test(line)) continue
     if (genericHeaders.has(line.toLowerCase())) return { text, redaction: null }
     const words = line.split(/\s+/)
     const looksLikeName = words.length >= 2 && words.length <= 4
@@ -79,9 +87,9 @@ function redactLikelyNameLine(text: string): { text: string; redaction: PiiRedac
         redaction: { category: 'name', original: line },
       }
     }
-    // The first non-empty line was checked; if it's not name-shaped, stop
-    // — scanning further down risks redacting an ordinary job title or
-    // company name that happens to be title-cased.
+    // The first line carrying any actual letters was checked; if it is
+    // not name-shaped, stop — scanning further down risks redacting an
+    // ordinary job title or company name that happens to be title-cased.
     return { text, redaction: null }
   }
   return { text, redaction: null }

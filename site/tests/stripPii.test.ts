@@ -58,6 +58,18 @@ test('a plausible name on the first line is redacted; a generic header is left a
   assert.equal(withHeader.text.split('\n')[0], 'Curriculum Vitae')
 })
 
+test('a decorative divider before the name does not put the name out of reach', () => {
+  // Found live: a template that opens with a rule of dashes/bullets left
+  // the real name on the SECOND line unredacted, because the first
+  // version of this scan stopped at the first non-empty line
+  // unconditionally, decorative or not.
+  const withDivider = stripPii('=====\nJane Doe\nSoftware Engineer')
+  assert.equal(withDivider.text, '=====\n[NAME]\nSoftware Engineer')
+
+  const withBullets = stripPii('• • •\nJane Doe')
+  assert.equal(withBullets.text, '• • •\n[NAME]')
+})
+
 test('a job title as the first line is not mistaken for a name', () => {
   // Not 2-4 title-cased words that read as a personal name -- "Senior
   // Backend Engineer" is exactly the kind of false positive the
