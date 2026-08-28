@@ -1,0 +1,51 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "cs-compass-cv",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-25",
+  "account_id": "fe69f3e06c087c0a5fe4425fcc989b7f",
+
+  // Non-secret config only. GEMINI_API_KEY / TURNSTILE_SECRET_KEY are
+  // uploaded with `wrangler secret put`, never written here -- this file is
+  // committed. TURNSTILE_SITE_KEY (the PUBLIC widget key) is not needed
+  // here at all -- the Worker only ever verifies a token with
+  // TURNSTILE_SECRET_KEY; the frontend embeds the site key directly, since
+  // it is safe to ship in a bundle by design.
+  "vars": {
+    "ALLOWED_ORIGINS": "https://mojtaba-alehosseini.github.io,http://localhost:5173,http://localhost:4173",
+    "TURNSTILE_EXPECTED_ACTION": "cv-analyse",
+    "TURNSTILE_EXPECTED_HOSTNAMES": "mojtaba-alehosseini.github.io,localhost",
+    // Comfortably under the fallback chain's own ~1,100/day real ceiling
+    // (GEMINI-LIMITS.md: two 500-RPD Lite models + ~100 more from the
+    // 20-RPD fallbacks) -- this is the cap that fails closed BEFORE a
+    // request burns a call the chain could not have served anyway.
+    "DAILY_CV_LIMIT": "1000"
+  },
+
+  // The real spend cap. Per-IP alone cannot bound aggregate usage across
+  // many clients, so this is a SINGLE shared object (one fixed id), counting
+  // every request against ONE account-wide daily budget -- see
+  // src/dailyCounter.ts's own header for why SQLite storage specifically.
+  "durable_objects": {
+    "bindings": [
+      { "name": "DAILY_COUNTER", "class_name": "DailyCounter" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["DailyCounter"] }
+  ],
+
+  // A per-IP burst brake, NOT the real cap (that's the Durable Object
+  // above) -- this only stops one client hammering the endpoint in a tight
+  // loop. period must be exactly 10 or 60 (Cloudflare's own constraint,
+  // verified against current docs before writing this).
+  "ratelimits": [
+    {
+      "name": "BURST_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 5, "period": 60 }
+    }
+  ],
+
+  "observability": { "enabled": true }
+}

@@ -25,6 +25,12 @@ Thumbs.db
 .env
 .env.local
 
+# Cloudflare Worker local secrets and dev state -- .dev.vars holds real
+# GEMINI_API_KEY / TURNSTILE_SECRET_KEY values for `wrangler dev` only,
+# sourced from prompts/run-package-22.cmd, never committed.
+worker/.dev.vars
+worker/.wrangler/
+
 # logs
 *.log
 npm-debug.log*
@@ -114,3 +120,4 @@ REPORT-P18.md
 REPORT-P19.md
 REPORT-P20.md
 REPORT-P21.md
+REPORT-P22.md
