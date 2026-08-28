@@ -1,6 +1,7 @@
 import { DailyCounter } from './dailyCounter'
 import { verifyTurnstile } from './turnstile'
 import { errorResponse } from './errors'
+import { analyseWithFallback } from './gemini'
 
 export { DailyCounter }
 
@@ -129,14 +130,30 @@ async function handleAnalyse(request: Request, env: Env): Promise<Response> {
     )
   }
 
-  // Tier 0 stops here, deliberately: every gate above is real (Origin,
-  // Turnstile, burst limit, daily cap), proven end to end, with no model
-  // call yet. Tier 2 replaces this stub with the actual Gemini fallback
-  // chain: gemini-3.5-flash-lite -> 3.1-flash-lite -> the 20-RPD models.
+  // ---- the model call, with its own fallback chain (gemini.ts). Every
+  // gate above already passed, so this is the ONE place a real Gemini
+  // request happens, spending exactly one real quota unit per genuine
+  // analysis request -- not per HTTP request, since none of the checks
+  // above reach this line on their own. ----
+  const outcome = await analyseWithFallback(cvText, env.GEMINI_API_KEY)
+  if (!outcome.ok) {
+    const code = outcome.reason === 'all_models_exhausted' ? 'model_unavailable' : 'upstream_failure'
+    return errorResponse(code, outcome.detail, origin)
+  }
+
+  // profile.status can be "incomplete" here — a genuine, successful model
+  // response that says it could not confidently extract a profile, not a
+  // Worker-level error. Relayed as-is; Tier 3's own UI is what decides
+  // what "incomplete" means for the reader (the work order's own
+  // instruction: check status == "incomplete" before parsing).
   return new Response(
     JSON.stringify({
       ok: true,
-      stage: 'tier-0-skeleton',
+      profile: outcome.profile,
+      // Named explicitly, not just logged server-side: Tier 4 gate 7
+      // ("show it moving to the next model, not retrying the exhausted
+      // one") needs this visible in the response itself, not inferred.
+      modelUsed: outcome.modelUsed,
       dailyUsage: { count: consumed.count, limit: consumed.limit },
     }),
     { status: 200, headers: { 'content-type': 'application/json', 'access-control-allow-origin': origin } },

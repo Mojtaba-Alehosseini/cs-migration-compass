@@ -12,5 +12,11 @@
     "isolatedModules": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  // test/ deliberately excluded, matching site/tsconfig.json's own
+  // convention: those files import with a literal .ts extension and use
+  // node:test/node:assert, which this config's Workers-runtime "types"
+  // list does not carry. Node 22.6+ strips their type annotations at run
+  // time without type-checking them -- `npm test` runs them directly,
+  // `npm run typecheck` (this config) checks src/ only.
+  "include": ["src/**/*.ts"]
 }
