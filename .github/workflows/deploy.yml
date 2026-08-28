@@ -77,12 +77,20 @@ jobs:
           owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "url=https://${owner}.github.io/${{ github.event.repository.name }}/" >> "$GITHUB_OUTPUT"
 
+      # VITE_TURNSTILE_SITE_KEY is a Turnstile SITE key, not a secret by
+      # design — Turnstile's own model is that this value is embedded in
+      # every page that renders the widget, unlike TURNSTILE_SECRET_KEY
+      # (server-side only, held by the Worker alone, never here).
+      # VITE_CV_WORKER_URL is likewise just the Worker's own public
+      # endpoint, already named in index.html's own CSP connect-src.
       - name: Build
         run: npm run build
         working-directory: site
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
           SITE_URL: ${{ steps.origin.outputs.url }}
+          VITE_TURNSTILE_SITE_KEY: 0x4AAAAAAEf1kzX0YZ-SBayy
+          VITE_CV_WORKER_URL: https://cs-compass-cv.bigbookarchive.workers.dev
 
       # GitHub Pages serves a 404 for unknown paths; copying index.html to
       # 404.html makes client-side routes deep-linkable and shareable, which the

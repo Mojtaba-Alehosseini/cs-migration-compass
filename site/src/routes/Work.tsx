@@ -47,6 +47,7 @@ import { loadOpenings, fmtCompany, type Openings as OpeningsData } from '../data
 import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency,
   type CrossRate } from '../components/PostingPay'
 import { ProfileForm, CountryRow, PayVsCost, CoverageMap } from './Position'
+import { CvUpload } from '../components/CvUpload'
 
 /* ---------------------------------------------------------------- openings --- */
 
@@ -579,6 +580,12 @@ export function Work() {
           <p style={{ color: 'var(--ink-2)', marginTop: 8 }}>{loadError}</p>
         </div>
       )}
+
+      {/* Package 22 — an alternative way to fill the SAME form below, never
+        * a different one. The form itself (package 10, gate: works with no
+        * network at all) is completely unaffected whether or not this is
+        * ever used. */}
+      <CvUpload occupations={occupations} onApply={onProfileChange} />
 
       <ProfileForm profile={profile} occupations={occupations} onChange={onProfileChange} />
 

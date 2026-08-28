@@ -47,5 +47,15 @@
     }
   ],
 
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+
+  // Declared explicitly rather than left as wrangler's own implicit
+  // default (which produces a deploy-time warning either way): the
+  // standard *.workers.dev subdomain is genuinely the right host here, no
+  // custom domain needed for a personal project. Preview URLs are
+  // harmless to leave on -- every request this Worker's own code accepts
+  // or refuses is decided by the Origin header it carries, never by which
+  // Cloudflare-side hostname routed it there.
+  "workers_dev": true,
+  "preview_urls": true
 }

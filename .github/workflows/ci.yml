@@ -81,8 +81,15 @@ jobs:
       - run: npm test
         working-directory: site
 
+      # Same non-secret values deploy.yml's own build step uses — a
+      # Turnstile SITE key and the Worker's own public URL, neither
+      # confidential (see deploy.yml's own comment) — so the UI regression
+      # suite below exercises the CV panel in its real, configured state.
       - run: npm run build
         working-directory: site
+        env:
+          VITE_TURNSTILE_SITE_KEY: 0x4AAAAAAEf1kzX0YZ-SBayy
+          VITE_CV_WORKER_URL: https://cs-compass-cv.bigbookarchive.workers.dev
 
       # Package 13, Tier 0/5 gate 12 — the 9 client-side regressions in
       # docs/REGRESSION-CATALOGUE.md (R1, R2, R3, R8, R9, R10, R11, R12,
