@@ -7,7 +7,7 @@
 // tests already cover without a network call.
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { isValidProfile, MODEL_CHAIN, type CvProfile } from '../src/gemini.ts'
+import { isValidProfile, MODEL_CHAIN, analyseWithFallback, type CvProfile } from '../src/gemini.ts'
 
 const VALID: CvProfile = {
   status: 'ok',
@@ -59,4 +59,52 @@ test('MODEL_CHAIN never repeats a model', () => {
 
 test('Gemma is not in the chain — GEMINI-LIMITS.md rules it out for CV text (16K TPM)', () => {
   assert.equal(MODEL_CHAIN.some((m) => m.includes('gemma')), false)
+})
+
+// Gate 7 — "the fallback chain fires... show it moving to the next model
+// rather than retrying the exhausted one." A mocked fetch, not a live
+// call burning real daily quota to NATURALLY trigger a 429 (which would
+// mean deliberately exhausting the primary model, the opposite of what
+// this account's own quota discipline is for) — this tests the ACTUAL
+// decision logic in analyseWithFallback() directly: on 429, advance
+// exactly one model, do not re-call the one that just failed.
+function mockGeminiResponse(profile: CvProfile): Response {
+  const body = { candidates: [{ content: { parts: [{ text: JSON.stringify(profile) }] } }] }
+  return new Response(JSON.stringify(body), { status: 200 })
+}
+
+test('on a 429 from the primary model, the SECOND model in the chain answers — not a retry of the first', async () => {
+  const calls: string[] = []
+  const originalFetch = globalThis.fetch
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
+    const url = String(input)
+    calls.push(url)
+    if (url.includes(MODEL_CHAIN[0])) return new Response('rate limited', { status: 429 })
+    if (url.includes(MODEL_CHAIN[1])) return mockGeminiResponse(VALID)
+    throw new Error(`unexpected model called: ${url}`)
+  }) as typeof fetch
+  try {
+    const outcome = await analyseWithFallback('some cv text', 'fake-key-for-this-test')
+    assert.equal(outcome.ok, true)
+    if (outcome.ok) assert.equal(outcome.modelUsed, MODEL_CHAIN[1])
+    // Exactly one call per model, in chain order — not a retry of the
+    // first model after its own 429.
+    assert.equal(calls.filter((c) => c.includes(MODEL_CHAIN[0])).length, 1)
+    assert.equal(calls.filter((c) => c.includes(MODEL_CHAIN[1])).length, 1)
+    assert.equal(calls.length, 2)
+  } finally {
+    globalThis.fetch = originalFetch
+  }
+})
+
+test('429s all the way down the chain produce a distinguishable "all models exhausted" outcome', async () => {
+  const originalFetch = globalThis.fetch
+  globalThis.fetch = (async () => new Response('rate limited', { status: 429 })) as typeof fetch
+  try {
+    const outcome = await analyseWithFallback('some cv text', 'fake-key-for-this-test')
+    assert.equal(outcome.ok, false)
+    if (!outcome.ok) assert.equal(outcome.reason, 'all_models_exhausted')
+  } finally {
+    globalThis.fetch = originalFetch
+  }
 })
