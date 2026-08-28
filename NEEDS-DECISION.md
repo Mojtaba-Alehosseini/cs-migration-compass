@@ -2590,3 +2590,41 @@ not eliminated: the script now probes for next year's URL and flags loudly if it
 `REPORT-P20.md` Gate 11, `docs/DATA-FITNESS.md` §11). `EDITION_YEAR` still needs a human to update
 when WIPO ships a new edition — this closes the fetch-mechanism problem #55 was about, not the
 separate, ongoing need for someone to notice when GII's edition changes.
+
+## 56. CV storage was explicitly out of scope for package 22 — deferred to package 23, with what it will need
+
+Package 22 built the CV reader end to end — upload, client-side text extraction, PII stripping, the
+model call, applying the result to the profile form — and deliberately stops there. §0 of its own work
+order named storage out of scope; nothing in this package writes a CV, its extracted text, or its
+redacted text to any persistent store anywhere. The browser holds the reviewed text only in component
+state (`CvUpload.tsx`), for the lifetime of that page load; a refresh loses it. The Worker
+(`worker/src/index.ts`) forwards `cvText` to Gemini and returns the parsed profile — it is never
+written to the Durable Object, a log, or anywhere else server-side.
+
+**What exists today, load-bearing for whatever package 23 decides.** Tier 1's whole design rests on
+"the file itself never leaves the browser, and the PII-stripped text is the only thing that does" (see
+`site/src/cv/stripPii.ts`'s own header) plus "nothing is sent until the reviewed text is explicitly
+confirmed" (Tier 3, checked directly via `performance.getEntriesByType('resource')` showing zero
+requests before confirmation). Any storage design has to either preserve both properties deliberately
+or say plainly which one it is giving up and why — neither should erode by accident because a later
+package added a write path without re-reading why this one didn't.
+
+**What package 23 will need, if CV storage is taken up:**
+- **A decision on WHAT gets stored** — the raw file, the extracted text, the PII-stripped text, or only
+  the derived profile (occupation/years/skills/education/languages). Each is a materially different
+  privacy posture; this package's own design assumed none of them get kept, so this is a fresh decision,
+  not an extension of an existing one.
+- **A second, separate consent/disclosure.** Gate 11's Article 50-style labelling covers "a model read
+  this CV," not "this was kept." Storing anything is a distinct processing purpose under the same
+  regulatory frame this package already took seriously, and needs its own explicit disclosure, likely
+  its own opt-in — not folded silently into the existing "AI-assisted" chip.
+- **An identity concept, which does not exist anywhere in package 22.** The daily counter
+  (`worker/src/dailyCounter.ts`) is a single global count, not per-user; there is no login, session, or
+  any notion of "whose CV is this." Storage implies retrieval, which implies answering that question
+  first.
+- **A deletion path designed in from the start**, not retrofitted after storage ships — cheap to build
+  alongside the write path, expensive to bolt on once real data exists that needs it.
+
+**Not decided here.** Whether package 23 stores the CV at all, or only ever the derived profile, is a
+product decision this package's own work order left to the owner — recorded so the choice is made
+once, deliberately, rather than by whichever package next needs a returning user to imply it.
