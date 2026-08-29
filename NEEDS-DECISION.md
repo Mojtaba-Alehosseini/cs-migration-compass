@@ -2628,3 +2628,22 @@ package added a write path without re-reading why this one didn't.
 **Not decided here.** Whether package 23 stores the CV at all, or only ever the derived profile, is a
 product decision this package's own work order left to the owner — recorded so the choice is made
 once, deliberately, rather than by whichever package next needs a returning user to imply it.
+
+## 57. The `/work` redesign and CV storage both remain open; the redesign should not start before package 23's fixes are live
+
+Package 23's own work order was explicit about sequencing: *"A redesign of the page follows separately.
+This package fixes what is wrong underneath it. Do not redesign anything here; a redesign built on a
+leaking, non-deterministic reader is wasted work."* That package fixed the CV reader's own correctness
+defects (a PII leak that contradicted its own disclosure, non-deterministic output, a result that
+vanished on apply, unused schema fields, an undefined years figure) — see `REPORT-P23.md`. Recorded
+here as its own line item so the dependency is not lost between packages: whoever picks up the `/work`
+redesign should confirm package 23's fixes are live first, not assume it from the redesign's own work
+order alone.
+
+CV storage (#56, above) is the other open item this same package's finish protocol named, unchanged by
+package 23 — still explicitly deferred, still needing the same four decisions #56 lists (what gets
+kept, a second consent layer, an identity concept, a deletion path) before any package builds it.
+
+**Not decided here.** Neither when the `/work` redesign begins nor what it changes — only that it
+should not begin before this package's own fixes are confirmed live, which is a sequencing fact, not a
+design decision.
