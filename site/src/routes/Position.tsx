@@ -28,9 +28,12 @@ import { stabilityOf, yearsToHome, savingsPerYear, type Budget } from '../data/c
 import { years as fmtYearsToHome, dropApprox, NO_DATA } from '../data/format'
 import { UnstableMark } from '../components/Unstable'
 
-const PERIOD_LABEL = { hour: '/hour', month: '/month', year: '/year' } as const
+// Package 24 — exported (were module-local) so components/work's new
+// CountryStripRow can format the exact same way CountryRow always has,
+// rather than a second copy that could drift from it.
+export const PERIOD_LABEL = { hour: '/hour', month: '/month', year: '/year' } as const
 
-function fmtNative(v: number | null, currency: string): string {
+export function fmtNative(v: number | null, currency: string): string {
   if (v == null) return NO_DATA
   try {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(v)
@@ -39,7 +42,7 @@ function fmtNative(v: number | null, currency: string): string {
   }
 }
 
-function ordinal(pct: number): string {
+export function ordinal(pct: number): string {
   const r = Math.round(pct)
   return `P${r}`
 }

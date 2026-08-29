@@ -46,8 +46,9 @@ import { loadExperienceGradient, profileFromParams, profileToParams, DEFAULT_OCC
 import { loadOpenings, fmtCompany, type Openings as OpeningsData } from '../data/postings'
 import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency,
   type CrossRate } from '../components/PostingPay'
-import { ProfileForm, CountryRow, PayVsCost, CoverageMap } from './Position'
-import { CvUpload } from '../components/CvUpload'
+import { PayVsCost, CoverageMap } from './Position'
+import { CountryStripRow } from '../components/work/CountryStripRow'
+import { ProfileLine } from '../components/work/ProfileLine'
 
 /* ---------------------------------------------------------------- openings --- */
 
@@ -236,38 +237,43 @@ const DIST_PIPS: Record<string, { pips: number; label: string; ranks: boolean }>
  *  nothing carried it across. Restored here rather than on the full-list page
  *  because it belongs beside the position: they are the two answers to "what
  *  does this country pay", one from a national wage table and one from what
- *  employers advertise, and they must never be blended. */
-function PublishedPay({ summary, meta, minN, spine }: {
-  summary: NonNullable<OpeningsData['pay_summary_by_country']>
-  meta: OpeningsData['pay_summary_meta']
-  minN: number
-  /** The site's own fifteen-country scope (core.citiesByCountry.keys()) --
-   *  NEEDS-DECISION #52: this panel's summary carries every country the
-   *  harvest reached (50, 36 of them outside the fifteen). None of the 36
-   *  currently clears the 30-posting publish floor (France is closest, at
-   *  29 — checked directly against the committed corpus, not assumed; an
-   *  earlier version of this comment claimed France WAS currently
-   *  publishable, which adversarial review found false, so the
-   *  publishableOut branch below is not exercised by today's data). The
-   *  split exists for the moment an out-of-scope country DOES clear the
-   *  floor, which is only ever a few postings away — without it, that
-   *  country would silently render as a headline chip beside the fifteen's
-   *  own. Split the same way /openings' own country dropdown already
-   *  separates "this site covers" from "also in the harvest." */
-  spine: string[]
-}) {
+ *  employers advertise, and they must never be blended.
+ *
+ *  Package 24, Tier 1b — the ONE always-open panel this used to be is split
+ *  into the three pieces the work order's own below-fold ordering names
+ *  separately ("openings detail · coverage on its three axes · the
+ *  withheld-countries register · the beyond-our-fifteen section"). The
+ *  COMPUTATION below is untouched, byte-for-byte, down to every
+ *  adversarial-review comment attached to it (NEEDS-DECISION #45/#52's own
+ *  in-scope/out-of-scope split) — only which JSX fragment renders inside
+ *  which <details> changed. `usePublishedPaySlices` is the shared filtering
+ *  the three render functions below it now call instead of computing once
+ *  for one combined panel. */
+function usePublishedPaySlices(summary: NonNullable<OpeningsData['pay_summary_by_country']>, spine: string[]) {
   const inScope = new Set(spine)
   const publishable = summary.filter((r) => r.publishable && r.median_published_usd_year != null)
   const withheld = summary.filter((r) => !r.publishable)
     .sort((a, b) => b.n_as_published - a.n_as_published)
-  const publishableIn = publishable.filter((r) => inScope.has(r.country))
-  const publishableOut = publishable.filter((r) => !inScope.has(r.country))
-  const withheldIn = withheld.filter((r) => inScope.has(r.country))
-  const withheldOut = withheld.filter((r) => !inScope.has(r.country))
+  return {
+    publishableIn: publishable.filter((r) => inScope.has(r.country)),
+    publishableOut: publishable.filter((r) => !inScope.has(r.country)),
+    withheldIn: withheld.filter((r) => inScope.has(r.country)),
+    withheldOut: withheld.filter((r) => !inScope.has(r.country)),
+    publishable, withheld,
+  }
+}
+
+/** Below-fold item 1 (folded into "Openings detail"): the headline medians
+ * themselves, in scope. */
+function PublishedPayHeadline({ summary, spine }: {
+  summary: NonNullable<OpeningsData['pay_summary_by_country']>
+  spine: string[]
+}) {
+  const { publishableIn, publishable, withheld } = usePublishedPaySlices(summary, spine)
   if (publishable.length === 0 && withheld.length === 0) return null
   return (
-    <div className="panel" style={{ marginTop: 12 }}>
-      <h2>Median advertised pay, software roles only</h2>
+    <div style={{ marginTop: 12 }}>
+      <h2 style={{ fontSize: 'var(--text-sm)' }}>Median advertised pay, software roles only</h2>
       <div className="sub">
         Annual-salary advertisements, counted once per distinct role, restricted to titles
         classified as software and <b>limited to recent postings</b> — pay advertised in 2016 and in
@@ -340,8 +346,23 @@ function PublishedPay({ summary, meta, minN, spine }: {
           of native annual minima end in 0 or 5 — so a median of it resolves no finer.
         </p>
       )}
+    </div>
+  )
+}
+
+/** Below-fold item 3: "the withheld-countries register." */
+function PublishedPayWithheld({ summary, meta, minN, spine }: {
+  summary: NonNullable<OpeningsData['pay_summary_by_country']>
+  meta: OpeningsData['pay_summary_meta']
+  minN: number
+  spine: string[]
+}) {
+  const { withheldIn } = usePublishedPaySlices(summary, spine)
+  if (withheldIn.length === 0) return meta?.vintage_cost ? <p className="sub">{meta.vintage_cost}</p> : null
+  return (
+    <>
       {withheldIn.length > 0 && (
-        <div style={{ marginTop: 14 }}>
+        <div>
           <h3 style={{ fontSize: 'var(--text-sm)', margin: '0 0 6px' }}>Too few to quote a median</h3>
           <div className="sub" style={{ marginBottom: 8 }}>
             Counts below are advertisements whose annual pay could be priced in USD — not every
@@ -379,7 +400,25 @@ function PublishedPay({ summary, meta, minN, spine }: {
         </div>
       )}
       {meta?.vintage_cost && <p className="sub" style={{ marginTop: 8 }}>{meta.vintage_cost}</p>}
+    </>
+  )
+}
 
+/** Below-fold item 4: "the beyond-our-fifteen section." */
+function PublishedPayBeyond15({ summary, spine }: {
+  summary: NonNullable<OpeningsData['pay_summary_by_country']>
+  spine: string[]
+}) {
+  const { publishableOut, withheldOut } = usePublishedPaySlices(summary, spine)
+  if (publishableOut.length === 0 && withheldOut.length === 0) {
+    return (
+      <p className="sub">
+        Nothing outside the site's fifteen currently clears the advertised-pay publish floor.
+      </p>
+    )
+  }
+  return (
+    <>
       {/* NEEDS-DECISION #45/#52 — everything the harvest reached outside the
         * site's fifteen, kept separate the same way /openings' own country
         * dropdown already separates "this site covers" from "also in the
@@ -395,8 +434,7 @@ function PublishedPay({ summary, meta, minN, spine }: {
         * that floor doesn't also mean crossing into a LESS disclosed
         * treatment than the fifteen get. */}
       {(publishableOut.length > 0 || withheldOut.length > 0) && (
-        <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px dashed var(--ink-3)' }}>
-          <h3 style={{ fontSize: 'var(--text-sm)', margin: '0 0 6px' }}>Beyond our fifteen</h3>
+        <div>
           <div className="sub" style={{ marginBottom: 8 }}>
             The harvest reaches {publishableOut.length + withheldOut.length} countries this site
             does not cover — no cost-of-living, tax or housing data, so nothing here joins a
@@ -463,7 +501,7 @@ function PublishedPay({ summary, meta, minN, spine }: {
           )}
         </div>
       )}
-    </div>
+    </>
   )
 }
 
@@ -544,15 +582,6 @@ export function Work() {
     return out.sort((a, b) => a.cc.localeCompare(b.cc) || a.key.localeCompare(b.key))
   }, [wages, spine])
 
-  /** Where the coverage matrix's link for a country should land: its FIRST
-   *  section. Canada has two, and two sections cannot share one id — the
-   *  earlier `id={`c-${cc}`}` gave both of Canada's the same one. */
-  const anchorFor = useMemo(() => {
-    const m = new Map<string, string>()
-    for (const s of sections) if (!m.has(s.cc)) m.set(s.cc, s.key)
-    return m
-  }, [sections])
-
   /** Each absent country's own stated reason, keyed by code. The wage build
    *  records why a country has no row — "ISTAT publishes no occupation-level
    *  (CP2011) earnings flow at all, per src_salary_it.py" — and the gap where
@@ -565,13 +594,10 @@ export function Work() {
 
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
-      <h1 style={{ fontSize: 'var(--text-xl)' }}>Where you'd stand, and what's open</h1>
-      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: '72ch' }}>
-        Two questions that were never really separate. A <b>position</b> is a rank inside a country's
-        own published wage table — not an estimate of you. An <b>estimate</b> is this pipeline's own
-        model, shown only ever beside the distribution it came from. <b>Openings</b> are real
-        advertisements, with the employer's own range where they published one. Where a country
-        cannot answer one of these, it says which one and why, before you spend effort on it.
+      <h1 style={{ fontSize: 'var(--text-xl)' }}>Where you'd stand</h1>
+      <p className="lede" style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '6px 0 14px', maxWidth: '64ch' }}>
+        Fifteen countries, ranked by their own published pay table. Where one can't answer that, it
+        says why.
       </p>
 
       {loadError && (
@@ -581,245 +607,177 @@ export function Work() {
         </div>
       )}
 
-      {/* Package 22 — an alternative way to fill the SAME form below, never
-        * a different one. The form itself (package 10, gate: works with no
-        * network at all) is completely unaffected whether or not this is
-        * ever used. */}
-      <CvUpload occupations={occupations} onApply={onProfileChange} />
+      {/* Package 24, Tier 1b — "Drop a CV, or set it yourself," one line,
+        * replacing the old always-open CV panel and three-field form. Both
+        * still live inside it, completely unchanged (package 10's own
+        * no-network gate on the form, package 22's Art 50 disclosure on the
+        * CV step) — only the collapsed/expanded wrapper around them is new. */}
+      <ProfileLine profile={profile} occupations={occupations} countryName={countryName}
+        onProfileChange={onProfileChange} />
 
-      <ProfileForm profile={profile} occupations={occupations} onChange={onProfileChange} />
-
-      <div className="panel" style={{ marginTop: 12 }}>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-          <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
-            Show pay in
-            <select value={display} onChange={(e) => setDisplay(e.target.value as DisplayCurrency)}
-              style={{ display: 'block', marginTop: 4, padding: '6px 8px', border: '1px solid var(--line)',
-                background: 'var(--surface)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)' }}>
-              {DISPLAY_CURRENCIES.map((c) => (
-                <option key={c} value={c}>{DISPLAY_CURRENCY_LABEL[c]}</option>
-              ))}
-            </select>
-          </label>
-          <p className="sub" style={{ margin: 0, maxWidth: '54ch' }}>
-            "As advertised" is the default and the source of truth. Everything else is a derived
-            view: a converted figure opens its own method, and carries a marker where no rate for
-            its own year exists yet.
-          </p>
-        </div>
-      </div>
-
-      {/* Position + openings, country by country. One panel per country so the
-        * two halves sit beside each other rather than on two pages. */}
-      <div className="panel" style={{ marginTop: 12 }}>
-        <h2>Position and openings, country by country</h2>
-        <div className="sub">
-          Position: this country's own published percentile table, ranked by its own experience
-          cross where one exists (SE, NO), the published median everywhere else. Estimate: that
-          table's own median, shifted the same way — always labelled, never a source citation.
-          Openings: real advertisements classified as software.
-        </div>
-        {/* The position half needs `wages` and `gradient`. It does NOT need the
-          * openings summary, and gating it on `postings` meant one failed fetch
-          * of a 150 KB convenience file replaced fifteen countries' positions
-          * with a skeleton that announced aria-busy forever — indistinguishable
-          * from still loading, on data that had already arrived. The openings
-          * half degrades on its own below. Adversarial review finding 4. */}
+      {/* THE ANSWER. Fifteen countries' worth of rows (sixteen sections —
+        * Canada publishes two NOC codes, NEEDS-DECISION #12), each one
+        * flag-dot / distribution strip with a marker / estimate / openings
+        * count. Four marks carry what this page used to say in fourteen
+        * paragraphs — see CountryStripRow's own header for the full budget.
+        * Gated on `wages`/`gradient` only, not `postings` — Adversarial
+        * review finding 4 (package 17): gating the position half on the
+        * openings summary meant one failed fetch of a 150 KB convenience
+        * file replaced fifteen countries' positions with a permanent
+        * skeleton. Each row's own openings count degrades independently. */}
+      <div className="panel" style={{ marginTop: 12, padding: '8px 14px' }}>
         {!wages || !gradient ? (
           <ChartSkeleton height={320} />
         ) : !supported ? (
           <Gap title="No wage data resolved for this occupation yet" span="s6">
             <p>
               Only software developers (ISCO-08 2512) has resolved wage data across the spine, so
-              there is no position to show for this one and no country sections below. Switch back
-              to Software developers to see real positions; the openings themselves are classified
-              from job titles rather than from the occupation crosswalk, so they are unaffected by
-              this and are listed in full on <Link to="/openings">Every opening</Link>.
+              there is no position to show for this one. Switch back to Software developers to see
+              real positions; the openings themselves are classified from job titles rather than
+              from the occupation crosswalk, so they are unaffected by this and are listed in full
+              on <Link to="/openings">Every opening</Link>.
             </p>
           </Gap>
         ) : (
-          <>
-            <table className="tbl" style={{ marginTop: 10 }}>
-              <caption className="sr-only">
-                Coverage by country: occupation, pay basis, experience and openings
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">Country</th>
-                  <th scope="col" title="Does this country's own occupation code resolve to the one you picked?">Occupation</th>
-                  <th scope="col" title="How much of the wage distribution does the office publish?">Pay basis</th>
-                  <th scope="col" title="Does the country publish an experience or age cross to personalise by?">Experience</th>
-                  <th scope="col" title="Software openings, and how many name a figure">Openings</th>
-                  <th scope="col">Reading</th>
-                </tr>
-              </thead>
-              <tbody>
-                {spine.map((cc) => {
-                  const row = wageByCountry.get(cc)
-                  const dist = row?.native?.distribution
-                  const d = dist ? DIST_PIPS[dist] : undefined
-                  const b = byCountry[cc]
-                  const open = { length: b?.software ?? 0 }
-                  const named = { length: b?.named ?? 0 }
-                  const reading = !row ? 'No wage table for this occupation'
-                    : !d?.ranks ? 'No rank — only a central figure'
-                    : !postings ? 'Ranks; openings didn’t load'
-                    : open.length === 0 ? 'Ranks; nothing open'
-                    : named.length === 0 ? `Ranks; ${open.length} open, none name pay`
-                    : `Ranks; ${named.length} of ${open.length} name pay`
-                  return (
-                    <tr key={cc}
-                      >
-                      <th scope="row" style={{ fontWeight: 'var(--weight-normal)' }}>
-                        {/* A BUTTON, not an anchor. The routes are hash-based
-                          * (createHashRouter), so a bare `href="#c-DK"` does
-                          * not address a fragment — it replaces the router's
-                          * own hash, and all fifteen of these links landed on
-                          * "That page isn't here", taking the reader's profile
-                          * query string with them. The earlier target-size fix
-                          * made them a comfortable 187x31 and they still did
-                          * not work. Adversarial review finding 1. */}
-                        <button type="button"
-                          onClick={() => document.getElementById(`c-${anchorFor.get(cc) ?? cc}`)
-                            ?.scrollIntoView({
-                              // Smooth is the enhancement, not the mechanism —
-                              // the site zeroes every duration token under
-                              // reduced motion and this is the one animation
-                              // that does not route through them.
-                              behavior: typeof matchMedia === 'function'
-                                && matchMedia('(prefers-reduced-motion: reduce)').matches
-                                ? 'auto' : 'smooth',
-                              block: 'start',
-                            })}
-                          style={{ background: 'none', border: 0, font: 'inherit', width: '100%',
-                            color: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center',
-                            gap: 6, textAlign: 'left',
-                            // WCAG 2.5.8 target size — these rendered 17px tall
-                            // and Lighthouse flagged all fifteen. Padding, not a
-                            // fixed height, so the cell grows only as far as the
-                            // target needs.
-                            minHeight: 24, padding: '4px 2px' }}>
-                          <Flag cc={cc} size={12} /> <b>{cc}</b>
-                          <span className="sub">{countryName(cc)}</span>
-                        </button>
-                      </th>
-                      <td><Pips on={row ? 1 : 0} of={1}
-                        label={row ? 'Occupation code resolves' : 'No occupation code resolves'} /></td>
-                      <td><Pips on={d?.pips ?? 0} of={3}
-                        label={d?.label ?? 'no distribution published'} /></td>
-                      <td><Pips on={cc === 'SE' || cc === 'NO' ? 1 : 0} of={1} faint
-                        label={cc === 'SE' || cc === 'NO'
-                          ? 'Publishes an experience or age cross'
-                          : 'No experience or age cross published'} /></td>
-                      <td><Pips on={open.length === 0 ? 0 : named.length === 0 ? 1 : named.length >= 10 ? 3 : 2} of={3}
-                        label={!postings ? 'Openings did not load'
-                          : open.length === 0 ? 'No software openings'
-                          : `${named.length} of ${open.length} software openings name a figure`} /></td>
-                      <td className="sub">{reading}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-
-            {/* Every country, position and openings side by side.
-              *
-              * An earlier revision showed only the country picked in the matrix
-              * above. That looked tidier and was a real regression: the old
-              * /position rendered all fifteen at once, and comparing them IS
-              * the feature — the UI regression suite caught it immediately,
-              * with eleven checks failing because the Netherlands, Norway and
-              * Canada's two NOC rows were no longer in the document at all.
-              * The matrix is a summary of these, never a filter on them. */}
-            {sections.map(({ key, cc, row, firstOfCountry }) => {
-              return (
-                <section key={key} id={`c-${key}`}
-                  style={{ borderTop: '1px solid var(--line)', paddingTop: 14, marginTop: 14 }}>
-                  <h3 style={{ fontSize: 'var(--text-md)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <Flag cc={cc} size={15} /> {countryName(cc)}
-                    {key !== cc && <span className="sub">· {key}</span>}
-                  </h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 18, marginTop: 10 }}>
-                    <div>
-                      <h4 style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', margin: '0 0 6px' }}>
-                        Where you'd stand
-                      </h4>
-                      {row
-                        ? (
-                          <>
-                            {/* The two column labels the old /position carried.
-                              * Without them the row reads "US · P50 of 15-1252
-                              * · $135,980/year" with nothing saying which
-                              * number is the published position and which is
-                              * this site's estimate — the one distinction the
-                              * whole page is built on. Adversarial review D2. */}
-                            <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr 1fr', gap: 12,
-                              fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', paddingBottom: 4 }}>
-                              <span /><span>Position</span><span>Estimate</span>
-                            </div>
-                            <CountryRow row={row} profile={profile} gradient={gradient}
-                              highlighted={profile.country != null
-                                && row.country.split('-')[0] === profile.country} />
-                          </>
-                        )
-                        : (
-                          <Gap title={`No wage table for this occupation in ${countryName(cc)}`}
-                            span="s6" level={5}>
-                            <p>
-                              {/* The source's OWN reason, not a generic one. This
-                                * said "at this occupation depth", which for Italy
-                                * is not merely vague but wrong — ISTAT publishes
-                                * no occupation-level earnings flow at all, and
-                                * the accurate sentence was sitting in
-                                * wages.absent, rendered only in the coverage map
-                                * far below. Two explanations of one fact on one
-                                * page, the vaguer beside the gap itself.
-                                * Adversarial review D1. */}
-                              {absentReason.get(cc)
-                                ?? `The site holds no published wage distribution for ${countryName(cc)} at this occupation depth`}
-                              , so there is no table to rank inside. That is a gap in what the
-                              national office publishes at a comparable code, not a gap in{' '}
-                              {countryName(cc)}'s labour market. Nothing here is estimated from a
-                              neighbouring country.
-                            </p>
-                          </Gap>
-                        )}
-                    </div>
-                    <div>
-                      <h4 style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', margin: '0 0 6px' }}>
-                        What's actually open
-                      </h4>
-                      {/* Openings are keyed by ISO country, so Canada's two NOC
-                        * rows share one openings panel rather than double-counting
-                        * the same advertisements. Rendered against the first of
-                        * the pair only. */}
-                      {firstOfCountry
-                        ? <Openings name={countryName(cc)} block={byCountry[cc]}
-                            display={display} crossRates={crossRates} fxMaxGap={fxMaxGap}
-                            unavailable={!postings}
-                            classDecision={postings?.title_class_summary?.class_decisions?.SW} />
-                        : (
-                          <p className="sub">
-                            Shown once for {countryName(cc)}, above — these are the same
-                            advertisements, and the two national codes share them.
-                          </p>
-                        )}
-                    </div>
-                  </div>
-                </section>
-              )
-            })}
-          </>
+          sections.map(({ key, cc, row, firstOfCountry }, i) => (
+            <CountryStripRow
+              key={key}
+              row={row}
+              cc={cc}
+              name={countryName(cc)}
+              secondCode={row && key !== cc ? row.national_code : undefined}
+              profile={profile}
+              gradient={gradient}
+              openings={byCountry[cc]}
+              // Canada's two NOC rows share one openings block — the SAME
+              // advertisements, classified by title, never by NOC code, so
+              // both rows show the identical count. The old page showed it
+              // once and printed a note on the second row explaining why;
+              // this row has no room for a permanent note, so the same fact
+              // goes into the tap card instead — nothing lost, relocated.
+              openingsSharedWithCode={!firstOfCountry && row ? sections.find((s) => s.cc === cc && s.firstOfCountry)?.row?.national_code : undefined}
+              absentReason={absentReason.get(cc)}
+              highlighted={profile.country != null && cc === profile.country}
+              index={i}
+            />
+          ))
         )}
       </div>
 
-      {postings?.pay_summary_by_country && (
-        <PublishedPay summary={postings.pay_summary_by_country}
-          meta={postings.pay_summary_meta} minN={postings.pay_summary_min_n} spine={spine} />
-      )}
+      {/* Below the fold, in the order the work order specifies: openings
+        * detail, coverage on its three axes, the withheld-countries
+        * register, the beyond-our-fifteen section. All of it still honest,
+        * none of it competing with the answer above. */}
+
+      <details className="disclosure panel">
+        <summary style={{ cursor: 'pointer', fontSize: 'var(--text-sm)' }}>
+          Openings detail — real advertisements, employer's own range
+        </summary>
+        <div style={{ marginTop: 10 }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+            <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
+              Show pay in
+              <select value={display} onChange={(e) => setDisplay(e.target.value as DisplayCurrency)}
+                style={{ display: 'block', marginTop: 4, padding: '6px 8px', border: '1px solid var(--line)',
+                  background: 'var(--surface)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)' }}>
+                {DISPLAY_CURRENCIES.map((c) => (
+                  <option key={c} value={c}>{DISPLAY_CURRENCY_LABEL[c]}</option>
+                ))}
+              </select>
+            </label>
+            <p className="sub" style={{ margin: 0, maxWidth: '54ch' }}>
+              "As advertised" is the default and the source of truth. Everything else is a derived
+              view: a converted figure opens its own method, and carries a marker where no rate for
+              its own year exists yet.
+            </p>
+          </div>
+          {postings?.pay_summary_by_country && (
+            <PublishedPayHeadline summary={postings.pay_summary_by_country} spine={spine} />
+          )}
+          {spine.map((cc) => (
+            <div key={cc} style={{ borderTop: '1px solid var(--line)', paddingTop: 12, marginTop: 12 }}>
+              <h3 style={{ fontSize: 'var(--text-sm)', display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 6px' }}>
+                <Flag cc={cc} size={13} /> {countryName(cc)}
+              </h3>
+              <Openings name={countryName(cc)} block={byCountry[cc]}
+                display={display} crossRates={crossRates} fxMaxGap={fxMaxGap}
+                unavailable={!postings}
+                classDecision={postings?.title_class_summary?.class_decisions?.SW} />
+            </div>
+          ))}
+        </div>
+      </details>
+
+      <details className="disclosure panel">
+        <summary style={{ cursor: 'pointer', fontSize: 'var(--text-sm)' }}>Coverage, on its three axes</summary>
+        <table className="tbl" style={{ marginTop: 10 }}>
+          <caption className="sr-only">Coverage by country: occupation, pay basis, experience</caption>
+          <thead>
+            <tr>
+              <th scope="col">Country</th>
+              <th scope="col" title="Does this country's own occupation code resolve to the one you picked?">Occupation</th>
+              <th scope="col" title="How much of the wage distribution does the office publish?">Pay basis</th>
+              <th scope="col" title="Does the country publish an experience or age cross to personalise by?">Experience</th>
+              <th scope="col">Reading</th>
+            </tr>
+          </thead>
+          <tbody>
+            {spine.map((cc) => {
+              const row = wageByCountry.get(cc)
+              const dist = row?.native?.distribution
+              const d = dist ? DIST_PIPS[dist] : undefined
+              const reading = !row ? 'No wage table for this occupation'
+                : !d?.ranks ? 'No rank — only a central figure'
+                : 'Ranks against the published table'
+              return (
+                <tr key={cc}>
+                  <th scope="row" style={{ fontWeight: 'var(--weight-normal)' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Flag cc={cc} size={12} /> <b>{cc}</b>
+                      <span className="sub">{countryName(cc)}</span>
+                    </span>
+                  </th>
+                  <td><Pips on={row ? 1 : 0} of={1}
+                    label={row ? 'Occupation code resolves' : 'No occupation code resolves'} /></td>
+                  <td><Pips on={d?.pips ?? 0} of={3}
+                    label={d?.label ?? 'no distribution published'} /></td>
+                  <td><Pips on={cc === 'SE' || cc === 'NO' ? 1 : 0} of={1} faint
+                    label={cc === 'SE' || cc === 'NO'
+                      ? 'Publishes an experience or age cross'
+                      : 'No experience or age cross published'} /></td>
+                  <td className="sub">{reading}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </details>
+
+      <details className="disclosure panel">
+        <summary style={{ cursor: 'pointer', fontSize: 'var(--text-sm)' }}>
+          Too few advertisements to quote a median pay figure
+        </summary>
+        <div style={{ marginTop: 10 }}>
+          {postings?.pay_summary_by_country ? (
+            <PublishedPayWithheld summary={postings.pay_summary_by_country}
+              meta={postings.pay_summary_meta} minN={postings.pay_summary_min_n} spine={spine} />
+          ) : <p className="sub">Openings summary unavailable.</p>}
+        </div>
+      </details>
+
+      <details className="disclosure panel">
+        <summary style={{ cursor: 'pointer', fontSize: 'var(--text-sm)' }}>
+          Beyond our fifteen — the harvest reaches further, uncovered here
+        </summary>
+        <div style={{ marginTop: 10 }}>
+          {postings?.pay_summary_by_country ? (
+            <PublishedPayBeyond15 summary={postings.pay_summary_by_country} spine={spine} />
+          ) : <p className="sub">Openings summary unavailable.</p>}
+        </div>
+      </details>
 
       {/* `supported` is not optional here, and dropping it in the merge was the
-        * worst thing this package did. computeEstimate() never reads
+        * worst thing package 17 did. computeEstimate() never reads
         * profile.occupation — the gate was the ONLY thing stopping it — so
         * without it /work?occupation=isco08:2511 printed "Your estimate ·
         * $135,980/yr" for Systems analysts, from the US SOFTWARE DEVELOPER row,

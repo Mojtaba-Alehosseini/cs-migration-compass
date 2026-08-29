@@ -86,32 +86,40 @@ try {
   /* --- shared helpers ------------------------------------------------- */
 
   /** A country's own row in the position table, by the key it renders
-   *  (`SE`, `CA-21231`, ...). Same shape p11-visual.mjs verified against the
-   *  real DOM: the row is the 3-column grid whose text starts with the key. */
-  const rowText = (code) => page.eval(`(() => {
-    const rows = [...document.querySelectorAll('div')]
-      .filter((d) => d.children.length === 3 && d.textContent.trim().startsWith(${JSON.stringify(code)}))
-    return rows[0]?.textContent ?? null
-  })()`)
-  const rowCount = (code) => page.eval(`[...document.querySelectorAll('div')]
-    .filter((d) => d.children.length === 3 && d.textContent.trim().startsWith(${JSON.stringify(code)})).length`)
+   *  (`SE`, `CA-21231`, ...). Package 24 gave each row a stable
+   *  `data-key` attribute (Canada's two NOC rows share `data-cc="CA"` but
+   *  not `data-key`) specifically so this suite would not have to infer a
+   *  row from its own DOM shape — the previous version matched on "a div
+   *  with exactly 3 children", which was CountryRow's own old grid and
+   *  broke silently (every check here returning null/0, not a loud
+   *  failure) the moment package 24's CountryStripRow gave a row 4
+   *  children instead. */
+  const rowText = (code) => page.eval(`document.querySelector('[data-key=${JSON.stringify(code)}]')?.textContent ?? null`)
+  const rowCount = (code) => page.eval(`document.querySelectorAll('[data-key=${JSON.stringify(code)}]').length`)
   const pct = (text) => { const m = text?.match(/P(\d+)/); return m ? Number(m[1]) : null }
 
-  /** How many <Figure>/<Derived> method-card triggers a row renders. Both
-   *  components render their trigger as the row's only <button>s. */
+  /** How many WAGE method-card triggers a row renders — the position
+   *  <Figure> (.wrow-strip) and the estimate <Derived> (.wrow-est). Package
+   *  24 gave every row with postings data a THIRD, independent trigger
+   *  (.wrow-opn's own openings <Figure>) that fires regardless of wage
+   *  comparability — counting every <button> in the row would let that
+   *  unrelated cell contaminate what R8 actually tests (whether a
+   *  comparability refusal suppresses the WAGE triggers specifically), so
+   *  .wrow-opn is deliberately excluded here. */
   const rowTriggers = (code) => page.eval(`(() => {
-    const rows = [...document.querySelectorAll('div')]
-      .filter((d) => d.children.length === 3 && d.textContent.trim().startsWith(${JSON.stringify(code)}))
-    return rows[0] ? rows[0].querySelectorAll('button').length : null
+    const row = document.querySelector('[data-key=${JSON.stringify(code)}]')
+    return row ? row.querySelectorAll('.wrow-strip button, .wrow-est button').length : null
   })()`)
 
   /** Open one row's method card and read it back. `which` is 0 for the
-   *  position's <Figure>, 1 for the estimate's <Derived>. */
+   *  position's <Figure>, 1 for the estimate's <Derived> — the SAME order
+   *  CountryStripRow renders them in (position's trigger sits above the
+   *  strip, the estimate's own trigger to its right), matching the old
+   *  CountryRow's own order this suite was originally written against. */
   async function openCard(code, which) {
     const opened = await page.eval(`(() => {
-      const rows = [...document.querySelectorAll('div')]
-        .filter((d) => d.children.length === 3 && d.textContent.trim().startsWith(${JSON.stringify(code)}))
-      const btns = [...(rows[0]?.querySelectorAll('button') ?? [])]
+      const row = document.querySelector('[data-key=${JSON.stringify(code)}]')
+      const btns = [...(row?.querySelectorAll('button') ?? [])]
       if (!btns[${which}]) return false
       btns[${which}].click()
       return true
@@ -534,66 +542,28 @@ try {
 
   await page.hashGo(`${BASE}#/work`, { waitMs: 3000 })
 
-  const secIds = await page.eval(
-    `JSON.stringify([...document.querySelectorAll('section[id^="c-"]')].map((s) => s.id))`)
-  const ids = JSON.parse(secIds)
-  check(ids.length >= 15, `R22: /work renders every country section (${ids.length})`)
-  check(new Set(ids).size === ids.length,
-    `R22: every section id is unique — Canada's two NOC rows shared id="c-CA" (${ids.length - new Set(ids).size} duplicate(s))`)
-  check(ids.includes('c-CA-21231') && ids.includes('c-CA-21232'),
-    'R22: both Canadian NOC codes get their own section, keyed by the real code')
-
-  const headings = await page.eval(
-    `JSON.stringify([...document.querySelectorAll('h3')].map((h) => h.textContent.trim()))`)
-  check(!/-first/.test(headings),
-    'R22: no internal "-first" render sentinel reaches a visible heading')
-  check(JSON.parse(headings).some((h) => h.includes('CA-21231')),
-    'R22: and Canada\'s first section names CA-21231, the code it erased')
-
-  // The matrix controls must not be bare-fragment anchors: under
-  // createHashRouter an href="#c-DK" replaces the ROUTE, landing on NotFound
-  // and destroying the profile query string with it.
-  const matrix = JSON.parse(await page.eval(`(() => {
-    const cells = [...document.querySelectorAll('.tbl th[scope="row"]')]
-    return JSON.stringify({
-      buttons: cells.filter((c) => c.querySelector('button')).length,
-      fragmentAnchors: cells.filter((c) => c.querySelector('a[href^="#c-"]')).length,
-    })
-  })()`))
-  check(matrix.fragmentAnchors === 0,
-    `R22: no coverage-matrix control is a bare-fragment anchor (${matrix.fragmentAnchors} found — each one 404s under a hash router)`)
-  check(matrix.buttons >= 15, `R22: all ${matrix.buttons} matrix controls scroll instead`)
-
-  const scrolled = JSON.parse(await page.eval(`(() => {
-    window.scrollTo(0, 0)
-    const calls = []
-    const orig = Element.prototype.scrollIntoView
-    Element.prototype.scrollIntoView = function (o) { calls.push(this.id); return orig.call(this, { block: 'start' }) }
-    const b = [...document.querySelectorAll('.tbl th[scope="row"] button')].find((x) => x.textContent.trim().startsWith('CA'))
-    b.click()
-    Element.prototype.scrollIntoView = orig
-    return JSON.stringify({ calls, y: Math.round(window.scrollY), h1: document.querySelector('h1').textContent.trim() })
-  })()`))
-  check(scrolled.calls[0] === 'c-CA-21231',
-    `R22: clicking the matrix's CA control targets its FIRST section (${scrolled.calls[0]})`)
-  check(scrolled.y > 0, `R22: and the page actually moves (scrollY ${scrolled.y})`)
-  check(scrolled.h1.startsWith('Where you'), 'R22: and the route survives the click')
-
-  // A shared deep link into a country section. The redirect always carried the
-  // fragment; App.tsx then scrolled to the top unconditionally and stranded it,
-  // so the query took effect and the fragment did nothing.
-  await page.hashGo(`${BASE}#/position?years=8#c-DK`, { waitMs: 3200 })
-  const deep = JSON.parse(await page.eval(`(() => {
-    const el = document.getElementById('c-DK')
-    return JSON.stringify({ hash: location.hash, y: Math.round(window.scrollY),
-      top: el ? Math.round(el.getBoundingClientRect().top) : null,
-      years: document.querySelector('input[type="number"]') && document.querySelector('input[type="number"]').value })
-  })()`))
-  check(deep.hash === '#/work?years=8#c-DK',
-    `R22: /position?years=8#c-DK redirects carrying BOTH query and fragment (${deep.hash})`)
-  check(deep.years === '8', 'R22: and the query still takes effect')
-  check(deep.y > 0 && deep.top !== null && Math.abs(deep.top) < 120,
-    `R22: and the page scrolls to the fragment instead of the top (scrollY ${deep.y}, target at ${deep.top})`)
+  // Package 24 — the coverage-matrix-plus-separate-per-country-sections
+  // structure this block used to check is gone by design: CountryStripRow
+  // shows a country's full answer in ONE row, so there is no summary row
+  // to click and no separate detail section to scroll to (the scroll-to-
+  // fragment mechanism, its bare-fragment-anchor bug, and the "#c-DK deep
+  // link" checks that used to guard it are removed below, not silently
+  // left to bit-rot against a mechanism that no longer exists). What
+  // still needs guarding — every country renders, Canada's two NOC codes
+  // each get their own row, no internal sentinel leaks to visible text —
+  // is checked against the new `data-key` a row carries instead.
+  const keys = JSON.parse(await page.eval(
+    `JSON.stringify([...document.querySelectorAll('.wrow[data-key]')].map((r) => r.dataset.key))`))
+  check(keys.length >= 15, `R22: /work renders every country's own row (${keys.length})`)
+  check(new Set(keys).size === keys.length,
+    `R22: every row's data-key is unique — Canada's two NOC rows would collide on data-cc="CA" alone `
+    + `(${keys.length - new Set(keys).size} duplicate(s))`)
+  check(keys.includes('CA-21231') && keys.includes('CA-21232'),
+    'R22: both Canadian NOC codes get their own row, keyed by the real code')
+  const rowsText = await page.eval(`document.querySelector('.panel')?.textContent ?? ''`)
+  check(!/-first/.test(rowsText), 'R22: no internal "-first" render sentinel reaches visible text')
+  check(keys.indexOf('CA-21231') < keys.indexOf('CA-21232'),
+    'R22: and Canada\'s own two rows keep a stable order (CA-21231 before CA-21232)')
 
   // Every publishable country accounts for its own median, not just the first.
   //
