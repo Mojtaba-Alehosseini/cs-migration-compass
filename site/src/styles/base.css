@@ -185,7 +185,14 @@ a { color: var(--ink-2); }
 .wrow-strip { position: relative; height: 20px; display: flex; align-items: center; }
 .wrow-track-wrap { position: relative; height: 6px; width: 100%; border-radius: 3px; background: var(--surface-sunk); }
 .wrow-track { position: absolute; top: 0; bottom: 0; left: 0; right: 0; border-radius: 3px; }
-.wrow-track.solid { background: color-mix(in srgb, var(--rowc) 32%, var(--surface-sunk)); }
+/* Mixed toward --ink-3, not --surface-sunk: two light tones mixed together
+   cannot clear WCAG 1.4.11's 3:1 non-text-contrast floor no matter the
+   ratio (verified against every solid-track country's own colour, worst
+   case NL at 2.99:1 even at a 65% mix) -- caught by an accessibility
+   audit, not visible in ordinary use. --ink-3 is dark enough at a modest
+   35% mix to clear 3:1 for every one of them (3.53-4.47:1) while the
+   country hue still reads clearly against the darker IQR band above it. */
+.wrow-track.solid { background: color-mix(in srgb, var(--rowc) 35%, var(--ink-3)); }
 .wrow-track.iqr { background: var(--rowc); top: -1px; bottom: -1px; right: auto; }
 .wrow-track.dashed {
   border-top: 3px dashed color-mix(in srgb, var(--rowc) 70%, var(--ink-3));

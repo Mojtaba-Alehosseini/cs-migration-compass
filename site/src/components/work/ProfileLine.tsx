@@ -52,6 +52,15 @@ export function ProfileLine({ profile, occupations, countryName, onProfileChange
       </button>
       <div
         id="profline-body"
+        // Accessibility review, Tier 5: max-height:0 hides this panel
+        // visually (via the outer wrapper's own overflow:clip) but does
+        // NOT remove its inputs from the tab order — confirmed live, a
+        // keyboard user tabbing past the collapsed header landed straight
+        // inside the occupation/years/country fields with no visible
+        // focus anywhere on screen. `inert` removes the whole collapsed
+        // subtree from focus and interaction without touching the CSS
+        // transition (unlike display:none, which would break it).
+        {...(open ? {} : { inert: '' })}
         style={{
           maxHeight: open ? 600 : 0, opacity: open ? 1 : 0,
           // Tier 4's own ceiling for this transition is <250ms; --dur-base
