@@ -97,6 +97,30 @@ test('on a 429 from the primary model, the SECOND model in the chain answers —
   }
 })
 
+// Package 23, Gate 4 — the request body actually carries the determinism
+// settings, not just the comment claiming it does. Five real runs against
+// the live API (REPORT-P23.md) proved the OUTCOME; this proves the CODE
+// PATH that outcome depends on, without spending quota on every CI run.
+test('the request to the model pins temperature, topP, topK and seed for determinism', async () => {
+  let capturedBody: Record<string, unknown> | null = null
+  const originalFetch = globalThis.fetch
+  globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+    capturedBody = JSON.parse(String(init?.body))
+    return mockGeminiResponse(VALID)
+  }) as typeof fetch
+  try {
+    await analyseWithFallback('some cv text', 'fake-key-for-this-test')
+    const config = (capturedBody as { generationConfig?: Record<string, unknown> } | null)
+      ?.generationConfig
+    assert.equal(config?.temperature, 0)
+    assert.equal(config?.topP, 1)
+    assert.equal(config?.topK, 1)
+    assert.equal(config?.seed, 42)
+  } finally {
+    globalThis.fetch = originalFetch
+  }
+})
+
 test('429s all the way down the chain produce a distinguishable "all models exhausted" outcome', async () => {
   const originalFetch = globalThis.fetch
   globalThis.fetch = (async () => new Response('rate limited', { status: 429 })) as typeof fetch

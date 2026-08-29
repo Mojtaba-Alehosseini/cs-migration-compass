@@ -139,7 +139,30 @@ function buildPrompt(cvText: string): string {
 async function callModel(model: ModelName, apiKey: string, cvText: string): Promise<Response> {
   const body = {
     contents: [{ parts: [{ text: buildPrompt(cvText) }] }],
-    generationConfig: { responseMimeType: 'application/json', responseSchema: RESPONSE_SCHEMA },
+    generationConfig: {
+      responseMimeType: 'application/json',
+      responseSchema: RESPONSE_SCHEMA,
+      // Package 23, Tier 2 — the same CV gave different answers (years 6
+      // vs 7) across two runs of the SAME model, because sampling ran at
+      // the model default with nothing pinning it down. All four fields
+      // below were verified live before being added — none is documented
+      // as rejected, but package 22's own lesson was that documentation
+      // is not a substitute for testing against the live endpoint, so
+      // each was tried against the real API first (a live 200, not a
+      // guess from a docs page). temperature 0 is the primary lever;
+      // topP/topK narrowed to the single most likely token are belt and
+      // suspenders on top of it; seed is set for whatever determinism a
+      // fixed seed adds on top of temperature 0 — none of these are
+      // documented by Google as a GUARANTEE of bit-identical output
+      // (server-side batching can introduce floating-point-level
+      // variance even at temperature 0), which is exactly why Gate 4
+      // proves this empirically with five real runs rather than trusting
+      // the parameters alone.
+      temperature: 0,
+      topP: 1,
+      topK: 1,
+      seed: 42,
+    },
   }
   return fetch(`${API_BASE}/${model}:generateContent`, {
     method: 'POST',
