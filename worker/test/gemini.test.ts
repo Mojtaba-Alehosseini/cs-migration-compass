@@ -13,6 +13,7 @@ const VALID: CvProfile = {
   status: 'ok',
   occupation: { isco08: '2512', confidence: 'high', evidence: 'three roles titled engineer' },
   years_professional: 6,
+  years_evidence: 'employed 2018-2024 with no gaps',
   education_level: 'masters',
 }
 
@@ -35,6 +36,12 @@ test('years_professional must be a number, not a numeric string', () => {
 
 test('education_level must be a string', () => {
   assert.equal(isValidProfile({ ...VALID, education_level: 4 }), false)
+})
+
+test('years_evidence must be a string, not omitted', () => {
+  assert.equal(isValidProfile({ ...VALID, years_evidence: 4 }), false)
+  const { years_evidence: _ye, ...withoutEvidence } = VALID
+  assert.equal(isValidProfile(withoutEvidence), false)
 })
 
 // Package 23, Gate 7 — skills and languages were dropped from the schema

@@ -15,6 +15,7 @@ export interface CvProfile {
   status: 'ok' | 'incomplete'
   occupation: { isco08: string; confidence: 'high' | 'moderate' | 'low'; evidence: string }
   years_professional: number
+  years_evidence: string
   education_level: string
 }
 

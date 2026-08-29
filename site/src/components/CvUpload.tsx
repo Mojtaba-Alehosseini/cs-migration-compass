@@ -336,7 +336,7 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
             <td style={{ padding: '4px 0' }}>{profile.occupation.evidence}</td>
           </tr>
           <tr>
-            <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)' }}>Years of experience</td>
+            <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)', verticalAlign: 'top' }}>Years of experience</td>
             <td style={{ padding: '4px 0' }}>
               <input
                 type="number" min={0} max={50} step={0.5} value={years}
@@ -346,6 +346,17 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
                 }}
                 style={{ ...SELECT_STYLE, width: 90 }}
               />
+              {/* Package 23, Tier 5 — years_professional is a total-career
+                  elapsed figure the model can get wrong in genuinely
+                  ambiguous ways (a gap, an overlap, a CV's own narrower
+                  stated figure); years_evidence is where it says what the
+                  number came from instead of presenting it with false
+                  confidence, shown here so a reader can judge it before
+                  applying, the same way occupation's own evidence is shown
+                  above. */}
+              <span style={{ display: 'block', marginTop: 4, color: 'var(--ink-3)', fontSize: 'var(--text-2xs)' }}>
+                Based on: {profile.years_evidence}
+              </span>
             </td>
           </tr>
         </tbody>

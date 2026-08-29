@@ -98,21 +98,44 @@ const RESPONSE_SCHEMA = {
     },
     years_professional: {
       type: 'integer',
-      description: 'Total years of professional work experience, estimated from the employment '
-        + 'history. 0 if the text describes no professional experience at all.',
+      description: 'How much calendar time is covered by AT LEAST ONE professional role — not the '
+        + 'span from the earliest role to the latest, and not the sum of each role\'s own duration. '
+        + 'Compute it like this: mark every calendar period covered by a professional role, merge '
+        + 'any periods that overlap (two roles held at once, e.g. freelance work alongside full-time '
+        + 'employment, merge into one covered period — never double-counted), then add up only the '
+        + 'covered periods. A gap (a stretch with NO professional role at all) is never covered by '
+        + 'anything, so it is automatically excluded — a 2-year role, a 1-year gap, then a 3-year '
+        + 'role is 5, not 6: the gap year is not part of any role\'s covered period, not a special '
+        + 'case subtracted afterward. If the CV states an explicit total-years figure that clearly '
+        + 'covers the WHOLE career, prefer that stated figure. If a stated figure is scoped to a '
+        + 'narrower area instead (e.g. "2+ years as a BI professional" on a CV whose employment '
+        + 'history goes back further, or covers other professional roles too), compute the total '
+        + 'from the full employment history instead — this field is deliberately the whole-career '
+        + 'total, not scoped to one specialisation. 0 if the text describes no professional '
+        + 'experience at all.',
+    },
+    years_evidence: {
+      type: 'string',
+      description: 'Brief, concrete reason for the years_professional figure — which dates or '
+        + 'stated figure it came from, and whether a gap, an overlap, or a scope mismatch (a '
+        + 'narrower stated figure vs. the fuller employment history) was involved. If the figure is '
+        + 'genuinely uncertain for any reason — no dates given, a gap of unclear length, ambiguous '
+        + 'overlapping roles — say so here explicitly rather than presenting the number with false '
+        + 'confidence.',
     },
     education_level: {
       type: 'string',
       enum: ['secondary', 'bachelors', 'masters', 'doctorate', 'other'],
     },
   },
-  required: ['status', 'occupation', 'years_professional', 'education_level'],
+  required: ['status', 'occupation', 'years_professional', 'years_evidence', 'education_level'],
 } as const
 
 export interface CvProfile {
   status: 'ok' | 'incomplete'
   occupation: { isco08: string; confidence: 'high' | 'moderate' | 'low'; evidence: string }
   years_professional: number
+  years_evidence: string
   education_level: string
 }
 
@@ -183,6 +206,7 @@ export function isValidProfile(v: unknown): v is CvProfile {
     return false
   }
   if (typeof p.years_professional !== 'number') return false
+  if (typeof p.years_evidence !== 'string') return false
   if (typeof p.education_level !== 'string') return false
   return true
 }
