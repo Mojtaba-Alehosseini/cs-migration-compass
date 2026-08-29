@@ -122,7 +122,11 @@ a { color: var(--ink-2); }
 
 .unit { font-family: var(--font-ui); font-size: var(--text-2xs); color: var(--ink-3); font-weight: 400; margin-left: 3px; }
 
-.nodata { color: var(--ink-3); font-style: italic; font-size: var(--text-xs); }
+/* Explicit font-ui, not inherited: this is always explanatory prose, never
+   a figure, and package 24 nested it inside .wrow-est's own font-display
+   for the first time — without this, "AE publishes only a distribution
+   too narrow to..." rendered in the editorial serif meant for numbers. */
+.nodata { font-family: var(--font-ui); color: var(--ink-3); font-style: italic; font-size: var(--text-xs); }
 
 /* pill buttons */
 .pill {
@@ -193,11 +197,14 @@ a { color: var(--ink-2); }
 }
 .wrow-marker.hollow { background: var(--surface); }
 .wrow-est {
-  font-size: var(--text-xs); text-align: right; font-variant-numeric: tabular-nums;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: var(--font-display); font-size: var(--text-xs); text-align: right;
+  font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.wrow-basis { font-size: var(--text-2xs); color: var(--ink-3); font-weight: var(--weight-normal); margin-left: 5px; }
-.wrow-opn { font-size: var(--text-xs); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.wrow-basis { font-family: var(--font-ui); font-size: var(--text-2xs); color: var(--ink-3); font-weight: var(--weight-normal); margin-left: 5px; }
+.wrow-opn {
+  font-family: var(--font-display); font-size: var(--text-xs); text-align: right;
+  font-variant-numeric: tabular-nums; color: var(--ink-2);
+}
 
 @media (max-width: 820px) {
   .wrow { grid-template-columns: 108px 1fr 172px 44px; gap: 8px; }

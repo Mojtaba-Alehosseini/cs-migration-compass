@@ -208,7 +208,7 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
                 what: position.reason,
               }}
             >
-              <span style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)',
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xs)', color: 'var(--ink-3)',
                 fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
                 {ordinal(position.pct)}
               </span>
