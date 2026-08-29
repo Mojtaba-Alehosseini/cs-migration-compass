@@ -111,6 +111,18 @@ test('a bare personal domain with no scheme is redacted -- the real leak that sh
   assert.ok(!text.includes('jane-doe.github.io'))
 })
 
+// Package 23, Gate 11 -- adversarial review found a second real gap of the
+// same shape Gate 1 fixed: LinkedIn's own short-link domain, lnkd.in, has
+// a TLD (.in) not on BARE_DOMAIN_RE's curated list (adding it generally
+// would make the ordinary English word "in" a TLD-match risk), so it is
+// special-cased alongside the other known profile hosts instead.
+test('LinkedIn\'s own lnkd.in short-link domain is redacted, with or without a path', () => {
+  const { text: withPath } = stripPii('Jane Doe\nProfile: lnkd.in/janedoe')
+  assert.ok(!withPath.includes('lnkd.in'))
+  const { text: bare } = stripPii('Jane Doe\nSee lnkd.in for details')
+  assert.ok(!bare.includes('lnkd.in'))
+})
+
 test('bare-domain redaction does not eat ordinary technical prose', () => {
   const cv = [
     'Jane Doe',

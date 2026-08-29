@@ -66,12 +66,18 @@ const BARE_DOMAIN_RE = new RegExp(
 )
 
 // http(s):// links, and bare "known-profile-host/path" forms a CV commonly
-// carries without a scheme (linkedin.com/in/…, github.com/…). General bare
-// domains beyond those two special-cased hosts are handled by
-// BARE_DOMAIN_RE above, not here — this half stays case-insensitive
-// because there is no tech-term collision risk on these three specific
-// host names the way there is for a generic TLD match.
-const URL_RE = /\bhttps?:\/\/\S+|\b(?:www\.|(?:linkedin|github|gitlab)\.com\/)\S*/gi
+// carries without a scheme (linkedin.com/in/…, github.com/…, LinkedIn's
+// own lnkd.in short-link domain — found by Package 23's own Gate 11
+// adversarial review, the same class of gap Tier 1 fixed: lnkd.in's own
+// TLD, .in, was not on BARE_DOMAIN_RE's curated list, and adding .in
+// there generally would make an ordinary English word — "in" — a TLD
+// match risk, so it is special-cased here instead, alongside the other
+// known, unambiguous profile hosts). General bare domains beyond these
+// four special-cased hosts are handled by BARE_DOMAIN_RE above, not here
+// — this half stays case-insensitive because there is no tech-term
+// collision risk on these specific host names the way there is for a
+// generic TLD match.
+const URL_RE = /\bhttps?:\/\/\S+|\b(?:www\.|(?:linkedin|github|gitlab)\.com\/|lnkd\.in\/?)\S*/gi
 
 // International-friendly: an optional leading +, then 7-15 digits with
 // optional spaces/dots/dashes/parens between groups. Requires at least 7
