@@ -54,7 +54,12 @@ export function ProfileLine({ profile, occupations, countryName, onProfileChange
         id="profline-body"
         style={{
           maxHeight: open ? 600 : 0, opacity: open ? 1 : 0,
-          transition: 'max-height var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out)',
+          // Tier 4's own ceiling for this transition is <250ms; --dur-base
+          // (260ms) narrowly misses it, --dur-fast (160ms) does not — both
+          // properties on the same token rather than inventing a one-off
+          // value between them (Tier 4: reduced motion stays structural,
+          // via duration tokens, not a second motion contract).
+          transition: 'max-height var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out)',
         }}
       >
         <div style={{ padding: '0 16px 16px', borderTop: open ? '1px solid var(--line)' : undefined }}>

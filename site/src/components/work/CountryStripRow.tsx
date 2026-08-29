@@ -143,19 +143,27 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
 
   const basisLabel = BASIS_LABEL[cc]
 
-  // Before the first draw: opacity animates in, staggered by index. After:
-  // settled at full opacity, transition removed — the track's own left/
-  // width never change post-mount (only the marker's position morphs on a
-  // profile change), so leaving a transition on it after draw-in would be
-  // inert, not wrong, but the marker below needs the DIFFERENT post-draw
-  // transition (morphing `left`), so the two are kept as separate styles
-  // rather than one imprecise shared one.
-  const trackEntranceStyle: React.CSSProperties = drawn
-    ? { opacity: 1 }
-    : { opacity: 0, transition: `opacity var(--dur-draw) var(--ease-out) calc(var(--dur-draw-stagger) * ${index})` }
-  const markerEntranceStyle: React.CSSProperties = drawn
-    ? { opacity: 1, transition: 'left var(--dur-morph) var(--ease-out)' }
-    : { opacity: 0, transition: `opacity var(--dur-draw) var(--ease-out) calc(var(--dur-draw-stagger) * ${index})` }
+  // The `transition` property itself must stay the SAME string across the
+  // drawn flip, not swap which properties it covers — a CSS transition is
+  // resolved from the style in effect AFTER a change, so a style object
+  // that changes `opacity` and REMOVES `opacity` from `transition` in the
+  // same React commit never animates that change at all; it jumps. Caught
+  // by tracing computed opacity frame-by-frame (0 then straight to 1, no
+  // interpolation), not by reading the code — the earlier "transition
+  // removed... inert, not wrong" reasoning here was itself wrong. Kept
+  // stable instead: opacity's OWN transition (staggered by index) covers
+  // the one-time reveal and then sits inert once opacity settles at 1,
+  // same as `left`'s own transition sits inert until a profile change
+  // first moves the marker.
+  const staggerDelay = `calc(var(--dur-draw-stagger) * ${index})`
+  const trackEntranceStyle: React.CSSProperties = {
+    opacity: drawn ? 1 : 0,
+    transition: `opacity var(--dur-draw) var(--ease-out) ${staggerDelay}`,
+  }
+  const markerEntranceStyle: React.CSSProperties = {
+    opacity: drawn ? 1 : 0,
+    transition: `opacity var(--dur-draw) var(--ease-out) ${staggerDelay}, left var(--dur-morph) var(--ease-out)`,
+  }
 
   return (
     <div className="wrow" data-cc={cc} data-key={row.country}
