@@ -96,3 +96,84 @@ test('every category can be redacted together without interfering', () => {
   const categories = new Set(redactions.map((r) => r.category))
   assert.deepEqual([...categories].sort(), ['address', 'email', 'name', 'phone', 'url'])
 })
+
+// Package 23, Gate 1 -- the real leak: a bare "firstname-lastname.github.io"
+// (no scheme, no www., not a github.com/ path) went to the model in full
+// while the panel claimed the name had been removed.
+test('a bare personal domain with no scheme is redacted -- the real leak that shipped', () => {
+  const cv = [
+    'Jane Doe',
+    'DATA SCIENTIST',
+    'https://linkedin.com/in/jane-doe · github.com/jane-doe · jane-doe.github.io',
+  ].join('\n')
+  const { text } = stripPii(cv)
+  assert.ok(!/jane-doe/i.test(text), `name survived in: ${text}`)
+  assert.ok(!text.includes('jane-doe.github.io'))
+})
+
+test('bare-domain redaction does not eat ordinary technical prose', () => {
+  const cv = [
+    'Jane Doe',
+    '5 years of Node.js and React.js development.',
+    '5 years of ASP.NET development, and Python 3.11 experience.',
+    'I used React. My next project was different.',
+    'Shipped v3.11.2 of the library.',
+  ].join('\n')
+  const { text } = stripPii(cv)
+  assert.ok(text.includes('Node.js'))
+  assert.ok(text.includes('React.js'))
+  assert.ok(text.includes('ASP.NET'))
+  assert.ok(text.includes('Python 3.11'))
+  assert.ok(text.includes('React. My next project'))
+  assert.ok(text.includes('v3.11.2'))
+})
+
+test('a bare domain in a common TLD outside .com/.io still redacts (e.g. .dev, .me, .co.uk)', () => {
+  const { text: t1 } = stripPii('Jane Doe\nSee jane-doe.dev for my work.')
+  assert.ok(!t1.includes('jane-doe.dev'))
+  const { text: t2 } = stripPii('Jane Doe\nPortfolio at janedoe.me')
+  assert.ok(!t2.includes('janedoe.me'))
+  const { text: t3 } = stripPii('Jane Doe\nContact via example.co.uk please')
+  assert.ok(!t3.includes('example.co.uk'))
+})
+
+// Package 23, Gate 2 -- once the name is known from its line, every OTHER
+// occurrence is swept too, not just the line it was first found on.
+test('the name is redacted everywhere it appears, not only on its own line', () => {
+  const cv = [
+    'Jane Doe',
+    'Reach me: jane.doe@company.com',
+    'Portfolio: jane-doe.example-hosting.zzz',
+    'Slides prepared by JANE DOE, 2026.',
+  ].join('\n')
+  const { text } = stripPii(cv)
+  assert.ok(!/jane/i.test(text), `name survived in: ${text}`)
+  assert.ok(!/doe/i.test(text), `name survived in: ${text}`)
+  // The domain's own host label is unusual enough (.zzz) that only the
+  // name-sweep -- not the bare-domain pattern's own curated TLD list --
+  // could have closed it, proving the two fixes are independent layers,
+  // not one merely duplicating the other.
+  assert.ok(text.includes('.example-hosting.zzz'), 'the non-PII part of the domain should survive')
+})
+
+test('a first name alone, with no surname beside it, is still swept', () => {
+  const { text } = stripPii('Jane Doe\nData Scientist\n\nJane worked at Acme as a developer.')
+  assert.ok(!text.includes('Jane worked'))
+  assert.ok(text.includes('worked at Acme as a developer'))
+})
+
+test('the redaction count is honest -- a name appearing several times is counted that many times', () => {
+  const cv = [
+    'Jane Doe',
+    'Data Scientist',
+    'Contact Jane Doe at jane-doe.example.zzz for more',
+    'Slides prepared by JANE DOE, 2026',
+  ].join('\n')
+  const { redactions } = stripPii(cv)
+  // 1 (the name line) + 2 (both occurrences on the "Contact..." line: the
+  // plain-text mention and the domain) + 1 (the closing credit line) = 4,
+  // not silently collapsed to 1 the way the shipped bug's own panel copy
+  // claimed happened.
+  const nameCount = redactions.filter((r) => r.category === 'name').length
+  assert.equal(nameCount, 4)
+})

@@ -29,12 +29,48 @@ export interface StripPiiResult {
 
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g
 
+// Package 23, Gate 1 — the owner's own CV leaked exactly here: a bare
+// `firstname-lastname.github.io` (no scheme, no `www.`, no `github.com/`
+// path) matched none of the three alternatives this pattern used to have,
+// so it went to the model in full view while the panel claimed the name
+// had been removed. Bare hostnames across common TLDs are matched here
+// too, deliberately case-SENSITIVE on the TLD itself — the reason is not
+// a shortcut, it is what keeps a technology name from being read as a
+// domain: a real domain's TLD is written in lowercase in ordinary use
+// ("github.io", never "GitHub.IO"), while the one realistic collision
+// this project's own CVs contain, ".NET" (as in "ASP.NET"), is written
+// with the TLD-lookalike part in UPPERCASE -- "asp.net" in lowercase
+// would still match, and should: at that point it is indistinguishable
+// from a genuine lowercase domain, and the asymmetry this file's own
+// header names (redact when uncertain) applies the same way here.
+// "Node.js" / "React.js" need no special-casing: ".js" is not in the TLD
+// list below at all. A version string ("3.11", "v3.11.2") is excluded by
+// construction -- the TLD list is alphabetic strings only, and a bare
+// digit run can never match one. A sentence-ending "word.Word" ("...used
+// React. My next...") cannot match either: the TLD must follow the dot
+// with NO space, and a sentence boundary always has one. All four of
+// these are the work order's own named false-positive risks, tested
+// directly against exactly this shape before trusting the pattern (see
+// site/tests/stripPii.test.ts), not assumed safe from reading the regex.
+// The TLD list is deliberately not exhaustive (a real list runs past a
+// thousand entries) -- generic ones plus the countries this site's own
+// audience and the owner's own CV (Italy) plausibly produce a bare
+// personal domain in.
+const BARE_DOMAIN_TLDS = 'com|io|dev|me|page|co|net|org|ai|app|info|xyz|tech|pro|cloud|site'
+  + '|dk|uk|de|it|nl|se|no|fr|es|ca|us|au'
+const BARE_DOMAIN_RE = new RegExp(
+  String.raw`\b[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?`
+  + String.raw`(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*`
+  + String.raw`\.(?:${BARE_DOMAIN_TLDS})\b(?:/\S*)?`,
+  'g',
+)
+
 // http(s):// links, and bare "known-profile-host/path" forms a CV commonly
-// carries without a scheme (linkedin.com/in/…, github.com/…) — general
-// bare domains (e.g. a company name in prose that happens to end .com)
-// are deliberately NOT matched here; that would over-redact ordinary text
-// for a marginal recall gain on a form of PII the scheme-based match
-// already covers for anyone who pasted a real link.
+// carries without a scheme (linkedin.com/in/…, github.com/…). General bare
+// domains beyond those two special-cased hosts are handled by
+// BARE_DOMAIN_RE above, not here — this half stays case-insensitive
+// because there is no tech-term collision risk on these three specific
+// host names the way there is for a generic TLD match.
 const URL_RE = /\bhttps?:\/\/\S+|\b(?:www\.|(?:linkedin|github|gitlab)\.com\/)\S*/gi
 
 // International-friendly: an optional leading +, then 7-15 digits with
@@ -61,7 +97,9 @@ const POSTAL_CODE_RE = /\b\d{5}(?:-\d{4})?\b|\b[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d
  *  misses) leave real text for the reviewer to catch by hand; a false
  *  positive here at worst redacts an ordinary section heading — the
  *  asymmetry favours redacting when uncertain, not the reverse. */
-function redactLikelyNameLine(text: string): { text: string; redaction: PiiRedaction | null } {
+function redactLikelyNameLine(
+  text: string,
+): { text: string; redaction: PiiRedaction | null; tokens: string[] } {
   const lines = text.split('\n')
   const genericHeaders = new Set(['resume', 'cv', 'curriculum vitae', 'profile', 'summary'])
   for (let i = 0; i < lines.length; i++) {
@@ -75,7 +113,7 @@ function redactLikelyNameLine(text: string): { text: string; redaction: PiiRedac
     // of this function, which stopped at the FIRST non-empty line
     // unconditionally.
     if (!/[a-zA-Z]/.test(line)) continue
-    if (genericHeaders.has(line.toLowerCase())) return { text, redaction: null }
+    if (genericHeaders.has(line.toLowerCase())) return { text, redaction: null, tokens: [] }
     const words = line.split(/\s+/)
     const looksLikeName = words.length >= 2 && words.length <= 4
       && words.every((w) => /^[A-Z][a-zA-Z'.-]*$/.test(w))
@@ -85,14 +123,83 @@ function redactLikelyNameLine(text: string): { text: string; redaction: PiiRedac
       return {
         text: [...before, '[NAME]', ...after].join('\n'),
         redaction: { category: 'name', original: line },
+        tokens: words,
       }
     }
     // The first line carrying any actual letters was checked; if it is
     // not name-shaped, stop — scanning further down risks redacting an
     // ordinary job title or company name that happens to be title-cased.
-    return { text, redaction: null }
+    return { text, redaction: null, tokens: [] }
   }
-  return { text, redaction: null }
+  return { text, redaction: null, tokens: [] }
+}
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+/** Package 23, Gate 2 — the name-LINE redaction above closes exactly one
+ *  occurrence. The owner's own leak was a second occurrence of the same
+ *  name, inside a domain, that the line-based redaction never looks at.
+ *  "A name appearing three times and redacted once is the same failure in
+ *  a different place" (the work order's own words) — so once the name is
+ *  known, every remaining occurrence of it anywhere in the text is swept,
+ *  not just the line it was first found on.
+ *
+ *  Two levels, run in order:
+ *  1. The full name as one flexible unit — tokens joined by any run of
+ *     spaces/dots/hyphens/underscores, OR NOTHING — so
+ *     "mojtaba-alehosseini" (a domain), "mojtaba.alehosseini" (an email
+ *     local-part), "mojtabaalehosseini" (a concatenated filename/handle)
+ *     and "MOJTABA ALEHOSSEINI" (a repeated all-caps header) are all one
+ *     match each, case-insensitive.
+ *  2. Individual tokens on their own — a first name alone in a sentence,
+ *     with no surname beside it, which level 1 cannot match. Restricted to
+ *     tokens whose alphabetic core is 3+ characters: a bare 1-2 letter
+ *     token (an initial, "Jr.", "Li") is too common a substring/word in
+ *     ordinary prose to sweep globally without a much broader
+ *     false-positive cost than the narrow miss it would close — the SAME
+ *     line-based redaction above still catches a short token when it is
+ *     actually part of the name line itself, this level only skips
+ *     sweeping it EVERYWHERE ELSE in the document.
+ *
+ *  Each match found is pushed as its own `name` redaction, so a name
+ *  appearing twice is counted as two — the honest-count requirement
+ *  (Gate 3) this package exists to satisfy. Deliberately run AFTER email/
+ *  url/phone/address in stripPii()'s own pipeline: those more specific
+ *  patterns get first claim on anything they can positively identify (an
+ *  email swallows a name in its own local-part whole, as `[EMAIL]`, not a
+ *  separate `name` redaction), and this sweep is the last-resort backstop
+ *  for whatever they do not recognise — an uncommon TLD the bare-domain
+ *  pattern does not list, a plain repeated headline, a filename mention. */
+function sweepNameEverywhere(text: string, rawTokens: string[]): StripPiiResult {
+  const redactions: PiiRedaction[] = []
+  let out = text
+  // A trailing period is a line-ending/OCR artefact far more often than a
+  // real part of a name — stripped here only, so a full-phrase match does
+  // not require an exact trailing "." that a domain or a repeated
+  // headline elsewhere would never carry.
+  const tokens = rawTokens.map((t) => t.replace(/\.+$/, '')).filter(Boolean)
+
+  if (tokens.length >= 2) {
+    const joined = tokens.map(escapeRegExp).join('[\\s.\\-_]*')
+    const fullNameRe = new RegExp(`\\b${joined}\\b`, 'gi')
+    out = out.replace(fullNameRe, (m) => {
+      redactions.push({ category: 'name', original: m })
+      return '[NAME]'
+    })
+  }
+
+  const qualifying = tokens.filter((t) => t.replace(/[^a-zA-Z]/g, '').length >= 3)
+  if (qualifying.length > 0) {
+    const tokenRe = new RegExp(`\\b(?:${qualifying.map(escapeRegExp).join('|')})\\b`, 'gi')
+    out = out.replace(tokenRe, (m) => {
+      redactions.push({ category: 'name', original: m })
+      return '[NAME]'
+    })
+  }
+
+  return { text: out, redactions }
 }
 
 function redactPattern(
@@ -129,6 +236,7 @@ export function stripPii(rawText: string): StripPiiResult {
 
   text = redactPattern(text, EMAIL_RE, 'email', 'EMAIL', redactions)
   text = redactPattern(text, URL_RE, 'url', 'URL', redactions)
+  text = redactPattern(text, BARE_DOMAIN_RE, 'url', 'URL', redactions)
   text = text.replace(PHONE_RE, (match) => {
     if (looksLikeYearRange(match)) return match
     redactions.push({ category: 'phone', original: match })
@@ -149,6 +257,12 @@ export function stripPii(rawText: string): StripPiiResult {
   const nameResult = redactLikelyNameLine(text)
   text = nameResult.text
   if (nameResult.redaction) redactions.push(nameResult.redaction)
+
+  if (nameResult.tokens.length > 0) {
+    const swept = sweepNameEverywhere(text, nameResult.tokens)
+    text = swept.text
+    redactions.push(...swept.redactions)
+  }
 
   return { text, redactions }
 }
