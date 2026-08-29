@@ -1020,6 +1020,28 @@ a data-convention migration across four sources), not a blocked source, a disagr
 methods this package can adjudicate, an indefensible number, or an internal note. Belongs with a
 future package that owns a Compare/Explore design pass, the same reasoning item #6 was given.
 
+**CLOSED, package 24 — a per-row basis chip, not a data migration.** `CountryStripRow.tsx`'s own
+`BASIS_LABEL` map gives Norway, Finland, Germany and Denmark — exactly the four sources this item's
+own body names as inconsistent — a small inline text chip beside their estimate: "incl. bonus"
+(Norway), "excl. bonus" (Finland, Germany), "incl. pension" (Denmark, naming its own STAND concept
+rather than mislabelling it as a plain total-earnings figure). Spain, also total_earnings per this
+item's own body, gets none — it was never a DUAL-basis source with a silent choice between two
+tables the way Norway/Finland/Germany are (package 11's own update); it has only ever had the one
+figure to publish. The chip earns its own mark in the redesign's five-mark budget (`REPORT-P24.md`'s
+own Tier 1 mark-budget table) rather than living behind a tap: a reader comparing Norway's and
+Finland's numbers side by side needs the "these are not the same measurement" fact at the same
+glance as the numbers themselves, not one tap away, since the whole failure mode this item describes
+is comparing two figures that look alike without realising they aren't. Nothing else in the budget
+was given up to make room — the design totals four marks, one under its own five-mark ceiling.
+Unifying every source onto one basis (this item's own other option) stays out of scope, for the same
+reason it was out of scope at package 10 and 11: it means revisiting `_extract_no()`, `_extract_fi()`,
+`_extract_de()` and Denmark's own STAND derivation, and this package's own governing constraint is
+presentation only, no method changes.
+
+This resolves the item's own "Decide" question. It does NOT resolve the PACKAGE 11 REMEDIATION
+UPDATE above (finding F13, Norway's own USD estimate path) — that is a computation question, not a
+display one, and fixing it would itself be a method change. Carried forward as its own item: #58.
+
 ## 22. A flat net-take-home percentage is applied to a salary that can range 2.5x under a user-chosen percentile
 
 `compute.ts`'s `netFor()` applies one `net_pct` scalar per city (e.g. Valencia 72%, Copenhagen 64%)
@@ -2647,3 +2669,37 @@ kept, a second consent layer, an identity concept, a deletion path) before any p
 **Not decided here.** Neither when the `/work` redesign begins nor what it changes — only that it
 should not begin before this package's own fixes are confirmed live, which is a sequencing fact, not a
 design decision.
+
+**CLOSED, package 24 — package 23's fixes are live.** Package 23's own Gate 12 verified the PII fix,
+determinism, the apply-persistence fix and the schema cleanup against the deployed site, not just the
+build (`REPORT-P23.md`). The `/work` redesign (this package) confirmed that verification before
+starting its own Preflight. Sequencing satisfied; the CV-storage half of this same finish protocol
+(#56) is unrelated to a presentation-only redesign and remains its own open item, unchanged.
+
+## 58. Norway's own USD estimate path shifts a regular-pay figure with a total-earnings-calibrated premium — F13, inherited from #21, still unresolved
+
+Package 11's own remediation update to item #21 (finding F13, above) found that `computeEstimateUsdYear()`
+(`site/src/data/profile.ts`) shifts Norway's `usd_regular_pay` combo (bonus excluded) using
+`experience_gradient.json`'s own Norway entry — sourced from "SSB 11658, occupation 2512," the same
+statistical office and, on the evidence available, the same Manedslønn-family total-earnings concept
+`_extract_no()` already uses for this country's own native figure (item #21's own body, above). The
+gradient's own `meta.premium_basis` field records `"median"` — which central STATISTIC the premium is
+measured against, mean or median — a different axis entirely from which PAY BASIS (regular vs total)
+that median was itself computed from; nothing in `experience_gradient.json` states the latter
+explicitly for Norway, which is itself part of what this finding names. If the premium really is
+calibrated on a total-earnings series, applying it to a regular-pay base assumes the same
+proportional bonus-inclusive premium holds for a bonus-excluded figure — not demonstrated, and not
+obviously true (bonus components do not necessarily scale with tenure the same way base pay does).
+
+**Not fixed by package 24.** This package's own governing constraint was presentation only, no
+method changes — and resolving F13 means picking one of: (a) shifting `usd_total_earnings` instead,
+matching the gradient's own probable basis, at the cost of losing the regular-pay figure
+`computeEstimateUsdYear()` otherwise prefers; (b) locating or deriving a regular-pay-basis premium
+series for Norway specifically; (c) disclosing the mismatch itself as its own chain step, the same
+way the function already discloses its regular-to-total FALLBACK (`computeEstimateUsdYear()`'s own
+`basis_fallback` chain entry, for the Spain-shaped case) — each is a real method decision, not a
+wording choice.
+
+**Decide:** which of the three paths above (or another) resolves the mismatch, and whether it is
+Norway-specific or needs the same check run against every other personalising country's own
+gradient-to-combo pairing before it is trusted generally.
