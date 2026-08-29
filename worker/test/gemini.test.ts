@@ -13,9 +13,7 @@ const VALID: CvProfile = {
   status: 'ok',
   occupation: { isco08: '2512', confidence: 'high', evidence: 'three roles titled engineer' },
   years_professional: 6,
-  skills: ['python', 'kubernetes'],
   education_level: 'masters',
-  languages: ['en', 'da-basic'],
 }
 
 test('a well-formed profile validates', () => {
@@ -35,9 +33,20 @@ test('years_professional must be a number, not a numeric string', () => {
   assert.equal(isValidProfile({ ...VALID, years_professional: '6' }), false)
 })
 
-test('skills must be an array of strings, not a comma-joined string', () => {
-  assert.equal(isValidProfile({ ...VALID, skills: 'python, kubernetes' }), false)
-  assert.equal(isValidProfile({ ...VALID, skills: [1, 2] }), false)
+test('education_level must be a string', () => {
+  assert.equal(isValidProfile({ ...VALID, education_level: 4 }), false)
+})
+
+// Package 23, Gate 7 — skills and languages were dropped from the schema
+// (neither had a real consumer; languages was also the field with the
+// actual reported bug). A response that STILL carries them -- an older
+// cached model behaviour, a future model not yet re-prompted -- must not
+// be rejected for carrying extra data isValidProfile() no longer asks
+// for; the same "extra fields don't invalidate" contract the pay-shaped
+// test below already relies on.
+test('a response still carrying the dropped skills/languages fields remains valid', () => {
+  const withDropped = { ...VALID, skills: ['python'], languages: ['en'] }
+  assert.equal(isValidProfile(withDropped), true)
 })
 
 test('a pay-shaped field appearing anywhere does not change validity either way', () => {

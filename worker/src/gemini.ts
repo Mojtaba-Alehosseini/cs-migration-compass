@@ -56,7 +56,22 @@ export type ModelName = (typeof MODEL_CHAIN)[number]
  *  separately, against the site's real crosswalk data, never guessed at
  *  in the prompt. Every field required, matching the work order's own
  *  explicit instruction — an optional field is a channel for the model to
- *  omit exactly the field a stricter check would have caught. */
+ *  omit exactly the field a stricter check would have caught.
+ *
+ *  Package 23, Tier 4 — `skills` and `languages` DROPPED, not merely
+ *  reformatted. Both were collected and never consumed: a grep across
+ *  this whole repo found exactly two uses of either field outside this
+ *  file, and both were the CV panel's own read-only display row — no
+ *  applied patch, no downstream logic, nothing else in the site ever
+ *  reads `profile.skills` or `profile.languages`. `languages` was also
+ *  the field with the actual reported bug (`en-professional`, `fa`,
+ *  `it-elementary` in one run; `en`, `fa`, `it-basic` in the next — four
+ *  formats across two runs of one CV, none of them an ISO code or a real
+ *  CEFR level) — constraining it to a controlled vocabulary would have
+ *  fixed the format for a field that still reaches no consumer, which is
+ *  effort spent on a field that was never the actual problem. A field the
+ *  model fills for nothing is latency and tokens spent for nothing on
+ *  every real call, not just the display it used to feed. */
 const RESPONSE_SCHEMA = {
   type: 'object',
   properties: {
@@ -86,33 +101,19 @@ const RESPONSE_SCHEMA = {
       description: 'Total years of professional work experience, estimated from the employment '
         + 'history. 0 if the text describes no professional experience at all.',
     },
-    skills: {
-      type: 'array',
-      items: { type: 'string' },
-      description: 'Concrete technical or professional skills actually named in the text.',
-    },
     education_level: {
       type: 'string',
       enum: ['secondary', 'bachelors', 'masters', 'doctorate', 'other'],
     },
-    languages: {
-      type: 'array',
-      items: { type: 'string' },
-      description: 'Languages mentioned, as ISO 639-1 codes where possible, with a "-basic" / '
-        + '"-intermediate" / "-fluent" suffix only if a proficiency level is actually stated, '
-        + 'e.g. "en", "fa", "da-basic".',
-    },
   },
-  required: ['status', 'occupation', 'years_professional', 'skills', 'education_level', 'languages'],
+  required: ['status', 'occupation', 'years_professional', 'education_level'],
 } as const
 
 export interface CvProfile {
   status: 'ok' | 'incomplete'
   occupation: { isco08: string; confidence: 'high' | 'moderate' | 'low'; evidence: string }
   years_professional: number
-  skills: string[]
   education_level: string
-  languages: string[]
 }
 
 export type GeminiOutcome =
@@ -182,9 +183,7 @@ export function isValidProfile(v: unknown): v is CvProfile {
     return false
   }
   if (typeof p.years_professional !== 'number') return false
-  if (!Array.isArray(p.skills) || !p.skills.every((s) => typeof s === 'string')) return false
   if (typeof p.education_level !== 'string') return false
-  if (!Array.isArray(p.languages) || !p.languages.every((l) => typeof l === 'string')) return false
   return true
 }
 

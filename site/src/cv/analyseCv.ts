@@ -15,9 +15,7 @@ export interface CvProfile {
   status: 'ok' | 'incomplete'
   occupation: { isco08: string; confidence: 'high' | 'moderate' | 'low'; evidence: string }
   years_professional: number
-  skills: string[]
   education_level: string
-  languages: string[]
 }
 
 export type AnalyseOutcome =

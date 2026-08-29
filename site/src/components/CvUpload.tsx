@@ -329,7 +329,11 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
           </tr>
           <tr>
             <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)' }}>Confidence</td>
-            <td style={{ padding: '4px 0' }}>{profile.occupation.confidence} — {profile.occupation.evidence}</td>
+            <td style={{ padding: '4px 0' }}>{profile.occupation.confidence}</td>
+          </tr>
+          <tr>
+            <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)', verticalAlign: 'top' }}>Evidence</td>
+            <td style={{ padding: '4px 0' }}>{profile.occupation.evidence}</td>
           </tr>
           <tr>
             <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)' }}>Years of experience</td>
@@ -344,18 +348,6 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
               />
             </td>
           </tr>
-          {profile.skills.length > 0 && (
-            <tr>
-              <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)' }}>Skills mentioned</td>
-              <td style={{ padding: '4px 0' }}>{profile.skills.join(', ')}</td>
-            </tr>
-          )}
-          {profile.languages.length > 0 && (
-            <tr>
-              <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)' }}>Languages</td>
-              <td style={{ padding: '4px 0' }}>{profile.languages.join(', ')}</td>
-            </tr>
-          )}
         </tbody>
       </table>
       <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6 }}>
