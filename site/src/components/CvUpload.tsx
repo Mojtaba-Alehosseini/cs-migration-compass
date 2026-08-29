@@ -141,19 +141,18 @@ export function CvUpload({ occupations, onApply }: {
     setStage({ kind: 'idle' })
   }, [])
 
-  const applyResult = useCallback((profile: CvProfile) => {
-    const key = `isco08:${profile.occupation.isco08}`
-    const resolved = occupations?.shared_keys[key]
-    // A PARTIAL patch, not a full replacement: an unresolved code omits
-    // `occupation` entirely, leaving the form's own current value exactly
-    // as it was, rather than overwriting it with an invalid key. This is
-    // the same onChange contract ProfileForm's own occupation/years/
-    // country fields already merge into — see Position.tsx's own
-    // onProfileChange.
-    onApply(resolved ? { occupation: key, yearsProfessional: profile.years_professional }
-      : { yearsProfessional: profile.years_professional })
-    reset()
-  }, [occupations, onApply, reset])
+  // Package 23, Tier 3 — no longer calls reset(). The result used to
+  // vanish the instant it was applied (the whole panel snapped back to
+  // "Choose File — no file chosen"), so there was nothing left on screen
+  // to check the applied values against, no way to re-apply after a
+  // second thought, and no way to re-read the model's own evidence
+  // sentence. Applying now just forwards the patch upward; the result
+  // (and CvResult's own "Applied" confirmation) stays exactly where it
+  // was. reset() is still what the explicit Discard button calls — the
+  // work order's own "a way to discard deliberately".
+  const applyResult = useCallback((patch: { occupation?: string; yearsProfessional: number }) => {
+    onApply(patch)
+  }, [onApply])
 
   return (
     <div className="panel" style={{ marginBottom: 14 }}>
@@ -245,7 +244,7 @@ export function CvUpload({ occupations, onApply }: {
           profile={stage.profile}
           modelUsed={stage.modelUsed}
           occupations={occupations}
-          onApply={() => applyResult(stage.profile)}
+          onApply={applyResult}
           onDiscard={reset}
         />
       )}
@@ -253,13 +252,32 @@ export function CvUpload({ occupations, onApply }: {
   )
 }
 
+const SELECT_STYLE = {
+  display: 'block', width: '100%', marginTop: 2, padding: '5px 6px',
+  border: '1px solid var(--line)', background: 'var(--surface)',
+  borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)', color: 'var(--ink-1)',
+} as const
+
 function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
   profile: CvProfile
   modelUsed: string
   occupations: Occupations | null
-  onApply: () => void
+  onApply: (patch: { occupation?: string; yearsProfessional: number }) => void
   onDiscard: () => void
 }) {
+  const key = `isco08:${profile.occupation.isco08}`
+  const resolved = occupations?.shared_keys[key]
+  // Package 23, Tier 3 — the model's own reading is a starting point, not
+  // an authority: both fields are edited HERE, in local state, before
+  // anything reaches the form below. An unresolved code starts the select
+  // on the placeholder rather than guessing a real occupation for the
+  // reader — the code below still tracks that this is initialised ONCE
+  // per fresh result (a new analysis mounts a new CvResult instance), not
+  // re-derived on every render.
+  const [years, setYears] = useState(profile.years_professional)
+  const [occupationKey, setOccupationKey] = useState(resolved ? key : '')
+  const [applied, setApplied] = useState(false)
+
   if (profile.status === 'incomplete') {
     return (
       <div style={{ marginTop: 10 }}>
@@ -272,24 +290,40 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
     )
   }
 
-  const key = `isco08:${profile.occupation.isco08}`
-  const resolved = occupations?.shared_keys[key]
+  const options = occupations
+    ? Object.entries(occupations.shared_keys)
+      .sort((a, b) => a[1].level - b[1].level || a[1].title.localeCompare(b[1].title))
+    : []
+
+  const handleApply = () => {
+    onApply(occupationKey ? { occupation: occupationKey, yearsProfessional: years }
+      : { yearsProfessional: years })
+    setApplied(true)
+  }
 
   return (
     <div style={{ marginTop: 10 }}>
       <table style={{ width: '100%', fontSize: 'var(--text-xs)', borderCollapse: 'collapse' }}>
         <tbody>
           <tr>
-            <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)' }}>Occupation</td>
+            <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)', verticalAlign: 'top' }}>Occupation</td>
             <td style={{ padding: '4px 0' }}>
-              {resolved ? (
-                <>{resolved.title} <span style={{ color: 'var(--ink-3)' }}>({key})</span></>
-              ) : (
-                <>
-                  <span className="chip chip-note">unclassified</span>{' '}
-                  ISCO-08 {profile.occupation.isco08} — this site does not yet have wage data mapped
-                  to that code, so the occupation field below will not change.
-                </>
+              <select value={occupationKey} onChange={(e) => setOccupationKey(e.target.value)} style={SELECT_STYLE}>
+                {!resolved && (
+                  <option value="">
+                    unclassified — ISCO-08 {profile.occupation.isco08} (not mapped yet; pick one or leave
+                    the form's current occupation unchanged)
+                  </option>
+                )}
+                {options.map(([k, meta]) => (
+                  <option key={k} value={k}>{meta.title} ({k})</option>
+                ))}
+              </select>
+              {!resolved && !occupationKey && (
+                <span style={{ display: 'block', marginTop: 4, color: 'var(--ink-3)', fontSize: 'var(--text-2xs)' }}>
+                  This site does not yet have wage data mapped to that code, so the form's occupation
+                  will not change unless you pick one above.
+                </span>
               )}
             </td>
           </tr>
@@ -299,7 +333,16 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
           </tr>
           <tr>
             <td style={{ padding: '4px 8px 4px 0', color: 'var(--ink-2)' }}>Years of experience</td>
-            <td style={{ padding: '4px 0' }}>{profile.years_professional}</td>
+            <td style={{ padding: '4px 0' }}>
+              <input
+                type="number" min={0} max={50} step={0.5} value={years}
+                onChange={(e) => {
+                  const v = Number(e.target.value)
+                  if (Number.isFinite(v) && v >= 0) setYears(v)
+                }}
+                style={{ ...SELECT_STYLE, width: 90 }}
+              />
+            </td>
           </tr>
           {profile.skills.length > 0 && (
             <tr>
@@ -316,13 +359,15 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
         </tbody>
       </table>
       <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6 }}>
-        Read by {modelUsed} — check this against your own CV before applying it below.
+        Read by {modelUsed} — check this against your own CV, correct it above if needed, before
+        applying it below.
       </p>
-      <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-        <button className="btn-accent" onClick={onApply}>
-          Apply {resolved ? 'occupation and ' : ''}years of experience to the form below
+      <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
+        <button className="btn-accent" onClick={handleApply}>
+          Apply {occupationKey ? 'occupation and ' : ''}years of experience to the form below
         </button>
         <button onClick={onDiscard} className="pill">Discard</button>
+        {applied && <span className="chip chip-note">Applied ✓ — edit above and apply again anytime</span>}
       </div>
     </div>
   )
