@@ -1,0 +1,615 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CS Migration Compass — /work redesign (design mockup)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  DESIGN MOCKUP — Package 24, Tier 1. /work redesigned so it can be SEEN
+  instead of READ. Self-contained and driveable, running on a real slice of
+  the committed data (data/processed/wage_distribution.json and
+  site/public/data/history/openings.json, extracted verbatim — see this
+  file's own <script id="data">). No build step, no network. Open it in a
+  browser and use it.
+
+  THE MEASURED PROBLEM this answers: 22 explanatory paragraphs on one page,
+  headings that are whole sentences, a coverage table that repeats what the
+  row below it already says in prose. The fix is not fewer words on the same
+  design — it is encoding the SAME honesty rules (name what is missing, and
+  why) as MARKS instead of sentences, the way Explore and Compare already do
+  with confidence chips and dashed "naive" strokes.
+
+  THE MARK BUDGET — four, not five, because four already says everything:
+    1. TRACK pattern (solid / dashed / em-dash) — how much of a distribution
+       the office publishes. Independent of...
+    2. MARKER fill (filled / hollow) — personalised to your years, or sitting
+       at the published median because this country cannot personalise.
+    3. The ESTIMATE's dashed underline — reusing <Derived>'s own established
+       "tap for the method" convention, not a new device.
+    4. A small text BASIS CHIP ("excl. bonus" / "incl. bonus" / "incl.
+       pension") — NEEDS-DECISION #21's own ruling, Tier 2 below — shown only
+       on the four rows where the office could have published either basis
+       and picked one silently.
+  A country's row combines marks 1 and 2 independently (a FULL track can
+  carry a HOLLOW marker — most rows do, since only Sweden and Norway
+  personalise) rather than needing a fifth state for every combination.
+
+  WHAT THIS MOCKUP SIMPLIFIES, deliberately, and will NOT ship this way:
+  the years→percentile shift for Sweden and Norway below is a smooth,
+  hand-picked curve for demonstrating the FILLED-marker state visually —
+  not experience_gradient.json's own real age-band premium curves. This
+  package changes presentation only; the real shift math is untouched. See
+  `shiftPercentile()` below, which says so again at the point it matters.
+-->
+<script id="data" type="application/json">{"rows":[{"key":"SE","cc":"SE","name":"Sweden","currency":"SEK","period":"month","year":2025,"distribution":"full","mean":55500.0,"median":53500.0,"p10":39600.0,"p25":46200.0,"p75":62600.0,"p90":72600.0,"source_id":"salary_se","national_code":"2512","crosswalk_comparable":true,"personalises":true,"has_regular_pay":true,"has_total_earnings":false,"basisLabel":null},{"key":"GB","cc":"GB","name":"United Kingdom","currency":"GBP","period":"year","year":2025,"distribution":"full","mean":62387.0,"median":55587.0,"p10":30752.0,"p25":41141.0,"p75":75077.0,"p90":101172.0,"source_id":"salary_uk","national_code":"2134","crosswalk_comparable":true,"personalises":false,"has_regular_pay":false,"has_total_earnings":true,"basisLabel":null},{"key":"US","cc":"US","name":"United States","currency":"USD","period":"year","year":2025,"distribution":"full","mean":148100.0,"median":135980.0,"p10":82460.0,"p25":105210.0,"p75":171980.0,"p90":214670.0,"source_id":"bls_oews","national_code":"15-1252","crosswalk_comparable":true,"personalises":false,"has_regular_pay":true,"has_total_earnings":false,"basisLabel":null},{"key":"DK","cc":"DK","name":"Denmark","currency":"DKK","period":"hour","year":2024,"distribution":"quartile-only","mean":408.56,"median":393.81,"p10":null,"p25":323.45,"p75":474.35,"p90":null,"source_id":"salary_dk","national_code":"2512","crosswalk_comparable":true,"personalises":false,"has_regular_pay":true,"has_total_earnings":true,"basisLabel":"incl. pension"},{"key":"NO","cc":"NO","name":"Norway","currency":"NOK","period":"month","year":2025,"distribution":"quartile-only","mean":81050,"median":77420,"p10":null,"p25":63330,"p75":93820,"p90":null,"source_id":"salary_no","national_code":"2512","crosswalk_comparable":true,"personalises":true,"has_regular_pay":true,"has_total_earnings":true,"basisLabel":"incl. bonus"},{"key":"FI","cc":"FI","name":"Finland","currency":"EUR","period":"month","year":2024,"distribution":"full","mean":5253,"median":5100,"p10":3519,"p25":null,"p75":null,"p90":7092,"source_id":"salary_fi","national_code":"2512","crosswalk_comparable":true,"personalises":false,"has_regular_pay":true,"has_total_earnings":true,"basisLabel":"excl. bonus"},{"key":"AU","cc":"AU","name":"Australia","currency":"AUD","period":"year","year":2024,"distribution":"central-tendency-only","mean":135788.25,"median":132758,"p10":null,"p25":null,"p75":null,"p90":null,"source_id":"salary_au","national_code":"261313","crosswalk_comparable":true,"personalises":false,"has_regular_pay":false,"has_total_earnings":true,"basisLabel":null},{"key":"ES","cc":"ES","name":"Spain","currency":"EUR","period":"year","year":2018,"distribution":"full","mean":39318.16,"median":36000.0,"p10":19313.74,"p25":27000.0,"p75":49608.76,"p90":63061.11,"source_id":"salary_es","national_code":"it_professionals","crosswalk_comparable":true,"personalises":false,"has_regular_pay":false,"has_total_earnings":true,"basisLabel":null},{"key":"IE","cc":"IE","name":"Ireland","currency":"EUR","period":"hour","year":2022,"distribution":"central-tendency-only","mean":38.41,"median":32.99,"p10":null,"p25":null,"p75":null,"p90":null,"source_id":"salary_ie","national_code":"soc1:2","crosswalk_comparable":true,"personalises":false,"has_regular_pay":true,"has_total_earnings":false,"basisLabel":null},{"key":"QA","cc":"QA","name":"Qatar","currency":"QAR","period":"month","year":2023,"distribution":"mean-only","mean":26942.299202869068,"median":null,"p10":null,"p25":null,"p75":null,"p90":null,"source_id":"salary_qa","national_code":"isco08_major:2","crosswalk_comparable":true,"personalises":false,"has_regular_pay":false,"has_total_earnings":false,"basisLabel":null},{"key":"AE","cc":"AE","name":"United Arab Emirates","currency":"AED","period":"month","year":2009,"distribution":"mean-only","mean":13688.694,"median":null,"p10":null,"p25":null,"p75":null,"p90":null,"source_id":"salary_ae","national_code":"isco08_major:2","crosswalk_comparable":true,"personalises":false,"has_regular_pay":false,"has_total_earnings":false,"basisLabel":null},{"key":"NL","cc":"NL","name":"Netherlands","currency":"EUR","period":"hour","year":2024,"distribution":"quartile-only","mean":null,"median":34.8,"p10":null,"p25":27.0,"p75":43.4,"p90":null,"source_id":"salary_nl","national_code":"0811","crosswalk_comparable":false,"personalises":false,"has_regular_pay":true,"has_total_earnings":false,"basisLabel":null},{"key":"DE","cc":"DE","name":"Germany","currency":"EUR","period":"year","year":2025,"distribution":"central-tendency-only","mean":73656.0,"median":70212.0,"p10":null,"p25":null,"p75":null,"p90":null,"source_id":"salary_de","national_code":"434","crosswalk_comparable":true,"personalises":false,"has_regular_pay":true,"has_total_earnings":true,"basisLabel":"excl. bonus"},{"key":"CA-21231","cc":"CA","name":"Canada","currency":"CAD","period":"hour","year":2024,"distribution":"full","mean":60.57,"median":56.49,"p10":35.0,"p25":43.75,"p75":72.12,"p90":91.35,"source_id":"salary_ca","national_code":"21231","crosswalk_comparable":true,"personalises":false,"has_regular_pay":false,"has_total_earnings":false,"basisLabel":null},{"key":"CA-21232","cc":"CA","name":"Canada","currency":"CAD","period":"hour","year":2024,"distribution":"full","mean":51.72,"median":48.08,"p10":30.0,"p25":38.46,"p75":60.67,"p90":76.92,"source_id":"salary_ca","national_code":"21232","crosswalk_comparable":true,"personalises":false,"has_regular_pay":false,"has_total_earnings":false,"basisLabel":null},{"key":"IT","cc":"IT","name":"Italy","absentReason":"no-series — ISTAT publishes no occupation-level (CP2011) earnings flow at all, per src_salary_it.py"}],"openings":{"AE":{"software":24,"named":1,"all":178},"AU":{"software":100,"named":10,"all":369},"CA":{"software":352,"named":88,"all":1304},"DE":{"software":198,"named":33,"all":727},"DK":{"software":9,"named":1,"all":29},"ES":{"software":126,"named":8,"all":345},"FI":{"software":65,"named":3,"all":141},"GB":{"software":705,"named":130,"all":2148},"IE":{"software":69,"named":2,"all":166},"IT":{"software":28,"named":13,"all":129},"NL":{"software":81,"named":8,"all":319},"NO":{"software":14,"named":1,"all":38},"QA":{"software":8,"named":2,"all":10},"SE":{"software":65,"named":1,"all":157},"US":{"software":7125,"named":3314,"all":29668}},"spine":["AE","AU","CA","DE","DK","ES","FI","GB","IE","IT","NL","NO","QA","SE","US"]}</script>
+<style>
+:root {
+  --font-display: 'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+  --font-ui: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Cascadia Mono','SF Mono',ui-monospace,Consolas,monospace;
+
+  --text-2xs:.75rem; --text-xs:.8125rem; --text-sm:.875rem; --text-base:.9375rem;
+  --text-md:1.0625rem; --text-lg:1.375rem; --text-xl:1.75rem; --text-2xl:2.25rem;
+  --leading-tight:1.15; --leading-snug:1.35; --leading-normal:1.55;
+  --weight-normal:400; --weight-medium:500; --weight-semibold:600;
+  --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.25rem;
+  --radius-xs:4px; --radius-sm:6px; --radius-md:9px; --radius-lg:13px; --radius-pill:999px;
+  --dur-instant:90ms; --dur-fast:160ms; --dur-base:260ms; --dur-slow:480ms; --dur-draw-stagger:60ms;
+  --ease-out: cubic-bezier(.22,1,.36,1);
+
+  --paper:#faf7f0; --surface:#fff; --surface-sunk:#f0ece2; --surface-raised:rgba(255,255,255,.72);
+  --ink-1:#191813; --ink-2:#55524a; --ink-3:#74705f;
+  --line:#e2ded2; --line-strong:#cdc7b6;
+  --accent:#0c6b54; --accent-ink:#fff; --accent-wash:#dfeee7; --accent-strong:#084d3d;
+  --warn:#a8471f; --note:#6b5e8c; --hatch: rgba(12,107,84,.42);
+
+  --c-US:#3f6f9f; --c-CA:#c2503a; --c-GB:#4a4a86; --c-IE:#2e8b6f; --c-DE:#6b6357;
+  --c-NL:#d1873c; --c-IT:#7a9440; --c-ES:#b6483f; --c-SE:#3f8fa8; --c-DK:#a4568c;
+  --c-NO:#5566b0; --c-FI:#4d9bc9; --c-AU:#2f7f70; --c-AE:#8a7327; --c-QA:#96566b;
+}
+[data-mode="dark"] {
+  --paper:#17150f; --surface:#201e17; --surface-sunk:#100f0a; --surface-raised:rgba(255,255,255,.045);
+  --ink-1:#f2eee3; --ink-2:#bdb7a6; --ink-3:#8f8878;
+  --line:#332f25; --line-strong:#4a4536;
+  --accent:#5fbf9f; --accent-ink:#10221c; --accent-wash:#17332a; --accent-strong:#8ad9bd;
+  --warn:#e08a5f; --note:#a795c9; --hatch: rgba(79,191,155,.45);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-instant:0ms; --dur-fast:0ms; --dur-base:0ms; --dur-slow:0ms; --dur-draw-stagger:0ms; }
+}
+
+*{box-sizing:border-box}
+body{margin:0; background:var(--paper); color:var(--ink-1); font-family:var(--font-ui);
+  font-size:var(--text-base); line-height:var(--leading-normal); -webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px; margin:0 auto; padding:20px 18px 90px}
+h1,h2,h3{font-family:var(--font-display); font-weight:var(--weight-semibold); margin:0}
+h1{font-size:var(--text-xl); letter-spacing:-.02em}
+h2{font-size:var(--text-sm); color:var(--ink-2); font-weight:var(--weight-medium)}
+h3{font-size:var(--text-xs)}
+.lede{font-size:var(--text-sm); color:var(--ink-2); max-width:64ch; padding:6px 0 16px}
+.sub{font-size:var(--text-2xs); color:var(--ink-3); line-height:var(--leading-normal)}
+.tnum{font-variant-numeric:tabular-nums}
+.panel{background:var(--surface-raised); border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:var(--space-5); margin-top:12px}
+.nodata{color:var(--ink-3); font-style:italic}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:var(--radius-xs)}
+button{font:inherit; color:inherit; background:none; border:0; cursor:pointer}
+/* Press feedback on every tappable trigger — instant, on the press itself,
+   not just the eventual state change (emil-design-eng: "buttons must feel
+   responsive to press"). :active also fires on a keyboard Enter/Space
+   activation in most browsers, not pointer-only — this is deliberately
+   NOT the class of "keyboard-initiated action" Tier 4's own motion rule
+   means to exclude (a hotkey fired hundreds of times a day); it is a
+   90ms tactile confirmation on an occasional, deliberate press, mouse or
+   keyboard either way, the same low-frequency tier Compare's own "hover
+   lift, scale(.97) on press" already applies to regardless of input
+   device. */
+.est button:active,.opn button:active,.profline-head:active,.disclosure summary:active,.cvline .chip:active{
+  transform:scale(.97); transition:transform var(--dur-instant) var(--ease-out)}
+a{color:var(--accent)}
+
+/* ---- theme switcher (mockup-only chrome, not part of the design) ---- */
+.mockctl{position:fixed; top:10px; right:10px; z-index:50; display:flex; gap:6px; background:var(--surface);
+  border:1px solid var(--line); border-radius:var(--radius-pill); padding:4px; box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.mockctl button{font-size:11px; padding:5px 10px; border-radius:var(--radius-pill); color:var(--ink-2)}
+.mockctl button[aria-pressed=true]{background:var(--accent); color:var(--accent-ink)}
+
+/* ---- the profile line: one line, expands, collapses to a summary ---- */
+.profline{background:var(--surface-raised); border:1px solid var(--line); border-radius:var(--radius-lg);
+  overflow:clip}
+.profline-head{display:flex; align-items:center; gap:10px; width:100%; padding:13px 16px; text-align:left}
+.profline-head:hover{background:var(--surface-sunk)}
+.profline-head .lbl{font-size:var(--text-sm); flex:1}
+.profline-head .summary{font-size:var(--text-sm); font-weight:var(--weight-medium); flex:1; font-variant-numeric:tabular-nums}
+.profline-head .chev{color:var(--ink-3); transition:transform var(--dur-fast) var(--ease-out)}
+.profline[data-open=true] .chev{transform:rotate(180deg)}
+.profline-body{max-height:0; opacity:0; transition:max-height var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+  transform-origin:top}
+.profline[data-open=true] .profline-body{max-height:420px; opacity:1}
+.profline-inner{padding:0 16px 16px; border-top:1px solid var(--line)}
+.form{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-top:12px}
+.field{display:flex; flex-direction:column; gap:4px}
+.field>span{font-size:var(--text-2xs); color:var(--ink-2)}
+select,input[type=number]{font:inherit; font-size:var(--text-xs); padding:7px 9px; color:var(--ink-1);
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm)}
+.cvline{display:flex; align-items:center; gap:8px; margin-top:12px; font-size:var(--text-2xs); color:var(--ink-3)}
+.chip{display:inline-flex; align-items:center; gap:4px; font-size:11px; padding:2px 9px;
+  border-radius:var(--radius-pill); font-weight:var(--weight-medium); line-height:1.6}
+.chip-note{background:var(--accent-wash); color:var(--accent-strong)}
+.art50{font-size:var(--text-2xs); color:var(--ink-3); margin-top:6px}
+
+/* ---- the answer: fifteen rows ---- */
+.rows{margin-top:4px}
+.row{display:grid; grid-template-columns:132px 1fr 172px 50px; gap:12px; align-items:center;
+  padding:5px 4px; border-top:1px solid var(--line)}
+.row:first-child{border-top:none}
+.row:focus-within,.row:hover{background:var(--surface-sunk)}
+.rowid{display:flex; align-items:center; gap:6px; font-size:var(--text-xs); overflow:hidden}
+.flagdot{width:14px; height:14px; border-radius:50%; flex:none; overflow:hidden; display:inline-flex;
+  align-items:center; justify-content:center; font-size:var(--text-2xs); border:1px solid var(--line-strong)}
+.cc{font-weight:var(--weight-semibold); white-space:nowrap}
+.cname{color:var(--ink-3); font-size:var(--text-2xs); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.strip-wrap{position:relative; height:20px; display:flex; align-items:center}
+.strip{position:relative; height:6px; width:100%; border-radius:3px; background:var(--surface-sunk)}
+.strip .track{position:absolute; top:0; bottom:0; border-radius:3px}
+.strip .track.solid{background:color-mix(in srgb, var(--rowc) 32%, var(--surface-sunk))}
+.strip .track.iqr{background:var(--rowc); top:-1px; bottom:-1px}
+.strip .track.dashed{border-top:3px dashed color-mix(in srgb, var(--rowc) 70%, var(--ink-3)); top:1.5px; bottom:auto; background:none}
+.strip .marker{position:absolute; top:50%; width:11px; height:11px; border-radius:50%; transform:translate(-50%,-50%);
+  border:2px solid var(--rowc); background:var(--rowc); box-shadow:0 0 0 2px var(--surface);
+  transition:left var(--dur-base) var(--ease-out)}
+.strip .marker.hollow{background:var(--surface)}
+.strip .noseries{color:var(--ink-3); font-size:var(--text-xs); padding-left:2px}
+.pctlabel{position:absolute; top:-14px; font-size:var(--text-2xs); color:var(--ink-3); font-variant-numeric:tabular-nums;
+  transform:translateX(-50%); white-space:nowrap; transition:left var(--dur-base) var(--ease-out)}
+/* draw-in: rows fade/rise once, staggered, never replay */
+.row .strip .track,.row .strip .marker{opacity:0; transition:opacity var(--dur-base) var(--ease-out),
+  left var(--dur-base) var(--ease-out)}
+.row.drawn .strip .track,.row.drawn .strip .marker{opacity:1}
+
+/* Estimate and openings are each ONE line — a stacked second line was the
+   actual reason the very first pass of this row measured 47px, nearly 50%
+   over the ~34px/row budget the work order names, found by measuring the
+   live mockup rather than assuming the CSS matched the target. The basis
+   label sits inline after the value, not on its own line. */
+.est{font-size:var(--text-xs); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis}
+.est button{border-bottom:1px dashed var(--ink-3); font-size:inherit}
+.est .basis{font-size:var(--text-2xs); color:var(--ink-3); font-weight:var(--weight-normal); margin-left:5px}
+.opn{font-size:var(--text-xs); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2)}
+.opn button{border-bottom:1px dashed var(--ink-3); font-size:inherit; color:inherit}
+
+/* ---- method card popover, reusing <Figure>/<Derived>'s own language ---- */
+.card{position:fixed; z-index:80; background:var(--ink-1); color:var(--paper); border-radius:var(--radius-md);
+  padding:11px 14px; width:270px; box-shadow:0 14px 34px rgba(0,0,0,.28); font-size:var(--text-2xs);
+  line-height:var(--leading-normal)}
+.card b{display:block; margin-bottom:3px}
+.card ol{margin:6px 0 0; padding-left:16px; display:flex; flex-direction:column; gap:3px; opacity:.9}
+
+/* ---- below the fold ---- */
+.axis3{display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:4px 14px; margin-top:10px}
+.axis3 .h{font-size:var(--text-2xs); color:var(--ink-3); grid-column:1/-1; margin-top:8px}
+.pip{width:14px; height:6px; border-radius:2px; background:var(--line-strong); display:inline-block; margin-right:1px}
+.pip.on{background:var(--accent)}
+.pip.part{background:var(--accent); opacity:.42}
+.disclosure summary{cursor:pointer; font-size:var(--text-xs); padding:8px 0; list-style:none; display:flex;
+  align-items:center; gap:6px}
+.disclosure summary::-webkit-details-marker{display:none}
+.disclosure summary::before{content:'▸'; font-size:var(--text-2xs); color:var(--ink-3); transition:transform var(--dur-fast) var(--ease-out)}
+.disclosure[open] summary::before{transform:rotate(90deg)}
+.wreg{display:flex; justify-content:space-between; gap:10px; font-size:var(--text-2xs); padding:3px 0; border-top:1px solid var(--line)}
+
+@media (max-width:820px){ .row{grid-template-columns:96px 1fr 88px 52px; gap:8px} }
+@media (max-width:600px){
+  /* Found live: .est and .opn sharing one grid-area("meta") does not stack
+     them, it OVERLAYS them at the same position — two currency strings
+     superimposed character-on-character ("55K 51,923/mo" for "SEK
+     51,923/mo"). Separate named areas, side by side, fixes it; a shared
+     area is only safe for elements that are never both present. */
+  .row{grid-template-columns:1fr 1fr; grid-template-areas:"id id" "strip strip" "est opn";
+    row-gap:5px; padding:10px 4px}
+  .rowid{grid-area:id}
+  .strip-wrap{grid-area:strip}
+  .est{grid-area:est; text-align:left}
+  .opn{grid-area:opn; text-align:right}
+}
+</style>
+
+<div class="mockctl" role="group" aria-label="Mockup controls, not part of the design">
+  <button type="button" data-mode-btn="light" aria-pressed="true">Light</button>
+  <button type="button" data-mode-btn="dark" aria-pressed="false">Dark</button>
+</div>
+
+<div class="wrap">
+  <h1>Where you'd stand</h1>
+  <p class="lede">Fifteen countries, ranked by their own published pay table. Where one can't answer that, it says why.</p>
+
+  <div class="profline" data-open="false" id="profline">
+    <button type="button" class="profline-head" id="profline-toggle" aria-expanded="false" aria-controls="profline-body">
+      <span class="lbl" id="profline-label">Drop a CV, or set it yourself.</span>
+      <span class="chev" aria-hidden="true">▾</span>
+    </button>
+    <div class="profline-body" id="profline-body">
+      <div class="profline-inner">
+        <div class="cvline">
+          <label class="chip chip-note" style="cursor:pointer">
+            <input type="file" accept="application/pdf" style="display:none" id="cv-input">
+            📄 Drop a CV
+          </label>
+          <span>PDF only, read in your browser — nothing is sent until you've checked the text.</span>
+        </div>
+        <p class="art50" id="art50-note" hidden>
+          <b>AI-assisted.</b> A model reads your CV into occupation and years of experience — shown for you to check,
+          not an authority you have to accept. It never sees or produces a pay figure.
+        </p>
+        <div class="form">
+          <label class="field"><span>Occupation</span>
+            <select id="f-occ"><option>Software developers (isco08:2512)</option></select>
+          </label>
+          <label class="field"><span>Years of experience</span>
+            <input type="number" id="f-years" min="0" max="40" value="6" style="width:70px">
+          </label>
+          <label class="field"><span>Where you are now (optional)</span>
+            <select id="f-country">
+              <option value="">Not specified</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rows panel" id="rows" style="padding:8px 14px"></div>
+
+  <p class="sub" style="margin-top:10px">
+    <span class="tnum" id="fitcheck"></span>
+  </p>
+
+  <!-- below the fold, in the order the work order specifies -->
+  <details class="disclosure panel">
+    <summary>Openings detail — real advertisements, employer's own range</summary>
+    <div id="openings-detail" style="margin-top:4px"></div>
+  </details>
+
+  <details class="disclosure panel">
+    <summary>Coverage, on its three axes</summary>
+    <div class="axis3" id="coverage3"></div>
+  </details>
+
+  <details class="disclosure panel">
+    <summary>Too few advertisements to quote a median pay figure</summary>
+    <div id="withheld-reg" style="margin-top:6px"></div>
+  </details>
+
+  <details class="disclosure panel">
+    <summary>Beyond our fifteen — the harvest reaches further, uncovered here</summary>
+    <p class="sub" style="margin-top:6px">
+      The harvest reaches countries this site does not cover — no cost-of-living, tax or housing data, so nothing
+      here joins a comparison or a headline count above. Not part of the fifteen; shown because the numbers are real.
+    </p>
+  </details>
+
+  <p class="sub" style="margin-top:16px">
+    Position: this country's own published percentile table, ranked by its own experience cross where one exists.
+    Estimate: that table's own median, shifted the same way — never a source citation. Openings: real
+    advertisements classified as software.
+  </p>
+</div>
+
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => [...(r || document).querySelectorAll(s)];
+const fmt0 = (v) => Math.round(v).toLocaleString('en-US');
+const PERIOD = { hour: '/hr', month: '/mo', year: '/yr' };
+
+/* ---- flags: tiny inline circles, letters standing in for real SVGs the
+   mockup doesn't ship (the real <Flag> component IS the real SVG set) ---- */
+function flagDot(cc) {
+  return `<span class="flagdot" style="background:var(--c-${cc})" aria-hidden="true"></span>`;
+}
+
+/* ---- Package 24, Tier 1 mockup simplification — NOT the real shift math.
+   experience_gradient.json's own age-band premium curves (per-country,
+   built from each source's own published age cross) are what the real
+   implementation uses and continues to use unchanged; this package changes
+   presentation only. This is a smooth, hand-picked years→percentile curve
+   for Sweden and Norway ONLY (the two personalising countries), enough to
+   demonstrate the FILLED-marker state and the shifted estimate moving
+   convincingly when years changes — not a claim about what either country's
+   real premium curve says at any specific year. */
+function shiftPercentile(years) {
+  const pts = [[0, 25], [5, 42], [10, 55], [15, 68], [20, 78], [30, 88]];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [y0, p0] = pts[i], [y1, p1] = pts[i + 1];
+    if (years <= y1) return p0 + (p1 - p0) * Math.max(0, (years - y0) / (y1 - y0));
+  }
+  return 90;
+}
+
+/* Linear interpolation across whatever percentile points a country actually
+   publishes — never assumes a point that isn't there, never assumes evenly
+   spaced percentiles (the strip's own width is VALUE space, not percentile
+   space, so a skewed distribution visibly looks skewed). */
+function knownPoints(r) {
+  return [[10, r.p10], [25, r.p25], [50, r.median], [75, r.p75], [90, r.p90]]
+    .filter(([, v]) => v != null);
+}
+function valueAtPercentile(pts, pct) {
+  if (pts.length === 0) return null;
+  if (pct <= pts[0][0]) return pts[0][1];
+  if (pct >= pts[pts.length - 1][0]) return pts[pts.length - 1][1];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [p0, v0] = pts[i], [p1, v1] = pts[i + 1];
+    if (pct >= p0 && pct <= p1) return v0 + (v1 - v0) * (pct - p0) / (p1 - p0);
+  }
+  return pts[pts.length - 1][1];
+}
+function percentileAtValue(pts, value) {
+  if (pts.length === 0) return null;
+  if (value <= pts[0][1]) return pts[0][0];
+  if (value >= pts[pts.length - 1][1]) return pts[pts.length - 1][0];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [p0, v0] = pts[i], [p1, v1] = pts[i + 1];
+    if (value >= v0 && value <= v1) return p0 + (p1 - p0) * (value - v0) / (v1 - v0);
+  }
+  return pts[pts.length - 1][0];
+}
+
+function ordinal(n) {
+  n = Math.round(n);
+  const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+function money(v, cur, per) {
+  if (v == null) return '—';
+  try {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: cur, maximumFractionDigits: 0 }).format(v) + PERIOD[per];
+  } catch { return `${fmt0(v)} ${cur}${PERIOD[per]}`; }
+}
+
+let firstDraw = true; // draw-in fires once; a profile change morphs instead
+
+function renderRows() {
+  const years = Number($('#f-years').value) || 0;
+  const highlighted = $('#f-country').value;
+  const host = $('#rows');
+  host.innerHTML = D.rows.map((r) => {
+    const cc = r.cc;
+    if (r.absentReason) {
+      return `<div class="row" data-cc="${cc}" style="--rowc:var(--ink-3)">
+        <div class="rowid">${flagDot(cc)}<span class="cc">${cc}</span><span class="cname">${r.name}</span></div>
+        <div class="strip-wrap"><span class="noseries" aria-label="No wage series published">— no series published</span></div>
+        <div class="est"><span class="nodata">no table</span></div>
+        <div class="opn">—</div>
+      </div>`;
+    }
+    const pts = knownPoints(r);
+    const hasTrack = pts.length >= 2;
+    const personal = r.personalises;
+    const targetPct = personal ? shiftPercentile(years) : 50;
+    const estVal = hasTrack ? valueAtPercentile(pts, targetPct) : (r.median ?? r.mean);
+    const shownPct = hasTrack ? (personal ? targetPct : 50) : null;
+
+    let trackHtml = '';
+    let markerLeft = 50;
+    if (hasTrack) {
+      const lo = pts[0][1], hi = pts[pts.length - 1][1];
+      const pos = (v) => hi === lo ? 50 : ((v - lo) / (hi - lo)) * 100;
+      markerLeft = pos(estVal);
+      const iqrLo = r.p25 != null ? pos(r.p25) : null, iqrHi = r.p75 != null ? pos(r.p75) : null;
+      // full/quartile-only mean a REAL spread was published (2+ percentile
+      // points) -- solid track. Everything else that still reaches this
+      // branch (points.length >= 2 requires p10/p25/median/p75/p90
+      // specifically, so this is unreachable today, but kept honest rather
+      // than assuming) gets the dashed treatment too.
+      const solidCls = r.distribution === 'full' || r.distribution === 'quartile-only' ? 'solid' : 'dashed';
+      trackHtml = `<span class="track ${solidCls}" style="left:0;right:0"></span>`;
+      if (iqrLo != null && iqrHi != null) {
+        trackHtml += `<span class="track iqr" style="left:${iqrLo}%; width:${iqrHi - iqrLo}%"></span>`;
+      }
+    } else {
+      // central-tendency-only / mean-only: no real spread to place a rank
+      // inside (fewer than 2 published percentile points) — an ABBREVIATED
+      // dashed segment around the one known figure, visually distinct from
+      // a full-width track, so "there is less here" is legible without
+      // reading the row at all. Found live: the first version of this
+      // branch rendered NO track element at all for exactly these rows —
+      // the country that most needed the dashed-track state (nothing to
+      // rank inside) was the one row where it silently never appeared.
+      markerLeft = 50;
+      trackHtml = `<span class="track dashed" style="left:32%; right:32%"></span>`;
+    }
+    const filled = personal;
+    const pctLabelHtml = shownPct != null
+      ? `<span class="pctlabel" style="left:${markerLeft}%">${ordinal(Math.round(shownPct))}</span>` : '';
+    // Every mark's text alternative names BOTH axes explicitly (track
+    // completeness AND personalisation) rather than leaving the reader to
+    // infer "solid vs dashed" or "wide vs narrow" from the rendered shape
+    // alone — Gate 13's own bar ("every mark carries a text alternative")
+    // means the full state, not just whichever half a sighted reader
+    // would notice first.
+    const distText = r.distribution === 'full' ? 'publishes the full distribution (p10-p90)'
+      : r.distribution === 'quartile-only' ? 'publishes quartiles only (p25-p75), no tails'
+      : `publishes only a ${r.distribution.replace(/-/g, ' ')}`;
+    const srLabel = !hasTrack
+      ? `${r.name}: ${distText}, no distribution to rank inside`
+      : `${r.name}: ${distText}. ${personal ? `Personalised — ranks at the ${ordinal(Math.round(targetPct))} percentile` : 'Not personalised — marker sits at the published median'}`;
+
+    const basisChip = r.basisLabel ? `<span class="basis">${r.basisLabel}</span>` : '';
+    const est = hasTrack || r.median != null || r.mean != null
+      ? `<button type="button" data-card-cc="${r.key}">${money(estVal, r.currency, r.period)}</button>${basisChip}`
+      : `<span class="nodata">no figure</span>`;
+
+    // Openings: ONE number on the row itself (software openings), the
+    // "N name a figure" fact moved behind a tap rather than dropped — the
+    // same <Figure>-style disclosure the estimate already uses, not a
+    // second stacked line. Gate 6's own "nothing lost, itemise where it
+    // went" is this: it went from a permanent second line to a tap, same
+    // as fourteen paragraphs went to taps elsewhere on this page.
+    const op = D.openings[cc];
+    const opHtml = op
+      ? `<button type="button" data-opencard-cc="${cc}">${op.software.toLocaleString()}</button>`
+      : `<span class="nodata">—</span>`;
+
+    return `<div class="row" data-cc="${cc}" style="--rowc:var(--c-${cc})">
+      <div class="rowid">${flagDot(cc)}<span class="cc">${cc}${r.key !== cc ? ' · ' + r.national_code : ''}</span><span class="cname">${r.name}</span></div>
+      <div class="strip-wrap" title="${srLabel}">
+        <span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">${srLabel}</span>
+        <div class="strip" aria-hidden="true">
+          ${trackHtml}
+          <span class="marker ${filled ? '' : 'hollow'}" style="left:${markerLeft}%"></span>
+        </div>
+        ${pctLabelHtml}
+      </div>
+      <div class="est">${est}</div>
+      <div class="opn">${opHtml}</div>
+    </div>`;
+  }).join('');
+
+  // draw-in once; on every later call (a profile change), just retarget —
+  // the CSS transition on left/opacity handles the morph, interruptible,
+  // ~base duration ease-out, per docs/DESIGN.md's own motion table.
+  requestAnimationFrame(() => {
+    $$('.row', host).forEach((el, i) => {
+      if (firstDraw) el.style.transitionDelay = `${i * 60}ms`;
+      el.classList.add('drawn');
+      if (firstDraw) setTimeout(() => { el.style.transitionDelay = ''; }, 900);
+    });
+    firstDraw = false;
+  });
+
+  const fits = host.getBoundingClientRect().height;
+  $('#fitcheck').textContent = `${D.rows.length} rows, ${Math.round(fits)}px tall.`;
+}
+
+function renderCoverage() {
+  $('#coverage3').innerHTML = D.rows.map((r) => {
+    const cc = r.cc;
+    const occOk = !r.absentReason;
+    const dist = r.absentReason ? null : { full: 3, 'quartile-only': 2, 'central-tendency-only': 1, 'mean-only': 1 }[r.distribution];
+    const pip = (on, of, cls) => Array.from({ length: of }, (_, i) =>
+      `<i class="pip ${i < on ? (cls || 'on') : ''}"></i>`).join('');
+    return `<div>
+        <div class="cname">${r.key}</div>
+        <div>${pip(occOk ? 1 : 0, 1)}</div>
+        <div>${pip(dist || 0, 3)}</div>
+        <div>${pip(r.personalises ? 1 : 0, 1, 'part')}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderOpeningsDetail() {
+  $('#openings-detail').innerHTML = D.spine.map((cc) => {
+    const op = D.openings[cc];
+    if (!op) return '';
+    const row = D.rows.find((r) => r.cc === cc);
+    const name = row ? row.name : cc;
+    return `<div class="wreg"><span>${flagDot(cc)} ${name}</span>
+      <span class="tnum">${op.named} of ${op.software} name pay (${op.all.toLocaleString()} total)</span></div>`;
+  }).join('');
+}
+
+function renderWithheld() {
+  $('#withheld-reg').innerHTML = D.rows.filter((r) => !r.absentReason && r.distribution === 'mean-only').map((r) =>
+    `<div class="wreg"><span>${flagDot(r.cc)} ${r.name}</span><span class="sub">too few distinct software roles for a median</span></div>`
+  ).join('') || '<p class="sub">Nothing withheld at the current publish floor.</p>';
+}
+
+function populateCountryPicker() {
+  const sel = $('#f-country');
+  for (const cc of D.spine) {
+    const r = D.rows.find((x) => x.cc === cc);
+    const o = document.createElement('option');
+    o.value = cc; o.textContent = r ? r.name : cc;
+    sel.appendChild(o);
+  }
+}
+
+/* ---- profile line: collapses to a summary the moment it is filled ---- */
+function updateProflineSummary() {
+  const years = $('#f-years').value;
+  const cc = $('#f-country').value;
+  const name = cc ? (D.rows.find((r) => r.cc === cc) || {}).name : null;
+  const open = $('#profline').dataset.open === 'true';
+  if (!open) {
+    $('#profline-label').textContent = `Software developer · ${years} yrs${name ? ' · ' + name : ''}`;
+  }
+}
+
+function toggleProfline(open) {
+  const el = $('#profline');
+  el.dataset.open = String(open);
+  $('#profline-toggle').setAttribute('aria-expanded', String(open));
+  if (open) $('#profline-label').textContent = 'Drop a CV, or set it yourself.';
+  else updateProflineSummary();
+}
+
+/* ---- method-card popover, reused for both the estimate (<Derived>'s own
+   shape) and the openings count (<Figure>'s own shape) — same mechanics,
+   same visual language, so a reader learns the affordance once. ---- */
+function placeCard(btn, html) {
+  document.querySelectorAll('.card').forEach((c) => c.remove());
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.setAttribute('role', 'dialog');
+  const rect = btn.getBoundingClientRect();
+  card.style.left = Math.min(rect.left, window.innerWidth - 290) + 'px';
+  card.style.top = (rect.bottom + 7) + 'px';
+  card.innerHTML = html;
+  document.body.appendChild(card);
+  const close = (e) => { if (!card.contains(e.target)) { card.remove(); document.removeEventListener('click', close); } };
+  setTimeout(() => document.addEventListener('click', close), 0);
+}
+function showCard(btn, cc) {
+  const r = D.rows.find((x) => x.key === cc);
+  if (!r) return;
+  const personal = r.personalises;
+  placeCard(btn, `<b>${r.name} — ${r.source_id}</b>
+    <span style="opacity:.85">HOW THIS NUMBER WAS CALCULATED</span>
+    <ol>
+      <li>published: ${money(r.median ?? r.mean, r.currency, r.period)} (${r.year})</li>
+      ${personal ? `<li>ranked against this country's own percentile table at ${$('#f-years').value} years' experience</li>` : `<li>not personalised — this country has no experience cross to shift by</li>`}
+      ${r.basisLabel ? `<li>native figure ${r.basisLabel} — see NEEDS-DECISION #21</li>` : ''}
+    </ol>`);
+}
+function showOpeningsCard(btn, cc) {
+  const op = D.openings[cc];
+  const r = D.rows.find((x) => x.cc === cc);
+  if (!op) return;
+  placeCard(btn, `<b>${r ? r.name : cc} — software openings</b>
+    <span style="opacity:.85">${op.software.toLocaleString()} of ${op.all.toLocaleString()} advertisements the harvest reaches here classify as software.</span>
+    <ol>
+      <li>${op.named.toLocaleString()} of ${op.software.toLocaleString()} name a figure — the employer's own range, never this site's estimate</li>
+      <li>not ranked; the full list is on <a href="#" style="pointer-events:none">Every opening</a></li>
+    </ol>`);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  populateCountryPicker();
+  renderRows();
+  renderCoverage();
+  renderOpeningsDetail();
+  renderWithheld();
+  updateProflineSummary();
+
+  $('#profline-toggle').addEventListener('click', () => {
+    toggleProfline($('#profline').dataset.open !== 'true');
+  });
+  $('#f-years').addEventListener('input', () => { renderRows(); updateProflineSummary(); });
+  $('#f-country').addEventListener('change', () => { renderRows(); updateProflineSummary(); });
+  $('#cv-input').addEventListener('change', (e) => {
+    if (e.target.files[0]) { $('#art50-note').hidden = false; }
+  });
+  $('#rows').addEventListener('click', (e) => {
+    const estBtn = e.target.closest('[data-card-cc]');
+    if (estBtn) { e.stopPropagation(); showCard(estBtn, estBtn.dataset.cardCc); return; }
+    const opnBtn = e.target.closest('[data-opencard-cc]');
+    if (opnBtn) { e.stopPropagation(); showOpeningsCard(opnBtn, opnBtn.dataset.opencardCc); }
+  });
+
+  $$('.mockctl [data-mode-btn]').forEach((b) => b.addEventListener('click', () => {
+    document.documentElement.setAttribute('data-mode', b.dataset.modeBtn === 'dark' ? 'dark' : 'light');
+    $$('.mockctl [data-mode-btn]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+});
+</script>
