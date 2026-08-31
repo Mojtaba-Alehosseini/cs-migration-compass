@@ -37,7 +37,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAsync } from '../components/explore/useAsync'
-import { Gap, ChartSkeleton } from '../components/explore/Controls'
+import { Gap } from '../components/explore/Controls'
 import { Flag } from '../components/Flag'
 import { loadWages, type WageCountry } from '../data/explore'
 import { loadOccupations, useData } from '../data/store'
@@ -47,7 +47,7 @@ import { loadOpenings, fmtCompany, type Openings as OpeningsData } from '../data
 import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency,
   type CrossRate } from '../components/PostingPay'
 import { PayVsCost, CoverageMap } from './Position'
-import { CountryStripRow } from '../components/work/CountryStripRow'
+import { CountryStripRow, RowListSkeleton } from '../components/work/CountryStripRow'
 import { ProfileLine } from '../components/work/ProfileLine'
 
 /* ---------------------------------------------------------------- openings --- */
@@ -627,7 +627,7 @@ export function Work() {
         * skeleton. Each row's own openings count degrades independently. */}
       <div className="panel" style={{ marginTop: 12, padding: '8px 14px' }}>
         {!wages || !gradient ? (
-          <ChartSkeleton height={320} />
+          <RowListSkeleton count={spine.length} />
         ) : !supported ? (
           <Gap title="No wage data resolved for this occupation yet" span="s6">
             <p>

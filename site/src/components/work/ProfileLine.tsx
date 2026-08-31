@@ -26,9 +26,16 @@ export function ProfileLine({ profile, occupations, countryName, onProfileChange
 }) {
   const [open, setOpen] = useState(false)
 
-  const occTitle = occupations?.shared_keys[profile.occupation]?.title ?? profile.occupation
-  const summary = `${occTitle} · ${profile.yearsProfessional} yrs`
-    + (profile.country ? ` · ${countryName(profile.country)}` : '')
+  // Only the RESOLVED title, never the key it resolves from: until
+  // occupations.json lands, `shared_keys[...]` misses and the old fallback
+  // (`?? profile.occupation`) printed the internal identifier itself —
+  // "isco08:2512 · 8 yrs" on screen, caught in the loading state rather
+  // than by review. The years and country come from the profile and are
+  // known immediately, so the honest collapsed line is those alone until
+  // the title is real.
+  const occTitle = occupations?.shared_keys[profile.occupation]?.title
+  const summary = [occTitle, `${profile.yearsProfessional} yrs`,
+    profile.country ? countryName(profile.country) : null].filter(Boolean).join(' · ')
 
   return (
     <div className="panel profline" data-open={open} style={{ padding: 0, overflow: 'clip' }}>

@@ -562,6 +562,57 @@ try {
     'R22: both Canadian NOC codes get their own row, keyed by the real code')
   const rowsText = await page.eval(`document.querySelector('.panel')?.textContent ?? ''`)
   check(!/-first/.test(rowsText), 'R22: no internal "-first" render sentinel reaches visible text')
+  // The same class of leak, one page element over. The collapsed profile
+  // line resolves an occupation KEY ("isco08:2512") to a human title
+  // through occupations.json — and its first version fell back to printing
+  // the key itself whenever that file had not landed yet, which is every
+  // first paint. Found in the loading state, not by reading the component.
+  //
+  // Scoped to that line, deliberately: CoverageMap names the same code in
+  // its own prose ("Software developers (isco08:2512) specifically"), and
+  // that is a real citation on a site that names NOC and SOC codes
+  // everywhere — a blanket ban on the string would fail on correct text.
+  // What must never happen is the key standing in FOR a missing label.
+  //
+  // occupations.json is BLOCKED for this check rather than merely read
+  // early: by the time a loaded page settles, the title has resolved and
+  // the buggy fallback is unreachable, so the same assertion against a
+  // settled page would pass no matter what the component does. Blocking
+  // the file pins the page in the state the fallback actually governs.
+  // Page.reload, not goto(): this URL is already loaded and goto() waits on
+  // a load event that a same-document hash navigation never fires (cdp.mjs
+  // says so in its own hashGo docstring) — it hangs the suite rather than
+  // failing it. A reload is also what this check needs anyway: the fetch
+  // has to run again, with the block in place.
+  //
+  // A reload also drops the console.error hook installed at setup AND
+  // everything it has collected, which the suite's own last check reads —
+  // so both are carried across by hand below. Without that, this check
+  // would quietly narrow that one to "errors since /work" and look like it
+  // still passed.
+  const errsBefore = await page.eval('window.__errs.slice()')
+  await page.send('Network.enable')
+  await page.send('Network.setBlockedURLs', { urls: ['*occupations.json*'] })
+  await page.send('Page.reload', { ignoreCache: true })
+  await sleep(2500)
+  const proflineText = await page.eval(
+    `document.querySelector('.profline-head')?.textContent ?? ''`)
+  check(proflineText.length > 0 && !/isco08:/.test(proflineText),
+    `R22: with occupations.json unavailable the profile line still shows no raw key — a title it `
+    + `cannot resolve is omitted, not printed as "isco08:..." (got `
+    + `"${proflineText.replace(/\s+/g, ' ').trim().slice(0, 40)}")`)
+  await page.send('Network.setBlockedURLs', { urls: [] })
+  await page.send('Page.reload', { ignoreCache: true })
+  await sleep(2500)
+  // Re-armed only now, seeded with what it had already collected: the two
+  // loads above are deliberately broken (a blocked fetch can legitimately
+  // console.error), and counting those would fail the stray-error check on
+  // this check's own doing rather than on a real defect.
+  await page.eval(`(() => {
+    window.__errs = ${JSON.stringify(errsBefore)}
+    const orig = console.error
+    console.error = (...a) => { window.__errs.push(a.map(String).join(' ')); orig.apply(console, a) }
+  })()`)
   check(keys.indexOf('CA-21231') < keys.indexOf('CA-21232'),
     'R22: and Canada\'s own two rows keep a stable order (CA-21231 before CA-21232)')
 

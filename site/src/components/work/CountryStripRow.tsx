@@ -66,6 +66,44 @@ const BASIS_LABEL: Record<string, string> = {
   NO: 'incl. bonus', FI: 'excl. bonus', DE: 'excl. bonus', DK: 'incl. pension',
 }
 
+/** The row list reserves the height it will occupy, standing in with the
+ *  SAME row structure rather than a fixed pixel box.
+ *
+ *  `ChartSkeleton height={320}` was what this panel used first — inherited
+ *  from the page it replaced, and wrong twice over. It under-reserved by
+ *  210px at 1440 wide (the loaded list measures 530px), and `.wrow`
+ *  collapses from one line into a three-area stack under 600px, so no
+ *  single number can be right at both layouts — least of all under the
+ *  mobile emulation Lighthouse actually scores. Measured: 0.178 CLS, the
+ *  whole of a 14-point performance regression, with the `<details>`
+ *  sections below named as the shifted element. Standing in with real rows
+ *  makes the reservation follow the same CSS the real rows do, at any
+ *  width, with no number to keep in sync.
+ *
+ *  `spine.length` rows, not the loaded list's own count: how many rows a
+ *  country contributes is a fact only `wages` carries (Canada publishes two
+ *  NOC codes, so the loaded list runs one row longer than the spine).
+ *  One row is the honest residual — reserving more would be guessing, and
+ *  rendering real country rows against data that has not arrived would be
+ *  claiming a distribution this site does not yet have. */
+export function RowListSkeleton({ count }: { count: number }) {
+  return (
+    <div aria-busy="true">
+      <span className="visually-hidden">Loading each country&rsquo;s published pay distribution…</span>
+      {Array.from({ length: count }, (_, i) => (
+        // aria-hidden: these carry no country and no figure — the one line
+        // above is the whole accessible content of a loading list.
+        <div className="wrow" key={i} aria-hidden="true" style={{ opacity: 0.4 }}>
+          <div className="wrow-id"><b>&nbsp;</b></div>
+          <div className="wrow-strip"><div className="wrow-track-wrap" /></div>
+          <div className="wrow-est">&nbsp;</div>
+          <div className="wrow-opn">&nbsp;</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, openings,
   openingsSharedWithCode, absentReason, highlighted, index }: {
   row: WageCountry | undefined
