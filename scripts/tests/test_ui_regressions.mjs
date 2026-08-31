@@ -372,10 +372,38 @@ try {
 
   await page.hashGo(`${BASE}#/position?years=8`, { waitMs: 2800 })
   const nl = await rowText('NL')
-  const nlTriggers = await rowTriggers('NL')
   const seTriggers = await rowTriggers('SE')
   say(`  NL: ${nl}`)
-  check(nlTriggers === 0, `R8: the Netherlands renders NO method-card trigger (got ${nlTriggers})`)
+
+  /* This used to assert NL renders ZERO method-card triggers, as a proxy for
+   * "no figure is presented for a country the crosswalk refuses". Package 24
+   * made the proxy wrong without making the property wrong: NL's refusal
+   * REASON is now itself behind a <Figure>, because the reason is a ~640px
+   * sentence in a 196px cell and hover-only truncation left it unreadable on
+   * touch (adversarial review, finding 3). A trigger disclosing a refusal is
+   * not a figure.
+   *
+   * So the property is asserted directly, and more strictly than the count
+   * was: no <Derived> anywhere in the row (that component is the only thing
+   * that renders a CALCULATED figure), and no digits in the estimate cell at
+   * all. Both would have caught the original bug this test was written for,
+   * and unlike "zero buttons" neither passes when the cell is empty. */
+  const nlEst = await page.eval(`(() => {
+    const row = document.querySelector('[data-key="NL"]')
+    if (!row) return null
+    const cell = row.querySelector('.wrow-est')
+    return JSON.stringify({
+      text: cell?.innerText ?? '',
+      derivedTriggers: [...row.querySelectorAll('button')]
+        .filter((b) => /show how this number was calculated/i.test(b.textContent || '')).length,
+    })
+  })()`)
+  const nlEstParsed = nlEst ? JSON.parse(nlEst) : null
+  check(nlEstParsed?.derivedTriggers === 0,
+    `R8: the Netherlands renders NO <Derived> — nothing calculated is presented for a country the `
+    + `crosswalk refuses (got ${nlEstParsed?.derivedTriggers})`)
+  check(!!nlEstParsed && !/\d/.test(nlEstParsed.text),
+    `R8: and its estimate cell carries no figure at all (got "${nlEstParsed?.text?.replace(/\s+/g, ' ').trim()}")`)
   check(!!nl?.includes('NL has no ISCO-08 correspondence at all for this occupation'),
     'R8: it renders the crosswalk\'s own refusal reason instead')
   check(nl != null && !/P\d/.test(nl), 'R8: and no position percentile at all')
@@ -560,7 +588,14 @@ try {
     + `(${keys.length - new Set(keys).size} duplicate(s))`)
   check(keys.includes('CA-21231') && keys.includes('CA-21232'),
     'R22: both Canadian NOC codes get their own row, keyed by the real code')
-  const rowsText = await page.eval(`document.querySelector('.panel')?.textContent ?? ''`)
+  // The panel holding the ROWS, not `.panel` index 0 — that is ProfileLine's
+  // own wrapper, which contains no row at all, so this assertion read an
+  // element that could never carry the sentinel and passed unconditionally.
+  // Proved by injection during the adversarial review: appending "-first" to
+  // a real row's code left it still passing (finding 4).
+  const rowsText = await page.eval(
+    `([...document.querySelectorAll('.panel')].find((p) => p.querySelector('.wrow[data-key]'))?.textContent ?? '')`)
+  check(rowsText.length > 0, 'R22: the row-list panel is the one being read for sentinels, and it is not empty')
   check(!/-first/.test(rowsText), 'R22: no internal "-first" render sentinel reaches visible text')
   // The same class of leak, one page element over. The collapsed profile
   // line resolves an occupation KEY ("isco08:2512") to a human title

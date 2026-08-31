@@ -625,7 +625,17 @@ export function Work() {
         * openings summary meant one failed fetch of a 150 KB convenience
         * file replaced fifteen countries' positions with a permanent
         * skeleton. Each row's own openings count degrades independently. */}
+      {/* The heading is visually hidden, not absent. Dropping the old
+        * page's own <h2>/<h3>-per-country structure left this route with an
+        * <h1> and then one unstructured run of text for its entire answer —
+        * every other heading on the page sits inside a closed <details> or
+        * the inert profile body, so a screen-reader user navigating by
+        * heading had nothing to land on. The rows are a list and now say
+        * so. Adversarial review, finding 12. */}
       <div className="panel" style={{ marginTop: 12, padding: '8px 14px' }}>
+        <h2 id="rows-heading" className="visually-hidden">
+          Position and openings, country by country
+        </h2>
         {!wages || !gradient ? (
           <RowListSkeleton count={spine.length} />
         ) : !supported ? (
@@ -639,7 +649,14 @@ export function Work() {
             </p>
           </Gap>
         ) : (
-          sections.map(({ key, cc, row, firstOfCountry }, i) => (
+          // role="list" wraps ONLY the rows. It sat on the panel first, which
+          // also holds the heading above — and an ARIA list may contain
+          // nothing but listitems, so the <h2> invalidated it (Lighthouse
+          // aria-required-children, accessibility 100 -> 95). The skeleton
+          // and the unsupported-occupation Gap are not listitems either,
+          // which is why the role lives on this branch alone.
+          <div role="list" aria-labelledby="rows-heading">
+          {sections.map(({ key, cc, row, firstOfCountry }, i) => (
             <CountryStripRow
               key={key}
               row={row}
@@ -656,11 +673,13 @@ export function Work() {
               // this row has no room for a permanent note, so the same fact
               // goes into the tap card instead — nothing lost, relocated.
               openingsSharedWithCode={!firstOfCountry && row ? sections.find((s) => s.cc === cc && s.firstOfCountry)?.row?.national_code : undefined}
+              openingsUnavailable={!postings}
               absentReason={absentReason.get(cc)}
               highlighted={profile.country != null && cc === profile.country}
               index={i}
             />
-          ))
+          ))}
+          </div>
         )}
       </div>
 
@@ -739,8 +758,20 @@ export function Work() {
                   </th>
                   <td><Pips on={row ? 1 : 0} of={1}
                     label={row ? 'Occupation code resolves' : 'No occupation code resolves'} /></td>
-                  <td><Pips on={d?.pips ?? 0} of={3}
-                    label={d?.label ?? 'no distribution published'} /></td>
+                  {/* The label is printed, not only fed to Pips' own
+                    * screen-reader span. `.sr-only` was undefined in the CSS
+                    * before this package, so these labels had always been
+                    * rendering VISIBLY by accident; defining it (a real fix,
+                    * five table captions depended on it) hid them, and with
+                    * them the only visible statement anywhere on /work of
+                    * "full distribution" versus "quartiles only" — the row's
+                    * own track has two states for four published levels.
+                    * Restored deliberately this time. Adversarial review,
+                    * finding 7. */}
+                  <td>
+                    <Pips on={d?.pips ?? 0} of={3} label={d?.label ?? 'no distribution published'} />
+                    <span className="sub" style={{ marginLeft: 6 }}>{d?.label ?? 'none published'}</span>
+                  </td>
                   <td><Pips on={cc === 'SE' || cc === 'NO' ? 1 : 0} of={1} faint
                     label={cc === 'SE' || cc === 'NO'
                       ? 'Publishes an experience or age cross'

@@ -193,7 +193,20 @@ a { color: var(--ink-2); }
    35% mix to clear 3:1 for every one of them (3.53-4.47:1) while the
    country hue still reads clearly against the darker IQR band above it. */
 .wrow-track.solid { background: color-mix(in srgb, var(--rowc) 35%, var(--ink-3)); }
-.wrow-track.iqr { background: var(--rowc); top: -1px; bottom: -1px; right: auto; }
+/* The quartile boundaries are two ticks, not a shaded band.
+   The band was a fill in the country's own hue sitting on a track mixed
+   from the SAME hue — measured at 1.01-1.34:1 against it once the track
+   was darkened to clear its own 3:1 floor, i.e. invisible, and no tint of
+   that hue reaches 3:1 against it (best candidate 2.50:1). Two ticks in
+   the page's own paper colour do: a light mark on a dark track, contrast
+   carried by luminance rather than by hue, and unambiguous where the band
+   was not — for a quartile-only country the ticks land on the track's own
+   ends, which is exactly what "the published range IS p25-p75" looks like.
+   Adversarial review, finding 11. */
+.wrow-quartile {
+  position: absolute; top: -2px; bottom: -2px; width: 2px;
+  background: var(--paper); border-radius: 1px;
+}
 .wrow-track.dashed {
   border-top: 3px dashed color-mix(in srgb, var(--rowc) 70%, var(--ink-3));
   top: 1.5px; bottom: auto; background: none;

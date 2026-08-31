@@ -5,7 +5,8 @@
  * mark budget and the reasoning behind it):
  *
  *   1. Track pattern (solid / dashed / none) — how much of a distribution
- *      the office publishes. Independent of...
+ *      the office publishes, with two light ticks marking p25/p75 where
+ *      the office publishes them. Independent of...
  *   2. Marker fill (filled / hollow) — personalised to the profile, or
  *      sitting at the published median because this country cannot
  *      personalise.
@@ -105,7 +106,7 @@ export function RowListSkeleton({ count }: { count: number }) {
 }
 
 export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, openings,
-  openingsSharedWithCode, absentReason, highlighted, index }: {
+  openingsSharedWithCode, openingsUnavailable, absentReason, highlighted, index }: {
   row: WageCountry | undefined
   cc: string
   name: string
@@ -121,6 +122,9 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
    *  double-counted — the old page's own on-screen note, relocated rather
    *  than dropped now that the row has no room for permanent prose. */
   openingsSharedWithCode?: string
+  /** True when the openings summary itself failed to load, so an absent
+   *  count means "unknown", not "none". */
+  openingsUnavailable?: boolean
   highlighted: boolean
   /** The source's own stated reason this country has no wage row at all
    *  (wages.absent) — Italy: "ISTAT publishes no occupation-level (CP2011)
@@ -134,20 +138,53 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
   index: number
 }) {
   const drawn = useDrawnIn()
+  const entrance: React.CSSProperties = {
+    opacity: drawn ? 1 : 0,
+    transition: `opacity var(--dur-draw) var(--ease-out) calc(var(--dur-draw-stagger) * ${index})`,
+  }
+  // The openings cell is identical in both branches and must be: Italy is
+  // the ONLY country that reaches the no-row branch, and it is also the
+  // country with the best openings coverage of the fifteen — 28 software
+  // advertisements, 13 naming a figure. This cell used to be a hardcoded
+  // em dash here, which read as "nothing open" for the one country whose
+  // openings are the whole argument for merging the two halves of this
+  // page (see Work.tsx's own module header). Adversarial review, finding 1.
+  const openingsCell = (
+    <OpeningsCell name={name} openings={openings} unavailable={openingsUnavailable}
+      sharedWithCode={openingsSharedWithCode} />
+  )
+
   if (!row) {
-    const reason = absentReason ?? `The site holds no published wage distribution for ${name} at this occupation depth`
+    // The sourced reason carries an internal "no-series — " prefix and the
+    // pipeline filename that produced it; neither belongs in a sentence
+    // read aloud to someone. The two framing sentences the old page put
+    // around it do — they are what stop a reader concluding the wrong
+    // thing, and they were dropped rather than relocated in the first pass
+    // (adversarial review, finding 6).
+    const sourced = (absentReason ?? `the site holds no published wage distribution for ${name} at this occupation depth`)
+      .replace(/^no-series\s*[—-]\s*/i, '')
+      .replace(/,?\s*per\s+\S+\.py\s*$/i, '')
+    const reason = `${name}: ${sourced}, so there is no table to rank inside. That is a gap in what the `
+      + `national office publishes at a comparable code, not a gap in ${name}'s labour market. Nothing `
+      + 'here is estimated from a neighbouring country.'
     return (
-      <div className="wrow" data-cc={cc} data-key={cc} style={{ ['--rowc' as string]: 'var(--ink-3)' }}>
+      <div className="wrow" role="listitem" data-cc={cc} data-key={cc} style={{ ['--rowc' as string]: 'var(--ink-3)' }}>
         <div className="wrow-id">
           <span className="wrow-flag"><Flag cc={cc} size={14} /></span>
           <b>{cc}</b><span className="wrow-name">{name}</span>
         </div>
-        <div className="wrow-strip" title={reason}>
+        <div className="wrow-strip">
           <span className="visually-hidden">{reason}</span>
-          <span className="nodata" aria-hidden="true" style={{ fontSize: 'var(--text-xs)' }}>— no series published</span>
+          <span className="nodata" aria-hidden="true" style={{ ...entrance, fontSize: 'var(--text-xs)' }}>
+            — no series published
+          </span>
         </div>
-        <div className="wrow-est"><span className="nodata">no table</span></div>
-        <div className="wrow-opn">—</div>
+        <div className="wrow-est">
+          <Figure source={{ name: `${name} — no wage table`, confidence: 'official', what: reason }}>
+            <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>no table</span>
+          </Figure>
+        </div>
+        {openingsCell}
       </div>
     )
   }
@@ -158,7 +195,18 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
   const hasTrack = points.length >= 2
   const filled = position.ok && position.personalised
 
-  let markerLeft = 50, iqrLo: number | null = null, iqrHi: number | null = null
+  // `markerLeft` is NULL until a real position computes one — it was
+  // initialised to 50 before, and that initialiser survived for every row
+  // where computeEstimate refuses: the Netherlands (publishes quartiles,
+  // but its occupation crosswalk is not comparable) drew a full solid
+  // track with a marker parked at 50% of the strip, which is not its
+  // median and not any published quantity, while the sr text asserted
+  // "marker sits at the published median". A fabricated mark and a
+  // fabricated sentence, on the one country this site refuses to rank.
+  // Same for the five central-tendency-only countries. No position, no
+  // marker — the absence IS the mark. Adversarial review, finding 2.
+  let markerLeft: number | null = null
+  let iqrLo: number | null = null, iqrHi: number | null = null
   if (hasTrack && estimate.ok) {
     const sorted = [...points].sort((a, b) => a.value - b.value)
     const lo = sorted[0]!.value, hi = sorted[sorted.length - 1]!.value
@@ -173,11 +221,24 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
   const solidTrack = row.native.distribution === 'full' || row.native.distribution === 'quartile-only'
   const distText = row.native.distribution === 'full' ? 'publishes the full distribution (p10-p90)'
     : row.native.distribution === 'quartile-only' ? 'publishes quartiles only (p25-p75), no tails'
-    : `publishes only a ${row.native.distribution.replace(/-/g, ' ')}`
+    // The key's own trailing "-only" is dropped before the words are read
+    // aloud: `mean-only` through the generic branch produced "publishes
+    // only a mean only".
+    : `publishes only a ${row.native.distribution.replace(/-only$/, '').replace(/-/g, ' ')}`
   const srLabel = !hasTrack
     ? `${name}: ${distText}, no distribution to rank inside`
-    : `${name}: ${distText}. ${filled ? `Personalised — ranks at the ${ordinal(position.ok ? position.pct : 50)} percentile`
-      : 'Not personalised — marker sits at the published median'}`
+    : markerLeft == null
+      // A published distribution the site still cannot rank inside. The
+      // track is a real fact about what the office publishes; the missing
+      // marker is a real fact about this occupation's crosswalk. Both are
+      // said, neither is invented.
+      ? `${name}: ${distText}, but no position is marked — `
+        + `${!position.ok ? position.reason : 'this occupation does not resolve here'}`
+      : filled
+        // ordinal() already returns "P39"; "the P39 percentile" was reading
+        // aloud as a doubled label.
+        ? `${name}: ${distText}. Personalised — ranks at ${ordinal(position.ok ? position.pct : 50)}`
+        : `${name}: ${distText}. Not personalised — marker sits at the published median`
 
   const basisLabel = BASIS_LABEL[cc]
 
@@ -204,8 +265,18 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
   }
 
   return (
-    <div className="wrow" data-cc={cc} data-key={row.country}
-      style={{ ['--rowc' as string]: `var(--c-${cc})`, background: highlighted ? 'var(--surface-sunk)' : undefined }}>
+    // The highlight is an inset rule, not a background wash. --surface-sunk
+    // behind this row pushed its own 12px --ink-3 text (country name, basis
+    // chip, percentile) from 5.04:1 down to 4.27:1 — below AA for normal
+    // text, and only on the row the reader had singled out as their own.
+    // An inset shadow marks the row without touching any contrast pair, and
+    // costs no layout (a real border would shift the grid).
+    // Adversarial review, finding 8.
+    <div className="wrow" role="listitem" data-cc={cc} data-key={row.country}
+      style={{
+        ['--rowc' as string]: `var(--c-${cc})`,
+        boxShadow: highlighted ? 'inset 3px 0 0 var(--accent)' : undefined,
+      }}>
       <div className="wrow-id">
         <span className="wrow-flag"><Flag cc={cc} size={14} /></span>
         <b>{cc}{secondCode ? ` · ${secondCode}` : ''}</b><span className="wrow-name">{name}</span>
@@ -217,15 +288,19 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
             <>
               <span className={`wrow-track ${solidTrack ? 'solid' : 'dashed'}`} style={trackEntranceStyle} />
               {iqrLo != null && iqrHi != null && (
-                <span className="wrow-track iqr"
-                  style={{ ...trackEntranceStyle, left: `${iqrLo}%`, width: `${iqrHi - iqrLo}%` }} />
+                <>
+                  <span className="wrow-quartile" style={{ ...trackEntranceStyle, left: `${iqrLo}%` }} />
+                  <span className="wrow-quartile" style={{ ...trackEntranceStyle, left: `${iqrHi}%` }} />
+                </>
               )}
             </>
           ) : (
             <span className="wrow-track dashed" style={{ ...trackEntranceStyle, left: '32%', right: '32%' }} />
           )}
-          <span className={`wrow-marker ${filled ? '' : 'hollow'}`}
-            style={{ ...markerEntranceStyle, left: `${markerLeft}%` }} />
+          {markerLeft != null && (
+            <span className={`wrow-marker ${filled ? '' : 'hollow'}`}
+              style={{ ...markerEntranceStyle, left: `${markerLeft}%` }} />
+          )}
         </div>
         {/* The position's own tappable trigger — CountryRow always had one
           * (a <Figure>, separate from the estimate's own <Derived>), and an
@@ -235,7 +310,7 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
           * content from estimate's own chain (the currency shift), and
           * losing it was a real regression, not a simplification. Restored
           * here rather than left dropped. */}
-        {hasTrack && position.ok && (
+        {markerLeft != null && position.ok && (
           // The positioning (absolute, left:%, the entrance transition) has
           // to live on THIS wrapper, not on <Figure>'s own root — Figure
           // sets its own inline `position: relative`, which would win over
@@ -248,10 +323,17 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
                 name: position.sourceLabel, asOf: String(position.year), confidence: 'official',
                 what: `Personalised to ${profile.yearsProfessional} years of professional experience — `
                   + 'ranked against this country\'s own percentile table, not stated directly.',
+                // The old CountryRow printed "n = 1,687,890 · 2023" under
+                // every position. The year survived this redesign as
+                // <Figure>'s asOf; the sample size did not, and <Figure>
+                // has a field for exactly it. Dropped outright rather than
+                // relocated — adversarial review, finding 5.
+                sample: position.n != null ? `n = ${position.n.toLocaleString()} in the published table` : undefined,
                 steps: position.chain.map((s) => s.detail),
               } : {
                 name: position.sourceLabel, asOf: String(position.year), confidence: 'official',
                 what: position.reason,
+                sample: position.n != null ? `n = ${position.n.toLocaleString()} in the published table` : undefined,
               }}
             >
               <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-2xs)', color: 'var(--ink-3)',
@@ -271,25 +353,65 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
             {basisLabel && <span className="wrow-basis">{basisLabel}</span>}
           </>
         ) : (
-          <span className="nodata" title={estimate.reason} style={{ fontSize: 'var(--text-2xs)' }}>{estimate.reason}</span>
+          // A short label that FITS, with the sourced sentence one tap
+          // away. This cell is 196px wide with nowrap+ellipsis, and these
+          // refusal reasons run ~640px — 31% of the sentence was visible
+          // on desktop, 24% on a phone ("AU publishes only a distribution
+          // too n…"), and the only way to read the rest was a title=
+          // tooltip, which does not exist on touch. Gate 6's own bar is a
+          // mark or a tap; a quarter-sentence behind hover was neither.
+          // Adversarial review, finding 3.
+          <Figure source={{
+            name: `${name} — no estimate`, confidence: 'official', what: estimate.reason,
+          }}>
+            <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>
+              {hasTrack ? 'not comparable' : 'no spread published'}
+            </span>
+          </Figure>
         )}
       </div>
+      {openingsCell}
+    </div>
+  )
+}
+
+/** Shared by both branches of the row above, so a country with no wage
+ *  table still shows the advertisements it does have. */
+function OpeningsCell({ name, openings, unavailable, sharedWithCode }: {
+  name: string
+  openings: { software: number; named: number } | undefined
+  unavailable?: boolean
+  sharedWithCode?: string
+}) {
+  if (!openings) {
+    // "The openings file did not load" and "there are no openings here"
+    // are different facts, and a bare em dash said neither — Work.tsx's
+    // own comment calls stating one when the other happened "a lie the
+    // reader cannot check". Adversarial review, finding 9.
+    const why = unavailable
+      ? `The openings summary did not load, so ${name}'s count is unknown — not zero.`
+      : `No software advertisements resolved to ${name} in this harvest.`
+    return (
       <div className="wrow-opn">
-        {openings ? (
-          <Figure source={{
-            name: `${name} software openings`,
-            what: `${openings.software.toLocaleString()} of the harvest's own advertisements here classify as software.`
-              + (openingsSharedWithCode
-                ? ` Shared with ${openingsSharedWithCode}, above — the same advertisements, classified by title, `
-                  + 'never by national occupation code, so both codes show the same count rather than double-counting it.'
-                : ''),
-            sample: `${openings.named.toLocaleString()} of ${openings.software.toLocaleString()} name a figure — the `
-              + 'employer\'s own range, never this site\'s estimate. Not ranked; the full list is under Every opening.',
-          }}>
-            {openings.software.toLocaleString()}
-          </Figure>
-        ) : <span className="nodata">—</span>}
+        <span className="visually-hidden">{why}</span>
+        <span className="nodata" aria-hidden="true" title={why}>—</span>
       </div>
+    )
+  }
+  return (
+    <div className="wrow-opn">
+      <Figure source={{
+        name: `${name} software openings`,
+        what: `${openings.software.toLocaleString()} of the harvest's own advertisements here classify as software.`
+          + (sharedWithCode
+            ? ` Shared with ${sharedWithCode}, above — the same advertisements, classified by title, `
+              + 'never by national occupation code, so both codes show the same count rather than double-counting it.'
+            : ''),
+        sample: `${openings.named.toLocaleString()} of ${openings.software.toLocaleString()} name a figure — the `
+          + 'employer\'s own range, never this site\'s estimate. Not ranked; the full list is under Every opening.',
+      }}>
+        {openings.software.toLocaleString()}
+      </Figure>
     </div>
   )
 }
