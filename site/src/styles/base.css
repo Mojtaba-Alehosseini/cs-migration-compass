@@ -190,8 +190,13 @@ a { color: var(--ink-2); }
    ratio (verified against every solid-track country's own colour, worst
    case NL at 2.99:1 even at a 65% mix) -- caught by an accessibility
    audit, not visible in ordinary use. --ink-3 is dark enough at a modest
-   35% mix to clear 3:1 for every one of them (3.53-4.47:1) while the
-   country hue still reads clearly against the darker IQR band above it. */
+   35% mix to clear 3:1 for every one of them -- 3.53:1 (NL) to 5.06:1 (GB)
+   in light mode, 6.07-7.41:1 in dark. The cost is a muted hue: the country
+   colour survives at full strength in the marker and the flag, but this
+   track is no longer the vivid band the mockup drew. A light fill with a
+   darker border of the same hue was measured as the alternative that would
+   keep both, and its worst border reached only 2.78:1 against this
+   background -- under the same floor. Contrast kept, hue conceded. */
 .wrow-track.solid { background: color-mix(in srgb, var(--rowc) 35%, var(--ink-3)); }
 /* The quartile boundaries are two ticks, not a shaded band.
    The band was a fill in the country's own hue sitting on a track mixed
