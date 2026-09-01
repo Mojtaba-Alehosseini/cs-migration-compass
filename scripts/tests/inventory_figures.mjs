@@ -17,11 +17,19 @@
  * Needs a preview server on :4173 (npm run build && npm run preview).
  */
 import { writeFileSync, mkdirSync, readFileSync } from 'node:fs'
-import { pathToFileURL } from 'node:url'
+import { pathToFileURL, fileURLToPath } from 'node:url'
+
+/* Paths are resolved from THIS FILE, not the working directory. CI runs
+ * the suite with working-directory: site, so a bare
+ * 'site/public/data/core.json' resolved to site/site/... and the whole
+ * suite died with ENOENT after every other check had passed — a failure
+ * only CI could produce, because every local run happens from the repo
+ * root. */
+export const REPO = fileURLToPath(new URL('../../', import.meta.url))
 import { launch, openPage } from './cdp.mjs'
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4173/'
-const OUT = process.env.INVENTORY_OUT ?? '.status/evidence/p25-inventory.json'
+const OUT = process.env.INVENTORY_OUT ?? null   // resolved against REPO below
 
 /* The in-page extractor. Everything this returns is read off the rendered
  * DOM; nothing is inferred from source. Kept as one string so it runs in a
@@ -245,7 +253,7 @@ export async function capture(page, id, url, { maxMs = 6000 } = {}) {
 }
 
 export function defaultTargets(base = BASE) {
-  const core = JSON.parse(readFileSync('site/public/data/core.json', 'utf8'))
+  const core = JSON.parse(readFileSync(REPO + 'site/public/data/core.json', 'utf8'))
   const coreData = core.data ?? core
   const cities = (coreData.cities ?? []).map((c) => c.id)
   const countries = (coreData.countries ?? []).map((c) => c.iso2 ?? c.code ?? c.id).filter(Boolean)
@@ -327,10 +335,11 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       marks: pages.reduce((a, p) => a + (p.marks?.length ?? 0), 0),
       pagesWithError: pages.filter((p) => p.error).length,
     }
-    mkdirSync('.status/evidence', { recursive: true })
-    writeFileSync(OUT, JSON.stringify({ generated_at: started, base: BASE, totals, pages }, null, 1), 'utf8')
+    mkdirSync(REPO + '.status/evidence', { recursive: true })
+    const out = OUT ?? (REPO + '.status/evidence/p25-inventory.json')
+    writeFileSync(out, JSON.stringify({ generated_at: started, base: BASE, totals, pages }, null, 1), 'utf8')
     console.log(JSON.stringify(totals, null, 1))
-    console.log('wrote', OUT)
+    console.log('wrote', out)
     page.close()
   } finally { close() }
 }

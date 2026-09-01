@@ -17,7 +17,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { launch, openPage } from './cdp.mjs'
-import { capture, defaultTargets } from './inventory_figures.mjs'
+import { capture, defaultTargets, REPO } from './inventory_figures.mjs'
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4173/'
 
@@ -191,7 +191,7 @@ try {
    * 11418", QA's 8 in the profile line's "8 yrs". Blank seven of the fifteen
    * openings cells entirely and it still printed PASS. Anchored per row, it
    * asks the question it names. */
-  const openings = dataOf(readJson('site/public/data/history/openings.json')).by_country ?? {}
+  const openings = dataOf(readJson(REPO + 'site/public/data/history/openings.json')).by_country ?? {}
   // Read from the RECORD, not from a live query: the theme sweep above
   // navigates the page away, and a live read here silently returned the
   // wrong route's DOM (15 of 15 "absent").
