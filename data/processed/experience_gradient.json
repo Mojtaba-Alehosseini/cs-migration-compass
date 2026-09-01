@@ -1,6 +1,6 @@
 {
  "source_id": "experience_gradient",
- "generated_at": "2026-08-13T02:48:54+00:00",
+ "generated_at": "2026-09-01T00:38:32+00:00",
  "meta": {
   "purpose": "Per-country relative pay-by-experience curves — SE and NO only, the two countries whose own occupation-level cross shares the same office, classification and depth as their own wage distribution. Package 10 shipped one universal curve anchored on Spain's tenure cross and applied it to every country; retired here (package 11) after re-examination found the identical population-borrowing problem the position's own F2/F3 fix had already been built to prevent, just moved to the estimate. Spain's own tenure cross (salary_es.json's broader_category_context) remains real, committed data, just not consumed by this file — see NEEDS-DECISION.md #20.",
   "confidence": "derived",
@@ -55,7 +55,9 @@
      "period": "month",
      "measures": "age",
      "proxy_caveat": "This is an age band standing in for years of professional experience — SCB/SSB do not publish an occupation x tenure cross the way INE does for Spain's broader category, so age is what this pipeline has. Age is a weak proxy specifically in software: 35% of Stack Overflow's 2025 survey respondents report under ten years of professional coding, so a 35-year-old is often still early-career. The band's own relative premium is shown as itself — a real number from a real table — but the AGE axis it is plotted against is an approximation of the band's own centre, and the site's own conversion from years of professional experience to an assumed age (career start ~22) is its own separate, disclosed assumption — see profile.ts's own ASSUMED_CAREER_START_AGE.",
-     "premium_basis": "mean"
+     "premium_basis": "mean",
+     "pay_basis": "regular_pay",
+     "pay_basis_source": "SCB LonYrkeAlder4AN ContentsCode 000007BN 'Monthly salary' — the same concept as this country's own dispersion table (LoneSpridSektYrk4AN 000007CD/000007CE); manadslon excludes bonus per pay_composition.json."
     }
    },
    "NO": {
@@ -88,6 +90,8 @@
      "measures": "age",
      "proxy_caveat": "This is an age band standing in for years of professional experience — SCB/SSB do not publish an occupation x tenure cross the way INE does for Spain's broader category, so age is what this pipeline has. Age is a weak proxy specifically in software: 35% of Stack Overflow's 2025 survey respondents report under ten years of professional coding, so a 35-year-old is often still early-career. The band's own relative premium is shown as itself — a real number from a real table — but the AGE axis it is plotted against is an approximation of the band's own centre, and the site's own conversion from years of professional experience to an assumed age (career start ~22) is its own separate, disclosed assumption — see profile.ts's own ASSUMED_CAREER_START_AGE.",
      "premium_basis": "median",
+     "pay_basis": "total_earnings",
+     "pay_basis_source": "SSB 11658 ContentsCodes GjMdTotal 'Average monthly earnings (NOK)' and MedianMndLonn 'Median monthly earnings (NOK)' — Manedslonn basis. SSB publishes basic (Avtalt) earnings under separate codes; neither is fetched here, and 11418 labels them 'Basic monthly salary'.",
      "vintage_note": "This cross is measured at '2026K1', a single quarter — this country's own dispersion_by_year is annual. Both are SSB's own figures, but they do not share a reference period exactly; disclosed rather than treated as if they were the same moment in time."
     }
    }

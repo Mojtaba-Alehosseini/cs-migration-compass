@@ -134,6 +134,19 @@ export interface CountryGradientMeta {
    *  against what SCB's own band figures rank to directly. See
    *  _centralFor() below, the single place this is consulted. */
   premium_basis: 'mean' | 'median'
+  /** WHICH PAY BASIS the premium was measured on — a different axis from
+   *  premium_basis above, which is the central STATISTIC. Both must match
+   *  the figure being shifted, and until package 25 neither this field nor
+   *  any equivalent existed, which is exactly why NEEDS-DECISION #58
+   *  (finding F13) could sit open: Norway's USD estimate shifted
+   *  AvtaltManedslonn (basic salary) by a premium SSB measured on
+   *  Manedslonn (total earnings), and nothing in the data said so.
+   *
+   *  Read from each office's own returned table metadata, cited in
+   *  pay_basis_source, and required by build_experience_gradient.py — a
+   *  curve added without one fails the build rather than being applied. */
+  pay_basis: 'regular_pay' | 'total_earnings'
+  pay_basis_source: string
   year?: number
   quarter?: string
   vintage_note?: string
@@ -431,11 +444,50 @@ export function computeEstimate(profile: Profile, row: WageCountry, gradient: Ex
  *  refused both, or the country has no distribution at all). */
 export function computeEstimateUsdYear(profile: Profile, row: WageCountry, gradient: ExperienceGradient): EstimateResult | null {
   if (_notComparable(row)) return null
-  const regular = row.combos['usd_regular_pay']
-  if (regular && regular.ok) {
-    const result = _shiftEstimate(row, regular.value, regular.currency, profile, gradient)
-    return result.ok ? result : null
+
+  /* NEEDS-DECISION #58 / finding F13, resolved in package 25. When a
+   * country personalises, the premium is measured on ONE pay basis and the
+   * figure it multiplies must be on the SAME one — otherwise the result is
+   * a number no office measured. Norway was exactly this: SSB's 11658 cross
+   * is Manedslonn (total earnings, bonus in — its own ContentsCodes say
+   * "monthly earnings", never "basic"), while this function preferred
+   * usd_regular_pay, which for Norway is AvtaltManedslonn, "Basic monthly
+   * salary". A ~3.5% different figure shifted by a premium built on the
+   * other one, with the age profile of bonus — the part that actually
+   * varies with the premium — unmeasured either way.
+   *
+   * The basis-matched combo is therefore preferred over the site's usual
+   * regular_pay default whenever a gradient exists. Sweden is unaffected:
+   * SCB publishes one concept (manadslon, bonus excluded) and its cross and
+   * its dispersion are both on it, so the matched combo IS usd_regular_pay.
+   * Countries with no gradient keep the old preference exactly — there is
+   * no premium to agree with, so nothing to match. */
+  const cg = _countryGradient(row, gradient)
+  const preferred: string[] = cg
+    ? (cg.meta.pay_basis === 'total_earnings'
+        ? ['usd_total_earnings', 'usd_regular_pay']
+        : ['usd_regular_pay', 'usd_total_earnings'])
+    : ['usd_regular_pay', 'usd_total_earnings']
+
+  const matchedKey = preferred[0]!
+  const matched = row.combos[matchedKey]
+  if (matched && matched.ok) {
+    const result = _shiftEstimate(row, matched.value, matched.currency, profile, gradient)
+    if (!result.ok) return null
+    // Only worth saying when the choice was driven by the premium rather
+    // than by the site's default — i.e. Norway.
+    if (cg && matchedKey === 'usd_total_earnings') {
+      return { ...result, chain: [
+        { op: 'basis_match', detail: `${row.country}'s own experience cross is measured on total_earnings `
+          + `(${cg.meta.pay_basis_source}) — so the figure shifted here is total_earnings too, not this `
+          + 'the usual regular_pay default of this site. Applying a total-earnings premium to a basic-salary figure '
+          + 'would multiply a number by a rate measured on a different one.' },
+        ...result.chain,
+      ] }
+    }
+    return result
   }
+
   const total = row.combos['usd_total_earnings']
   if (total && total.ok) {
     const result = _shiftEstimate(row, total.value, total.currency, profile, gradient)

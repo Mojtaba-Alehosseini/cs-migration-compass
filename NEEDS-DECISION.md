@@ -2703,3 +2703,55 @@ wording choice.
 **Decide:** which of the three paths above (or another) resolves the mismatch, and whether it is
 Norway-specific or needs the same check run against every other personalising country's own
 gradient-to-combo pairing before it is trusted generally.
+
+**CLOSED, package 25 — answered from the source tables, not by judgement. The mismatch is real, it is
+Norway-specific, and it is confined to the USD path.**
+
+The item asked which of three paths to take. It turned out to be answerable at the source, because
+the field that would settle it simply did not exist: `premium_basis` records mean-vs-median, the
+central STATISTIC, and neither gradient entry stated which PAY BASIS its premium was measured on.
+That absence was the defect. Both offices publish the answer in their own table metadata:
+
+| | Cross used for the premium | Office's own label for the codes fetched | Basis |
+| --- | --- | --- | --- |
+| SE | SCB `LonYrkeAlder4AN`, `000007BN` | "Monthly salary" — the same concept as its own dispersion table's `000007CD`/`000007CE` ("Monthly salary"/"Median") | **regular_pay** (SCB's månadslön excludes bonus: *"en 13:e eller 14:e månadslön samt vinstdelning ... ingår inte i lönestatistiken"*) |
+| NO | SSB `11658`, `GjMdTotal` + `MedianMndLonn` | "Average monthly earnings (NOK)" and "Median monthly earnings (NOK)" — SSB names the other concept separately, and `11418` labels it `AvtaltManedslonn` "Basic monthly salary" | **total_earnings** (Månedslønn; `pay_composition.json`: `irregular_bonus: true`, "bonus is IN by construction") |
+
+Checked against what each code path actually shifts:
+
+- **SE — matched, everywhere.** SCB publishes one concept, and both its cross and its dispersion are
+  on it. `native` is `regular_pay` (55,500 SEK/month × 12 = `native_regular_pay`), and
+  `usd_regular_pay` is the same basis. Nothing to fix. Sweden was checked as explicitly as Norway
+  precisely because "is it Norway-specific?" cannot be answered by looking only at Norway.
+- **NO — native path already correct.** `native` is `total_earnings` (81,050 NOK/month × 12 =
+  `native_total_earnings`), which is the basis its premium was measured on. `/work`'s estimate and
+  position were never affected.
+- **NO — USD path was the mismatch.** `computeEstimateUsdYear()` preferred `usd_regular_pay`, which
+  for Norway is `AvtaltManedslonn` — a basic-salary figure multiplied by a premium built on total
+  earnings. The two differ by ~3.5%, and the part that actually varies with the premium (how bonus
+  scales with age) is unmeasured on either basis.
+
+**Path taken: (a), shift the basis-matched figure — not (c), the disclosure.** `computeEstimateUsdYear()`
+now prefers the combo whose basis equals the gradient's `pay_basis` when a gradient exists, and keeps
+the old regular_pay-first preference for every country that has no premium to agree with. Option (c)
+was available and cheap — the function already has a `basis_fallback` precedent — but disclosing a
+mismatch is not fixing one when the matching figure is already published and committed. Option (b)
+(sourcing a regular-pay premium for Norway) would have required a new SSB fetch and would then have
+broken the native path, which is currently correct: it would need a premium PER basis, not a
+different one.
+
+**The published value this changes, stated rather than buried.** Norway's USD estimate at 8 years'
+experience: **$79,908/year → $81,940/year** (+2.54%). Before: `usd_regular_pay` median 87,150 ×
+0.9169. After: `usd_total_earnings` median 89,367 × 0.9169. It feeds `PayVsCost` only; no figure on
+`/work` moved. The source that settles it is the ContentsCode table above — SSB's own labels.
+
+**The class of defect is now impossible rather than fixed once.**
+`build_experience_gradient.py` refuses to write a curve whose `pay_basis` is missing or not one of
+`regular_pay`/`total_earnings`, or which cites no `pay_basis_source` (exit 1, demonstrated).
+`scripts/tests/test_package25_gradient_basis.py` pins the pairing in CI, including a numeric check
+that each personalising country's `native` block really is on the basis its premium claims — a future
+curve added without a stated basis fails the build, and a curve whose basis stops matching fails the
+suite.
+
+NO's own `vintage_note` (a single quarter, `2026K1`, against an annual dispersion series) is
+unchanged and still disclosed; this ruling does not touch it.

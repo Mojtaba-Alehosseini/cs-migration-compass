@@ -154,6 +154,21 @@ def _se_curve() -> tuple[list[dict], dict]:
         # a mean-relative % to the median assumes the two measures move
         # together across age bands, an assumption never stated or checked.
         "premium_basis": "mean",
+        # PACKAGE 25, NEEDS-DECISION #58. Which PAY BASIS this premium was
+        # measured on — a different axis from premium_basis above, which is
+        # the central STATISTIC (mean vs median). Read from SCB's own
+        # returned metadata, not inferred: LonYrkeAlder4AN's fetched
+        # ContentsCode 000007BN is labelled "Monthly salary", the same
+        # concept as LoneSpridSektYrk4AN's own 000007CD/000007CE
+        # ("Monthly salary" / "Median") that this country's dispersion is
+        # built from. One concept, one office, one table family (AM0110A) —
+        # and pay_composition.json records SCB's manadslon as bonus-EXCLUDED
+        # ("en 13:e eller 14:e manadslon samt vinstdelning ... ingar inte"),
+        # i.e. regular_pay. Premium and base therefore agree for Sweden.
+        "pay_basis": "regular_pay",
+        "pay_basis_source": "SCB LonYrkeAlder4AN ContentsCode 000007BN 'Monthly salary' — the same "
+                             "concept as this country's own dispersion table (LoneSpridSektYrk4AN "
+                             "000007CD/000007CE); manadslon excludes bonus per pay_composition.json.",
     }
     return points, meta
 
@@ -180,6 +195,27 @@ def _no_curve() -> tuple[list[dict], dict]:
         # Unlike SE, 11658's own bands and its own "999D" total are BOTH
         # median_nok_month — genuinely median-relative already, no mismatch.
         "premium_basis": "median",
+        # PACKAGE 25, NEEDS-DECISION #58. Read from SSB's own returned
+        # metadata: 11658's two fetched ContentsCodes are GjMdTotal
+        # ("Average monthly earnings (NOK)") and MedianMndLonn ("Median
+        # monthly earnings (NOK)"). SSB names the OTHER concept separately
+        # and differently — 11418 carries both Manedslonn ("Monthly
+        # earnings") and AvtaltManedslonn ("Basic monthly salary"), and
+        # 11658's own note distinguishes "average basic monthly earnings"
+        # from "average monthly earnings". Neither fetched code says
+        # "basic"/"Avtalt", so this premium is measured on Manedslonn:
+        # total earnings, bonus INCLUDED (pay_composition.json:
+        # irregular_bonus true, "bonus is IN by construction").
+        #
+        # This is the field NEEDS-DECISION #58 (finding F13) needed and
+        # nobody had recorded. It matches this country's own NATIVE figure
+        # (also Manedslonn) and does NOT match usd_regular_pay, which is
+        # AvtaltManedslonn — see profile.ts's own basis check.
+        "pay_basis": "total_earnings",
+        "pay_basis_source": "SSB 11658 ContentsCodes GjMdTotal 'Average monthly earnings (NOK)' and "
+                             "MedianMndLonn 'Median monthly earnings (NOK)' — Manedslonn basis. SSB "
+                             "publishes basic (Avtalt) earnings under separate codes; neither is "
+                             "fetched here, and 11418 labels them 'Basic monthly salary'.",
         "vintage_note": f"This cross is measured at {aq['quarter']!r}, a single quarter — this "
                          "country's own dispersion_by_year is annual. Both are SSB's own figures, but "
                          "they do not share a reference period exactly; disclosed rather than treated "
@@ -210,11 +246,38 @@ def run() -> None:
         log(f"    note: NO's own curve is NOT monotonically non-decreasing ({premiums_no}) — "
             "see module docstring")
 
+    by_country = {
+        "SE": {"curve": se_points, "meta": se_meta},
+        "NO": {"curve": no_points, "meta": no_meta},
+    }
+
+    # PACKAGE 25, NEEDS-DECISION #58 — the class of defect, made impossible
+    # at the point it would be introduced. A gradient shifts a pay figure by
+    # a relative premium; if the premium was measured on a different pay
+    # basis than the figure it is applied to, the result is a number nobody
+    # measured. That is exactly what finding F13 caught for Norway's USD
+    # path, and it was invisible because NO ENTRY STATED ITS BASIS AT ALL.
+    # A future curve added without one now stops the build here rather than
+    # being applied silently by profile.ts.
+    VALID_BASES = {"regular_pay", "total_earnings"}
+    for cc, entry in by_country.items():
+        basis = entry["meta"].get("pay_basis")
+        if basis not in VALID_BASES:
+            raise SystemExit(
+                f"experience_gradient: {cc}'s curve declares pay_basis={basis!r}; it must be one of "
+                f"{sorted(VALID_BASES)}, read from the source table's own ContentsCode metadata and "
+                f"cited in pay_basis_source. A premium whose basis is unknown cannot be safely "
+                f"applied to any figure — see NEEDS-DECISION.md #58."
+            )
+        if not entry["meta"].get("pay_basis_source"):
+            raise SystemExit(
+                f"experience_gradient: {cc} states pay_basis={basis!r} but cites no pay_basis_source. "
+                f"The basis must be traceable to the publishing table, not asserted."
+            )
+        log(f"    {cc} pay_basis: {basis} ({entry['meta']['premium_basis']}-relative)")
+
     payload = {
-        "by_country": {
-            "SE": {"curve": se_points, "meta": se_meta},
-            "NO": {"curve": no_points, "meta": no_meta},
-        },
+        "by_country": by_country,
         "interpolation": "piecewise-linear between a country's own points, against an ASSUMED AGE "
                           "(years of professional experience + a stated career-start-age constant — "
                           "see profile.ts's own ASSUMED_CAREER_START_AGE, not this file's own concern); "
