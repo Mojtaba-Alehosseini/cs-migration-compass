@@ -109,6 +109,22 @@ export const EXTRACT = String.raw`
         scrollWidth: el.scrollWidth, clientWidth: el.clientWidth,
         shownPct: Math.round((el.clientWidth / el.scrollWidth) * 100),
         title: el.getAttribute('title'),
+        // Whether the clipped text is still reachable somewhere in its own
+        // row: the accessible label, or a title on an ancestor. A country
+        // NAME ellipsised in a fixed column is not the same defect as a
+        // refusal SENTENCE cut to 31% with no other route to it -- the row
+        // still carries the full name in its screen-reader text, and the
+        // flag and ISO code identify it besides. Recorded rather than
+        // judged here; the assertion decides what to do with it.
+        recoverable: (() => {
+          const row = el.closest('[data-cc], tr, li, .panel')
+          if (!row) return false
+          const full = norm(el.innerText)
+          if (!full) return false
+          const alt = norm([...row.querySelectorAll('.visually-hidden, .sr-only')]
+            .map((n) => n.textContent).join(' ')) + ' ' + norm(row.getAttribute('title') || '')
+          return alt.includes(full)
+        })(),
         // A real tap target, not merely SOME focusable ancestor. This read
         // closest of button/a/[tabindex], and #main carries tabindex=-1
         // so the skip link can focus it — which made EVERY element on every

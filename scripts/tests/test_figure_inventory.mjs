@@ -259,11 +259,18 @@ try {
     // refusal reason clipped to 31% inside a plain <span title={...}> —
     // would have slipped through the first version of this filter, which
     // excused anything carrying a title. The bar is a real tap target.
-    .filter((c) => c.shownPct < 70 && c.text.length > 12 && !c.interactive)
+    // ...and whose content is not reachable any other way. CI caught the
+    // distinction this needs: `.wrow-name` renders "United Arab Emirates"
+    // at 68% on the Linux runner's fonts (80% on Windows), and it is a
+    // LABEL whose full text is in the row's own accessible name, beside a
+    // flag and an ISO code. Package 24's defect was a 100-character
+    // refusal SENTENCE at 31% with no other route to it. The rule is
+    // "the reader cannot get to this content", not "an ellipsis exists".
+    .filter((c) => c.shownPct < 70 && c.text.length > 12 && !c.interactive && !c.recoverable)
     .map((c) => ({ page: p.id, ...c })))
   clipped.slice(0, 6).forEach((c) => say(`    ${c.shownPct}%  ${c.page} :: ${c.text.slice(0, 60)}`))
   check(clipped.length === 0,
-    `C5: nothing is clipped below 70% without a real tap target — a hover title is not one `
+    `C5: no clipped text is unreachable — no tap target, and not in the row's accessible name `
     + `(${clipped.length} found)`)
 
   /* ============================================================= class 6 */
