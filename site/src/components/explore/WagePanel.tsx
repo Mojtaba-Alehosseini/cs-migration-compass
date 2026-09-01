@@ -36,6 +36,7 @@
  * why and how — not at first glance").
  */
 
+import { readableAbsentReason } from '../../data/profile'
 import { useMemo, useState } from 'react'
 import { Derived, type DerivedConcept } from '../Derived'
 import { Seg, ChartFoot, ChartTable, Gap } from './Controls'
@@ -456,7 +457,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
           <p>
             {wages.absent.map((a, i) => (
               <span key={a.country}>
-                {i > 0 && '; '}<b>{a.country}</b> — {a.reason.split(' — ')[0]}
+                {i > 0 && '; '}<b>{a.country}</b> — {readableAbsentReason(a.reason)}
               </span>
             ))}
             {uncomparable.map((c) => (

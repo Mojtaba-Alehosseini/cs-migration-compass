@@ -171,7 +171,7 @@ def _extract_dk(occ: dict) -> dict:
         "hours_per_week": DK_STANDARDISED_HOURS_PER_WEEK, "year": int(year),
         "source": "Danmarks Statistik's own standardised full-time week (37h) — empirically verified "
                    "via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all "
-                   "years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not "
+                   "years/occupations in table LONS20 (this pipeline's own mdrsnit reconciliation), not "
                    "the generic cross-country hours_worked.json Eurostat figure",
     }
     obs["explicit_hours_by_field"] = {f: hours_note for f in ("mean", "median", "p25", "p75")}
@@ -484,8 +484,13 @@ def _figure_for_basis(source_id: str, obs: dict, basis: str, repr_field: str) ->
     see _repr_field()."""
     if "basis_total_earnings" in obs:  # Finland/Germany — already-split native fields
         key = "basis_total_earnings" if basis == "total_earnings" else "basis_regular_pay"
-        chain = [{"op": "native_basis_select", "detail": f"{source_id} publishes "
-                  f"{basis} as its own separate field — no subtraction needed"}]
+        # The office's NAME, not its source_id: this string is rendered
+        # verbatim inside a <Derived> method card, where "salary_fi publishes
+        # regular_pay..." puts an internal identifier in front of a reader as
+        # if it were a citation (package 25, adversarial review).
+        chain = [{"op": "native_basis_select",
+                  "detail": f"{_SOURCE_NAMES.get(source_id) or source_id} publishes "
+                            f"{basis} as its own separate field — no subtraction needed"}]
         # Germany only (finding F6, adversarial review): regular_pay was
         # annualised at extraction, not published annually — say so here,
         # with the real pre-conversion number, rather than let the generic

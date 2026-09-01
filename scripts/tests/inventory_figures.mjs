@@ -161,7 +161,17 @@ export const EXTRACT = String.raw`
       }
     }
     const isChip = /(^|\s)chip(\s|-|$)/.test(String(el.className))
-    const fillOpaque = opaque(cs.backgroundColor)
+    // SVG marks have no background-color at all — their paint is the fill property, on
+    // the element or its child shape. Reading backgroundColor made every
+    // .mdot-mark fall through to its 1px ring while its actual colour was
+    // never looked at, so /compare's marks were scored on two colours that
+    // are not the mark.
+    const isSvg = el instanceof SVGElement
+    const svgFill = isSvg
+      ? (cs.fill && cs.fill !== 'none' ? cs.fill
+         : (el.querySelector('*') ? getComputedStyle(el.querySelector('*')).fill : null))
+      : null
+    const fillOpaque = isSvg ? opaque(svgFill) : opaque(cs.backgroundColor)
     // A ring drawn with box-shadow IS the separation between this mark and
     // whatever it sits on: .wrow-marker puts a 2px surface-coloured halo
     // around itself precisely so a filled dot reads against a same-hue
@@ -179,8 +189,9 @@ export const EXTRACT = String.raw`
       cls: String(el.className || el.tagName),
       kind: isChip ? 'text-chip' : 'non-text',
       // the colour that carries this mark's meaning
-      meaningColor: isChip ? cs.color : (hasRing ? cs.borderTopColor
-        : (fillOpaque ? cs.backgroundColor : cs.borderTopColor)),
+      meaningColor: isChip ? cs.color
+        : (isSvg && fillOpaque) ? svgFill
+        : (hasRing ? cs.borderTopColor : (fillOpaque ? cs.backgroundColor : cs.borderTopColor)),
       meaningFrom: isChip ? 'text' : (hasRing ? 'border' : (fillOpaque ? 'fill' : 'border')),
       ownBackground: cs.backgroundColor,
       behind: haloColor || behind,
@@ -191,8 +202,19 @@ export const EXTRACT = String.raw`
     }
   })
 
+  // Per-row cells, so an assertion can ask what THIS country's own cell says
+  // rather than whether a digit string appears somewhere on the page.
+  const rows = Object.fromEntries([...document.querySelectorAll('.wrow[data-cc]')].map((r) => [
+    r.dataset.cc,
+    {
+      key: r.dataset.key ?? null,
+      openings: norm(r.querySelector('.wrow-opn') ? r.querySelector('.wrow-opn').innerText : ''),
+      estimate: norm(r.querySelector('.wrow-est') ? r.querySelector('.wrow-est').innerText : ''),
+    },
+  ]))
+
   return JSON.stringify({
-    figures, nodata, clipped, marks,
+    figures, nodata, clipped, marks, rows,
     text: norm(document.body.innerText),
     headings: [...document.querySelectorAll('h1,h2,h3')].map((h) => norm(h.textContent)).filter(Boolean),
   })
@@ -243,6 +265,20 @@ export function defaultTargets(base = BASE) {
       ['explore-life', `${base}#/explore/life`],
       ['data', `${base}#/data`],
       ['postings-seed', `${base}#/data/postings-seed`],
+      // Added after the package-25 adversarial review: the first target list
+      // claimed "every route the site can display" and skipped the eager
+      // landing route, the 404, three of Explore's own seven themes, and
+      // every state that needs a selection or a non-default occupation --
+      // including PayVsCost, which holds the one value this package changed
+      // and the one sentence it wrote.
+      ['home', base],
+      ['not-found', `${base}#/no-such-route`],
+      ['explore-visa', `${base}#/explore/visa`],
+      ['explore-people', `${base}#/explore/people`],
+      ['explore-climate', `${base}#/explore/climate`],
+      ['compare-selected', `${base}#/compare?places=oslo,copenhagen,berlin`],
+      ['work-payvscost', `${base}#/work?years=8&places=oslo,copenhagen`],
+      ['work-occ-2511', `${base}#/work?years=8&occupation=isco08:2511`],
       ...countries.map((cc) => [`country-${cc}`, `${base}#/country/${cc}`]),
       ...cities.map((id) => [`city-${id}`, `${base}#/city/${id}`]),
     ],

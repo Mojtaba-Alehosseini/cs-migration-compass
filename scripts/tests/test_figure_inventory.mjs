@@ -39,7 +39,12 @@ const dataOf = (o) => o.data ?? o
  * a lookup fell through, or a pipeline filename reaching prose. */
 const FORBIDDEN_KEYS = [
   { re: /\bsrc_[a-z_]+\.py\b/g, what: 'a pipeline filename' },
-  { re: /\bno-series\s*[—-]/g, what: 'the internal no-series prefix' },
+  // The token itself, with or without the dash that usually follows it.
+  // The first version required a trailing dash, and WagePanel renders
+  // a.reason.split(' -- ')[0], which keeps the token and throws the
+  // sentence away -- so the one place it printed bare was the one place
+  // this pattern could not see.
+  { re: /no-series/g, what: 'the internal no-series token' },
   { re: /\b(usd|native)_(regular_pay|total_earnings)\b/g, what: 'a raw combo key' },
 ]
 /* An id used AS a citation — "salary_ca published median" — as opposed to
@@ -47,7 +52,13 @@ const FORBIDDEN_KEYS = [
 const ID_AS_CITATION = /\b(salary_[a-z]{2}|bls_oews)\s+(published|publishes)\b/g
 
 /* ---------------------------------------------------------------- class 4 */
-const ID_ONLY_LABEL = /^(salary_[a-z]{2}|bls_oews|[a-z]+_[a-z]{2,})$/
+/* An internal source id anywhere in a card's own title — not only as the
+ * whole title. The first version was anchored (`^...$`), so it matched a
+ * bare "salary_se" and missed "salary_ca published median", which is the
+ * exact string this package was fixing. It caught 13 of the 40 affected
+ * cards; the other 27 were found by reading the record by hand, which is
+ * not a check. */
+const SOURCE_ID_ANYWHERE = /(salary_[a-z]{2}|bls_oews|numbeo|teranet|oecd_[a-z_]+)/
 
 /* ---------------------------------------------------------------- class 6 */
 function relLum(r, g, b) {
@@ -95,6 +106,39 @@ try {
 
   check(pages.every((p) => !p.error), `every route rendered without throwing (${pages.filter((p) => p.error).length} errored)`)
 
+  /* C6 is a CONTRAST check, and contrast is a property of the palette — so
+   * it has to be measured in every palette the site ships, not just the one
+   * that happens to be the default. Measured in compass/light alone it
+   * passed by 0.067 of margin, and warm/light failed. Four themes x two
+   * modes, on the routes that carry the marks. */
+  const THEME_PAGES = [
+    ['work', `${BASE}#/work?years=8`],
+    ['compare-selected', `${BASE}#/compare?places=oslo,copenhagen,berlin`],
+    ['country-US', `${BASE}#/country/US`],
+  ]
+  const themed = []
+  for (const theme of ['compass', 'editorial', 'terminal', 'warm']) {
+    for (const mode of ['light', 'dark']) {
+      for (const [id, url] of THEME_PAGES) {
+        await page.hashGo(url, { waitMs: 200 })
+        await page.eval(`
+          (() => { try {
+            localStorage.setItem('compass:theme', ${JSON.stringify(theme)})
+            localStorage.setItem('compass:mode', ${JSON.stringify(mode)})
+          } catch (e) {}
+            document.documentElement.setAttribute('data-theme', ${JSON.stringify(theme)})
+            document.documentElement.setAttribute('data-mode', ${JSON.stringify(mode)})
+          })()`)
+        try {
+          const cap = await capture(page, `${theme}/${mode} ${id}`, url)
+          themed.push(cap)
+        } catch { /* recorded as a gap by the count below */ }
+      }
+    }
+  }
+  say(`Theme sweep: ${themed.length} captures across 4 themes x 2 modes
+`)
+
   /* ============================================================= class 1 */
   say('\n=== C1: no displayed figure sits on an unset initialiser ===')
   /* /work's `markerLeft = 50` is the template — a default that survived the
@@ -103,40 +147,91 @@ try {
    * it encodes genuinely lands there. Real percentile positions are
    * irrational-ish; an exact 50% across many rows is the signature of a
    * constant, not of data. */
-  const positioned = pages.flatMap((p) => (p.marks ?? []).filter((m) => m.left).map((m) => ({ page: p.id, ...m })))
-  const atFifty = positioned.filter((m) => m.left === '50%')
-  say(`  ${positioned.length} positioned marks; ${atFifty.length} sit at exactly left:50%`)
-  atFifty.slice(0, 5).forEach((m) => say(`    ${m.page} ${m.cls}`))
-  check(atFifty.length === 0,
-    `C1: no positioned mark sits on the midpoint default (${atFifty.length} found)`)
+  /* Any round constant repeated across rows, not the single literal '50%'.
+   * A blocklist of one value is a rule tested against the one case it was
+   * written from: an initialiser of 0, 32 or 100 reproduces package 24's
+   * defect exactly and the first version of this check could not see it.
+   * Data-derived positions are effectively never whole numbers, so a whole
+   * number appearing on three or more DIFFERENT rows is a constant.
+   * Two exemptions, both because the mark carries NO VALUE rather than
+   * because it would otherwise fail:
+   *   .wrow-quartile  — p25/p75 landing on 0%/100% is exactly what a
+   *     quartile-only country's own published range looks like.
+   *   .wrow-track.dashed — the abbreviated placeholder drawn for a country
+   *     that publishes no spread at all. It is identical on every such row
+   *     by construction, encodes no position, and those rows render no
+   *     marker whatsoever (package 24's fix), so nothing there is presented
+   *     as a measurement. This check flagged it at 32% on 20 marks; that is
+   *     the shape doing its job, not an initialiser leaking. */
+  const positioned = pages.flatMap((p) => (p.marks ?? [])
+    .filter((m) => m.left && !/wrow-quartile|wrow-track dashed/.test(String(m.cls)))
+    .map((m) => ({ page: p.id, ...m })))
+  const byValue = new Map()
+  for (const m of positioned) {
+    if (!/^\d+(\.0+)?%$/.test(m.left)) continue          // whole-number percentage
+    const k = m.left
+    if (!byValue.has(k)) byValue.set(k, [])
+    byValue.get(k).push(m)
+  }
+  const constants = [...byValue.entries()].filter(([, ms]) => ms.length >= 3)
+  say(`  ${positioned.length} positioned marks; ${constants.length} whole-number position(s) repeat across 3+ marks`)
+  constants.forEach(([v, ms]) => say(`    ${v} on ${ms.length} marks (${[...new Set(ms.map((m) => m.cls))].join(', ')})`))
+  check(constants.length === 0,
+    `C1: no positioned mark sits on a repeated whole-number constant — the signature of an `
+    + `initialiser presented as a measurement (${constants.length} found)`)
 
   /* ============================================================= class 2 */
   say('\n=== C2: nothing reads "no data" while the data is non-empty ===')
   /* Italy's 28 openings rendered as an em dash. Cross-checked against the
    * payload rather than against the component's intent. */
+  /* Read from each country's OWN openings cell, not from the page's text.
+   * The first version asked whether the digit string appeared ANYWHERE in
+   * /work's innerText, which is unfalsifiable for most of the spine: AE's 24
+   * also appears in "ATO Taxation Statistics 2023-24", NO's 14 in "table
+   * 11418", QA's 8 in the profile line's "8 yrs". Blank seven of the fifteen
+   * openings cells entirely and it still printed PASS. Anchored per row, it
+   * asks the question it names. */
   const openings = dataOf(readJson('site/public/data/history/openings.json')).by_country ?? {}
-  const workPage = pages.find((p) => p.id === 'work')
-  const workText = workPage?.text ?? ''
-  const countriesWithOpenings = Object.entries(openings)
-    .filter(([, v]) => (v?.software ?? 0) > 0)
-    .map(([cc, v]) => ({ cc, n: v.software }))
+  // Read from the RECORD, not from a live query: the theme sweep above
+  // navigates the page away, and a live read here silently returned the
+  // wrong route's DOM (15 of 15 "absent").
+  const workRows = pages.find((p) => p.id === 'work')?.rows ?? {}
+  const cellByCc = Object.fromEntries(Object.entries(workRows).map(([cc, r]) => [cc, r.openings]))
   const spine = new Set(countries)
-  const onSpine = countriesWithOpenings.filter((c) => spine.has(c.cc))
-  const missing = onSpine.filter(({ n }) => !workText.includes(n.toLocaleString('en-US')))
-  say(`  ${onSpine.length} spine countries have >0 software openings; checking each count is rendered`)
-  missing.slice(0, 6).forEach((m) => say(`    MISSING  ${m.cc} = ${m.n}`))
+  const onSpine = Object.entries(openings)
+    .filter(([cc, v]) => spine.has(cc) && (v?.software ?? 0) > 0)
+    .map(([cc, v]) => ({ cc, n: v.software }))
+  const missing = onSpine.filter(({ cc, n }) => {
+    const cell = cellByCc[cc]
+    if (cell == null) return true
+    // The count must be in THIS country's own openings cell, as its own
+    // number — not merely a substring of some longer figure in it.
+    return !new RegExp(`(^|[^\d,])${n.toLocaleString('en-US').replace(/,/g, ',')}([^\d]|$)`).test(cell)
+  })
+  say(`  ${onSpine.length} spine countries have >0 software openings; each checked against its own cell`)
+  missing.slice(0, 6).forEach((m) => say(`    MISSING  ${m.cc} = ${m.n} (cell reads ${JSON.stringify(cellByCc[m.cc] ?? null)})`))
   check(missing.length === 0,
-    `C2: every spine country's own non-zero openings count appears on /work (${missing.length} absent)`)
+    `C2: every spine country's own openings count is rendered in that country's own cell (${missing.length} absent)`)
 
   /* ============================================================= class 3 */
   say('\n=== C3: no internal key reaches a reader ===')
+  /* Card titles and bodies are scanned too. p.text is captured with every
+   * card CLOSED, so anything a card says was invisible to this check -- and
+   * the cards are exactly where citations live. */
   const keyHits = []
-  for (const p of pages) {
+  const scan = (page, text, where) => {
     for (const { re, what } of FORBIDDEN_KEYS) {
-      for (const m of (p.text ?? '').match(re) ?? []) keyHits.push({ page: p.id, hit: m, what })
+      for (const m of (text ?? '').match(re) ?? []) keyHits.push({ page, hit: m, what: what + ' (' + where + ')' })
     }
-    for (const m of (p.text ?? '').match(ID_AS_CITATION) ?? []) {
-      keyHits.push({ page: p.id, hit: m, what: 'a source id used as a citation' })
+    for (const m of (text ?? '').match(ID_AS_CITATION) ?? []) {
+      keyHits.push({ page, hit: m, what: 'a source id used as a citation (' + where + ')' })
+    }
+  }
+  for (const p of pages) {
+    scan(p.id, p.text, 'page text')
+    for (const f of p.figures ?? []) {
+      scan(p.id, f.cardLabel, 'card title')
+      scan(p.id, f.cardText, 'card body')
     }
   }
   keyHits.slice(0, 8).forEach((h) => say(`    ${h.page}: ${JSON.stringify(h.hit)} — ${h.what}`))
@@ -147,7 +242,7 @@ try {
   const cardless = figures.filter((f) => !f.hasCard)
   const idLabelled = figures.filter((f) => {
     const l = (f.cardLabel || '').replace(/^(Source|Method):\s*/, '').trim()
-    return l && ID_ONLY_LABEL.test(l)
+    return l && SOURCE_ID_ANYWHERE.test(l)
   })
   cardless.slice(0, 5).forEach((f) => say(`    NO CARD  ${f.page} :: ${f.visible}`))
   idLabelled.slice(0, 5).forEach((f) => say(`    ID LABEL ${f.page} :: ${f.cardLabel}`))
@@ -188,7 +283,7 @@ try {
    * three that are. */
   const lowContrast = []
   let offscreen = 0
-  for (const p of pages) {
+  for (const p of [...pages, ...themed]) {
     for (const m of p.marks ?? []) {
       if (!m.w || !m.h) continue
       // Only marks actually on screen can have a measured backdrop.

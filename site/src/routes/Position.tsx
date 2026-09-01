@@ -316,7 +316,11 @@ export function PayVsCost({ profile, wageByCountry, gradient }: {
               : !row.crosswalk.comparable
                 ? row.crosswalk.reason
                 : knownPercentilePoints(row.native.value).length < 2
-                  ? `${row.source_id} publishes only a ${row.native.distribution.replace(/-/g, ' ')} — no spread to shift an estimate against`
+                  // Same defect coverageFor() above was fixed for, six lines away and
+                  // missed the first time: the source's NAME, and the distribution key's
+                  // own trailing "-only" dropped before it is read as English.
+                  ? `${row.source_name ?? row.source_id} publishes only a `
+                    + `${row.native.distribution.replace(/-only$/, '').replace(/-/g, ' ')} — no spread to shift an estimate against`
                   : `${city.country}'s pay composition is unverified (neither regular_pay nor total_earnings — see pay_composition.json), so no USD figure can be run through cost-of-living`
             return (
               <div key={city.id} style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-3)' }}>

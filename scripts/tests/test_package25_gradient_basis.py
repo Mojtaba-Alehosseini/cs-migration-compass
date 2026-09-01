@@ -109,15 +109,35 @@ class TestGradientBasisMatchesTheNativeFigureItShifts(unittest.TestCase):
                     f"{self._native_basis(row)}, by a premium measured on "
                     f"{entry['meta']['pay_basis']} — the exact mismatch NEEDS-DECISION #58 exists for")
 
-    def test_norways_usd_regular_pay_is_the_combo_that_does_NOT_match(self) -> None:
-        """The specific figure finding F13 named. Kept as a test so that if a
-        future change points the USD path back at usd_regular_pay for Norway,
-        this states plainly what that would reintroduce."""
+    def test_the_usd_path_really_selects_the_basis_matched_combo(self) -> None:
+        """The BEHAVIOUR, not the data shape.
+
+        The first version of this test asserted only that NO declares
+        total_earnings and that both its USD combos exist — all of which stays
+        true if computeEstimateUsdYear() is reverted to preferring
+        regular_pay. It was a data-shape test wearing a behaviour test's name
+        (package 25, adversarial review). This reads profile.ts itself and
+        pins the selection rule: the combo key must be chosen FROM the
+        gradient's own pay_basis, and the hardcoded regular-pay-first
+        preference must be gone."""
+        src = (ROOT / "site" / "src" / "data" / "profile.ts").read_text(encoding="utf-8")
+        fn = src[src.index("export function computeEstimateUsdYear"):]
+        fn = fn[:fn.index(chr(10) + "}" + chr(10))]
+        self.assertIn("cg.meta.pay_basis", fn,
+                      "the USD path must choose its combo from the gradient's own stated pay basis")
+        self.assertIn("usd_total_earnings", fn)
+        self.assertNotIn("const regular = row.combos['usd_regular_pay']", fn,
+                         "the unconditional regular-pay-first preference is what NEEDS-DECISION #58 "
+                         "ruled wrong for Norway; finding it here means the fix was reverted")
+
+    def test_norways_two_usd_combos_both_exist_so_the_choice_is_real(self) -> None:
+        """The selection above is only meaningful if both candidates are
+        actually available for Norway — otherwise it would be picking the
+        only option and would prove nothing."""
         no = self.rows["NO"]
         self.assertEqual(self.by_country["NO"]["meta"]["pay_basis"], "total_earnings")
         self.assertTrue(no["combos"]["usd_regular_pay"]["ok"])
-        self.assertTrue(no["combos"]["usd_total_earnings"]["ok"],
-                        "NO must publish usd_total_earnings for the basis-matched USD path to exist")
+        self.assertTrue(no["combos"]["usd_total_earnings"]["ok"])
 
 
 if __name__ == "__main__":

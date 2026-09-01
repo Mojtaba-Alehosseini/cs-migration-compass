@@ -222,7 +222,16 @@ a { color: var(--ink-2); }
 }
 .wrow-marker {
   position: absolute; top: 50%; width: 11px; height: 11px; border-radius: 50%; transform: translate(-50%, -50%);
-  border: 2px solid var(--rowc); background: var(--rowc); box-shadow: 0 0 0 2px var(--surface);
+  /* The ring is mixed 75% toward --ink-2, not the country hue at full
+     strength. The ring is what separates this marker from its own
+     surface-coloured halo, and at full strength that pair bottoms out at
+     2.79:1 (warm/light, NL) -- under WCAG 1.4.11's 3:1 floor, and only
+     3.07:1 in the default theme, which is how it passed a contrast audit
+     measured in one palette. Mixed, the worst case over four themes x two
+     modes x fifteen hues is 3.56:1. The fill stays the pure hue, so
+     filled-versus-hollow reads exactly as before. */
+  border: 2px solid color-mix(in srgb, var(--rowc) 75%, var(--ink-2));
+  background: var(--rowc); box-shadow: 0 0 0 2px var(--surface);
 }
 .wrow-marker.hollow { background: var(--surface); }
 .wrow-est {

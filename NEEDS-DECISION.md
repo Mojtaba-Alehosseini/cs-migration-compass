@@ -2721,8 +2721,18 @@ Checked against what each code path actually shifts:
 
 - **SE — matched, everywhere.** SCB publishes one concept, and both its cross and its dispersion are
   on it. `native` is `regular_pay` (55,500 SEK/month × 12 = `native_regular_pay`), and
-  `usd_regular_pay` is the same basis. Nothing to fix. Sweden was checked as explicitly as Norway
-  precisely because "is it Norway-specific?" cannot be answered by looking only at Norway.
+  `usd_regular_pay` is the same basis. Nothing to fix. Sweden was checked because "is it
+  Norway-specific?" cannot be answered by looking only at Norway.
+
+  **One asymmetry, stated rather than glossed:** the two sides rest on different strengths of
+  evidence. That SE's cross and its dispersion share ONE concept is proven by SCB's own metadata —
+  both tables' ContentsCodes read "Monthly salary". That the concept is bonus-EXCLUDED comes from
+  `pay_composition.json`'s note for `salary_se`, which itself carries
+  `"verified_live_this_session": false`. Norway's classification is settled by the labels alone
+  ("monthly earnings" vs "Basic monthly salary"); Sweden's leans on that carried note. It changes no
+  behaviour — SE's `usd_total_earnings` is `ok: false`, so the preference list resolves to
+  `usd_regular_pay` either way — but "read from the office's own metadata" is true of the *matching*
+  argument for Sweden, not of the *basis label*.
 - **NO — native path already correct.** `native` is `total_earnings` (81,050 NOK/month × 12 =
   `native_total_earnings`), which is the basis its premium was measured on. `/work`'s estimate and
   position were never affected.
@@ -2741,9 +2751,16 @@ broken the native path, which is currently correct: it would need a premium PER 
 different one.
 
 **The published value this changes, stated rather than buried.** Norway's USD estimate at 8 years'
-experience: **$79,908/year → $81,940/year** (+2.54%). Before: `usd_regular_pay` median 87,150 ×
-0.9169. After: `usd_total_earnings` median 89,367 × 0.9169. It feeds `PayVsCost` only; no figure on
-`/work` moved. The source that settles it is the ContentsCode table above — SSB's own labels.
+experience: **$79,917/year → $81,949/year** (+2.54%). Before: `usd_regular_pay` median 87,150.30 ×
+**0.917**. After: `usd_total_earnings` median 89,366.57 × **0.917**. It feeds `PayVsCost` only; no
+figure on `/work` moved. The source that settles it is the ContentsCode table above — SSB's own
+labels.
+
+The multiplier is 0.917, not 0.9169: `_computeShift()` rounds the curve's own premium to one decimal
+(`Math.round(gRaw.pct * 10) / 10`, `profile.ts`), so SSB's −8.31% is applied as −8.3%. This item
+first recorded $79,908 → $81,940 — the arithmetic done by hand against the unrounded premium instead
+of read off the rendered card. Corrected against what the site actually displays, which is the whole
+method package 25 exists to enforce.
 
 **The class of defect is now impossible rather than fixed once.**
 `build_experience_gradient.py` refuses to write a curve whose `pay_basis` is missing or not one of

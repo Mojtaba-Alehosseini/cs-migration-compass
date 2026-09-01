@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-09-01T01:03:09+00:00",
+ "generated_at": "2026-09-01T02:55:41+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -402,7 +402,7 @@
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "337.03 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
+        "detail": "337.03 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (this pipeline's own mdrsnit reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
        },
        {
         "op": "weekly_to_annual",
@@ -438,7 +438,7 @@
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "344.58 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
+        "detail": "344.58 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (this pipeline's own mdrsnit reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
        },
        {
         "op": "weekly_to_annual",
@@ -478,7 +478,7 @@
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "337.03 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
+        "detail": "337.03 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (this pipeline's own mdrsnit reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
        },
        {
         "op": "weekly_to_annual",
@@ -518,7 +518,7 @@
        },
        {
         "op": "hourly_to_weekly",
-        "detail": "344.58 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (src_salary_dk.py mdrsnit_reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
+        "detail": "344.58 x 37.0 hours/week (DK 2024, Danmarks Statistik's own standardised full-time week (37h) — empirically verified via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all years/occupations in table LONS20 (this pipeline's own mdrsnit reconciliation), not the generic cross-country hours_worked.json Eurostat figure)"
        },
        {
         "op": "weekly_to_annual",
@@ -583,7 +583,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_no publishes regular_pay as its own separate field — no subtraction needed"
+        "detail": "SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08) publishes regular_pay as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
@@ -607,7 +607,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_no publishes total_earnings as its own separate field — no subtraction needed"
+        "detail": "SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08) publishes total_earnings as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
@@ -631,7 +631,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_no publishes regular_pay as its own separate field — no subtraction needed"
+        "detail": "SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08) publishes regular_pay as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
@@ -659,7 +659,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_no publishes total_earnings as its own separate field — no subtraction needed"
+        "detail": "SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08) publishes total_earnings as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
@@ -724,7 +724,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_fi publishes regular_pay as its own separate field — no subtraction needed"
+        "detail": "Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) publishes regular_pay as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
@@ -748,7 +748,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_fi publishes total_earnings as its own separate field — no subtraction needed"
+        "detail": "Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) publishes total_earnings as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
@@ -772,7 +772,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_fi publishes regular_pay as its own separate field — no subtraction needed"
+        "detail": "Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) publishes regular_pay as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
@@ -800,7 +800,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_fi publishes total_earnings as its own separate field — no subtraction needed"
+        "detail": "Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010) publishes total_earnings as its own separate field — no subtraction needed"
        },
        {
         "op": "monthly_to_annual",
@@ -1368,7 +1368,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_de publishes regular_pay as its own separate field — no subtraction needed"
+        "detail": "Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages) publishes regular_pay as its own separate field — no subtraction needed"
        },
        {
         "op": "annualise",
@@ -1396,7 +1396,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_de publishes total_earnings as its own separate field — no subtraction needed"
+        "detail": "Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages) publishes total_earnings as its own separate field — no subtraction needed"
        },
        {
         "op": "identity",
@@ -1420,7 +1420,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_de publishes regular_pay as its own separate field — no subtraction needed"
+        "detail": "Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages) publishes regular_pay as its own separate field — no subtraction needed"
        },
        {
         "op": "annualise",
@@ -1452,7 +1452,7 @@
       "chain": [
        {
         "op": "native_basis_select",
-        "detail": "salary_de publishes total_earnings as its own separate field — no subtraction needed"
+        "detail": "Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages) publishes total_earnings as its own separate field — no subtraction needed"
        },
        {
         "op": "identity",

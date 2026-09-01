@@ -450,9 +450,11 @@ export function computeEstimate(profile: Profile, row: WageCountry, gradient: Ex
 /** Tier 4 support: the same shift, in annual USD, reading a USD combo
  *  build_wage_distribution.py already resolved (year-matched FX,
  *  normalise.py's own conversion) — never a client-side currency
- *  conversion of the native estimate. Prefers regular_pay (matching the
- *  wage panel's own default basis) but falls back to total_earnings when
- *  a country's own composition can't express regular_pay at all — Spain
+ *  conversion of the native estimate. Prefers the basis the country's own
+ *  experience cross was MEASURED on where one exists (NEEDS-DECISION #58,
+ *  package 25) and regular_pay otherwise — matching the wage panel's own
+ *  default — falling back to the other basis when the preferred one is not
+ *  available for that country at all. Spain
  *  (bonus included by construction, no subtractable component) is exactly
  *  this case, and Spain contains Valencia, this site's own established
  *  instability canary (compute.ts's own docstring); without the fallback,
@@ -497,8 +499,8 @@ export function computeEstimateUsdYear(profile: Profile, row: WageCountry, gradi
     if (cg && matchedKey === 'usd_total_earnings') {
       return { ...result, chain: [
         { op: 'basis_match', detail: `${row.country}'s own experience cross is measured on total_earnings `
-          + `(${cg.meta.pay_basis_source}) — so the figure shifted here is total_earnings too, not this `
-          + 'the usual regular_pay default of this site. Applying a total-earnings premium to a basic-salary figure '
+          + `(${cg.meta.pay_basis_source}) — so the figure shifted here is total_earnings too, rather than `
+          + 'the regular_pay this site otherwise prefers. Applying a total-earnings premium to a basic-salary figure '
           + 'would multiply a number by a rate measured on a different one.' },
         ...result.chain,
       ] }
@@ -506,14 +508,19 @@ export function computeEstimateUsdYear(profile: Profile, row: WageCountry, gradi
     return result
   }
 
-  const total = row.combos['usd_total_earnings']
+  // The SECOND entry of the preference list, not a hardcoded key. This read
+  // row.combos['usd_total_earnings'] regardless, so a total_earnings-basis
+  // gradient whose own combo was unavailable retried the same key and
+  // returned null instead of falling back — a dead branch contradicting the
+  // ordered list six lines above it (package 25, adversarial review).
+  const total = row.combos[preferred[1]!]
   if (total && total.ok) {
     const result = _shiftEstimate(row, total.value, total.currency, profile, gradient)
     if (!result.ok) return null
     return { ...result, chain: [
-      { op: 'basis_fallback', detail: `${row.country}'s own composition cannot express regular_pay (see its `
-        + 'pay_composition.json entry) — this figure is total_earnings instead, which INCLUDES the irregular '
-        + 'bonus regular_pay would have excluded. A real, different number, not a silent substitute.' },
+      { op: 'basis_fallback', detail: `${row.country}'s own composition cannot express ${preferred[0]!.replace('usd_', '')} `
+        + `(see its pay_composition.json entry) — this figure is ${preferred[1]!.replace('usd_', '')} instead, a real, `
+        + 'different number, not a silent substitute.' },
       ...result.chain,
     ] }
   }
