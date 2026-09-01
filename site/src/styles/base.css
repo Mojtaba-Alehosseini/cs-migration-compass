@@ -176,7 +176,11 @@ a { color: var(--ink-2); }
    start, at 35px/row. */
 .wrow {
   display: grid; grid-template-columns: 132px 1fr 196px 50px; gap: 12px; align-items: center;
-  padding: 5px 4px; border-top: 1px solid var(--line);
+  /* 4px, not 5px (package 25, tier 4). Sixteen rows turn one pixel of
+     vertical padding into 32px of page, which is most of what stood
+     between this list and a 1366x768 laptop. The strip inside the row is
+     untouched at 20px, so no mark changes size or position. */
+  padding: 4px 4px; border-top: 1px solid var(--line);
 }
 .wrow:first-child { border-top: none; }
 .wrow-id { display: flex; align-items: center; gap: 6px; font-size: var(--text-xs); overflow: hidden; }

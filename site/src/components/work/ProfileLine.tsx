@@ -46,7 +46,7 @@ export function ProfileLine({ profile, occupations, countryName, onProfileChange
         aria-controls="profline-body"
         onClick={() => setOpen((o) => !o)}
         style={{
-          display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '13px 16px',
+          display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '11px 16px',
           textAlign: 'left', fontSize: 'var(--text-sm)',
         }}
       >

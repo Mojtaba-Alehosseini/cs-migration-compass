@@ -595,7 +595,7 @@ export function Work() {
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Where you'd stand</h1>
-      <p className="lede" style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '6px 0 14px', maxWidth: '64ch' }}>
+      <p className="lede" style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '4px 0 10px', maxWidth: '64ch' }}>
         Fifteen countries, ranked by their own published pay table. Where one can't answer that, it
         says why.
       </p>
@@ -632,7 +632,7 @@ export function Work() {
         * the inert profile body, so a screen-reader user navigating by
         * heading had nothing to land on. The rows are a list and now say
         * so. Adversarial review, finding 12. */}
-      <div className="panel" style={{ marginTop: 12, padding: '8px 14px' }}>
+      <div className="panel" style={{ marginTop: 10, padding: '6px 14px' }}>
         <h2 id="rows-heading" className="visually-hidden">
           Position and openings, country by country
         </h2>
