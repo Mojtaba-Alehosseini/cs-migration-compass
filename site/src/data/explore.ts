@@ -168,6 +168,9 @@ export const comboKey = (currency: CurrencyMode, basis: Basis) => `${currency}_$
 export interface WageCountry {
   country: string          // ISO2, or "CA-21231"/"CA-21232" for Canada's two NOC codes — see NEEDS-DECISION #12
   source_id: string
+  /** The human name provenance.json records for source_id, resolved at
+   *  build time — what a citation should say instead of the id. */
+  source_name?: string
   national_code: string
   native: {
     currency: string; period: 'hour' | 'month' | 'year'; year: number

@@ -110,6 +110,21 @@ jobs:
           done
           CHROME_PATH=google-chrome-stable node ../scripts/tests/test_ui_regressions.mjs
           TEST_EXIT=$?
+          # Package 25 — the figure inventory's own six assertions, run against
+          # the SAME preview server. They render every route and entity the
+          # site can show (100 combinations, ~585 figures) and assert over what
+          # the DOM actually contains: no figure sitting on an unset
+          # initialiser, no "no data" over non-empty data, no internal key
+          # visible, every card naming a real source, nothing clipped below
+          # legibility without a tap target, every mark clearing its contrast
+          # floor against what is really painted behind it. Package 24 shipped
+          # two of those defects to production; both were invisible in review
+          # and obvious on screen. Runs here rather than in a script someone
+          # has to remember.
+          if [ $TEST_EXIT -eq 0 ]; then
+            CHROME_PATH=google-chrome-stable node ../scripts/tests/test_figure_inventory.mjs
+            TEST_EXIT=$?
+          fi
           kill $PREVIEW_PID 2>/dev/null || true
           exit $TEST_EXIT
 

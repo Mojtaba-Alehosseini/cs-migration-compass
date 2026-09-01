@@ -50,11 +50,21 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import DATA, PROCESSED, log  # noqa: E402
+from _common import DATA, PROCESSED, log, load_provenance  # noqa: E402
 import crosswalk  # noqa: E402
 import normalise as nm  # noqa: E402
 
 REFERENCE = ("SE", "2512")
+
+# source_id -> the human name provenance.json already records for it, so a
+# card can cite "Job Bank Wages (Canada) — NOC 2021, software occupations"
+# rather than "salary_ca". Built once at import; falls back to the id, which
+# is still better than nothing and is caught by the inventory assertion.
+_SOURCE_NAMES = {
+    e.get("source_id"): e.get("name")
+    for e in (load_provenance().get("entries") or [])
+    if isinstance(e, dict) and e.get("source_id") and e.get("name")
+}
 
 
 # --------------------------------------------------------------------------
@@ -655,6 +665,16 @@ def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapp
 
     return {
         "country": cc, "source_id": source_id, "national_code": national_code,
+        # PACKAGE 25, tier 3, assertion class 4. The site cites its own
+        # sources by NAME; profile.ts had only source_id to hand, so every
+        # unpersonalised position card read "salary_ca published median" —
+        # an internal identifier presented to a reader as a citation, on 29
+        # figures across the country pages and /work. The name already
+        # exists in provenance.json; resolving it here costs the client
+        # nothing (DataMethods.tsx records that provenance.json lands late
+        # enough to shift the page by itself, so fetching it on /work to
+        # spell a label would trade one defect for a worse one).
+        "source_name": _SOURCE_NAMES.get(source_id) or source_id,
         "native": {"currency": obs["currency"], "period": obs["period"], "year": obs["year"],
                    "value": {k: obs.get(k) for k in ("mean", "median", "p10", "p25", "p75", "p90")},
                    "n_employees": obs.get("n_employees"),

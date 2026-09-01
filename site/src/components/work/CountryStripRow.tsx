@@ -32,7 +32,7 @@ import { useEffect, useState } from 'react'
 import { Flag } from '../Flag'
 import { Figure } from '../Figure'
 import { Derived } from '../Derived'
-import { computePosition, computeEstimate, knownPercentilePoints,
+import { computePosition, computeEstimate, knownPercentilePoints, readableAbsentReason,
   type Profile, type ExperienceGradient } from '../../data/profile'
 import { fmtNative, ordinal, PERIOD_LABEL } from '../../routes/Position'
 import type { WageCountry } from '../../data/explore'
@@ -161,9 +161,8 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
     // around it do — they are what stop a reader concluding the wrong
     // thing, and they were dropped rather than relocated in the first pass
     // (adversarial review, finding 6).
-    const sourced = (absentReason ?? `the site holds no published wage distribution for ${name} at this occupation depth`)
-      .replace(/^no-series\s*[—-]\s*/i, '')
-      .replace(/,?\s*per\s+\S+\.py\s*$/i, '')
+    const sourced = readableAbsentReason(absentReason)
+      ?? `the site holds no published wage distribution for ${name} at this occupation depth`
     const reason = `${name}: ${sourced}, so there is no table to rank inside. That is a gap in what the `
       + `national office publishes at a comparable code, not a gap in ${name}'s labour market. Nothing `
       + 'here is estimated from a neighbouring country.'

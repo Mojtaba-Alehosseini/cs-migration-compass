@@ -16,8 +16,7 @@ import { loadWages, type WageCountry } from '../data/explore'
 import {
   loadExperienceGradient, profileFromParams, profileToParams, computePosition,
   computeEstimate, computeEstimateUsdYear, knownPercentilePoints, experienceCoverageFor,
-  DEFAULT_OCCUPATION, type Profile, type ExperienceGradient,
-} from '../data/profile'
+  DEFAULT_OCCUPATION, type Profile, type ExperienceGradient, readableAbsentReason } from '../data/profile'
 import { useAsync } from '../components/explore/useAsync'
 import { Figure } from '../components/Figure'
 import { Derived } from '../components/Derived'
@@ -85,7 +84,7 @@ export function coverageFor(row: WageCountry | undefined, absentReason: string |
   experienceDetail: string; experiencePersonalised: boolean
 } {
   if (!row) {
-    return { works: false, crosswalkOk: false, crosswalkDetail: absentReason ?? 'no wage source at all',
+    return { works: false, crosswalkOk: false, crosswalkDetail: readableAbsentReason(absentReason) ?? 'no wage source at all',
       distributionDetail: '—', experienceDetail: '—', experiencePersonalised: false }
   }
   const crosswalkOk = row.crosswalk.comparable
@@ -102,7 +101,14 @@ export function coverageFor(row: WageCountry | undefined, absentReason: string |
   const hasSpread = knownPercentilePoints(row.native.value).length >= 2
   const distributionDetail = hasSpread
     ? d.replace(/-/g, ' ')
-    : `${row.source_id} publishes only a ${d.replace(/-/g, ' ')} — no spread to rank or shift against`
+    // The source's NAME, and the distribution key's own trailing "-only"
+    // dropped before it is read as English. This line rendered
+    // "salary_ae publishes only a mean only" — an internal id standing in
+    // for the office that published the figure, plus a doubled word. Both
+    // were caught by rendering the page and reading it back rather than by
+    // reading this expression (package 25, assertion classes 3 and 4).
+    : `${row.source_name ?? row.source_id} publishes only a `
+      + `${d.replace(/-only$/, '').replace(/-/g, ' ')} — no spread to rank or shift against`
   const works = crosswalkOk && hasSpread
   // Finding F3, adversarial review: this used to collapse to a hardcoded
   // 'personalised' / 'published median only' from .personalised alone,
@@ -541,7 +547,7 @@ export function Position() {
             {wages.absent.length > 0 && (
               <Gap title={`${wages.absent.length} countries don't appear above`} span="s6"
                 where={<>Full account in <Link to="/data">NEEDS-DECISION.md →</Link></>}>
-                <p>{wages.absent.map((a) => `${a.country} — ${a.reason}`).join('; ')}. Absence drawn, not implied by a missing row.</p>
+                <p>{wages.absent.map((a) => `${a.country} — ${readableAbsentReason(a.reason)}`).join('; ')}. Absence drawn, not implied by a missing row.</p>
               </Gap>
             )}
           </div>

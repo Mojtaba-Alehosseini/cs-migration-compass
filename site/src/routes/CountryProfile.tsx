@@ -5,6 +5,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { Flag } from '../components/Flag'
+import { readableAbsentReason } from '../data/profile'
 import { Figure } from '../components/Figure'
 import { Derived } from '../components/Derived'
 import { useAsync } from '../components/explore/useAsync'
@@ -99,7 +100,7 @@ function WageRowFigure({ row }: { row: WageCountry }) {
   return (
     <div style={{ marginTop: 10 }}>
       <Figure source={{
-        name: row.source_id, what: `${distributionNote} `
+        name: row.source_name ?? row.source_id, what: `${distributionNote} `
           + (row.crosswalk.comparable && row.crosswalk.degraded_by ? row.crosswalk.degraded_by : '')
           + mdrsnitNote,
         asOf: String(n.year), confidence: 'official',
@@ -226,7 +227,7 @@ export function CountryProfile() {
               </div>
             ))
           ) : wageAbsence ? (
-            <p className="nodata" style={{ marginTop: 8 }}>{wageAbsence.reason}</p>
+            <p className="nodata" style={{ marginTop: 8 }}>{readableAbsentReason(wageAbsence.reason)}</p>
           ) : (
             <p className="nodata" style={{ marginTop: 8 }}>No developer-wage figure for {country.name}.</p>
           )}

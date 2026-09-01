@@ -179,6 +179,24 @@ function _countryGradient(row: WageCountry, gradient: ExperienceGradient): Count
   return gradient.by_country[iso] ?? null
 }
 
+/** A `wages.absent[].reason` as a reader should see it.
+ *
+ *  The committed string carries two developer breadcrumbs: a machine-ish
+ *  `no-series — ` prefix and a trailing `, per src_salary_it.py`. Both are
+ *  real provenance and stay in the data; neither belongs in a sentence read
+ *  aloud to someone asking why Italy has no table. Package 24 stripped them
+ *  inside /work's own row and nowhere else, so the raw form kept rendering
+ *  in the coverage map and its absence footnote — found by reading the
+ *  page's own text back, not by reading the components (package 25,
+ *  assertion class 3). One helper, so the next render site cannot forget.
+ */
+export function readableAbsentReason(reason: string | undefined): string | undefined {
+  return reason
+    ?.replace(/^no-series\s*[—-]\s*/i, '')
+    .replace(/,?\s*per\s+\S+\.py\s*$/i, '')
+    .trim()
+}
+
 /** Countries with a real occupation-level experience/age/tenure cross that
  *  does NOT share the same population as their own wage distribution —
  *  named specifically, not lumped in with the majority that has no cross
@@ -529,7 +547,7 @@ export function computePosition(profile: Profile, row: WageCountry, gradient: Ex
 
   const cg = _countryGradient(row, gradient)
   if (!cg) {
-    return { ok: true, pct: 50, n: row.native.n_employees, sourceLabel: `${row.source_id} published median`,
+    return { ok: true, pct: 50, n: row.native.n_employees, sourceLabel: `${row.source_name ?? row.source_id} published median`,
       year: row.native.year, personalised: false, reason: _noExperienceCrossReason(row) }
   }
   // A gradient exists but has neither of the figures it needs to shift —
@@ -571,7 +589,7 @@ export function computePosition(profile: Profile, row: WageCountry, gradient: Ex
   }
 
   return { ok: true, pct: rank.pct, n: row.native.n_employees,
-    sourceLabel: `${row.source_id} published table, ranked against ${cg.meta.source}`,
+    sourceLabel: `${row.source_name ?? row.source_id} published table, ranked against ${cg.meta.source}`,
     year: row.native.year, personalised: true, chain, clamped: rank.clamped }
 }
 

@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-08-21T17:05:55+00:00",
+ "generated_at": "2026-09-01T01:03:09+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -49,6 +49,7 @@
     "country": "SE",
     "source_id": "salary_se",
     "national_code": "2512",
+    "source_name": "SCB wage structure statistics — ICT occupations (SSYK 2012)",
     "native": {
      "currency": "SEK",
      "period": "month",
@@ -145,6 +146,7 @@
     "country": "GB",
     "source_id": "salary_uk",
     "national_code": "2134",
+    "source_name": "ONS ASHE Table 14.7 — Annual pay (Gross), IT occupations, SOC 2020 4-digit",
     "native": {
      "currency": "GBP",
      "period": "year",
@@ -241,6 +243,7 @@
     "country": "US",
     "source_id": "bls_oews",
     "national_code": "15-1252",
+    "source_name": "BLS Occupational Employment and Wage Statistics (OEWS) — software developers",
     "native": {
      "currency": "USD",
      "period": "year",
@@ -315,7 +318,7 @@
        },
        {
         "op": "fx_convert",
-        "detail": "135980.0 / 1 (US 2025 period-average rate, fx_rates (World Bank PA.NUS.FCRF, period average))"
+        "detail": "135980.0 USD is already USD — identity, no rate applied"
        }
       ],
       "currency": "USD",
@@ -337,6 +340,7 @@
     "country": "DK",
     "source_id": "salary_dk",
     "national_code": "2512",
+    "source_name": "Danmarks Statistik (DST) LONS20 — ICT occupation wage dispersion (DISCO-08)",
     "native": {
      "currency": "DKK",
      "period": "hour",
@@ -540,6 +544,7 @@
     "country": "NO",
     "source_id": "salary_no",
     "national_code": "2512",
+    "source_name": "SSB (Statistics Norway) — ICT occupation wage dispersion (STYRK-08)",
     "native": {
      "currency": "NOK",
      "period": "month",
@@ -680,6 +685,7 @@
     "country": "FI",
     "source_id": "salary_fi",
     "national_code": "2512",
+    "source_name": "Tilastokeskus (Statistics Finland) — ICT occupation wages, full-time earners (AL2010)",
     "native": {
      "currency": "EUR",
      "period": "month",
@@ -820,6 +826,7 @@
     "country": "AU",
     "source_id": "salary_au",
     "national_code": "261313",
+    "source_name": "ATO Taxation Statistics 2023-24, Table 15A — income by 6-digit ANZSCO occupation",
     "native": {
      "currency": "AUD",
      "period": "year",
@@ -916,6 +923,7 @@
     "country": "ES",
     "source_id": "salary_es",
     "national_code": "it_professionals",
+    "source_name": "INE Encuesta Cuatrienal de Estructura Salarial (EES) — IT wages by CNO-11",
     "native": {
      "currency": "EUR",
      "period": "year",
@@ -1011,6 +1019,7 @@
     "country": "IE",
     "source_id": "salary_ie",
     "national_code": "soc1:2",
+    "source_name": "CSO Ireland — SES06 earnings, 'Professional' 1-digit SOC major group",
     "native": {
      "currency": "EUR",
      "period": "hour",
@@ -1114,6 +1123,7 @@
     "country": "QA",
     "source_id": "salary_qa",
     "national_code": "isco08_major:2",
+    "source_name": "Qatar Planning and Statistics Authority — wages by ISCO major group, via data.gov.qa",
     "native": {
      "currency": "QAR",
      "period": "month",
@@ -1165,6 +1175,7 @@
     "country": "AE",
     "source_id": "salary_ae",
     "national_code": "isco08_major:2",
+    "source_name": "UAE — no occupation-level wage series since 2009 (ILOSTAT last known figures)",
     "native": {
      "currency": "AED",
      "period": "month",
@@ -1216,6 +1227,7 @@
     "country": "NL",
     "source_id": "salary_nl",
     "national_code": "0811",
+    "source_name": "CBS (Statistics Netherlands) — software/application developer wages (BRC 2014)",
     "native": {
      "currency": "EUR",
      "period": "hour",
@@ -1317,6 +1329,7 @@
     "country": "DE",
     "source_id": "salary_de",
     "national_code": "434",
+    "source_name": "Destatis GENESIS — 62361-0030 / 62361-0034 (KldB 2010 wages)",
     "native": {
      "currency": "EUR",
      "period": "year",
@@ -1464,6 +1477,7 @@
     "country": "CA-21231",
     "source_id": "salary_ca",
     "national_code": "21231",
+    "source_name": "Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region",
     "native": {
      "currency": "CAD",
      "period": "hour",
@@ -1516,6 +1530,7 @@
     "country": "CA-21232",
     "source_id": "salary_ca",
     "national_code": "21232",
+    "source_name": "Job Bank Wages (Canada) — NOC 2021, software occupations, by economic region",
     "native": {
      "currency": "CAD",
      "period": "hour",
