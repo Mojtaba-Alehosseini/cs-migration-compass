@@ -29,12 +29,25 @@ export interface Climate {
   monthly_source?: string
 }
 
+/** Package 27: which of this city's own research trail (documented in full
+ *  in `note`) the band figures were actually drawn from — read by hand from
+ *  `note` once per city, not guessed at render time. `_nolink`/`_linked`
+ *  says whether `sources[]` also carries a matching URL; "compiled" means
+ *  the note itself describes a genuine multi-source triangulation with no
+ *  single dominant source, so no company name is asserted. See
+ *  citySalarySource() in registry.ts, the only place this is read. */
+export type SalaryPrimarySource =
+  | 'payscale_nolink' | 'payscale_linked' | 'talentcom_nolink'
+  | 'levelsfyi_linked' | 'bls_linked' | 'indeed_linked' | 'indeed_seek_linked'
+  | 'compiled'
+
 export interface SalaryBands {
   new_grad: number | null
   mid: number | null
   senior: number | null
   confidence?: Confidence
   note?: string
+  primary_source?: SalaryPrimarySource
 }
 
 export interface LevelsFyi {

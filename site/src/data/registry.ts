@@ -9,7 +9,7 @@
 
 import type { Band, City, Confidence, Country } from './types'
 import { m2PerYear, savingsPerYear, yearsToHome, netFor } from './compute'
-import { money, moneyShort, num, pct, rankOf, years, NO_DATA } from './format'
+import { money, moneyShort, num, pct, rankOf, years, NO_DATA, sourceName, sourceUrlByHost } from './format'
 
 export type ThemeKey = 'money' | 'visa' | 'jobs' | 'housing' | 'people' | 'life' | 'climate'
 
@@ -77,9 +77,50 @@ export interface MetricDef {
 
 const numbeo = (city: City, what: string) => ({
   name: 'Numbeo',
-  url: city.sources.find((s) => s.includes('numbeo')) ?? 'https://www.numbeo.com/cost-of-living/',
+  url: sourceUrlByHost(city.sources, ['numbeo.com']) ?? 'https://www.numbeo.com/cost-of-living/',
   what,
 })
+
+/** Which real source this city's own "Developer salary" band traces to —
+ *  read from `salary_usd_year.primary_source`, itself hand-set once per city
+ *  from that city's own `note` (see SalaryPrimarySource in types.ts), never
+ *  guessed at render time. Package 26 found this card hardcoded to "talent.com
+ *  + PayScale" for every city regardless of what the record actually says;
+ *  package 27 traced all 73 notes and found the true picture is far more
+ *  varied — PayScale nationally for most Nordic/UK/Ireland cities, talent.com
+ *  for Canada, levels.fyi for most of Germany and the US metros it covers, BLS
+ *  or Indeed where levels.fyi's own metro page was unreachable, Indeed+SEEK
+ *  for four Australian cities, and a genuine multi-source triangulation
+ *  (Glassdoor, KeepCoding, TechPays, and others) everywhere none of those is
+ *  clearly dominant — see NEEDS-DECISION #59. A city whose record does not
+ *  support a single named source says so ("Compiled estimate") rather than
+ *  naming one anyway. */
+export function citySalarySource(city: City): { name: string; url?: string; what: string } {
+  const what = city.salary_usd_year.note ?? 'Market-wide band for this city.'
+  const src = city.salary_usd_year.primary_source
+  switch (src) {
+    case 'payscale_nolink':
+      return { name: 'PayScale', what }
+    case 'payscale_linked':
+      return { name: 'PayScale', url: sourceUrlByHost(city.sources, ['payscale.com']), what }
+    case 'talentcom_nolink':
+      return { name: 'talent.com', what }
+    case 'levelsfyi_linked':
+      return { name: 'levels.fyi', url: city.salary_levels_fyi?.source, what }
+    case 'bls_linked':
+      return { name: sourceName('https://bls.gov'), url: sourceUrlByHost(city.sources, ['bls.gov', 'api.bls.gov']), what }
+    case 'indeed_linked':
+      return { name: 'Indeed', url: sourceUrlByHost(city.sources, ['indeed.com', 'au.indeed.com', 'it.indeed.com']), what }
+    case 'indeed_seek_linked':
+      // Indeed backs new_grad and senior, SEEK backs mid — both real, only one
+      // URL field to offer, and Indeed covers two of the three bands. `what`
+      // (the note) names both explicitly either way.
+      return { name: 'Indeed + SEEK', url: sourceUrlByHost(city.sources, ['indeed.com', 'au.indeed.com', 'it.indeed.com']), what }
+    case 'compiled':
+    default:
+      return { name: 'Compiled estimate', what }
+  }
+}
 
 export const METRICS: MetricDef[] = [
   // ---------------- Money ----------------
@@ -94,11 +135,7 @@ export const METRICS: MetricDef[] = [
     tickFormat: moneyTick,
     direction: 'higher_better',
     confidence: 'crowd',
-    source: (c) => ({
-      name: 'talent.com + PayScale',
-      url: c.sources.find((s) => s.includes('talent.com') || s.includes('payscale')),
-      what: c.salary_usd_year.note ?? 'Market-wide band for this city.',
-    }),
+    source: (c) => citySalarySource(c),
   },
   {
     key: 'salary_levels_fyi',

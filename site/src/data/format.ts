@@ -122,38 +122,76 @@ export const CONFIDENCE_MEANING = {
 } as const
 
 /** Turn a source URL into something a human recognises. */
-export function sourceName(url: string): string {
+/** The real registrable host, no `www.` — the ONLY thing safe to match a
+ *  source's identity against. Package 27: `city.sources.find(s =>
+ *  s.includes('talent.com'))` matched `gulftalent.com` too (it contains the
+ *  substring), so Dubai and Abu Dhabi displayed a citation named "talent.com"
+ *  that linked to a different company. `.includes()` on a URL string is
+ *  never safe for this — only the parsed hostname is. */
+export function hostOf(url: string): string {
   try {
-    const host = new URL(url).hostname.replace(/^www\./, '')
-    const known: Record<string, string> = {
-      'numbeo.com': 'Numbeo',
-      'levels.fyi': 'levels.fyi',
-      'talent.com': 'talent.com',
-      'payscale.com': 'PayScale',
-      'expatistan.com': 'Expatistan',
-      'bls.gov': 'US Bureau of Labor Statistics',
-      'api.worldbank.org': 'World Bank',
-      'ec.europa.eu': 'Eurostat',
-      'oecd.org': 'OECD',
-      'sdmx.oecd.org': 'OECD',
-      'stats.bis.org': 'BIS',
-      'un.org': 'UN DESA',
-      'population.un.org': 'UN Population Division',
-      'worldhappiness.report': 'World Happiness Report',
-      'files.worldhappiness.report': 'World Happiness Report',
-      'rsf.org': 'Reporters Without Borders',
-      'mipex.eu': 'MIPEX',
-      'ef.com': 'EF Education First',
-      'en.wikipedia.org': 'Wikipedia',
-      'fhfa.gov': 'FHFA',
-      'housepriceindex.ca': 'Teranet–National Bank',
-      'publicdata.landregistry.gov.uk': 'HM Land Registry',
-      'imf.org': 'IMF',
-    }
-    return known[host] ?? host
+    return new URL(url).hostname.replace(/^www\./, '')
   } catch {
-    return url
+    return ''
   }
+}
+
+/** The first URL in `sources` whose host is one of `hosts`, checked in the
+ *  order `hosts` lists them — so a caller that prefers `bls.gov` over
+ *  `api.bls.gov` when both exist just lists `bls.gov` first. Exact-host
+ *  match only (see hostOf()); never a substring test. */
+export function sourceUrlByHost(sources: string[], hosts: string[]): string | undefined {
+  for (const h of hosts) {
+    const hit = sources.find((s) => hostOf(s) === h)
+    if (hit) return hit
+  }
+  return undefined
+}
+
+export function sourceName(url: string): string {
+  const host = hostOf(url)
+  if (!host) return url
+  const known: Record<string, string> = {
+    'numbeo.com': 'Numbeo',
+    'levels.fyi': 'levels.fyi',
+    'talent.com': 'talent.com',
+    'payscale.com': 'PayScale',
+    'expatistan.com': 'Expatistan',
+    'bls.gov': 'US Bureau of Labor Statistics',
+    'api.bls.gov': 'US Bureau of Labor Statistics',
+    'api.worldbank.org': 'World Bank',
+    'ec.europa.eu': 'Eurostat',
+    'oecd.org': 'OECD',
+    'sdmx.oecd.org': 'OECD',
+    'stats.bis.org': 'BIS',
+    'un.org': 'UN DESA',
+    'population.un.org': 'UN Population Division',
+    'worldhappiness.report': 'World Happiness Report',
+    'files.worldhappiness.report': 'World Happiness Report',
+    'rsf.org': 'Reporters Without Borders',
+    'mipex.eu': 'MIPEX',
+    'ef.com': 'EF Education First',
+    'en.wikipedia.org': 'Wikipedia',
+    'fhfa.gov': 'FHFA',
+    'housepriceindex.ca': 'Teranet–National Bank',
+    'publicdata.landregistry.gov.uk': 'HM Land Registry',
+    'imf.org': 'IMF',
+    // Package 27 — city salary-band sources, once matched by host instead of
+    // guessed by whichever URL sat first in an unordered array.
+    'gulftalent.com': 'GulfTalent',
+    'indeed.com': 'Indeed',
+    'au.indeed.com': 'Indeed',
+    'it.indeed.com': 'Indeed',
+    'seek.com.au': 'SEEK',
+    'au.seek.com': 'SEEK',
+    'ziprecruiter.com': 'ZipRecruiter',
+    'glassdoor.com': 'Glassdoor',
+    'glassdoor.es': 'Glassdoor España',
+    'keepcoding.io': 'KeepCoding',
+    'stepstone.de': 'StepStone',
+    'techpays.com': 'TechPays',
+  }
+  return known[host] ?? host
 }
 
 export function cityPath(id: string) { return `/city/${id}` }

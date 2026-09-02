@@ -2968,3 +2968,67 @@ requires:
     change, not a one-line fix, and CityProfile.tsx's own inline `<Figure>` uses (the 90 m² multiply
     among them) would still need finding and moving by hand regardless of which path `registry.ts`
     takes.
+
+## 60. For 21 of 73 cities, "market-wide" and "top-employer" pay are not two independent bands — both trace to the same levels.fyi metro page
+
+Package 27, Tier 1 traced every city's `salary_usd_year` (the "Developer salary" headline figure,
+previously mislabelled "talent.com + PayScale" for all 73 — see #59) back to what its own `note`
+field says was actually used, city by city, not guessed. `src_levels_fyi.py`'s own docstring states
+the site's architecture plainly: *"The dataset already carries MARKET-WIDE salary bands (talent.com,
+PayScale, BLS). This adds the other half... The site shows BOTH and never averages them."* The
+premise is that `salary_usd_year` (market-wide) and `salary_levels_fyi` (top-employer) are
+independent bands from independent source families, and the UI's own comparability caveat
+(`registry.ts`, `salary_levels_fyi`'s `what`) tells the reader exactly that: *"Correlated with the
+market band (r = 0.90) but NOT interchangeable... Never blended with it."*
+
+**For 21 of 73 cities, that premise does not hold.** Their own `note` says `salary_usd_year`'s bands
+were read from the SAME levels.fyi metro page that separately backs `salary_levels_fyi` — usually a
+different percentile slice of the identical underlying self-reported sample, not an independent
+market-wide survey:
+
+- **13 US metros** (`new_york, boston, chicago, atlanta, raleigh, dallas, houston, san_antonio,
+  miami, nashville, washington_dc, philadelphia, sf_bay_area`): the note is explicit —
+  *"new_grad=Entry Level band p50 (n=1559); mid approximated from all-levels aggregate median
+  (n=8877)... senior=Senior band p50 (n=3422)"* (New York's own numbers) — three different
+  percentile/aggregate reads of ONE levels.fyi metro page, with a BLS OEWS figure named only as a
+  cross-check, never used as the headline.
+- **6 German cities + Amsterdam** (`berlin, munich, hamburg, frankfurt, stuttgart, amsterdam`): same
+  pattern — *"levels.fyi self-reported total comp... entry-level range... midpoint used; overall
+  average total comp... used as 'mid' proxy"* — again one page, sliced differently per band.
+- **Dubai and Abu Dhabi**: explicitly named *"HARMONIZED 2026-08: entry $33k / senior $100k from
+  levels.fyi Dubai... Mid $57k = geometric mean interpolation within that same source family"* — and
+  the note itself discloses that the market-wide sources (talent.com, PayScale) were checked and
+  found to sit far lower, in a *"deeply two-tier"* market, and were deliberately NOT used.
+
+**What this is not.** No number is wrong — `salary_usd_year`'s own bands for these 21 cities still
+reproduce exactly from levels.fyi's own published percentiles, same as before. Nothing here changes
+what's displayed.
+
+**What this is.** The reader is told two things that are only half true for these 21 cities: (1) the
+citation now correctly says "levels.fyi" (package 27 fixed the false "talent.com + PayScale" label —
+see #59), so a reader who opens the card sees the real source; but (2) the SEPARATE "top-employer
+pay" card beside it still carries the comparability caveat claiming independence and
+non-interchangeability from a band that, for these specific cities, is not actually independent —
+it is the same dataset read a second way. Dubai/Abu Dhabi are the sharpest case: the "market-wide"
+figure there is explicitly, by the note's own words, NOT the market-wide reading at all, but a
+big-employer-skewed levels.fyi figure standing in for it because the true market-wide sources were
+judged unreliable.
+
+**Options:**
+  - **(a) Leave both bands as-is, correct the caveat for these 21 cities specifically.** Cheapest:
+    add a per-city flag (`salary_usd_year.primary_source === 'levelsfyi_linked'`) that swaps the
+    "top-employer pay" card's `what` text to disclose the shared source, for these 21 cities only.
+    Ships without new data or new research.
+  - **(b) Re-derive a genuinely independent market-wide band for these 21 cities**, the way the other
+    52 already have one (BLS, Indeed, PayScale, talent.com, SEEK, or a real multi-source
+    triangulation). Real research work, city by city, not a same-session fix — the reason
+    `salary_usd_year` leaned on levels.fyi for these 21 in the first place was that the independent
+    sources were unavailable, thin, or (Dubai/Abu Dhabi) judged unrepresentative, so re-deriving one
+    means finding a source that wasn't there before, not just re-reading an existing one.
+  - **(c) Drop the "top-employer pay" card specifically for these 21 cities**, since it adds no
+    independent information over the market band already shown — the two-tier comparison this site
+    is built around genuinely does not exist for them. Loses a feature other cities keep, but is the
+    most honest single-card fix if (b) is judged not worth the research cost.
+
+Not resolved here — Tier 1's own instruction is to escalate a finding that changes what a figure
+means, not to pick an answer under a citation-fix package's own time pressure.

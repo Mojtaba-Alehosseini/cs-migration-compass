@@ -9,7 +9,8 @@
     "mid": 88000,
     "senior": 119000,
     "confidence": "crowd",
-    "note": "HARMONIZED 2026-08: bands rebuilt on market-source family. Mid $88k = avg(talent.com AU AUD155k; PayScale Sydney AUD95.6k). new_grad/senior scaled by AU sibling-city market ratios (Melbourne 0.76x/1.37x). levels.fyi Sydney showed entry AND senior both ~AU$170k total comp (thin, big-tech skew: Atlassian/Google/Apple) - treat that as top-employer upper bound, not typical market."
+    "note": "HARMONIZED 2026-08: bands rebuilt on market-source family. Mid $88k = avg(talent.com AU AUD155k; PayScale Sydney AUD95.6k). new_grad/senior scaled by AU sibling-city market ratios (Melbourne 0.76x/1.37x). levels.fyi Sydney showed entry AND senior both ~AU$170k total comp (thin, big-tech skew: Atlassian/Google/Apple) - treat that as top-employer upper bound, not typical market.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 2480,
    "rent_1br_outside_usd_month": 1700,
@@ -162,7 +163,8 @@
     "mid": 76000,
     "senior": 104000,
     "confidence": "crowd",
-    "note": "levels.fyi Melbourne: AU$83,255 median entry-level, AU$148,803 senior (total comp, self-reported, includes named employers like Microsoft). Mid-level (3-5y) not found in available sources (levels.fyi, SEEK, Hays). | MID: Mid = average of talent.com AU median (AUD122,087) and PayScale Melbourne median (AUD93,536, 309 profiles) = AUD107,812 -> /1.4262. NOTE: talent.com's Melbourne low/high band (AUD120,000-127,854) is unusually narrow for a 10,000-sample query, suggesting a possible data-quality quirk on talent.com for this city; treat with some caution."
+    "note": "levels.fyi Melbourne: AU$83,255 median entry-level, AU$148,803 senior (total comp, self-reported, includes named employers like Microsoft). Mid-level (3-5y) not found in available sources (levels.fyi, SEEK, Hays). | MID: Mid = average of talent.com AU median (AUD122,087) and PayScale Melbourne median (AUD93,536, 309 profiles) = AUD107,812 -> /1.4262. NOTE: talent.com's Melbourne low/high band (AUD120,000-127,854) is unusually narrow for a 10,000-sample query, suggesting a possible data-quality quirk on talent.com for this city; treat with some caution.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1740,
    "rent_1br_outside_usd_month": 1380,
@@ -315,7 +317,8 @@
     "mid": 81000,
     "senior": 131000,
     "confidence": "crowd",
-    "note": "levels.fyi Brisbane: AU$73,880-130,900 entry-level range (midpoint used), total comp, self-reported. Senior uses the AU-wide levels.fyi band AU$153,792-218,836 (midpoint) since a Brisbane-specific senior figure wasn't surfaced — flagged as a national, not city-specific, proxy. Mid-level (3-5y) not found. | MID: Mid = average of talent.com AU median (AUD141,640) and PayScale Brisbane median (AUD89,811, 165 profiles) = AUD115,726 -> /1.4262. NOTE: the two sources disagree on Brisbane vs Melbourne ordering (talent.com: Brisbane>Melbourne; PayScale: Melbourne>Brisbane); after averaging, Brisbane edges out Melbourne ($81k vs $76k), but this relative ranking is uncertain given the source disagreement."
+    "note": "levels.fyi Brisbane: AU$73,880-130,900 entry-level range (midpoint used), total comp, self-reported. Senior uses the AU-wide levels.fyi band AU$153,792-218,836 (midpoint) since a Brisbane-specific senior figure wasn't surfaced — flagged as a national, not city-specific, proxy. Mid-level (3-5y) not found. | MID: Mid = average of talent.com AU median (AUD141,640) and PayScale Brisbane median (AUD89,811, 165 profiles) = AUD115,726 -> /1.4262. NOTE: the two sources disagree on Brisbane vs Melbourne ordering (talent.com: Brisbane>Melbourne; PayScale: Melbourne>Brisbane); after averaging, Brisbane edges out Melbourne ($81k vs $76k), but this relative ranking is uncertain given the source disagreement.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1930,
    "rent_1br_outside_usd_month": 1410,
@@ -466,7 +469,8 @@
     "mid": 72000,
     "senior": 107000,
     "confidence": "crowd",
-    "note": "levels.fyi Perth: AU$71,901-99,970 entry-level range and AU$113,110-192,569 senior range (midpoints used), total comp, self-reported. Mid-level (3-5y) not found. Perth shows the lowest software-engineer pay of the four major AU cities researched. | MID: Mid = average of talent.com AU median (AUD115,000, 8,642 samples) and PayScale Perth median (AUD89,661, 82 profiles) = AUD102,331 -> /1.4262. Lowest of the 4 AU cities on both sources."
+    "note": "levels.fyi Perth: AU$71,901-99,970 entry-level range and AU$113,110-192,569 senior range (midpoints used), total comp, self-reported. Mid-level (3-5y) not found. Perth shows the lowest software-engineer pay of the four major AU cities researched. | MID: Mid = average of talent.com AU median (AUD115,000, 8,642 samples) and PayScale Perth median (AUD89,661, 82 profiles) = AUD102,331 -> /1.4262. Lowest of the 4 AU cities on both sources.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1900,
    "rent_1br_outside_usd_month": 1550,
@@ -519,7 +523,8 @@
     "mid": 77000,
     "senior": 79000,
     "confidence": "crowd",
-    "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$76,708; mid from SEEK Adelaide median AU$110,000 (job-ad based, largest/most robust city figure available); senior from Indeed 'Senior Software Engineer' avg AU$113,008. PayScale samples (n=20-111) broadly consistent but smaller."
+    "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$76,708; mid from SEEK Adelaide median AU$110,000 (job-ad based, largest/most robust city figure available); senior from Indeed 'Senior Software Engineer' avg AU$113,008. PayScale samples (n=20-111) broadly consistent but smaller.",
+    "primary_source": "indeed_seek_linked"
    },
    "rent_1br_center_usd_month": 1770,
    "rent_1br_outside_usd_month": 1380,
@@ -574,7 +579,8 @@
     "mid": 60000,
     "senior": 83000,
     "confidence": "crowd",
-    "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$75,498; mid from SEEK Gold Coast median AU$86,000 (lowest of the 8 AU cities researched, corroborated by Indeed's AU$86,164 general average); senior from Indeed 'Senior Software Engineer' avg AU$118,041."
+    "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$75,498; mid from SEEK Gold Coast median AU$86,000 (lowest of the 8 AU cities researched, corroborated by Indeed's AU$86,164 general average); senior from Indeed 'Senior Software Engineer' avg AU$118,041.",
+    "primary_source": "indeed_seek_linked"
    },
    "rent_1br_center_usd_month": 2410,
    "rent_1br_outside_usd_month": 1470,
@@ -727,7 +733,8 @@
     "mid": 64000,
     "senior": 99000,
     "confidence": "crowd",
-    "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$77,946; mid from SEEK Hobart median AU$91,980 (identical to SEEK's Tasmania state-wide figure); senior from Indeed 'Senior Software Engineer' avg AU$141,066. Smallest sample sizes of the researched AU cities (Numbeo: 22 contributors) — lower confidence."
+    "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$77,946; mid from SEEK Hobart median AU$91,980 (identical to SEEK's Tasmania state-wide figure); senior from Indeed 'Senior Software Engineer' avg AU$141,066. Smallest sample sizes of the researched AU cities (Numbeo: 22 contributors) — lower confidence.",
+    "primary_source": "indeed_seek_linked"
    },
    "rent_1br_center_usd_month": 1820,
    "rent_1br_outside_usd_month": 1380,
@@ -879,7 +886,8 @@
     "mid": 88000,
     "senior": 96000,
     "confidence": "crowd",
-    "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$94,869; mid from SEEK Canberra/ACT median AU$125,290 (highest of the 8 AU cities, reflecting a government/defence premium); senior from Indeed 'Senior Software Engineer' avg AU$137,480 (also highest). PayScale's Canberra page is stale (last updated 2018) and was excluded."
+    "note": "New-grad from Indeed 'Junior Software Engineer' avg AU$94,869; mid from SEEK Canberra/ACT median AU$125,290 (highest of the 8 AU cities, reflecting a government/defence premium); senior from Indeed 'Senior Software Engineer' avg AU$137,480 (also highest). PayScale's Canberra page is stale (last updated 2018) and was excluded.",
+    "primary_source": "indeed_seek_linked"
    },
    "rent_1br_center_usd_month": 1760,
    "rent_1br_outside_usd_month": 1490,
@@ -1032,7 +1040,8 @@
     "mid": 57000,
     "senior": 100000,
     "confidence": "crowd",
-    "note": "HARMONIZED 2026-08: entry $33k / senior $100k from levels.fyi Dubai (AED120k/AED367k total comp, big-multinational skew). Mid $57k = geometric mean interpolation within that same source family (no direct mid source exists). CAUTION: market-wide sources (talent.com AE AED90k, PayScale AED87.5k ~= $24k) sit far lower - the Dubai dev market is deeply two-tier. Tax-free."
+    "note": "HARMONIZED 2026-08: entry $33k / senior $100k from levels.fyi Dubai (AED120k/AED367k total comp, big-multinational skew). Mid $57k = geometric mean interpolation within that same source family (no direct mid source exists). CAUTION: market-wide sources (talent.com AE AED90k, PayScale AED87.5k ~= $24k) sit far lower - the Dubai dev market is deeply two-tier. Tax-free.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 2440,
    "rent_1br_outside_usd_month": 1500,
@@ -1087,7 +1096,8 @@
     "mid": 78000,
     "senior": 105000,
     "confidence": "crowd",
-    "note": "HARMONIZED 2026-08: entry $58k / senior $105k from levels.fyi Abu Dhabi (elite-employer skew: ADIA, FAB). Mid $78k = geometric mean interpolation within same family. CAUTION: market-wide talent.com AE median ~= $25k - strong two-tier market. Tax-free."
+    "note": "HARMONIZED 2026-08: entry $58k / senior $105k from levels.fyi Abu Dhabi (elite-employer skew: ADIA, FAB). Mid $78k = geometric mean interpolation within same family. CAUTION: market-wide talent.com AE median ~= $25k - strong two-tier market. Tax-free.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1960,
    "rent_1br_outside_usd_month": 1310,
@@ -1240,7 +1250,8 @@
     "mid": 30000,
     "senior": 59000,
     "confidence": "crowd",
-    "note": "PayScale Qatar (thin, n=7-14): early-career (1-4y) QAR95,585 used for new_grad, corroborated by Glassdoor's Ogoul Technology median of QAR96,000; mid-career QAR110,000. Senior uses Glassdoor's Rheinmetall Barzan Advanced Technologies median QAR216,000; levels.fyi Doha shows a wider all-experience range of QAR95,998-262,296. All Doha salary sources are thin — indicative only. Tax-free."
+    "note": "PayScale Qatar (thin, n=7-14): early-career (1-4y) QAR95,585 used for new_grad, corroborated by Glassdoor's Ogoul Technology median of QAR96,000; mid-career QAR110,000. Senior uses Glassdoor's Rheinmetall Barzan Advanced Technologies median QAR216,000; levels.fyi Doha shows a wider all-experience range of QAR95,998-262,296. All Doha salary sources are thin — indicative only. Tax-free.",
+    "primary_source": "payscale_linked"
    },
    "rent_1br_center_usd_month": 1980,
    "rent_1br_outside_usd_month": 1250,
@@ -1296,7 +1307,8 @@
     "mid": 197000,
     "senior": 250000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"new-york-city-area\" location page. new_grad=Entry Level band p50 (n=1559); mid approximated from all-levels aggregate median (n=8877) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=3422). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $166,830."
+    "note": "levels.fyi total comp (base+stock+bonus), \"new-york-city-area\" location page. new_grad=Entry Level band p50 (n=1559); mid approximated from all-levels aggregate median (n=8877) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=3422). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $166,830.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 4410,
    "rent_1br_outside_usd_month": 2950,
@@ -1451,7 +1463,8 @@
     "mid": 169000,
     "senior": 218000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"greater-boston-area\" location page. new_grad=Entry Level band p50 (n=343); mid approximated from all-levels aggregate median (n=2078) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=883). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $166,090."
+    "note": "levels.fyi total comp (base+stock+bonus), \"greater-boston-area\" location page. new_grad=Entry Level band p50 (n=343); mid approximated from all-levels aggregate median (n=2078) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=883). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $166,090.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 3400,
    "rent_1br_outside_usd_month": 2600,
@@ -1606,7 +1619,8 @@
     "mid": 150000,
     "senior": 190000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"greater-chicago-area\" location page. new_grad=Entry Level band p50 (n=250); mid approximated from all-levels aggregate median (n=1599) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=649). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $134,380."
+    "note": "levels.fyi total comp (base+stock+bonus), \"greater-chicago-area\" location page. new_grad=Entry Level band p50 (n=250); mid approximated from all-levels aggregate median (n=1599) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=649). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $134,380.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 2370,
    "rent_1br_outside_usd_month": 1660,
@@ -1761,7 +1775,8 @@
     "mid": 145000,
     "senior": 179000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"atlanta-area\" location page. new_grad=Entry Level band p50 (n=138); mid approximated from all-levels aggregate median (n=992) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=482). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $132,960."
+    "note": "levels.fyi total comp (base+stock+bonus), \"atlanta-area\" location page. new_grad=Entry Level band p50 (n=138); mid approximated from all-levels aggregate median (n=992) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=482). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $132,960.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 2020,
    "rent_1br_outside_usd_month": 1460,
@@ -1916,7 +1931,8 @@
     "mid": 150000,
     "senior": 182000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"raleigh-durham-area\" location page. new_grad=Entry Level band p50 (n=73); mid approximated from all-levels aggregate median (n=566) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=277). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $132,770."
+    "note": "levels.fyi total comp (base+stock+bonus), \"raleigh-durham-area\" location page. new_grad=Entry Level band p50 (n=73); mid approximated from all-levels aggregate median (n=566) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=277). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $132,770.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1740,
    "rent_1br_outside_usd_month": 1280,
@@ -2071,7 +2087,8 @@
     "mid": 135000,
     "senior": 170000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"greater-dallas-area\" location page. new_grad=Entry Level band p50 (n=318); mid approximated from all-levels aggregate median (n=2000) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=855). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $133,290."
+    "note": "levels.fyi total comp (base+stock+bonus), \"greater-dallas-area\" location page. new_grad=Entry Level band p50 (n=318); mid approximated from all-levels aggregate median (n=2000) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=855). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $133,290.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1830,
    "rent_1br_outside_usd_month": 1440,
@@ -2217,7 +2234,8 @@
     "mid": 130000,
     "senior": 165000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"greater-houston-area\" location page. new_grad=Entry Level band p50 (n=62); mid approximated from all-levels aggregate median (n=473) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=193). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $129,440."
+    "note": "levels.fyi total comp (base+stock+bonus), \"greater-houston-area\" location page. new_grad=Entry Level band p50 (n=62); mid approximated from all-levels aggregate median (n=473) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=193). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $129,440.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1710,
    "rent_1br_outside_usd_month": 1410,
@@ -2264,7 +2282,8 @@
     "mid": 127000,
     "senior": 164000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"san-antonio-area\" location page. new_grad=Entry Level band p50 (n=9); mid approximated from all-levels aggregate median (n=71) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=31). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $128,430."
+    "note": "levels.fyi total comp (base+stock+bonus), \"san-antonio-area\" location page. new_grad=Entry Level band p50 (n=9); mid approximated from all-levels aggregate median (n=71) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=31). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $128,430.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1510,
    "rent_1br_outside_usd_month": 1060,
@@ -2320,7 +2339,8 @@
     "mid": 140000,
     "senior": 169000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"miami-ft-lauderdale-area\" location page. new_grad=Entry Level band p50 (n=44); mid approximated from all-levels aggregate median (n=375) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=180). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $132,650."
+    "note": "levels.fyi total comp (base+stock+bonus), \"miami-ft-lauderdale-area\" location page. new_grad=Entry Level band p50 (n=44); mid approximated from all-levels aggregate median (n=375) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=180). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $132,650.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 2770,
    "rent_1br_outside_usd_month": 2160,
@@ -2376,7 +2396,8 @@
     "mid": 130000,
     "senior": 207000,
     "confidence": "official",
-    "note": "levels.fyi has no dedicated metro page for this city (confirmed by direct URL testing); Glassdoor was attempted as the task's specified fallback but blocked automated access (Cloudflare). Bands instead derived from BLS OES May 2025 Software Developers (15-1252) wage percentiles for this metro: p10=$78,480 (new_grad proxy), median=$130,450 (mid proxy), p90=$207,330 (senior proxy). CAVEAT: BLS figures are base wage only (exclude stock/bonus) and are percentiles across ALL experience levels blended together (not discrete career-stage bands like levels.fyi uses), so these are not directly comparable to the total-comp bands used for the levels.fyi-covered cities in this dataset -- treat as a rougher estimate."
+    "note": "levels.fyi has no dedicated metro page for this city (confirmed by direct URL testing); Glassdoor was attempted as the task's specified fallback but blocked automated access (Cloudflare). Bands instead derived from BLS OES May 2025 Software Developers (15-1252) wage percentiles for this metro: p10=$78,480 (new_grad proxy), median=$130,450 (mid proxy), p90=$207,330 (senior proxy). CAVEAT: BLS figures are base wage only (exclude stock/bonus) and are percentiles across ALL experience levels blended together (not discrete career-stage bands like levels.fyi uses), so these are not directly comparable to the total-comp bands used for the levels.fyi-covered cities in this dataset -- treat as a rougher estimate.",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 2370,
    "rent_1br_outside_usd_month": 1700,
@@ -2528,7 +2549,8 @@
     "mid": 130000,
     "senior": 177000,
     "confidence": "official",
-    "note": "levels.fyi has no dedicated metro page for this city (confirmed by direct URL testing); Glassdoor was attempted as the task's specified fallback but blocked automated access (Cloudflare). Bands instead derived from BLS OES May 2025 Software Developers (15-1252) wage percentiles for this metro: p10=$80,170 (new_grad proxy), median=$129,620 (mid proxy), p90=$176,800 (senior proxy). CAVEAT: BLS figures are base wage only (exclude stock/bonus) and are percentiles across ALL experience levels blended together (not discrete career-stage bands like levels.fyi uses), so these are not directly comparable to the total-comp bands used for the levels.fyi-covered cities in this dataset -- treat as a rougher estimate."
+    "note": "levels.fyi has no dedicated metro page for this city (confirmed by direct URL testing); Glassdoor was attempted as the task's specified fallback but blocked automated access (Cloudflare). Bands instead derived from BLS OES May 2025 Software Developers (15-1252) wage percentiles for this metro: p10=$80,170 (new_grad proxy), median=$129,620 (mid proxy), p90=$176,800 (senior proxy). CAVEAT: BLS figures are base wage only (exclude stock/bonus) and are percentiles across ALL experience levels blended together (not discrete career-stage bands like levels.fyi uses), so these are not directly comparable to the total-comp bands used for the levels.fyi-covered cities in this dataset -- treat as a rougher estimate.",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1930,
    "rent_1br_outside_usd_month": 1520,
@@ -2680,7 +2702,8 @@
     "mid": 154000,
     "senior": 185000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"nashville-area\" location page. new_grad=Entry Level band p50 (n=20); mid approximated from all-levels aggregate median (n=156) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=70). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $126,610."
+    "note": "levels.fyi total comp (base+stock+bonus), \"nashville-area\" location page. new_grad=Entry Level band p50 (n=20); mid approximated from all-levels aggregate median (n=156) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=70). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $126,610.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1950,
    "rent_1br_outside_usd_month": 1400,
@@ -2826,7 +2849,8 @@
     "mid": 136000,
     "senior": 172000,
     "confidence": "official",
-    "note": "levels.fyi has no dedicated metro page for this city (confirmed by direct URL testing); Glassdoor was attempted as the task's specified fallback but blocked automated access (Cloudflare). Bands instead derived from BLS OES May 2025 Software Developers (15-1252) wage percentiles for this metro: p10=$93,690 (new_grad proxy), median=$135,920 (mid proxy), p90=$172,360 (senior proxy). CAVEAT: BLS figures are base wage only (exclude stock/bonus) and are percentiles across ALL experience levels blended together (not discrete career-stage bands like levels.fyi uses), so these are not directly comparable to the total-comp bands used for the levels.fyi-covered cities in this dataset -- treat as a rougher estimate."
+    "note": "levels.fyi has no dedicated metro page for this city (confirmed by direct URL testing); Glassdoor was attempted as the task's specified fallback but blocked automated access (Cloudflare). Bands instead derived from BLS OES May 2025 Software Developers (15-1252) wage percentiles for this metro: p10=$93,690 (new_grad proxy), median=$135,920 (mid proxy), p90=$172,360 (senior proxy). CAVEAT: BLS figures are base wage only (exclude stock/bonus) and are percentiles across ALL experience levels blended together (not discrete career-stage bands like levels.fyi uses), so these are not directly comparable to the total-comp bands used for the levels.fyi-covered cities in this dataset -- treat as a rougher estimate.",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1900,
    "rent_1br_outside_usd_month": 1380,
@@ -2969,7 +2993,8 @@
     "mid": 158000,
     "senior": 202000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"northern-virginia-washington-dc\" location page. new_grad=Entry Level band p50 (n=328); mid approximated from all-levels aggregate median (n=1778) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=665). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $154,930."
+    "note": "levels.fyi total comp (base+stock+bonus), \"northern-virginia-washington-dc\" location page. new_grad=Entry Level band p50 (n=328); mid approximated from all-levels aggregate median (n=1778) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=665). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $154,930.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 2630,
    "rent_1br_outside_usd_month": 2120,
@@ -3124,7 +3149,8 @@
     "mid": 128000,
     "senior": 170000,
     "confidence": "crowd",
-    "note": "levels.fyi total comp (base+stock+bonus), \"philadelphia-area\" location page. new_grad=Entry Level band p50 (n=102); mid approximated from all-levels aggregate median (n=722) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=278). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $133,040."
+    "note": "levels.fyi total comp (base+stock+bonus), \"philadelphia-area\" location page. new_grad=Entry Level band p50 (n=102); mid approximated from all-levels aggregate median (n=722) since levels.fyi has no dedicated mid-level metro page; senior=Senior band p50 (n=278). Cross-check: BLS OES May 2025 median (all-experience, base wage only) = $133,040.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1970,
    "rent_1br_outside_usd_month": 1320,
@@ -3270,7 +3296,8 @@
     "mid": 275000,
     "senior": 378000,
     "confidence": "crowd",
-    "note": "levels.fyi Bay Area metro aggregate updated Jul 9 2026 (25th pct=new_grad $202k, median=mid $275k, 75th pct=senior $378k, rounded). BLS OEWS San Francisco-Oakland-Fremont MSA 'Computer and mathematical' occupational group mean wage was $78.40/hr (~$163,072/yr annualized, May 2024 data) - well below levels.fyi total comp, as expected since it is base-only pay averaged across all employers/all computer occupations, not total comp at top tech firms."
+    "note": "levels.fyi Bay Area metro aggregate updated Jul 9 2026 (25th pct=new_grad $202k, median=mid $275k, 75th pct=senior $378k, rounded). BLS OEWS San Francisco-Oakland-Fremont MSA 'Computer and mathematical' occupational group mean wage was $78.40/hr (~$163,072/yr annualized, May 2024 data) - well below levels.fyi total comp, as expected since it is base-only pay averaged across all employers/all computer occupations, not total comp at top tech firms.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 3770,
    "rent_1br_outside_usd_month": 2730,
@@ -3423,7 +3450,8 @@
     "mid": 157000,
     "senior": 233000,
     "confidence": "crowd",
-    "note": "levels.fyi metro page was inaccessible (JS-rendered SPA returned empty HTML) and this session's WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in Seattle, WA (n=2.5k job-posting-derived salaries, updated Jul 27 2026) as new_grad/mid/senior. Cross-checked against ZipRecruiter (avg $167,886/yr; 25th pct $136,600; 90th pct $233,295 - closely matches Indeed's high end) and BLS OEWS Seattle-Tacoma-Bellevue MSA 'Computer and mathematical' group mean wage $73.93/hr (~$153,774/yr, May 2024) - consistent with Indeed's average."
+    "note": "levels.fyi metro page was inaccessible (JS-rendered SPA returned empty HTML) and this session's WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in Seattle, WA (n=2.5k job-posting-derived salaries, updated Jul 27 2026) as new_grad/mid/senior. Cross-checked against ZipRecruiter (avg $167,886/yr; 25th pct $136,600; 90th pct $233,295 - closely matches Indeed's high end) and BLS OEWS Seattle-Tacoma-Bellevue MSA 'Computer and mathematical' group mean wage $73.93/hr (~$153,774/yr, May 2024) - consistent with Indeed's average.",
+    "primary_source": "indeed_linked"
    },
    "rent_1br_center_usd_month": 2440,
    "rent_1br_outside_usd_month": 1920,
@@ -3577,7 +3605,8 @@
     "mid": 131000,
     "senior": 207000,
     "confidence": "crowd",
-    "note": "levels.fyi unavailable this session (WebSearch budget was already exhausted; direct levels.fyi fetch returned an empty JS-rendered page). Fallback used: BLS OEWS May 2023, Austin-Round Rock, TX metro, Software Developers (SOC 15-1252) - median hourly wage $63.14 x 2080 hrs = $131,331 used as 'mid'. new_grad/senior derived by applying national BLS 25th- and 90th-percentile-to-median ratios (0.77x / 1.58x) to the metro median. BLS wages are base salary only (excludes equity/bonus common in tech total comp), so these figures likely understate real total compensation, especially at senior level."
+    "note": "levels.fyi unavailable this session (WebSearch budget was already exhausted; direct levels.fyi fetch returned an empty JS-rendered page). Fallback used: BLS OEWS May 2023, Austin-Round Rock, TX metro, Software Developers (SOC 15-1252) - median hourly wage $63.14 x 2080 hrs = $131,331 used as 'mid'. new_grad/senior derived by applying national BLS 25th- and 90th-percentile-to-median ratios (0.77x / 1.58x) to the metro median. BLS wages are base salary only (excludes equity/bonus common in tech total comp), so these figures likely understate real total compensation, especially at senior level.",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1890,
    "rent_1br_outside_usd_month": 1300,
@@ -3623,7 +3652,8 @@
     "mid": 135000,
     "senior": 213000,
     "confidence": "crowd",
-    "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Denver-Aurora-Lakewood, CO metro, Software Developers (SOC 15-1252) - median hourly wage $64.90 x 2080 hrs = $134,992 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level."
+    "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Denver-Aurora-Lakewood, CO metro, Software Developers (SOC 15-1252) - median hourly wage $64.90 x 2080 hrs = $134,992 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level.",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 2030,
    "rent_1br_outside_usd_month": 1670,
@@ -3678,7 +3708,8 @@
     "mid": 154000,
     "senior": 245000,
     "confidence": "crowd",
-    "note": "levels.fyi metro page was inaccessible (JS-rendered SPA) and WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in Los Angeles, CA (n=538 postings, updated Jul 20 2026) as new_grad/mid/senior. BLS OEWS Los Angeles-Long Beach-Anaheim MSA 'Computer and mathematical' group mean wage was $60.21/hr (~$125,237/yr, May 2024) - lower than Indeed's average, consistent with it covering a broad occupational group/all employers rather than the software-engineer-specific title at tech-paying firms."
+    "note": "levels.fyi metro page was inaccessible (JS-rendered SPA) and WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in Los Angeles, CA (n=538 postings, updated Jul 20 2026) as new_grad/mid/senior. BLS OEWS Los Angeles-Long Beach-Anaheim MSA 'Computer and mathematical' group mean wage was $60.21/hr (~$125,237/yr, May 2024) - lower than Indeed's average, consistent with it covering a broad occupational group/all employers rather than the software-engineer-specific title at tech-paying firms.",
+    "primary_source": "indeed_linked"
    },
    "rent_1br_center_usd_month": 2480,
    "rent_1br_outside_usd_month": 2260,
@@ -3732,7 +3763,8 @@
     "mid": 134000,
     "senior": 205000,
     "confidence": "crowd",
-    "note": "levels.fyi metro page was inaccessible (JS-rendered SPA) and WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in San Diego, CA (n=625 postings, updated Jul 26 2026) as new_grad/mid/senior. BLS OEWS San Diego-Chula Vista-Carlsbad MSA 'Computer and mathematical' group mean wage was $62.22/hr (~$129,418/yr, May 2024) - a reasonably close cross-check to Indeed's average."
+    "note": "levels.fyi metro page was inaccessible (JS-rendered SPA) and WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in San Diego, CA (n=625 postings, updated Jul 26 2026) as new_grad/mid/senior. BLS OEWS San Diego-Chula Vista-Carlsbad MSA 'Computer and mathematical' group mean wage was $62.22/hr (~$129,418/yr, May 2024) - a reasonably close cross-check to Indeed's average.",
+    "primary_source": "indeed_linked"
    },
    "rent_1br_center_usd_month": 3300,
    "rent_1br_outside_usd_month": 2610,
@@ -3786,7 +3818,8 @@
     "mid": 126000,
     "senior": 204000,
     "confidence": "crowd",
-    "note": "levels.fyi metro page was inaccessible (JS-rendered SPA) and WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in Sacramento, CA (n=33 postings only - small sample, updated Jul 10 2026) as new_grad/mid/senior. BLS OEWS Sacramento-Roseville-Folsom MSA 'Computer and mathematical' group mean wage was $55.91/hr (~$116,293/yr, May 2024) - a reasonably close cross-check, though both figures should be treated as lower-confidence given Sacramento's smaller tech job market and thin sample."
+    "note": "levels.fyi metro page was inaccessible (JS-rendered SPA) and WebSearch quota was exhausted, so used Indeed.com's Low/Average/High market pay for 'Software Engineer' in Sacramento, CA (n=33 postings only - small sample, updated Jul 10 2026) as new_grad/mid/senior. BLS OEWS Sacramento-Roseville-Folsom MSA 'Computer and mathematical' group mean wage was $55.91/hr (~$116,293/yr, May 2024) - a reasonably close cross-check, though both figures should be treated as lower-confidence given Sacramento's smaller tech job market and thin sample.",
+    "primary_source": "indeed_linked"
    },
    "rent_1br_center_usd_month": 2090,
    "rent_1br_outside_usd_month": 1540,
@@ -3840,7 +3873,8 @@
     "mid": 133000,
     "senior": 210000,
     "confidence": "crowd",
-    "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Portland-Vancouver-Hillsboro, OR-WA metro, Software Developers (SOC 15-1252) - median hourly wage $63.88 x 2080 hrs = $132,870 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level."
+    "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Portland-Vancouver-Hillsboro, OR-WA metro, Software Developers (SOC 15-1252) - median hourly wage $63.88 x 2080 hrs = $132,870 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level.",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 2060,
    "rent_1br_outside_usd_month": 1640,
@@ -3885,7 +3919,8 @@
     "mid": 126000,
     "senior": 199000,
     "confidence": "crowd",
-    "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Phoenix-Mesa-Chandler, AZ metro, Software Developers (SOC 15-1252) - median hourly wage $60.53 x 2080 hrs = $125,902 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level."
+    "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Phoenix-Mesa-Chandler, AZ metro, Software Developers (SOC 15-1252) - median hourly wage $60.53 x 2080 hrs = $125,902 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level.",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1780,
    "rent_1br_outside_usd_month": 1420,
@@ -3939,7 +3974,8 @@
     "mid": 116000,
     "senior": 183000,
     "confidence": "crowd",
-    "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Salt Lake City, UT metro, Software Developers (SOC 15-1252) - median hourly wage $55.65 x 2080 hrs = $115,752 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level."
+    "note": "levels.fyi unavailable this session (WebSearch budget exhausted; direct fetch blocked/empty). Fallback used: BLS OEWS May 2023, Salt Lake City, UT metro, Software Developers (SOC 15-1252) - median hourly wage $55.65 x 2080 hrs = $115,752 used as 'mid'. new_grad/senior derived via national BLS 25th/90th-to-median ratios (0.77x/1.58x). BLS wages are base salary only, excludes equity/bonus, so likely understates real total comp especially at senior level.",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1550,
    "rent_1br_outside_usd_month": 1360,
@@ -3993,7 +4029,8 @@
     "mid": 122000,
     "senior": 192000,
     "confidence": "crowd",
-    "note": "BLS OEWS May 2023, Las Vegas-Henderson-Paradise NV MSA, Software Developers (15-1252): median hourly wage $58.57 (x2080 = ~$121,826/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+    "note": "BLS OEWS May 2023, Las Vegas-Henderson-Paradise NV MSA, Software Developers (15-1252): median hourly wage $58.57 (x2080 = ~$121,826/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering).",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1590,
    "rent_1br_outside_usd_month": 1390,
@@ -4037,7 +4074,8 @@
     "mid": 107000,
     "senior": 169000,
     "confidence": "crowd",
-    "note": "BLS OEWS May 2023, Pittsburgh PA MSA, Software Developers (15-1252): median hourly wage $51.50 (x2080 = $107,120/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+    "note": "BLS OEWS May 2023, Pittsburgh PA MSA, Software Developers (15-1252): median hourly wage $51.50 (x2080 = $107,120/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering).",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1570,
    "rent_1br_outside_usd_month": 1130,
@@ -4090,7 +4128,8 @@
     "mid": 128000,
     "senior": 202000,
     "confidence": "crowd",
-    "note": "BLS OEWS May 2023, Minneapolis-St. Paul-Bloomington MN-WI MSA, Software Developers (15-1252): median hourly wage $61.40 (x2080 = $127,712/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+    "note": "BLS OEWS May 2023, Minneapolis-St. Paul-Bloomington MN-WI MSA, Software Developers (15-1252): median hourly wage $61.40 (x2080 = $127,712/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering).",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1800,
    "rent_1br_outside_usd_month": 1280,
@@ -4134,7 +4173,8 @@
     "mid": 114000,
     "senior": 181000,
     "confidence": "crowd",
-    "note": "BLS OEWS May 2023, Columbus OH MSA, Software Developers (15-1252): median hourly wage $54.97 (x2080 = $114,338/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+    "note": "BLS OEWS May 2023, Columbus OH MSA, Software Developers (15-1252): median hourly wage $54.97 (x2080 = $114,338/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering).",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1570,
    "rent_1br_outside_usd_month": 1100,
@@ -4178,7 +4218,8 @@
     "mid": 107000,
     "senior": 170000,
     "confidence": "crowd",
-    "note": "BLS OEWS May 2023, Detroit-Warren-Dearborn MI MSA, Software Developers (15-1252): median hourly wage $51.68 (x2080 = $107,494/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering)."
+    "note": "BLS OEWS May 2023, Detroit-Warren-Dearborn MI MSA, Software Developers (15-1252): median hourly wage $51.68 (x2080 = $107,494/yr) used as mid; new_grad = mid x0.77, senior = mid x1.58 (national 25th/90th-to-median ratios). Base salary only, excludes equity/bonus - likely understates real total comp, especially senior level. levels.fyi was not accessible this session (WebSearch quota exhausted, direct fetch blocked by JS rendering).",
+    "primary_source": "bls_linked"
    },
    "rent_1br_center_usd_month": 1520,
    "rent_1br_outside_usd_month": 940,
@@ -4232,7 +4273,8 @@
     "senior": 115000,
     "confidence": "crowd",
     "note": "talent.com CA (10,000 samples): low $92,500 / median $120,668 / high $161,025 CAD -> /1.4044. Cross-check PayScale Toronto median C$92,450 (433 profiles, base ~ total comp).",
-    "sources": []
+    "sources": [],
+    "primary_source": "talentcom_nolink"
    },
    "rent_1br_center_usd_month": 1610,
    "rent_1br_outside_usd_month": 1450,
@@ -4284,7 +4326,8 @@
     "senior": 116000,
     "confidence": "crowd",
     "note": "talent.com CA (10,000 samples): low $77,123 / median $115,000 / high $162,640 CAD -> /1.4044. Cross-check PayScale Vancouver median C$90,383 (182 profiles).",
-    "sources": []
+    "sources": [],
+    "primary_source": "talentcom_nolink"
    },
    "rent_1br_center_usd_month": 1850,
    "rent_1br_outside_usd_month": 1570,
@@ -4336,7 +4379,8 @@
     "senior": 106000,
     "confidence": "crowd",
     "note": "talent.com CA (10,000 samples): low $90,000 / median $122,500 / high $148,328 CAD -> /1.4044. DEVIATION FLAG: this median exceeds Toronto/Ottawa ($120,668) and Vancouver ($115,000), contradicting the expected Toronto/Vancouver > Montreal pattern. PayScale Montreal median is only C$81,383 (117 profiles) and would rank Montreal below Toronto/Vancouver/Ottawa/Calgary as expected -- the two sources disagree materially here; treat Montreal's relative ranking with caution.",
-    "sources": []
+    "sources": [],
+    "primary_source": "talentcom_nolink"
    },
    "rent_1br_center_usd_month": 1270,
    "rent_1br_outside_usd_month": 990,
@@ -4388,7 +4432,8 @@
     "senior": 115000,
     "confidence": "crowd",
     "note": "talent.com CA returned figures identical to Toronto (low $92,500 / median $120,668 / high $161,025 CAD -> /1.4044), a possible granularity limit. However PayScale Ottawa median (C$92,077, 74 profiles) independently sits within 0.4% of PayScale Toronto (C$92,450), so Ottawa~=Toronto looks like a genuine market feature, not just a data artifact.",
-    "sources": []
+    "sources": [],
+    "primary_source": "talentcom_nolink"
    },
    "rent_1br_center_usd_month": 1500,
    "rent_1br_outside_usd_month": 1250,
@@ -4440,7 +4485,8 @@
     "senior": 87000,
     "confidence": "crowd",
     "note": "talent.com CA (10,000 samples): low $80,000 / median $104,418 / high $121,963 CAD -> /1.4044. Cross-check PayScale Calgary median C$89,678 (66 profiles).",
-    "sources": []
+    "sources": [],
+    "primary_source": "talentcom_nolink"
    },
    "rent_1br_center_usd_month": 1340,
    "rent_1br_outside_usd_month": 1090,
@@ -4492,7 +4538,8 @@
     "senior": 86000,
     "confidence": "crowd",
     "note": "talent.com CA (10,000 samples): low $72,150 / median $85,000 / high $121,085 CAD -> /1.4044. Cross-check PayScale Halifax median C$71,209 (34 profiles). Lowest of the 6 Canadian cities on both sources, consistent with sanity expectation (Halifax < Montreal/Ottawa/Calgary).",
-    "sources": []
+    "sources": [],
+    "primary_source": "talentcom_nolink"
    },
    "rent_1br_center_usd_month": 1450,
    "rent_1br_outside_usd_month": 1280,
@@ -4544,7 +4591,8 @@
     "senior": 114000,
     "confidence": "crowd",
     "note": "PRIMARY: PayScale London (507 profiles): 10%=GBP34k / median=GBP51,674 / 90%=GBP85k -> /0.7446. talent.com UK's London page returned figures identical to its Manchester page (GBP40,200 median, 10,000 samples) -- a granularity limit -- so was used only as a secondary reference, not primary. Base ~ total comp assumed per task guidance.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 3070,
    "rent_1br_outside_usd_month": 2370,
@@ -4596,7 +4644,8 @@
     "senior": 71000,
     "confidence": "crowd",
     "note": "PRIMARY: PayScale Manchester (89 profiles): 10%=GBP28k / median=GBP40,486 / 90%=GBP53k -> /0.7446. talent.com UK's Manchester page duplicated its London figures exactly (GBP40,200 median), so was not used as primary.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 1870,
    "rent_1br_outside_usd_month": 1260,
@@ -4648,7 +4697,8 @@
     "senior": 83000,
     "confidence": "crowd",
     "note": "PRIMARY: PayScale Edinburgh (75 profiles): 10%=GBP28k / median=GBP37,545 / 90%=GBP62k -> /0.7446. talent.com UK cites a close median of GBP40,000 (10,000 samples) as secondary cross-check. London (GBP51,674 median) > Manchester (GBP40,486) ~= Edinburgh (GBP37,545) -- matches the expected sanity pattern.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 1630,
    "rent_1br_outside_usd_month": 1220,
@@ -4700,7 +4750,8 @@
     "senior": 96000,
     "confidence": "crowd",
     "note": "PRIMARY: PayScale Dublin (104 profiles): 10%=EUR37k / median=EUR53,272 / 90%=EUR83k -> /0.8686. talent.com IE returned Dublin and Cork with identical figures (EUR59,000 median, 10,000 samples) -- a granularity limit -- cited only as secondary reference.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 2520,
    "rent_1br_outside_usd_month": 2170,
@@ -4752,7 +4803,8 @@
     "senior": 71000,
     "confidence": "crowd",
     "note": "PRIMARY: PayScale Cork (37 profiles): 10%=EUR38k / median=EUR46,140 / 90%=EUR62k -> /0.8686. talent.com IE's Cork page duplicated its Dublin figures exactly (EUR59,000 median), so was not used as primary. Dublin (EUR53,272 median) > Cork (EUR46,140) holds clearly on PayScale, matching sanity expectation.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 2110,
    "rent_1br_outside_usd_month": 1850,
@@ -4804,7 +4856,8 @@
     "senior": 59000,
     "confidence": "crowd",
     "note": "PRIMARY: PayScale Sweden, national -- no Stockholm-specific breakdown exists on either source: Entry-Level=SEK387,088 / Mid-Career=SEK528,123 / Experienced=SEK560,504 -> /9.5589. talent.com SE gave Stockholm and Gothenburg identical figures (median SEK1,050,000 ~ $109,850) which look anomalously high -- more than double PayScale's figure and would make Stockholm the single highest-paid Group-1 city, exceeding London, which conflicts with general knowledge that London tops Europe -- flagged as a likely outlier (only 128 samples) and NOT used. SANITY FLAG: at these rates Helsinki's mid ($60k) exceeds Stockholm's ($55k) in USD despite Sweden's local-currency figure being nominally larger -- this is a currency-conversion effect (SEK has weakened a lot vs EUR/USD: 9.56 SEK/USD vs 0.869 EUR/USD), not a data error. Copenhagen and Oslo do come out above Stockholm as expected.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 1760,
    "rent_1br_outside_usd_month": 1140,
@@ -4856,7 +4909,8 @@
     "senior": 59000,
     "confidence": "crowd",
     "note": "No Gothenburg-specific breakdown found on either source (PayScale Sweden has no per-city data; talent.com SE's Gothenburg page duplicated Stockholm's figures exactly). PayScale Sweden national figures used as proxy for both cities: Entry-Level=SEK387,088 / Mid-Career=SEK528,123 / Experienced=SEK560,504 -> /9.5589. Treat as a national-level estimate, not Gothenburg-specific.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 1050,
    "rent_1br_outside_usd_month": 900,
@@ -4908,7 +4962,8 @@
     "senior": 109000,
     "confidence": "crowd",
     "note": "talent.com has no salary tool for Denmark (nav lacks a 'Search salary' link). PRIMARY: PayScale Denmark, national (98 profiles overall): Entry-Level=DKK455,891 / Mid-Career=DKK527,564 / Late-Career=DKK709,859 -> /6.4927 (Late-Career used for senior; the nominal 'Experienced' 10-19y bucket had only 6 profiles and was non-monotonic/noisy, so was discarded as unreliable). Cross-check: Numbeo Copenhagen avg monthly net salary DKK30,357 (~DKK364k/yr net, all occupations, not tech-specific) is a plausible after-tax floor given Denmark's high marginal tax rates relative to our ~DKK527k gross mid estimate.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 1950,
    "rent_1br_outside_usd_month": 1440,
@@ -4960,7 +5015,8 @@
     "senior": 109000,
     "confidence": "crowd",
     "note": "No Aarhus-specific salary data found (talent.com has no Denmark salary tool; PayScale Denmark has no city breakdown). PayScale Denmark national figures used as proxy (identical to Copenhagen): Entry-Level=DKK455,891 / Mid-Career=DKK527,564 / Late-Career=DKK709,859 -> /6.4927. Numbeo's Aarhus cost-of-living page could not be retrieved this session (repeated fetch failures) so this city is effectively single-sourced -- treat with extra caution and expect Aarhus to run somewhat below Copenhagen in reality given it is Denmark's second city.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 1350,
    "rent_1br_outside_usd_month": 1000,
@@ -5014,7 +5070,8 @@
     "senior": 76000,
     "confidence": "crowd",
     "note": "talent.com has no salary tool for Norway (nav lacks a 'Search salary' link). PRIMARY: PayScale Norway, national (73 profiles overall): Entry-Level=NOK505,987 / Mid-Career=NOK668,230 / Experienced=NOK724,953 -> /9.5316. Cross-check: Numbeo Oslo avg monthly net salary NOK40,862 (~NOK490k/yr net, all occupations).",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 1990,
    "rent_1br_outside_usd_month": 1480,
@@ -5066,7 +5123,8 @@
     "senior": 76000,
     "confidence": "crowd",
     "note": "No Bergen-specific salary data found (talent.com has no Norway salary tool; PayScale Norway has no city breakdown). PayScale Norway national figures used as proxy (identical to Oslo): Entry-Level=NOK505,987 / Mid-Career=NOK668,230 / Experienced=NOK724,953 -> /9.5316. Numbeo Bergen avg monthly net salary (NOK42,509) is actually slightly higher than Oslo's (NOK40,862) -- likely an artifact of a small, energy-sector-skewed all-occupation sample, not tech-specific -- not used to differentiate Bergen from Oslo.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 1410,
    "rent_1br_outside_usd_month": 1010,
@@ -5118,7 +5176,8 @@
     "senior": 72000,
     "confidence": "crowd",
     "note": "talent.com has no salary tool for Finland (nav lacks a 'Search salary' link). PRIMARY: PayScale Finland, national (113 profiles overall; Nokia is a notable named employer in the dataset): Entry-Level=EUR37,437 / Mid-Career=EUR52,224 / Experienced=EUR62,470 -> /0.8686. Cross-check: Numbeo Helsinki avg monthly net salary EUR2,709 (~EUR32.5k/yr net, all occupations). See Stockholm note for a sanity-check flag: Helsinki's mid ($60k) exceeds Stockholm's ($55k) in USD due to SEK weakness vs EUR at current rates, deviating from the 'Stockholm > Helsinki' expectation.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 1250,
    "rent_1br_outside_usd_month": 910,
@@ -5170,7 +5229,8 @@
     "senior": 72000,
     "confidence": "crowd",
     "note": "No Tampere-specific salary data found (talent.com has no Finland salary tool; PayScale Finland has no city breakdown). PayScale Finland national figures used as proxy (identical to Helsinki): Entry-Level=EUR37,437 / Mid-Career=EUR52,224 / Experienced=EUR62,470 -> /0.8686. Numbeo Tampere avg monthly net salary (EUR2,631) is slightly below Helsinki's (EUR2,709), directionally consistent with Helsinki > Tampere even though the grounded software-engineer bands had to be shared between the two cities.",
-    "sources": []
+    "sources": [],
+    "primary_source": "payscale_nolink"
    },
    "rent_1br_center_usd_month": 990,
    "rent_1br_outside_usd_month": 770,
@@ -5221,7 +5281,8 @@
     "mid": 104000,
     "senior": 119000,
     "confidence": "crowd",
-    "note": "levels.fyi self-reported total comp (Jul 2026): entry-level range €55,469-89,483 (midpoint ~€72,000 used); overall average total comp €90,147 (range €77,418-113,412, used as 'mid' proxy since no distinct 3-5y band published); senior range €84,765-121,918 (midpoint ~€103,000 used). Skews toward larger/known tech employers (Wayfair, Meta, Google) vs city-wide market average; gross annual approx."
+    "note": "levels.fyi self-reported total comp (Jul 2026): entry-level range €55,469-89,483 (midpoint ~€72,000 used); overall average total comp €90,147 (range €77,418-113,412, used as 'mid' proxy since no distinct 3-5y band published); senior range €84,765-121,918 (midpoint ~€103,000 used). Skews toward larger/known tech employers (Wayfair, Meta, Google) vs city-wide market average; gross annual approx.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1530,
    "rent_1br_outside_usd_month": 1100,
@@ -5277,7 +5338,8 @@
     "mid": 97000,
     "senior": 118000,
     "confidence": "crowd",
-    "note": "levels.fyi self-reported gross annual total comp: entry-level €54,809-71,052 (midpoint ~€62,931); overall average total comp €84,056 (range €67,347-105,927, used as 'mid' proxy since no distinct 3-5y band was published); senior €83,406-121,420 (midpoint ~€102,413). Skews toward large/known tech employers (Google, Apple, BMW, SAP) vs. city-wide market average; StepStone/Gehalt.de corroborates Munich as one of Germany's highest-paying tech cities."
+    "note": "levels.fyi self-reported gross annual total comp: entry-level €54,809-71,052 (midpoint ~€62,931); overall average total comp €84,056 (range €67,347-105,927, used as 'mid' proxy since no distinct 3-5y band was published); senior €83,406-121,420 (midpoint ~€102,413). Skews toward large/known tech employers (Google, Apple, BMW, SAP) vs. city-wide market average; StepStone/Gehalt.de corroborates Munich as one of Germany's highest-paying tech cities.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1730,
    "rent_1br_outside_usd_month": 1330,
@@ -5334,7 +5396,8 @@
     "mid": 85000,
     "senior": 97000,
     "confidence": "crowd",
-    "note": "levels.fyi self-reported gross annual total comp: entry-level €43,513-55,303 (midpoint ~€49,408); overall average total comp €73,621 (range €62,008-85,878, used as 'mid' proxy); senior €72,198-96,243 (midpoint ~€84,221). Skews toward larger/known employers (top payer cited: Drager, €87,723 avg); Hamburg trails Munich/Frankfurt per StepStone city-tier commentary, consistent with a large base of non-listed SMEs/agencies."
+    "note": "levels.fyi self-reported gross annual total comp: entry-level €43,513-55,303 (midpoint ~€49,408); overall average total comp €73,621 (range €62,008-85,878, used as 'mid' proxy); senior €72,198-96,243 (midpoint ~€84,221). Skews toward larger/known employers (top payer cited: Drager, €87,723 avg); Hamburg trails Munich/Frankfurt per StepStone city-tier commentary, consistent with a large base of non-listed SMEs/agencies.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1270,
    "rent_1br_outside_usd_month": 950,
@@ -5392,7 +5455,8 @@
     "mid": 85000,
     "senior": 99000,
     "confidence": "crowd",
-    "note": "levels.fyi self-reported gross annual total comp: entry-level €54,177-79,876 (unusually wide range suggesting a small/skewed sample; midpoint ~€67,027); overall average total comp €74,051 (range €58,282-85,111, used as 'mid' proxy); senior €74,535-96,765 (midpoint ~€85,650). Frankfurt is Germany's finance/fintech capital (Deutsche Bank, ECB, Commerzbank, DWS), which StepStone notes lifts city salaries above the national average, particularly for backend/quant-adjacent roles."
+    "note": "levels.fyi self-reported gross annual total comp: entry-level €54,177-79,876 (unusually wide range suggesting a small/skewed sample; midpoint ~€67,027); overall average total comp €74,051 (range €58,282-85,111, used as 'mid' proxy); senior €74,535-96,765 (midpoint ~€85,650). Frankfurt is Germany's finance/fintech capital (Deutsche Bank, ECB, Commerzbank, DWS), which StepStone notes lifts city salaries above the national average, particularly for backend/quant-adjacent roles.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1380,
    "rent_1br_outside_usd_month": 1160,
@@ -5450,7 +5514,8 @@
     "mid": 85000,
     "senior": 112000,
     "confidence": "crowd",
-    "note": "Gross annual total compensation (base+bonus+equity where applicable) from levels.fyi Stuttgart, self-reported and skewed toward large employers with Stuttgart offices (Bosch, Mercedes-Benz, Porsche, Microsoft, Nvidia, Capgemini) vs. city-wide market average. EUR figures: entry-level range €31,272-74,861 (midpoint ~€53,000 used); mid-level uses a Germany-wide levels.fyi/TechPays 'medior' proxy figure of €73,807 (~€74,000) since no Stuttgart-specific mid-level figure exists; senior range €81,962-111,599 (midpoint ~€97,000 used). Stuttgart median total comp across all levels is €82,930."
+    "note": "Gross annual total compensation (base+bonus+equity where applicable) from levels.fyi Stuttgart, self-reported and skewed toward large employers with Stuttgart offices (Bosch, Mercedes-Benz, Porsche, Microsoft, Nvidia, Capgemini) vs. city-wide market average. EUR figures: entry-level range €31,272-74,861 (midpoint ~€53,000 used); mid-level uses a Germany-wide levels.fyi/TechPays 'medior' proxy figure of €73,807 (~€74,000) since no Stuttgart-specific mid-level figure exists; senior range €81,962-111,599 (midpoint ~€97,000 used). Stuttgart median total comp across all levels is €82,930.",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 1170,
    "rent_1br_outside_usd_month": 860,
@@ -5507,7 +5572,8 @@
     "mid": 94000,
     "senior": 139000,
     "confidence": "crowd",
-    "note": "Gross annual total compensation (base+bonus+equity) from levels.fyi Amsterdam, self-reported and skewed toward larger/known tech employers (Google, Amazon, Uber, ING, Booking.com) vs. city-wide market average. EUR figures: entry-level range €52,414-99,060 (midpoint ~€76,000 used); mid-level €70,000-90,000 range with median ~€80,000-82,447 per TechPays/levels.fyi (~€82,000 used); senior range €93,539-148,378 (midpoint ~€121,000 used). Overall blended average across all levels is €80,269-135,962 (avg €102,536)."
+    "note": "Gross annual total compensation (base+bonus+equity) from levels.fyi Amsterdam, self-reported and skewed toward larger/known tech employers (Google, Amazon, Uber, ING, Booking.com) vs. city-wide market average. EUR figures: entry-level range €52,414-99,060 (midpoint ~€76,000 used); mid-level €70,000-90,000 range with median ~€80,000-82,447 per TechPays/levels.fyi (~€82,000 used); senior range €93,539-148,378 (midpoint ~€121,000 used). Overall blended average across all levels is €80,269-135,962 (avg €102,536).",
+    "primary_source": "levelsfyi_linked"
    },
    "rent_1br_center_usd_month": 2580,
    "rent_1br_outside_usd_month": 1950,
@@ -5564,7 +5630,8 @@
     "mid": 75000,
     "senior": 92000,
     "confidence": "crowd",
-    "note": "Gross annual total compensation. Entry-level (€42,171-53,880, midpoint ~€48,000) and senior (€69,395-91,150, midpoint ~€80,000) bands are from a dedicated levels.fyi Eindhoven page (self-reported, thin sample). Mid-level (~€65,000) is a triangulated estimate combining Glassdoor's Software Engineer average (€63,250, range €50,250-80,000) and TechPays' Eindhoven all-tech-roles average (€67,250, 141 data points), since no dedicated Eindhoven mid-level figure was found. City-specific data here is notably thinner than Amsterdam's; treat as directional given Eindhoven's smaller, more specialized (semiconductor/hardware) labor market."
+    "note": "Gross annual total compensation. Entry-level (€42,171-53,880, midpoint ~€48,000) and senior (€69,395-91,150, midpoint ~€80,000) bands are from a dedicated levels.fyi Eindhoven page (self-reported, thin sample). Mid-level (~€65,000) is a triangulated estimate combining Glassdoor's Software Engineer average (€63,250, range €50,250-80,000) and TechPays' Eindhoven all-tech-roles average (€67,250, 141 data points), since no dedicated Eindhoven mid-level figure was found. City-specific data here is notably thinner than Amsterdam's; treat as directional given Eindhoven's smaller, more specialized (semiconductor/hardware) labor market.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1670,
    "rent_1br_outside_usd_month": 1400,
@@ -5622,7 +5689,8 @@
     "mid": 45000,
     "senior": 63000,
     "confidence": "crowd",
-    "note": "Gross annual. EUR: new_grad ~€27,000 (Glassdoor Italia junior avg €26,800; levels.fyi entry-level €23,607-33,890); mid ~€39,000 (Indeed.it Milano blended avg €33,480-33,512; Milan-specific commentary of €38-47k average); senior ~€55,000 (levels.fyi senior €43,692-73,134; Indeed.it notes senior devs at €42,000-70,000). levels.fyi's blended 'average total comp' (€40,267, driven by a Meta office at €246k) reflects multinational self-selection bias and was excluded from headline figures; Numbeo user comments independently corroborate a ~€25-33k typical junior range and a ~€40-50k 'glass ceiling' for most non-outlier developers."
+    "note": "Gross annual. EUR: new_grad ~€27,000 (Glassdoor Italia junior avg €26,800; levels.fyi entry-level €23,607-33,890); mid ~€39,000 (Indeed.it Milano blended avg €33,480-33,512; Milan-specific commentary of €38-47k average); senior ~€55,000 (levels.fyi senior €43,692-73,134; Indeed.it notes senior devs at €42,000-70,000). levels.fyi's blended 'average total comp' (€40,267, driven by a Meta office at €246k) reflects multinational self-selection bias and was excluded from headline figures; Numbeo user comments independently corroborate a ~€25-33k typical junior range and a ~€40-50k 'glass ceiling' for most non-outlier developers.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1730,
    "rent_1br_outside_usd_month": 1210,
@@ -5681,7 +5749,8 @@
     "mid": 39000,
     "senior": 52000,
     "confidence": "crowd",
-    "note": "Gross annual. EUR: new_grad ~€25,000 (levels.fyi entry-level €24,691-31,935; national Glassdoor Italia junior avg €26,800, with Rome typically a bit below Milan); mid ~€34,000 (Indeed.it Roma blended 'sviluppatore' avg €30,195 as a floor; national mid-level range €35-45k); senior ~€45,000. levels.fyi's Rome senior range (€36,836-94,794, driven by an Uber-linked entry at €238k) shows the same multinational-outlier skew seen in Milan — the high end was excluded from the headline figure."
+    "note": "Gross annual. EUR: new_grad ~€25,000 (levels.fyi entry-level €24,691-31,935; national Glassdoor Italia junior avg €26,800, with Rome typically a bit below Milan); mid ~€34,000 (Indeed.it Roma blended 'sviluppatore' avg €30,195 as a floor; national mid-level range €35-45k); senior ~€45,000. levels.fyi's Rome senior range (€36,836-94,794, driven by an Uber-linked entry at €238k) shows the same multinational-outlier skew seen in Milan — the high end was excluded from the headline figure.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1270,
    "rent_1br_outside_usd_month": 930,
@@ -5738,7 +5807,8 @@
     "mid": 38000,
     "senior": 53000,
     "confidence": "crowd",
-    "note": "Gross annual. EUR: new_grad ~€25,500 (Glassdoor Turin software developer 25th percentile €25,525 of 540 submissions, used as junior proxy); mid ~€33,000 (Glassdoor Turin software developer avg €30,100 / software engineer avg €35,000 blended; Indeed/jobted-style blended avg €34,217); senior ~€46,000 (Glassdoor 90th percentile €45,100; levels.fyi senior €47,163-59,153). Turin's sampled tech postings skew toward automotive/embedded-software roles (Stellantis-adjacent) rather than a broad consumer-tech market, and levels.fyi's Turin pages failed to render directly (WebSearch-summarized figures used instead) — treat bands as less certain than Milan/Rome."
+    "note": "Gross annual. EUR: new_grad ~€25,500 (Glassdoor Turin software developer 25th percentile €25,525 of 540 submissions, used as junior proxy); mid ~€33,000 (Glassdoor Turin software developer avg €30,100 / software engineer avg €35,000 blended; Indeed/jobted-style blended avg €34,217); senior ~€46,000 (Glassdoor 90th percentile €45,100; levels.fyi senior €47,163-59,153). Turin's sampled tech postings skew toward automotive/embedded-software roles (Stellantis-adjacent) rather than a broad consumer-tech market, and levels.fyi's Turin pages failed to render directly (WebSearch-summarized figures used instead) — treat bands as less certain than Milan/Rome.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 860,
    "rent_1br_outside_usd_month": 610,
@@ -5794,7 +5864,8 @@
     "mid": 51000,
     "senior": 69000,
     "confidence": "crowd",
-    "note": "Gross annual, triangulated from Glassdoor España + KeepCoding (citing Randstad/Jobted) + 10Code (citing LinkedIn Salary/InfoJobs): new_grad €22-30k (used €25k), mid €38-50k for 3-5yr Madrid/Barcelona devs (used €44k), senior — Glassdoor's 'Senior Software Engineer, Madrid' page reports average total comp €59,300 (base €45-63k) and a separate search found median €62k/range €48-77k (used €60k). levels.fyi shows much higher figures (median total comp €53,877 all-levels; entry-level median €29,792) because its self-reporting user base skews toward large multinational/FAANG offices (Google L3-L5 €114-143k, Meta E5 €157-184k) — real but non-representative; Glassdoor's EY junior salary band (€22.7-32.4k) is far more typical of the broad market."
+    "note": "Gross annual, triangulated from Glassdoor España + KeepCoding (citing Randstad/Jobted) + 10Code (citing LinkedIn Salary/InfoJobs): new_grad €22-30k (used €25k), mid €38-50k for 3-5yr Madrid/Barcelona devs (used €44k), senior — Glassdoor's 'Senior Software Engineer, Madrid' page reports average total comp €59,300 (base €45-63k) and a separate search found median €62k/range €48-77k (used €60k). levels.fyi shows much higher figures (median total comp €53,877 all-levels; entry-level median €29,792) because its self-reporting user base skews toward large multinational/FAANG offices (Google L3-L5 €114-143k, Meta E5 €157-184k) — real but non-representative; Glassdoor's EY junior salary band (€22.7-32.4k) is far more typical of the broad market.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1610,
    "rent_1br_outside_usd_month": 1220,
@@ -5852,7 +5923,8 @@
     "mid": 46000,
     "senior": 64000,
     "confidence": "crowd",
-    "note": "Gross annual, triangulated from Glassdoor España (direct: 'Programador Junior' Barcelona average base ~€21,000 + ~€2,000 supplements ~€23,000/yr total, range €18,950-27,500) + KeepCoding/Randstad city breakdown (€21-27k junior) + 10Code national bands adjusted for Barcelona's ~18% city premium: mid ~€40k (cross-checked against a '3-5yr Madrid/Barcelona developer €38-50k' figure), senior ~€56k (Glassdoor's Barcelona 'Senior Software Engineer' individual listings cluster €60-81k but skew toward 10-14yr veterans, scaled down toward a 6+yr entry-senior band). levels.fyi shows higher figures (median total comp €59,297) again skewed by multinational offices (Microsoft avg €93.7k, N26 up to €198k) — treat as outliers, not typical."
+    "note": "Gross annual, triangulated from Glassdoor España (direct: 'Programador Junior' Barcelona average base ~€21,000 + ~€2,000 supplements ~€23,000/yr total, range €18,950-27,500) + KeepCoding/Randstad city breakdown (€21-27k junior) + 10Code national bands adjusted for Barcelona's ~18% city premium: mid ~€40k (cross-checked against a '3-5yr Madrid/Barcelona developer €38-50k' figure), senior ~€56k (Glassdoor's Barcelona 'Senior Software Engineer' individual listings cluster €60-81k but skew toward 10-14yr veterans, scaled down toward a 6+yr entry-senior band). levels.fyi shows higher figures (median total comp €59,297) again skewed by multinational offices (Microsoft avg €93.7k, N26 up to €198k) — treat as outliers, not typical.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1680,
    "rent_1br_outside_usd_month": 1270,
@@ -5909,7 +5981,8 @@
     "mid": 32000,
     "senior": 48000,
     "confidence": "crowd",
-    "note": "Thinner data than Madrid/Barcelona. Triangulated from KeepCoding's city breakdown (junior €18-23k), individual Glassdoor-submitted Valencia salaries for 1-3yr 'Programador' (two data points: €17-19k and €26k), and a blended talent.com/Glassdoor 'Programador' figure spanning all experience levels (median €27,250, 25th pct €22,805, 75th pct €44,750, '1% below national average') used as an anchor for mid/senior since no clean per-level Valencia breakdown exists. Resulting EUR estimates: new_grad €21k, mid €28k, senior €42k. levels.fyi Valencia data (entry-level median ~€19-20k, but 'all levels' median total comp €54,487) looked internally inconsistent and thin-sample, so was not used as the headline figure."
+    "note": "Thinner data than Madrid/Barcelona. Triangulated from KeepCoding's city breakdown (junior €18-23k), individual Glassdoor-submitted Valencia salaries for 1-3yr 'Programador' (two data points: €17-19k and €26k), and a blended talent.com/Glassdoor 'Programador' figure spanning all experience levels (median €27,250, 25th pct €22,805, 75th pct €44,750, '1% below national average') used as an anchor for mid/senior since no clean per-level Valencia breakdown exists. Resulting EUR estimates: new_grad €21k, mid €28k, senior €42k. levels.fyi Valencia data (entry-level median ~€19-20k, but 'all levels' median total comp €54,487) looked internally inconsistent and thin-sample, so was not used as the headline figure.",
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1450,
    "rent_1br_outside_usd_month": 1070,

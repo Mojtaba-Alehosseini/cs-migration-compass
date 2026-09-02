@@ -10,6 +10,7 @@ import { Figure } from '../components/Figure'
 import { UnstableMark } from '../components/Unstable'
 import { useData } from '../data/store'
 import { dropApprox, money, num, pct, sourceName, years, NO_DATA, asOfLabel } from '../data/format'
+import { citySalarySource } from '../data/registry'
 import {
   HOME_M2, instabilityNote, isNeverAffordable, m2PerYear, missingInputs, netFor,
   savingsPerYear, yearsToHome,
@@ -94,9 +95,7 @@ export function CityProfile() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
                       <span>{BAND_LABEL[b]}</span>
                       <Figure source={{
-                        name: 'talent.com + PayScale',
-                        url: city.sources.find((s) => s.includes('talent.com') || s.includes('payscale')),
-                        what: city.salary_usd_year.note ?? 'Market-wide band for this city.',
+                        ...citySalarySource(city),
                         asOf: city.as_of, confidence: 'crowd',
                       }}>
                         <b className="tnum">{money(v)}</b>

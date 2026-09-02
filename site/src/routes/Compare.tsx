@@ -27,7 +27,7 @@ import { PlaceBrowser } from '../components/PlaceBrowser'
 import { useToast } from '../components/Toast'
 import { useData } from '../data/store'
 import { MAX_PLACES, normalise, useSelection } from '../data/selection'
-import { HEADLINE_KEYS, METRIC_BY_KEY, type MetricDef } from '../data/registry'
+import { HEADLINE_KEYS, METRIC_BY_KEY, citySalarySource, type MetricDef } from '../data/registry'
 import {
   LENS_LABEL, UNSTABLE_METRIC_KEYS, instabilityNote, isNeverAffordable, missingInputs,
   salaryByLens, stabilityOf, type Budget,
@@ -480,8 +480,7 @@ function fallbackSource(m: MetricDef, city: City, country: Country | undefined) 
 function salarySource(city: City, country: Country | undefined, lens: Lens) {
   if (lens === 'gross') {
     return {
-      name: 'talent.com + PayScale',
-      url: city.sources.find((s) => s.includes('talent.com') || s.includes('payscale')),
+      ...citySalarySource(city),
       what: city.salary_usd_year.note ?? 'Market-wide band for this city, gross per year.',
     }
   }
