@@ -623,6 +623,33 @@ def _annualise_all(value: dict, period: str, country: str, hours_year: int | Non
     return {"ok": True, "value": out, "chain": meta_chain["chain"]}
 
 
+def _native_basis(source_id: str) -> str | None:
+    """Package 27, Tier 3 (NEEDS-DECISION #59, defect B): which pay basis the
+    `native` block's own bare mean/median/etc. fields actually represent, so
+    WagePanel.tsx can show its "published: X" line only when it agrees with
+    whichever basis the reader has toggled to, instead of unconditionally.
+
+    comparison_basis(source_id, source_id) already answers exactly this —
+    it reads the source's own RAW pay_composition.json entry (bonus/employer-
+    contribution flags) and reports which single basis, if any, that raw
+    composition natively expresses. Verified against every source_id this
+    pipeline resolves before relying on it: DK/CA/QA/AE (composition
+    genuinely ambiguous or unverified) all return no common basis, correctly
+    — DK's own `native` is STAND, a third pre-subtraction concept equal to
+    neither combo, and CA/QA/AE never show any combo in WagePanel regardless
+    (package 26's own docstring: "UNVERIFIED composition... absent on EVERY
+    toggle state"). NO/FI/DE (the three dual-native-basis sources, where the
+    bare fields could plausibly be either) each return exactly one basis too,
+    and it matches each extractor's own docstring exactly (_extract_no:
+    Manedslonn/total; _extract_fi, _extract_de: the regular_ prefix) —
+    reusing this rather than re-deriving the answer from combo VALUES at
+    render time, which is what package 26's own reverted WagePanel.tsx fix
+    tried and got wrong for two of the three chain shapes it needed to
+    handle (see REPORT-P26.md, REPORT-P27.md)."""
+    bases = sorted(nm.comparison_basis(source_id, source_id).get("common_bases") or [])
+    return bases[0] if len(bases) == 1 else None
+
+
 def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapping: dict | None) -> dict:
     ref_mapping = crosswalk.load()[1].get(REFERENCE)
     cw = crosswalk.compare(ref_mapping, mapping) if mapping else \
@@ -684,6 +711,13 @@ def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapp
                    "value": {k: obs.get(k) for k in ("mean", "median", "p10", "p25", "p75", "p90")},
                    "n_employees": obs.get("n_employees"),
                    "distribution": obs.get("distribution") or _classify_distribution(obs),
+                   # Package 27, Tier 3 — which basis these bare fields are
+                   # actually on; see _native_basis()'s own docstring. None
+                   # for Denmark (a third, pre-subtraction concept — never
+                   # equal to either combo) and for Canada/Qatar/UAE (their
+                   # own composition is unverified, and no combo is ever
+                   # shown for them regardless).
+                   "native_basis": _native_basis(source_id),
                    # FIXED (tier 7, adversarial review finding F15): Qatar's
                    # mean is this pipeline's OWN weighted average of PSA's
                    # separately-published Male/Female series (see

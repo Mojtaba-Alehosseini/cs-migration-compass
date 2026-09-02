@@ -193,6 +193,15 @@ export interface WageCountry {
       stand_dkk_hour: number; computed_monthly: number
       published_mdrsnit: number; residual_pct: number
     } | null
+    /** Package 27, Tier 3 (NEEDS-DECISION #59, defect B): which basis these
+     *  bare value fields actually represent — read from the source's own raw
+     *  composition (`comparison_basis()`, build_wage_distribution.py), not
+     *  guessed from combo values at render time. null for Denmark (a third,
+     *  pre-subtraction concept equal to neither combo) and for
+     *  Canada/Qatar/UAE (unverified composition; no combo is ever shown for
+     *  them regardless). WagePanel.tsx shows this native block only when it
+     *  equals the panel's own currently-selected basis. */
+    native_basis: Basis | null
   }
   crosswalk: CrosswalkVerdict
   chart_comparable: ChartComparability

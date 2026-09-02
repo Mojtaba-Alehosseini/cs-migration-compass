@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-09-01T02:55:41+00:00",
+ "generated_at": "2026-09-02T13:39:10+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -64,6 +64,7 @@
      },
      "n_employees": null,
      "distribution": "full",
+     "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -161,6 +162,7 @@
      },
      "n_employees": null,
      "distribution": "full",
+     "native_basis": "total_earnings",
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -258,6 +260,7 @@
      },
      "n_employees": 1687890.0,
      "distribution": "full",
+     "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -355,6 +358,7 @@
      },
      "n_employees": 29096,
      "distribution": "quartile-only",
+     "native_basis": null,
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": {
@@ -559,6 +563,7 @@
      },
      "n_employees": 8281,
      "distribution": "quartile-only",
+     "native_basis": "total_earnings",
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -700,6 +705,7 @@
      },
      "n_employees": 27074,
      "distribution": "full",
+     "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -841,6 +847,7 @@
      },
      "n_employees": 84585,
      "distribution": "central-tendency-only",
+     "native_basis": "total_earnings",
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -938,6 +945,7 @@
      },
      "n_employees": null,
      "distribution": "full",
+     "native_basis": "total_earnings",
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -1034,6 +1042,7 @@
      },
      "n_employees": null,
      "distribution": "central-tendency-only",
+     "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -1138,6 +1147,7 @@
      },
      "n_employees": 331815,
      "distribution": "mean-only",
+     "native_basis": null,
      "weighting_note": "mean weighted by Qatar PSA's own published Male (n=209114, 28941 QAR/mo) and Female (n=122701, 23536 QAR/mo) counts — not a native combined figure",
      "annualised_note": null,
      "mdrsnit_check": null
@@ -1190,6 +1200,7 @@
      },
      "n_employees": null,
      "distribution": "mean-only",
+     "native_basis": null,
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -1242,6 +1253,7 @@
      },
      "n_employees": 316000,
      "distribution": "quartile-only",
+     "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -1344,6 +1356,7 @@
      },
      "n_employees": null,
      "distribution": "central-tendency-only",
+     "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": "Destatis publishes regular_pay (table 62361-0030) monthly, not annually — the source this pipeline's own dual-basis split uses for total_earnings (table 62361-0034) is already annual, so regular_pay is annualised here (x12, this pipeline's own fixed multiplier, same one normalise.py's annualise() applies everywhere else) to put both bases on the same period: 5,851.00 EUR/month x 12 = 70,212.00 EUR/year.",
      "mdrsnit_check": null
@@ -1492,6 +1505,7 @@
      },
      "n_employees": null,
      "distribution": "full",
+     "native_basis": null,
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null
@@ -1545,6 +1559,7 @@
      },
      "n_employees": null,
      "distribution": "full",
+     "native_basis": null,
      "weighting_note": null,
      "annualised_note": null,
      "mdrsnit_check": null

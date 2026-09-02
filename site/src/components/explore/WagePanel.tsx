@@ -386,14 +386,27 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
               const combo = r.combos[key]!
               if (!combo.ok) return null
               const comp = payComp.sources.find((s) => s.source_id === r.source_id)
+              // Package 27, Tier 3 (NEEDS-DECISION #59, defect B): `r.native`
+              // is ONE fixed figure per country — this pipeline's own default
+              // basis, with no per-basis variant (see WageCountry.native in
+              // explore.ts) — while `combo` is whichever basis the panel's
+              // own toggle currently selects. Shown only when
+              // `native_basis` (read from the source's own raw composition
+              // at build time, build_wage_distribution.py) equals the basis
+              // on screen — never guessed from the two values' own numbers,
+              // which is what package 26's own reverted attempt tried and
+              // got wrong for Denmark's subtraction-based chain.
+              const native = r.native.native_basis === basis
+                ? { value: r.native.value.median ?? r.native.value.mean ?? 0,
+                    currency: r.native.currency, period: r.native.period, year: r.native.year }
+                : undefined
               return (
                 <li key={r.country} style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
                   <span style={{ fontWeight: 600, color: cc3(splitRow(r.country).iso), minWidth: 32 }}>
                     {r.country}
                   </span>
                   <Derived chain={combo.chain}
-                    native={{ value: r.native.value.median ?? r.native.value.mean ?? 0,
-                      currency: r.native.currency, period: r.native.period, year: r.native.year }}
+                    native={native}
                     result={{ value: combo.value.median ?? combo.value.mean ?? 0, currency: combo.currency }}
                     concept={comp ? conceptForBasis(comp, basis) : undefined}
                     payCycleNote={CA_NOC_DISTINCTION[r.country] ?? payComp.pay_cycle_context[splitRow(r.country).iso]}>

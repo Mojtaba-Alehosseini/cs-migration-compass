@@ -2875,6 +2875,29 @@ chain shapes (plain native-swap, extraction-time-annualised, and subtraction-bas
 rather than shipped on the two cases that happened to check out — the same discipline item #58 used
 Sweden's carried note to *not* upgrade an unverified read into a confident fix.
 
+**RESOLVED, package 27, Tier 3.** Both reverted attempts tried to *re-derive* which basis `native`
+represents from the combo *values* at render time — the wrong layer to ask the question at, since
+`native` and each combo are already annualised, converted and (for Denmark) subtracted by the time
+they reach `WagePanel.tsx`; nothing at that point still carries which basis the raw figure started
+as. `build_wage_distribution.py` already has a function that answers exactly this, one layer down,
+against each source's own raw `pay_composition.json` entry: `normalise.comparison_basis(source_id,
+source_id)`. Verified live for every one of the 14 source_ids this pipeline resolves before trusting
+it: `salary_no → total_earnings`, `salary_fi → regular_pay`, `salary_de → regular_pay` (matching
+each extractor's own docstring, word for word); `salary_dk → None` (STAND is a third,
+pre-subtraction concept, matching neither); `salary_ca`/`salary_qa`/`salary_ae → None` (unverified
+composition, no combo ever shown regardless); every single-basis country returns exactly the one
+basis `WagePanel.tsx`'s own pre-existing docstring already names for it. `resolve_country()` now
+writes this onto `native.native_basis`; `WagePanel.tsx` shows the "published: X" line exactly when
+`native_basis === basis`, an exact-key comparison, no chain-shape guessing. Verified live in all
+three genuinely different shapes: Norway under `regular_pay` (native line now absent — the exact
+defect, gone), Norway under `total_earnings` (native line now present and correct: "published:
+77,420" beside a chain computing `77,420 × 12`), Denmark under either toggle (never shown, matching
+that its own native figure equals neither combo), Finland under `regular_pay` (shown correctly, its
+own native basis). Five new tests in `test_wage_distribution_extraction.py` pin this — including one
+that calls `resolve_country()` itself rather than the helper in isolation — proved able to fail by
+temporarily hard-coding the old always-`regular_pay` behaviour back in (9 of the 9 broke), then
+restored.
+
 **C — `Compare.tsx`'s generic fallback names "official sources" and links whichever URL sits first
 in an unordered array, regardless of the metric.** `fallbackSource()` (`site/src/routes/Compare.tsx
 :466-476`) is the citation for *any* `visa`/`people`/`life`/`jobs`/`net_pct` metric that has no
