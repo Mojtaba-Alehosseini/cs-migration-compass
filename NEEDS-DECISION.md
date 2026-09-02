@@ -2801,7 +2801,7 @@ suite.
 NO's own `vintage_note` (a single quarter, `2026K1`, against an annual dispersion series) is
 unchanged and still disclosed; this ruling does not touch it.
 
-## 59. Package 26's 30-figure citation-truth sample found 8 failures in 4 code locations, all below the arithmetic layer — package 25 never checked whether a citation was true, only whether one existed
+## 59. CLOSED, package 27 — Package 26's 30-figure citation-truth sample found 8 failures in 4 code locations, all below the arithmetic layer
 
 Package 25 made every one of 646 figures cite *something* and asserted structure over every card. It
 never traced a single citation back to its source. Package 26's Tier 2 drew a stratified 30-figure
@@ -2986,7 +2986,7 @@ same rule, lower severity, **not fixed this package**:
     source, "real arithmetic over ONE source's own real numbers") and what these actually are.
   Both are the same shape as the levels.fyi double-use finding (#60): correctly not silently
   patched under this tier's own time budget, and named here rather than left to a future inspection
-  to rediscover from scratch.
+  to rediscover from scratch. Carried forward as their own item, **#61**, now that this one is closed.
 
 **What this does not mean.** No published number was found wrong — every value traced (222+ figures
 checked structurally in the full sweep for defect A, plus the 30-sample's own arithmetic, all
@@ -3044,6 +3044,17 @@ requires:
     change, not a one-line fix, and CityProfile.tsx's own inline `<Figure>` uses (the 90 m² multiply
     among them) would still need finding and moving by hand regardless of which path `registry.ts`
     takes.
+
+**CLOSED, package 27.** All four defects resolved — see each defect's own "RESOLVED, package 27" note
+above for what changed and how it was verified. A stratified re-sample (package 26's own 30, re-traced
+live rather than assumed fixed, plus 30 new figures drawn from the same strata and weighted toward
+what this package actually changed — every `citySalarySource()` branch, every metric Tier 2 gave a
+real citation for the first time, both directions of the `native_basis` check) found 0 failures across
+60 figures — REPORT-P27.md, Tier 6. Two related, lower-severity instances found by defect D's own
+rule were named, not fixed, and are carried forward as their own item rather than left implicit here
+— see #61. NEEDS-DECISION #60 (the levels.fyi double-use finding, package 27 Tier 1) is a separate,
+still-open item — a citation-accuracy fix does not resolve a question about what a figure's own
+architecture claims.
 
 ## 60. For 21 of 73 cities, "market-wide" and "top-employer" pay are not two independent bands — both trace to the same levels.fyi metro page
 
@@ -3108,3 +3119,41 @@ judged unreliable.
 
 Not resolved here — Tier 1's own instruction is to escalate a finding that changes what a figure
 means, not to pick an answer under a citation-fix package's own time pressure.
+
+## 61. Two figures found by defect D's own rule, lower severity, not fixed — split out from #59 on its own closure
+
+Package 27, Tier 4 fixed the two computed-figures-in-a-bare-citation cases NEEDS-DECISION #59 named
+(Oslo's home price, take-home pay) and swept the rest of the codebase's `<Figure>` usages against
+`docs/DESIGN.md`'s own rule for the line between `<Figure>` and `<Derived>`. Two more instances turned
+up by the same rule. Lower severity than the two fixed figures (neither misattributes to a real
+company, neither mixes a 'crowd'-confidence input with an 'official' badge) — named here rather than
+fixed, and kept as their own item now that #59 itself is closed:
+
+- **`CountryProfile.tsx:244-250`, "UN DESA ÷ World Bank"** (`e.foreign_born.share_pct`) — genuinely
+  combines two sources the same way the take-home-pay figure did, but it is pre-computed at *build*
+  time with its own `formula` string already disclosed via the card's `what` text. The reader can
+  already see the working; it just isn't in `<Derived>`'s own structured chain.
+  `data/processed/un_migrant_stock.json` ÷ `data/processed/world_bank.json`, resolved at
+  `build_site_data.py` time, not at render time.
+- **`Compare.tsx`'s own `COMPUTED_WHAT` map** (`savings`, `total_monthly`, `years_to_home`,
+  `m2_per_year`) — already renders an honestly-named `"Computed — formula on screen"` card, so it
+  does not misattribute to a real company the way the two fixed figures did, but it is still a
+  `<Figure>` holding a prose paragraph in `what` rather than a `<Derived>` with an ordered chain.
+  Four metrics, one shared map, in `site/src/routes/Compare.tsx`.
+
+**Options**, cheapest first:
+  - **(a) Leave as-is.** Both are honest about being calculated (a disclosed formula string; a
+    literal "Computed" label) — the harm is a UI/consistency gap, not a false claim. Zero-cost, but
+    the site's own architecture (`<Figure>` = sourced, `<Derived>` = calculated) stays inconsistent
+    with these four-plus metrics.
+  - **(b) Convert `COMPUTED_WHAT`'s four metrics to `<Derived>`, reusing this package's own pattern**
+    (a small chain-builder per metric, mirroring `netPayChain()` in `compute.ts`) — bounded, four
+    known call sites, no new data or research needed, similar shape to Tier 4's own fix.
+  - **(c) Give the generic `MetricDef` rendering loop itself a `chain` field**, so any future computed
+    metric (not just these four) renders correctly by construction instead of by whoever adds it
+    remembering to special-case it in `Compare.tsx` the way Tier 4 did for `salary_net`. The
+    architectural fix NEEDS-DECISION #59 itself named and did not attempt — larger, touches every
+    consumer of `MetricDef` (`Compare.tsx`, the scatter builder, the weights tool), and is why it
+    was named rather than attempted under this package's own time budget.
+
+Not resolved here.
