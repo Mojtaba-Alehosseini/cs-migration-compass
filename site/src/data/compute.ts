@@ -7,6 +7,8 @@
  * wrong number is worse than an honest gap. */
 
 import type { Band, City, Computed, Country, Lens } from './types'
+import type { ChainStep } from './explore'
+import { money } from './format'
 
 /** A user's edits to the assumptions behind a city's numbers.
  *  Anything left undefined falls back to the city's own figures. */
@@ -51,6 +53,28 @@ export function netFor(city: City, band: Band, b: Budget = {}): number | null {
   const gross = grossFor(city, band, b)
   if (gross == null || city.net_pct == null) return null
   return gross * (city.net_pct / 100)
+}
+
+/** netFor()'s own working, as a <Derived> chain — package 27, Tier 4
+ *  (NEEDS-DECISION #59, defect D). Take-home pay is a real calculation
+ *  (this city's own crowd-sourced gross salary x a country-wide official tax
+ *  scalar — two different-confidence figures, not one office's own number),
+ *  and it used to render through <Figure> under a single "OECD Taxing Wages"
+ *  citation that named neither input. Returns null wherever netFor() itself
+ *  would; callers should fall back to whatever they already do for a missing
+ *  value. */
+export function netPayChain(city: City, band: Band, b: Budget = {}): { chain: ChainStep[]; result: number } | null {
+  const gross = grossFor(city, band, b)
+  const net = netFor(city, band, b)
+  if (gross == null || net == null || city.net_pct == null) return null
+  return {
+    chain: [
+      { op: 'gross', detail: `${money(gross)}/year — this city's own market-wide developer salary `
+        + '(a separately-cited figure — see "Developer salary" above).' },
+      { op: 'apply_tax_rate', detail: `x ${city.net_pct}% — this country's own flat net-of-tax share.` },
+    ],
+    result: net,
+  }
 }
 
 export function savingsPerYear(city: City, band: Band, b: Budget = {}): number | null {

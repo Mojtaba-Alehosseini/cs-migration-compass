@@ -2949,6 +2949,45 @@ numbers rendered the other way. Scope not swept: `registry.ts` has two more comp
 inline `<Figure>` usages elsewhere were not swept beyond the one instance traced — named here as
 likely-present, not counted.
 
+**RESOLVED, package 27, Tier 4 — both, plus a third render site the original finding didn't name.**
+Both figures now render through `<Derived>`, using a new shared `netPayChain()` (`compute.ts`) for
+the tax calculation so the fix lives in one place, not two. Verified live: Oslo's home-price card now
+reads *"$7,100/m² — Numbeo's own crowd-reported purchase price per square metre, outside the centre.
+x 90 m² — this site's own reference home size, editable in Compare. = $639,000"*; the take-home-pay
+figure (three render sites all shared one root cause and are all fixed together — CityProfile's own
+"a month in \[city\]" card, `registry.ts`'s `salary_net` metric, and Compare's own salary row under
+its "After tax" lens) now reads *"$70,000/year — this city's own market-wide developer salary (a
+separately-cited figure)... x 73% — this country's own flat net-of-tax share... = $51,100"* on every
+one of the three. `docs/DESIGN.md`'s own words settle which side of the line each case falls on:
+`<Figure>`'s optional `steps` field is for "real arithmetic over ONE source's own real numbers,"
+`<Derived>` for a number "converted, annualised, or had a component subtracted." Oslo's ×90 is a
+pipeline-owned multiplier over one source's number — the same shape as Germany's own ×12
+annualisation, already `<Derived>` elsewhere in this codebase; Berlin's net-pay combines TWO
+differently-sourced, differently-confidence-tiered numbers — squarely `<Derived>` territory, not
+`<Figure>`+`steps`.
+
+**Swept the rest of the codebase's own `<Figure>` usages "by rule," not just by inspection** (10
+files import `Figure`). Two already-correct precedents confirm the rule rather than complicate it:
+`Position.tsx` and `CountryStripRow.tsx`'s own personalised-position cards use exactly the sanctioned
+`<Figure>`+`steps` pattern DESIGN.md itself names as the example (an age-banded figure ranked against
+that same country's own percentile table — one source, shown working) — correctly `<Figure>`, left
+untouched. `WagePanel.tsx` and `DataMethods.tsx` were already clean. Two more instances found by the
+same rule, lower severity, **not fixed this package**:
+  - `CountryProfile.tsx:244-250`, "UN DESA ÷ World Bank" (`e.foreign_born.share_pct`) — genuinely
+    combines two sources the same way Berlin's net-pay did, but pre-computed at BUILD time with its
+    own `formula` string already disclosed via `what` — the reader can already see the working, just
+    not through `<Derived>`'s own structured chain UI. Lower harm than Oslo/Berlin (no false
+    attribution, no confidence-tier mixing), but the same rule catches it.
+  - `Compare.tsx`'s own `COMPUTED_WHAT` map (`savings`, `total_monthly`, `years_to_home`,
+    `m2_per_year`) already renders `name: 'Computed — formula on screen'` — honest about being
+    calculated, unlike Oslo/Berlin's false company attributions, but still a `<Figure>` with a prose
+    paragraph in `what`, not a `<Derived>` with an ordered chain. Four metrics, a genuine but lower-
+    severity instance of the same underlying gap between what `<Figure>` can honestly hold (one
+    source, "real arithmetic over ONE source's own real numbers") and what these actually are.
+  Both are the same shape as the levels.fyi double-use finding (#60): correctly not silently
+  patched under this tier's own time budget, and named here rather than left to a future inspection
+  to rediscover from scratch.
+
 **What this does not mean.** No published number was found wrong — every value traced (222+ figures
 checked structurally in the full sweep for defect A, plus the 30-sample's own arithmetic, all
 reproduced exactly from source files) is correct. The failure is entirely in what a correct number is

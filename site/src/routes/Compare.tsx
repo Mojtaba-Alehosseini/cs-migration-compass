@@ -20,6 +20,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { Flag, FlagRibbon } from '../components/Flag'
 import { Figure } from '../components/Figure'
+import { Derived } from '../components/Derived'
 import { BudgetEditor } from '../components/BudgetEditor'
 import { MetricPicker } from '../components/MetricPicker'
 import { ClimateOverlay } from '../components/ClimateOverlay'
@@ -30,7 +31,7 @@ import { MAX_PLACES, normalise, useSelection } from '../data/selection'
 import { HEADLINE_KEYS, METRIC_BY_KEY, citySalarySource, type MetricDef } from '../data/registry'
 import {
   LENS_LABEL, UNSTABLE_METRIC_KEYS, instabilityNote, isNeverAffordable, missingInputs,
-  salaryByLens, stabilityOf, type Budget,
+  netPayChain, salaryByLens, stabilityOf, type Budget,
   yearsToHomeRange,
 } from '../data/compute'
 import { UnstableMark } from '../components/Unstable'
@@ -560,6 +561,29 @@ function Cell({ metric, city, value, band, lens }:
         : (negative ? `−${metric.format(Math.abs(value))}` : metric.format(value))}
     </span>
   )
+
+  // Package 27, Tier 4 (NEEDS-DECISION #59, defect D): take-home pay is a
+  // real calculation — this city's own crowd-sourced gross salary x a
+  // country-wide official tax scalar, two different-confidence numbers, not
+  // one office's own figure — and used to render through <Figure> under a
+  // single "OECD Taxing Wages" citation that named neither input. Both places
+  // this value reaches a citable card (the salary_net metric itself, and the
+  // salary_gross row's own "net" lens) share the same underlying figure, so
+  // both render through the same <Derived> chain rather than one having it
+  // fixed and the other still guessing.
+  const isNetPay = metric.key === 'salary_net' || (metric.key === 'salary_gross' && lens === 'net')
+  const netChain = isNetPay ? netPayChain(city, band) : null
+  if (netChain) {
+    return (
+      <>
+        <Derived chain={netChain.chain} result={{ value: netChain.result, currency: 'USD' }}
+          payCycleNote={note ? `${src.what ? `${src.what} ` : ''}${note}` : src.what}>
+          {body}
+        </Derived>
+        {note && <span className="unstable-note">{note}</span>}
+      </>
+    )
+  }
 
   return (
     <>

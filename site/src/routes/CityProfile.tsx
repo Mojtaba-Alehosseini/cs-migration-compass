@@ -7,12 +7,13 @@
 import { Link, useParams } from 'react-router-dom'
 import { Flag, FlagRibbon } from '../components/Flag'
 import { Figure } from '../components/Figure'
+import { Derived } from '../components/Derived'
 import { UnstableMark } from '../components/Unstable'
 import { useData } from '../data/store'
 import { dropApprox, money, num, pct, sourceName, years, NO_DATA, asOfLabel } from '../data/format'
 import { citySalarySource } from '../data/registry'
 import {
-  HOME_M2, instabilityNote, isNeverAffordable, m2PerYear, missingInputs, netFor,
+  HOME_M2, instabilityNote, isNeverAffordable, m2PerYear, missingInputs, netFor, netPayChain,
   savingsPerYear, yearsToHome,
   stabilityOf,
 } from '../data/compute'
@@ -169,12 +170,17 @@ export function CityProfile() {
             <>
               <div className="sub">
                 Take the mid-level paycheck. After {country.name}’s taxes,{' '}
-                <Figure source={{
-                  name: 'OECD Taxing Wages + national calculators',
-                  what: country.tax.net_note ?? undefined, asOf: country.as_of, confidence: 'official',
-                }}>
-                  <b>{money(net / 12)}</b>
-                </Figure>{' '}
+                {(() => {
+                  const netChain = netPayChain(city, band)
+                  return netChain ? (
+                    <Derived
+                      chain={[...netChain.chain, { op: 'monthly', detail: `${money(netChain.result)}/year ÷ 12 = monthly.` }]}
+                      result={{ value: netChain.result / 12, currency: 'USD' }}
+                      payCycleNote={country.tax.net_note ?? undefined}>
+                      <b>{money(net / 12)}</b>
+                    </Derived>
+                  ) : <b>{money(net / 12)}</b>
+                })()}{' '}
                 lands in your account each month. Where it goes:
               </div>
               <MonthBar
@@ -213,12 +219,14 @@ export function CityProfile() {
               )}
               <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', marginTop: 6, lineHeight: 1.7 }}>
                 A {HOME_M2} m² flat outside the centre costs{' '}
-                <Figure source={{
-                  name: 'Numbeo', url: city.sources.find((s) => s.includes('numbeo')),
-                  what: 'Crowd-reported purchase price per square metre.', asOf: city.as_of, confidence: 'crowd',
-                }}>
+                <Derived
+                  chain={[
+                    { op: 'apt_m2', detail: `${money(city.apt_price_outside_usd_m2)}/m² — Numbeo's own crowd-reported purchase price per square metre, outside the centre.` },
+                    { op: 'multiply', detail: `x ${HOME_M2} m² — this site's own reference home size, editable in Compare.` },
+                  ]}
+                  result={{ value: city.apt_price_outside_usd_m2 * HOME_M2, currency: 'USD' }}>
                   <b>{money(city.apt_price_outside_usd_m2 * HOME_M2)}</b>
-                </Figure>.
+                </Derived>.
                 You save {money(saved)} a year, which buys <b>~{num(m2, 1)} m² a year</b>.
               </div>
               <div style={{
