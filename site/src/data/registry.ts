@@ -122,6 +122,72 @@ export function citySalarySource(city: City): { name: string; url?: string; what
   }
 }
 
+/** Package 27, Tier 2: `Compare.tsx`'s fallback used to link `country.sources[0]`
+ *  or `city.sources[0]` for any metric with no source of its own — whichever URL
+ *  a country's own harvesters happened to append first, regardless of the
+ *  metric asking. For Norway that was a private immigration-law firm's blog
+ *  post about SALARY THRESHOLDS, linked under a "Norway — official sources"
+ *  label on the VISA-timeline card. The GulfTalent defect in a different
+ *  costume: a position in an unordered array standing in for a recorded
+ *  relationship.
+ *
+ *  Read all 15 countries' own `sources[]` by hand (not pattern-matched) for a
+ *  genuine government immigration-authority domain. 8 have one: this is that
+ *  record, not a guess — `sourceUrlByHost()` below still only returns a URL
+ *  if the exact host is actually present for that country, so a wrong or
+ *  stale entry here fails safe (no link) rather than pointing anywhere false.
+ *  The other 7 (Canada, Germany, Italy, Spain, Sweden, UAE, Qatar) never had
+ *  an official source captured at all — every visa/salary-threshold URL on
+ *  their own record is a law firm, immigration consultancy or news write-up,
+ *  confirmed by reading each one, not assumed absent. */
+const OFFICIAL_IMMIGRATION_HOST: Partial<Record<string, string>> = {
+  AU: 'immi.homeaffairs.gov.au',
+  US: 'travel.state.gov',
+  GB: 'gov.uk',
+  IE: 'enterprise.gov.ie',
+  NL: 'ind.nl',
+  DK: 'nyidanmark.dk',
+  NO: 'udi.no',
+  FI: 'migri.fi',
+}
+
+/** Shared by salary_net and net_pct — both read the same per-city flat tax
+ *  scalar (see NEEDS-DECISION #22's own overstatement caveat), so both carry
+ *  the identical citation rather than one having it and the other falling
+ *  through to a guessed source for what is, underneath, the same number. */
+function taxSource(country: Country | undefined) {
+  return {
+    name: 'OECD Taxing Wages + national calculators',
+    // NEEDS-DECISION #22 — net_pct is ONE flat scalar per city, calibrated
+    // against that city's own published MID-band salary. Real income tax
+    // is progressive: a higher gross salary is taxed at a higher EFFECTIVE
+    // rate, so the share that survives as net actually FALLS as salary
+    // rises above the band this rate was calibrated against — applying
+    // the mid-calibrated (higher) survival share to a higher gross
+    // therefore OVERSTATES what a real progressive system would leave
+    // them, never understates it. Adversarial review, package 21: the
+    // first version of this note stated the direction backwards
+    // ("understates"), the exact opposite of what a rising effective tax
+    // rate implies. Not shipped as a fix (modelling real bracket
+    // schedules for fifteen countries is a genuine harvesting effort);
+    // disclosed here instead, on every figure this scalar feeds.
+    what: `${country?.tax.net_note ?? 'Single person at a mid-level developer salary.'} A single flat `
+      + `rate for the whole city, calibrated at the mid-level salary — real tax is progressive, `
+      + `so this OVERSTATES the true net figure the further a salary sits above what this rate `
+      + `was calibrated against (a real progressive system would keep less, not more).`,
+  }
+}
+
+function countryImmigrationSource(country: Country | undefined, what: string | undefined) {
+  const host = country ? OFFICIAL_IMMIGRATION_HOST[country.id] : undefined
+  const url = host && country ? sourceUrlByHost(country.sources, [host]) : undefined
+  return {
+    name: url ? `${country?.name} — official immigration authority` : 'Compiled — no official source captured',
+    url,
+    what,
+  }
+}
+
 export const METRICS: MetricDef[] = [
   // ---------------- Money ----------------
   {
@@ -163,26 +229,7 @@ export const METRICS: MetricDef[] = [
     tickFormat: moneyTick,
     direction: 'higher_better',
     confidence: 'official',
-    source: (_c, k) => ({
-      name: 'OECD Taxing Wages + national calculators',
-      // NEEDS-DECISION #22 — net_pct is ONE flat scalar per city, calibrated
-      // against that city's own published MID-band salary. Real income tax
-      // is progressive: a higher gross salary is taxed at a higher EFFECTIVE
-      // rate, so the share that survives as net actually FALLS as salary
-      // rises above the band this rate was calibrated against — applying
-      // the mid-calibrated (higher) survival share to a higher gross
-      // therefore OVERSTATES what a real progressive system would leave
-      // them, never understates it. Adversarial review, package 21: the
-      // first version of this note stated the direction backwards
-      // ("understates"), the exact opposite of what a rising effective tax
-      // rate implies. Not shipped as a fix (modelling real bracket
-      // schedules for fifteen countries is a genuine harvesting effort);
-      // disclosed here instead, on every figure this scalar feeds.
-      what: `${k?.tax.net_note ?? 'Single person at a mid-level developer salary.'} A single flat `
-        + `rate for the whole city, calibrated at the mid-level salary — real tax is progressive, `
-        + `so this OVERSTATES the true net figure the further a salary sits above what this rate `
-        + `was calibrated against (a real progressive system would keep less, not more).`,
-    }),
+    source: (_c, k) => taxSource(k),
   },
   {
     key: 'savings',
@@ -205,6 +252,7 @@ export const METRICS: MetricDef[] = [
     format: (v) => pct(v),
     direction: 'higher_better',
     confidence: 'official',
+    source: (_c, k) => taxSource(k),
   },
 
   // ---------------- Visas & staying ----------------
@@ -221,6 +269,7 @@ export const METRICS: MetricDef[] = [
     tickFormat: yearsTick,
     direction: 'lower_better',
     confidence: 'official',
+    source: (_c, k) => countryImmigrationSource(k, 'Typical time to permanent residency.'),
   },
   {
     key: 'citizenship_years',
@@ -232,6 +281,7 @@ export const METRICS: MetricDef[] = [
     tickFormat: yearsTick,
     direction: 'lower_better',
     confidence: 'official',
+    source: (_c, k) => countryImmigrationSource(k, 'Typical time to citizenship eligibility.'),
   },
   {
     key: 'tuition',
@@ -244,6 +294,7 @@ export const METRICS: MetricDef[] = [
     tickFormat: moneyTick,
     direction: 'lower_better',
     confidence: 'official',
+    source: (_c, k) => countryImmigrationSource(k, k?.visa.study_pathway?.note ?? 'International master’s tuition, per year.'),
   },
   {
     key: 'post_study_months',
@@ -254,6 +305,7 @@ export const METRICS: MetricDef[] = [
     format: (v) => (v == null ? NO_DATA : `${num(v)} months`),
     direction: 'higher_better',
     confidence: 'official',
+    source: (_c, k) => countryImmigrationSource(k, 'Post-study work-search visa length.'),
   },
 
   // ---------------- Finding work ----------------
@@ -277,10 +329,18 @@ export const METRICS: MetricDef[] = [
     label: 'IT share of all jobs',
     hint: 'What proportion of everyone working is in IT',
     theme: 'jobs',
+    // Same field as ict_specialists above — share_pct sits on the identical
+    // enriched.ict_specialists object, not a second dataset, so it carries
+    // the same citation rather than falling through to a guessed one.
     value: (_c, k) => k?.enriched.ict_specialists?.share_pct ?? null,
     format: (v) => pct(v, 1),
     direction: 'higher_better',
     confidence: 'official',
+    source: () => ({
+      name: 'Eurostat',
+      url: 'https://ec.europa.eu/eurostat/databrowser/view/isoc_sks_itspt',
+      what: 'Employed ICT specialists as a share of total employment. EU/EFTA only.',
+    }),
   },
 
   // ---------------- Homes & rent ----------------
@@ -454,6 +514,16 @@ export const METRICS: MetricDef[] = [
     axisFloor: 1,
     direction: 'lower_better',
     confidence: 'index',
+    // Every country's own `sources[]` carries a third-party ranking
+    // aggregator for this (statranker.org), never the index's own publisher —
+    // same lesson as happiness_rank above: a single well-known index has one
+    // real citation regardless of country, not whatever aggregator a search
+    // happened to surface.
+    source: () => ({
+      name: 'Global Peace Index',
+      url: 'https://www.visionofhumanity.org/maps/',
+      what: 'Institute for Economics & Peace — 2026 edition.',
+    }),
   },
   {
     key: 'healthcare',
@@ -464,6 +534,11 @@ export const METRICS: MetricDef[] = [
     format: (v) => (v == null ? NO_DATA : num(v, 1)),
     direction: 'higher_better',
     confidence: 'crowd',
+    source: () => ({
+      name: 'Numbeo',
+      url: 'https://www.numbeo.com/health-care/rankings_by_country.jsp',
+      what: 'Crowd-reported healthcare quality index, by country.',
+    }),
   },
   {
     key: 'hdi',
@@ -474,6 +549,13 @@ export const METRICS: MetricDef[] = [
     format: (v) => (v == null ? NO_DATA : v.toFixed(3)),
     direction: 'higher_better',
     confidence: 'index',
+    // Same lesson again: every country's sources[] carries Wikipedia's own
+    // list page for this, not UNDP's — the actual publisher.
+    source: () => ({
+      name: 'UNDP Human Development Reports',
+      url: 'https://hdr.undp.org/data-center/human-development-index',
+      what: 'UN Development Programme — combined health, education and income index.',
+    }),
   },
 
   // ---------------- Weather ----------------

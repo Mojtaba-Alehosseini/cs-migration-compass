@@ -462,17 +462,30 @@ const COMPUTED_WHAT: Record<string, (c: City, k: Country | undefined) => string>
   total_monthly: () => 'Rent outside the centre + living costs for one person, both crowd-reported.',
 }
 
-/** What to put on the card when the registry has no source of its own. */
+/** What to put on the card when the registry has no source of its own.
+ *
+ * Package 27, Tier 2: this used to link `country.sources[0]` or
+ * `city.sources[0]` — whichever URL a country or city's own harvesters
+ * happened to append first, regardless of what this specific metric asked
+ * for. For Norway's own `pr_years` (a VISA-timeline figure) that was a
+ * private immigration-law firm's blog post about salary thresholds, under a
+ * label that said "official sources" — the GulfTalent defect in a different
+ * costume, a position in an unordered array standing in for a recorded
+ * relationship. Every metric that had an identifiable, verified source has
+ * one now (`registry.ts` — pr_years/citizenship_years/tuition/
+ * post_study_months read a curated per-country immigration-authority host;
+ * ict_share, healthcare, peace_rank, hdi and net_pct all have their own
+ * fixed citation). What reaches this function today is only the handful with
+ * no verified single source on record at all — climate figures and Tehran
+ * flight time, both hand-estimated at project inception with no per-city
+ * citation trail the way `salary_usd_year`'s own notes turned out to have
+ * (see REPORT-P27.md), and `english_work`, a hand-judged category informed
+ * by EF EPI among other things but not identical to it. Honest about that
+ * now instead of guessing a link: no URL, just what the figure is. */
 function fallbackSource(m: MetricDef, city: City, country: Country | undefined) {
   const computed = COMPUTED_WHAT[m.key]
   if (computed) return { name: 'Computed — formula on screen', what: computed(city, country) }
-  // A country-level figure is sourced by the country record; anything else by
-  // the city's. Both lists are the ones the pipeline actually recorded.
-  const countryLevel = m.theme === 'visa' || m.theme === 'people' || m.theme === 'life'
-    || m.theme === 'jobs' || m.key === 'net_pct'
-  return countryLevel
-    ? { name: `${country?.name ?? 'Country'} — official sources`, url: country?.sources?.[0], what: m.hint }
-    : { name: `${city.name} — this city’s sources`, url: city.sources?.[0], what: m.hint }
+  return { name: 'Compiled — no single source on record', what: m.hint }
 }
 
 /** The salary row's own source card changes with the lens, because the number

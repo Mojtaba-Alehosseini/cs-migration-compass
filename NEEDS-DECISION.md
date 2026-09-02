@@ -2884,10 +2884,24 @@ country's own harvesters happened to append URLs in. Traced live: Norway's "~3 y
 arriving to being allowed to stay for good" card links `country.sources[0]`, which is
 `eiglaw.com/norway-raises-salary-thresholds-for-skilled-workers...` — a private immigration-law
 firm's blog post about *salary thresholds*, not an immigration-timeline claim, and not itself an
-official government source, under a label that says "official sources." No narrow fix was attempted:
-picking the metric-relevant URL out of an unordered, un-tagged array is a data-modelling problem, not
-a rendering one — it needs per-source topic tagging this pipeline does not currently record for
-`country.sources`, which is new design work, not a fix.
+official government source, under a label that says "official sources."
+
+**RESOLVED, package 27, Tier 2 — mostly.** Read all 15 countries' own `sources[]` by hand: 8
+(Australia, the US, Great Britain, Ireland, the Netherlands, Denmark, Norway, Finland) carry a
+genuine, identifiable government immigration-authority domain, just not first in the array —
+`registry.ts`'s new `countryImmigrationSource()` finds it by exact host (never position) for
+`pr_years`/`citizenship_years`/`tuition`/`post_study_months`. Verified live: Norway's own citation
+now reads "Norway — official immigration authority" and links `udi.no`. The other 7 (Canada,
+Germany, Italy, Spain, Sweden, UAE, Qatar) never had an official source captured at all — every
+visa-related URL on their own record is a law firm, immigration consultancy or news write-up, not a
+government one — confirmed by reading each one, not assumed. For those, the fix is honesty rather
+than a link: "Compiled — no official source captured," not a guess dressed as one. `net_pct`,
+`ict_share`, `healthcare`, `peace_rank` and `hdi` all gained their own fixed or field-shared citation
+too (same pattern `happiness_rank`/`ict_specialists` already used correctly), removing five more
+metrics from the fallback path entirely. What still reaches `fallbackSource()` — climate figures,
+Tehran flight time, `english_work` — never had a per-figure research trail the way `salary_usd_year`
+(#59A) or the visa figures turned out to have; the fallback itself no longer guesses a position, it
+says plainly there is no single source on record, rather than manufacturing one to avoid saying so.
 
 **D — real arithmetic renders through `<Figure>` (a bare citation) instead of `<Derived>` (this
 codebase's own purpose-built, disclosed-chain component), on two figures the original 30-sample had
