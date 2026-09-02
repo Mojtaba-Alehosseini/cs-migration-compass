@@ -2729,13 +2729,21 @@ Checked against what each code path actually shifts:
   `pay_composition.json`'s carried, `"verified_live_this_session": false` note. Settled the same way
   now, twice over:
 
-  1. **SCB's own full ContentsCode metadata** (fetched live from the table's own metadata endpoint,
-     not just the two codes this pipeline happens to query) shows `LonYrkeAlder4AN` offers **two**
-     base concepts — `000007BL` "Basic salary" and `000007BN` "Monthly salary" — while the dispersion
-     table (`LoneSpridSektYrk4AN`) offers only **one**, "Monthly salary". So "Monthly salary" is
-     provably the concept the two tables share; queried live for occupation 2512, 2025, it is also
-     provably not the narrowest available ("Basic salary" **54,900** SEK/month vs "Monthly salary"
-     **55,500**).
+  1. **SCB's own full ContentsCode metadata** (fetched live from each table's own metadata endpoint,
+     not inferred from what this pipeline's harvester happens to request) shows `LonYrkeAlder4AN`
+     offers **two** base pay CONCEPTS — `000007BL` "Basic salary" and `000007BN` "Monthly salary" —
+     of which `AGE_CONTENTS` (`scripts/src_salary_se.py`) fetches only `000007BN`; `000007BL` is
+     never queried at all. The dispersion table (`LoneSpridSektYrk4AN`) offers **12** ContentsCodes —
+     mean, median, four percentiles, and six confidence-interval margins on those — and
+     `DISPERSION_CONTENTS` fetches all 12, but every one of them is a different STATISTIC of the
+     exact same **one** base concept, "Monthly salary"; no "Basic salary" alternative exists on this
+     table at all, at any of its 12 codes. (Corrected here from this item's own first version, which
+     said "not just the two codes this pipeline happens to query" for both tables — true of the age
+     table's 2, false of the dispersion table's 12; caught by package 26's own Tier 2 adversarial
+     review re-reading the archived metadata directly rather than trusting the count as written.) So
+     "Monthly salary" is provably the concept the two tables share; queried live for occupation 2512,
+     2025, it is also provably not the narrowest available ("Basic salary" **54,900** SEK/month vs
+     "Monthly salary" **55,500**).
   2. **SCB's own current quality declaration**
      (*Kvalitetsdeklaration, Lönestrukturstatistik, hela ekonomin, 2025*, p.4) defines the difference
      directly: *"Månadslönen avser anställningens sammanlagda grundlön plus rörliga lönetillägg samt
@@ -2792,3 +2800,171 @@ suite.
 
 NO's own `vintage_note` (a single quarter, `2026K1`, against an annual dispersion series) is
 unchanged and still disclosed; this ruling does not touch it.
+
+## 59. Package 26's 30-figure citation-truth sample found 8 failures in 4 code locations, all below the arithmetic layer — package 25 never checked whether a citation was true, only whether one existed
+
+Package 25 made every one of 646 figures cite *something* and asserted structure over every card. It
+never traced a single citation back to its source. Package 26's Tier 2 drew a stratified 30-figure
+sample from `.status/evidence/p25-inventory.json` (12 of the inventory's own 17 distinct source ids
+— see "what this does not cover," below; both `<Figure>` and `<Derived>` cards; 22 of the 30 touch
+DK/NO/FI/DE/ES/CA; 8 `<Derived>` chain-step cards; 7 from `CityProfile`) and traced each one's full
+chain — page figure → data file/key → builder function → harvester → the source office's own table.
+**8 of 30 failed (27%), from 4 distinct, code-level root causes, none of them an arithmetic error** —
+every number checked was traceable and correct; what failed was what the number was *attributed to*.
+Two of the eight (defect D, below) were not caught by the original trace — they were found by this
+package's own adversarial review, which re-checked the two "PASS" verdicts that had no
+`data/processed/*.json` file behind them, rather than accepting the sample's own first pass. Per this
+package's own Tier-2 rule, a rate this far above 10% is a package of its own, not a fix to append to
+this one — Tier 3/4 (Explore) were not started. Full trace evidence: `REPORT-P26.md`.
+
+**A — `talent.com + PayScale`, the site's single most common citation, names sources by policy, not
+by record.** `site/src/data/registry.ts:97-101`, `site/src/routes/CityProfile.tsx:96-101`, and
+`site/src/routes/Compare.tsx:483` each hardcode `name: 'talent.com + PayScale'` for every city's
+headline "Developer salary" figure — 222 of 646 figures (34%), the largest single citation bucket on
+the site. Swept all 73 records in `data/cities.json` directly, not sampled: **69 of 73 (95%)** have
+no talent.com/PayScale URL anywhere in `sources[]`, so `city.sources.find(s => s.includes('talent.com')
+|| s.includes('payscale'))` returns `undefined` and the popover's "Open source ↗" link silently never
+renders — confirmed live (Oslo, `hasLink: false` on the rendered `[role=dialog]`). **44 of 73 (60%)**
+have a `salary_usd_year.note` that names neither source at all — Madrid's is triangulated from
+"Glassdoor España + KeepCoding (citing Randstad/Jobted) + 10Code (citing LinkedIn Salary/InfoJobs)."
+For Oslo, Copenhagen, and Helsinki, the note states directly that *"talent.com has no salary tool for
+\[country\]"* — one of the two named sources is confirmed absent for that specific city, while the
+card names it anyway. Stockholm is not the same case (corrected here after package 26's own
+adversarial review checked the note directly rather than assuming the Nordic cities all read alike):
+talent.com SE *did* return a figure for Stockholm (median SEK 1,050,000) — it was examined and
+rejected as a likely outlier, identical to Gothenburg's and more than double PayScale's own read,
+flagged with its sample size (128) and reasoned against general knowledge (it would put Stockholm
+above London). The rejection itself is sound methodology, fully disclosed in the note. But the
+*card* still says "talent.com + PayScale" as if talent.com contributed to the number shown, when its
+own reading was explicitly thrown out — the same name/content mismatch as the "no tool" cities,
+reached by a different route (a number solicited and rejected, not a tool that was never there).
+Toronto is the one clean case sampled: the note genuinely cites both, and both fed the final number,
+so the name is accurate — only the link is still dead. The displayed
+vintage ("Aug 2026" on every one of these cards) is `cities.json`'s own top-level `as_of`, a
+file-regeneration timestamp, not a per-source date — it can never trigger `<Figure>`'s own staleness
+warning no matter how old the underlying manually-researched PayScale read is.
+
+**B — `WagePanel.tsx`'s "published: X" line does not track the basis its own chain computes from.**
+`site/src/components/explore/WagePanel.tsx:394-401` (Explore → Money's "open each row's own method"
+detail list) passes `native={{ value: r.native.value... }}` unconditionally, but `WageCountry.native`
+(`site/src/data/explore.ts:168-188`) is **one fixed figure per country** — this pipeline's own
+default/native basis, with no per-basis variant — while `chain`/`result` come from `r.combos[key]`,
+keyed by whichever basis the panel's own toggle currently has selected. The two only agree when the
+selected toggle happens to match the country's own native default. Traced live: viewing this panel
+under `regular_pay`, Norway's card reads "published: 77,420 NOK/month (2025)" — `native_nok_month`,
+Norway's own *total_earnings* figure, per item #58 above — immediately followed by a chain computing
+`75,500 × 12 = 906,000`, where 75,500 is `avtalt_median_nok_month`, the *regular_pay* figure. The
+final result (906,000) is correct; the concept block correctly names both Norwegian concepts by name;
+but the "published: 77,420" line sits between them citing a number neither the chain nor the result
+uses. The docstring at `WagePanel.tsx:25-28` names DK, NO, FI, and DE as the four countries that
+"publish BOTH bases natively... absent on neither" — all four are structurally exposed to this same
+mismatch on whichever toggle isn't their own default; only Norway under `regular_pay` was traced in
+full. **A same-session fix was attempted and reverted, not shipped.** Two versions were written and
+checked against `data/processed/wage_distribution.json` directly rather than trusted on inspection —
+both were wrong. The first (suppress `native` unless its raw value equals the combo's) fails for
+every country, always: SE's own *matching* combo is `53,500 × 12 = 642,000`, not `53,500` — the
+combo is always annualised, even when the basis is right, so raw equality never holds. The second
+(scale by 12 first) works for FI (`native` month → combo year, always `× 12`) and DE (`native` is
+already annualised at extraction, per item's own `annualised_note`; DE's *matching* combo carries
+literally the same number) but breaks on DK, whose native figure is an hourly `STAND` concept that
+both bases reach only via subtraction *and* an hour→week→year conversion — neither combo is ever a
+clean scalar multiple of `native`, so the same check that correctly detects NO's mismatch would also
+suppress DK's *correct* case, which was never re-rendered live to confirm either way. Given a
+same-session fix could not be verified correct for all four countries' three genuinely different
+chain shapes (plain native-swap, extraction-time-annualised, and subtraction-based), it was reverted
+rather than shipped on the two cases that happened to check out — the same discipline item #58 used
+Sweden's carried note to *not* upgrade an unverified read into a confident fix.
+
+**C — `Compare.tsx`'s generic fallback names "official sources" and links whichever URL sits first
+in an unordered array, regardless of the metric.** `fallbackSource()` (`site/src/routes/Compare.tsx
+:466-476`) is the citation for *any* `visa`/`people`/`life`/`jobs`/`net_pct` metric that has no
+citation of its own: `{ name: '\${country.name} — official sources', url: country?.sources?.[0], ... }`.
+`country.sources` is not ordered by relevance to any specific metric — it is whatever order that
+country's own harvesters happened to append URLs in. Traced live: Norway's "~3 yrs, typical time from
+arriving to being allowed to stay for good" card links `country.sources[0]`, which is
+`eiglaw.com/norway-raises-salary-thresholds-for-skilled-workers...` — a private immigration-law
+firm's blog post about *salary thresholds*, not an immigration-timeline claim, and not itself an
+official government source, under a label that says "official sources." No narrow fix was attempted:
+picking the metric-relevant URL out of an unordered, un-tagged array is a data-modelling problem, not
+a rendering one — it needs per-source topic tagging this pipeline does not currently record for
+`country.sources`, which is new design work, not a fix.
+
+**D — real arithmetic renders through `<Figure>` (a bare citation) instead of `<Derived>` (this
+codebase's own purpose-built, disclosed-chain component), on two figures the original 30-sample had
+marked passing.** Found by package 26's own adversarial review re-checking the two "PASS" verdicts
+that carried no `data/processed/*.json` behind them, rather than accepting the arithmetic-reproduces
+standard applied everywhere else. `site/src/routes/CityProfile.tsx:216-222` (Oslo's "the path to
+owning a home" panel): `<Figure source={{name: 'Numbeo', what: 'Crowd-reported purchase price per
+square metre.', ...}}>{money(city.apt_price_outside_usd_m2 * HOME_M2)}</Figure>` — the card's own
+`what` string admits Numbeo published a *per-square-metre* rate, but the number inside the citation
+is that rate **× a fixed 90 m² assumption**, presented as if Numbeo published the total. `registry.ts`
+`salary_net` ("Take-home pay," `site/src/data/registry.ts:119-140`): `netFor()` (`compute.ts:50-54`)
+computes `city.salary_usd_year[band] * (city.net_pct / 100)` — the SAME defect-A "crowd"-confidence
+gross figure, multiplied by an OECD-derived tax-survival rate — and renders the result at
+`confidence: 'official'`, under "OECD Taxing Wages + national calculators," a source that publishes
+the *rate*, not the dollar figure the card shows, and never discloses that roughly half its own input
+is crowd-tier. `Derived.tsx`'s own doc comment states the rule this violates: *"a number this site
+calculated FROM one or more \[sources\] — a wage converted currency, annualised, or had a component
+subtracted... this is the only way a CALCULATED number is rendered."* Both of these are calculated
+numbers rendered the other way. Scope not swept: `registry.ts` has two more computed metrics
+(`savings_usd_year` via `savingsPerYear()`, `years_to_home`/`m2_per_year` via `yearsToHome()`/
+`m2PerYear()`) that were not individually re-checked for the same pattern, and CityProfile.tsx's
+inline `<Figure>` usages elsewhere were not swept beyond the one instance traced — named here as
+likely-present, not counted.
+
+**What this does not mean.** No published number was found wrong — every value traced (222+ figures
+checked structurally in the full sweep for defect A, plus the 30-sample's own arithmetic, all
+reproduced exactly from source files) is correct. The failure is entirely in what a correct number is
+*attributed to*: a source named that wasn't used, a "published" figure that isn't the one the chain
+beside it computes from, a link chosen by array position instead of topic, real arithmetic wrapped in
+a citation component that discloses none of it. **30 of 646 is a sample, not a proof** — defect A's
+true scope (222/646, 34%) was confirmed by a full sweep specifically because it was cheap to sweep
+mechanically; defects B, C, and D were each confirmed on one or two live instances and are named as
+structurally present elsewhere (four countries for B, every fallback-sourced metric for C, at least
+two more `registry.ts` computed metrics and CityProfile's own other inline `<Figure>` uses for D), not
+separately re-counted.
+
+**What this does not cover.** The sample touched 12 of the 17 distinct source ids the inventory's own
+figures actually carry (`.status/evidence/p26/figures_categorized.json`) — ONS (GB), CBS (NL), ATO
+(AU), and CSO (IE) were not in the original 30 (caught by this package's own adversarial review). A
+follow-up pass traced one figure from each directly against its own `data/processed/salary_*.json`
+file rather than leave the gap standing: AU (`data/processed/salary_au.json`, occupation `261313`
+"Computing professional - software engineer," ANZSCO 6-digit) — A$132,758/year matches exactly; GB
+(`salary_uk.json`, `2134` "Programmers and software development professionals," SOC 2020 4-digit) —
+£55,587/year matches exactly; IE (`salary_ie.json`, `soc1:2` "Professional," 1-digit — the coarser
+depth this pipeline's own crosswalk logic discloses for Ireland) — €33/hour matches (32.99 rounds to
+33); NL (`salary_nl.json`, `0811` "Software- en applicatieontwikkelaars," BRC 2014) — €35/hour matches
+(34.5 rounds to 35). All four passed, extending coverage to 16 of 17. `postings_seed_summary` (the
+17th, DataMethods-only) was not additionally traced.
+
+**Options for whichever package takes this on**, roughly in ascending order of how much new work each
+requires:
+  - **(a) Narrow the claim instead of the gap.** For A, stop naming specific providers in the citation
+    and say what's actually true of every city uniformly — e.g. "crowd-sourced salary estimate" with
+    the specific providers moved into `what`, read from the note itself rather than asserted in `name`.
+    Cheapest, ships without new data, but a reader loses the (currently false) impression of knowing
+    which site was consulted.
+  - **(b) Record what was actually used, per city, as data — not prose.** For A, add a structured
+    `salary_usd_year.sources_used: string[]` field (populated once, by hand, from each city's own
+    `note`) that `registry.ts`/`CityProfile.tsx`/`Compare.tsx` render directly instead of a hardcoded
+    literal, and add the missing per-city URLs to `sources[]` so the link stops being silently absent.
+    For C, the analogous fix is tagging `country.sources` entries by topic at harvest time so
+    `fallbackSource()` can filter by the metric's own `theme` instead of taking index 0. Correct, but
+    real data-entry/harvesting work across up to 73 cities and however many countries carry
+    fallback-sourced metrics — not a same-session patch.
+  - **(c) For B specifically, give `WageCountry` a `native_basis: Basis` field at build time**
+    (`build_wage_distribution.py` already knows which basis each `obs` came from when it builds
+    `native` — it is simply never recorded), then `WagePanel.tsx` can show `native` exactly when
+    `native_basis === basis`, correctly, for all four dual-basis countries without per-chain-shape
+    guessing at render time. The right fix, and now a small one given this item's own trace of all
+    three chain shapes — but still needs `build_wage_distribution.py` changed and its own tests
+    extended before it touches the site, which is why it was named here rather than attempted live.
+  - **(d) For D, route every computed metric through `<Derived>`, not `<Figure>`.** `registry.ts`'s
+    generic rendering loop only ever calls `<Figure>` — a computed `MetricDef` (one whose `value()`
+    does arithmetic over more than one field, not a straight passthrough) has nowhere else to go even
+    if the author wanted `<Derived>`. Needs the generic loop taught to accept an optional `chain`
+    alongside `source`, or these few computed metrics pulled out of the generic loop the way
+    `CountryProfile.tsx`'s own dual-basis cards already are — either way, a rendering-architecture
+    change, not a one-line fix, and CityProfile.tsx's own inline `<Figure>` uses (the 90 m² multiply
+    among them) would still need finding and moving by hand regardless of which path `registry.ts`
+    takes.
