@@ -156,19 +156,34 @@ def _se_curve() -> tuple[list[dict], dict]:
         "premium_basis": "mean",
         # PACKAGE 25, NEEDS-DECISION #58. Which PAY BASIS this premium was
         # measured on — a different axis from premium_basis above, which is
-        # the central STATISTIC (mean vs median). Read from SCB's own
-        # returned metadata, not inferred: LonYrkeAlder4AN's fetched
-        # ContentsCode 000007BN is labelled "Monthly salary", the same
-        # concept as LoneSpridSektYrk4AN's own 000007CD/000007CE
-        # ("Monthly salary" / "Median") that this country's dispersion is
-        # built from. One concept, one office, one table family (AM0110A) —
-        # and pay_composition.json records SCB's manadslon as bonus-EXCLUDED
-        # ("en 13:e eller 14:e manadslon samt vinstdelning ... ingar inte"),
-        # i.e. regular_pay. Premium and base therefore agree for Sweden.
+        # the central STATISTIC (mean vs median).
+        #
+        # PACKAGE 26: settled from SCB's own metadata twice over, not
+        # carried from a note. (1) LonYrkeAlder4AN's own full ContentsCode
+        # list (fetched live, not just the two codes this pipeline queries)
+        # shows TWO base concepts — 000007BL "Basic salary" and 000007BN
+        # "Monthly salary" — and the dispersion table (LoneSpridSektYrk4AN)
+        # offers only ONE, "Monthly salary" (000007CD/CE). So "Monthly
+        # salary" is the concept the two tables share; "Basic salary" is
+        # narrower still and confirmed lower numerically (54,900 vs 55,500
+        # SEK/month, occupation 2512, 2025 — queried live). (2) SCB's own
+        # current quality declaration (Kvalitetsdeklaration, Lonestrukturstatistik,
+        # hela ekonomin, 2025, page 4) defines it directly: "Manadslonen
+        # avser anstallningens sammanlagda grundlon plus rorliga
+        # lonetillagg samt formaner. Overtidsersattning ingar inte." — base
+        # pay plus routine role-based supplements and benefits; overtime
+        # excluded. The same document (page 11) separately confirms
+        # irregular/bonus-type pay (a 13th/14th month, profit-sharing,
+        # share options) is "svara att mata och ingar inte i
+        # lonestatistiken" — excluded from the wage statistics generally.
+        # Routine supplements in, irregular bonus out: regular_pay.
         "pay_basis": "regular_pay",
         "pay_basis_source": "SCB LonYrkeAlder4AN ContentsCode 000007BN 'Monthly salary' — the same "
                              "concept as this country's own dispersion table (LoneSpridSektYrk4AN "
-                             "000007CD/000007CE); manadslon excludes bonus per pay_composition.json.",
+                             "000007CD/000007CE, its only base-measure ContentsCode); defined in SCB's "
+                             "own current quality declaration (am0110_kd_2025.pdf, p.4) as grundlon plus "
+                             "routine supplements and benefits, overtime excluded, and (p.11) irregular "
+                             "bonus-type pay excluded from the wage statistics generally.",
     }
     return points, meta
 

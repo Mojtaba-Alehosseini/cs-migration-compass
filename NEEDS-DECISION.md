@@ -2724,15 +2724,35 @@ Checked against what each code path actually shifts:
   `usd_regular_pay` is the same basis. Nothing to fix. Sweden was checked because "is it
   Norway-specific?" cannot be answered by looking only at Norway.
 
-  **One asymmetry, stated rather than glossed:** the two sides rest on different strengths of
-  evidence. That SE's cross and its dispersion share ONE concept is proven by SCB's own metadata —
-  both tables' ContentsCodes read "Monthly salary". That the concept is bonus-EXCLUDED comes from
-  `pay_composition.json`'s note for `salary_se`, which itself carries
-  `"verified_live_this_session": false`. Norway's classification is settled by the labels alone
-  ("monthly earnings" vs "Basic monthly salary"); Sweden's leans on that carried note. It changes no
-  behaviour — SE's `usd_total_earnings` is `ok: false`, so the preference list resolves to
-  `usd_regular_pay` either way — but "read from the office's own metadata" is true of the *matching*
-  argument for Sweden, not of the *basis label*.
+  **CLOSED FULLY, package 26 — the asymmetry package 25 recorded is gone.** It left standing that
+  Norway's classification was settled by SSB's own labels directly, while Sweden's leaned on
+  `pay_composition.json`'s carried, `"verified_live_this_session": false` note. Settled the same way
+  now, twice over:
+
+  1. **SCB's own full ContentsCode metadata** (fetched live from the table's own metadata endpoint,
+     not just the two codes this pipeline happens to query) shows `LonYrkeAlder4AN` offers **two**
+     base concepts — `000007BL` "Basic salary" and `000007BN` "Monthly salary" — while the dispersion
+     table (`LoneSpridSektYrk4AN`) offers only **one**, "Monthly salary". So "Monthly salary" is
+     provably the concept the two tables share; queried live for occupation 2512, 2025, it is also
+     provably not the narrowest available ("Basic salary" **54,900** SEK/month vs "Monthly salary"
+     **55,500**).
+  2. **SCB's own current quality declaration**
+     (*Kvalitetsdeklaration, Lönestrukturstatistik, hela ekonomin, 2025*, p.4) defines the difference
+     directly: *"Månadslönen avser anställningens sammanlagda grundlön plus rörliga lönetillägg samt
+     förmåner. Övertidsersättning ingår inte."* — base pay plus routine, role-based supplements and
+     benefits; overtime excluded. The same document (p.11) separately confirms irregular/bonus-type
+     pay — a 13th/14th month, profit-sharing, share options — is *"svåra att mäta och ingår inte i
+     lönestatistiken"*, excluded from the wage statistics generally. Routine supplements in,
+     irregular bonus out: **regular_pay**, confirming the carried note rather than merely repeating
+     it — the "rörliga lönetillägg" the definition includes are ongoing, role-based supplements
+     (shift/on-call differentials and the like), a different concept from the *irregular* bonus
+     `pay_composition.json`'s `irregular_bonus` field tracks, so including them is consistent with
+     this pipeline's own regular/total split, not a loophole in it.
+
+  Both citations are now live sources, not carried notes, in `build_experience_gradient.py`'s own
+  `pay_basis_source` field. **Confirms `regular_pay`; changes no behaviour** — SE's
+  `usd_total_earnings` was already `ok: false`, so the preference list resolves to `usd_regular_pay`
+  either way, exactly as before. A check that confirms is not a wasted check.
 - **NO — native path already correct.** `native` is `total_earnings` (81,050 NOK/month × 12 =
   `native_total_earnings`), which is the basis its premium was measured on. `/work`'s estimate and
   position were never affected.

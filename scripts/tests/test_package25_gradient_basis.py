@@ -12,8 +12,12 @@ and wrote it down (`pay_basis`, `pay_basis_source`). These tests pin the
 facts that ruling rests on, so the pairing cannot silently drift:
 
   SE  SCB LonYrkeAlder4AN ContentsCode 000007BN "Monthly salary" — the same
-      concept as its own dispersion table's 000007CD/000007CE. manadslon
-      excludes bonus (pay_composition.json). => regular_pay, and SE's own
+      concept as its own dispersion table's 000007CD/000007CE (confirmed
+      package 26: that table's own FULL ContentsCode list has a second,
+      narrower concept, "Basic salary", which the dispersion table does not
+      offer at all). manadslon excludes bonus per SCB's own current quality
+      declaration (package 26, am0110_kd_2025.pdf, replacing package 25's
+      carried pay_composition.json note). => regular_pay, and SE's own
       native figure is regular_pay. MATCHED.
   NO  SSB 11658 ContentsCodes GjMdTotal "Average monthly earnings (NOK)" and
       MedianMndLonn "Median monthly earnings (NOK)". SSB names the other
@@ -67,6 +71,25 @@ class TestEveryGradientStatesItsPayBasis(unittest.TestCase):
         be re-read from the table, not silently accepted."""
         self.assertEqual(self.by_country["SE"]["meta"]["pay_basis"], "regular_pay")
         self.assertEqual(self.by_country["NO"]["meta"]["pay_basis"], "total_earnings")
+
+    def test_swedens_own_citation_no_longer_leans_on_a_carried_note(self) -> None:
+        """Package 25 closed #58 with an asymmetry stated rather than fixed:
+        Norway's basis was settled by SSB's own returned labels directly;
+        Sweden's leaned on pay_composition.json's own note, itself carrying
+        "verified_live_this_session": false. Package 26 fetched SCB's own
+        full ContentsCode metadata (not just the two codes this pipeline
+        queries) and its own current quality declaration PDF, and rewrote
+        the citation to point at both. This pins that the rewrite happened
+        — not that the conclusion is unchanged (a separate test already
+        covers that) — so a future edit cannot quietly regress the citation
+        back to a carried note without this test naming it."""
+        src = self.by_country["SE"]["meta"]["pay_basis_source"]
+        self.assertIn("quality declaration", src.lower(),
+                      "Sweden's own citation should point at SCB's quality declaration, the live "
+                      "source package 26 fetched, not merely restate the old carried note")
+        self.assertNotIn("pay_composition.json", src,
+                         "the citation should no longer defer to pay_composition.json's own note "
+                         "as its evidence for the basis — that note is what package 26 replaced")
 
 
 class TestGradientBasisMatchesTheNativeFigureItShifts(unittest.TestCase):
