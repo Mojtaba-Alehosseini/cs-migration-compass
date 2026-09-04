@@ -72,7 +72,27 @@ export function DataMethods() {
                       )}
                     </td>
                     <td style={cell}>
+                      {/* NEEDS-DECISION #67. This cell used to render transforms[0] alone
+                        * under a heading reading "What we take from it" — for 51 of the 54
+                        * rendered rows that is the FIRST of up to seven pipeline steps, and
+                        * the heading promised the lot. Nothing shown was false; the heading
+                        * over-claimed.
+                        *
+                        * The rest are disclosed rather than the heading weakened, because
+                        * the reader can then see how much is behind the cell. Collapsed by
+                        * default and inline, so the table grows by one line on the rows that
+                        * have more, not by a list on every row. */}
                       {e.transforms[0]}
+                      {e.transforms.length > 1 && (
+                        <details style={{ display: 'inline' }}>
+                          <summary style={{ display: 'inline', cursor: 'pointer', color: 'var(--accent)' }}>
+                            {' '}+{e.transforms.length - 1} more {e.transforms.length === 2 ? 'step' : 'steps'}
+                          </summary>
+                          <ol style={{ margin: '4px 0 0', paddingLeft: 16, color: 'var(--ink-2)' }}>
+                            {e.transforms.slice(1).map((t, i) => <li key={i} style={{ marginTop: 2 }}>{t}</li>)}
+                          </ol>
+                        </details>
+                      )}
                       {e.notes && <span style={{ display: 'block', color: 'var(--ink-3)', marginTop: 3 }}>{e.notes}</span>}
                     </td>
                     <td style={cell}>{e.coverage ?? '—'}{e.rows != null && <span style={{ display: 'block', color: 'var(--ink-3)' }}>{num(e.rows)} rows</span>}</td>
