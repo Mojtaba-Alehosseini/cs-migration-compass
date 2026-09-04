@@ -120,9 +120,24 @@ try {
       + `${String(p.marks?.length ?? 0).padEnd(6)} ${String(p.nodata?.length ?? 0).padEnd(8)} `
       + `${p.clipped?.length ?? 0}`)
   }
-  check(explorePages.length >= 8 && explorePages.every((p) => (p.figures?.length ?? 0) > 0),
-    `every Explore theme contributed at least one figure to the sample `
-    + `(${explorePages.length} routes, ${explorePages.reduce((a, p) => a + (p.figures?.length ?? 0), 0)} figures)`)
+  /* The anti-vacuity assertion is that each theme rendered SOMETHING these
+   * checks can inspect — not that it rendered a figure. Five of the seven
+   * themes (visa, jobs, people, life, climate) legitimately have no
+   * source-card triggers at all: Explore's own design puts confidence,
+   * caveat and CSV in a chart footer rather than on a per-figure card
+   * (Explore.tsx's header states this), and that was verified against the
+   * live DOM rather than inferred from the count being zero. An earlier
+   * version of this check demanded one figure per theme and failed on
+   * correct code, which is its own kind of wrong. What is worth knowing is
+   * printed in the table above: on those five themes C1, C3 and C4 have no
+   * figures to bite on, so their "0 violations" is a property of the sample
+   * and not of the page. */
+  check(explorePages.length >= 8
+    && explorePages.every((p) => (p.figures?.length ?? 0) + (p.marks?.length ?? 0) > 0),
+    `every Explore theme rendered something the assertions can inspect `
+    + `(${explorePages.length} routes, `
+    + `${explorePages.reduce((a, p) => a + (p.figures?.length ?? 0), 0)} figures, `
+    + `${explorePages.reduce((a, p) => a + (p.marks?.length ?? 0), 0)} marks)`)
   say('')
 
   /* C6 is a CONTRAST check, and contrast is a property of the palette — so
