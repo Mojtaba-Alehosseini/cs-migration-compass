@@ -3604,3 +3604,52 @@ to serve a page that already scores 97 on a throttled phone.
 obligation to change. Packages 24 through 28 fixed things because they were wrong, not because they
 had been measured. This number is real, it is recorded, and it is not hurting anyone; re-opening it
 should require a concrete cost, not the number's continued existence.
+
+## 69. The figure-inventory suite captures two different pages from the same build, and every assertion passes on both
+
+Package 30 ran `test_figure_inventory.mjs` about fifteen times while working through its gates, on
+one unchanged build and one unchanged `core.json`. It reports one of exactly two results:
+
+```
+Captured 646 figures, 54 no-data marks, 668 marks     ~11 runs
+Captured 646 figures, 61 no-data marks, 764 marks      ~4 runs
+```
+
+The figure count is identical every time. What moves is 7 extra "no data" marks and 96 extra marks
+in total. Both states pass C1-C6 and R8 with zero findings.
+
+**Why it went unnoticed for five packages.** Every assertion in the suite is shaped "N found, expect
+0". A run that renders 7 more no-data marks than another is therefore indistinguishable from one
+that does not, as long as none of those marks trips an assertion. The suite counts what it saw and
+asserts about defects; it has never asserted that what it saw is the same page twice.
+
+**What was ruled out.** Not the build: the state flips between runs against one build. Not the
+preview server holding a stale `dist/`: it flips across two consecutive runs on a server started
+seconds earlier. Not the code or the data: neither changed between any two of the runs above.
+
+**Leading hypothesis, not a conclusion.** The 61/764 state clusters immediately after a rebuild or
+a server restart -- 3 of its 4 appearances -- which fits a cold file cache making some fetch slower
+than the suite's fixed post-navigation wait, so a panel is captured still showing "no data". That
+is a guess consistent with the timing; nobody has yet identified WHICH panel, and the cheap way to
+find out is to print the 7 marks' own routes and labels rather than only their count.
+
+**Why this matters more than a flaky count.** If a real defect lands in whatever renders those 7
+marks, this suite finds it on roughly one run in four. That is worse than not covering the area,
+because the passing runs read as coverage. It is the same shape as #65 (a CI browser suite that
+failed once and passed unchanged on re-run) and should probably be decided alongside it.
+
+**Options:**
+  - **(a) Make the count itself an assertion.** Pin figures/marks/no-data to expected values, so a
+    drift fails loudly instead of being averaged away. Cheapest, and turns the flake into a red
+    build that someone must then explain -- which is the point.
+  - **(b) Find the 7 first.** Log each no-data mark's route and label, run until the 61 state
+    appears, and diff. Identifies the panel before deciding anything; costs one run in four.
+  - **(c) Wait for quiescence rather than a fixed delay.** Fixes the likely cause if the hypothesis
+    holds, and does nothing if it does not.
+
+Not resolved here. Found by package 30 while running its own gates. Nothing in that package caused
+it, and the reason is not an alibi but the observation itself: the two states alternate across
+runs of ONE build, from ONE commit, over ONE unchanged `core.json`. A source change cannot
+produce a difference that appears and disappears without one. This has not been re-run against an
+earlier commit, and does not need to be for that conclusion; it would still be worth doing to
+learn how long it has been true.

@@ -55,6 +55,12 @@ Chrome over the built site:
   review and obvious on screen. That is why these assertions read the DOM and the painted pixels
   rather than the source.
 
+  One caveat on this suite, found while writing this page: on one unchanged build it captures either
+  646 figures / 54 no-data marks / 668 marks, or 646 / 61 / 764 — roughly one run in four is the
+  second. Every assertion passes on both, because they are all shaped "N found, expect 0", so 7
+  extra no-data marks are invisible to them. A defect in whatever renders those 7 would be caught on
+  about one run in four. Open item #69.
+
 **Per package, by hand:** Lighthouse (desktop preset, at least 90 performance / 95 accessibility
 across 14 routes) and an independent adversarial review of the package's own work. Neither runs in
 CI.
@@ -115,12 +121,12 @@ at 390px, or only after a scroll, would pass CI.
 
 ## What is still open
 
-The decision log ([NEEDS-DECISION.md](../NEEDS-DECISION.md)) holds 68 items. Package 30 read all of
-them and reconciled every heading against its own body: **60 closed, 8 open.** Before that, 57
-headings gave no indication either way, so the honest answer to "what is still open" was that
-nobody knew.
+The decision log ([NEEDS-DECISION.md](../NEEDS-DECISION.md)) holds 69 items. Package 30 read the 68
+that existed and reconciled every heading against its own body, then added one of its own:
+**60 closed, 9 open.** Before that, 57 headings gave no indication either way, so the honest answer
+to "what is still open" was that nobody knew.
 
-All 8 remaining are judgement calls for the owner, not unfinished work:
+All 9 remaining are judgement calls for the owner, not unfinished work:
 
 | # | What it is |
 |---|---|
@@ -132,6 +138,7 @@ All 8 remaining are judgement calls for the owner, not unfinished work:
 | 62 | The UAE plots at $49,000 on "the price of the door", but one of its three routes has no salary floor at all |
 | 63 | Doha's salary citation lost a working PayScale link to stop it misattributing a band |
 | 65 | CI's browser suites failed once on a 30-second Chrome start budget, and passed on re-run unchanged |
+| 69 | The figure-inventory suite captures two different pages from the same build; every assertion passes on both |
 
 ---
 
