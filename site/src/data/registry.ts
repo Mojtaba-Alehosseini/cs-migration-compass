@@ -144,14 +144,24 @@ export function citySalarySource(city: City): { name: string; url?: string; what
  *  relationship.
  *
  *  Read all 15 countries' own `sources[]` by hand (not pattern-matched) for a
- *  genuine government immigration-authority domain. 8 have one: this is that
+ *  genuine government immigration-authority domain. 9 have one: this is that
  *  record, not a guess — `sourceUrlByHost()` below still only returns a URL
  *  if the exact host is actually present for that country, so a wrong or
  *  stale entry here fails safe (no link) rather than pointing anywhere false.
- *  The other 7 (Canada, Germany, Italy, Spain, Sweden, UAE, Qatar) never had
- *  an official source captured at all — every visa/salary-threshold URL on
+ *  The other 6 (Canada, Germany, Italy, Spain, UAE, Qatar) never had an
+ *  official source captured at all — every visa/salary-threshold URL on
  *  their own record is a law firm, immigration consultancy or news write-up,
- *  confirmed by reading each one, not assumed absent. */
+ *  confirmed by reading each one, not assumed absent.
+ *
+ *  Package 28's adversarial review: this said "8 have one" and counted
+ *  SWEDEN among the seven without, which package 27's own Tier 7 had already
+ *  falsified by adding `SE: migrationsverket.se` below — Sweden's record
+ *  carried Migrationsverket's own URL the whole time. A hand-audit's written
+ *  record contradicting the map it documents is the same defect as F5, which
+ *  that tier fixed in a test docstring; corrected here in the one it left.
+ *  Re-checked when correcting it: all nine mapped hosts resolve against
+ *  their own country's `sources[]`, and the six named above still have no
+ *  government host on record at all. */
 const OFFICIAL_IMMIGRATION_HOST: Partial<Record<string, string>> = {
   AU: 'immi.homeaffairs.gov.au',
   US: 'travel.state.gov',

@@ -128,10 +128,29 @@ try {
    * (Explore.tsx's header states this), and that was verified against the
    * live DOM rather than inferred from the count being zero. An earlier
    * version of this check demanded one figure per theme and failed on
-   * correct code, which is its own kind of wrong. What is worth knowing is
-   * printed in the table above: on those five themes C1, C3 and C4 have no
-   * figures to bite on, so their "0 violations" is a property of the sample
-   * and not of the page. */
+   * correct code, which is its own kind of wrong.
+   *
+   * What each check below actually reads, since "no figures" does NOT mean
+   * "no coverage" and an earlier version of this comment got that wrong for
+   * three of the six (package 28's own adversarial review):
+   *   C1  p.marks, narrowed to whole-number percentages. Explore's
+   *       positioned marks are fractional (visa's ruler dots sit at
+   *       34.0615%, 35.4571%, ...), so none enters C1's population — it has
+   *       candidates and correctly finds no constant among them, which is
+   *       the check working, not the check idling.
+   *   C2  the /work openings cells. Nothing to do with Explore.
+   *   C3  p.text — the WHOLE rendered page — for every route, plus card
+   *       titles and bodies. Never vacuous here: it reads all seven themes'
+   *       visible text whether or not they carry a figure.
+   *   C4  p.figures only. This is the one that genuinely idles on the five
+   *       card-less themes.
+   *   C5  p.clipped, which is 0 on all eight Explore routes — so C5
+   *       contributes nothing from Explore either, for a different reason
+   *       than C4 does.
+   *   C6  p.marks. Bites on every theme, 4-8 marks each.
+   * So of the six, C4 idles on five themes for want of figures, C5 idles on
+   * all eight for want of clipped text, and C3 and C6 genuinely cover all
+   * of them. */
   check(explorePages.length >= 8
     && explorePages.every((p) => (p.figures?.length ?? 0) + (p.marks?.length ?? 0) > 0),
     `every Explore theme rendered something the assertions can inspect `

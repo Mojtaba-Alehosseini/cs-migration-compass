@@ -3150,10 +3150,24 @@ value):
 Net count is unchanged at 21, but four of the original members should not have been on the list and
 four real members were missing — a reader auditing this entry city-by-city against the live site
 would have found four false positives and, separately, missed four real ones. Whichever of (a)/(b)/(c)
-above is chosen should be scoped against this corrected set: 9 US metros (new_york, boston, chicago,
-atlanta, raleigh, san_antonio, miami, washington_dc, sf_bay_area) + 6 German cities + amsterdam +
-dubai + abu-dhabi (full-overlap shape) + melbourne, brisbane, perth, eindhoven (partial-overlap
-shape, new_grad/senior only).
+above is chosen should be scoped against this corrected set, enumerated in full so it can be counted
+rather than trusted:
+
+- **9 US metros** — new_york, boston, chicago, atlanta, raleigh, san_antonio, miami, washington_dc,
+  sf_bay_area
+- **5 German cities** — berlin, munich, hamburg, frankfurt, stuttgart
+- **amsterdam**, **dubai**, **abu-dhabi**
+- **4 partial-overlap** (new_grad and senior only) — melbourne, brisbane, perth, eindhoven
+
+9 + 5 + 3 + 4 = **21**.
+
+*Corrected by package 28's adversarial review, which is the second error in this one paragraph and
+the more embarrassing kind:* it read "6 German cities + Amsterdam" from the original bullet above
+and carried the 6 forward as if all six were German. There are **five** German cities in
+`core.json` (the sixth entry in that bullet is Amsterdam, which is Dutch), so the list as first
+written summed to 22 against a headline of 21. The count 21 was right; the enumeration a reader
+would scope the options against was not — in an entry whose own correction claimed to have been
+"verified against `data/cities.json` directly".
 
 ## 61. Two figures found by defect D's own rule, lower severity, not fixed — split out from #59 on its own closure
 
@@ -3282,6 +3296,15 @@ Indeed link. Doha is the same shape with different companies, and got the opposi
     already allowlisted in `test_citation_derivation.py`'s compound-company-literal check, so the
     label is permitted there and nowhere else.
 
+    *Package 28's adversarial review adds a caveat to (b):* the compound-company-literal check
+    would not have caught that label anywhere, allowlist or not. It requires one of the two tokens
+    to be domain-shaped (`\w+\.[a-z]{2,4}`), and **neither "PayScale" nor "Glassdoor" contains a
+    dot** — so `'PayScale + Glassdoor'` and `'Glassdoor + PayScale'` both pass it. The guard
+    catches the shape that actually shipped ("talent.com + PayScale"), not every compound label.
+    If (b) is chosen, the label is safe to add but is not being policed; if the guard is meant to
+    police it, the domain requirement has to be relaxed to something like "two capitalised names
+    joined by + or and", which is a much noisier rule and was deliberately not written that way.
+
 Not resolved here — which of the two the site should standardise on is the owner's call, and
 whichever wins should be applied to both cities, not one.
 
@@ -3374,3 +3397,44 @@ run did not measure it — it only proved 30s was not enough once.
 
 Not resolved here — and deliberately not fixed on a hunch, because the failure is intermittent and
 neither option can be verified from a single green re-run.
+
+## 66. A second positional `skilled_routes[0]` survives on `/city/*`, invisible to the guard built for it
+
+Package 27's Tier 7 fixed `Visas.tsx`'s `skilled_routes[0]` — the read that made the Explore chart
+claim the UAE has no salary floor. Package 28's adversarial review found the same shape still in
+place one file away:
+
+```
+site/src/routes/CityProfile.tsx:261     route={country.visa.skilled_routes[0]?.name}
+```
+
+It renders in `Journey` as *"You land on a work visa — typically the {route}."* — array position
+standing in for a recorded "typical route" relationship, on a user-facing page, exactly the shape
+NEEDS-DECISION #59's defect C describes.
+
+**Nothing is wrong on screen today.** Checked all 13 countries where the line renders (AE and QA
+short-circuit earlier on `pr == null`): route 0 is a defensible "typical" route for every one of
+them as the data currently stands. This is a latent defect, not a live one — the same data edit
+that produced the UAE bug produces one here.
+
+**Two things make it worth recording rather than leaving.** First, Tier 5's guard cannot see it:
+`test_citation_derivation.py`'s positional check matches the identifier `sources` only, so
+`skilled_routes[0]` is outside its reach — the guard built after this defect class would not catch
+this instance of it. Second, it now disagrees with Explore: for the UAE, `/explore/visa` names the
+**Green Visa** (the cheapest priced route, after Tier 7) while `/city/dubai` would name the
+**Standard employment visa** (route 0). Two pages, two "typical" routes, same country — though as
+noted the UAE line does not currently render.
+
+**Options:**
+  - **(a) Record which route is typical, and read that.** A `typical: true` flag (or an explicit
+    ordering) on `visa.skilled_routes`, consumed by both call sites. Removes position-as-meaning
+    everywhere it appears and makes the two pages agree by construction. Costs a data edit for all
+    15 countries and a decision about what "typical" means where routes serve different people.
+  - **(b) Widen the Tier 5 guard and leave the code.** Extend the positional check beyond the
+    identifier `sources` to any `<identifier>[0]` indexing a route/source array in `site/src`, so
+    this and anything like it fails the suite until someone justifies it. Cheaper, catches the
+    class rather than the instance, but will flag legitimate first-element reads and needs an
+    allowlist — the thing Tier 7 just removed one of.
+
+Not resolved here — package 28's Tier 2 rule covers what its own Explore measurement justified, and
+this is neither Explore nor measured by it.

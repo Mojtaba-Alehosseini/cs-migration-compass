@@ -69,7 +69,7 @@ class TestNoSubstringHostMatching(unittest.TestCase):
     matched as a host. `sourceUrlByHost()` (format.ts) is the sanctioned
     replacement — exact hostname equality, never substring. This test does
     not care WHAT the substring is; it looks for the SHAPE (a `.find(` /
-    `.filter(` / `.findIndex(` lookup whose predicate tests its OWN
+    `.filter(` / `.findIndex(` / `.some(` lookup whose predicate tests its OWN
     parameter with `.includes(`, e.g. `s.host.includes(...)`) — not merely
     any call to `.includes` inside the predicate, which would also flag
     `(c) => available.includes(c)`, a plain membership test against an
@@ -79,7 +79,7 @@ class TestNoSubstringHostMatching(unittest.TestCase):
 
     def test_no_find_includes_pattern_in_a_sources_lookup(self) -> None:
         pattern = re.compile(
-            r"\.(?:find|filter|findIndex)\("
+            r"\.(?:find|filter|findIndex|some)\("
             r"\s*\(?(?P<p>\w+)(?:\s*:[^)=]*)?\)?\s*=>"
             r"\s*(?P=p)[\w.?]*\.includes\("
         )
