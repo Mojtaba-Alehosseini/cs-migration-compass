@@ -78,15 +78,31 @@ class TestNoSubstringHostMatching(unittest.TestCase):
     lookup necessarily spell its predicate as a bare, untyped arrow param."""
 
     def test_no_find_includes_pattern_in_a_sources_lookup(self) -> None:
+        # SHAPE 1 - the `.includes(` test is the predicate's FIRST term.
         pattern = re.compile(
             r"\.(?:find|filter|findIndex|some)\("
             r"\s*\(?(?P<p>\w+)(?:\s*:[^)=]*)?\)?\s*=>"
             r"\s*(?P=p)[\w.?]*\.includes\("
         )
+        # SHAPE 2 - it is ANYWHERE in the predicate, and the argument is a
+        # host-shaped literal. Package 30 found shape 1 blind to
+        # `sources.find((u) => onHost(u) && u.includes("talent.com"))` - the
+        # GulfTalent mechanism exactly, merely written second. Position is not
+        # what makes it wrong. Because this shape drops the position anchor it
+        # requires the ARGUMENT to look like a host (lowercase TLD, same
+        # reasoning as the compound-literal test), so it does not fire on the
+        # safe form package 30 introduced next to it: an EXACT host check and
+        # then a path fragment, `(u) => onHost(u) && u.includes(fragment)`.
+        host_arg = re.compile(
+            r"\.(?:find|filter|findIndex|some)\("
+            r"\s*\(?(?P<p>\w+)(?:\s*:[^)=]*)?\)?\s*=>"
+            r"[^;]*?(?P=p)[\w.?]*\.includes\(\s*"
+            r"(?P<q>['\"`])[^'\"`]*\w+\.[a-z]{2,4}[^'\"`]*(?P=q)"
+        )
         offenders = []
         for f in _ts_files():
             for i, line in _code_lines(f):
-                if pattern.search(line):
+                if pattern.search(line) or host_arg.search(line):
                     offenders.append(f"{f.relative_to(ROOT)}:{i}: {line.strip()}")
         self.assertEqual(offenders, [],
                           "a `.find(s => s.includes(...))` lookup over a sources[] array can match "

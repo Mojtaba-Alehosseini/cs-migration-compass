@@ -207,13 +207,63 @@ function taxSource(country: Country | undefined) {
   }
 }
 
-function countryImmigrationSource(country: Country | undefined, what: string | undefined) {
+/* WHICH page of an immigration authority answers WHICH figure.
+ *
+ * Four different figures — years to residency, years to citizenship, tuition
+ * and the post-study work-search window — all called this function, and it
+ * returned the FIRST URL on the authority's host. One link, four questions.
+ * Finland records eight migri.fi pages, so "years to permanent residency" on
+ * Helsinki cited `/en/specialist`, a work-permit page, while
+ * `/en/period-of-residence` — the page that actually answers it — sat unused
+ * in the same array. Norway's single recorded page is a citizenship-test page
+ * and was cited for residency; Sweden's is a citizenship news item, likewise;
+ * the Netherlands cited a salary-threshold page.
+ *
+ * This is #66's defect on a second field, found by package 29's review and
+ * fixed here the same way: by RECORDING the relationship instead of letting
+ * array position stand in for it. The fragment below selects from the
+ * country's own recorded `sources[]` — the URL still lives in the data, only
+ * the question of which page answers which figure lives here.
+ *
+ * Where no recorded page answers a figure, there is NO LINK. Naming the
+ * authority and linking a page about something else is the defect, not the
+ * fix; the card says the authority is the source and that no page for this
+ * particular figure is on record. */
+type ImmigrationTopic = 'residency' | 'citizenship' | 'study' | 'post_study'
+
+const IMMIGRATION_PAGE: Partial<Record<string, Partial<Record<ImmigrationTopic, string>>>> = {
+  FI: {
+    residency: '/period-of-residence',
+    citizenship: '/finnish-citizenship',
+    post_study: '/residence-permit-to-look-for-work',
+  },
+  GB: { post_study: '/graduate-visa' },
+  NL: { citizenship: 'naturalisation' },
+  DK: { study: '/Study/Higher-education' },
+  NO: { citizenship: 'norwegian-citizenship' },
+  SE: { citizenship: 'swedish-citizenship' },
+}
+
+function countryImmigrationSource(
+  country: Country | undefined,
+  topic: ImmigrationTopic,
+  what: string | undefined,
+) {
   const host = country ? OFFICIAL_IMMIGRATION_HOST[country.id] : undefined
-  const url = host && country ? sourceUrlByHost(country.sources, [host]) : undefined
+  const fragment = country ? IMMIGRATION_PAGE[country.id]?.[topic] : undefined
+  const onHost = (u: string) => { try { return new URL(u).hostname.replace(/^www\./, '') === host } catch { return false } }
+  const url = host && fragment && country
+    ? country.sources.find((u) => onHost(u) && u.includes(fragment))
+    : undefined
+  const authorityKnown = Boolean(host && country?.sources.some(onHost))
   return {
-    name: url ? `${country?.name} — official immigration authority` : 'Compiled — no official source captured',
+    name: authorityKnown
+      ? `${country?.name} — official immigration authority`
+      : 'Compiled — no official source captured',
     url,
-    what,
+    what: authorityKnown && !url
+      ? `${what ?? ''} The authority is on record for this country, but none of its pages we hold answers this particular figure, so nothing is linked rather than linking a page about something else.`.trim()
+      : what,
   }
 }
 
@@ -298,7 +348,7 @@ export const METRICS: MetricDef[] = [
     tickFormat: yearsTick,
     direction: 'lower_better',
     confidence: 'official',
-    source: (_c, k) => countryImmigrationSource(k, 'Typical time to permanent residency.'),
+    source: (_c, k) => countryImmigrationSource(k, 'residency', 'Typical time to permanent residency.'),
   },
   {
     key: 'citizenship_years',
@@ -310,7 +360,7 @@ export const METRICS: MetricDef[] = [
     tickFormat: yearsTick,
     direction: 'lower_better',
     confidence: 'official',
-    source: (_c, k) => countryImmigrationSource(k, 'Typical time to citizenship eligibility.'),
+    source: (_c, k) => countryImmigrationSource(k, 'citizenship', 'Typical time to citizenship eligibility.'),
   },
   {
     key: 'tuition',
@@ -323,7 +373,7 @@ export const METRICS: MetricDef[] = [
     tickFormat: moneyTick,
     direction: 'lower_better',
     confidence: 'official',
-    source: (_c, k) => countryImmigrationSource(k, k?.visa.study_pathway?.note ?? 'International master’s tuition, per year.'),
+    source: (_c, k) => countryImmigrationSource(k, 'study', k?.visa.study_pathway?.note ?? 'International master’s tuition, per year.'),
   },
   {
     key: 'post_study_months',
@@ -334,7 +384,7 @@ export const METRICS: MetricDef[] = [
     format: (v) => (v == null ? NO_DATA : `${num(v)} months`),
     direction: 'higher_better',
     confidence: 'official',
-    source: (_c, k) => countryImmigrationSource(k, 'Post-study work-search visa length.'),
+    source: (_c, k) => countryImmigrationSource(k, 'post_study', 'Post-study work-search visa length.'),
   },
 
   // ---------------- Finding work ----------------
