@@ -44,10 +44,6 @@ export function MoneyTheme() {
   const [lens, setLens] = useState<Lens>('level')
   const [picks, setPicks] = useState(['DE', 'CA', 'NL'])
 
-  // The dashed naive line is drawn only here (see the `level` branch below),
-  // so only this case may claim one on screen.
-  const showsNaive = lens === 'level' && picks.length <= 3
-
   const cfg = useMemo<ChartCfg | null>(() => {
     if (!data) return null
     const series: Series[] = []
@@ -119,6 +115,24 @@ export function MoneyTheme() {
   }
   if (!data || !cfg) return <ThemeSkeleton panels={[['s6', 563], ['s4', 443], ['s2', 443], ['s6', 1159]]} />
 
+  /* Both captions below describe LINES, so they are read off the lines that
+     were actually built, never inferred from the lens or the number of picks.
+     The first version of this fix inferred: it printed "paler line = OECD
+     projected real growth ..." on every lens but `yoy`, and the UAE and Qatar
+     have no OECD Economic Outlook rows at all, so selecting only those two
+     produced the caption with nothing paler on screen — the exact fault the
+     same change had just removed from the dashed caption one line below.
+     `picks.length <= 3` had the same shape: it is the condition the naive line
+     is drawn UNDER, not evidence that one was drawn. */
+  const drawsProjection = cfg.series.some((s) => s.mode === 'projection')
+  const drawsNaive = cfg.series.some((s) => s.mode === 'naive')
+  // The `yoy` lens hides the overlay deliberately, and only has something to
+  // say about that when an overlay exists for what is currently selected.
+  const hasOverlayData = picks.some((c) => {
+    const act = data.gdp[c]
+    return act?.length ? (data.eo[c] ?? []).some(([y]) => y > last(act)[0]) : false
+  })
+
   const csvRows = picks.flatMap((c) => (data.gdp[c] ?? []).map(([y, v]) => ({ country: c, year: y, gdp_per_person_usd: v })))
 
   return (
@@ -127,8 +141,10 @@ export function MoneyTheme() {
         <h2>Income per person, and where the OECD thinks it goes</h2>
         <div className="sub">
           GDP per person since 1990. Switch the lens: dollars, everything indexed to
-          1990, or the year-to-year change itself. The paler continuation is the OECD’s projection;
-          the dashed line is ours and is not a forecast. Drag across the chart to read any year.
+          1990, or the year-to-year change itself.
+          {drawsProjection && ' The paler continuation is the OECD’s projection.'}
+          {drawsNaive && ' The dashed line is ours and is not a forecast.'}
+          {' '}Drag across the chart to read any year.
         </div>
         <div className="crail">
           <Seg
@@ -158,23 +174,27 @@ export function MoneyTheme() {
               said nothing, disclosing the same mismatch on one lens and not the
               two where it is actually on screen.
 
-              The second chip is now conditional, which fixes a smaller fault
-              found while reading this: the dashed naive line exists only on the
-              level lens with three or fewer countries, but "dashed = naive
-              extrapolation" was printed on the indexed lens too, describing a
-              line that is not there. */}
-          {lens === 'yoy' ? (
+              Every caption here is now conditional on the SERIES THAT EXIST,
+              not on the lens or the pick count. Two faults of the same kind
+              were fixed that way: "dashed = naive extrapolation" printed on the
+              indexed lens, where no dashed line is drawn; and the paler-line
+              caption printed for the UAE and Qatar, which have no OECD
+              Economic Outlook rows, so nothing paler is on screen for them on
+              any lens. The second was introduced by the first version of this
+              very fix and found by package 30's adversarial review. */}
+          {lens === 'yoy' && hasOverlayData && (
             <span className="chip chip-quiet">
               OECD overlay hidden here — it projects real growth; this line is nominal US$, and
               mixing them would lie
             </span>
-          ) : (
+          )}
+          {drawsProjection && (
             <span className="chip chip-quiet">
               paler line = OECD projected real growth compounded onto a nominal US$ level — not the
               same quantity as the solid line
             </span>
           )}
-          {showsNaive && (
+          {drawsNaive && (
             <span className="chip chip-quiet">dashed = naive extrapolation, not a forecast</span>
           )}
         </ChartFoot>

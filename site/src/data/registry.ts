@@ -231,17 +231,26 @@ function taxSource(country: Country | undefined) {
  * particular figure is on record. */
 type ImmigrationTopic = 'residency' | 'citizenship' | 'study' | 'post_study'
 
+/* Full pathnames, matched EXACTLY. The first version of this map held
+ * substrings, and a substring is the same "array position decides it" defect
+ * one level down: Finland records both `/en/period-of-residence` and
+ * `/en/period-of-residence-before-10/2024` (the superseded page), the fragment
+ * `/period-of-residence` matched both, and the current page won only by being
+ * earlier in `sources[]`. Found by package 30's adversarial review, inside the
+ * fix whose own comment claimed array position no longer decided anything.
+ * `test_citation_derivation.py` now fails if any recorded path does not
+ * resolve to exactly one recorded source. */
 const IMMIGRATION_PAGE: Partial<Record<string, Partial<Record<ImmigrationTopic, string>>>> = {
   FI: {
-    residency: '/period-of-residence',
-    citizenship: '/finnish-citizenship',
-    post_study: '/residence-permit-to-look-for-work',
+    residency: '/en/period-of-residence',
+    citizenship: '/en/finnish-citizenship',
+    post_study: '/en/residence-permit-to-look-for-work',
   },
   GB: { post_study: '/graduate-visa' },
-  NL: { citizenship: 'naturalisation' },
-  DK: { study: '/Study/Higher-education' },
-  NO: { citizenship: 'norwegian-citizenship' },
-  SE: { citizenship: 'swedish-citizenship' },
+  NL: { citizenship: '/en/living-in-the-netherlands-with-a-residence-permit/civic-integration-for-more-secure-residence-permit-and-naturalisation' },
+  DK: { study: '/en-GB/You-want-to-apply/Study/Higher-education' },
+  NO: { citizenship: '/en/word-definitions/test-requirements-norwegian-citizenship/' },
+  SE: { citizenship: '/en/news-archive/news/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html' },
 }
 
 function countryImmigrationSource(
@@ -250,10 +259,11 @@ function countryImmigrationSource(
   what: string | undefined,
 ) {
   const host = country ? OFFICIAL_IMMIGRATION_HOST[country.id] : undefined
-  const fragment = country ? IMMIGRATION_PAGE[country.id]?.[topic] : undefined
+  const page = country ? IMMIGRATION_PAGE[country.id]?.[topic] : undefined
   const onHost = (u: string) => { try { return new URL(u).hostname.replace(/^www\./, '') === host } catch { return false } }
-  const url = host && fragment && country
-    ? country.sources.find((u) => onHost(u) && u.includes(fragment))
+  const atPath = (u: string) => { try { return new URL(u).pathname === page } catch { return false } }
+  const url = host && page && country
+    ? country.sources.find((u) => onHost(u) && atPath(u))
     : undefined
   const authorityKnown = Boolean(host && country?.sources.some(onHost))
   return {

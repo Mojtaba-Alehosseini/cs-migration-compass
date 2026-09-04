@@ -776,7 +776,7 @@ predicted a real fetch would produce.
 
 # Package 10 — Profile, position, estimate
 
-## 19. CLOSED, package 11 — Germany — `DESTATIS_TOKEN` still absent this session; the registered-account path remains untested
+## 19. CLOSED, package 11 — Germany — `DESTATIS_TOKEN` was absent that session, so the registered-account path went untested; formalised as a decision in package 21
 
 Package 10's work order (tier 0.1) named the same rule package 9's resumed work order established:
 this package must be launched through `prompts/run-package-10.cmd`, which sets `DESTATIS_TOKEN` in
@@ -1949,7 +1949,7 @@ often-small, user-chosen set the way they do to a fixed 15-country editorial pan
 **CLOSED, package 21 (Rule D — shipped partial mitigation stands).** Option (a) — the current
 shipped state — stands. (b)/(c) are a future design call this package's own items don't touch.
 
-## 41. CLOSED, package 21 — `postings-refresh.yml`'s reclaim bucket is uncapped and grows every run — a workflow timeout was added as a cheap safety net; whether to cap the bucket itself is still open
+## 41. CLOSED, package 21 — `postings-refresh.yml`'s reclaim bucket grew every run — a workflow timeout was the cheap safety net, and the bucket itself was then capped (RECLAIM_CAP = 5000, re-verified in package 30)
 
 An independent adversarial review (L3) flagged that `build_probe_order`'s own docstring
 (`postings_common.py`) referenced "See NEEDS-DECISION.md for the runtime tradeoff this creates" —
@@ -2420,7 +2420,7 @@ it exists for the moment one does, which the panel's own numbers put a handful o
 verified the branch renders correctly (FX-estimate marker, publish-window text, rounding note, all
 matching the fifteen's own disclosure) rather than trusting it unexercised.
 
-## 53. CLOSED, package 21 — `levels.fyi` converts outside `normalise.py`, at a pinned rate with no year, and it renders on 57 city pages
+## 53. CLOSED, package 21 (Rule D — documented, deliberately not changed) — `levels.fyi` converts outside `normalise.py`, at a pinned rate with no year, on 57 city pages; options (a)/(b)/(c) stay on record for a package that has a reason to move a value
 
 `normalise.py` opens by claiming that every wage-figure conversion in the pipeline goes through it
 and that no component converts inline. Package 17's adversarial review found that this is not true
@@ -2687,7 +2687,7 @@ package added a write path without re-reading why this one didn't.
 product decision this package's own work order left to the owner — recorded so the choice is made
 once, deliberately, rather than by whichever package next needs a returning user to imply it.
 
-## 57. CLOSED, package 24 — The `/work` redesign and CV storage both remain open; the redesign should not start before package 23's fixes are live
+## 57. CLOSED, package 24 — The `/work` redesign should not start before package 23's fixes are live, and they are; CV storage stays open on its own item, #56
 
 Package 23's own work order was explicit about sequencing: *"A redesign of the page follows separately.
 This package fixes what is wrong underneath it. Do not redesign anything here; a redesign built on a
@@ -2712,7 +2712,7 @@ build (`REPORT-P23.md`). The `/work` redesign (this package) confirmed that veri
 starting its own Preflight. Sequencing satisfied; the CV-storage half of this same finish protocol
 (#56) is unrelated to a presentation-only redesign and remains its own open item, unchanged.
 
-## 58. CLOSED, package 25 — Norway's own USD estimate path shifts a regular-pay figure with a total-earnings-calibrated premium — F13, inherited from #21, still unresolved
+## 58. CLOSED FULLY, package 26 — Norway's own USD estimate path shifted a regular-pay figure with a total-earnings-calibrated premium — F13, inherited from #21; the asymmetry is gone
 
 Package 11's own remediation update to item #21 (finding F13, above) found that `computeEstimateUsdYear()`
 (`site/src/data/profile.ts`) shifts Norway's `usd_regular_pay` combo (bonus excluded) using
@@ -3605,51 +3605,59 @@ obligation to change. Packages 24 through 28 fixed things because they were wron
 had been measured. This number is real, it is recorded, and it is not hurting anyone; re-opening it
 should require a concrete cost, not the number's continued existence.
 
-## 69. The figure-inventory suite captures two different pages from the same build, and every assertion passes on both
+## 69. Roughly three runs in four, the figure-inventory suite drops `/openings` entirely and still reports green
 
 Package 30 ran `test_figure_inventory.mjs` about fifteen times while working through its gates, on
-one unchanged build and one unchanged `core.json`. It reports one of exactly two results:
+one unchanged build and one unchanged `core.json`. It returns one of exactly two results:
 
 ```
-Captured 646 figures, 54 no-data marks, 668 marks     ~11 runs
-Captured 646 figures, 61 no-data marks, 764 marks      ~4 runs
+Captured 646 figures, 61 no-data marks, 764 marks      ~4 runs   <- the whole site
+Captured 646 figures, 54 no-data marks, 668 marks     ~11 runs   <- /openings missing
 ```
 
-The figure count is identical every time. What moves is 7 extra "no data" marks and 96 extra marks
-in total. Both states pass C1-C6 and R8 with zero findings.
+**The route is `/openings`, and the difference is the whole route.** 764 − 668 = 96 marks and
+61 − 54 = 7 no-data marks, which is exactly what `/openings` contributes; the per-route Explore
+table is byte-identical across both states. `/openings` fetches `postings.json`, which is
+**23.1 MiB**, and `capture()` waits a fixed **150 ms** after navigation
+(`scripts/tests/inventory_figures.mjs:254`). Driven directly, at 150 ms that page holds **203
+characters of text and zero rows**.
 
-**Why it went unnoticed for five packages.** Every assertion in the suite is shaped "N found, expect
-0". A run that renders 7 more no-data marks than another is therefore indistinguishable from one
-that does not, as long as none of those marks trips an assertion. The suite counts what it saw and
-asserts about defects; it has never asserted that what it saw is the same page twice.
+So the common state is the incomplete one. On about three runs in four, **96 of the suite's 764
+marks — 12.6% — and an entire route are absent from the population C1–C6 assert over**, while the
+run prints `ALL FIGURE-INVENTORY ASSERTIONS PASS`.
 
-**What was ruled out.** Not the build: the state flips between runs against one build. Not the
-preview server holding a stale `dist/`: it flips across two consecutive runs on a server started
-seconds earlier. Not the code or the data: neither changed between any two of the runs above.
+**Why it went unnoticed for five packages.** Every assertion is shaped "N found, expect 0". A run
+that never saw a route cannot fail an assertion about that route; it reports the same green as a run
+that saw it and found nothing wrong. The suite counts what it happened to see and asserts about
+defects, and has never asserted that it saw the same site twice.
 
-**Leading hypothesis, not a conclusion.** The 61/764 state clusters immediately after a rebuild or
-a server restart -- 3 of its 4 appearances -- which fits a cold file cache making some fetch slower
-than the suite's fixed post-navigation wait, so a panel is captured still showing "no data". That
-is a guess consistent with the timing; nobody has yet identified WHICH panel, and the cheap way to
-find out is to print the 7 marks' own routes and labels rather than only their count.
+**What was ruled out.** Not the build: the state flips between runs of one build. Not a stale
+`dist/` held by the preview server: it flips across two consecutive runs on a server seconds old.
+Not the source: nothing changed between any two of those runs, and a source change cannot produce a
+difference that appears and disappears without one.
 
-**Why this matters more than a flaky count.** If a real defect lands in whatever renders those 7
-marks, this suite finds it on roughly one run in four. That is worse than not covering the area,
-because the passing runs read as coverage. It is the same shape as #65 (a CI browser suite that
-failed once and passed unchanged on re-run) and should probably be decided alongside it.
+*Corrected by package 30's own adversarial review.* The first version of this item had the direction
+backwards — it recorded 61/764 as the anomaly and guessed at "a cold cache making some fetch slower
+than the fixed wait, so a panel is captured still showing no data". The observation it leaned on
+(the fuller state clusters right after a rebuild or restart) fits the opposite reading: right after
+a build, `postings.json` is warm in the OS page cache, the fetch beats 150 ms, and the route
+renders. Severity was understated in the same move: this is not seven extra marks no assertion looks
+at, it is a whole route dropping out of the sample.
 
 **Options:**
-  - **(a) Make the count itself an assertion.** Pin figures/marks/no-data to expected values, so a
-    drift fails loudly instead of being averaged away. Cheapest, and turns the flake into a red
-    build that someone must then explain -- which is the point.
-  - **(b) Find the 7 first.** Log each no-data mark's route and label, run until the 61 state
-    appears, and diff. Identifies the panel before deciding anything; costs one run in four.
-  - **(c) Wait for quiescence rather than a fixed delay.** Fixes the likely cause if the hypothesis
-    holds, and does nothing if it does not.
+  - **(a) Wait for the page, not for a duration.** Poll until the route has rendered (or a network
+    idle) instead of `waitMs: 150`. Fixes the cause. Costs wall-clock on 108 targets, and the cost
+    lands mostly on the one route that needs it.
+  - **(b) Assert that every target rendered something.** A route that produces no figures and no
+    marks is currently indistinguishable from a clean one; requiring a floor per target turns a
+    silent omission into a red build. Cheapest, and catches the next route this happens to.
+  - **(c) Pin the totals.** Assert 646/61/764 exactly, so any drift fails and someone has to explain
+    it. Brittle by design — it fails whenever the site legitimately changes — which is the argument
+    both for and against it.
 
-Not resolved here. Found by package 30 while running its own gates. Nothing in that package caused
-it, and the reason is not an alibi but the observation itself: the two states alternate across
-runs of ONE build, from ONE commit, over ONE unchanged `core.json`. A source change cannot
-produce a difference that appears and disappears without one. This has not been re-run against an
-earlier commit, and does not need to be for that conclusion; it would still be worth doing to
-learn how long it has been true.
+Not resolved here. (b) and (a) are complementary rather than alternatives; (c) is the one that needs
+a ruling on how much maintenance a gate may cost.
+
+**Same family as #65**, where a CI browser suite failed once on a 30-second Chrome-start budget and
+passed unchanged on re-run. Both are the browser suites being timed against fixed budgets rather
+than against the thing they are waiting for, and they should probably be decided together.

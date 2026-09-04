@@ -20,10 +20,11 @@ is at the bottom.
 | Cities | 73 |
 | Countries | 15 |
 | Metrics | 30, across 7 themes (money 5, housing 7, climate 5, life 4, visa 4, people 3, jobs 2) |
-| Distinct pages the site can render | 108 route/entity combinations |
-| Figures on those pages | 646, plus 54 "no data" marks |
+| Pages the site can render | 108 route/entity combinations the test suite walks, over 103 distinct URL paths (`/work` and `/compare` appear more than once with different query strings) |
+| Figures on those pages | 646, plus 61 "no data" marks |
 | Pipeline sources | 57 recorded in `data/provenance.json`; 54 render (53 ok, 1 partial); 2 blocked, 1 unavailable |
-| Payload | one file, `site/public/data/core.json` — 397.8 KB raw, ~89 KB gzipped |
+| Payload on arrival | `site/public/data/core.json` — 397.8 KB raw, ~89 KB gzipped. It is the only blocking fetch |
+| Payload if you open `/openings` | `postings.json`, **23.1 MiB**. `dist/data` is 28 MB in total, almost all of it history. Nothing else on the site is remotely this heavy, and it is the reason open item #69 exists |
 
 The site is static. There is no server, no account, and nothing is stored about a visitor.
 
@@ -31,7 +32,8 @@ The site is static. There is no server, no account, and nothing is stored about 
 
 ## What is verified, and how
 
-**On every push, CI runs:** the Python pipeline suite (`scripts/tests/test_*.py`, auto-discovered),
+**On every push to `main`, every pull request, and on manual dispatch, CI runs:** the Python
+pipeline suite (`scripts/tests/test_*.py`, auto-discovered),
 `validate_data.py`, `audit_data.py`, a TypeScript type-check, the site's own unit tests, a
 production build, and then two browser suites against that build's preview server.
 
@@ -55,11 +57,15 @@ Chrome over the built site:
   review and obvious on screen. That is why these assertions read the DOM and the painted pixels
   rather than the source.
 
-  One caveat on this suite, found while writing this page: on one unchanged build it captures either
-  646 figures / 54 no-data marks / 668 marks, or 646 / 61 / 764 — roughly one run in four is the
-  second. Every assertion passes on both, because they are all shaped "N found, expect 0", so 7
-  extra no-data marks are invisible to them. A defect in whatever renders those 7 would be caught on
-  about one run in four. Open item #69.
+  **Two caveats on this suite, both found while writing this page.** First, the six do not all cover
+  everything: the suite's own header records that C4 idles on five of the eight Explore themes (they
+  carry no figure cards) and C5 idles on all eight (nothing is clipped there), so on Explore the
+  real cover is C3 and C6. Second, and worse: on one unchanged build the suite captures either
+  646 figures / 61 no-data / 764 marks, or 646 / 54 / 668 — and the difference is the whole of
+  `/openings`, which fetches a 23.1 MiB file against a fixed 150 ms wait. **Roughly three runs in
+  four, an entire route and 12.6% of the marks are missing from what C1–C6 assert over, and the run
+  still prints PASS** — because every assertion is shaped "N found, expect 0", and a route that was
+  never seen cannot fail one. Open item #69.
 
 **Per package, by hand:** Lighthouse (desktop preset, at least 90 performance / 95 accessibility
 across 14 routes) and an independent adversarial review of the package's own work. Neither runs in
@@ -105,10 +111,16 @@ Canada, Germany, Italy, Spain, the UAE and Qatar carry no recorded official immi
 so their residency and citizenship figures name a compiled source rather than a government one.
 For the nine that do have an authority, package 30 checked which recorded page actually documents
 which figure: of 36 rendered citations, **8** have a page on record for their own figure. The other
-28 now link nothing and say so, because until package 30 all 36 linked the same per-country page
-regardless of the question — Helsinki cited a work-permit page for "years to permanent residency".
-A citation is a claim that the linked document supports the number; naming the authority and
-linking a page about something else is not a weaker version of that claim, it is a false one.
+28 now link nothing and say so, because until package 30 every country served one page for all four
+questions — Helsinki cited a work-permit page for "years to permanent residency". Two of the 36 were
+right by luck rather than by design (Norway and Sweden record only a citizenship page, and the
+citizenship figure is one of the four asking); 34 were about something other than the figure beside
+them. A citation is a claim that the linked document supports the number, and naming the authority
+while linking a page about something else is not a weaker version of that claim — it is a false one.
+
+The eight that remain are matched at topic level, not sentence level, and one is weak on its own
+terms: Denmark's tuition figure links a higher-education study-permit page, and the figure itself is
+a recorded estimate ("typically DKK 75k–120k/yr").
 
 **5. Layout is verified at one width per suite, in a window taller than any screen.**
 The browser suites run at 1280×2000 and 1440×4200. The tall viewport is deliberate — it forces
@@ -138,7 +150,7 @@ All 9 remaining are judgement calls for the owner, not unfinished work:
 | 62 | The UAE plots at $49,000 on "the price of the door", but one of its three routes has no salary floor at all |
 | 63 | Doha's salary citation lost a working PayScale link to stop it misattributing a band |
 | 65 | CI's browser suites failed once on a 30-second Chrome start budget, and passed on re-run unchanged |
-| 69 | The figure-inventory suite captures two different pages from the same build; every assertion passes on both |
+| 69 | Roughly three runs in four, the figure-inventory suite drops `/openings` entirely and still reports green |
 
 ---
 

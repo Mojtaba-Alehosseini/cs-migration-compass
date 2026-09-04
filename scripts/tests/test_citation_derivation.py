@@ -26,10 +26,12 @@ import re
 import sys
 import unittest
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 SITE_SRC = ROOT / "site" / "src"
 CITIES = ROOT / "data" / "cities.json"
+CORE = ROOT / "site" / "public" / "data" / "core.json"
 WAGE_DIST = ROOT / "data" / "processed" / "wage_distribution.json"
 
 # Files where a bare `.includes(<host-fragment>)` or a literal company name is
@@ -78,26 +80,51 @@ class TestNoSubstringHostMatching(unittest.TestCase):
     lookup necessarily spell its predicate as a bare, untyped arrow param."""
 
     def test_no_find_includes_pattern_in_a_sources_lookup(self) -> None:
-        # SHAPE 1 - the `.includes(` test is the predicate's FIRST term.
+        # SHAPE 1 - the `.includes(` test is the predicate's FIRST term. The
+        # argument is deliberately unconstrained here, so this also catches a
+        # host held in a variable (`s.includes(host)`) that shape 2 cannot see.
+        # The one exemption is a literal that is plainly a FILENAME:
+        # `files.find(p => p.includes('core.json'))` is an ordinary path lookup,
+        # not a citation matched by substring, and package 27's version flagged
+        # it. (Package 30's review reported this against shape 2; running the
+        # two patterns separately puts it here.)
         pattern = re.compile(
             r"\.(?:find|filter|findIndex|some)\("
             r"\s*\(?(?P<p>\w+)(?:\s*:[^)=]*)?\)?\s*=>"
             r"\s*(?P=p)[\w.?]*\.includes\("
+            r"(?!\s*['\"`][^'\"`]*\."
+            r"(?:json|html?|css|jsx?|tsx?|mjs|cjs|md|png|jpe?g|svg|gif|webp|csv|txt|ya?ml|map|pdf|zip)\b)"
         )
-        # SHAPE 2 - it is ANYWHERE in the predicate, and the argument is a
+        # SHAPE 2 - the test is ANYWHERE in the predicate and its argument is a
         # host-shaped literal. Package 30 found shape 1 blind to
         # `sources.find((u) => onHost(u) && u.includes("talent.com"))` - the
         # GulfTalent mechanism exactly, merely written second. Position is not
-        # what makes it wrong. Because this shape drops the position anchor it
-        # requires the ARGUMENT to look like a host (lowercase TLD, same
-        # reasoning as the compound-literal test), so it does not fire on the
-        # safe form package 30 introduced next to it: an EXACT host check and
-        # then a path fragment, `(u) => onHost(u) && u.includes(fragment)`.
+        # what makes it wrong.
+        #
+        # Its own first version was then found by that package's adversarial
+        # review to be three-quarters decoration, and this is the corrected one:
+        #
+        #   - `.endsWith(` and `.indexOf(` are included, because
+        #     `'gulftalent.com'.endsWith('talent.com')` is the identical bug
+        #     with no `.includes` anywhere in the line;
+        #   - the receiver no longer has to be the arrow's own parameter, so
+        #     `hostOf(s).endsWith('talent.com')` cannot slip past on shape;
+        #   - the literal must not look like a FILENAME. `\w+\.[a-z]{2,4}` also
+        #     matches core.json, index.html and styles.css, so the first
+        #     version flagged three ordinary file lookups. The host-shaped
+        #     requirement is what makes dropping the receiver anchor safe, so
+        #     it has to actually mean a host.
+        #
+        # It still cannot see a host held in a const (no literal to recognise)
+        # or a predicate broken across two lines (_code_lines scans one line at
+        # a time). Both are recorded rather than papered over.
         host_arg = re.compile(
             r"\.(?:find|filter|findIndex|some)\("
             r"\s*\(?(?P<p>\w+)(?:\s*:[^)=]*)?\)?\s*=>"
-            r"[^;]*?(?P=p)[\w.?]*\.includes\(\s*"
-            r"(?P<q>['\"`])[^'\"`]*\w+\.[a-z]{2,4}[^'\"`]*(?P=q)"
+            r"[^;]*?\.(?:includes|endsWith|indexOf)\(\s*"
+            r"(?P<q>['\"`])[^'\"`]*\w+\."
+            r"(?!(?:json|html?|css|jsx?|tsx?|mjs|cjs|md|png|jpe?g|svg|gif|webp|csv|txt|ya?ml|map|pdf|zip)\b)"
+            r"[a-z]{2,4}[^'\"`]*(?P=q)"
         )
         offenders = []
         for f in _ts_files():
@@ -281,6 +308,53 @@ class TestNativeBasisDistinguishesRealCases(unittest.TestCase):
         self.assertEqual(by_source.get("salary_fi"), "regular_pay")
         self.assertEqual(by_source.get("salary_dk"), None)
 
+
+
+class TestEveryRecordedImmigrationPageResolvesToExactlyOne(unittest.TestCase):
+    r"""registry.ts's IMMIGRATION_PAGE records WHICH page of an immigration
+    authority answers WHICH figure, because one url on the authority's host was
+    being served for four different questions -- #66's class on a second field,
+    fixed in package 30.
+
+    The first version of that map held SUBSTRINGS, which reintroduces the same
+    defect one level down. Finland records both `/en/period-of-residence` and
+    `/en/period-of-residence-before-10/2024`; the fragment `/period-of-residence`
+    matched both, and the live page won only by sitting earlier in `sources[]`.
+    Array position decided a citation inside the fix for array position
+    deciding a citation. Found by package 30's adversarial review, not by this
+    file, which is why the check now exists.
+
+    So: every recorded path must be a full pathname resolving to EXACTLY ONE of
+    that country's own recorded sources. Zero means the map points at a page
+    the data no longer carries, and the figure loses its citation silently.
+    Two or more means position is choosing again."""
+
+    def test_each_recorded_page_matches_exactly_one_source(self) -> None:
+        src = (SITE_SRC / "data" / "registry.ts").read_text(encoding="utf-8")
+        block = src.split("const IMMIGRATION_PAGE", 1)[1].split("\n}", 1)[0]
+        recorded: dict[str, dict[str, str]] = {}
+        for cc, body in re.findall(r"(?:^|\{|,)\s*([A-Z]{2}):\s*\{(.*?)\}", block, re.S):
+            for topic, path in re.findall(r"(\w+):\s*'([^']+)'", body):
+                recorded.setdefault(cc, {})[topic] = path
+        self.assertTrue(recorded, "IMMIGRATION_PAGE parsed as empty — the parser, not the map")
+
+        countries = {c["id"]: c for c in json.loads(CORE.read_text(encoding="utf-8"))["countries"]}
+        problems = []
+        for cc, topics in recorded.items():
+            sources = countries.get(cc, {}).get("sources", [])
+            for topic, path in topics.items():
+                if not path.startswith("/"):
+                    problems.append(f"{cc}/{topic}: {path!r} is not a pathname — a substring "
+                                    f"match is what this test exists to prevent")
+                    continue
+                hits = [u for u in sources if urlsplit(u).path == path]
+                if len(hits) != 1:
+                    problems.append(f"{cc}/{topic}: {path} matches {len(hits)} recorded sources"
+                                    + ("" if not hits else " -> " + ", ".join(hits)))
+        self.assertEqual(problems, [],
+                          "every recorded topic->page pairing must resolve to exactly one of that "
+                          "country's own sources; 0 loses the citation silently, 2+ lets array "
+                          "position pick it again:\n" + "\n".join(problems))
 
 
 class TestLensesOnlyWeightWhatTheToolCanShow(unittest.TestCase):
