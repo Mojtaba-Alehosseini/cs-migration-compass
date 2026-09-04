@@ -132,6 +132,30 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
   const dropped = data.cities.length - points.length
   const offscale = points.filter((p) => p.offX || p.offY)
   const inScale = points.filter((p) => !p.offX && !p.offY)
+
+  /* How many DISTINCT places the plotted cities occupy, and whether every
+   * city of a country lands on one of them.
+   *
+   * Four themes — visa, jobs, people, life — record every one of their
+   * metrics per COUNTRY, not per city (`registry.ts`: their `value` functions
+   * ignore the city argument). So any pair drawn from those themes puts all
+   * thirty US cities on a single point. The data is real and the placement is
+   * honest, but "every city is placed by its real numbers" reads as a cloud
+   * of 73, and package 29's adversarial review measured what it actually is:
+   * 70 markers at 9 positions on visa, 73 at 15 on life.
+   *
+   * Borrowing a money metric to spread them would be the very thing this
+   * package removed — a theme opening on someone else's subject. So the
+   * chart keeps the theme's own figures and says what they are. */
+  const distinctPlaces = new Set(inScale.map((p) => `${p.x.toFixed(4)},${p.y.toFixed(4)}`)).size
+  const byCountry = new Map<string, Set<string>>()
+  for (const p of inScale) {
+    const seen = byCountry.get(p.cc) ?? new Set<string>()
+    seen.add(`${p.x.toFixed(4)},${p.y.toFixed(4)}`)
+    byCountry.set(p.cc, seen)
+  }
+  const nationalFigures = inScale.length > distinctPlaces
+    && [...byCountry.values()].every((places) => places.size === 1)
   // A domain needs at least something to describe; if every point is flagged,
   // fall back to all of them rather than drawing an empty axis.
   const scaleFrom = inScale.length >= 2 ? inScale : points
@@ -291,6 +315,12 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
         <span>{inScale.length === 0
           ? `No city has both ${xM?.label ?? 'these'} and ${yM?.label ?? 'these'} on record — nothing to place, rather than an empty grid meaning nothing.`
           : `${inScale.length} of ${data.cities.length} cities plotted.`}</span>
+        {nationalFigures && (
+          <span className="chip chip-note">
+            at {distinctPlaces} points — both of these are national figures, so every city in a
+            country sits on the same one
+          </span>
+        )}
         {offscale.length > 0 && (
           <span className="chip chip-risk">
             {offscale.length} {offscale.length === 1 ? 'city is' : 'cities are'} off this scale — what

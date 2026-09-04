@@ -75,21 +75,28 @@ const LENS_FOR_THEME: Record<ThemeKey, string> = {
 export function WeightsTool({ theme }: { theme: ThemeKey }) {
   const data = useData()
   const [open, setOpen] = useState(false)
-  const [weights, setWeights] = useState<Record<string, number>>({})
-  const [activeLens, setActiveLens] = useState<string | null>(null)
-  /* Set once the visitor moves a slider or picks a lens themselves. Until
-   * then the theme's lens seeds the tool on open; afterwards their weights
-   * are theirs and survive every theme switch. */
-  const [ownWeights, setOwnWeights] = useState(false)
+  /* Null until the visitor makes the weighting theirs — by moving a slider,
+   * picking a lens or clearing the set. Storing "did they choose?" rather
+   * than copying the lens into state is what lets both things be true at
+   * once: an untouched tool FOLLOWS the theme, exactly as the scatter builder
+   * does, and a touched one is theirs and survives every theme switch.
+   *
+   * The first version of this seeded the weights inside the open handler,
+   * which meant the tool was theme-aware only on the first open — open it on
+   * money, walk to climate, and it was still weighting savings. Package 29's
+   * adversarial review caught that, and it is the reason this is derived
+   * rather than copied. */
+  const [ownWeights, setOwnWeights] = useState<Record<string, number> | null>(null)
+  const [ownLens, setOwnLens] = useState<string | null>(null)
 
   const themeLens = EXAMPLE_LENSES.find((l) => l.name === LENS_FOR_THEME[theme])
-  const openWith = () => {
-    if (!ownWeights && themeLens) {
-      setWeights({ ...themeLens.weights })
-      setActiveLens(themeLens.name)
-    }
-    setOpen(true)
-  }
+  // Closed means closed: no weighting, so nothing is scored until it is opened.
+  const weights = ownWeights ?? (open && themeLens ? themeLens.weights : {})
+  const activeLens = ownWeights ? ownLens : (open && themeLens ? themeLens.name : null)
+  const setWeights = (w: Record<string, number> | ((p: Record<string, number>) => Record<string, number>)) =>
+    setOwnWeights((prev) => (typeof w === 'function' ? w(prev ?? weights) : w))
+  const setActiveLens = (n: string | null) => setOwnLens(n)
+  const openWith = () => setOpen(true)
 
   const active = Object.entries(weights).filter(([, w]) => w > 0)
 
@@ -138,6 +145,25 @@ export function WeightsTool({ theme }: { theme: ThemeKey }) {
 
   const totalWeight = active.reduce((s, [, w]) => s + w, 0)
 
+  /* A city missing MOST of what you weighted is not ranked against cities
+   * that have it. composite() redistributes missing weight across whatever
+   * remains, which is right for a city missing one input of four and badly
+   * wrong for a city missing three of four: it ends up scored almost entirely
+   * on the one thing it does have, and can top the list.
+   *
+   * Package 29 found this the hard way. "Settle permanently" weights years to
+   * residency 3, years to citizenship 3, working language 1. The UAE records
+   * neither residency nor citizenship — its own city pages say there is no
+   * path at all — so six of seven weight vanished, the score came entirely
+   * from working language, where it scores top, and Dubai and Abu Dhabi came
+   * FIRST in a ranking built to find somewhere to settle permanently.
+   *
+   * So they are named rather than ranked or dropped, which is what this site
+   * does everywhere else with an absence. */
+  const RANKABLE = 0.5
+  const ranked = results.filter((r) => r.usedWeight >= totalWeight * RANKABLE)
+  const tooThin = results.filter((r) => r.usedWeight < totalWeight * RANKABLE)
+
   if (!open) {
     return (
       <div className="panel" style={{ marginTop: 12, borderStyle: 'dashed' }}>
@@ -145,7 +171,7 @@ export function WeightsTool({ theme }: { theme: ThemeKey }) {
         <div className="sub">
           The one place this site produces an ordering — and only because you built it. Off by default,
           and it stays off until you open it.
-          {themeLens && !ownWeights && (
+          {themeLens && ownWeights == null && (
             <> It will start from <b>{themeLens.name}</b> — {themeLens.note} — which you can change or clear.</>
           )}
         </div>
@@ -170,12 +196,12 @@ export function WeightsTool({ theme }: { theme: ThemeKey }) {
         {EXAMPLE_LENSES.map((l) => (
           <button key={l.name} className="pill" aria-pressed={activeLens === l.name}
             title={l.note}
-            onClick={() => { setWeights(l.weights); setActiveLens(l.name); setOwnWeights(true) }}>
+            onClick={() => { setWeights(l.weights); setActiveLens(l.name) }}>
             {l.name}
           </button>
         ))}
         {active.length > 0 && (
-          <button className="pill" onClick={() => { setWeights({}); setActiveLens(null); setOwnWeights(true) }}>Clear</button>
+          <button className="pill" onClick={() => { setWeights({}); setActiveLens(null) }}>Clear</button>
         )}
       </div>
       <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginBottom: 12 }}>
@@ -201,7 +227,6 @@ export function WeightsTool({ theme }: { theme: ThemeKey }) {
                     onChange={(e) => {
                       setWeights((w) => ({ ...w, [m.key]: Number(e.target.value) }))
                       setActiveLens(null)
-                      setOwnWeights(true)
                     }}
                     style={{ width: 74, accentColor: 'var(--accent)' }}
                     aria-label={`Weight for ${m.label}`}
@@ -234,7 +259,7 @@ export function WeightsTool({ theme }: { theme: ThemeKey }) {
               this ordering exists because you built it
             </span>
             <button className="pill" style={{ marginLeft: 'auto' }}
-              onClick={() => downloadCsv('compass-my-weighting.csv', results.map((r, i) => ({
+              onClick={() => downloadCsv('compass-my-weighting.csv', ranked.map((r, i) => ({
                 position: i + 1,
                 city: r.city.name,
                 score_0_to_1: r.score?.toFixed(4),
@@ -245,7 +270,7 @@ export function WeightsTool({ theme }: { theme: ThemeKey }) {
           </div>
 
           <ol style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {results.slice(0, 15).map((r, i) => (
+            {ranked.slice(0, 15).map((r, i) => (
               <li key={r.city.id} style={{
                 display: 'flex', gap: 10, alignItems: 'center',
                 padding: '6px 0', borderTop: i ? '1px solid var(--line)' : 'none',
@@ -280,8 +305,17 @@ export function WeightsTool({ theme }: { theme: ThemeKey }) {
             Where a city has no value for something you weighted, that weight is spread across the
             metrics it does have, and the chip says how much moved. Scoring a blank as zero would
             quietly punish cities for having thin data, which is a different claim from the one this
-            tool appears to make. Showing the top 15 of {results.length} scored.
+            tool appears to make. Showing the top 15 of {ranked.length} scored.
           </p>
+
+          {tooThin.length > 0 && (
+            <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 4, lineHeight: 1.7 }}>
+              Not ranked, and named rather than dropped:{' '}
+              <b>{tooThin.map((r) => r.city.name).join(', ')}</b>. More than half of what you
+              weighted is not recorded for {tooThin.length === 1 ? 'it' : 'them'}, and a score built
+              on the remainder would say more about which figures exist than about the place.
+            </p>
+          )}
         </>
       )}
     </div>

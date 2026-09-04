@@ -3474,7 +3474,7 @@ identifier `sources`, hardcoded, while being named for the whole class. Its watc
 from `types.ts`, so a new array field is covered the moment it is declared. Proved by restoring the
 `[0]` and watching it fail at `CityProfile.tsx:262`.
 
-## 67. "What we take from it" shows one pipeline step out of up to six, for 52 of 57 sources
+## 67. "What we take from it" shows one pipeline step out of up to seven, for 51 of the 54 rows the table renders
 
 Package 29's Tier 1 swept every first-element read in `site/src` for the #66 defect class. This one
 is **not** that defect — `provenance.entries[].transforms` is an ordered sequence of pipeline steps,
@@ -3489,8 +3489,13 @@ provenance entries                       57
 entries with more than one transform     52
 ```
 
-So for 52 of 57 sources the column describes the first of up to six steps and silently omits the
-rest. Examples: `ef_epi` shows 1 of 6, `bis_property_prices` / `bls_oews` /
+So for 51 of the 54 rendered rows the column describes the first of up to seven steps and silently
+omits the rest.
+
+*Corrected by package 29's own adversarial review:* the first version of this item quoted 57 and 52,
+which are the FILE's figures. `DataMethods.tsx` renders only rows whose `status` is ok or partial, so
+the surface being described is 54 rows, of which 51 carry more than one transform; and the longest
+chains (`oecd_indicators`, `wipo_gii`) run to seven steps, not six. Examples: `ef_epi` shows 1 of 6, `bis_property_prices` / `bls_oews` /
 `eurostat_ict_specialists` show 1 of 5 each. `bls_oews` reads "Constructed OEWS series IDs for 30
 metros..." and drops four further steps including whatever came after.
 

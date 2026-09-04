@@ -30,7 +30,7 @@ import type { Country, VisaRoute } from './types'
  * carries, not from a judgement added on top of it:
  *
  *   employer_offer  you arrive with a job, sponsored. The sentence's literal
- *                   case, and 18 of the 25 recorded routes.
+ *                   case, and 18 of the 27 recorded routes.
  *   points          you arrive on your own score, no employer needed
  *                   (CA Express Entry, AU Skilled Independent). Still an
  *                   arrival route, and Canada has ONLY this one.
@@ -50,19 +50,34 @@ const ARRIVAL_RANK: Record<string, number> = {
 const UNRANKED = 9
 
 /** The route a person most typically ARRIVES on — what CityProfile's journey
- *  names. Ranked by `type`; where two routes share a type the data records
- *  nothing further, so the recorded order stands, which is a residual and is
- *  documented rather than dressed up as a preference. Four countries tie that
- *  way today (NL, IT, SE, DK) and each was checked by hand: the first
- *  recorded route is the standard one in all four — Italy's own second route
- *  even says so in its summary ("Blue Card is the realistic dev route"). */
+ *  names. Ranked by `type` first; where two routes share a type, the one with
+ *  the LOWER barrier to entry wins — no published salary floor beats a floor,
+ *  and a lower floor beats a higher one.
+ *
+ *  That second rule is not decoration. Denmark records two `employer_offer`
+ *  routes: the Pay Limit Scheme, which needs $85,000, and the Positive List,
+ *  which has no floor and whose own summary says "software developers
+ *  regularly listed". Copenhagen's and Aarhus's own published bands are
+ *  $70,000 new-grad and $81,000 mid — BELOW the Pay Limit floor — so naming
+ *  it as the route you typically land on was wrong for most of the people
+ *  this site is written for. Package 29's adversarial review caught it, in a
+ *  tie the first version of this file had claimed to check by hand.
+ *
+ *  Where routes tie on type AND barrier the data records nothing further and
+ *  recorded order stands: NL's two routes publish the identical $82,100, and
+ *  Italy's two publish none, and in both the first is the standard one —
+ *  Italy's second even says so ("Blue Card is the realistic dev route"). */
 export function typicalArrivalRoute(country: Country | undefined): VisaRoute | undefined {
   const routes = country?.visa?.skilled_routes ?? []
+  // A route with no published floor gates on no salary at all, so it is open
+  // to more people than one that does; among floors, the lower is the lower bar.
+  const barrier = (r: VisaRoute) => r.salary_threshold_usd ?? -1
   let best: VisaRoute | undefined
   let bestRank = Infinity
   for (const r of routes) {
     const rank = ARRIVAL_RANK[r.type] ?? UNRANKED
-    if (rank < bestRank) { best = r; bestRank = rank }
+    if (rank < bestRank) { best = r; bestRank = rank; continue }
+    if (rank === bestRank && best && barrier(r) < barrier(best)) best = r
   }
   return best
 }

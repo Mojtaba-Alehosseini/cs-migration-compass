@@ -136,7 +136,7 @@ class TestNoPositionalPickIntoAnUnorderedArray(unittest.TestCase):
         return {
             m.group(1): m.group(2)
             for m in re.finditer(
-                r"^\s+([a-z_][A-Za-z0-9_]*)\??:\s*([A-Za-z_][A-Za-z0-9_]*)\[\]", src, re.M)
+                r"^\s+([a-z_][A-Za-z0-9_]*)\??:\s*(.*\[\])\s*$", src, re.M)
         }
 
     def test_the_watchlist_is_actually_derived_and_its_exemptions_are_live(self) -> None:
@@ -150,16 +150,39 @@ class TestNoPositionalPickIntoAnUnorderedArray(unittest.TestCase):
                          "covers nothing today and would silently cover whatever later takes the "
                          "name: " + ", ".join(stale))
 
+    def _has_reason(self, line: str) -> bool:
+        """An opt-out must SAY something. A bare `unordered-ok:` is not a
+        justification -- the docstring promised a reason was required while the
+        code only looked for the token, which package 29's own adversarial
+        review pointed out."""
+        i = line.find(self.OPT_OUT)
+        return i != -1 and len(line[i + len(self.OPT_OUT):].strip(" */	")) >= 8
+
+    def test_an_opt_out_without_a_reason_does_not_count(self) -> None:
+        self.assertFalse(self._has_reason("const u = e.urls[0] // unordered-ok:"),
+                         "a bare opt-out token must not excuse a positional read")
+        self.assertTrue(self._has_reason("const u = e.urls[0] // unordered-ok: one entry, one source"),
+                        "an opt-out that states a reason must be accepted")
+
     def test_no_positional_index_into_an_unordered_array(self) -> None:
         watched = sorted(f for f in self._array_fields() if f not in self.ORDERED)
         self.assertIn("skilled_routes", watched,
                       "the field this check failed to catch in #66 must be watched")
         self.assertIn("sources", watched, "the original defect's own field must still be watched")
-        pattern = re.compile(r"\b(" + "|".join(watched) + r")\??\.?\[0\]")
+        names = "|".join(watched)
+        # Also `.at(0)`, and one-line destructuring of a watched array. A value
+        # aliased to a local on one line and indexed on the next is still out of
+        # reach of a line-based check -- stated in the docstring rather than
+        # implied away.
+        pattern = re.compile(
+            r"\b(?:" + names + r")\??\.?\[0\]"
+            r"|\b(?:" + names + r")\??\.at\(\s*0\s*\)"
+            r"|\[\s*\w+\s*\]\s*=\s*[\w.?]*\b(?:" + names + r")\b"
+        )
         offenders = []
         for f in _ts_files():
             for i, line in _code_lines(f):
-                if pattern.search(line) and self.OPT_OUT not in line:
+                if pattern.search(line) and not self._has_reason(line):
                     offenders.append(f"{f.relative_to(ROOT)}:{i}: {line.strip()}")
         self.assertEqual(offenders, [], (
             "position 0 of an array whose order nobody recorded is standing in for a relationship "
