@@ -3438,3 +3438,40 @@ noted the UAE line does not currently render.
 
 Not resolved here — package 28's Tier 2 rule covers what its own Explore measurement justified, and
 this is neither Explore nor measured by it.
+
+## 67. "What we take from it" shows one pipeline step out of up to six, for 52 of 57 sources
+
+Package 29's Tier 1 swept every first-element read in `site/src` for the #66 defect class. This one
+is **not** that defect — `provenance.entries[].transforms` is an ordered sequence of pipeline steps,
+so `transforms[0]` genuinely means "the first step" rather than "an arbitrary one". It is recorded
+because the sweep surfaced it and the number is larger than expected.
+
+`DataMethods.tsx` renders the Data & methods table, whose second column is headed **"What we take
+from it"**. It renders `e.transforms[0]` — the first step only:
+
+```
+provenance entries                       57
+entries with more than one transform     52
+```
+
+So for 52 of 57 sources the column describes the first of up to six steps and silently omits the
+rest. Examples: `ef_epi` shows 1 of 6, `bis_property_prices` / `bls_oews` /
+`eurostat_ict_specialists` show 1 of 5 each. `bls_oews` reads "Constructed OEWS series IDs for 30
+metros..." and drops four further steps including whatever came after.
+
+**Why this is escalated rather than fixed.** Nothing rendered is false — the first step really is a
+thing the pipeline does, and each row also carries its own `notes`. What is at stake is how complete
+a table cell claims to be under that heading, and how much of a six-step pipeline belongs in it.
+That is a presentation decision on a page nobody asked this package to change, and package 28's rule
+(fix what is objectively wrong, escalate what is a judgement) puts it here.
+
+**Options:**
+  - **(a) Leave it, and change the heading.** The column promises more than one step delivers.
+    "First step" or "How we start from it" costs nothing and stops the cell over-claiming. Smallest
+    honest change; the full chain stays where it already lives, in `provenance.json`.
+  - **(b) Render the whole chain.** All transforms as an ordered list in the cell, or the first with
+    an honest "+4 more" disclosure the site already has vocabulary for. Complete, and matches what
+    the heading currently implies — at the cost of a much taller table on a page that is already
+    dense.
+
+Not resolved here.

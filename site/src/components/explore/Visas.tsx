@@ -10,6 +10,7 @@ import { useData } from '../../data/store'
 import { ChartFoot, type HeroStat } from './Controls'
 import { money } from '../../data/format'
 import type { Country } from '../../data/types'
+import { lowestSalaryFloorRoute } from '../../data/visaRoutes'
 
 /** What the design annotates beside a country's ribbon. */
 const NOTE: Record<string, string> = {
@@ -121,13 +122,9 @@ function Thresholds({ countries }: { countries: Country[] }) {
     // The cheapest door in, not just the first route on file: some countries
     // (AE) list a no-floor route before a route that does carry a threshold,
     // which would otherwise misreport the country as having no floor at all.
-    const route = (k.visa?.skilled_routes ?? []).reduce<
-      NonNullable<Country['visa']>['skilled_routes'][number] | null
-    >((cheapest, r) => {
-      if (r.salary_threshold_usd == null) return cheapest
-      if (cheapest == null || r.salary_threshold_usd < cheapest.salary_threshold_usd!) return r
-      return cheapest
-    }, null)
+    // The rule lives in one place now (package 29) so that this question and
+    // CityProfile's "what do you land on?" cannot drift into each other.
+    const route = lowestSalaryFloorRoute(k)
     return {
       cc: k.id,
       name: k.name,

@@ -95,29 +95,79 @@ class TestNoSubstringHostMatching(unittest.TestCase):
                           + "\n".join(offenders))
 
 
-class TestNoPositionalSourcePick(unittest.TestCase):
-    """Defect C: `country.sources[0]` / `city.sources[0]` links whichever URL
-    a country or city's own harvesters happened to append first — no
-    ordering by relevance is recorded, so position 0 is arbitrary with
-    respect to any specific figure. DataMethods.tsx's own `e.urls[0]` is a
-    different identifier (`urls`, not `sources`) and outside this pattern's
-    reach regardless; `e` there is one provenance.json entry already scoped
-    to a single source_id, so every URL in it is that one source's own."""
+class TestNoPositionalPickIntoAnUnorderedArray(unittest.TestCase):
+    r"""Defect C: `country.sources[0]` / `city.sources[0]` links whichever URL
+    a country or city's own harvesters happened to append first — no ordering
+    by relevance is recorded, so position 0 is arbitrary with respect to any
+    specific figure.
 
-    def test_no_bare_positional_index_into_a_sources_array(self) -> None:
-        pattern = re.compile(r"\bsources\??\.\[0\]|\bsources\[0\]")
+    THIS CHECK PREVIOUSLY MISSED A LIVE INSTANCE OF ITS OWN DEFECT. It was
+    written as `\bsources\??\.\[0\]|\bsources\[0\]` — the identifier `sources`,
+    hardcoded — while being named for the whole class. So when CityProfile.tsx
+    named `country.visa.skilled_routes[0]` as the route you land on
+    (NEEDS-DECISION #66, found by package 28's adversarial review and fixed in
+    package 29), the guard built for exactly this defect scanned that file,
+    matched nothing, and passed. Not file scope, not an exclusion: pattern
+    shape. It is the packages 25/26 failure mode — an assertion that passes for
+    a reason other than the property it names.
+
+    So the watchlist is DERIVED from types.ts rather than hand-listed, and a
+    new array field on the data model joins it automatically. Fields whose
+    order IS recorded are exempt with a reason each, and the exemptions are
+    checked against types.ts so a stale one cannot sit there covering nothing.
+    """
+
+    # Arrays whose element order is itself meaningful, so [0] means something.
+    ORDERED = {
+        "transforms": "pipeline steps, in the order the pipeline ran them",
+        "monthly": "calendar order, January first",
+        "missing_inputs": "one fixed priority order, in compute.missingInputs()",
+    }
+
+    # A single line may opt out by saying why, at the site of use:
+    #     <a href={e.urls[0]}>   // unordered-ok: all of one source's own URLs
+    # The reason is required, greppable, and cannot cover a whole file the way
+    # the allowlist package 27 removed did.
+    OPT_OUT = "unordered-ok:"
+
+    def _array_fields(self) -> dict[str, str]:
+        """Every `name: Type[]` field types.ts declares."""
+        src = _read(SITE_SRC / "data" / "types.ts")
+        return {
+            m.group(1): m.group(2)
+            for m in re.finditer(
+                r"^\s+([a-z_][A-Za-z0-9_]*)\??:\s*([A-Za-z_][A-Za-z0-9_]*)\[\]", src, re.M)
+        }
+
+    def test_the_watchlist_is_actually_derived_and_its_exemptions_are_live(self) -> None:
+        fields = self._array_fields()
+        self.assertTrue(fields,
+                        "parsed NO array fields out of types.ts — the parser broke, which would "
+                        "silently empty the watchlist and make the check below vacuous")
+        stale = sorted(f for f in self.ORDERED if f not in fields)
+        self.assertEqual(stale, [],
+                         "ORDERED exempts a field types.ts no longer declares, so the exemption "
+                         "covers nothing today and would silently cover whatever later takes the "
+                         "name: " + ", ".join(stale))
+
+    def test_no_positional_index_into_an_unordered_array(self) -> None:
+        watched = sorted(f for f in self._array_fields() if f not in self.ORDERED)
+        self.assertIn("skilled_routes", watched,
+                      "the field this check failed to catch in #66 must be watched")
+        self.assertIn("sources", watched, "the original defect's own field must still be watched")
+        pattern = re.compile(r"\b(" + "|".join(watched) + r")\??\.?\[0\]")
         offenders = []
         for f in _ts_files():
             for i, line in _code_lines(f):
-                if pattern.search(line):
+                if pattern.search(line) and self.OPT_OUT not in line:
                     offenders.append(f"{f.relative_to(ROOT)}:{i}: {line.strip()}")
-        self.assertEqual(offenders, [],
-                          "country.sources[0] / city.sources[0] links whichever URL a harvester "
-                          "happened to append first, regardless of which figure is asking — the "
-                          "same defect as the GulfTalent match, a position standing in for a "
-                          "recorded relationship. Record which source belongs to which figure "
-                          "instead (see citySalarySource(), countryImmigrationSource() in "
-                          "registry.ts):\n" + "\n".join(offenders))
+        self.assertEqual(offenders, [], (
+            "position 0 of an array whose order nobody recorded is standing in for a relationship "
+            "— the defect behind sources[0] (the GulfTalent link) and skilled_routes[0] (#66, "
+            "which would name a job-seeker permit as the work visa you land on the moment a "
+            "harvester appended it first). Derive the pick from a recorded field "
+            "(site/src/data/visaRoutes.ts shows the shape), or say why position is safe here with "
+            "an `" + self.OPT_OUT + "` comment on the line:\n") + "\n".join(offenders))
 
 
 class TestNoHardcodedMultiCompanyLiteral(unittest.TestCase):

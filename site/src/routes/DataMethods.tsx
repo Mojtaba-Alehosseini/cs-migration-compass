@@ -54,12 +54,20 @@ export function DataMethods() {
                 </tr>
               </thead>
               <tbody>
-                {ok.map((e) => (
+                {ok.map((e) => {
+                  // `e` is ONE provenance entry, already scoped to a single source_id, so
+                  // every URL it carries belongs to that same source. That is exactly what
+                  // makes position safe here and unsafe in the country/city case, which was
+                  // choosing between DIFFERENT companies. 21 of the 57 entries carry more
+                  // than one URL, so which one opens is arbitrary — and every candidate is
+                  // a correct destination for this source's own "open" link.
+                  const openUrl = e.urls[0] // unordered-ok: one entry, one source
+                  return (
                   <tr key={e.source_id}>
                     <td style={cell}>
                       <b>{e.name}</b>
-                      {e.urls[0] && (
-                        <a href={e.urls[0]} target="_blank" rel="noopener noreferrer"
+                      {openUrl && (
+                        <a href={openUrl} target="_blank" rel="noopener noreferrer"
                           style={{ display: 'block', color: 'var(--accent)', marginTop: 2 }}>open ↗</a>
                       )}
                     </td>
@@ -70,7 +78,8 @@ export function DataMethods() {
                     <td style={cell}>{e.coverage ?? '—'}{e.rows != null && <span style={{ display: 'block', color: 'var(--ink-3)' }}>{num(e.rows)} rows</span>}</td>
                     <td style={{ ...cell, color: 'var(--ink-3)' }}>{e.license}</td>
                   </tr>
-                ))}
+                  )
+                })}
               </tbody>
             </table>
           </div>

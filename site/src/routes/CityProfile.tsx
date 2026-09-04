@@ -12,6 +12,7 @@ import { UnstableMark } from '../components/Unstable'
 import { useData } from '../data/store'
 import { dropApprox, money, num, pct, sourceName, years, NO_DATA, asOfLabel } from '../data/format'
 import { citySalarySource } from '../data/registry'
+import { typicalArrivalRoute } from '../data/visaRoutes'
 import {
   HOME_M2, instabilityNote, isNeverAffordable, m2PerYear, missingInputs, netFor, netPayChain,
   savingsPerYear, yearsToHome,
@@ -258,7 +259,7 @@ export function CityProfile() {
             cc={country.id}
             pr={country.pr_years_typical}
             cit={country.citizenship_years_typical}
-            route={country.visa.skilled_routes[0]?.name}
+            route={typicalArrivalRoute(country)?.name}
             dual={country.dual_citizenship}
           />
         </div>
