@@ -216,7 +216,16 @@ try {
   for (const theme of ['compass', 'editorial', 'terminal', 'warm']) {
     for (const mode of ['light', 'dark']) {
       for (const [id, url] of THEME_PAGES) {
-        await page.hashGo(url, { waitMs: 200 })
+        /* The wait here is not decoration: the theme attributes below are
+         * set on a mounted app, and an app that has not mounted yet will
+         * overwrite them from its own stored preference on first paint. The
+         * condition is "mounted and settled", which is what waitForReady
+         * observes; `waitMs: 200` was a guess at the same thing that would
+         * have silently measured the DEFAULT theme on a slow machine — and
+         * C6 is the contrast check, so measuring the wrong palette is the
+         * one failure this loop exists to prevent. */
+        await page.hashGo(url)
+        await page.waitForReady({ label: `${theme}/${mode} ${id} (before theming)` })
         await page.eval(`
           (() => { try {
             localStorage.setItem('compass:theme', ${JSON.stringify(theme)})

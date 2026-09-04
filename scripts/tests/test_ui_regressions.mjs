@@ -62,15 +62,34 @@ if (!preview?.ok) {
 const SCATTER_PANEL = `[...document.querySelectorAll('h2')]
   .find((h) => h.textContent.includes('Ask your own question')).closest('.panel')`
 
+/* Navigate and wait for the page to actually be ready.
+ *
+ * This replaces nineteen `hashGo(url, { waitMs: N })` calls whose N ranged
+ * from 1600 to 6000 — twenty different guesses about how long this machine
+ * takes, every one of them wrong somewhere, and none of them able to fail.
+ * A wait that is too short does not raise an error; it just asserts over less
+ * of the page, which is how /openings stayed invisible to the figure inventory
+ * for six packages (package 30, NEEDS-DECISION #69).
+ *
+ * `waitForReady` requires network idle AND a settled DOM, and THROWS if
+ * neither arrives — so the failure mode is now a red build with a route name
+ * on it, not a quiet under-measurement. */
+let page   // assigned once the browser is open; `go` closes over it
+const go = async (url, opts = {}) => {
+  await page.hashGo(url)
+  return page.waitForReady({ label: url, ...opts })
+}
+
 const { port, close } = await launch({ port: await freeCdpPort() })
 try {
-  const page = await openPage(port)
+  page = await openPage(port)
   await page.viewport(1280, 2000)
 
   /* One real load; everything after it is hash routing (cdp.mjs's own goto()
    * waits for a load event a hash change never fires). That also keeps the
    * console.error hook installed below alive for the whole run. */
-  await page.goto(`${BASE}#/explore/housing`, { waitMs: 3000 })
+  await page.goto(`${BASE}#/explore/housing`)
+  await page.waitForReady({ label: `${BASE}#/explore/housing` })
 
   /* assertInjectiveTicks() throws in dev but only console.error()s in a
    * production build, which is what this suite runs against — so R2 reads the
@@ -124,21 +143,33 @@ try {
       btns[${which}].click()
       return true
     })()`)
-    await sleep(350)
+    /* Only wait for a card if a trigger was actually clicked. R8's whole
+     * point is that some rows correctly have NO trigger, and `opened` is
+     * false there — waiting for a dialog that is right not to exist would
+     * turn a passing assertion into a timeout. */
+    if (!opened) return null
+    await page.waitFor('document.querySelector(\'[role="dialog"]\')',
+      { label: `method card for ${code} to open` })
     const text = await page.eval(`(() => {
       const d = [...document.querySelectorAll('[role="dialog"]')].pop()
       return d ? d.textContent : null
     })()`)
     await page.eval(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`)
-    await sleep(250)
-    return opened ? text : null
+    await page.waitFor('!document.querySelector(\'[role="dialog"]\')',
+      { label: `method card for ${code} to close` })
+    return text
   }
 
   /** Scroll the scatter into view — Explore defers it until it is near the
    *  viewport, so it does not exist in the DOM before this. */
   async function showScatter() {
     await page.eval('window.scrollTo(0, document.body.scrollHeight)')
-    await sleep(2200)
+    /* The scatter is behind DeferUntilVisible, so "has it mounted" is a real
+     * DOM question with a real answer — not 2.2 seconds. Waiting for the
+     * panel alone is not enough either: it exists before its circles are
+     * drawn, and every check below reads circles. */
+    await page.waitFor(`${SCATTER_PANEL}?.querySelectorAll('svg circle').length > 0`,
+      { label: 'the deferred scatter to mount and draw its points' })
   }
 
   /** The scatter's own rendered y axis: each tick's label and the exact y its
@@ -176,7 +207,7 @@ try {
   /* ==================================================================== */
   say('=== R1: years-to-home reported past its own precision (Milan, Valencia) ===')
 
-  await page.hashGo(`${BASE}#/city/milan`, { waitMs: 2200 })
+  await go(`${BASE}#/city/milan`)
   const milan = await page.eval(`(() => {
     const panel = [...document.querySelectorAll('h2')]
       .find((h) => h.textContent.includes('The path to owning a home')).closest('.panel')
@@ -196,7 +227,7 @@ try {
 
   // Rome also reads "100+ yrs" and is NOT flagged: the mark tracks the
   // inputs' own precision, not the size of the number.
-  await page.hashGo(`${BASE}#/city/rome`, { waitMs: 2000 })
+  await go(`${BASE}#/city/rome`)
   const rome = await page.eval(`(() => {
     const panel = [...document.querySelectorAll('h2')]
       .find((h) => h.textContent.includes('The path to owning a home')).closest('.panel')
@@ -206,7 +237,7 @@ try {
   check(rome.mark === false,
     `R1: Rome reads "${rome.big}" too and is NOT marked — the flag is precision, not magnitude`)
 
-  await page.hashGo(`${BASE}#/explore/housing`, { waitMs: 2500 })
+  await go(`${BASE}#/explore/housing`)
   await showScatter()
   const axis1 = await scatterYAxis()
   const milanPt = await scatterPoint('Milan')
@@ -214,13 +245,15 @@ try {
     const c = ${SCATTER_PANEL}.querySelector('circle[data-city="Milan"]')
     c.dispatchEvent(new PointerEvent('pointerover', { bubbles: true }))
   })()`)
-  await sleep(350)
+  await page.waitFor(`${SCATTER_PANEL}.querySelector('.readout')?.textContent?.length > 0`,
+    { label: 'the hover readout to appear for Milan' })
   const readout = await page.eval(`${SCATTER_PANEL}.querySelector('.readout')?.textContent ?? null`)
   await page.eval(`(() => {
     const c = ${SCATTER_PANEL}.querySelector('circle[data-city="Milan"]')
     c.dispatchEvent(new PointerEvent('pointerout', { bubbles: true }))
   })()`)
-  await sleep(200)
+  await page.waitFor(`!(${SCATTER_PANEL}.querySelector('.readout')?.textContent?.length > 0)`,
+    { label: 'the hover readout to clear' })
   const milanReal = Number(readout?.match(/exactly ([\d,]+) yrs/)?.[1].replace(/,/g, ''))
   const domainTop = tickValue(axis1[axis1.length - 1].label)
   say(`  scatter readout: ${readout}`)
@@ -303,18 +336,32 @@ try {
    * formatter back on the real shipped metric object, make the real
    * ScatterBuilder re-render, and read what assertInjectiveTicks actually
    * does about it in a production build. */
-  const setY = (key) => page.eval(`(() => {
-    const sel = [...${SCATTER_PANEL}.querySelectorAll('select')][1]
-    Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(sel, ${JSON.stringify(key)})
-    sel.dispatchEvent(new Event('change', { bubbles: true }))
-  })()`)
+  /* The y-axis labels, as one string — the thing every check below reads, and
+   * therefore the thing to wait for. The sleeps this replaces (400ms, then
+   * 600ms) were waiting for a re-render whose completion is directly
+   * observable: the labels change. On a slow machine those numbers would have
+   * read the OLD axis and reported it as the new one, which for a check about
+   * duplicate tick labels means asserting on the wrong axis entirely. */
+  const Y_LABELS = `[...${SCATTER_PANEL}.querySelector('svg').querySelectorAll('g')]`
+    + `.filter((g) => g.querySelector('text')?.getAttribute('text-anchor') === 'end')`
+    + `.map((g) => g.querySelector('text').textContent).join('|')`
+  const setY = async (key) => {
+    await page.eval(`window.__yBefore = ${Y_LABELS}`)
+    await page.eval(`(() => {
+      const sel = [...${SCATTER_PANEL}.querySelectorAll('select')][1]
+      Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(sel, ${JSON.stringify(key)})
+      sel.dispatchEvent(new Event('change', { bubbles: true }))
+    })()`)
+    await page.waitFor(`${Y_LABELS} !== window.__yBefore`,
+      { label: `the scatter y-axis to re-render for ${key}` })
+  }
   await page.eval(`(() => {
     const d = window.__METRICS.find((m) => m.key === 'years_to_home')
     window.__realTickFormat = d.tickFormat
     d.tickFormat = (v) => d.format(v)
   })()`)
-  await setY('m2_per_year'); await sleep(400)
-  await setY('years_to_home'); await sleep(600)
+  await setY('m2_per_year')
+  await setY('years_to_home')
   const guardErrs = await page.eval('window.__errs.slice()')
   const brokenLabels = (await scatterYAxis()).map((t) => t.label)
   say(`  with the pre-fix formatter: ${JSON.stringify(brokenLabels)}`)
@@ -333,8 +380,8 @@ try {
   await page.eval(`(() => {
     window.__METRICS.find((m) => m.key === 'years_to_home').tickFormat = window.__realTickFormat
   })()`)
-  await setY('m2_per_year'); await sleep(400)
-  await setY('years_to_home'); await sleep(600)
+  await setY('m2_per_year')
+  await setY('years_to_home')
   const restored = (await scatterYAxis()).map((t) => t.label)
   check(JSON.stringify(restored) === JSON.stringify(shippedLabels),
     'R2: restoring the shipped tickFormat restores the seven distinct labels')
@@ -370,7 +417,7 @@ try {
   say('')
   say('=== R8: a comparability check never consulted (Netherlands) ===')
 
-  await page.hashGo(`${BASE}#/position?years=8`, { waitMs: 2800 })
+  await go(`${BASE}#/position?years=8`)
   const nl = await rowText('NL')
   const seTriggers = await rowTriggers('SE')
   say(`  NL: ${nl}`)
@@ -418,7 +465,7 @@ try {
   // computed from the full-precision premium. Tolerance is the display's own
   // rounding (2 decimals -> half a cent), nothing looser.
   for (const [code, y] of [['SE', 8], ['SE', 20], ['NO', 8]]) {
-    await page.hashGo(`${BASE}#/position?years=${y}`, { waitMs: 1800 })
+    await go(`${BASE}#/position?years=${y}`)
     const card = await openCard(code, 1)
     const m = card?.match(/([\d,]+(?:\.\d+)?) x ([\d.]+) = ([\d,]+(?:\.\d+)?)/)
     if (!m) { check(false, `R9: ${code} @ ${y}y — no "A x B = C" line found in the Derived card`); continue }
@@ -434,7 +481,7 @@ try {
   say('=== R10: "?years=" empty string must not become 0 ===')
 
   const yearsInput = () => page.eval(`document.querySelector('input[type=number]')?.value ?? null`)
-  await page.hashGo(`${BASE}#/position?years=`, { waitMs: 1800 })
+  await go(`${BASE}#/position?years=`)
   const empty = await yearsInput()
   const href = await page.eval('location.href')
   say(`  ${href} -> years input reads ${JSON.stringify(empty)}`)
@@ -444,16 +491,16 @@ try {
 
   // Controls: a real 0 is still honoured, and a real value still wins — the
   // fix is a null/empty test, not a floor on small numbers.
-  await page.hashGo(`${BASE}#/position?years=0`, { waitMs: 1600 })
+  await go(`${BASE}#/position?years=0`)
   check((await yearsInput()) === '0', 'R10: an explicit years=0 is still read as zero experience')
-  await page.hashGo(`${BASE}#/position?years=12`, { waitMs: 1600 })
+  await go(`${BASE}#/position?years=12`)
   check((await yearsInput()) === '12', 'R10: an ordinary years=12 is still read as itself')
 
   /* ==================================================================== */
   say('')
   say('=== R11: Canada\'s two NOC rows ===')
 
-  await page.hashGo(`${BASE}#/position?years=8`, { waitMs: 2000 })
+  await go(`${BASE}#/position?years=8`)
   const ca1 = await rowText('CA-21231')
   const ca2 = await rowText('CA-21232')
   say(`  ${ca1}`)
@@ -467,7 +514,7 @@ try {
   say('')
   say('=== R12: Sweden\'s premium computed against the mean, applied to the median ===')
 
-  await page.hashGo(`${BASE}#/position?years=8`, { waitMs: 2000 })
+  await go(`${BASE}#/position?years=8`)
   const se8 = await rowText('SE')
   say(`  SE @ 8y: ${se8}`)
   check(pct(se8) === 37, `R12: Sweden at 8 years ranks P37 (got P${pct(se8)})`)
@@ -483,11 +530,11 @@ try {
   say('')
   say('=== R13: Norway\'s youngest age band anchored below any reachable age ===')
 
-  await page.hashGo(`${BASE}#/position?years=2`, { waitMs: 2000 })
+  await go(`${BASE}#/position?years=2`)
   const no2 = await rowText('NO')
-  await page.hashGo(`${BASE}#/position?years=8`, { waitMs: 1800 })
+  await go(`${BASE}#/position?years=8`)
   const no8 = await rowText('NO')
-  await page.hashGo(`${BASE}#/position?years=30`, { waitMs: 1800 })
+  await go(`${BASE}#/position?years=30`)
   const no30 = await rowText('NO')
   say(`  NO @ 2y : ${no2}`)
   say(`  NO @ 8y : ${no8}`)
@@ -497,7 +544,7 @@ try {
   check(no2 !== no30,
     `R13: and 30 years does NOT (P${pct(no2)} vs P${pct(no30)}) — the identity above is a flat band, not a dead feature`)
 
-  await page.hashGo(`${BASE}#/position?years=17`, { waitMs: 1800 })
+  await go(`${BASE}#/position?years=17`)
   const no17 = await openCard('NO', 0)
   const premium = Number(no17?.match(/assumed age ~39[\s\S]*?age ~39 -> ([-+]?[\d.]+)%/)?.[1])
   say(`  NO @ 17y premium: ${premium}%`)
@@ -528,7 +575,7 @@ try {
     return h ? h.closest('.panel, section, div')?.textContent ?? h.textContent : null
   })()`)
 
-  await page.hashGo(`${BASE}#/explore/money`, { waitMs: 2500 })
+  await go(`${BASE}#/explore/money`)
 
   // Ireland, Spain, Germany: each below the resolved 4-digit depth (own
   // depth 1, 2, 2 respectively) -- pre-fix, all three rendered a bar right
@@ -568,7 +615,7 @@ try {
   // and why a fabricated pay figure for an unsupported occupation shipped
   // beside a panel saying no data resolved for it.
 
-  await page.hashGo(`${BASE}#/work`, { waitMs: 3000 })
+  await go(`${BASE}#/work`)
 
   // Package 24 — the coverage-matrix-plus-separate-per-country-sections
   // structure this block used to check is gone by design: CountryStripRow
@@ -629,7 +676,12 @@ try {
   await page.send('Network.enable')
   await page.send('Network.setBlockedURLs', { urls: ['*occupations.json*'] })
   await page.send('Page.reload', { ignoreCache: true })
-  await sleep(2500)
+  // The blocked request fails rather than hanging, so network-idle is
+  // reached honestly here; the profile line is what this check reads, so
+  // that is what it waits for.
+  await page.waitForReady({ label: '/work reloaded with occupations.json blocked' })
+  await page.waitFor("document.querySelector('.profline-head')?.textContent?.length > 0",
+    { label: 'the profile line to render without occupations.json' })
   const proflineText = await page.eval(
     `document.querySelector('.profline-head')?.textContent ?? ''`)
   check(proflineText.length > 0 && !/isco08:/.test(proflineText),
@@ -638,7 +690,7 @@ try {
     + `"${proflineText.replace(/\s+/g, ' ').trim().slice(0, 40)}")`)
   await page.send('Network.setBlockedURLs', { urls: [] })
   await page.send('Page.reload', { ignoreCache: true })
-  await sleep(2500)
+  await page.waitForReady({ label: '/work reloaded with the block lifted' })
   // Re-armed only now, seeded with what it had already collected: the two
   // loads above are deliberately broken (a blocked fetch can legitimately
   // console.error), and counting those would fail the stray-error check on
@@ -660,7 +712,7 @@ try {
   // publish rather than five. That is the floor working, and a test that reads
   // it as a regression is pinned to a snapshot — the same defect as a label
   // keyed to array position. Package 18.
-  await page.hashGo(`${BASE}#/work`, { waitMs: 2600 })
+  await go(`${BASE}#/work`)
   // Read the payload the built site serves, in Node — page.eval() does not
   // await, so an async fetch inside it returns a Promise, not JSON.
   const payload = JSON.parse(readFileSync(
@@ -685,7 +737,7 @@ try {
     'R22: and no country carries the US federal-listings sentence as if it were its own')
 
   // A fabricated figure for an occupation the site has just said it cannot answer.
-  await page.hashGo(`${BASE}#/work?occupation=isco08%3A2511&years=8`, { waitMs: 2600 })
+  await go(`${BASE}#/work?occupation=isco08%3A2511&years=8`)
   const unsupported = await page.eval('document.body.innerText')
   check(/No wage data resolved for this occupation yet/.test(unsupported),
     'R22: an unsupported occupation says so')
@@ -695,7 +747,7 @@ try {
     'R22: and no pay-against-cost panel built on that estimate')
 
   // /openings: the USD -> display leg is year-matched like the first leg.
-  await page.hashGo(`${BASE}#/openings`, { waitMs: 6000 })
+  await go(`${BASE}#/openings`)
   const fx = JSON.parse(await page.eval(`(async () => {
     const setV = (el, v, proto) => { Object.getOwnPropertyDescriptor(proto.prototype, 'value').set.call(el, v); el.dispatchEvent(new Event(proto === HTMLSelectElement ? 'change' : 'input', { bubbles: true })) }
     const findEls = () => ({
@@ -735,7 +787,8 @@ try {
   check(oldRow.found, 'R22: the 2016 US federal listing is reachable in /openings')
   // The method card mounts on click; read it on the NEXT round-trip, not in
   // the same evaluation that opened it.
-  await sleep(700)
+  await page.waitFor(`document.querySelector('[role="dialog"]')`,
+    { label: 'the openings method card to mount' })
   oldRow.year = await page.eval(
     `(document.body.innerText.match(/USD → AUD at the (\\d{4}) rate/) || [])[1] || null`)
   check(oldRow.year === '2016',
@@ -747,13 +800,22 @@ try {
   // visible row is a 2016-2017 USAJOBS listing, which converts at its OWN
   // year exactly and is therefore correctly unmarked — a zero here would mean
   // the filter, not the marker.
+  /* The list renders at most 100 rows, so its COUNT does not change when the
+   * filter does — measured, after a first version of this wait keyed on the
+   * count and timed out. What changes is which rows those are. */
+  const firstRows = `[...document.querySelectorAll('.tbl tbody tr')].slice(0, 3).map((r) => r.textContent).join('|')`
+  await page.eval(`window.__rowsBefore = ${firstRows}`)
   await page.eval(`(() => {
     const setV = (el, v, proto) => { Object.getOwnPropertyDescriptor(proto.prototype, 'value').set.call(el, v); el.dispatchEvent(new Event('input', { bubbles: true })) }
     const search = document.querySelector('input[type="text"], input:not([type])')
     setV(search, '', HTMLInputElement)
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
   })()`)
-  await sleep(900)
+  /* The 900ms this replaces would, on a slow machine, have read the still
+   * FILTERED list — and the comment above explains that a filtered list makes
+   * this check pass for the wrong reason. */
+  await page.waitFor(`${firstRows} !== window.__rowsBefore`,
+    { label: 'the openings list to re-filter after clearing the search' })
   const recent = JSON.parse(await page.eval(`(() => {
     const rows = [...document.querySelectorAll('.tbl tbody tr')]
     const marked = rows.filter((r) => r.querySelector('.fx-estimate'))

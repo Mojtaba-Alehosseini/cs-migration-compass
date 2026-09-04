@@ -118,6 +118,34 @@ export async function openPage(port) {
   let id = 0
   const pending = new Map()
   const events = []
+  /* In-flight requests, tracked so readiness can be a FACT rather than a
+   * guess about how long a fetch takes. This is the signal package 30's
+   * `/openings` failure needed and did not have: that route's 24 MiB fetch
+   * is in flight for ~700ms while the page shell sits there looking settled,
+   * and no amount of DOM-stability polling can tell "still loading" from
+   * "finished, and this is all there is".
+   *
+   * Network events are deliberately NOT pushed into `events`: 108 pages of
+   * request/response traffic is a lot of retained JSON for a list whose only
+   * consumer is the console-error filter. */
+  /* requestId -> started-at. A Map rather than a Set because a request that
+   * never reports completion — a cancelled preload, a websocket, a connection
+   * the server holds open — would otherwise pin the in-flight count above zero
+   * for the rest of the session and turn every readiness wait into a timeout.
+   * That would be this package's own mistake in miniature: replacing a wait
+   * that silently measured less with one that loudly measures nothing. Entries
+   * older than STALE_MS stop counting; they are a stuck request, not a page
+   * still loading. */
+  const STALE_MS = 10000
+  const started = new Map()
+  const inflight = {
+    get size() {
+      const cutoff = Date.now() - STALE_MS
+      let n = 0
+      for (const t of started.values()) if (t > cutoff) n++
+      return n
+    },
+  }
   ws.addEventListener('message', (ev) => {
     const msg = JSON.parse(ev.data)
     if (msg.id != null) {
@@ -126,6 +154,10 @@ export async function openPage(port) {
       if (!p) return
       if (msg.error) p.reject(new Error(`${msg.error.message} (${JSON.stringify(msg.error.data ?? '')})`))
       else p.resolve(msg.result)
+    } else if (msg.method === 'Network.requestWillBeSent') {
+      started.set(msg.params.requestId, Date.now())
+    } else if (msg.method === 'Network.loadingFinished' || msg.method === 'Network.loadingFailed') {
+      started.delete(msg.params.requestId)
     } else {
       events.push(msg)
     }
@@ -141,6 +173,7 @@ export async function openPage(port) {
   await send('Page.enable')
   await send('Runtime.enable')
   await send('Log.enable')
+  await send('Network.enable')
 
   const page = {
     send,
@@ -171,10 +204,84 @@ export async function openPage(port) {
 
     /* Hash routing means most navigations never fire a load event, so goto()
      * would wait forever. This drives the SPA the way a link does — and keeps
-     * the app's state, which is exactly what the selection gates need. */
-    async hashGo(url, { waitMs = 900 } = {}) {
+     * the app's state, which is exactly what the selection gates need.
+     *
+     * `waitMs` now defaults to 0. It used to be 900, which is a guess about a
+     * machine: too long on a laptop, too short on a loaded CI runner, and
+     * wrong in a way that never failed — it just measured less. Callers wait
+     * for `waitForReady()` instead. */
+    async hashGo(url, { waitMs = 0 } = {}) {
       await send('Runtime.evaluate', { expression: `location.href = ${JSON.stringify(url)}` })
-      await sleep(waitMs)
+      if (waitMs) await sleep(waitMs)
+    },
+
+    /** How many network requests are in flight right now. */
+    inflight: () => inflight.size,
+
+    /**
+     * Poll a page-side boolean expression until it is true.
+     *
+     * A timeout is an ERROR, never a shrug. The whole point of replacing fixed
+     * waits is that "we waited and it never happened" must be louder than
+     * "we waited and moved on", which is what a `sleep()` does by design.
+     */
+    async waitFor(expression, { timeoutMs = 15000, pollMs = 50, label = expression } = {}) {
+      const t0 = Date.now()
+      let lastErr = null
+      for (;;) {
+        try {
+          if (await page.eval(`Boolean(${expression})`)) return Date.now() - t0
+          lastErr = null
+        } catch (e) { lastErr = e }
+        if (Date.now() - t0 > timeoutMs) {
+          throw new Error(`waitFor timed out after ${timeoutMs}ms: ${label}`
+            + (lastErr ? `\n  last evaluation error: ${lastErr.message}` : ''))
+        }
+        await sleep(pollMs)
+      }
+    },
+
+    /**
+     * Wait until the page is genuinely ready: nothing in flight, and the DOM
+     * has stopped changing — both continuously for `quietMs`.
+     *
+     * Network idle is what a DOM-stability check cannot substitute for. A page
+     * whose data is still downloading has a perfectly stable DOM; that is the
+     * exact state in which this suite captured `/openings` for six packages,
+     * and no stability window fixes it, because the shell stays stable for the
+     * whole duration of the fetch. Requiring both means the wait ends when the
+     * page is finished, not when it has been quiet for long enough to look it.
+     *
+     * `also` is an optional page-side expression for a route that knows what
+     * its own arrival looks like.
+     */
+    async waitForReady({ quietMs = 300, timeoutMs = 20000, also = null, label = 'page ready' } = {}) {
+      const t0 = Date.now()
+      let lastCount = -1
+      let stableSince = 0
+      let idleSince = 0
+      for (;;) {
+        const now = Date.now()
+        if (inflight.size === 0) { if (!idleSince) idleSince = now } else { idleSince = 0 }
+
+        const count = await page.eval('document.querySelectorAll("*").length')
+        if (count !== lastCount) { lastCount = count; stableSince = 0 }
+        else if (!stableSince) stableSince = now
+
+        const complete = await page.eval('document.readyState === "complete"')
+        const quiet = idleSince && stableSince
+          && now - idleSince >= quietMs && now - stableSince >= quietMs
+        if (complete && quiet && (!also || await page.eval(`Boolean(${also})`))) {
+          return now - t0
+        }
+        if (now - t0 > timeoutMs) {
+          throw new Error(`waitForReady timed out after ${timeoutMs}ms: ${label}\n`
+            + `  in-flight requests: ${inflight.size}\n`
+            + `  DOM nodes: ${count} (stable: ${stableSince ? `${now - stableSince}ms` : 'no'})\n`
+            + (also ? `  extra condition never became true: ${also}\n` : ''))
+        }
+        await sleep(50)
+      }
     },
 
     async eval(expression, { awaitPromise = false } = {}) {

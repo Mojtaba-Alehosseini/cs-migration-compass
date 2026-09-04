@@ -52,8 +52,15 @@ export const EXTRACT = String.raw`
     let cardText = null, cardLabel = null
     try {
       b.click()
-      await new Promise((r) => setTimeout(r, 25))
-      const card = document.querySelector('[role="dialog"]')
+      // Poll for the card instead of assuming 25ms is enough to open one. A
+      // card that opened slowly used to be recorded as "no card at all",
+      // which C4 reads as a violation -- a timing guess manufacturing a
+      // finding. 600ms cap; the loop exits the moment it appears.
+      let card = null
+      for (let i = 0; i < 60 && !card; i++) {
+        card = document.querySelector('[role="dialog"]')
+        if (!card) await new Promise((r) => setTimeout(r, 10))
+      }
       // textContent, not innerText, as the fallback: innerText needs layout
       // and came back EMPTY for every <Derived> card on /explore while the
       // card was demonstrably open (its aria-label read back fine). Trusting
@@ -66,7 +73,11 @@ export const EXTRACT = String.raw`
         cardLabel = card.getAttribute('aria-label')
       }
       b.click()
-      await new Promise((r) => setTimeout(r, 10))
+      // And wait for it to actually be gone, so the next figure's poll cannot
+      // read the previous figure's still-closing card as its own.
+      for (let i = 0; i < 60 && document.querySelector('[role="dialog"]'); i++) {
+        await new Promise((r) => setTimeout(r, 10))
+      }
     } catch (e) { cardText = 'ERROR: ' + e.message }
     const cell = b.closest('td,th,li,[class*="wrow-"],div')
     figures.push({
@@ -245,25 +256,29 @@ export const EXTRACT = String.raw`
 })()
 `
 
-/* Waits for the route to be READY rather than for a fixed 2.6s. A hundred
- * pages x a worst-case sleep is five minutes, which is the difference
- * between an assertion suite CI runs on every push and one someone
- * remembers to run. Readiness = the route has painted something with a
- * figure, a no-data mark or a heading, and has stopped growing. */
-export async function capture(page, id, url, { maxMs = 6000 } = {}) {
-  await page.hashGo(url, { waitMs: 150 })
-  await page.eval(`
-    (async () => {
-      const t0 = performance.now()
-      let last = -1, stable = 0
-      while (performance.now() - t0 < ${maxMs}) {
-        const n = document.querySelectorAll('button, .nodata, h1, h2, table, .wrow').length
-        if (n === last && n > 0) { if (++stable >= 3) return true } else { stable = 0; last = n }
-        await new Promise((r) => setTimeout(r, 60))
-      }
-      return false
-    })()
-  `, { awaitPromise: true })
+/* Waits for the route to be READY.
+ *
+ * The previous version polled `button, .nodata, h1, h2, table, .wrow` until
+ * that count was stable and non-zero. It looked like a readiness check and was
+ * not one, because the page SHELL supplies those elements before any route
+ * data arrives. Measured on `/openings`:
+ *
+ *     t=208ms   4 elements, 0 rows,     829 chars   <- shell
+ *     t=616ms   4 elements, 0 rows,     829 chars   <- declared READY here
+ *     t=726ms  16 elements, 100 rows, 14459 chars   <- the route's own content
+ *
+ * Stable and non-zero, 110ms too early, three runs in four. That is the same
+ * defect as the assertions it feeds: satisfied by absence. No stability window
+ * fixes it either — the shell count does not move for the whole duration of
+ * that 24 MiB fetch, so a longer window is still a race, just a slower one.
+ *
+ * `waitForReady()` requires the network to be idle as well, which is the fact
+ * a DOM count cannot stand in for, and a timeout THROWS — the caller records
+ * it as an errored route, and the coverage floors fail the run. Absence is now
+ * loud twice over. */
+export async function capture(page, id, url, { timeoutMs = 25000 } = {}) {
+  await page.hashGo(url)
+  await page.waitForReady({ quietMs: 300, timeoutMs, label: `${id} — ${url}` })
   const raw = await page.eval(EXTRACT, { awaitPromise: true })
   return { id, url, ...JSON.parse(raw), consoleErrors: page.consoleErrors() }
 }

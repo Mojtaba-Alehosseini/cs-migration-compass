@@ -56,14 +56,16 @@ if (ONLY === 'all' || ONLY === 'shots') {
   const chrome = await launch({ port: 9351 })
   const page = await openPage(chrome.port)
   // Pin the palette so "light"/"dark" is the only thing varying across the set.
-  await page.goto(url('money'), { waitMs: 1500 })
+  await page.goto(url('money'))
+  await page.waitForReady({ label: 'explore/money (palette pin)' })
   for (const theme of THEMES) {
     for (const [vp, [w, h]] of Object.entries(VIEWPORTS)) {
       await page.viewport(w, h, vp === 'mobile')
       for (const mode of MODES) {
         await page.eval(`(() => { try { localStorage.setItem('compass:mode', ${JSON.stringify(mode)});
           localStorage.setItem('compass:theme', 'compass') } catch {} ; return 1 })()`)
-        await page.goto(url(theme), { waitMs: 3200 })
+        await page.goto(url(theme))
+        await page.waitForReady({ label: theme + ' ' + vp + ' ' + mode + ' (before screenshot)' })
         // Scroll to the bottom and back before capturing. Both bottom panels
         // sit behind DeferUntilVisible, so a full-page capture taken without
         // scrolling shows two large EMPTY reserved boxes — an artefact of the
@@ -97,7 +99,8 @@ for (const theme of THEMES) {
     const chrome = await launch({ port: port++ })
     const page = await openPage(chrome.port)
     await page.viewport(w, h, vp === 'mobile')
-    await page.goto(url(theme), { waitMs: 4000 })
+    await page.goto(url(theme))
+    await page.waitForReady({ label: theme + ' ' + vp + ' (before measuring)' })
 
     // 2 — how far down is the first real answer? `/work`'s own defect (its h1
     // rendering fourth) was found by measuring exactly this.
