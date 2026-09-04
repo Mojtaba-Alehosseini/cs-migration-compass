@@ -85,12 +85,15 @@ export function Explore() {
         </DeferUntilVisible>
       )}
 
-      {/* Both tools live on every theme, unchanged by this package. */}
+      {/* Both tools live on every theme — the owner's ruling on NEEDS-DECISION #64,
+          kept as-is. What changed in package 29 is that each now opens on the
+          question ITS OWN theme is about, instead of the same two housing metrics
+          everywhere; a visitor's own question replaces that and follows them. */}
       <DeferUntilVisible minHeight={520} label="Scatter builder">
-        <Suspense fallback={<ChartSkeleton height={520} />}><ScatterBuilder /></Suspense>
+        <Suspense fallback={<ChartSkeleton height={520} />}><ScatterBuilder theme={active} /></Suspense>
       </DeferUntilVisible>
       <DeferUntilVisible minHeight={200} label="Weights tool">
-        <WeightsTool />
+        <WeightsTool theme={active} />
       </DeferUntilVisible>
     </div>
   )

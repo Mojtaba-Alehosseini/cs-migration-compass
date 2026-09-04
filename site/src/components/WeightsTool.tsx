@@ -14,7 +14,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Flag } from './Flag'
 import { useData } from '../data/store'
-import { METRICS, METRIC_BY_KEY, THEMES } from '../data/registry'
+import { METRICS, METRIC_BY_KEY, THEMES, type ThemeKey } from '../data/registry'
 import { UNSTABLE_METRIC_KEYS, composite, stabilityOf, type WeightedInput } from '../data/compute'
 import { downloadCsv } from '../lib/export'
 
@@ -42,11 +42,40 @@ const EXAMPLE_LENSES: { name: string; note: string; weights: Record<string, numb
   },
 ]
 
-export function WeightsTool() {
+/* Which of the example lenses a theme opens on (package 29, the owner's
+ * ruling on NEEDS-DECISION #64). The tool stays OFF by default — that is the
+ * whole point of it, and its own copy says so — but when a visitor opens it
+ * from a theme, it starts from the lens that theme is about instead of from
+ * an empty set of sliders. Every lens below already existed; nothing new is
+ * asserted about what matters, and the visitor's first slider replaces it. */
+const LENS_FOR_THEME: Record<ThemeKey, string> = {
+  money: 'Build savings fast',
+  housing: 'Build savings fast',
+  visa: 'Settle permanently',
+  people: 'Settle permanently',
+  jobs: 'Land a first job',
+  life: 'Warm and liveable',
+  climate: 'Warm and liveable',
+}
+
+export function WeightsTool({ theme }: { theme: ThemeKey }) {
   const data = useData()
   const [open, setOpen] = useState(false)
   const [weights, setWeights] = useState<Record<string, number>>({})
   const [activeLens, setActiveLens] = useState<string | null>(null)
+  /* Set once the visitor moves a slider or picks a lens themselves. Until
+   * then the theme's lens seeds the tool on open; afterwards their weights
+   * are theirs and survive every theme switch. */
+  const [ownWeights, setOwnWeights] = useState(false)
+
+  const themeLens = EXAMPLE_LENSES.find((l) => l.name === LENS_FOR_THEME[theme])
+  const openWith = () => {
+    if (!ownWeights && themeLens) {
+      setWeights({ ...themeLens.weights })
+      setActiveLens(themeLens.name)
+    }
+    setOpen(true)
+  }
 
   const active = Object.entries(weights).filter(([, w]) => w > 0)
 
@@ -102,8 +131,11 @@ export function WeightsTool() {
         <div className="sub">
           The one place this site produces an ordering — and only because you built it. Off by default,
           and it stays off until you open it.
+          {themeLens && !ownWeights && (
+            <> It will start from <b>{themeLens.name}</b> — {themeLens.note} — which you can change or clear.</>
+          )}
         </div>
-        <button className="pill" onClick={() => setOpen(true)}>Open the weights tool</button>
+        <button className="pill" onClick={openWith}>Open the weights tool</button>
       </div>
     )
   }
@@ -124,12 +156,12 @@ export function WeightsTool() {
         {EXAMPLE_LENSES.map((l) => (
           <button key={l.name} className="pill" aria-pressed={activeLens === l.name}
             title={l.note}
-            onClick={() => { setWeights(l.weights); setActiveLens(l.name) }}>
+            onClick={() => { setWeights(l.weights); setActiveLens(l.name); setOwnWeights(true) }}>
             {l.name}
           </button>
         ))}
         {active.length > 0 && (
-          <button className="pill" onClick={() => { setWeights({}); setActiveLens(null) }}>Clear</button>
+          <button className="pill" onClick={() => { setWeights({}); setActiveLens(null); setOwnWeights(true) }}>Clear</button>
         )}
       </div>
       <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginBottom: 12 }}>
@@ -155,6 +187,7 @@ export function WeightsTool() {
                     onChange={(e) => {
                       setWeights((w) => ({ ...w, [m.key]: Number(e.target.value) }))
                       setActiveLens(null)
+                      setOwnWeights(true)
                     }}
                     style={{ width: 74, accentColor: 'var(--accent)' }}
                     aria-label={`Weight for ${m.label}`}

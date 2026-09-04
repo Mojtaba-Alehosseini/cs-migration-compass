@@ -18,7 +18,7 @@
 
 import { useMemo, useState } from 'react'
 import { useData } from '../data/store'
-import { THEMES, METRICS, METRIC_BY_KEY, AXIS_METRICS, tickFormatFor } from '../data/registry'
+import { THEMES, METRICS, METRIC_BY_KEY, AXIS_METRICS, tickFormatFor, type ThemeKey } from '../data/registry'
 import { UNSTABLE_METRIC_KEYS, stabilityOf } from '../data/compute'
 import { assertInjectiveTicks } from './chart/engine'
 import { downloadCsv } from '../lib/export'
@@ -29,6 +29,33 @@ const SCATTER_PRESETS = [
   { x: 'happiness_rank', y: 'savings', label: 'Money against life' },
   { x: 'summer_high', y: 'winter_low', label: 'Summer heat against winter cold' },
 ]
+
+/* What the builder opens on, per theme (package 29, the owner's ruling on
+ * NEEDS-DECISION #64). It used to open on the same two HOUSING metrics
+ * everywhere, so a visitor who reached Weather and scrolled was handed a
+ * pre-selected question about apartment prices.
+ *
+ * Every pair below is drawn from that theme's OWN metrics, so no theme opens
+ * on someone else's subject. They are starting points, not recommendations —
+ * the sub-line above the presets already says so, and the first thing the
+ * visitor changes replaces them for the rest of the session.
+ */
+const SCATTER_DEFAULTS: Record<ThemeKey, { x: string; y: string }> = {
+  // What you earn against what is actually left over.
+  money: { x: 'salary_gross', y: 'savings' },
+  // The two halves of the legal road: residency, then a passport.
+  visa: { x: 'pr_years', y: 'citizenship_years' },
+  // Absolute size of the market against how concentrated it is.
+  jobs: { x: 'ict_specialists', y: 'ict_share' },
+  // Unchanged: this pair was always the housing question, and belongs here.
+  housing: { x: 'apt_m2', y: 'years_to_home' },
+  // Who already moved, against how many came from one particular country.
+  people: { x: 'foreign_born', y: 'iranian_born' },
+  // Whether the places that report being happiest also look after you.
+  life: { x: 'happiness_rank', y: 'healthcare' },
+  // The theme's own framing: the question is February, not the mean.
+  climate: { x: 'summer_high', y: 'winter_low' },
+}
 
 interface Point {
   name: string
@@ -66,10 +93,18 @@ function axis(values: number[], floor?: number): { min: number; max: number; tic
   return { min, max, ticks, step: nice }
 }
 
-export function ScatterBuilder() {
+export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
   const data = useData()
-  const [xKey, setXKey] = useState('apt_m2')
-  const [yKey, setYKey] = useState('years_to_home')
+  /* The theme supplies the question until the visitor asks their own, and
+   * from then on theirs is the one that follows them across themes. Storing
+   * "did they choose?" rather than copying the default into state is what
+   * makes both true at once: an untouched builder tracks the theme, a touched
+   * one survives every switch. */
+  const [chosen, setChosen] = useState<{ x: string; y: string } | null>(null)
+  const xKey = chosen?.x ?? SCATTER_DEFAULTS[theme].x
+  const yKey = chosen?.y ?? SCATTER_DEFAULTS[theme].y
+  const setXKey = (k: string) => setChosen({ x: k, y: yKey })
+  const setYKey = (k: string) => setChosen({ x: xKey, y: k })
   const [hover, setHover] = useState<Point | null>(null)
 
   const xM = METRIC_BY_KEY.get(xKey)
@@ -156,7 +191,7 @@ export function ScatterBuilder() {
         {SCATTER_PRESETS.map((p) => (
           <button key={p.label} className="pill"
             aria-pressed={xKey === p.x && yKey === p.y}
-            onClick={() => { setXKey(p.x); setYKey(p.y) }}>
+            onClick={() => setChosen({ x: p.x, y: p.y })}>
             {p.label}
           </button>
         ))}
@@ -253,7 +288,9 @@ export function ScatterBuilder() {
       </div>
 
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginTop: 8, fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
-        <span>{inScale.length} of {data.cities.length} cities plotted.</span>
+        <span>{inScale.length === 0
+          ? `No city has both ${xM?.label ?? 'these'} and ${yM?.label ?? 'these'} on record — nothing to place, rather than an empty grid meaning nothing.`
+          : `${inScale.length} of ${data.cities.length} cities plotted.`}</span>
         {offscale.length > 0 && (
           <span className="chip chip-risk">
             {offscale.length} {offscale.length === 1 ? 'city is' : 'cities are'} off this scale — what
