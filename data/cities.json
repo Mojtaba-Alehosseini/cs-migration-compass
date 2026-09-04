@@ -1251,7 +1251,7 @@
     "senior": 59000,
     "confidence": "crowd",
     "note": "PayScale Qatar (thin, n=7-14): early-career (1-4y) QAR95,585 used for new_grad, corroborated by Glassdoor's Ogoul Technology median of QAR96,000; mid-career QAR110,000. Senior uses Glassdoor's Rheinmetall Barzan Advanced Technologies median QAR216,000; levels.fyi Doha shows a wider all-experience range of QAR95,998-262,296. All Doha salary sources are thin — indicative only. Tax-free.",
-    "primary_source": "payscale_linked"
+    "primary_source": "compiled"
    },
    "rent_1br_center_usd_month": 1980,
    "rent_1br_outside_usd_month": 1250,

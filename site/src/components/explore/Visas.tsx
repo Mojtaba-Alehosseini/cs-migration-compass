@@ -118,7 +118,16 @@ function FlagBar({ cc, width }: { cc: string; width: number }) {
  *  a fact about the route, not a missing number. */
 function Thresholds({ countries }: { countries: Country[] }) {
   const rows = countries.map((k) => {
-    const route = k.visa?.skilled_routes?.[0]
+    // The cheapest door in, not just the first route on file: some countries
+    // (AE) list a no-floor route before a route that does carry a threshold,
+    // which would otherwise misreport the country as having no floor at all.
+    const route = (k.visa?.skilled_routes ?? []).reduce<
+      NonNullable<Country['visa']>['skilled_routes'][number] | null
+    >((cheapest, r) => {
+      if (r.salary_threshold_usd == null) return cheapest
+      if (cheapest == null || r.salary_threshold_usd < cheapest.salary_threshold_usd!) return r
+      return cheapest
+    }, null)
     return {
       cc: k.id,
       name: k.name,

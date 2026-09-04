@@ -3120,6 +3120,41 @@ judged unreliable.
 Not resolved here — Tier 1's own instruction is to escalate a finding that changes what a figure
 means, not to pick an answer under a citation-fix package's own time pressure.
 
+**Correction (adversarial review, package 27 tier 2b): the 21-city membership above was wrong in
+both directions.** Verified against `data/cities.json` directly (not against the note text alone —
+the note can claim a levels.fyi read happened without the top-employer card actually carrying a
+value):
+
+- **`dallas`, `houston`, `nashville`, `philadelphia` do not belong on this list.** Their
+  `salary_usd_year.note` does say a levels.fyi metro page was read, but their `salary_levels_fyi`
+  block is `median_total_comp_usd: null` with `unavailable_reason: "No
+  /t/software-engineer/locations/<slug> route resolved..."` — the harvester that built the
+  *headline* figure found a page; the separate harvester behind the top-employer card did not, for
+  these four specifically. `CityProfile.tsx`'s own guard (`lf?.median_total_comp_usd != null ? ... :
+  lf?.unavailable_reason ? <span className="nodata">No levels.fyi figure for {city}...` renders the
+  no-data fallback instead of the caveat-bearing card, so there is no second band on the page for
+  these four and therefore nothing to conflict with #59's fix — the premise this entire finding
+  depends on does not hold for them. That leaves 9 of the 13 US metros actually affected, not 13.
+- **`melbourne`, `brisbane`, `perth` (AU), and `eindhoven` (NL) belong on this list and were
+  missing.** All four carry a live, non-null `salary_levels_fyi.median_total_comp_usd`, so the
+  caveat-bearing card does render. Their pattern is a partial version of the same defect, not the
+  full version the bullets above describe: `new_grad` and `senior` bands trace to the same
+  levels.fyi page as the top-employer card (e.g. Melbourne's note — *"levels.fyi Melbourne:
+  AU$83,255 median entry-level, AU$148,803 senior... Senior uses the AU-wide levels.fyi band"*),
+  while `mid` is independently sourced (Melbourne/Brisbane/Perth: talent.com AU + PayScale
+  city-specific, averaged; Eindhoven: Glassdoor + TechPays). So the comparability caveat is false
+  specifically when a reader is looking at the new_grad or senior band for these four, true for mid.
+- `abu_dhabi` above should read `abu-dhabi` (hyphenated) — the id it actually has in
+  `data/cities.json`; the description of its figures checks out.
+
+Net count is unchanged at 21, but four of the original members should not have been on the list and
+four real members were missing — a reader auditing this entry city-by-city against the live site
+would have found four false positives and, separately, missed four real ones. Whichever of (a)/(b)/(c)
+above is chosen should be scoped against this corrected set: 9 US metros (new_york, boston, chicago,
+atlanta, raleigh, san_antonio, miami, washington_dc, sf_bay_area) + 6 German cities + amsterdam +
+dubai + abu-dhabi (full-overlap shape) + melbourne, brisbane, perth, eindhoven (partial-overlap
+shape, new_grad/senior only).
+
 ## 61. Two figures found by defect D's own rule, lower severity, not fixed — split out from #59 on its own closure
 
 Package 27, Tier 4 fixed the two computed-figures-in-a-bare-citation cases NEEDS-DECISION #59 named
@@ -3140,6 +3175,20 @@ fixed, and kept as their own item now that #59 itself is closed:
   does not misattribute to a real company the way the two fixed figures did, but it is still a
   `<Figure>` holding a prose paragraph in `what` rather than a `<Derived>` with an ordered chain.
   Four metrics, one shared map, in `site/src/routes/Compare.tsx`.
+
+**Correction (adversarial review, package 27 tier 2b): a third instance, same file, same rule,
+missed by this sweep.** `Compare.tsx`'s own `salarySource()` (line ~494) branches on `lens`: the
+`'gross'` branch is a real citation, the `'net'` branch is the take-home-pay figure Tier 4 already
+converted to `<Derived>` (`isNetPay` at line 574 covers `salary_net` and `salary_gross`+`'net'`
+specifically). The third, `lens === 'after'`, branch does not — it falls through to
+`return { name: 'Computed — formula on screen', what: 'Net salary − 12 × (rent + living costs), all
+three from the sources on this page.' }`, the exact same formula as `COMPUTED_WHAT.savings` just
+above it, rendered through the same bare-`<Figure>` path (`isNetPay` is false for it, so it never
+reaches the `<Derived>` branch at line 576). Live and reachable: the salary row under the "after
+costs" lens in the comparison table. Same severity class as the `COMPUTED_WHAT` bullet above — an
+honestly-labeled computed card, not a misattribution — so it belongs with that bullet's fix, not
+with the two Tier-4-fixed figures: whichever of (a)/(b)/(c) below is chosen should cover this branch
+of `salarySource()` too, not just the four `COMPUTED_WHAT` entries.
 
 **Options**, cheapest first:
   - **(a) Leave as-is.** Both are honest about being calculated (a disclosed formula string; a

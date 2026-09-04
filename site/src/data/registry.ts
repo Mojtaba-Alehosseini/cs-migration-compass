@@ -106,7 +106,19 @@ export function citySalarySource(city: City): { name: string; url?: string; what
     case 'talentcom_nolink':
       return { name: 'talent.com', what }
     case 'levelsfyi_linked':
-      return { name: 'levels.fyi', url: city.salary_levels_fyi?.source, what }
+      // Package 27's own adversarial review: 4 of these 21 cities' own
+      // salary_levels_fyi.source is a bare, unresolved stub
+      // ("…/locations/", no city slug) — src_levels_fyi.py tried every
+      // route pattern it knows and recorded WHY in unavailable_reason
+      // rather than substitute a guess, but citySalarySource() was reading
+      // .source unconditionally, so the citation still offered a link that
+      // does not resolve to this city's own page. Only offer the link when
+      // a route genuinely resolved.
+      return {
+        name: 'levels.fyi',
+        url: city.salary_levels_fyi?.unavailable_reason ? undefined : city.salary_levels_fyi?.source,
+        what,
+      }
     case 'bls_linked':
       return { name: sourceName('https://bls.gov'), url: sourceUrlByHost(city.sources, ['bls.gov', 'api.bls.gov']), what }
     case 'indeed_linked':
@@ -149,6 +161,13 @@ const OFFICIAL_IMMIGRATION_HOST: Partial<Record<string, string>> = {
   DK: 'nyidanmark.dk',
   NO: 'udi.no',
   FI: 'migri.fi',
+  // Package 27's own adversarial review: Migrationsverket is Sweden's real,
+  // singular immigration authority (work permits, residence, citizenship —
+  // not narrowly the one citizenship-news article `sources[]` happens to
+  // carry). Missing here originally for no principled reason — Norway's own
+  // `udi.no` entry is equally narrow (a citizenship-testing page) and was
+  // included; Sweden should have been treated the same way.
+  SE: 'migrationsverket.se',
 }
 
 /** Shared by salary_net and net_pct — both read the same per-city flat tax

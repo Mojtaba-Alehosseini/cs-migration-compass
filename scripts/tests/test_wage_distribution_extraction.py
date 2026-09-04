@@ -91,10 +91,16 @@ class TestNativeBasisMatchesWhatEachExtractorsOwnDocstringClaims(unittest.TestCa
                 self.assertIsNone(bwd._native_basis(source_id))
 
     def test_single_basis_sources_match_wagepanels_own_documented_summary(self) -> None:
-        # WagePanel.tsx's own docstring names these groups explicitly: GB/AU/ES
-        # publish bonus-included (total_earnings); SE/US/IE publish
+        # WagePanel.tsx's own docstring names six of these seven explicitly:
+        # GB/AU/ES publish bonus-included (total_earnings); SE/US/IE publish
         # bonus-excluded (regular_pay). Pinned here so the two files cannot
-        # silently drift apart.
+        # silently drift apart. The Netherlands is NOT one of the six the
+        # docstring enumerates — salary_nl's "regular_pay" is grounded
+        # independently, straight from pay_composition.json's own raw entry
+        # (irregular_bonus: false, employer_social_contributions: false —
+        # the same shape WagePanel.tsx's docstring defines as regular_pay's
+        # canonical meaning, just not a country this file's prose happens to
+        # name), not by extension of the docstring's own group listing.
         expected = {
             "salary_uk": "total_earnings", "salary_au": "total_earnings", "salary_es": "total_earnings",
             "salary_se": "regular_pay", "bls_oews": "regular_pay", "salary_ie": "regular_pay",

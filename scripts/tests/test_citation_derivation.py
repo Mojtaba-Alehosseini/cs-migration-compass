@@ -68,12 +68,21 @@ class TestNoSubstringHostMatching(unittest.TestCase):
     `s.includes('gulftalent.com')`, because the substring is *contained*, not
     matched as a host. `sourceUrlByHost()` (format.ts) is the sanctioned
     replacement — exact hostname equality, never substring. This test does
-    not care WHAT the substring is; it looks for the SHAPE (`.find(` +
-    `.includes(` on what would be a URL list), because the exact string that
-    breaks next time will not be "talent.com" again."""
+    not care WHAT the substring is; it looks for the SHAPE (a `.find(` /
+    `.filter(` / `.findIndex(` lookup whose predicate tests its OWN
+    parameter with `.includes(`, e.g. `s.host.includes(...)`) — not merely
+    any call to `.includes` inside the predicate, which would also flag
+    `(c) => available.includes(c)`, a plain membership test against an
+    outer array and not a substring lookup at all. The exact string that
+    breaks next time will not be "talent.com" again — nor will the next
+    lookup necessarily spell its predicate as a bare, untyped arrow param."""
 
     def test_no_find_includes_pattern_in_a_sources_lookup(self) -> None:
-        pattern = re.compile(r"\.find\(\s*\(?\w*\)?\s*=>\s*\w*\.includes\(")
+        pattern = re.compile(
+            r"\.(?:find|filter|findIndex)\("
+            r"\s*\(?(?P<p>\w+)(?:\s*:[^)=]*)?\)?\s*=>"
+            r"\s*(?P=p)[\w.?]*\.includes\("
+        )
         offenders = []
         for f in _ts_files():
             for i, line in _code_lines(f):
@@ -90,20 +99,15 @@ class TestNoPositionalSourcePick(unittest.TestCase):
     """Defect C: `country.sources[0]` / `city.sources[0]` links whichever URL
     a country or city's own harvesters happened to append first — no
     ordering by relevance is recorded, so position 0 is arbitrary with
-    respect to any specific figure. DataMethods.tsx's own `e.urls[0]` is
-    deliberately NOT the same risk (see its own module comment) — `e` there
-    is one provenance.json entry already scoped to a single source_id, so
-    every URL in it is that one source's own; excluded by file name, not by
-    blanket exemption."""
-
-    ALLOWLISTED_FILES = {"DataMethods.tsx"}
+    respect to any specific figure. DataMethods.tsx's own `e.urls[0]` is a
+    different identifier (`urls`, not `sources`) and outside this pattern's
+    reach regardless; `e` there is one provenance.json entry already scoped
+    to a single source_id, so every URL in it is that one source's own."""
 
     def test_no_bare_positional_index_into_a_sources_array(self) -> None:
         pattern = re.compile(r"\bsources\??\.\[0\]|\bsources\[0\]")
         offenders = []
         for f in _ts_files():
-            if f.name in self.ALLOWLISTED_FILES:
-                continue
             for i, line in _code_lines(f):
                 if pattern.search(line):
                     offenders.append(f"{f.relative_to(ROOT)}:{i}: {line.strip()}")
@@ -123,10 +127,23 @@ class TestNoHardcodedMultiCompanyLiteral(unittest.TestCase):
     companies joined by "+"/"and", OUTSIDE the one function that is now
     allowed to know company names (citySalarySource(), which switches on
     per-city recorded data, not a constant), is exactly that shape
-    recurring."""
+    recurring — in either token order, in a template literal as much as a
+    quoted string, and regardless of which of the two names is the one
+    shaped like a domain."""
 
     def test_no_compound_company_literal_outside_the_sanctioned_source(self) -> None:
-        pattern = re.compile(r"""['"][^'"]*\b\w+\.\w{2,4}\s*\+\s*\w+['"]""")
+        # Lowercase-only TLD: a bare `\w{2,4}` also matches property-access
+        # arithmetic inside a template literal's `${...}` hole (`S.PT + 11`,
+        # `0.43 + i`) — real citation domains (talent.com, migrationsverket.se)
+        # are lowercase, those property names and decimals are not.
+        domain = r"\w+\.[a-z]{2,4}"
+        word = r"\w+"
+        # "+" tolerates no surrounding space; "and" requires real whitespace
+        # on both sides so it can't fire on a substring of an ordinary word
+        # (Netherlands, Thailand, brand, sandbox, ...).
+        sep = r"(?:\s*\+\s*|\s+and\s+)"
+        pair = rf"(?:{domain}{sep}{word}|{word}{sep}{domain})"
+        pattern = re.compile(rf"""(?P<q>['"`])[^'"`]*\b{pair}\b[^'"`]*(?P=q)""")
         offenders = []
         for f in _ts_files():
             if f.name in ALLOWLISTED_FOR_LITERALS:
