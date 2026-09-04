@@ -1019,6 +1019,27 @@ table.cmp {
 .vrow:nth-child(13) .ribbon-grow { animation-delay: 480ms; }
 @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
+/* Package 28, Tier 2 — measured, not guessed: at 390px the Visas theme was the
+   one page on the site that scrolled sideways (document 481px wide inside a
+   390px viewport). The row is a flex line that cannot shrink — a fixed 96px
+   name column, a ribbon whose width is years x 10px, and a `white-space:
+   nowrap` label — so three rows pushed past the edge:
+
+     Qatar   96 + 200px ribbon (20 years, twice the next longest) + label = 439px
+     US      "~4 → ~8 yrs · ⚑ lottery + Iran ban" held on one line       = 387px
+     UAE     "golden visa only — no citizenship path" held on one line   = 341px
+
+   The ribbon is the chart's own encoding (length = years), so it is left
+   exactly as it is at every width; only the things around it give way. The
+   name column narrows and the label is allowed to wrap onto its own line,
+   which is enough for the longest row (72 + 9 + 200 = 281px inside 293px).
+   Desktop is untouched. */
+@media (max-width: 560px) {
+  .vrow { flex-wrap: wrap; }
+  .vrow .nm { width: 72px; }
+  .vrow b { white-space: normal; }
+}
+
 .ruler { position: relative; }
 .ruler .dots { position: absolute; inset: 0; pointer-events: none; }
 .ruler .dots > span { position: absolute; transform: translate(-50%, -50%); }
