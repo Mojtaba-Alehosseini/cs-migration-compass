@@ -3264,6 +3264,12 @@ Neither rendering is wrong about the data — the chart's one-number-per-country
 Not resolved here — package 28's Tier 2 rule is that a presentation change nobody has ruled on is
 escalated, not implemented.
 
+*Package 29 note, still open.* Tier 1 established a fact that narrows this item: the UAE's city
+pages render **no journey at all** (`pr_years_typical` is null, so `Journey` returns early), so the
+$49,000 appears on the Explore ruler and nowhere else. There is no second surface contradicting it,
+and the question here is unchanged — whether one number per country can represent a country that has
+both a floor-free route and two gated ones.
+
 ## 63. Doha's salary citation lost a working PayScale link to stop it misattributing one band
 
 Package 27's adversarial review reclassified Doha's `salary_usd_year.primary_source` from
@@ -3308,7 +3314,7 @@ Indeed link. Doha is the same shape with different companies, and got the opposi
 Not resolved here — which of the two the site should standardise on is the owner's call, and
 whichever wins should be applied to both cities, not one.
 
-## 64. Two generic tools take 22–41% of every Explore theme's height, and no theme feeds either of them
+## 64. CLOSED, package 29 — Two generic tools take 22–41% of every Explore theme's height, and no theme feeds either of them
 
 Package 28, Tier 1 measured the claim `Explore.tsx:88-94` makes in its own comment — *"Both tools
 live on every theme"* — rather than defending or assuming it. Measured on the served production
@@ -3362,6 +3368,18 @@ packages of change landed around it.
 
 Not resolved here.
 
+**RULED by the owner, implemented in package 29's Tier 2.** The ruling: keep both tools on every
+theme at full height, and make each default to that theme's own question. Option (a), and
+explicitly not (b) — they are not to be moved, shortened or collapsed, and the 823px measurement is
+accepted rather than treated as a problem to solve.
+
+Done: every theme now opens the scatter builder on a pair drawn from its own metrics (climate on
+summer high against winter low, visa on residency against citizenship, and so on), and the weights
+tool starts from whichever of its four existing lenses matches the theme, while staying off by
+default. A question the visitor builds themselves overrides the default and survives every theme
+switch — verified, and the reason that needed care is that it already worked, so a naive default
+would have broken it. Both tools verified still present at full height on all seven.
+
 ## 65. CI's browser suites failed once on a 30-second Chrome start budget, and passed on re-run with no change
 
 Package 28, Tier 0 pushed seven package-27 commits. CI went red on the first run
@@ -3398,7 +3416,7 @@ run did not measure it — it only proved 30s was not enough once.
 Not resolved here — and deliberately not fixed on a hunch, because the failure is intermittent and
 neither option can be verified from a single green re-run.
 
-## 66. A second positional `skilled_routes[0]` survives on `/city/*`, invisible to the guard built for it
+## 66. CLOSED, package 29 — A second positional `skilled_routes[0]` survives on `/city/*`, invisible to the guard built for it
 
 Package 27's Tier 7 fixed `Visas.tsx`'s `skilled_routes[0]` — the read that made the Explore chart
 claim the UAE has no salary floor. Package 28's adversarial review found the same shape still in
@@ -3439,6 +3457,23 @@ noted the UAE line does not currently render.
 Not resolved here — package 28's Tier 2 rule covers what its own Explore measurement justified, and
 this is neither Explore nor measured by it.
 
+**FIXED in package 29, Tier 1.** The naming rule is derived from the `type` field the data already
+carries, ranked by how well each kind matches the sentence being rendered ("you land on a work
+visa"): employer_offer, then points, then talent, then job_seeker — the last being the permit you
+hold when you have no job, which that sentence must never name. Both route rules now sit as named
+functions in `site/src/data/visaRoutes.ts`.
+
+Nothing on screen changed: for all fourteen countries whose journey renders, route 0 was already the
+right arrival route. Two corrections to this item's own premises, though. It renders for **fourteen**
+countries, not thirteen — Qatar's `pr_years_typical` is 20, so Doha's journey renders in full, and
+only the UAE short-circuits. And because the UAE's journey never renders, the cross-page
+disagreement this item worried about cannot be seen by anyone.
+
+The guard was widened too, which was the more important half: it missed this because it matched the
+identifier `sources`, hardcoded, while being named for the whole class. Its watchlist is now derived
+from `types.ts`, so a new array field is covered the moment it is declared. Proved by restoring the
+`[0]` and watching it fail at `CityProfile.tsx:262`.
+
 ## 67. "What we take from it" shows one pipeline step out of up to six, for 52 of 57 sources
 
 Package 29's Tier 1 swept every first-element read in `site/src` for the #66 defect class. This one
@@ -3475,3 +3510,37 @@ That is a presentation decision on a page nobody asked this package to change, a
     dense.
 
 Not resolved here.
+
+## 68. CLOSED on arrival, package 29 — core.json costs 89.5 KB on every theme, including the two that read nothing else
+
+Package 28's Tier 1 measured that `core.json` is fetched on all seven Explore themes, and that visa
+and climate pull no other data at all — so on those two the entire data cost is a bundle largely
+about other themes. It was recorded as a measurement, not a defect. Package 29 was asked to rule on
+it, in either direction, and the answer is **leave it**.
+
+**What it costs.** 397.8 KB raw, **89.5 KB gzipped**, one fetch, not referenced from `index.html` —
+the app requests it (`store.ts`: *"core.json is the only blocking fetch"*).
+
+**Where it hurts: nowhere the site is measured, and nowhere it is not.** The existing gates are
+desktop Lighthouse, which package 28 passed 14/14 at >=90/>=95 with TBT 0 ms. That is exactly the
+condition under which a payload argument would be invisible, so this ruling looked where the gates
+do not — a throttled **mobile** run, simulated network and mobile CPU:
+
+    climate   performance 97   FCP 1.3 s   LCP 2.6 s   TBT 0 ms     SI 1.3 s
+    home      performance 96   FCP 1.3 s   LCP 2.1 s   TBT 180 ms   SI 1.4 s
+
+Climate is the theme that reads core.json and nothing else — the strongest case anyone could make
+for splitting — and it scores 97 on throttled mobile. There is no measurable cost to remove.
+
+**And splitting could not help while #64's ruling stands.** The owner has just ruled that both
+generic tools stay on every theme. The scatter builder offers **29 axis metrics spanning all seven
+themes** on every theme, and the weights tool scores **every city** against the metric registry. So
+the two panels that are required to be present on the climate page are precisely the ones that need
+countries, cities and metrics in full. Splitting `core.json` by theme would either break them or
+force a second fetch of the rest the moment a visitor scrolls — trading one 89.5 KB request for two,
+to serve a page that already scores 97 on a throttled phone.
+
+**The discipline, stated because it is the point.** A measurement is a reason to look, not an
+obligation to change. Packages 24 through 28 fixed things because they were wrong, not because they
+had been measured. This number is real, it is recorded, and it is not hurting anyone; re-opening it
+should require a concrete cost, not the number's continued existence.
