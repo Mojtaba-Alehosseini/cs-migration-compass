@@ -17,7 +17,7 @@ already decided the answer. This is the opposite of that.
 **We visualise; we never recommend.**
 
 - No "best country", no verdict, no score, no default ranking.
-- Any ordering you see exists because *you* built it — you chose the axes, the
+- Any ordering you see exists because *you* built it: you chose the axes, the
   weights, the filters.
 - Cities are listed alphabetically until you say otherwise.
 - **Every filter is off by default**, including visa feasibility. Someone with a
@@ -36,8 +36,8 @@ If a number here surprises you, it is meant to be checkable. Tap it.
 
 | File | What it holds |
 | --- | --- |
-| `data/countries.json` | 15 countries — visa routes and 2026 thresholds, study pathway, Iranian-passport friction, PR and citizenship timelines, dual citizenship, tax model, job market, quality-of-life indices, language reality, an honest narrative paragraph |
-| `data/cities.json` | 73 cities — developer salaries in three bands, levels.fyi total-comp band, rents, living costs, apartment prices, climate, travel from Tehran, tech-scene notes |
+| `data/countries.json` | 15 countries: visa routes and 2026 thresholds, study pathway, Iranian-passport friction, PR and citizenship timelines, dual citizenship, tax model, job market, quality-of-life indices, language reality, an honest narrative paragraph |
+| `data/cities.json` | 73 cities: developer salaries in three bands, levels.fyi total-comp band, rents, living costs, apartment prices, climate, travel from Tehran, tech-scene notes |
 | `data/metrics.json` | The data dictionary: definitions, directions, confidence tiers, pinned FX, staleness rules |
 | `data/processed/` | 24 processed datasets from the pipeline |
 | `data/raw/` | What was actually downloaded, committed so any transform can be re-audited offline |
@@ -51,7 +51,7 @@ World Happiness Report, MIPEX, RSF, EF EPI, WIPO GII, Numbeo, plus institutional
 forecasts from OECD Economic Outlook 119 and UN World Population Prospects.
 
 Two sources could not be reached and say so on the site rather than being quietly
-omitted — see [docs/LIMITATIONS.md](docs/LIMITATIONS.md) §6.
+omitted; see [docs/LIMITATIONS.md](docs/LIMITATIONS.md) §6.
 
 ---
 
@@ -100,7 +100,7 @@ Two gotchas are handled centrally and are worth knowing if you extend it:
 - UN DESA, the BLS website, EF and WIPO return **403 to default Python user
   agents**. `_common.py` always sends a browser-like `User-Agent`.
 - `housepriceindex.ca` serves an intermediate certificate `certifi` does not
-  carry. We route verification through the OS trust store via `truststore` —
+  carry. We route verification through the OS trust store via `truststore`, 
   certificate verification is never disabled.
 
 ---
@@ -112,10 +112,10 @@ Pages; `BASE_PATH` is set automatically for project pages.
 
 CI (`.github/workflows/ci.yml`) runs three jobs:
 
-- **validate-data** — runs against committed data, no network, so a third-party
+- **validate-data**: runs against committed data, no network, so a third-party
   outage can never turn the build red
-- **build-site** — typecheck and production build
-- **pipeline-smoke** — two cheap live sources, `continue-on-error` for the same
+- **build-site**: typecheck and production build
+- **pipeline-smoke**: two cheap live sources, `continue-on-error` for the same
   reason
 
 Link previews: because the app is hash-routed, a crawler fetching `/#/city/berlin`
@@ -135,25 +135,25 @@ site/       the web app (Vite + React + TypeScript + Tailwind + Recharts + Motio
 docs/       STATE-OF-THE-SITE · SOURCES · METHODOLOGY · LIMITATIONS · DESIGN
 ```
 
-- **[docs/STATE-OF-THE-SITE.md](docs/STATE-OF-THE-SITE.md)** — start here. What
+- **[docs/STATE-OF-THE-SITE.md](docs/STATE-OF-THE-SITE.md)**: start here. What
   the site covers, what has actually been checked and how, what is knowingly
   imperfect, and what is still undecided. Every number on it is reproducible
   from a command listed at the bottom of the page.
-- **[docs/SOURCES.md](docs/SOURCES.md)** — every source, licence and citation.
+- **[docs/SOURCES.md](docs/SOURCES.md)**: every source, licence and citation.
   Generated from `provenance.json`; never hand-edited.
-- **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)** — every formula, and every
+- **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**: every formula, and every
   choice that could have gone another way.
-- **[docs/LIMITATIONS.md](docs/LIMITATIONS.md)** — where this is weak, in plain
+- **[docs/LIMITATIONS.md](docs/LIMITATIONS.md)**: where this is weak, in plain
   sight.
-- **[docs/DESIGN.md](docs/DESIGN.md)** — tokens, themes, motion spec.
+- **[docs/DESIGN.md](docs/DESIGN.md)**: tokens, themes, motion spec.
 
 ---
 
 ## Licence
 
-**Code** — MIT, see [LICENSE](LICENSE).
+**Code**, MIT, see [LICENSE](LICENSE).
 
-**Data** — belongs to the organisations it came from, each under its own terms.
+**Data**, belongs to the organisations it came from, each under its own terms.
 Some are open (World Bank, Eurostat, UN DESA); some permit derived aggregates
 only; for those this repository commits the fetch script and the aggregates but
 not the raw payload. Every source's licence and required citation is in
@@ -170,7 +170,7 @@ The most useful contributions are corrections. If a number is wrong:
 2. Open an issue with the source that contradicts it.
 
 Adding a source means adding one `scripts/src_<name>.py` that follows the same
-contract — download to `data/raw/`, write `data/processed/`, record provenance —
+contract: download to `data/raw/`, write `data/processed/`, record provenance, 
 and one line in `SOURCES` in `scripts/pipeline.py`. `make validate` will tell you
 if you missed anything: it fails the build on a missing licence, a missing
 transform list, a placeholder where a null belongs, or an inverted salary band.
