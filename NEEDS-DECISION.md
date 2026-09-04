@@ -3206,3 +3206,171 @@ of `salarySource()` too, not just the four `COMPUTED_WHAT` entries.
     was named rather than attempted under this package's own time budget.
 
 Not resolved here.
+
+## 62. The UAE now plots at $49,000 on "the price of the door", but one of its three routes has no salary floor at all
+
+Package 27's adversarial review found `Visas.tsx`'s `Thresholds` chart reading
+`skilled_routes[0]` positionally: the UAE's route 0 (Standard employment visa) carries
+`salary_threshold_usd: null`, so the chart listed the country under *"United Arab Emirates —
+points or sponsorship, no salary floor"* while routes 1 and 2 (Golden Visa $98,000, Green Visa
+$49,000) both carry published floors. Package 28, Tier 0 confirmed the fix live and confirmed it
+changes exactly one country's rendered figure: the UAE, now a dot at $49,000 labelled "Green Visa
+(skilled worker)". For every other country, `route[0]` already was the lowest-threshold route, so
+nothing else moved.
+
+**The fix removed a false claim and left a different incompleteness behind.** The UAE's route 0 is
+not a missing number — its own `threshold_note` reads *"No published skill salary threshold; MOHRE
+skill-level classification applies"*, and its summary says *"no points or degree-based salary floor
+for most roles"*. So the UAE genuinely has a floor-free way in. The chart is called "The price of
+the door" and shows one number per country; for the UAE, the honest answer is two facts at once —
+a floor-free employer-sponsored route, and two self-sponsored routes gated at $49k and $98k. The
+new rendering states the second and hides the first, where the old one did the reverse.
+
+The inconsistency this creates is visible on the same chart: **Qatar** stays in the no-floor chip
+list on exactly the shape the UAE just left it for — one employer-sponsored route, `null`
+threshold, `threshold_note: "No published salary threshold for skilled roles"`. Both countries
+have a floor-free employer route; the UAE now reads as $49,000 and Qatar as no floor, purely
+because the UAE *additionally* publishes two salary-gated routes. Offering more ways in makes the
+UAE look more expensive than the country offering fewer.
+
+Neither rendering is wrong about the data — the chart's one-number-per-country shape cannot hold
+"has both". Which of the two facts leads is a presentation call, so it is not being made here.
+
+**Options:**
+  - **(a) Keep the fix as shipped, and mark the dot.** The UAE keeps its $49,000 position (a real,
+    published floor, and the reason the fix was made), with its own annotation on the ruler — the
+    file already has a `NOTE` map keyed by country code for exactly this (`Visas.tsx:15`, currently
+    carrying `AE: 'golden visa only — no citizenship path'`). Cheapest, and the ruler stays a
+    ruler: every plotted country is one that really does gate on salary.
+  - **(b) Let a country appear as both.** Plot the UAE's floor *and* keep it in the no-floor list,
+    with the chip reworded for this case ("also has a route with no salary floor"). Most complete,
+    but it breaks the chart's current invariant that `has` and `nulls` partition the country set,
+    and the chip list stops being a list of floor-free countries.
+
+Not resolved here — package 28's Tier 2 rule is that a presentation change nobody has ruled on is
+escalated, not implemented.
+
+## 63. Doha's salary citation lost a working PayScale link to stop it misattributing one band
+
+Package 27's adversarial review reclassified Doha's `salary_usd_year.primary_source` from
+`payscale_linked` to `compiled`. Package 28, Tier 0 confirmed why, from Doha's own note: PayScale
+Qatar backs `new_grad` (QAR 95,585) and `mid` (QAR 110,000), but `senior` is **Glassdoor's**
+(Rheinmetall Barzan Advanced Technologies median, QAR 216,000), with levels.fyi named only as a
+range cross-check. `citySalarySource()` takes a city, not a band, so the single label "PayScale"
+covered the senior figure too — naming a company that did not produce that number, which is the
+defect NEEDS-DECISION #59 existed to remove. The reclassification is correct on those grounds and
+changed no published value.
+
+**What it cost:** Doha has a real `payscale.com` URL on file
+(`.../research/QA/Job=Software_Engineer/Salary`), and `compiled` renders "Compiled estimate" with
+no link at all, so the reader lost a click-through to a source that genuinely backs two of the
+three bands.
+
+**Why this is worth a ruling rather than a quiet fix:** the codebase already has the other answer
+for the identical shape. `indeed_seek_linked` exists because for Adelaide *"Indeed backs new_grad
+and senior, SEEK backs mid — both real, only one URL field to offer, and Indeed covers two of the
+three bands"* (`registry.ts`); that case keeps a compound label naming both companies **and** the
+Indeed link. Doha is the same shape with different companies, and got the opposite treatment.
+
+**Options:**
+  - **(a) Leave Doha as `compiled`.** No misattribution, no new enum value, and the note under the
+    card names all three providers and which band each backs. The reader loses the link.
+  - **(b) Give Doha the Adelaide treatment** — a `payscale_glassdoor_linked` branch labelled
+    "PayScale + Glassdoor", carrying the PayScale URL. Names both real sources, restores the link,
+    and matches how the codebase already resolves this exact split. Costs one `primary_source`
+    value, one branch in `citySalarySource()`, and one data edit; note that `registry.ts` is
+    already allowlisted in `test_citation_derivation.py`'s compound-company-literal check, so the
+    label is permitted there and nowhere else.
+
+Not resolved here — which of the two the site should standardise on is the owner's call, and
+whichever wins should be applied to both cities, not one.
+
+## 64. Two generic tools take 22–41% of every Explore theme's height, and no theme feeds either of them
+
+Package 28, Tier 1 measured the claim `Explore.tsx:88-94` makes in its own comment — *"Both tools
+live on every theme"* — rather than defending or assuming it. Measured on the served production
+build, seven themes, desktop 1440x900:
+
+| | `Ask your own question` (ScatterBuilder) | `Weigh things yourself` (WeightsTool) |
+| --- | --- | --- |
+| renders on | all 7 themes | all 7 themes |
+| height | 708 px, identical on all 7 | 115 px, identical on all 7 |
+| network cost on mount | one ~3 KB chunk (`ExploreCharts-*.js`) | none of its own |
+
+Together they occupy **823 px on every theme**, against page heights of 2,012–3,668 px:
+
+| theme | page height with tools | tools' share |
+| --- | --- | --- |
+| visa | 2,012 | **41%** |
+| people | 2,195 | 37% |
+| jobs | 2,365 | 35% |
+| life | 2,330 | 35% |
+| climate | 2,339 | 35% |
+| housing | 2,964 | 28% |
+| money | 3,668 | 22% |
+
+**Neither tool is theme-aware in any way.** `ScatterBuilder()` and `WeightsTool()` take no props
+(`ExploreCharts.tsx:69`, `WeightsTool.tsx`); both read `useData()` (core.json) and the metric
+registry, never the theme's own data. Measured consequence: on **all seven themes** the builder
+opens preset to the same two axes — *"Apartment price per m²"* against *"Years to own a 90 m²
+flat"* — with the same 29 metric options in each dropdown. A visitor who opens **Climate** and
+scrolls is offered a housing question, pre-selected, under a heading inviting them to ask their
+own.
+
+So the structural claim holds in the direction the work order suspected: they are two generic
+panels appended to seven specific pages. What the measurement does **not** support is calling them
+expensive — 823 px of layout and ~3 KB of JavaScript, both deferred behind `DeferUntilVisible`
+until scrolled to, is cheap. The cost is attention and coherence, not bytes.
+
+This is not being changed here. Dropping a panel and restructuring a page are both explicitly the
+owner's calls under package 28's own Tier 2 rule, and the owner has not seen this page since four
+packages of change landed around it.
+
+**Options:**
+  - **(a) Leave both on every theme, but let the theme feed the builder.** Keep the panels where
+    they are and default `ScatterBuilder`'s two axes to metrics belonging to the current theme
+    (`AXIS_METRICS.filter(m => m.theme === key)` is already computed at `ExploreCharts.tsx:288` for
+    the dropdown groups, so the data to do it is in hand). Smallest change; the tool stops opening
+    on a housing question under Climate. Does not reduce the 823 px.
+  - **(b) Give both tools their own home and link to it.** Move them off the seven themes to one
+    destination reached from the theme bar, so each theme ends at its own last chart. Recovers
+    22–41% of every theme's height and removes the repetition; costs a navigation step for the
+    visitor who wants them, and is a structural change to a page the owner has not yet reviewed.
+
+Not resolved here.
+
+## 65. CI's browser suites failed once on a 30-second Chrome start budget, and passed on re-run with no change
+
+Package 28, Tier 0 pushed seven package-27 commits. CI went red on the first run
+(`33831786400`, 6m1s) at `scripts/tests/test_ui_regressions.mjs:65`:
+
+```
+Error: headless Chrome did not expose a debugging port within 30s
+  binary: google-chrome-stable
+```
+
+No Chrome stderr was captured, which `cdp.mjs` prints when there is any — so the process spawned,
+did not exit, and simply had not opened its debugging port inside the budget. Re-running the same
+job on the identical commit passed (5m8s, no code change), which is what rules out the commit as
+the cause.
+
+**This budget has already been raised once for this exact symptom.** `cdp.mjs`'s own comment
+records it: *"30s, not 15. A cold Chrome start on a loaded CI runner is slow, and the old budget
+(100 x 150ms) sat close enough to the real start time that a busy runner failed the whole suite
+before a single check ran."* Today is the same failure one budget later, on a runner image new
+enough that the log also warns Node 20 actions are being forced onto Node 24.
+
+A red build that a bare re-run turns green is worse than a slow one: it trains whoever reads it to
+re-run rather than to look. But the right remedy depends on what the true start time is, and this
+run did not measure it — it only proved 30s was not enough once.
+
+**Options:**
+  - **(a) Raise the budget and record the reason.** One line in `cdp.mjs` (the poll is
+    `200 x 150ms`); cheapest, keeps the failure mode visible if Chrome is genuinely broken, but is
+    the second guess at a number nobody has measured.
+  - **(b) Retry the launch once before failing.** `launch()` throws today; wrapping the spawn in a
+    single retry with a fresh profile directory distinguishes "slow to start" from "cannot start"
+    and reports which. More code in the one file every browser suite depends on.
+
+Not resolved here — and deliberately not fixed on a hunch, because the failure is intermittent and
+neither option can be verified from a single green re-run.

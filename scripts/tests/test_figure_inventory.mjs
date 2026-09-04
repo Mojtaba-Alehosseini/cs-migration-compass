@@ -106,6 +106,25 @@ try {
 
   check(pages.every((p) => !p.error), `every route rendered without throwing (${pages.filter((p) => p.error).length} errored)`)
 
+  /* Package 28 — per-route coverage for Explore's seven themes. The six
+   * assertions below already run over every route, but they report one
+   * aggregate number, so "0 violations" cannot be told apart from "that
+   * theme rendered nothing to violate anything". This prints what each
+   * theme actually contributed to the sample. It asserts nothing new: it is
+   * the evidence that the assertions had something to bite on per theme. */
+  const explorePages = pages.filter((p) => p.id === 'explore' || p.id.startsWith('explore-'))
+  say('Explore, per theme — what each route contributed to the sample:')
+  say('  route              figures  marks  no-data  clipped')
+  for (const p of explorePages) {
+    say(`  ${p.id.padEnd(18)} ${String(p.figures?.length ?? 0).padEnd(8)} `
+      + `${String(p.marks?.length ?? 0).padEnd(6)} ${String(p.nodata?.length ?? 0).padEnd(8)} `
+      + `${p.clipped?.length ?? 0}`)
+  }
+  check(explorePages.length >= 8 && explorePages.every((p) => (p.figures?.length ?? 0) > 0),
+    `every Explore theme contributed at least one figure to the sample `
+    + `(${explorePages.length} routes, ${explorePages.reduce((a, p) => a + (p.figures?.length ?? 0), 0)} figures)`)
+  say('')
+
   /* C6 is a CONTRAST check, and contrast is a property of the palette — so
    * it has to be measured in every palette the site ships, not just the one
    * that happens to be the default. Measured in compass/light alone it
