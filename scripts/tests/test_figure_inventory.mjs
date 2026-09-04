@@ -18,6 +18,7 @@
 import { readFileSync } from 'node:fs'
 import { launch, openPage } from './cdp.mjs'
 import { capture, defaultTargets, REPO } from './inventory_figures.mjs'
+import { coverageReport, explain, loadFloors } from './coverage.mjs'
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4173/'
 
@@ -105,6 +106,48 @@ try {
     + `${pages.reduce((a, p) => a + (p.marks?.length ?? 0), 0)} marks\n`)
 
   check(pages.every((p) => !p.error), `every route rendered without throwing (${pages.filter((p) => p.error).length} errored)`)
+
+  /* ================================================================
+   * COVERAGE — did this run actually SEE the site it is asserting about?
+   *
+   * This runs before every violation check below, because all of those are
+   * shaped "find violations, expect zero" and that shape is satisfied by
+   * absence. Package 30 established that `/openings` was dropping out of
+   * this suite on roughly three runs in four — 96 of 764 marks, an entire
+   * route — while the run printed ALL ASSERTIONS PASS. Nothing here could
+   * have noticed, because a page that never rendered has nothing to violate.
+   *
+   * The floors come from `coverage_floors.json`, recorded by
+   * `record_coverage_floors.mjs` against a run that was independently
+   * verified complete. They guard absence, not growth.
+   * ================================================================ */
+  const floors = loadFloors()
+  const cov = coverageReport(pages, floors)
+  say(`\nCoverage against floors recorded ${floors.recorded.at} at ${floors.recorded.commit}:`)
+  say(`  corpus  figures ${cov.corpus.figures} (floor ${floors.corpus.figures})`
+    + `  marks ${cov.corpus.marks} (floor ${floors.corpus.marks})`
+    + `  no-data ${cov.corpus.nodata} (floor ${floors.corpus.nodata})`
+    + `  rows ${cov.corpus.rows} (floor ${floors.corpus.rows})`)
+  /* Routes that contributed nothing AND were expected to contribute
+   * something. `not-found` legitimately has no figures, marks, no-data or
+   * rows — it is a 404 page — so listing it here as vacuous would be exactly
+   * the kind of noise that trains people to skim past the line that matters.
+   * Its floor is textLen alone, which still fails if the 404 stops rendering. */
+  const vacuous = Object.entries(cov.contributions)
+    .filter(([id, c]) => c.figures === 0 && c.marks === 0 && c.nodata === 0 && c.rows === 0
+      && Object.entries(floors.routes[id] ?? {}).some(([k, v]) => k !== 'textLen' && v != null))
+    .map(([id]) => id)
+  if (vacuous.length) say(`  routes expected to contribute something and contributing NOTHING: ${vacuous.join(', ')}`)
+  if (cov.unexpected.length) say(`  routes with no recorded floor (new since the floors were taken): ${cov.unexpected.join(', ')}`)
+  for (const line of explain(cov)) say(line)
+
+  check(cov.missing.length === 0,
+    `coverage: every route the floors expect was captured (${cov.missing.length} missing)`)
+  check(cov.below.length === 0,
+    `coverage: every route met its own floor (${cov.below.length} below)`)
+  check(cov.corpusBelow.length === 0,
+    `coverage: the run as a whole met the corpus floors (${cov.corpusBelow.length} below)`)
+  say('')
 
   /* Package 28 — per-route coverage for Explore's seven themes. The six
    * assertions below already run over every route, but they report one

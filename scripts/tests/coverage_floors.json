@@ -1,0 +1,1543 @@
+{
+ "recorded": {
+  "at": "2026-09-04",
+  "commit": "41d2a2b",
+  "by": "scripts/tests/record_coverage_floors.mjs",
+  "method": "DOM element count unchanged for 1500ms, readyState complete, 25000ms cap",
+  "why": "measured independently of the suite readiness signal it is the yardstick for",
+  "observed": {
+   "targets": 108,
+   "figures": 646,
+   "marks": 764,
+   "nodata": 61,
+   "rows": 60
+  },
+  "fractions": {
+   "route": 0.8,
+   "text": 0.5,
+   "corpus": 0.95
+  }
+ },
+ "corpus": {
+  "figures": 613,
+  "marks": 725,
+  "nodata": 57,
+  "rows": 57
+ },
+ "observed_routes": {
+  "work": {
+   "figures": 41,
+   "marks": 46,
+   "nodata": 9,
+   "rows": 15,
+   "textLen": 11407
+  },
+  "work-y20": {
+   "figures": 41,
+   "marks": 46,
+   "nodata": 9,
+   "rows": 15,
+   "textLen": 11408
+  },
+  "work-country-DK": {
+   "figures": 41,
+   "marks": 46,
+   "nodata": 9,
+   "rows": 15,
+   "textLen": 11417
+  },
+  "openings": {
+   "figures": 0,
+   "marks": 96,
+   "nodata": 7,
+   "rows": 0,
+   "textLen": 14355
+  },
+  "compare": {
+   "figures": 0,
+   "marks": 73,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5872
+  },
+  "explore": {
+   "figures": 5,
+   "marks": 10,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 7820
+  },
+  "explore-money": {
+   "figures": 5,
+   "marks": 10,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 7820
+  },
+  "explore-housing": {
+   "figures": 2,
+   "marks": 9,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5732
+  },
+  "explore-jobs": {
+   "figures": 0,
+   "marks": 7,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 3987
+  },
+  "explore-life": {
+   "figures": 0,
+   "marks": 5,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 3693
+  },
+  "data": {
+   "figures": 0,
+   "marks": 6,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 32844
+  },
+  "postings-seed": {
+   "figures": 0,
+   "marks": 6,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 42870
+  },
+  "home": {
+   "figures": 0,
+   "marks": 73,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 1726
+  },
+  "not-found": {
+   "figures": 0,
+   "marks": 0,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 288
+  },
+  "explore-visa": {
+   "figures": 0,
+   "marks": 8,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4094
+  },
+  "explore-people": {
+   "figures": 0,
+   "marks": 5,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 3633
+  },
+  "explore-climate": {
+   "figures": 0,
+   "marks": 2,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4427
+  },
+  "compare-selected": {
+   "figures": 18,
+   "marks": 0,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 3697
+  },
+  "work-payvscost": {
+   "figures": 43,
+   "marks": 46,
+   "nodata": 8,
+   "rows": 15,
+   "textLen": 11728
+  },
+  "work-occ-2511": {
+   "figures": 0,
+   "marks": 6,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 8026
+  },
+  "country-AU": {
+   "figures": 2,
+   "marks": 10,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 5428
+  },
+  "country-US": {
+   "figures": 2,
+   "marks": 31,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 5900
+  },
+  "country-CA": {
+   "figures": 3,
+   "marks": 7,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 5969
+  },
+  "country-GB": {
+   "figures": 2,
+   "marks": 5,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5057
+  },
+  "country-IE": {
+   "figures": 2,
+   "marks": 4,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4781
+  },
+  "country-DE": {
+   "figures": 2,
+   "marks": 7,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5586
+  },
+  "country-NL": {
+   "figures": 2,
+   "marks": 5,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5536
+  },
+  "country-IT": {
+   "figures": 1,
+   "marks": 4,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 5635
+  },
+  "country-ES": {
+   "figures": 2,
+   "marks": 5,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5622
+  },
+  "country-SE": {
+   "figures": 2,
+   "marks": 5,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5311
+  },
+  "country-DK": {
+   "figures": 2,
+   "marks": 4,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5139
+  },
+  "country-NO": {
+   "figures": 2,
+   "marks": 4,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5112
+  },
+  "country-FI": {
+   "figures": 2,
+   "marks": 4,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4848
+  },
+  "country-AE": {
+   "figures": 2,
+   "marks": 5,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 6402
+  },
+  "country-QA": {
+   "figures": 2,
+   "marks": 2,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 5780
+  },
+  "city-sydney": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4841
+  },
+  "city-melbourne": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4871
+  },
+  "city-brisbane": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4813
+  },
+  "city-perth": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4827
+  },
+  "city-adelaide": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4870
+  },
+  "city-gold-coast": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4825
+  },
+  "city-hobart": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4827
+  },
+  "city-canberra": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4889
+  },
+  "city-dubai": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5168
+  },
+  "city-abu-dhabi": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5177
+  },
+  "city-doha": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5092
+  },
+  "city-new_york": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4987
+  },
+  "city-boston": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4990
+  },
+  "city-chicago": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4991
+  },
+  "city-atlanta": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4990
+  },
+  "city-raleigh": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4993
+  },
+  "city-dallas": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4614
+  },
+  "city-houston": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4621
+  },
+  "city-san_antonio": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4989
+  },
+  "city-miami": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4958
+  },
+  "city-tampa": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4925
+  },
+  "city-orlando": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4928
+  },
+  "city-nashville": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4619
+  },
+  "city-charlotte": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4562
+  },
+  "city-washington_dc": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4984
+  },
+  "city-philadelphia": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4618
+  },
+  "city-sf_bay_area": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5035
+  },
+  "city-seattle": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4961
+  },
+  "city-austin": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4679
+  },
+  "city-denver": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5056
+  },
+  "city-los_angeles": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4995
+  },
+  "city-san_diego": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4995
+  },
+  "city-sacramento": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5006
+  },
+  "city-portland": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4697
+  },
+  "city-phoenix": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5087
+  },
+  "city-salt_lake_city": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5061
+  },
+  "city-las_vegas": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4659
+  },
+  "city-pittsburgh": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4978
+  },
+  "city-minneapolis": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4624
+  },
+  "city-columbus": {
+   "figures": 5,
+   "marks": 3,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 4665
+  },
+  "city-detroit": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4972
+  },
+  "city-toronto": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4615
+  },
+  "city-vancouver": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4607
+  },
+  "city-montreal": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4617
+  },
+  "city-ottawa": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4623
+  },
+  "city-calgary": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4630
+  },
+  "city-halifax": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4636
+  },
+  "city-london": {
+   "figures": 6,
+   "marks": 2,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4364
+  },
+  "city-manchester": {
+   "figures": 6,
+   "marks": 2,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4360
+  },
+  "city-edinburgh": {
+   "figures": 6,
+   "marks": 2,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4350
+  },
+  "city-dublin": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4349
+  },
+  "city-cork": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4346
+  },
+  "city-stockholm": {
+   "figures": 5,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4023
+  },
+  "city-gothenburg": {
+   "figures": 5,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4029
+  },
+  "city-copenhagen": {
+   "figures": 5,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 3904
+  },
+  "city-aarhus": {
+   "figures": 3,
+   "marks": 1,
+   "nodata": 2,
+   "rows": 0,
+   "textLen": 3501
+  },
+  "city-oslo": {
+   "figures": 5,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 3882
+  },
+  "city-bergen": {
+   "figures": 5,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 3934
+  },
+  "city-helsinki": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4603
+  },
+  "city-tampere": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4556
+  },
+  "city-berlin": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5068
+  },
+  "city-munich": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5095
+  },
+  "city-hamburg": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5116
+  },
+  "city-frankfurt": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5096
+  },
+  "city-stuttgart": {
+   "figures": 6,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5121
+  },
+  "city-amsterdam": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4931
+  },
+  "city-eindhoven": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4970
+  },
+  "city-milan": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5210
+  },
+  "city-rome": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4885
+  },
+  "city-turin": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4943
+  },
+  "city-madrid": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5118
+  },
+  "city-barcelona": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5081
+  },
+  "city-valencia": {
+   "figures": 6,
+   "marks": 1,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5346
+  }
+ },
+ "routes": {
+  "work": {
+   "figures": 32,
+   "marks": 36,
+   "nodata": 7,
+   "rows": 12,
+   "textLen": 5703
+  },
+  "work-y20": {
+   "figures": 32,
+   "marks": 36,
+   "nodata": 7,
+   "rows": 12,
+   "textLen": 5704
+  },
+  "work-country-DK": {
+   "figures": 32,
+   "marks": 36,
+   "nodata": 7,
+   "rows": 12,
+   "textLen": 5708
+  },
+  "openings": {
+   "figures": null,
+   "marks": 76,
+   "nodata": 5,
+   "rows": null,
+   "textLen": 7177
+  },
+  "compare": {
+   "figures": null,
+   "marks": 58,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2936
+  },
+  "explore": {
+   "figures": 4,
+   "marks": 8,
+   "nodata": null,
+   "rows": null,
+   "textLen": 3910
+  },
+  "explore-money": {
+   "figures": 4,
+   "marks": 8,
+   "nodata": null,
+   "rows": null,
+   "textLen": 3910
+  },
+  "explore-housing": {
+   "figures": 1,
+   "marks": 7,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2866
+  },
+  "explore-jobs": {
+   "figures": null,
+   "marks": 5,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1993
+  },
+  "explore-life": {
+   "figures": null,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1846
+  },
+  "data": {
+   "figures": null,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 16422
+  },
+  "postings-seed": {
+   "figures": null,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 21435
+  },
+  "home": {
+   "figures": null,
+   "marks": 58,
+   "nodata": null,
+   "rows": null,
+   "textLen": 863
+  },
+  "not-found": {
+   "figures": null,
+   "marks": null,
+   "nodata": null,
+   "rows": null,
+   "textLen": 144
+  },
+  "explore-visa": {
+   "figures": null,
+   "marks": 6,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2047
+  },
+  "explore-people": {
+   "figures": null,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1816
+  },
+  "explore-climate": {
+   "figures": null,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2213
+  },
+  "compare-selected": {
+   "figures": 14,
+   "marks": null,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 1848
+  },
+  "work-payvscost": {
+   "figures": 34,
+   "marks": 36,
+   "nodata": 6,
+   "rows": 12,
+   "textLen": 5864
+  },
+  "work-occ-2511": {
+   "figures": null,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 4013
+  },
+  "country-AU": {
+   "figures": 1,
+   "marks": 8,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2714
+  },
+  "country-US": {
+   "figures": 1,
+   "marks": 24,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2950
+  },
+  "country-CA": {
+   "figures": 2,
+   "marks": 5,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2984
+  },
+  "country-GB": {
+   "figures": 1,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2528
+  },
+  "country-IE": {
+   "figures": 1,
+   "marks": 3,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2390
+  },
+  "country-DE": {
+   "figures": 1,
+   "marks": 5,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2793
+  },
+  "country-NL": {
+   "figures": 1,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2768
+  },
+  "country-IT": {
+   "figures": 1,
+   "marks": 3,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2817
+  },
+  "country-ES": {
+   "figures": 1,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2811
+  },
+  "country-SE": {
+   "figures": 1,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2655
+  },
+  "country-DK": {
+   "figures": 1,
+   "marks": 3,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2569
+  },
+  "country-NO": {
+   "figures": 1,
+   "marks": 3,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2556
+  },
+  "country-FI": {
+   "figures": 1,
+   "marks": 3,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2424
+  },
+  "country-AE": {
+   "figures": 1,
+   "marks": 4,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 3201
+  },
+  "country-QA": {
+   "figures": 1,
+   "marks": 1,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2890
+  },
+  "city-sydney": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2420
+  },
+  "city-melbourne": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2435
+  },
+  "city-brisbane": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2406
+  },
+  "city-perth": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2413
+  },
+  "city-adelaide": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2435
+  },
+  "city-gold-coast": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2412
+  },
+  "city-hobart": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2413
+  },
+  "city-canberra": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2444
+  },
+  "city-dubai": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2584
+  },
+  "city-abu-dhabi": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2588
+  },
+  "city-doha": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2546
+  },
+  "city-new_york": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2493
+  },
+  "city-boston": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2495
+  },
+  "city-chicago": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2495
+  },
+  "city-atlanta": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2495
+  },
+  "city-raleigh": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2496
+  },
+  "city-dallas": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2307
+  },
+  "city-houston": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2310
+  },
+  "city-san_antonio": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2494
+  },
+  "city-miami": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2479
+  },
+  "city-tampa": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2462
+  },
+  "city-orlando": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2464
+  },
+  "city-nashville": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2309
+  },
+  "city-charlotte": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2281
+  },
+  "city-washington_dc": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2492
+  },
+  "city-philadelphia": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2309
+  },
+  "city-sf_bay_area": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2517
+  },
+  "city-seattle": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2480
+  },
+  "city-austin": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2339
+  },
+  "city-denver": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2528
+  },
+  "city-los_angeles": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2497
+  },
+  "city-san_diego": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2497
+  },
+  "city-sacramento": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2503
+  },
+  "city-portland": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2348
+  },
+  "city-phoenix": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2543
+  },
+  "city-salt_lake_city": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2530
+  },
+  "city-las_vegas": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2329
+  },
+  "city-pittsburgh": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2489
+  },
+  "city-minneapolis": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2312
+  },
+  "city-columbus": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2332
+  },
+  "city-detroit": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2486
+  },
+  "city-toronto": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2307
+  },
+  "city-vancouver": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2303
+  },
+  "city-montreal": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2308
+  },
+  "city-ottawa": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2311
+  },
+  "city-calgary": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2315
+  },
+  "city-halifax": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2318
+  },
+  "city-london": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2182
+  },
+  "city-manchester": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2180
+  },
+  "city-edinburgh": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2175
+  },
+  "city-dublin": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2174
+  },
+  "city-cork": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2173
+  },
+  "city-stockholm": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2011
+  },
+  "city-gothenburg": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2014
+  },
+  "city-copenhagen": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1952
+  },
+  "city-aarhus": {
+   "figures": 2,
+   "marks": 1,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 1750
+  },
+  "city-oslo": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1941
+  },
+  "city-bergen": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1967
+  },
+  "city-helsinki": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2301
+  },
+  "city-tampere": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2278
+  },
+  "city-berlin": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2534
+  },
+  "city-munich": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2547
+  },
+  "city-hamburg": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2558
+  },
+  "city-frankfurt": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2548
+  },
+  "city-stuttgart": {
+   "figures": 4,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2560
+  },
+  "city-amsterdam": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2465
+  },
+  "city-eindhoven": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2485
+  },
+  "city-milan": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2605
+  },
+  "city-rome": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2442
+  },
+  "city-turin": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2471
+  },
+  "city-madrid": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2559
+  },
+  "city-barcelona": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2540
+  },
+  "city-valencia": {
+   "figures": 4,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2673
+  }
+ }
+}
