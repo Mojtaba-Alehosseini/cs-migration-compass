@@ -19,6 +19,20 @@ import { UNSTABLE_METRIC_KEYS, composite, stabilityOf, type WeightedInput } from
 import { downloadCsv } from '../lib/export'
 
 /* Deliberately varied so no single lens reads as the site's opinion. */
+/* A lens may only weight a metric this tool will render a slider for, which
+ * means `direction !== 'neutral'`. That rule is not decoration: composite()
+ * normalises by `higherIsBetter`, which is `direction === 'higher_better'`,
+ * so a NEUTRAL metric silently scores as though LOWER were better.
+ *
+ * Two lenses used to break it, and package 29 found them only because it
+ * made lenses the per-theme default (#64) and went looking at what actually
+ * got applied. "Settle permanently" weighted `foreign_born`, ranking places
+ * with FEWER people born abroad above places with more — a judgement nobody
+ * chose, in the lens for people who want to settle. "Warm and liveable"
+ * weighted `summer_high`, ranking COOLER summers higher, in a lens named for
+ * warmth. Neither rendered a slider, so neither could be seen or changed.
+ * `sunshine` and `happiness_rank` already carry those intentions honestly.
+ * TestLensesOnlyWeightWhatTheToolCanShow keeps it that way. */
 const EXAMPLE_LENSES: { name: string; note: string; weights: Record<string, number> }[] = [
   {
     name: 'Build savings fast',
@@ -28,12 +42,12 @@ const EXAMPLE_LENSES: { name: string; note: string; weights: Record<string, numb
   {
     name: 'Settle permanently',
     note: 'weights the legal road over the money',
-    weights: { pr_years: 3, citizenship_years: 3, foreign_born: 2, english_work: 1 },
+    weights: { pr_years: 3, citizenship_years: 3, english_work: 1 },
   },
   {
     name: 'Warm and liveable',
     note: 'sun and daily life ahead of pay',
-    weights: { sunshine: 3, happiness_rank: 2, summer_high: 1, healthcare: 2 },
+    weights: { sunshine: 3, happiness_rank: 2, healthcare: 2 },
   },
   {
     name: 'Land a first job',

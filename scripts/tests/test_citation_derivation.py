@@ -243,5 +243,51 @@ class TestNativeBasisDistinguishesRealCases(unittest.TestCase):
         self.assertEqual(by_source.get("salary_dk"), None)
 
 
+
+class TestLensesOnlyWeightWhatTheToolCanShow(unittest.TestCase):
+    r"""The weights tool renders a slider only for metrics whose `direction` is
+    not 'neutral' (`WeightsTool.tsx`: `m.direction !== 'neutral'`), because for
+    a neutral metric "better" is undefined. But `composite()` normalises by
+    `higherIsBetter`, which is `direction === 'higher_better'` — so a neutral
+    metric that reaches the weights anyway is scored as though LOWER were
+    better, with no slider to see it and no way to change it.
+
+    Two of the four example lenses did exactly that until package 29:
+    "Settle permanently" weighted `foreign_born`, ranking places with FEWER
+    people born abroad above places with more; "Warm and liveable" weighted
+    `summer_high`, ranking COOLER summers higher. Both were invisible, both
+    were backwards with respect to the lens's own name, and both only came to
+    light because package 29 made a lens the per-theme default and checked
+    what actually got applied.
+
+    A lens is an assertion about what matters. It may only assert it about a
+    metric the tool is willing to show."""
+
+    def test_no_lens_weights_a_neutral_metric(self) -> None:
+        wt = _read(SITE_SRC / "components" / "WeightsTool.tsx")
+        reg = _read(SITE_SRC / "data" / "registry.ts")
+
+        direction = {}
+        for m in re.finditer(r"key:\s*'([^']+)'[\s\S]{0,600}?direction:\s*'([a-z_]+)'", reg):
+            direction.setdefault(m.group(1), m.group(2))
+        self.assertIn("summer_high", direction,
+                      "parsed no directions out of registry.ts — the parser broke, which would "
+                      "make this check vacuous")
+
+        offenders = []
+        for lens in re.finditer(r"name: '([^']+)'[\s\S]{0,400}?weights: \{([^}]*)\}", wt):
+            for pair in lens.group(2).split(","):
+                key = pair.split(":")[0].strip()
+                if not key:
+                    continue
+                if direction.get(key) == "neutral":
+                    offenders.append(f"{lens.group(1)!r} weights {key!r} (direction: neutral)")
+        self.assertEqual(offenders, [],
+                          "a lens weights a metric the weights tool refuses to render a slider "
+                          "for, because its direction is 'neutral' and 'better' is undefined for "
+                          "it. composite() will still score it, as though LOWER were better, "
+                          "invisibly. Drop the key, or give the metric a real direction:\n"
+                          + "\n".join(offenders))
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
