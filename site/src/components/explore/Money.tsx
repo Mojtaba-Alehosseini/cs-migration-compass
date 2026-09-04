@@ -44,6 +44,10 @@ export function MoneyTheme() {
   const [lens, setLens] = useState<Lens>('level')
   const [picks, setPicks] = useState(['DE', 'CA', 'NL'])
 
+  // The dashed naive line is drawn only here (see the `level` branch below),
+  // so only this case may claim one on screen.
+  const showsNaive = lens === 'level' && picks.length <= 3
+
   const cfg = useMemo<ChartCfg | null>(() => {
     if (!data) return null
     const series: Series[] = []
@@ -147,11 +151,32 @@ export function MoneyTheme() {
         <ChartFoot csv={{ name: 'compass-gdp-per-person.csv', rows: csvRows }}>
           <span className="chip chip-ok">● Official · World Bank</span>
           <span className="chip chip-ok">● {data.eoChip}</span>
-          <span className="chip chip-quiet">
-            {lens === 'yoy'
-              ? 'OECD overlay hidden here — it projects real growth; this line is nominal US$, and mixing them would lie'
-              : 'dashed = naive extrapolation, not a forecast'}
-          </span>
+          {/* NEEDS-DECISION #4, decided package 11 and implemented here. The
+              overlay compounds the OECD's projected REAL growth onto the World
+              Bank's NOMINAL US$ level. The yearly-change lens hides the overlay
+              and said so in a chip; the level and indexed lenses DRAW it and
+              said nothing, disclosing the same mismatch on one lens and not the
+              two where it is actually on screen.
+
+              The second chip is now conditional, which fixes a smaller fault
+              found while reading this: the dashed naive line exists only on the
+              level lens with three or fewer countries, but "dashed = naive
+              extrapolation" was printed on the indexed lens too, describing a
+              line that is not there. */}
+          {lens === 'yoy' ? (
+            <span className="chip chip-quiet">
+              OECD overlay hidden here — it projects real growth; this line is nominal US$, and
+              mixing them would lie
+            </span>
+          ) : (
+            <span className="chip chip-quiet">
+              paler line = OECD projected real growth compounded onto a nominal US$ level — not the
+              same quantity as the solid line
+            </span>
+          )}
+          {showsNaive && (
+            <span className="chip chip-quiet">dashed = naive extrapolation, not a forecast</span>
+          )}
         </ChartFoot>
         <ChartTable
           caption={`Income per person, ${picks.join(', ')} — the numbers behind this chart`}
