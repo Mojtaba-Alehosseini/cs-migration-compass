@@ -132,9 +132,13 @@ automatically as part of `npm run build`.
 data/       curated + raw + processed + provenance
 scripts/    one script per source + orchestrator + validation + generators
 site/       the web app (Vite + React + TypeScript + Tailwind + Recharts + Motion)
-docs/       SOURCES · METHODOLOGY · LIMITATIONS · DESIGN
+docs/       STATE-OF-THE-SITE · SOURCES · METHODOLOGY · LIMITATIONS · DESIGN
 ```
 
+- **[docs/STATE-OF-THE-SITE.md](docs/STATE-OF-THE-SITE.md)** — start here. What
+  the site covers, what has actually been checked and how, what is knowingly
+  imperfect, and what is still undecided. Every number on it is reproducible
+  from a command listed at the bottom of the page.
 - **[docs/SOURCES.md](docs/SOURCES.md)** — every source, licence and citation.
   Generated from `provenance.json`; never hand-edited.
 - **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)** — every formula, and every
