@@ -61,7 +61,7 @@ disagrees, which is the signature of a stale draft leftover, not a considered
 choice — two sources agreeing against one is decidable without the owner. No
 change needed; shipped behaviour (eight metros) already matches the evidence.
 
-## 4. The OECD overlay applies *real* growth to a *nominal* line
+## 4. CLOSED, package 30 - The OECD overlay applies *real* growth to a *nominal* line
 
 The design compounds the OECD's projected **real** GDP growth onto the World
 Bank's **nominal** US$ level, draws it as a separate paler line, and hides it
@@ -82,6 +82,24 @@ carries real regression risk with no verification budget left to catch it —
 exactly the "leave it for a package" case tier 3's own instructions describe.
 Small, safe, and well-scoped for a future micro-task: add the existing
 yearly-change chip's text to the level/indexed lens branches too.
+
+**CLOSED, package 30 tier 2 - implemented as decided.** `Money.tsx` (the chart moved out of
+`ExploreCharts.tsx`, which no longer holds any of it) now carries the caveat on the level and
+indexed lenses, the two that actually DRAW the overlay: "paler line = OECD projected real growth
+compounded onto a nominal US$ level - not the same quantity as the solid line". The yearly-change
+lens keeps its original overlay-hidden chip. Package 11's stated blocker was unfamiliarity with the
+lens-rendering code; it was read in full first, and all three lenses were checked on the rendered
+page afterwards, not only the two that changed.
+
+Reading it turned up a second, smaller fault: the chip "dashed = naive extrapolation, not a
+forecast" rendered on every lens, but the dashed line is drawn only on the level lens and only with
+three or fewer countries selected, so on the indexed lens it described a line that was not there.
+The chip is now conditional on the same expression that draws the line.
+
+Evidence: `.status/screenshots/p30-gate3-lens-{level,index,yoy}.png`, driven through the Seg
+control the way a visitor drives it. The control fires on `pointerdown`, not `click`, so a scripted
+`.click()` changes nothing and would have produced three identical screenshots of the same lens
+presented as proof of three.
 
 ## 5. CLOSED, package 21 — `bls_oews`, `imf_weo`, `worldbank_gep`, Numbeo city rents
 
@@ -3492,7 +3510,7 @@ identifier `sources`, hardcoded, while being named for the whole class. Its watc
 from `types.ts`, so a new array field is covered the moment it is declared. Proved by restoring the
 `[0]` and watching it fail at `CityProfile.tsx:262`.
 
-## 67. "What we take from it" shows one pipeline step out of up to seven, for 51 of the 54 rows the table renders
+## 67. CLOSED, package 30 - "What we take from it" shows one pipeline step out of up to seven, for 51 of the 54 rows the table renders
 
 Package 29's Tier 1 swept every first-element read in `site/src` for the #66 defect class. This one
 is **not** that defect — `provenance.entries[].transforms` is an ordered sequence of pipeline steps,
@@ -3532,7 +3550,26 @@ That is a presentation decision on a page nobody asked this package to change, a
     the heading currently implies — at the cost of a much taller table on a page that is already
     dense.
 
-Not resolved here.
+**CLOSED, package 30 tier 3 - option (b), the disclosure, chosen with a measurement rather than a
+preference.** Both routes were measured against the live page:
+
+```
+baseline, one step shown, heading over-claiming     table  9,023px
+heading reworded only  (option a)                   table  9,023px  (+0)
++N more, collapsed     (option b, shipped)          table  9,084px  (+61px, +0.7%)
++N more, all 51 expanded at once                    table 15,593px  (+73%)
+```
+
+Option (b) costs 61 pixels across the whole table - 0.7% - because the summary sits inline on rows
+that already wrap to several lines; median row height is unchanged at 152px. The objection to (b)
+was that it makes a dense table denser, and at 0.7% on arrival it does not. The 73% figure is what
+a reader opts into one row at a time, not what the page costs on load. So the heading stays honest
+and the cell stops under-delivering: first step, a count of what follows, and the rest one click
+away.
+
+Evidence: `.status/screenshots/p30-gate4-transforms-{collapsed,expanded}.png` - 51 disclosures
+present on the rendered page, a sample summary reading "+4 more steps", and an expanded row listing
+the remainder as an ordered list. No published value changed.
 
 ## 68. CLOSED on arrival, package 29 — core.json costs 89.5 KB on every theme, including the two that read nothing else
 
