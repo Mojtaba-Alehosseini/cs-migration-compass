@@ -3787,3 +3787,76 @@ or more than a reader should be handed. Not a call to make inside a verification
 
 `/data`'s four are excluded from the question: a page whose subject is the dataset naming
 `countries.json` and `provenance.json` is documenting itself, not leaking.
+
+## 71. `/openings` costs 38 seconds on a slow phone, and only shipping fewer rows can change that
+
+Measured on a throttled phone through CDP — 390x844, CPU 4x, DevTools' own network profiles —
+separating the two costs that the "24 MiB" headline runs together:
+
+```
+Slow 4G (500 kbps)   fetch 42.0 s   parse 0.5 s   -> the fetch dominates by 79x
+Fast 4G (4 Mbps)     fetch  5.4 s   parse 0.6 s   -> the fetch dominates by 9.4x
+                     heap +23.7 MB
+```
+
+42 s is 2.5 MB x 8 / 500 kbps. The fetch time simply *is* the wire size, so parse time, heap and
+precomputed aggregates are all beside the point. Note what this rules out: the aggregates
+(`country_counts`, `pay_summary_by_country`, `provider_summary`, `seed_companies`,
+`title_class_summary`) are already precomputed and shipped inside the same file, and they cost
+almost nothing. Precomputing more of them would save nothing, because **rows are 99% of the wire**
+(2.44 MB of 2.47 MB).
+
+**Two things were fixed here, and neither is the answer.** `occupation` is null on all 48,758 rows
+(its classifier has never run) and `_series` is a harvester working field on 4,000 rows that the
+`Posting` type does not even declare. Nothing reads either. Dropping them: 24,200,722 -> 23,255,243
+raw (3.9%), 2,472,563 -> 2,462,613 gzipped (0.4%). Real dead weight, no display change — 0 rows
+differ beyond those two fields, every aggregate byte-identical — but 0.4% of 42 s is not a fix.
+
+**And one intuitive answer is refuted by measurement.** Restructuring the payload columnar, or
+columnar plus dictionary-encoding the repetitive columns, makes it *bigger*:
+
+```
+today                 2,462,613 gz    2.35 MiB    38.5 s on Slow 4G
+columnar              2,561,584 gz    2.44 MiB    40.0 s     104% of today
+columnar + dictionary 2,538,902 gz    2.42 MiB    39.7 s     103% of today
+```
+
+gzip already exploits the repetition that a columnar layout is meant to expose, so the restructure
+costs more than it saves. Worth recording so nobody spends a package rediscovering it.
+
+**What is left is shipping fewer rows, and that is a design decision.** Every remaining field is
+read: `title` (the level guess and the title query both parse it), `country`, `remote` and
+`compensation` (filters and the with-pay count), `url`, `company`/`company_slug`, `location_raw`,
+`posted_at` (all four rendered in the table), `id` (the React key), `sw` (the software flag that
+keeps the page agreeing with its own published medians). There is no fat left to trim.
+
+The page loads all 48,758 rows because it filters across the whole corpus client-side — country,
+level, remote, title query — and renders the first 100 of whatever matches. That is the feature.
+The precedent for slicing exists and is already used where it can be: `/work` loads
+`history/openings.json` (25 KB gzipped, aggregates only) instead of this file, and the seed page
+loads `postings_seed_summary`. `/openings` is the one route that genuinely needs rows.
+
+**Options:**
+  - **(a) Leave it.** The route is the browsable list and full-corpus client-side filtering is what
+    it is for. Cost: 38.5 s on Slow 4G, 5.4 s on Fast 4G, every visit. Nobody on a slow connection
+    sees this page.
+  - **(b) Two-stage: a filter index up front, full rows on demand.** Ship only what the filters and
+    the map read — country, remote, the software flag, a lowercased title, whether pay is present —
+    then fetch the full records for the 100 rows actually being displayed. **Measured: 407,131
+    gzipped, 17% of today's wire, 6.4 s instead of 38.5 s on Slow 4G.** Filtering stays exact
+    because the index carries every field the filters read. Cost: real client work — a second
+    request per page of results, a loading state the page does not have today, and "Show 400 more"
+    becomes four more fetches. Nothing displayed need change.
+  - **(c) Ship rows for the default view only, fetch the rest when a filter is touched.** Cheaper to
+    build than (b) but it changes behaviour: the unfiltered list is instant and the first filter
+    costs a fetch, which is the opposite of what a visitor expects from a filter box.
+
+(b) is the one the numbers support — a 6x improvement with no change to what is displayed — but it
+is a change to how the page loads, which is not a call to make inside a verification package.
+Package 26's rule.
+
+**A byte budget now guards the class either way.** `test_payload_budget.py` fails when a served
+payload grows past a recorded gzipped budget, because the desktop-preset Lighthouse gate cannot see
+this: `/openings` scores 100 while shipping 2.4 MiB, since on localhost the transfer is instant.
+Its second assertion also fails when a payload grows heavy enough to deserve a budget and does not
+have one — it caught `countries.json` and `bis_property_prices.json` on its first run.

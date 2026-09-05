@@ -373,6 +373,23 @@ def _slim_postings(doc: dict) -> dict:
         if (r.pop("title_class", None) or {}).get("class") == "SW":
             r["sw"] = True
         r.pop("duplicate_of", None)
+        # Package 37 -- two more fields nothing opens.
+        #
+        # `occupation` is the ISCO-08 slot for the Gemini classifier, which has
+        # never run: it is null on all 48,758 rows, and postings.ts's own type
+        # comment says so. Nothing in site/src reads it. It shipped
+        # `"occupation":null` 48,758 times.
+        #
+        # `_series` is on 4,000 rows, holds a bare code like "2210", is read by
+        # nothing, and is not declared on the Posting interface at all -- a
+        # harvester's working field that leaked into the published payload.
+        #
+        # Measured on the served file: 998 KB raw, 9.3 KB gzipped. That is 4%
+        # of what the browser parses and holds, and 0.4% of the wire. It is not
+        # the fix for this payload -- see below -- it is simply dead weight,
+        # removed on the same principle as the two fields above.
+        r.pop("occupation", None)
+        r.pop("_series", None)
     doc.setdefault("meta", {})["shipped_row_shape"] = (
         "`sw: true` marks a row the classifier calls software, and is present only where true. The "
         "full title_class block and duplicate_of are NOT shipped -- they cost 15 Lighthouse points "
@@ -380,7 +397,9 @@ def _slim_postings(doc: dict) -> dict:
         "data/processed/postings.json; the aggregates are shipped as data.title_class_summary, "
         "data.duplicate_summary and data.pay_summary_by_country. The flag exists so the page shows "
         "the SAME software set the published medians are computed from, rather than re-deriving it "
-        "from titles and disagreeing with itself.")
+        "from titles and disagreeing with itself. `occupation` (null on every row; its classifier "
+        "has never run) and `_series` (a harvester working field on 4,000 rows) are not shipped "
+        "either -- nothing reads them.")
     return doc
 
 
