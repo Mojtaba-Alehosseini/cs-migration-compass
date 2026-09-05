@@ -165,7 +165,7 @@ def run() -> None:
         f"({with_comp_total/len(all_postings)*100 if all_postings else 0:.1f}%), {converted_total} converted to USD "
         f"({converted_total/with_comp_total*100 if with_comp_total else 0:.1f}% of those with compensation)")
 
-    # Package 14 -- moved here from the client (site/src/routes/Postings.tsx's
+    # Package 14 -- moved here from the client (site/src/routes/Openings.tsx's
     # own advertisedByCountryCfg()), a real Lighthouse performance regression
     # this package's own postings recovery caused: history/postings.json grew
     # to a ~20MB JSON payload (46,040 real postings, up from 19,463), and the
@@ -354,7 +354,7 @@ def run() -> None:
         rows=len(seed_companies),
         coverage=f"{len(seed_companies)} companies across {len([v for v in provider_summary.values() if v.get('available')])} providers",
         notes="site/src/routes/PostingsSeed.tsx reads ONLY this file now, not postings.json's own full "
-              "~20MB payload — Postings.tsx (the filterable list/map) still reads postings.json itself, "
+              "~20MB payload — Openings.tsx (the filterable list/map) still reads postings.json itself, "
               "which it genuinely needs the full array for.",
     )
 

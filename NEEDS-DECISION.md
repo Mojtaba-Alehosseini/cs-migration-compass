@@ -3715,3 +3715,75 @@ a call to make inside a verification package. Package 26's rule, kept since.
 
 Not resolved here. C3 is unchanged; the gap is written into its own comment so the next reader finds
 the decision rather than the silence.
+
+### Update, package 35 — split on evidence, and one half is already fixed
+
+The 64 hits were not one population, and the dividing line turned out to be checkable rather than
+editorial. Every file token a reader can actually see was enumerated from the **rendered** corpus —
+page text plus every card title and body, across all 134 targets including the material states — and
+each was resolved against `git ls-files`. **23 distinct tokens.**
+
+**The repository is public.** Checked, not inferred: `gh repo view` reports `visibility=PUBLIC,
+isPrivate=false`, and an unauthenticated `api.github.com` request returns HTTP 200. So linking is a
+real option, and a tracked file genuinely is something a reader can go and look at.
+
+**Population 1 — named, and reachable nowhere. One item, now fixed.**
+
+```
+Postings.tsx    2x, /data page text
+```
+
+`data/provenance.json` carried a note reading "Postings.tsx (the filterable list/map) still reads
+postings.json itself". Package 17 renamed that route to `Openings.tsx`, so the sentence had pointed
+at a file that did not exist for eighteen packages. Fixed at both ends — the note is authored in
+`scripts/build_postings.py` and written into `data/provenance.json`, and both now say `Openings.tsx`.
+No figure changed; this is a filename in a sentence.
+
+`jobs.json` also came up and is NOT a dead reference: Teamtailor publishes a per-subdomain feed at
+`/jobs.json`, so that is the vendor's endpoint, correctly named. It is exempted by name, with that
+reason, in the new check.
+
+**The work order's own premise did not survive the check, which is why the check was worth running.**
+It listed `data/processed/pay_composition.json` as untracked and therefore dead. That path is indeed
+untracked, but nothing references it: the cards say `pay_composition.json`, a bare filename, and that
+file exists and is tracked at `data/pay_composition.json`. Population 1 was never
+`pay_composition.json`; it was a route rename nobody had noticed.
+
+**C3b now closes population 1 permanently.** Every file path shown to a reader must resolve to a
+tracked file. Demonstrated firing by reintroducing the real defect into the built payload:
+`st-data-details: "Postings.tsx" is named but tracked nowhere` — and note it was one of package 34's
+new material states that caught it.
+
+**Population 2 — named, and tracked. 21 tokens, still the owner's call.**
+
+```
+  37x NEEDS-DECISION.md      23x profile.ts             22x salary_es.json
+  10x pay_composition.json   10x build_postings.py       8x postings.json
+   6x data/processed/postings.json   5x hours_worked.json  4x normalise.py
+   2x each: salary_se.json, salary_no.json, validate_data.py, PostingsSeed.tsx,
+            site/src/routes/PostingsSeed.tsx, data/labels/title_ground_truth.json,
+            bls_oews.json, postings_common.py
+   2x each on /data, where naming the dataset IS the content:
+            countries.json, cities.json, metrics.json, provenance.json
+```
+
+Every one resolves. The question is what to do with them, and it is about this project's voice:
+
+  - **(a) Link them.** The repo is public, so each could be an anchor to
+    `github.com/Mojtaba-Alehosseini/cs-migration-compass/blob/main/<path>`, delivering the
+    traceability the wording already promises. Cost: ~17 sites to change, a link-building helper, and
+    a decision about whether links point at `main` or at a pinned commit — `main` drifts, a pin goes
+    stale.
+  - **(b) Strip them.** Say what the file contains instead of naming it: "this country's pay
+    composition is unverified" rather than "see pay_composition.json". Cost: ~17 copy edits, and the
+    reader loses the ability to find the artefact at all.
+  - **(c) Leave them.** Cost: nothing changes, and a technical reader who tries to look one up has to
+    know to search the repository. This is the status quo.
+
+**Named explicitly because it is the one worth a deliberate answer:** `NEEDS-DECISION.md` is tracked,
+and 37 references point a visitor at it. That is seventy items of internal deliberation, including
+every judgement call this project has escalated. It may be exactly the transparency this site is for,
+or more than a reader should be handed. Not a call to make inside a verification package.
+
+`/data`'s four are excluded from the question: a page whose subject is the dataset naming
+`countries.json` and `provenance.json` is documenting itself, not leaking.

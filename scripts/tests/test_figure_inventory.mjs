@@ -16,6 +16,7 @@
  * test_ui_regressions.mjs.
  */
 import { readFileSync } from 'node:fs'
+import { execSync } from 'node:child_process'
 import { launch, openPage } from './cdp.mjs'
 import { capture, defaultTargets, REPO } from './inventory_figures.mjs'
 import { coverageReport, explain, loadFloors } from './coverage.mjs'
@@ -358,6 +359,55 @@ try {
   }
   keyHits.slice(0, 8).forEach((h) => say(`    ${h.page}: ${JSON.stringify(h.hit)} — ${h.what}`))
   check(keyHits.length === 0, `C3: no pipeline filename, internal prefix, combo key, or id-as-citation is visible (${keyHits.length} found)`)
+
+  /* C3b — a file this site NAMES to a reader must be a file they can reach.
+   *
+   * Whether naming repository files in reader-facing copy is right at all is
+   * NEEDS-DECISION #70 and the owner's call, so this does not touch the ones
+   * that resolve. What is not a matter of taste is a reference that resolves
+   * to NOTHING: package 35 found a provenance note telling readers that
+   * "Postings.tsx (the filterable list/map) still reads postings.json" — a
+   * file renamed to Openings.tsx by package 17, so the sentence pointed at
+   * something that had not existed for eighteen packages.
+   *
+   * Checked against `git ls-files`, not the filesystem: the claim these
+   * sentences make is that a reader can go and look, and this repository is
+   * public, so "tracked" is exactly the property that makes that true. A bare
+   * filename resolves if any tracked path ends with it. */
+  say('\n=== C3b: every file this site names is a file a reader can reach ===')
+  const FILE_TOKEN = /\b[A-Za-z][A-Za-z0-9_.\/-]*\.(?:json|md|py|csv|ts|tsx|jsonc|yml|yaml)\b/g
+  /* Named endpoints that belong to somebody else. Teamtailor publishes a
+   * per-subdomain feed AT /jobs.json; that is the vendor's URL, not a claim
+   * about a file in this repository. Listed explicitly, with the reason, so
+   * the exemption is visible rather than a hole in the regex. */
+  const EXTERNAL_FILE_MENTIONS = new Set(['jobs.json'])
+  let tracked = null
+  try {
+    tracked = execSync('git ls-files', { cwd: REPO, maxBuffer: 64 * 1024 * 1024 }).toString().split('\n').filter(Boolean)
+  } catch (e) {
+    say(`    could not read git ls-files: ${e.message}`)
+  }
+  if (!tracked) {
+    check(false, 'C3b: the tracked-file list could not be read, so this check could not run')
+  } else {
+    const trackedSet = new Set(tracked)
+    const resolves = (tok) => trackedSet.has(tok) || tracked.some((p) => p.endsWith('/' + tok))
+    const deadRefs = []
+    for (const p of pages) {
+      const look = (text, where) => {
+        for (const tok of (text ?? '').match(FILE_TOKEN) ?? []) {
+          if (EXTERNAL_FILE_MENTIONS.has(tok) || resolves(tok)) continue
+          deadRefs.push({ page: p.id, tok, where })
+        }
+      }
+      look(p.text, 'page text')
+      for (const f of p.figures ?? []) { look(f.cardLabel, 'card title'); look(f.cardText, 'card body') }
+    }
+    const distinct = [...new Map(deadRefs.map((d) => [d.tok, d])).values()]
+    distinct.slice(0, 8).forEach((d) => say(`    ${d.page}: ${JSON.stringify(d.tok)} is named but tracked nowhere (${d.where})`))
+    check(deadRefs.length === 0,
+      `C3b: every file path shown to a reader resolves to a tracked file (${deadRefs.length} dead, ${distinct.length} distinct)`)
+  }
 
   /* ============================================================= class 4 */
   say('\n=== C4: every card names a real source or method ===')
