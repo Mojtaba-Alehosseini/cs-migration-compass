@@ -3661,3 +3661,57 @@ a ruling on how much maintenance a gate may cost.
 **Same family as #65**, where a CI browser suite failed once on a 30-second Chrome-start budget and
 passed unchanged on re-run. Both are the browser suites being timed against fixed budgets rather
 than against the thing they are waiting for, and they should probably be decided together.
+
+## 70. Reader-facing cards name pipeline data files and the decision log — 64 instances, and C3 has never covered the class
+
+Found by package 34, and only because `/work`'s currency state became reachable for the first time.
+Reading those cards turned up a method card that says:
+
+> Spain's own INE tenure cross exists (`broader_category_context` in `salary_es.json`) but measures a
+> BROADER occupational population ... See NEEDS-DECISION.md #20.
+
+Three internal references in one sentence a visitor reads: an internal field name, a pipeline data
+file, and a decision log the site does not publish.
+
+**C3 exists to stop exactly this and cannot see it.** `FORBIDDEN_KEYS` bans `src_*.py` — a pipeline
+SCRIPT filename — and `ID_AS_CITATION` only matches an id used as a citation (`salary_es published`).
+Neither pattern covers `salary_es.json`. One file extension apart, and the class has been uncovered
+for as long as it has existed.
+
+Broadening the check to `[a-z_]+\.json` and `NEEDS-DECISION` finds **64 instances** across the
+corpus. They are not all the same thing:
+
+```
+LEGITIMATE — the page's own job is to document the dataset
+  DataMethods.tsx:153-156   countries.json, cities.json, metrics.json, provenance.json
+
+QUESTIONABLE — a file the reader cannot open, named in a card or a caption
+  profile.ts:205            "broader_category_context in salary_es.json ... See NEEDS-DECISION.md #20."
+  Position.tsx:324          "neither regular_pay nor total_earnings — see pay_composition.json"
+  Position.tsx:553          link labelled "NEEDS-DECISION.md →"      (it navigates to /data)
+  WagePanel.tsx:469         link labelled "NEEDS-DECISION.md →"      (it navigates to /data)
+  PostingsSeed.tsx:31       "candidates this session could not fully verify (see NEEDS-DECISION.md)."
+  explore, explore-money    pay_composition.json, hours_worked.json in card bodies
+```
+
+**Why this is escalated rather than fixed.** Nothing here is false. This project shows its workings
+on purpose, and a technical reader may well be better served by the exact filename than by a vaguer
+phrase. The two links even go somewhere useful — `/data` — they are just labelled with a filename
+rather than with what the reader will find there. So the question is not "is this a bug" but "is
+naming an unpublished artefact in reader-facing copy the voice this project wants", and that is not
+a call to make inside a verification package. Package 26's rule, kept since.
+
+**Options:**
+  - **(a) Treat them as leaks.** Reword the six questionable sites to name what the reader gets
+    rather than the file it lives in — "the full account on Data and methods" instead of
+    "NEEDS-DECISION.md →", "this country's pay composition is unverified" without the filename. Then
+    broaden C3 to `[a-z_]+\.json` and `NEEDS-DECISION`, exempting `/data` where listing the files IS
+    the content. Cost: six strings of user-facing copy, and a check that then covers the class for
+    good.
+  - **(b) Treat them as deliberate traceability.** Keep the copy, and record in C3's own comment that
+    data filenames and decision-log references are OUT of scope by decision, not by oversight. Cost:
+    the class stays uncovered, so a genuinely careless leak of the same shape would still pass —
+    which is what happened here.
+
+Not resolved here. C3 is unchanged; the gap is written into its own comment so the next reader finds
+the decision rather than the silence.

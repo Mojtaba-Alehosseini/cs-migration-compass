@@ -40,6 +40,23 @@ const dataOf = (o) => o.data ?? o
  * a lookup fell through, or a pipeline filename reaching prose. */
 const FORBIDDEN_KEYS = [
   { re: /\bsrc_[a-z_]+\.py\b/g, what: 'a pipeline filename' },
+  /* NOT COVERED, deliberately, and recorded rather than silently absent:
+   * pipeline DATA filenames and internal decision-log references. This list
+   * bans src_*.py but not salary_es.json, so a method card reading
+   * "broader_category_context in salary_es.json (see NEEDS-DECISION.md #20)"
+   * has always passed. Package 34 found it when /work's currency state became
+   * reachable and its cards were read for the first time, then found 64 more
+   * of the same shape across Explore, Position, WagePanel and PostingsSeed.
+   *
+   * It is not obviously a defect. This project shows its workings on purpose,
+   * and /data legitimately names countries.json and provenance.json because
+   * documenting the dataset is that page's job. What is not obvious is whether
+   * a card elsewhere should tell a reader to "see pay_composition.json", a
+   * file the site does not publish. That is a decision about the project's
+   * voice, not a patch, so it is NEEDS-DECISION #70 with two options and the
+   * full inventory, and this check stays as it was until it is ruled on.
+   * Broadening it now would fail the build on copy nobody has decided is
+   * wrong. */
   // The token itself, with or without the dash that usually follows it.
   // The first version required a trailing dash, and WagePanel renders
   // a.reason.split(' -- ')[0], which keeps the token and throws the
@@ -395,11 +412,17 @@ try {
    * three that are. */
   const lowContrast = []
   let offscreen = 0
+  let unmeasurable = 0
   for (const p of [...pages, ...themed]) {
     for (const m of p.marks ?? []) {
       if (!m.w || !m.h) continue
       // Only marks actually on screen can have a measured backdrop.
       if (m.kind !== 'text-chip' && !m.onScreen) { offscreen += 1; continue }
+      /* A wrapper whose paint is a multi-colour child image and which carries
+       * no ring: there is no single colour that is the mark, so scoring one
+       * would be scoring something the page never draws. Counted and named,
+       * on the same principle as the below-the-fold marks. */
+      if (m.unmeasurable) { unmeasurable += 1; continue }
       const fg = parseColor(m.meaningColor)
       const bg = parseColor(m.kind === 'text-chip' ? m.ownBackground : m.behind)
       if (!fg || !bg || fg[3] === 0 || bg[3] === 0) continue
@@ -414,6 +437,7 @@ try {
   }
   const worst = [...new Map(lowContrast.map((x) => [x.cls + '|' + x.behind, x])).values()]
   say(`  ${offscreen} marks were below the fold and are not measurable by paint-stack; excluded, not assumed passing`)
+  say(`  ${unmeasurable} marks paint only through a child image and carry no ring; excluded, not assumed passing`)
   worst.slice(0, 8).forEach((x) => say(`    ${x.r}:1 (needs ${x.floor}) ${x.cls} [${x.via}] on ${x.behind}  @${x.page}`))
   check(lowContrast.length === 0,
     `C6: every mark clears its floor on the pair that carries its meaning `

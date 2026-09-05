@@ -220,17 +220,46 @@ export const EXTRACT = String.raw`
     const hasRing = parseFloat(cs.borderTopWidth) > 0 && opaque(cs.borderTopColor)
     const haloMatch = (cs.boxShadow || '').match(HALO_RE)
     const haloColor = haloMatch ? haloMatch[1] : null
+
+    /* A WRAPPER THAT PAINTS NOTHING ITSELF. SwarmField wraps a <Flag> SVG in a
+     * span: the span has a transparent background and a 0px border, so every
+     * branch below used to fall through to borderTopColor — a colour on
+     * a zero-width border, which is never painted. C6 scored rgb(25,24,19)
+     * against a backdrop, got 1.00:1, and reported an invisible thing as a
+     * contrast failure. Same shape as the .mdot-mark note above (paint living
+     * somewhere other than backgroundColor), on an element that is not itself
+     * an SVG so the svgFill branch never ran.
+     *
+     * Two cases, and they are genuinely different:
+     *   - selected: the 2.5px box-shadow ring IS the mark's separation from
+     *     the page, so that is the colour to measure, against what sits
+     *     behind the RING rather than against the ring itself.
+     *   - unselected: the mark's paint is a multi-colour flag. There is no
+     *     single colour to score, so it is recorded UNMEASURABLE rather than
+     *     compared against something it is not — the same discipline as the
+     *     below-the-fold marks: excluded, and counted, never assumed passing. */
+    const paintsNothingItself = !isChip && !isSvg && !fillOpaque && !hasRing
+    const childArt = paintsNothingItself ? el.querySelector('svg, img') : null
+    const ringIsMeaning = paintsNothingItself && !!haloColor
+
     return {
       cls: String(el.className || el.tagName),
       kind: isChip ? 'text-chip' : 'non-text',
       // the colour that carries this mark's meaning
       meaningColor: isChip ? cs.color
+        : ringIsMeaning ? haloColor
         : (isSvg && fillOpaque) ? svgFill
         : (hasRing ? cs.borderTopColor : (fillOpaque ? cs.backgroundColor : cs.borderTopColor)),
-      meaningFrom: isChip ? 'text' : (hasRing ? 'border' : (fillOpaque ? 'fill' : 'border')),
+      meaningFrom: isChip ? 'text'
+        : ringIsMeaning ? 'ring'
+        : (hasRing ? 'border' : (fillOpaque ? 'fill' : 'border')),
+      // A wrapper whose only paint is a child image, with no ring to measure.
+      unmeasurable: !!childArt && !ringIsMeaning,
       ownBackground: cs.backgroundColor,
-      behind: haloColor || behind,
-      behindCls: haloColor ? 'its own halo ring' : behindCls,
+      // When the ring is the meaning, the ring's own colour cannot also be
+      // its backdrop; compare it to what is painted behind the mark.
+      behind: ringIsMeaning ? behind : (haloColor || behind),
+      behindCls: ringIsMeaning ? behindCls : (haloColor ? 'its own halo ring' : behindCls),
       onScreen,
       w: Math.round(r.width), h: Math.round(r.height),
       left: el.style.left || null,
