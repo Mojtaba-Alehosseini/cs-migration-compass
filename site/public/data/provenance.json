@@ -584,7 +584,7 @@
       "status": "ok",
       "rows": 1738,
       "coverage": "1738 companies across 6 providers",
-      "notes": "site/src/routes/PostingsSeed.tsx reads ONLY this file now, not postings.json's own full ~20MB payload — Postings.tsx (the filterable list/map) still reads postings.json itself, which it genuinely needs the full array for."
+      "notes": "site/src/routes/PostingsSeed.tsx reads ONLY this file now, not postings.json's own full ~20MB payload — Openings.tsx (the filterable list/map) still reads postings.json itself, which it genuinely needs the full array for."
     },
     {
       "source_id": "postings_teamtailor",
