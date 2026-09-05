@@ -1,16 +1,16 @@
 {
  "recorded": {
-  "at": "2026-09-04",
-  "commit": "41d2a2b",
+  "at": "2026-09-05",
+  "commit": "4cbe73f",
   "by": "scripts/tests/record_coverage_floors.mjs",
   "method": "DOM element count unchanged for 1500ms, readyState complete, 25000ms cap",
   "why": "measured independently of the suite readiness signal it is the yardstick for",
   "observed": {
-   "targets": 108,
-   "figures": 646,
-   "marks": 764,
-   "nodata": 61,
-   "rows": 60
+   "targets": 134,
+   "figures": 1048,
+   "marks": 1616,
+   "nodata": 942,
+   "rows": 75
   },
   "fractions": {
    "route": 0.8,
@@ -19,10 +19,10 @@
   }
  },
  "corpus": {
-  "figures": 613,
-  "marks": 725,
-  "nodata": 57,
-  "rows": 57
+  "figures": 995,
+  "marks": 1535,
+  "nodata": 894,
+  "rows": 71
  },
  "observed_routes": {
   "work": {
@@ -780,6 +780,188 @@
    "nodata": 0,
    "rows": 0,
    "textLen": 5346
+  },
+  "st-home-question": {
+   "figures": 0,
+   "marks": 73,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 2124
+  },
+  "st-home-search": {
+   "figures": 0,
+   "marks": 73,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 2130
+  },
+  "st-home-place": {
+   "figures": 0,
+   "marks": 73,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 2137
+  },
+  "st-openings-country": {
+   "figures": 0,
+   "marks": 15,
+   "nodata": 47,
+   "rows": 0,
+   "textLen": 10477
+  },
+  "st-openings-level": {
+   "figures": 0,
+   "marks": 14,
+   "nodata": 81,
+   "rows": 0,
+   "textLen": 12642
+  },
+  "st-openings-remote": {
+   "figures": 0,
+   "marks": 99,
+   "nodata": 4,
+   "rows": 0,
+   "textLen": 14531
+  },
+  "st-openings-query": {
+   "figures": 0,
+   "marks": 13,
+   "nodata": 85,
+   "rows": 0,
+   "textLen": 13004
+  },
+  "st-openings-currency": {
+   "figures": 93,
+   "marks": 96,
+   "nodata": 7,
+   "rows": 0,
+   "textLen": 18224
+  },
+  "st-openings-map": {
+   "figures": 0,
+   "marks": 2,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 2784
+  },
+  "st-openings-500": {
+   "figures": 0,
+   "marks": 133,
+   "nodata": 324,
+   "rows": 0,
+   "textLen": 52580
+  },
+  "st-openings-500-aud": {
+   "figures": 176,
+   "marks": 133,
+   "nodata": 324,
+   "rows": 0,
+   "textLen": 59877
+  },
+  "st-compare-hidemap": {
+   "figures": 0,
+   "marks": 0,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5148
+  },
+  "st-work-currency": {
+   "figures": 112,
+   "marks": 46,
+   "nodata": 8,
+   "rows": 15,
+   "textLen": 11823
+  },
+  "st-city-alljobs": {
+   "figures": 2,
+   "marks": 3,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4659
+  },
+  "st-country-origin": {
+   "figures": 2,
+   "marks": 7,
+   "nodata": 1,
+   "rows": 0,
+   "textLen": 5503
+  },
+  "st-data-details": {
+   "figures": 0,
+   "marks": 6,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 33146
+  },
+  "st-seed-provider": {
+   "figures": 0,
+   "marks": 6,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 27001
+  },
+  "st-money-lens": {
+   "figures": 5,
+   "marks": 9,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 7726
+  },
+  "st-money-picks": {
+   "figures": 5,
+   "marks": 9,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 7745
+  },
+  "st-money-scatter": {
+   "figures": 5,
+   "marks": 10,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 7802
+  },
+  "st-housing-base": {
+   "figures": 2,
+   "marks": 9,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5732
+  },
+  "st-jobs-onebyone": {
+   "figures": 0,
+   "marks": 7,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 3972
+  },
+  "st-jobs-window": {
+   "figures": 0,
+   "marks": 7,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4008
+  },
+  "st-people-weights": {
+   "figures": 0,
+   "marks": 5,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 5153
+  },
+  "st-climate-slider": {
+   "figures": 0,
+   "marks": 2,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4915
+  },
+  "st-climate-check": {
+   "figures": 0,
+   "marks": 2,
+   "nodata": 0,
+   "rows": 0,
+   "textLen": 4918
   }
  },
  "routes": {
@@ -1538,6 +1720,188 @@
    "nodata": null,
    "rows": null,
    "textLen": 2673
+  },
+  "st-home-question": {
+   "figures": null,
+   "marks": 58,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1062
+  },
+  "st-home-search": {
+   "figures": null,
+   "marks": 58,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1065
+  },
+  "st-home-place": {
+   "figures": null,
+   "marks": 58,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1068
+  },
+  "st-openings-country": {
+   "figures": null,
+   "marks": 12,
+   "nodata": 37,
+   "rows": null,
+   "textLen": 5238
+  },
+  "st-openings-level": {
+   "figures": null,
+   "marks": 11,
+   "nodata": 64,
+   "rows": null,
+   "textLen": 6321
+  },
+  "st-openings-remote": {
+   "figures": null,
+   "marks": 79,
+   "nodata": 3,
+   "rows": null,
+   "textLen": 7265
+  },
+  "st-openings-query": {
+   "figures": null,
+   "marks": 10,
+   "nodata": 68,
+   "rows": null,
+   "textLen": 6502
+  },
+  "st-openings-currency": {
+   "figures": 74,
+   "marks": 76,
+   "nodata": 5,
+   "rows": null,
+   "textLen": 9112
+  },
+  "st-openings-map": {
+   "figures": null,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1392
+  },
+  "st-openings-500": {
+   "figures": null,
+   "marks": 106,
+   "nodata": 259,
+   "rows": null,
+   "textLen": 26290
+  },
+  "st-openings-500-aud": {
+   "figures": 140,
+   "marks": 106,
+   "nodata": 259,
+   "rows": null,
+   "textLen": 29938
+  },
+  "st-compare-hidemap": {
+   "figures": null,
+   "marks": null,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2574
+  },
+  "st-work-currency": {
+   "figures": 89,
+   "marks": 36,
+   "nodata": 6,
+   "rows": 12,
+   "textLen": 5911
+  },
+  "st-city-alljobs": {
+   "figures": 1,
+   "marks": 2,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2329
+  },
+  "st-country-origin": {
+   "figures": 1,
+   "marks": 5,
+   "nodata": 1,
+   "rows": null,
+   "textLen": 2751
+  },
+  "st-data-details": {
+   "figures": null,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 16573
+  },
+  "st-seed-provider": {
+   "figures": null,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 13500
+  },
+  "st-money-lens": {
+   "figures": 4,
+   "marks": 7,
+   "nodata": null,
+   "rows": null,
+   "textLen": 3863
+  },
+  "st-money-picks": {
+   "figures": 4,
+   "marks": 7,
+   "nodata": null,
+   "rows": null,
+   "textLen": 3872
+  },
+  "st-money-scatter": {
+   "figures": 4,
+   "marks": 8,
+   "nodata": null,
+   "rows": null,
+   "textLen": 3901
+  },
+  "st-housing-base": {
+   "figures": 1,
+   "marks": 7,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2866
+  },
+  "st-jobs-onebyone": {
+   "figures": null,
+   "marks": 5,
+   "nodata": null,
+   "rows": null,
+   "textLen": 1986
+  },
+  "st-jobs-window": {
+   "figures": null,
+   "marks": 5,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2004
+  },
+  "st-people-weights": {
+   "figures": null,
+   "marks": 4,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2576
+  },
+  "st-climate-slider": {
+   "figures": null,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2457
+  },
+  "st-climate-check": {
+   "figures": null,
+   "marks": 1,
+   "nodata": null,
+   "rows": null,
+   "textLen": 2459
   }
  }
 }

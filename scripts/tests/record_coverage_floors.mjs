@@ -24,7 +24,7 @@
 import { writeFileSync } from 'node:fs'
 import { execSync } from 'node:child_process'
 import { launch, openPage } from './cdp.mjs'
-import { EXTRACT, REPO, defaultTargets } from './inventory_figures.mjs'
+import { EXTRACT, REPO, SETUP_HELPERS, defaultTargets } from './inventory_figures.mjs'
 import { contribution, FLOORS_PATH } from './coverage.mjs'
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4173/'
@@ -45,22 +45,44 @@ try {
   await page.viewport(1440, 4200)
   process.stderr.write(`recording floors from ${targets.length} targets\n`)
   let n = 0
-  for (const [id, url] of targets) {
+
+  /* Deliberately NOT the suite's own readiness signal: the floors are the
+   * yardstick, so they must not be measured with the instrument they check. */
+  const settle = () => page.eval(`(async () => {
+    const t0 = performance.now()
+    let last = -1, since = performance.now()
+    while (performance.now() - t0 < ${MAX_MS}) {
+      const c = document.querySelectorAll('*').length
+      if (c !== last) { last = c; since = performance.now() }
+      else if (performance.now() - since >= ${STABLE_MS} && document.readyState === 'complete') return true
+      await new Promise((r) => setTimeout(r, 100))
+    }
+    return false
+  })()`, { awaitPromise: true })
+  for (const [id, url, setup] of targets) {
+    // Remount before a state target, for the same reason capture() does: the
+    // router ignores a navigation to the hash it is already on, so a state
+    // would otherwise be recorded on top of the previous state's leftovers.
+    if (setup) {
+      await page.eval(`location.href = ${JSON.stringify(url.replace(/#.*$/, '#/no-such-route'))}`)
+      await settle()
+    }
     await page.eval(`location.href = ${JSON.stringify(url)}`)
-    const settled = await page.eval(`(async () => {
-      const t0 = performance.now()
-      let last = -1, since = performance.now()
-      while (performance.now() - t0 < ${MAX_MS}) {
-        const c = document.querySelectorAll('*').length
-        if (c !== last) { last = c; since = performance.now() }
-        else if (performance.now() - since >= ${STABLE_MS} && document.readyState === 'complete') return true
-        await new Promise((r) => setTimeout(r, 100))
+    const settled = await settle()
+    if (setup) {
+      await page.eval('window.scrollTo(0, document.body.scrollHeight)')
+      await settle()
+      await page.eval(SETUP_HELPERS)
+      const applied = await page.eval(setup)
+      if (typeof applied === 'string' && applied.startsWith('NO ')) {
+        process.stderr.write(`REFUSING to record: setup for "${id}" did not find its control: ${applied}\n`)
+        process.exit(1)
       }
-      return false
-    })()`, { awaitPromise: true })
-    if (!settled) unsettled.push(id)
+      await settle()
+    }
     const p = JSON.parse(await page.eval(EXTRACT, { awaitPromise: true }))
     seen[id] = contribution({ ...p, id })
+    if (!settled) unsettled.push(id)
     if (++n % 20 === 0) process.stderr.write(`  ... ${n}/${targets.length}\n`)
   }
 } finally {

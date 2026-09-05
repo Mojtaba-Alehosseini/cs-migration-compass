@@ -96,8 +96,8 @@ try {
   say(`Inventory: ${targets.length} route/entity combinations `
     + `(${countries.length} countries, ${cities.length} cities)`)
   const pages = []
-  for (const [id, url] of targets) {
-    try { pages.push(await capture(page, id, url)) }
+  for (const [id, url, setup] of targets) {
+    try { pages.push(await capture(page, id, url, { setup })) }
     catch (e) { pages.push({ id, url, error: String((e && e.message) || e), figures: [], nodata: [], clipped: [], marks: [], text: '' }) }
   }
   const figures = pages.flatMap((p) => (p.figures ?? []).map((f) => ({ page: p.id, ...f })))

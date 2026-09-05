@@ -276,12 +276,90 @@ export const EXTRACT = String.raw`
  * a DOM count cannot stand in for, and a timeout THROWS — the caller records
  * it as an errored route, and the coverage floors fail the run. Absence is now
  * loud twice over. */
-export async function capture(page, id, url, { timeoutMs = 25000 } = {}) {
+export async function capture(page, id, url, { timeoutMs = 25000, setup = null } = {}) {
+  if (setup) {
+    /* Bounce through a route that does not exist before navigating to the
+     * target. Setting `location.href` to the hash you are already on is a
+     * no-op for the router, so a state target that follows its own base route
+     * would inherit whatever the previous capture left behind — package 33's
+     * classifier chained /openings' no-data marks 7 -> 47 -> 83 -> 61 exactly
+     * that way, and every baseline in that run was the previous case's result.
+     * NotFound is the cheapest thing to unmount through. */
+    await page.hashGo(url.replace(/#.*$/, '#/no-such-route'))
+    await page.waitForReady({ quietMs: 300, timeoutMs, label: `${id} — remount` })
+  }
   await page.hashGo(url)
   await page.waitForReady({ quietMs: 300, timeoutMs, label: `${id} — ${url}` })
+  if (setup) {
+    /* Several controls sit in panels behind DeferUntilVisible — the weights
+     * tool, the scatter builder, the climate matcher. They do not exist in the
+     * DOM until they are scrolled near, so a setup for one of them would fail
+     * to find its control on a page that is otherwise perfectly rendered. */
+    await page.eval('window.scrollTo(0, document.body.scrollHeight)')
+    await page.waitForReady({ quietMs: 300, timeoutMs, label: `${id} — deferred panels` })
+    await page.eval(SETUP_HELPERS)
+    const applied = await page.eval(setup)
+    if (typeof applied === 'string' && applied.startsWith('NO ')) {
+      /* The control this state is defined by is not on the page. That is a
+       * failure, not a state to capture: it means either the control moved or
+       * the page did not finish rendering, and capturing anyway would file the
+       * DEFAULT state under the state's name and quietly restore exactly the
+       * blindness this whole line of work is closing. */
+      throw new Error(`setup for "${id}" did not find its control: ${applied}`)
+    }
+    await page.waitForReady({ quietMs: 300, timeoutMs, label: `${id} — after setup` })
+  }
   const raw = await page.eval(EXTRACT, { awaitPromise: true })
   return { id, url, ...JSON.parse(raw), consoleErrors: page.consoleErrors() }
 }
+
+/* Page-side helpers for state setups. Kept here rather than repeated in each
+ * setup expression so a selector fix lands in one place.
+ *
+ * Every one of these exists because package 33's classifier got it wrong once:
+ * `sel` matches the WRAPPING label (this site's labels wrap their select, so
+ * the label text is not in the select's own textContent); `input` falls back
+ * to `input:not([type])` (a type=text selector misses an input with no type
+ * attribute); `keys` exists because the base-year control is a draggable
+ * handle that answers arrow keys and can never be clicked. */
+export const SETUP_HELPERS = String.raw`
+window.__h = {
+  norm: (s) => (s ?? '').replace(/[\s ]+/g, ' ').trim(),
+  btn(re) {
+    const b = [...document.querySelectorAll('button')].find((x) => new RegExp(re, 'i').test(window.__h.norm(x.textContent)))
+    if (!b) return 'NO BUTTON matching ' + re
+    b.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); b.click(); return 'ok'
+  },
+  sel(labelRe, value) {
+    const re = new RegExp(labelRe, 'i')
+    const s = [...document.querySelectorAll('select')].find((x) => {
+      const lab = x.closest('label')
+      return re.test(window.__h.norm(x.getAttribute('aria-label') || ''))
+        || (lab && re.test(window.__h.norm((lab.childNodes[0] && lab.childNodes[0].textContent) || '')))
+    })
+    if (!s) return 'NO SELECT matching ' + labelRe
+    Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(s, value)
+    s.dispatchEvent(new Event('change', { bubbles: true })); return 'ok'
+  },
+  input(v, sel) {
+    const el = document.querySelector(sel || 'input[type="text"]') || document.querySelector('input:not([type])')
+    if (!el) return 'NO INPUT ' + (sel || 'text')
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(el, v)
+    el.dispatchEvent(new Event('input', { bubbles: true })); return 'ok'
+  },
+  click(sel) {
+    const el = document.querySelector(sel)
+    if (!el) return 'NO ELEMENT ' + sel
+    el.click(); return 'ok'
+  },
+  keys(sel, key, n) {
+    const el = document.querySelector(sel)
+    if (!el) return 'NO ELEMENT ' + sel
+    el.focus()
+    for (let i = 0; i < n; i++) el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }))
+    return 'ok'
+  },
+}; 'ready'`
 
 export function defaultTargets(base = BASE) {
   const core = JSON.parse(readFileSync(REPO + 'site/public/data/core.json', 'utf8'))
@@ -320,8 +398,76 @@ export function defaultTargets(base = BASE) {
       ['work-occ-2511', `${base}#/work?years=8&occupation=isco08:2511`],
       ...countries.map((cc) => [`country-${cc}`, `${base}#/country/${cc}`]),
       ...cities.map((id) => [`city-${id}`, `${base}#/city/${id}`]),
-    ],
+
+      /* MATERIAL STATE — the states a visitor can reach that the address
+       * cannot. Package 33 exercised every control on every route and found
+       * that ALL 28 of them change something these assertions read; nothing
+       * was presentational. Until this list existed, every "0 violations"
+       * result described the default state of every page.
+       *
+       * The two that matter most are currency conversions, which is exactly
+       * the class C4 exists for: /openings renders 0 figures by default and
+       * 93 once a currency is chosen, /work 41 and 109. None of those 161 had
+       * ever been examined.
+       *
+       * One capture per control from a clean baseline, plus the single
+       * combination already proven to matter (500 rows with a currency), not
+       * a combinatorial sweep. A full sweep of the 28 controls in pairs would
+       * be 378 captures and roughly six minutes of extra wall-clock for
+       * states nobody has evidence of caring about; this is 25 captures and
+       * about 40 seconds. */
+      ...STATE_TARGETS(base),
+    ].filter(([id]) => !SKIP.has(id)),
   }
+}
+
+/* Test-only: drop targets by id, so "what happens when a state stops being
+ * captured?" is a command anyone can run rather than a temporary edit someone
+ * has to remember to undo.
+ *
+ *     INVENTORY_SKIP=st-openings-currency node scripts/tests/test_figure_inventory.mjs
+ *
+ * The coverage floors are recorded per target id, so a skipped target has a
+ * floor and no capture — which is exactly the "route silently stopped
+ * contributing" case, and it fails. */
+const SKIP = new Set((process.env.INVENTORY_SKIP ?? '').split(',').map((s) => s.trim()).filter(Boolean))
+
+/** [id, url, setup] — the setup runs after readiness, before extraction. */
+function STATE_TARGETS(base) {
+  return [
+    ['st-home-question', `${base}#/`, `window.__h.btn('Where can you actually buy a home')`],
+    ['st-home-search', `${base}#/`, `window.__h.input('osl')`],
+    ['st-home-place', `${base}#/`, `window.__h.btn('^Stockholm$')`],
+
+    ['st-openings-country', `${base}#/openings`, `window.__h.sel('Country', 'DE')`],
+    ['st-openings-level', `${base}#/openings`, `window.__h.sel('Level', 'senior')`],
+    ['st-openings-remote', `${base}#/openings`, `window.__h.click('input[type="checkbox"]')`],
+    ['st-openings-query', `${base}#/openings`, `window.__h.input('engineer')`],
+    ['st-openings-currency', `${base}#/openings`, `window.__h.sel('Show pay in', 'AUD')`],
+    ['st-openings-map', `${base}#/openings`, `window.__h.btn('^Map$')`],
+    ['st-openings-500', `${base}#/openings`, `window.__h.btn('Show 400 more')`],
+    // The proven combination: 176 figures, 324 no-data marks.
+    ['st-openings-500-aud', `${base}#/openings`,
+      `(() => { const a = window.__h.sel('Show pay in', 'AUD'); if (a !== 'ok') return a; return window.__h.btn('Show 400 more') })()`],
+
+    ['st-compare-hidemap', `${base}#/compare`, `window.__h.btn('hide map')`],
+    ['st-work-currency', `${base}#/work?years=8`, `window.__h.sel('Show pay in', 'AUD')`],
+    ['st-city-alljobs', `${base}#/city/berlin`, `window.__h.btn('All jobs')`],
+    ['st-country-origin', `${base}#/country/DE`, `window.__h.input('iran')`],
+    ['st-data-details', `${base}#/data`, `(() => { const d = document.querySelector('details'); if (!d) return 'NO ELEMENT details'; d.open = true; return 'ok' })()`],
+    ['st-seed-provider', `${base}#/data/postings-seed`, `window.__h.sel('Filter companies by provider', 'ashby')`],
+
+    ['st-money-lens', `${base}#/explore/money`, `window.__h.btn('indexed to 1990')`],
+    ['st-money-picks', `${base}#/explore/money`, `window.__h.btn('^AE$')`],
+    ['st-money-scatter', `${base}#/explore/money`, `window.__h.sel('across', 'net_pct')`],
+    // A draggable handle, not a button: it answers arrow keys and a click does nothing.
+    ['st-housing-base', `${base}#/explore/housing`, `window.__h.keys('.baser', 'ArrowRight', 8)`],
+    ['st-jobs-onebyone', `${base}#/explore/jobs`, `window.__h.btn('one by one')`],
+    ['st-jobs-window', `${base}#/explore/jobs`, `window.__h.btn('2004')`],
+    ['st-people-weights', `${base}#/explore/people`, `window.__h.btn('Open the weights tool')`],
+    ['st-climate-slider', `${base}#/explore/climate`, `window.__h.input('-5', 'input[type="range"]')`],
+    ['st-climate-check', `${base}#/explore/climate`, `window.__h.click('input[type="checkbox"]')`],
+  ]
 }
 
 
