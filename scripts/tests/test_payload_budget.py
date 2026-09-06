@@ -33,7 +33,10 @@ SERVED = ROOT / "site" / "public" / "data"
 
 # gzipped bytes. Recorded 2026-09-05 with ~12% headroom over the measured size.
 BUDGETS = {
-    "history/postings.json": 2_800_000,   # measured 2,462,613 — the site's heaviest by far
+    # Package 38 (#71) replaced the 2,462,613-byte monolith with an index the
+    # page filters over and row chunks it fetches only for what it displays.
+    # This is the arrival cost now, and it is the number that must not creep.
+    "history/postings_index.json": 520_000,   # measured 451,898
     "core.json": 110_000,                 # measured  ~89,000 — the only blocking fetch
     "history/oecd_indicators.json": 260_000,
     "history/postings_seed_summary.json": 90_000,
@@ -59,6 +62,24 @@ class TestPayloadBudget(unittest.TestCase):
                          "a served payload grew past its budget. On Slow 4G every 64 KB gzipped is "
                          "about another second of staring at a spinner:\n  " + "\n  ".join(over))
 
+    def test_the_row_chunks_stay_small_individually_and_in_total(self) -> None:
+        """Each chunk is well under the smallest single-file budget, so the
+        per-file check would never look at them — but a visitor paging through a
+        scattered filter can pull many, and the whole set is what a crawler or a
+        prefetch would take. Budget both."""
+        chunks = sorted(SERVED.glob("history/postings_rows_*.json"))
+        self.assertTrue(chunks, "the postings row chunks are not being published")
+        sizes = [len(gzip.compress(p.read_bytes(), 9)) for p in chunks]
+        worst = max(sizes)
+        total = sum(sizes)
+        self.assertLessEqual(worst, 40_000,
+                             f"the largest row chunk is {worst:,} gzipped bytes; a chunk is meant to "
+                             f"be one cheap fetch (measured ~19,500)")
+        self.assertLessEqual(total, 2_400_000,
+                             f"all {len(chunks)} row chunks together are {total:,} gzipped bytes "
+                             f"(measured ~1,918,000). The point of the split is that nobody pays "
+                             f"for all of them; this guards the case where something starts to.")
+
     def test_the_budget_still_covers_the_heaviest_files(self) -> None:
         """A budget nobody updates stops describing the site. If a served file
         is heavier than the smallest thing being budgeted and is not itself
@@ -68,6 +89,9 @@ class TestPayloadBudget(unittest.TestCase):
         for p in SERVED.rglob("*.json"):
             rel = p.relative_to(SERVED).as_posix()
             if rel in BUDGETS:
+                continue
+            # The row chunks have their own budget, individually and in total.
+            if rel.startswith("history/postings_rows_"):
                 continue
             size = len(gzip.compress(p.read_bytes(), 9))
             if size > smallest_budgeted:

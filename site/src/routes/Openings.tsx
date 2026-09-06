@@ -23,13 +23,14 @@
  * filter matched a country the map holds no point for.
  */
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAsync } from '../components/explore/useAsync'
 import { ChartSkeleton } from '../components/explore/Controls'
 import { Flag } from '../components/Flag'
 import { useData } from '../data/store'
-import { loadPostings, fmtCompany, PROVIDER_LABEL, type Posting } from '../data/postings'
+import { loadPostingsIndex, loadPostingRowChunk, joinPosting, fmtCompany, PROVIDER_LABEL,
+  type Posting, type PostingRow } from '../data/postings'
 import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency }
   from '../components/PostingPay'
 import { LAND_PATH, LAND_VIEWBOX } from '../data/land'
@@ -73,7 +74,9 @@ const LEVEL_LABEL = { intern: 'Intern', junior: 'Junior', senior: 'Senior', 'sta
 const LEVELS = ['intern', 'junior', 'senior', 'staff+'] as const
 
 export function Openings() {
-  const { data, error } = useAsync(loadPostings, 'postings')
+  const { data: doc, error } = useAsync(loadPostingsIndex, 'postings_index')
+  const data = doc?.data
+  const rowsPerChunk = doc?.meta?.rows_per_chunk ?? 500
   const core = useData()
   const [country, setCountry] = useState('')
   const [level, setLevel] = useState('')
@@ -93,34 +96,48 @@ export function Openings() {
   const crossRates = data?.display_fx?.rates
   const fxMaxGap = data?.display_fx?.max_gap_years ?? 0
 
+  /* Package 38 (#71) — filtering runs over the INDEX, which carries every
+   * field a filter reads for all 48,758 postings, so it is exactly as exact as
+   * it was when the whole corpus was in memory. What changed is that the rows
+   * being displayed are fetched afterwards, a chunk at a time, instead of all
+   * of them arriving whether or not anything shows them. `filtered` is now the
+   * matching POSITIONS, because a position is what locates a row in its chunk. */
   const filtered = useMemo(() => {
-    if (!data) return [] as Posting[]
+    if (!data) return [] as number[]
     const q = query.trim().toLowerCase()
-    return data.postings.filter((p) => {
-      if (country && p.country !== country) return false
-      if (level && levelGuess(p.title) !== level) return false
-      if (remoteOnly && !p.remote) return false
-      if (q && !p.title?.toLowerCase().includes(q)) return false
-      return true
+    const out: number[] = []
+    data.index.forEach((r, i) => {
+      if (country && r.c !== country) return
+      if (level && levelGuess(r.t) !== level) return
+      if (remoteOnly && !r.r) return
+      if (q && !r.t?.toLowerCase().includes(q)) return
+      out.push(i)
     })
+    return out
   }, [data, country, level, remoteOnly, query])
 
   const withComp = useMemo(
-    () => (data?.postings ?? []).filter((p) => p.compensation).length, [data])
+    () => (data?.index ?? []).reduce((n, r) => n + (r.p ? 1 : 0), 0), [data])
 
   /** Which harvesters actually contributed to this payload, in payload order.
    *  Named rather than counted: "6 sources" tells a reader nothing about
    *  whether the ones they care about are in it. */
+  /*  Read from provider_summary, the aggregate the harvester already publishes,
+   *  rather than by scanning 48,758 rows for a field that is now only in the
+   *  chunks. Same answer from the same build: provider_summary is written by
+   *  build_postings.py from the rows themselves. */
   const providersAvailable = useMemo(() => {
-    const seen = new Set<string>()
-    for (const p of data?.postings ?? []) if (p.provider) seen.add(p.provider)
-    return [...seen].filter((k) => k in PROVIDER_LABEL).sort()
+    const s = data?.provider_summary ?? {}
+    return Object.keys(s).filter((k) => k in PROVIDER_LABEL && s[k]?.available).sort()
   }, [data])
 
   const mapDots = useMemo(() => {
     if (view !== 'map') return []
     const counts = new Map<string, number>()
-    for (const p of filtered) { if (p.country) counts.set(p.country, (counts.get(p.country) ?? 0) + 1) }
+    for (const i of filtered) {
+      const cc = data?.index[i]?.c
+      if (cc) counts.set(cc, (counts.get(cc) ?? 0) + 1)
+    }
     return [...counts.entries()]
       .filter(([cc]) => COUNTRY_LATLON[cc])
       .map(([cc, count]) => {
@@ -128,15 +145,15 @@ export function Openings() {
         const { x, y } = project(lat, lon)
         return { cc, count, x, y }
       })
-  }, [filtered, view])
+  }, [filtered, view, data])
   const maxDot = Math.max(1, ...mapDots.map((d) => d.count))
 
   /** What the map cannot draw, computed from the same table the dots come from
    *  so the caption can never drift from the drawing. */
   const mapOmitted = useMemo(() => {
     const counts = new Map<string, number>()
-    for (const p of data?.postings ?? []) {
-      if (p.country) counts.set(p.country, (counts.get(p.country) ?? 0) + 1)
+    for (const r of data?.index ?? []) {
+      if (r.c) counts.set(r.c, (counts.get(r.c) ?? 0) + 1)
     }
     const missing = [...counts.entries()].filter(([cc]) => !COUNTRY_LATLON[cc])
     const total = [...counts.values()].reduce((s, k) => s + k, 0)
@@ -152,6 +169,45 @@ export function Openings() {
   // In-scope and out-of-scope countries stay separated, exactly as the old
   // /postings separated them: the harvest reaches countries this site does not
   // cover, and a flat dropdown reads as coverage. NEEDS-DECISION #45.
+  /* The rows actually on screen, fetched a chunk at a time. `filtered` gives
+   * positions; a position divided by the chunk size is the file it lives in.
+   * Nothing is displayed from a chunk that has not arrived — the table simply
+   * has fewer rows for the moment, the way it always did before the fetch
+   * finished, rather than showing a row with holes in it. */
+  const visible = useMemo(() => filtered.slice(0, limit), [filtered, limit])
+  const [rowsByChunk, setRowsByChunk] = useState<Map<number, PostingRow[]>>(new Map())
+  const neededChunks = useMemo(
+    () => [...new Set(visible.map((i) => Math.floor(i / rowsPerChunk)))], [visible, rowsPerChunk])
+
+  useEffect(() => {
+    let live = true
+    const missing = neededChunks.filter((n) => !rowsByChunk.has(n))
+    if (!missing.length) return
+    Promise.all(missing.map(async (n) => [n, await loadPostingRowChunk(n)] as const))
+      .then((loaded) => {
+        if (!live) return
+        setRowsByChunk((prev) => {
+          const next = new Map(prev)
+          for (const [n, rows] of loaded) next.set(n, rows)
+          return next
+        })
+      })
+      .catch(() => { /* useAsync owns the error surface for this route */ })
+    return () => { live = false }
+  }, [neededChunks, rowsByChunk])
+
+  /** The visible rows, rejoined from their two halves. */
+  const shown = useMemo(() => {
+    if (!data) return [] as Posting[]
+    const out: Posting[] = []
+    for (const i of visible) {
+      const chunk = rowsByChunk.get(Math.floor(i / rowsPerChunk))
+      const row = chunk?.[i % rowsPerChunk]
+      if (row) out.push(joinPosting(data.index[i]!, row))
+    }
+    return out
+  }, [visible, rowsByChunk, data, rowsPerChunk])
+
   const [inScope, outOfScope] = useMemo(() => {
     if (!data) return [[], []] as [[string, number][], [string, number][]]
     const covered = new Set(core.citiesByCountry.keys())
@@ -213,7 +269,7 @@ export function Openings() {
         <>
           <div className="panel">
             <div className="sub">
-              {data.postings.length.toLocaleString()} advertisements
+              {data.index.length.toLocaleString()} advertisements
               {data.duplicate_summary
                 ? ` (${data.duplicate_summary.distinct_roles.toLocaleString()} distinct roles — ${data.duplicate_summary.re_listings.toLocaleString()} are re-listings)`
                 : ''}
@@ -223,8 +279,8 @@ export function Openings() {
                 * a defect everywhere else. Adversarial review D4, D5. */}
               , {Object.keys(data.seed_companies).length.toLocaleString()} companies,{' '}
               {providersAvailable.length} sources ({providersAvailable.map((k) => PROVIDER_LABEL[k]).join(', ')}).{' '}
-              {withComp.toLocaleString()} ({data.postings.length
-                ? Math.round((withComp / data.postings.length) * 100) : 0}%) state a real pay
+              {withComp.toLocaleString()} ({data.index.length
+                ? Math.round((withComp / data.index.length) * 100) : 0}%) state a real pay
               range.
               {outOfScope.length > 0 && (
                 <> The harvest also reaches <b>{outOfScope.length} countries this site does not
@@ -247,7 +303,7 @@ export function Openings() {
                 <select value={country} onChange={(e) => setCountry(e.target.value)}
                   style={{ display: 'block', marginTop: 4, padding: '6px 8px', border: '1px solid var(--line)',
                     background: 'var(--surface)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)' }}>
-                  <option value="">All ({data.postings.length.toLocaleString()})</option>
+                  <option value="">All ({data.index.length.toLocaleString()})</option>
                   <optgroup label="Countries this site covers">
                     {inScope.map(([cc, k]) => <option key={cc} value={cc}>{cc} ({k.toLocaleString()})</option>)}
                   </optgroup>
@@ -394,7 +450,7 @@ export function Openings() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.slice(0, limit).map((p) => (
+                  {shown.map((p) => (
                     <tr key={p.id}>
                       <td>
                         {p.country && <Flag cc={p.country} size={12} />}{' '}

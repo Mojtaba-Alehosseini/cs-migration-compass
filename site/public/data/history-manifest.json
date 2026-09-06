@@ -176,11 +176,14 @@
   "status": "ok",
   "empty": false
  },
- "postings": {
+ "postings_index": {
   "theme": "jobs",
-  "file": "history/postings.json",
-  "kb": 22710.2,
-  "kind": null,
+  "file": "history/postings_index.json",
+  "kb": 3583.3,
+  "kind": "derived_index",
+  "derived_from": "data/processed/postings.json",
+  "row_chunks": 98,
+  "rows_per_chunk": 500,
   "confidence": null,
   "institution": null,
   "attribution_chip": null,

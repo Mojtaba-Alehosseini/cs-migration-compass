@@ -9,7 +9,7 @@
  * states for the Python side.
  */
 
-import { loadHistory } from './store'
+import { loadDataFile, loadHistory } from './store'
 
 /** Package 17 — what the merged page loads INSTEAD of the full postings array.
  *
@@ -259,9 +259,81 @@ export async function loadPostingsSeedSummary(): Promise<PostingsSeedSummary> {
   return h.data
 }
 
-export async function loadPostings(): Promise<PostingsData> {
-  const h = await loadHistory<PostingsData>('postings')
-  return h.data
+/* ------------------------------------------------------------------ index */
+/* Package 38 (#71). The full array is no longer shipped. `/openings` filters
+ * across all 48,758 postings but renders at most 100, so the fields a filter
+ * reads travel up front and the rows themselves are fetched only for what is
+ * displayed.
+ *
+ * Measured on a throttled phone, package 37: the fetch dominates parse by 79x
+ * on Slow 4G, and the fetch time is the wire size. Rows were 99% of it.
+ *
+ *     old, everything on arrival     2,462,613 gz    38.5 s on Slow 4G
+ *     index + the first row chunk      471,473 gz     7.5 s
+ *
+ * Filtering stays EXACT because every field a filter touches is in the index —
+ * including the title, unlowercased, since the query matches it and the table
+ * displays it, and shipping a lowercased copy too would send the largest field
+ * twice. */
+
+/** One posting's filterable fields. Keys are short because there are 48,758. */
+export interface PostingIndexRow {
+  /** title */
+  t: string | null
+  /** country */
+  c: string | null
+  /** remote */
+  r: 0 | 1
+  /** software, per the classifier that the published medians also use */
+  s: 0 | 1
+  /** has published pay */
+  p: 0 | 1
+}
+
+/** The display-only half of a posting, fetched a chunk at a time. */
+export type PostingRow = Pick<Posting,
+  'id' | 'provider' | 'company' | 'company_slug' | 'location_raw' | 'compensation' | 'url' | 'posted_at'>
+
+export interface PostingsIndex extends Omit<PostingsData, 'postings'> {
+  index: PostingIndexRow[]
+}
+
+export interface PostingsIndexDoc {
+  data: PostingsIndex
+  meta: { row_chunks: number; rows_per_chunk: number; [k: string]: unknown }
+}
+
+export async function loadPostingsIndex(): Promise<PostingsIndexDoc> {
+  return loadHistory<PostingsIndex>('postings_index') as Promise<PostingsIndexDoc>
+}
+
+const chunkCache = new Map<number, Promise<PostingRow[]>>()
+
+/** One chunk of display rows, memoised — a filtered view revisits the same
+ *  chunks as the visitor pages through it. Fetched directly rather than through
+ *  loadHistory(), because a chunk is a bare array: wrapping 98 files in a
+ *  `{ data, meta }` envelope to satisfy a helper would be bytes spent on
+ *  nothing. */
+export function loadPostingRowChunk(n: number): Promise<PostingRow[]> {
+  const cached = chunkCache.get(n)
+  if (cached) return cached
+  const p = loadDataFile<PostingRow[]>(`history/postings_rows_${String(n).padStart(3, '0')}.json`)
+  chunkCache.set(n, p)
+  return p
+}
+
+/** Re-join an index entry and its display row into the shape the table renders.
+ *  The two halves are the same posting split across two files; nothing is
+ *  recomputed and nothing is guessed. */
+export function joinPosting(i: PostingIndexRow, row: PostingRow): Posting {
+  return {
+    ...row,
+    title: i.t,
+    country: i.c,
+    remote: i.r ? true : false,
+    occupation: null,
+    ...(i.s ? { sw: true as const } : {}),
+  }
 }
 
 /** Every provider this package's own harvesters can produce, whether or not

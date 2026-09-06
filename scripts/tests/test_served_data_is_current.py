@@ -57,6 +57,13 @@ VERBATIM = (
 #   history-manifest.json the index of the history files
 GENERATED = ("core.json", "history/openings.json", "history-manifest.json")
 
+# Package 38 (#71): the postings monolith was replaced by a filter index plus
+# row chunks. These are compared by RE-APPLYING the real split to the source,
+# below — not allowlisted, for the same reason the monolith never was: an
+# allowlist would pass a stale index just as happily as a fresh one.
+POSTINGS_INDEX = "history/postings_index.json"
+POSTINGS_ROWS_PREFIX = "history/postings_rows_"
+
 
 def canon(obj) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
@@ -69,7 +76,7 @@ def served_files() -> list[Path]:
 class TestServedDataIsCurrent(unittest.TestCase):
     def _source_for(self, served: Path) -> Path | None:
         rel = served.relative_to(SERVED).as_posix()
-        if rel in GENERATED:
+        if rel in GENERATED or rel == POSTINGS_INDEX or rel.startswith(POSTINGS_ROWS_PREFIX):
             return None
         name = served.name
         for cand in (PROCESSED / name, DATA / name):
@@ -77,9 +84,34 @@ class TestServedDataIsCurrent(unittest.TestCase):
                 return cand
         return None
 
-    def test_every_served_file_matches_its_source_after_the_publish_transform(self) -> None:
-        from build_site_data import _slim_postings  # noqa: PLC0415
+    def test_the_postings_index_and_chunks_match_the_source(self) -> None:
+        """The index and its row chunks are compared by re-running the real
+        publish transform on data/processed/postings.json. An allowlist saying
+        "these files are allowed to differ" would pass a stale index without
+        noticing, which is exactly what this file exists to prevent."""
+        from build_site_data import _slim_postings, _split_postings  # noqa: PLC0415
 
+        src = PROCESSED / "postings.json"
+        self.assertTrue(src.exists(), "data/processed/postings.json is missing")
+        index_doc, chunks = _split_postings(_slim_postings(json.loads(src.read_bytes())))
+
+        served_index = SERVED / POSTINGS_INDEX
+        self.assertTrue(served_index.exists(), f"{POSTINGS_INDEX} is not being published")
+        self.assertEqual(canon(json.loads(served_index.read_bytes())), canon(index_doc),
+                         f"{POSTINGS_INDEX} does not match what the publish step produces from "
+                         f"the source — the served index is stale")
+
+        served_chunks = sorted(SERVED.glob("history/postings_rows_*.json"))
+        self.assertEqual(len(served_chunks), len(chunks),
+                         f"{len(served_chunks)} row chunks served, {len(chunks)} produced from the "
+                         f"source — a chunk was added, dropped or left behind")
+        bad = []
+        for n, (path, expected) in enumerate(zip(served_chunks, chunks)):
+            if canon(json.loads(path.read_bytes())) != canon(expected):
+                bad.append(path.relative_to(SERVED).as_posix())
+        self.assertEqual(bad, [], "row chunks that do not match the source:\n  " + "\n  ".join(bad))
+
+    def test_every_served_file_matches_its_source_after_the_publish_transform(self) -> None:
         problems: list[str] = []
         for served in served_files():
             rel = served.relative_to(SERVED).as_posix()
@@ -94,8 +126,6 @@ class TestServedDataIsCurrent(unittest.TestCase):
             source_doc = json.loads(src.read_bytes())
             # Re-apply the real transform, so a genuinely stale postings.json
             # cannot hide behind "that file is allowed to differ".
-            if rel == "history/postings.json":
-                source_doc = _slim_postings(source_doc)
             if canon(source_doc) != canon(json.loads(served.read_bytes())):
                 problems.append(f"{rel}: does not match {src.relative_to(ROOT).as_posix()} "
                                 f"after the publish step's own transform")
@@ -125,6 +155,11 @@ class TestServedDataIsCurrent(unittest.TestCase):
         for served in served_files():
             rel = served.relative_to(SERVED).as_posix()
             if rel in GENERATED or self._source_for(served) is not None:
+                continue
+            # The index and its row chunks are accounted for by
+            # test_the_postings_index_and_chunks_match_the_source, which
+            # re-derives every one of them from the source.
+            if rel == POSTINGS_INDEX or rel.startswith(POSTINGS_ROWS_PREFIX):
                 continue
             orphans.append(rel)
         self.assertEqual(orphans, [],

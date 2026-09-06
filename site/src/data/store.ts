@@ -16,6 +16,11 @@ async function getJson<T>(path: string): Promise<T> {
   return (await res.json()) as T
 }
 
+/** One lazily-fetched JSON file under data/, for payloads that are not a
+ *  `{ data, meta }` history document — the postings row chunks are bare
+ *  arrays, and giving them a fake wrapper would cost bytes on 98 files. */
+export const loadDataFile = <T>(path: string) => getJson<T>(path)
+
 export const loadCore = () => getJson<Core>('core.json')
 export const loadProvenance = () => getJson<Provenance>('provenance.json')
 export const loadManifest = () => getJson<Record<string, HistoryManifestEntry>>('history-manifest.json')

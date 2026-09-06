@@ -776,6 +776,16 @@ try {
   })()`, { awaitPromise: true }))
   check(fx.ok, `R22: /openings accepts a title filter and a display currency${fx.reason ? ` (${fx.reason})` : ''}`)
 
+  /* Package 38 (#71): the rows a filter matches are fetched after the filter is
+   * applied — the index says WHICH postings match, and their display fields
+   * come from row chunks pulled on demand. So the table is briefly shorter than
+   * the match count, exactly as it was briefly empty before the payload
+   * arrived. Wait for the row this check is about, rather than reading the
+   * table in the frame the filter changed it. */
+  await page.waitFor(
+    `[...document.querySelectorAll('.tbl tbody tr')].some((r) => /Census Bureau/.test(r.textContent))`,
+    { label: 'the 2016 USAJOBS row to arrive from its chunk', timeoutMs: 30000 })
+
   const oldRow = JSON.parse(await page.eval(`(() => {
     const tr = [...document.querySelectorAll('.tbl tbody tr')].find((r) => /Census Bureau/.test(r.textContent))
     if (!tr) return JSON.stringify({ found: false })

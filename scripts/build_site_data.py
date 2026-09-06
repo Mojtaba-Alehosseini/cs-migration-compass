@@ -403,6 +403,74 @@ def _slim_postings(doc: dict) -> dict:
     return doc
 
 
+ROWS_PER_CHUNK = 500
+
+# What a filter reads, and therefore what has to be in the index for filtering
+# to stay EXACT over the whole corpus rather than over whatever happens to be
+# loaded. Short keys because this array has 48,758 entries.
+#   t  title       the free-text query matches it, and levelGuess() parses it
+#   c  country     the country filter and both map aggregates
+#   r  remote      the remote-only filter
+#   s  sw          the software flag, so the page agrees with its own medians
+#   p  paid        whether compensation exists, for the with-pay count
+# Everything else is display-only and travels in the row chunks.
+INDEX_FIELDS = ("t", "c", "r", "s", "p")
+DISPLAY_FIELDS = ("id", "provider", "company", "company_slug", "location_raw",
+                  "compensation", "url", "posted_at")
+
+
+def _split_postings(doc: dict) -> tuple[dict, list[list[dict]]]:
+    """Split the slimmed postings document into a filter index and row chunks.
+
+    `/openings` renders at most 100 rows and never more than 500, but it filters
+    across all 48,758 — so the whole corpus has to be filterable client-side
+    while the rows themselves do not have to be present until something is
+    displayed.
+
+    Measured on a throttled phone (package 37): the fetch dominates parse by 79x
+    on Slow 4G, and the fetch time IS the wire size, so the only thing that
+    helps is sending fewer bytes. Rows were 99% of them.
+
+        index (all 48,758, filterable fields)     419,870 gz   17% of the old file
+        one row chunk (500 rows, display fields)   25,122 gz
+        the old monolith                        2,462,613 gz
+
+    The default view needs the index and one chunk. Measured chunk fan-out for
+    the first 100 matches: no filter 1, remote-only 1, "engineer" 1, senior 1,
+    country=DE 5, and a rare term like "rust" 28 — the worst case, and still a
+    third of what every visitor used to pay on arrival.
+
+    The title stays in the INDEX rather than the chunks, and unlowercased: the
+    query filter needs every title, so shipping a lowercased copy for filtering
+    and the original for display would send the largest field twice."""
+    import copy
+    doc = copy.deepcopy(doc)
+    rows = doc.get("data", {}).get("postings") or []
+    index = [{
+        "t": r.get("title"),
+        "c": r.get("country"),
+        "r": 1 if r.get("remote") else 0,
+        "s": 1 if r.get("sw") else 0,
+        "p": 1 if r.get("compensation") else 0,
+    } for r in rows]
+    chunks = [
+        [{k: r.get(k) for k in DISPLAY_FIELDS} for r in rows[i:i + ROWS_PER_CHUNK]]
+        for i in range(0, len(rows), ROWS_PER_CHUNK)
+    ]
+    doc["data"].pop("postings", None)
+    doc["data"]["index"] = index
+    doc["meta"]["row_chunks"] = len(chunks)
+    doc["meta"]["rows_per_chunk"] = ROWS_PER_CHUNK
+    doc["meta"]["index_shape"] = (
+        "One entry per posting, in payload order, carrying only what a filter reads: t=title, "
+        "c=country, r=remote, s=software, p=has published pay. Filtering is exact over the whole "
+        "corpus because every field a filter touches is here. The rows themselves live in "
+        "history/postings_rows_NNN.json, " + str(ROWS_PER_CHUNK) + " to a file, and are fetched "
+        "only for rows actually displayed. The title is kept here rather than in the chunks, and "
+        "not lowercased, so the largest field ships once.")
+    return doc, chunks
+
+
 def main() -> int:
     SITE_DATA.mkdir(parents=True, exist_ok=True)
     HISTORY_DIR.mkdir(parents=True, exist_ok=True)
@@ -448,6 +516,39 @@ def main() -> int:
                 "status": doc.get("meta", {}).get("status", "ok"),
                 "empty": not small["data"]["by_country"],
             }
+            # The monolith is replaced by an index plus row chunks. Nothing
+            # else reads history/postings.json — /work loads openings.json and
+            # the seed page loads postings_seed_summary — so it is not written
+            # at all rather than shipped alongside as dead weight.
+            index_doc, chunks = _split_postings(doc)
+            for n, chunk in enumerate(chunks):
+                (HISTORY_DIR / f"postings_rows_{n:03d}.json").write_text(
+                    json.dumps(chunk, ensure_ascii=False, separators=(",", ":")) + "\n",
+                    encoding="utf-8")
+            idx_path = HISTORY_DIR / "postings_index.json"
+            idx_path.write_text(
+                json.dumps(index_doc, ensure_ascii=False, separators=(",", ":")) + "\n",
+                encoding="utf-8")
+            chunk_kb = sum((HISTORY_DIR / f"postings_rows_{n:03d}.json").stat().st_size
+                           for n in range(len(chunks))) / 1024
+            log(f"  postings_index.json{idx_path.stat().st_size/1024:8.1f} KB  "
+                f"({len(index_doc['data']['index'])} rows filterable) "
+                f"+ {len(chunks)} row chunks, {chunk_kb:.1f} KB total")
+            manifest["postings_index"] = {
+                "theme": theme,
+                "file": "history/postings_index.json",
+                "kb": round(idx_path.stat().st_size / 1024, 1),
+                "kind": "derived_index",
+                "derived_from": "data/processed/postings.json",
+                "row_chunks": len(chunks),
+                "rows_per_chunk": ROWS_PER_CHUNK,
+                "confidence": doc.get("meta", {}).get("confidence"),
+                "institution": doc.get("meta", {}).get("institution"),
+                "attribution_chip": doc.get("meta", {}).get("attribution_chip"),
+                "status": doc.get("meta", {}).get("status", "ok"),
+                "empty": not index_doc["data"]["index"],
+            }
+            continue
         dest = HISTORY_DIR / f"{source_id}.json"
         dest.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         kb = dest.stat().st_size / 1024
