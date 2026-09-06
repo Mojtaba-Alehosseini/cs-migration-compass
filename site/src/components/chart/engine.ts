@@ -375,12 +375,40 @@ export function makeChart(host: HTMLElement) {
   }
 
   /** Direct manipulation: same scales, same nodes, no teardown — so a captured
-   *  pointer keeps its element for the whole drag and the update is 1:1. */
+   *  pointer keeps its element for the whole drag and the update is 1:1.
+   *
+   *  "Same nodes" is a PRECONDITION, and this used to assume it rather than
+   *  check it. The loop below rewrites the `d` of the paths that already
+   *  exist; a series the config has gained has no path to rewrite, and one it
+   *  has lost keeps the last `d` it was given. NEEDS-DECISION #72 was exactly
+   *  that: the house-price picker marked a country selected, the address
+   *  recorded it, the insight line beneath the chart named it — and the chart
+   *  went on drawing the other three, with its own aria-label still naming
+   *  them, because aria-label is only ever written by build().
+   *
+   *  So when the precondition does not hold, fall back to the operation that
+   *  does: a full build. The drag is untouched, because moving the base year
+   *  changes every series' VALUES and none of their keys, which is the case
+   *  this fast path exists for and the case it still takes.
+   *
+   *  The comparison is against the DOM rather than against the last config,
+   *  because build() draws no path for a series with no points (`!pp?.length`
+   *  → continue), so "what is drawn" and "what was configured" are not the
+   *  same set, and only the first one can tell you whether a node is there to
+   *  rewrite. */
   function updateSeries(cB: ChartCfg) {
     const S = st.S
     if (!S) { build(cB, true); return }
+    const pts = toScreen(cB, S)
+    const drawn = new Set(
+      [...host.querySelectorAll<SVGPathElement>('path.ser')].map((p) => p.dataset.k!))
+    const wanted = cB.series.map((s) => s.key).filter((k) => pts[k]?.length)
+    if (wanted.length !== drawn.size || wanted.some((k) => !drawn.has(k))) {
+      build(cB, true)
+      return
+    }
     st.cfg = cB
-    st.pts = toScreen(cB, S)
+    st.pts = pts
     const els: Record<string, SVGTextElement> = {}
     host.querySelectorAll<SVGTextElement>('.el').forEach((e) => { els[e.dataset.k!] = e })
     host.querySelectorAll<SVGPathElement>('path.ser').forEach((p) => {
