@@ -430,7 +430,37 @@ try {
     for (const p of pages) {
       named += eligible(p.text).length
       for (const tok of eligible(p.unlinkedText)) bare.push({ page: p.id, tok })
+      /* Card bodies as well as page prose. The page snapshot is taken with
+       * every card SHUT — they are opened, read and closed one at a time — so
+       * scanning only the page missed the source popovers, which is where this
+       * site names most of its files. `fileLink.tsx` says as much in its own
+       * header. Checking only the page would have left this assertion passing
+       * for a reason unrelated to what it claims. */
+      for (const f of p.figures ?? []) {
+        named += eligible(f.cardText).length
+        for (const tok of eligible(f.cardBare)) bare.push({ page: p.id, tok, where: 'card body' })
+      }
     }
+
+    /* And a link has to go where it SAYS. Sitting inside some anchor is not the
+     * property; two cards once read "NEEDS-DECISION.md →" while navigating to
+     * /data, which is the mismatch #70 was raised about. */
+    const misdirected = []
+    for (const p of pages) {
+      const links = [...(p.pageLinks ?? []), ...(p.figures ?? []).flatMap((f) => f.cardLinks ?? [])]
+      for (const l of links) {
+        for (const tok of eligible(l.text)) {
+          const path = tracked.find((t) => t === tok || t.endsWith('/' + tok))
+          if (path && !l.href.endsWith('/' + path) && !l.href.endsWith(path)) {
+            misdirected.push({ page: p.id, tok, href: l.href })
+          }
+        }
+      }
+    }
+    misdirected.slice(0, 6).forEach((d) =>
+      say(`    ${d.page}: "${d.tok}" is linked to ${d.href.slice(-60)}`))
+    check(misdirected.length === 0,
+      `C3c: every file link points at the file it names (${misdirected.length} misdirected)`)
     /* The denominator is printed on purpose. "0 bare" means nothing if nothing
      * was ever named -- a check satisfied by absence is the exact shape the
      * coverage floors above exist to catch, and this one would have the same

@@ -221,7 +221,11 @@ export function SwarmField({
     })
 
     return { placed, missing, gutter }
-  }, [cities, countryOf, question, secondAxis, scatter, width])
+  // `budget` belongs here because the placement above READS it. Leaving it out
+  // made the field ignore a live budget edit entirely: every other dependency
+  // is stable across one, so the memo never re-ran and the dots kept the
+  // positions they had before the slider moved.
+  }, [cities, countryOf, question, secondAxis, scatter, width, budget])
 
   /* Plot geometry, in pixels.
    *

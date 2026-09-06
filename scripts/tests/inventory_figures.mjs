@@ -49,7 +49,7 @@ export const EXTRACT = String.raw`
     const raw = norm(b.textContent)
     const kind = /calculated/i.test(raw) ? 'Derived' : 'Figure'
     const visible = norm(raw.replace(/[-—]?\s*show (where this number comes from|how this number was calculated)/i, ''))
-    let cardText = null, cardLabel = null
+    let cardText = null, cardLabel = null, cardBare = null, cardLinks = []
     try {
       b.click()
       // Poll for the card instead of assuming 25ms is enough to open one. A
@@ -71,6 +71,20 @@ export const EXTRACT = String.raw`
       if (card) {
         cardText = norm(card.innerText) || norm(card.textContent)
         cardLabel = card.getAttribute('aria-label')
+        /* The card's own text with its anchors removed, for the same reason
+         * the page has one: a file name a reader can only READ is a different
+         * thing from one they can open. Cards are shut again before the page
+         * snapshot is taken, so without this the card bodies -- which is where
+         * this site names most of its files -- were invisible to that check. */
+        const clone = card.cloneNode(true)
+        for (const a of clone.querySelectorAll('a')) a.remove()
+        cardBare = norm(clone.textContent)
+        /* Each anchor's text against where it actually points, so "named one
+         * file and linked another" is catchable: two cards used to read
+         * "NEEDS-DECISION.md →" while navigating to /data. */
+        cardLinks = [...card.querySelectorAll('a')].map((a) => ({
+          text: norm(a.textContent), href: a.getAttribute('href') || '',
+        }))
       }
       b.click()
       // And wait for it to actually be gone, so the next figure's poll cannot
@@ -81,7 +95,7 @@ export const EXTRACT = String.raw`
     } catch (e) { cardText = 'ERROR: ' + e.message }
     const cell = b.closest('td,th,li,[class*="wrow-"],div')
     figures.push({
-      kind, visible, cardLabel, cardText,
+      kind, visible, cardLabel, cardText, cardBare, cardLinks,
       hasCard: cardText != null && cardText.length > 0,
       container: cell ? String(cell.className || cell.tagName) : null,
       srText: norm([...b.querySelectorAll('.visually-hidden,.sr-only')].map((s) => s.textContent).join(' ')),
@@ -289,10 +303,15 @@ export const EXTRACT = String.raw`
     return norm(clone.textContent)
   })()
 
+  const pageLinks = [...document.querySelectorAll('a')].map((a) => ({
+    text: norm(a.textContent), href: a.getAttribute('href') || '',
+  }))
+
   return JSON.stringify({
     figures, nodata, clipped, marks, rows,
     text: norm(document.body.innerText),
     unlinkedText: bare,
+    pageLinks,
     headings: [...document.querySelectorAll('h1,h2,h3')].map((h) => norm(h.textContent)).filter(Boolean),
   })
 })()

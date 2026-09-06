@@ -61,7 +61,11 @@ export function years(v: number | null | undefined, never = false): string {
 /** Strip the leading "~" where a stronger approximation mark (the unstable "≈")
  *  is already rendered beside the figure. Stacking both read "≈~5 yrs". */
 export function dropApprox(s: string): string {
-  return s.startsWith('~') ? s.slice(1) : s
+  // Both marks, because the home question emits "≈never" as well as "~5 yrs"
+  // — so the table rendered "≈≈never" for Milan, which is the exact stacking
+  // this function exists to prevent.
+  if (s.startsWith('~')) return s.slice(1)
+  return s.startsWith('≈') ? s.slice(1) : s
 }
 
 /** The band a years-to-home figure occupies under one rounding step of its own

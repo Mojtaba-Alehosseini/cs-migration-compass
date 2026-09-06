@@ -113,7 +113,12 @@ export function Home() {
       if (b.v == null) return -1
       return a.v - b.v
     })
-  }, [data.cities, question, countryOf])
+  // `budget` is in the deps because the line above READS it. Without it every
+  // other dependency is stable across a budget edit, so the memo never re-ran
+  // and the field kept the figures from before the slider moved -- while the
+  // picks panel, which computes inline, showed the new ones. Two numbers for
+  // one city on one screen.
+  }, [data.cities, question, countryOf, budget])
 
   return (
     <div className="wrap" style={{ paddingTop: 22, paddingBottom: 90 }}>
@@ -331,15 +336,19 @@ export function Home() {
                     </Link>
                   </td>
                   <td style={cell}>
-                    {question.id === 'home' && <UnstableMark city={city} band="mid" />}
+                    {question.id === 'home' && <UnstableMark city={city} band="mid" budget={budget} />}
                     <span className="tnum">
-                      {question.id === 'home' && stabilityOf(city, 'mid') === 'unstable'
+                      {question.id === 'home' && stabilityOf(city, 'mid', budget) === 'unstable'
                         ? dropApprox(question.fmt(v))
                         : question.fmt(v)}
                     </span>
                   </td>
                   <td style={cell}><span className="tnum">{money(city.salary_usd_year.mid)}</span></td>
-                  <td style={cell}><span className="tnum">{money(savingsPerYear(city, 'mid'))}</span></td>
+                  {/* With the budget, like every other figure on this page. Without
+                      it this column contradicted the years-to-home cell beside it:
+                      at ?b=rf:1.4 London read "no data" next to "$6,930 kept", when
+                      the real figure at that rent is negative. */}
+                  <td style={cell}><span className="tnum">{money(savingsPerYear(city, 'mid', budget))}</span></td>
                 </tr>
               ))}
             </tbody>

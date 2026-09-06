@@ -13,7 +13,7 @@
  */
 
 import type { City, Country } from './types'
-import { effectiveLiving, effectiveRent, savingsPerYear, yearsToHome, type Budget } from './compute'
+import { effectiveLiving, effectiveRent, isNeverAffordable, savingsPerYear, yearsToHome, type Budget } from './compute'
 import { money, moneyShort, num } from './format'
 
 export type QuestionKind = 'swarm' | 'country'
@@ -122,7 +122,17 @@ export const QUESTIONS: Question[] = [
     dir: '← faster',
     xLabel: 'years to a home',
     cap: 130,
-    value: (c, _k, b) => yearsToHome(c, 'mid', b),
+    /* `yearsToHome` returns null for two different things: inputs it does not
+     * have, and inputs it has that leave nothing to save. Only the first is
+     * "no data". BudgetEditor, PlaceBrowser, CityProfile and Compare all say
+     * the second in words -- this field was the one place that did not, and it
+     * parked a city with COMPLETE data in the no-data gutter. It showed once a
+     * budget could reach the field: at ?b=rf:2, sixteen cities landed there,
+     * Oslo among them with savings of -$2,900.
+     *
+     * The axis already ends at "≈never" and `fmt` already renders it past the
+     * 130-year cap, so the honest answer was reachable all along. */
+    value: (c, _k, b) => (isNeverAffordable(c, 'mid', b) ? 130 : yearsToHome(c, 'mid', b)),
     scale: xYears,
     ticks: [[2, '2'], [5, '5'], [10, '10'], [20, '20'], [30, '30'], [130, '30+']],
     // Package 16 — a SECOND copy of the years-to-home formatter, which kept

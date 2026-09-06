@@ -4134,7 +4134,7 @@ sampling mid-intro compares two layouts and calls it a data change. The probe wa
 and carries a control — the same address twice — that places all 73 identically.
 
 
-## 74. `/openings` fails the Lighthouse gate at 76 — CLS 1.036, and every other metric on the route scores 100
+## 74. CLOSED, package 42 — `/openings` fails the Lighthouse gate at 76 — CLS 1.036, and every other metric on the route scores 100
 
 Found by package 41's tier-4 gate run, and it is a **gate failure, not a note**: the standing bar is
 >=90 performance, and `/openings` returns 76. Thirteen of fourteen routes pass.
@@ -4217,3 +4217,121 @@ assumption that readers are experiencing a 1.036 shift, because on the profile c
 phone they are experiencing 0.042.
 
 Not acted on. Reported as a FAILED gate rather than rounded to "13 of 14 pass".
+
+### CLOSED, package 42 — caused by the split, fixed by reserving what the rows actually occupy
+
+**Causation, which this item recorded as NOT established.** The commit before #71 (`6e2be78`, one
+23.3 MB `postings.json`) was built in a worktree and served beside HEAD — same instrument, same
+machine, three runs each:
+
+```
+pre-#71   CLS 0.000  0.000  0.000     performance  93  95 100
+HEAD      CLS 1.036  1.036  1.036     performance  76  76  76
+```
+
+The split caused it. The other possibility this item raised — that `/openings` always shifted and
+package 30's 100 was localhost making a 23 MB transfer free — is false. Worth recording the rest of
+the trade: the old build spent 43–214 ms of TBT parsing 23 MB, against 8–34 ms now. #71 bought
+main-thread time and paid in layout shift.
+
+**The mechanism.** `shown` dropped any posting whose display chunk had not arrived
+(`if (row) out.push(...)`). Index and first chunk are two fetches, so the table rendered with ZERO
+rows and then jumped to a hundred.
+
+**The fix is not a bigger reserved number.** Every visible posting now renders as soon as the INDEX
+lands — the index carries the title, the tall cell — and the display-only cells fill in when the
+chunk arrives, so the browser computes each row's height from real content at the width it is
+actually being read.
+
+```
+DESKTOP   perf 100 100 100 100   CLS 0.012   TBT 42 15 0 5 ms      (was 76 76 76, CLS 1.036)
+MOBILE    CLS 0.042 unchanged — that instrument never saw the 1.036
+```
+
+`/openings` is back inside the ≥90 gate at **100**, and the full 14-route sweep passes with TBT
+0–13 ms as evidence the machine was quiet.
+
+**Two things this closure does not claim.** The fix does not reach CLS 0 — 0.0085–0.0593 depending
+on width, all inside "good", and **#75** carries the measurement and the reason (the table has no
+column widths). And the extra render it introduces was checked for cost rather than assumed free:
+the two builds interleaved on throttled mobile, four rounds each, median TBT 588 ms without the fix
+and 490 ms with it.
+
+**The documented trade in `Openings.tsx` is kept.** Its skeleton heights are untouched and still
+hold; what stopped being true is the sentence they rest on — "a shift nobody can see" — written for
+a one-stage load. The comment says so rather than quietly reversing another package's reasoning.
+
+## 75. `/openings` still shifts 0.06 at the widths between desktop and phone, because the table has no column widths
+
+Package 42 took this route from **CLS 1.036 to 0.012 on the desktop preset** and back inside the
+≥90 gate at 100. The adversarial review then measured what one width could not show, and the
+package's own re-measurement agreed — Fast 4G, one real document load per width:
+
+```
+  width      CLS   title column
+   1440    0.0085      559px
+   1280    0.0108      559px
+   1024    0.0217      530px
+    900    0.0435      431px
+    820    0.0580      367px      <- worst
+    768    0.0553      326px
+    600    0.0593      191px
+    390    0.0489      133px
+    360    0.0530      133px
+```
+
+**Every one of these is inside Google's 0.1 "good" threshold**, and all are far below the 1.036 they
+replaced. This is not a failing gate; it is an overclaim corrected and a residual named.
+
+**The cause is that this table has no CSS rule of its own.** `table.tbl` appears in no stylesheet in
+the repository, so it is `table-layout: auto`: when the company, pay and date cells arrive with real
+content they redistribute the column widths, and the title column — the tall one the fix relies on
+— re-wraps. The row count no longer changes, which is why the shift dropped by two orders of
+magnitude; the column widths still do.
+
+The code comment that claimed *"the title is the tallest cell … no breakpoint has to be
+anticipated"* was written from a single desktop measurement and has been corrected in place to say
+this instead.
+
+**Options:**
+  - **(a) Give the table fixed column widths.** `table-layout: fixed` with five `<col>` widths makes
+    every column independent of its content, so arriving cells cannot move anything. It is the only
+    change that takes this to zero. It is also a layout decision about a shipped route at every
+    width, and a wrong set of widths is worse than a 0.06 shift.
+  - **(b) Leave it and record the number.** 0.0085–0.0593 is "good" on every width measured, the
+    gate passes at 100, and the remaining movement is a title re-wrapping rather than a hundred rows
+    appearing. The cost of (a) is a design pass nobody has asked for.
+
+Not resolved here. The measurement is what this item exists to carry: the next package does not have
+to rediscover that the desktop number is the best case rather than the typical one.
+
+## 76. `yearsToHome` returns null for two different facts, and only one of them is "no data"
+
+`compute.ts` returns `null` both when an input is missing and when savings are `<= 0`. Its own
+docstring names the difference — *"in that case the answer is 'never on this income', which the UI
+states in words"* — and four places do exactly that through `isNeverAffordable()`: `BudgetEditor`,
+`PlaceBrowser`, `CityProfile` and `Compare`.
+
+**Home was the one place that did not**, and package 42 made it visible. Once a budget could reach
+the field, a city with COMPLETE data and negative savings parked in the "no data" gutter: at
+`?b=rf:2` sixteen cities did, Oslo among them with savings of −$2,900. The table said it twice in
+one row — `London  no data  $69,000  −$4,446` — one cell claiming the figure could not be computed
+beside another showing exactly why it was negative.
+
+**Fixed for Home** by returning the axis's own cap, so those cities read `≈never` at the far end of
+an axis whose right-hand label is already `≈never`. No new vocabulary, no new component.
+
+**What is NOT fixed, and is the actual item:** the ambiguity is still in `compute.ts`, and every
+caller has to remember to ask `isNeverAffordable()` separately. Five call sites now do; the sixth
+that forgets will silently print "no data" for a number the site can compute.
+
+**Options:**
+  - **(a) Make the return type carry the distinction** — a discriminated result, or a separate
+    `NEVER` sentinel — so a caller cannot conflate them by omission. Touches every consumer of
+    `yearsToHome`, which is most of the site.
+  - **(b) Leave the two-call convention and document it at the function.** Cheaper, and it is what
+    the codebase already does four times over; the risk is that "remember to also call X" is exactly
+    the shape of the defect this item is about.
+
+Not resolved here — (a) is a type change across the site's most-used computation, which is not a
+call to make inside a package fixing three other things.

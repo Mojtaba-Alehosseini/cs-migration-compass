@@ -220,9 +220,24 @@ export function Openings() {
    *  This reserves the list's REAL geometry rather than a pixel guess, which is
    *  the mistake `ChartSkeleton`'s own docstring records ("the layout shift
    *  that cost Explore its performance score") and the one package 31 avoided
-   *  when it took /work from 0.178 to 0. The title is the tallest cell and it
-   *  lives in the index, so the browser computes each row's real height at
-   *  whatever width it is being read — no breakpoint has to be anticipated.
+   *  when it took /work from 0.178 to 0.
+   *
+   *  IT DOES NOT REACH ZERO, and the first version of this comment claimed more
+   *  than it had measured. "The title is the tallest cell so no breakpoint has
+   *  to be anticipated" is wrong: this table has no CSS rule of its own, so it
+   *  is `table-layout: auto`, and the company, pay and date cells arriving with
+   *  real content REDISTRIBUTE the column widths — the title column measures
+   *  559px at 1440 and 133px at 390, and re-wrapping the title is what is left
+   *  of the shift. Measured on Fast 4G, one document load per width:
+   *
+   *      1440  0.0085     1024  0.0217      820  0.0580      390  0.0489
+   *      1280  0.0108      900  0.0435      768  0.0553      360  0.0530
+   *
+   *  All inside the 0.1 "good" threshold and all far below the 1.036 this
+   *  replaced, but five times the desktop figure at the widths in between.
+   *  Closing the rest means giving the table fixed column widths, which is a
+   *  layout decision about a shipped route rather than a bug fix —
+   *  NEEDS-DECISION #75.
    */
   const shown = useMemo(() => {
     if (!data) return [] as { key: string; idx: PostingIndexRow; row: PostingRow | null }[]
@@ -490,8 +505,15 @@ export function Openings() {
                   {shown.map(({ key, idx, row }) => {
                     const p = row ? joinPosting(idx, row) : null
                     return (
-                      <tr key={key}>
-                        <td>
+                      /* aria-busy says what the ellipses mean. Without it three of
+                         the five cells were announced as empty, which on a site
+                         whose rule is to NAME what is missing reads as "no
+                         company, no pay, no date" rather than "not here yet" --
+                         and PostingPay renders the words "not stated" for a
+                         genuinely absent figure, so empty already means
+                         something else here. */
+                      <tr key={key} aria-busy={p ? undefined : true}>
+                        <td aria-label={p ? undefined : 'Company, loading'}>
                           {idx.c && <Flag cc={idx.c} size={12} />}{' '}
                           {p
                             ? (p.provider === 'hn'
@@ -507,14 +529,22 @@ export function Openings() {
                             ? <a href={p.url} target="_blank" rel="noopener noreferrer">{idx.t}</a>
                             : idx.t}
                         </td>
-                        <td className="sub">{p ? (p.location_raw ?? (idx.r ? 'Remote' : '—')) : (idx.r ? 'Remote' : '—')}</td>
-                        <td>
+                        {/* "Remote" comes from the index and is true the moment the
+                            row appears, so it is shown. The em dash is NOT: it is
+                            this site's glyph for "no value", and rendering it for a
+                            location that simply has not arrived states something
+                            definite that later changes. */}
+                        <td className="sub" aria-label={p ? undefined : 'Location, loading'}>
+                          {p ? (p.location_raw ?? (idx.r ? 'Remote' : '—')) : (idx.r ? 'Remote' : <span aria-hidden="true">…</span>)}
+                        </td>
+                        <td aria-label={p ? undefined : 'Advertised pay, loading'}>
                           {p
                             ? <PostingPay comp={p.compensation} display={display}
                               crossRates={crossRates} maxGapYears={fxMaxGap} />
                             : <span className="sub" aria-hidden="true">…</span>}
                         </td>
-                        <td className="sub" style={{ whiteSpace: 'nowrap' }}>
+                        <td className="sub" style={{ whiteSpace: 'nowrap' }}
+                          aria-label={p ? undefined : 'Posted, loading'}>
                           {p ? fmtDate(p.posted_at) : <span aria-hidden="true">…</span>}
                         </td>
                       </tr>

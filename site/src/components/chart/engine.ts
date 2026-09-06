@@ -402,13 +402,26 @@ export function makeChart(host: HTMLElement) {
     const pts = toScreen(cB, S)
     const drawn = new Set(
       [...host.querySelectorAll<SVGPathElement>('path.ser')].map((p) => p.dataset.k!))
-    const wanted = cB.series.map((s) => s.key).filter((k) => pts[k]?.length)
-    if (wanted.length !== drawn.size || wanted.some((k) => !drawn.has(k))) {
+    /* A Set on both sides. Comparing an ARRAY's length against a Set's size
+     * calls a duplicated key a changed set: `?hp=CA,CA,DE` gave 3 wanted
+     * against 2 drawn, so every base-year step tore the chart down and rebuilt
+     * it — destroying the 1:1 drag this path exists to protect, on exactly the
+     * input `useUrlList` does not deduplicate. */
+    const wanted = new Set(cB.series.map((s) => s.key).filter((k) => pts[k]?.length))
+    if (wanted.size !== drawn.size || [...wanted].some((k) => !drawn.has(k))) {
       build(cB, true)
       return
     }
     st.cfg = cB
     st.pts = pts
+    /* The accessible name is part of the update, not only part of a build.
+     * #72 was "aria-label is only ever written by build()", and fixing just the
+     * series half would have left the same defect on the drag: every sighted
+     * cue — the handle, the insight line, the table caption, the address —
+     * followed the base year while the only description a blind reader gets
+     * still named the year they started from. */
+    const svg = host.querySelector('svg')
+    if (svg && cB.aria) svg.setAttribute('aria-label', cB.aria)
     const els: Record<string, SVGTextElement> = {}
     host.querySelectorAll<SVGTextElement>('.el').forEach((e) => { els[e.dataset.k!] = e })
     host.querySelectorAll<SVGPathElement>('path.ser').forEach((p) => {
