@@ -34,8 +34,9 @@
  * REPORT-P17.md gate 7 itemises the mapping.
  */
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { useUrlState } from '../data/urlState'
 import { useAsync } from '../components/explore/useAsync'
 import { Gap } from '../components/explore/Controls'
 import { Flag } from '../components/Flag'
@@ -530,7 +531,7 @@ export function Work() {
   const { data: postings, error: postingsError } = useAsync(loadOpenings, 'openings')
   const loadError = wagesError ?? gradientError ?? occupationsError ?? postingsError
 
-  const [display, setDisplay] = useState<DisplayCurrency>('native')
+  const [display, setDisplay] = useUrlState<DisplayCurrency>('pay', 'native', DISPLAY_CURRENCIES)
   // The whole rate object, not `.rate` — PostingPay matches each posting's own
   // year against `by_year`. Mapping this down to one number is what made every
   // cross-rate conversion silently use 2025.

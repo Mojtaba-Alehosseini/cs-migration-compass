@@ -3,7 +3,7 @@
  * nationality-mix explorer. */
 
 import { Link, useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { useUrlState } from '../data/urlState'
 import { Flag } from '../components/Flag'
 import { readableAbsentReason } from '../data/profile'
 import { Figure } from '../components/Figure'
@@ -312,7 +312,7 @@ export function CountryProfile() {
 
 /** "find people from …" — the nationality-mix explorer. */
 function OriginExplorer({ origins }: { origins: { origin: string; value: number }[] }) {
-  const [q, setQ] = useState('')
+  const [q, setQ] = useUrlState<string>('origin', '')
   const shown = q.length > 1
     ? origins.filter((o) => o.origin.toLowerCase().includes(q.toLowerCase()))
     : origins.slice(0, 6)

@@ -9,12 +9,13 @@
  * and the Gulf, named here rather than left implicit).
  */
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAsync } from '../components/explore/useAsync'
 import { Flag } from '../components/Flag'
 import { ChartSkeleton } from '../components/explore/Controls'
 import { loadPostingsSeedSummary, fmtCompany, KNOWN_PROVIDERS, PROVIDER_LABEL, PROVIDER_HAS_COMPENSATION_FIELD, PROVIDER_LICENSE } from '../data/postings'
+import { useUrlState } from '../data/urlState'
 
 const DENSITY_NOTE: Record<string, string> = {
   US: 'HIGH — expected: California, Colorado, Illinois, Maryland, Massachusetts, Minnesota, New '
@@ -38,7 +39,7 @@ const DENSITY_NOTE: Record<string, string> = {
 
 export function PostingsSeed() {
   const { data, error } = useAsync(loadPostingsSeedSummary, 'postings_seed_summary')
-  const [providerFilter, setProviderFilter] = useState('')
+  const [providerFilter, setProviderFilter] = useUrlState<string>('provider', '', ['', ...KNOWN_PROVIDERS])
 
   const companies = useMemo(() => {
     if (!data) return []

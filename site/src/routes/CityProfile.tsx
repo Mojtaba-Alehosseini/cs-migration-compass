@@ -10,6 +10,7 @@ import { Figure } from '../components/Figure'
 import { Derived } from '../components/Derived'
 import { UnstableMark } from '../components/Unstable'
 import { useData } from '../data/store'
+import { useUrlFlag, useUrlState } from '../data/urlState'
 import { dropApprox, money, num, pct, sourceName, years, NO_DATA, asOfLabel } from '../data/format'
 import { citySalarySource } from '../data/registry'
 import { typicalArrivalRoute } from '../data/visaRoutes'
@@ -21,7 +22,6 @@ import {
 } from '../data/compute'
 import { NotFound } from './NotFound'
 import type { Band } from '../data/types'
-import { useState } from 'react'
 
 /* BAND_LABEL lives in compute.ts, which also names the band inside the net-pay
  * chain. Two copies of the same three strings would drift the moment one was
@@ -38,8 +38,10 @@ export function CityProfile() {
    * was pinned were the six DERIVED figures: net pay, savings, years to a home,
    * m² per year, affordability and the net-pay chain. A visitor could see what
    * a senior earns here but not what it leaves at the end of a year. */
-  const [band, setBand] = useState<Band>('mid')
-  const [allJobs, setAllJobs] = useState(false)
+  const [band, setBand] = useUrlState<Band>('band', 'mid',
+    (v) => (v === 'new_grad' || v === 'mid' || v === 'senior')
+      && city != null && city.salary_usd_year[v as Band] != null)
+  const [allJobs, setAllJobs] = useUrlFlag('alljobs')
 
   if (!city) return <NotFound />
   const country = data.countryById.get(city.country)

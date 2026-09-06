@@ -29,6 +29,7 @@ import { useAsync } from '../components/explore/useAsync'
 import { ChartSkeleton } from '../components/explore/Controls'
 import { Flag } from '../components/Flag'
 import { useData } from '../data/store'
+import { useUrlFlag, useUrlNumber, useUrlState } from '../data/urlState'
 import { loadPostingsIndex, loadPostingRowChunk, joinPosting, fmtCompany, PROVIDER_LABEL,
   type Posting, type PostingRow } from '../data/postings'
 import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency }
@@ -78,17 +79,29 @@ export function Openings() {
   const data = doc?.data
   const rowsPerChunk = doc?.meta?.rows_per_chunk ?? 500
   const core = useData()
-  const [country, setCountry] = useState('')
-  const [level, setLevel] = useState('')
-  const [remoteOnly, setRemoteOnly] = useState(false)
-  const [query, setQuery] = useState('')
-  const [display, setDisplay] = useState<DisplayCurrency>('native')
-  const [view, setView] = useState<'list' | 'map'>('list')
+  /* #9 — every filter here is in the address, so a filtered list can be sent
+   * to someone. Each falls back to the default when the address asks for
+   * something this build cannot honour: a country that has dropped out of the
+   * harvest, a level that no longer exists, a currency that was retired. A
+   * shared link outliving its data renders the default view, not a crash. */
+  /* `!data ||` is load-order, not laxity. The index arrives asynchronously, so
+   * validating against country_counts before it lands would reject every
+   * country on the first render and show the UNFILTERED list, then switch when
+   * the data arrived — the default-view flash a shared link must not produce.
+   * An unknown country is rejected once there is something to check it against,
+   * and not before. */
+  const [country, setCountry] = useUrlState<string>('country', '',
+    (v) => v === '' || !data || Object.prototype.hasOwnProperty.call(data.country_counts, v))
+  const [level, setLevel] = useUrlState<string>('level', '', ['', ...LEVELS])
+  const [remoteOnly, setRemoteOnly] = useUrlFlag('remote')
+  const [query, setQuery] = useUrlState<string>('q', '')
+  const [display, setDisplay] = useUrlState<DisplayCurrency>('pay', 'native', DISPLAY_CURRENCIES)
+  const [view, setView] = useUrlState<'list' | 'map'>('view', 'list', ['list', 'map'])
   // Package 17 — 100 rows, not 500. The old /postings rendered 500 immediately
   // and scored 0.86; this page renders a <Derived> per pay cell, which is more
   // work per row, and 500 of them took it to 0.75. A hundred is more than fits
   // on a screen and the rest is one click away.
-  const [limit, setLimit] = useState(100)
+  const [limit, setLimit] = useUrlNumber('rows', 100, { min: 100, max: 5000 })
 
   // The whole rate object, not `.rate` — PostingPay matches each posting's own
   // year against `by_year`. Mapping this down to one number is what made every
@@ -475,7 +488,7 @@ export function Openings() {
                 <p className="sub" style={{ marginTop: 8 }}>
                   Showing the first {limit.toLocaleString()} of {filtered.length.toLocaleString()}.
                   Not ranked — these are in harvest order.{' '}
-                  <button type="button" onClick={() => setLimit((n) => n + 400)}
+                  <button type="button" onClick={() => setLimit(limit + 400)}
                     className="chip chip-quiet" style={{ cursor: 'pointer' }}>
                     Show 400 more
                   </button>
