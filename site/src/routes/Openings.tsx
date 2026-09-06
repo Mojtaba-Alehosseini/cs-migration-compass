@@ -31,7 +31,7 @@ import { Flag } from '../components/Flag'
 import { useData } from '../data/store'
 import { useUrlFlag, useUrlNumber, useUrlState } from '../data/urlState'
 import { loadPostingsIndex, loadPostingRowChunk, joinPosting, fmtCompany, PROVIDER_LABEL,
-  type Posting, type PostingRow } from '../data/postings'
+  type PostingIndexRow, type PostingRow } from '../data/postings'
 import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCurrency }
   from '../components/PostingPay'
 import { LAND_PATH, LAND_VIEWBOX } from '../data/land'
@@ -209,16 +209,27 @@ export function Openings() {
     return () => { live = false }
   }, [neededChunks, rowsByChunk])
 
-  /** The visible rows, rejoined from their two halves. */
+  /** The visible rows, rejoined from their two halves.
+   *
+   *  A posting whose display chunk has not arrived is rendered from the INDEX
+   *  rather than skipped. Skipping it was NEEDS-DECISION #74: the index and the
+   *  first chunk are two fetches, so the table rendered empty and then jumped
+   *  to a hundred rows, and that jump measured **CLS 1.036** — a full viewport
+   *  of movement, against 0.000 on the build before the payload was split.
+   *
+   *  This reserves the list's REAL geometry rather than a pixel guess, which is
+   *  the mistake `ChartSkeleton`'s own docstring records ("the layout shift
+   *  that cost Explore its performance score") and the one package 31 avoided
+   *  when it took /work from 0.178 to 0. The title is the tallest cell and it
+   *  lives in the index, so the browser computes each row's real height at
+   *  whatever width it is being read — no breakpoint has to be anticipated.
+   */
   const shown = useMemo(() => {
-    if (!data) return [] as Posting[]
-    const out: Posting[] = []
-    for (const i of visible) {
+    if (!data) return [] as { key: string; idx: PostingIndexRow; row: PostingRow | null }[]
+    return visible.map((i) => {
       const chunk = rowsByChunk.get(Math.floor(i / rowsPerChunk))
-      const row = chunk?.[i % rowsPerChunk]
-      if (row) out.push(joinPosting(data.index[i]!, row))
-    }
-    return out
+      return { key: `i${i}`, idx: data.index[i]!, row: chunk?.[i % rowsPerChunk] ?? null }
+    })
   }, [visible, rowsByChunk, data, rowsPerChunk])
 
   const [inScope, outOfScope] = useMemo(() => {
@@ -272,7 +283,20 @@ export function Openings() {
         * shifts nothing — and reserving 3,764px would hold a four-screen blank
         * open while the 24 MB payload parses, which is a worse page than a
         * shift nobody can see. The old route made the same trade with the same
-        * number. Adversarial review D8, re-measured rather than asserted. */}
+        * number. Adversarial review D8, re-measured rather than asserted.
+        *
+        * PACKAGE 42: that trade is KEPT — this skeleton is unchanged, and both
+        * numbers above still hold. But the sentence it rests on, "a shift
+        * nobody can see", stopped being true when #71 made this route load in
+        * TWO stages. The index arrives and this skeleton is replaced; the row
+        * chunk arrives and the table grows from nothing to a hundred rows,
+        * which is not below the fold and is not invisible. Measured: CLS 1.036
+        * against 0.000 on the build before the split, three runs each.
+        *
+        * The fix is NOT a bigger number here. It is that the row list no longer
+        * starts empty — see `shown` — so the reserve is the rows' own rendered
+        * height at whatever width the page is being read, rather than a pixel
+        * this comment would have to keep guessing. CLS 1.036 -> 0.012. */}
       {!data ? (
         <>
           <div className="panel"><ChartSkeleton height={153} /></div>
@@ -463,25 +487,39 @@ export function Openings() {
                   </tr>
                 </thead>
                 <tbody>
-                  {shown.map((p) => (
-                    <tr key={p.id}>
-                      <td>
-                        {p.country && <Flag cc={p.country} size={12} />}{' '}
-                        {p.provider === 'hn'
-                          ? (p.company ?? PROVIDER_LABEL[p.provider])
-                          : fmtCompany(p.company, p.company_slug)}
-                      </td>
-                      <td>
-                        {p.url
-                          ? <a href={p.url} target="_blank" rel="noopener noreferrer">{p.title}</a>
-                          : p.title}
-                      </td>
-                      <td className="sub">{p.location_raw ?? (p.remote ? 'Remote' : '—')}</td>
-                      <td><PostingPay comp={p.compensation} display={display}
-                        crossRates={crossRates} maxGapYears={fxMaxGap} /></td>
-                      <td className="sub" style={{ whiteSpace: 'nowrap' }}>{fmtDate(p.posted_at)}</td>
-                    </tr>
-                  ))}
+                  {shown.map(({ key, idx, row }) => {
+                    const p = row ? joinPosting(idx, row) : null
+                    return (
+                      <tr key={key}>
+                        <td>
+                          {idx.c && <Flag cc={idx.c} size={12} />}{' '}
+                          {p
+                            ? (p.provider === 'hn'
+                              ? (p.company ?? PROVIDER_LABEL[p.provider])
+                              : fmtCompany(p.company, p.company_slug))
+                            : <span className="sub" aria-hidden="true">…</span>}
+                        </td>
+                        <td>
+                          {/* The title comes from the index, so it is here from
+                              the first paint — which is what holds the row's
+                              height still while the rest of the row arrives. */}
+                          {p?.url
+                            ? <a href={p.url} target="_blank" rel="noopener noreferrer">{idx.t}</a>
+                            : idx.t}
+                        </td>
+                        <td className="sub">{p ? (p.location_raw ?? (idx.r ? 'Remote' : '—')) : (idx.r ? 'Remote' : '—')}</td>
+                        <td>
+                          {p
+                            ? <PostingPay comp={p.compensation} display={display}
+                              crossRates={crossRates} maxGapYears={fxMaxGap} />
+                            : <span className="sub" aria-hidden="true">…</span>}
+                        </td>
+                        <td className="sub" style={{ whiteSpace: 'nowrap' }}>
+                          {p ? fmtDate(p.posted_at) : <span aria-hidden="true">…</span>}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
               {filtered.length > limit && (
