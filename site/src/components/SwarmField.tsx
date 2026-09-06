@@ -26,6 +26,7 @@ import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Flag, FlagRibbon } from './Flag'
 import type { City, Country } from '../data/types'
 import type { Question, SecondAxis } from '../data/questions'
+import type { Budget } from '../data/compute'
 import { ANCHORS, pickColor } from '../data/questions'
 
 const LANE_ORDER = [0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7]
@@ -66,6 +67,10 @@ interface Props {
   countryOf: (c: City) => Country | undefined
   question: Question
   secondAxis: SecondAxis | null
+  /** The reader's own rent/living assumptions. The field is where they have
+   *  to show up: `home` and `left` are computed FROM them, and the home
+   *  question's own sub-line promises they are editable. */
+  budget: Budget
   selected: string[]
   onToggle: (id: string) => void
   intro: boolean
@@ -130,7 +135,7 @@ function collide2D(
 }
 
 export function SwarmField({
-  cities, countryOf, question, secondAxis, selected, onToggle, intro,
+  cities, countryOf, question, secondAxis, budget, selected, onToggle, intro,
 }: Props) {
   const fieldRef = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState(1000)
@@ -162,8 +167,8 @@ export function SwarmField({
       const country = countryOf(city)
       return {
         city,
-        value: question.value(city, country),
-        y: secondAxis ? secondAxis.value(city, country) : null,
+        value: question.value(city, country, budget),
+        y: secondAxis ? secondAxis.value(city, country, budget) : null,
       }
     })
 

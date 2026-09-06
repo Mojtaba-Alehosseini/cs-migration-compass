@@ -13,7 +13,7 @@
  */
 
 import type { City, Country } from './types'
-import { savingsPerYear, yearsToHome } from './compute'
+import { effectiveLiving, effectiveRent, savingsPerYear, yearsToHome, type Budget } from './compute'
 import { money, moneyShort, num } from './format'
 
 export type QuestionKind = 'swarm' | 'country'
@@ -31,7 +31,7 @@ export interface SecondAxis {
    *  "↑ apartment price per m²". Always phrased so that up = more of this. */
   axisLabel: string
   hint: string
-  value: (city: City, country: Country | undefined) => number | null
+  value: (city: City, country: Country | undefined, b?: Budget) => number | null
   /** value -> 0..100 up the field. 0 is the bottom of the plot. */
   scale: (v: number) => number
   ticks: [number, string][]
@@ -48,7 +48,10 @@ export interface Question {
   dir: string
   /** Plain-words name of the x metric, for the scatter axis title. */
   xLabel: string
-  value: (city: City, country: Country | undefined) => number | null
+  /** `b` is the reader's own rent/living/salary assumptions. Optional, because
+   *  most questions do not depend on them — but the three that do MUST take
+   *  it, or the field silently contradicts the sub-line under it. */
+  value: (city: City, country: Country | undefined, b?: Budget) => number | null
   /** value -> 0..100 position across the field */
   scale: (v: number) => number
   ticks: [number, string][]
@@ -95,10 +98,14 @@ export const QUESTIONS: Question[] = [
       label: 'total monthly cost',
       axisLabel: 'rent + living costs, per month',
       hint: 'rent and living costs combined',
-      value: (c) =>
-        c.rent_1br_outside_usd_month == null || c.col_single_no_rent_usd_month == null
-          ? null
-          : c.rent_1br_outside_usd_month + c.col_single_no_rent_usd_month,
+      // Through effectiveRent/effectiveLiving, not the raw fields: this axis
+      // IS rent plus living costs, so a reader who has said their rent is 40%
+      // higher must see it here too.
+      value: (c, _k, b) => {
+        const rent = effectiveRent(c, b)
+        const living = effectiveLiving(c, b)
+        return rent == null || living == null ? null : rent + living
+      },
       // Real range: $1,650–$4,620 a month.
       scale: (v) => clamp(((v - 1500) / 3300) * 100),
       ticks: [[2000, '$2k'], [3000, '$3k'], [4000, '$4k']],
@@ -115,7 +122,7 @@ export const QUESTIONS: Question[] = [
     dir: '← faster',
     xLabel: 'years to a home',
     cap: 130,
-    value: (c) => yearsToHome(c, 'mid'),
+    value: (c, _k, b) => yearsToHome(c, 'mid', b),
     scale: xYears,
     ticks: [[2, '2'], [5, '5'], [10, '10'], [20, '20'], [30, '30'], [130, '30+']],
     // Package 16 — a SECOND copy of the years-to-home formatter, which kept
@@ -146,7 +153,7 @@ export const QUESTIONS: Question[] = [
     axisR: '$150k',
     dir: 'keep more →',
     xLabel: 'money kept per year',
-    value: (c) => savingsPerYear(c, 'mid'),
+    value: (c, _k, b) => savingsPerYear(c, 'mid', b),
     scale: (v) => clamp(4 + (Math.max(v, 0) / 150000) * 91),
     ticks: [[25000, '$25k'], [50000, '$50k'], [75000, '$75k'], [100000, '$100k'], [125000, '$125k']],
     fmt: (v) => (v == null ? 'no data' : moneyShort(v)),

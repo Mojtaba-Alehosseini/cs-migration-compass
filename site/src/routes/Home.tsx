@@ -107,7 +107,7 @@ export function Home() {
   }, [query, data])
 
   const rows = useMemo(() => {
-    const withV = data.cities.map((c) => ({ city: c, v: question.value(c, countryOf(c)) }))
+    const withV = data.cities.map((c) => ({ city: c, v: question.value(c, countryOf(c), budget) }))
     return withV.sort((a, b) => {
       if (a.v == null) return 1
       if (b.v == null) return -1
@@ -203,6 +203,7 @@ export function Home() {
           countryOf={countryOf}
           question={question}
           secondAxis={secondAxis}
+          budget={budget}
           selected={selected}
           onToggle={toggle}
           intro={intro}
@@ -241,7 +242,7 @@ export function Home() {
                 <span>
                   {/* The same marker the table and Compare use: this question's
                       axis is years-to-home, which can be rounding-limited. */}
-                  {question.id === 'home' && <UnstableMark city={c} band="mid" />}
+                  {question.id === 'home' && <UnstableMark city={c} band="mid" budget={budget} />}
                   {/* Package 16 — dropApprox, for the same reason Compare and Position
                     * use it: the "≈" above is the stronger marker and the formatter
                     * emits one too, so this rendered "≈≈never" and "≈~23 yrs".
@@ -249,8 +250,8 @@ export function Home() {
                     * three did not. */}
                   <b className="tnum">
                     {question.id === 'home' && stabilityOf(c, 'mid') === 'unstable'
-                      ? dropApprox(question.fmt(question.value(c, countryOf(c))))
-                      : question.fmt(question.value(c, countryOf(c)))}
+                      ? dropApprox(question.fmt(question.value(c, countryOf(c), budget)))
+                      : question.fmt(question.value(c, countryOf(c), budget))}
                   </b>{' '}
                   <button onClick={() => toggle(c.id)} aria-label={`Remove ${c.name}`}
                     style={{ color: 'var(--ink-3)', padding: '0 2px' }}>✕</button>
@@ -421,10 +422,14 @@ export function Home() {
               <button className="pill" onClick={() => downloadCsv('compass-picks.csv', selectedCities.map((c) => ({
                 city: c.name,
                 country: countryOf(c)?.name ?? '',
-                [question.q]: question.value(c, countryOf(c)),
+                /* The reader's own assumptions, in the download too. The button
+                 * sits inside the editor that sets them, so a CSV computed
+                 * without them would contradict the figures immediately above
+                 * it — and the file outlives the page that explains it. */
+                [question.q]: question.value(c, countryOf(c), budget),
                 salary_mid_usd: c.salary_usd_year.mid,
-                kept_per_year_usd: savingsPerYear(c, 'mid'),
-                years_to_home: yearsToHome(c, 'mid'),
+                kept_per_year_usd: savingsPerYear(c, 'mid', budget),
+                years_to_home: yearsToHome(c, 'mid', budget),
               })))}>⤓ CSV</button>
               <Link className="pill" to={`/compare?places=${selected.slice(0, 6).join(',')}`}
                 style={{ textDecoration: 'none' }}>Open in Compare →</Link>
