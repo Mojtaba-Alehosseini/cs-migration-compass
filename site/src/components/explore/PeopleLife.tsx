@@ -14,6 +14,13 @@ import { useAsync } from './useAsync'
 import { useUrlList, useUrlState } from '../../data/urlState'
 import { loadPeople, loadLife, type PeopleData, type LifeData, type Pair } from '../../data/explore'
 
+/* Hoisted, not inline. `useUrlList` memoises its value on the fallback's
+ * IDENTITY, so a fresh array literal per render meant the memo never hit and
+ * `picks` was a new array every time — which then invalidated every chart
+ * config with `picks` in its deps, work the previous `useState` default never
+ * caused. */
+const LIFE_PICKS = ['FI', 'DK', 'NL', 'DE', 'US']
+
 const cc = (c: string) => `var(--c-${c})`
 const last = <T,>(a: T[]) => a[a.length - 1]!
 
@@ -150,7 +157,7 @@ const RSF_PICKS = ['FI', 'NL', 'DK', 'DE', 'US']
 export function LifeTheme() {
   const { data, error } = useAsync(loadLife, 'life')
   const [mode, setMode] = useUrlState<'score' | 'rank'>('mode', 'score', ['score', 'rank'])
-  const [picks, setPicks] = useUrlList('picks', ['FI', 'DK', 'NL', 'DE', 'US'])
+  const [picks, setPicks] = useUrlList('picks', LIFE_PICKS)
 
   const whrCfg = useMemo<ChartCfg | null>(() => {
     if (!data) return null

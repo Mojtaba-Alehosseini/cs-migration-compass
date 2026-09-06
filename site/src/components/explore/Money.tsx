@@ -20,6 +20,13 @@ import { useUrlList, useUrlState } from '../../data/urlState'
 import { loadMoney, loadWages, naiveLine, yoy, type MoneyData, type Pair } from '../../data/explore'
 import { money as fmtMoney, moneyShort } from '../../data/format'
 
+/* Hoisted, not inline. `useUrlList` memoises its value on the fallback's
+ * IDENTITY, so a fresh array literal per render meant the memo never hit and
+ * `picks` was a new array every time — which then invalidated every chart
+ * config with `picks` in its deps, work the previous `useState` default never
+ * caused. */
+const MONEY_PICKS = ['DE', 'CA', 'NL']
+
 type Lens = 'level' | 'index' | 'yoy'
 
 const cc = (c: string) => `var(--c-${c})`
@@ -43,7 +50,7 @@ export function MoneyTheme() {
   const { data, error } = useAsync(loadMoney, 'money')
   const { data: wages, error: wagesError } = useAsync(loadWages, 'wages')
   const [lens, setLens] = useUrlState<Lens>('lens', 'level', ['level', 'index', 'yoy'])
-  const [picks, setPicks] = useUrlList('picks', ['DE', 'CA', 'NL'])
+  const [picks, setPicks] = useUrlList('picks', MONEY_PICKS)
 
   const cfg = useMemo<ChartCfg | null>(() => {
     if (!data) return null

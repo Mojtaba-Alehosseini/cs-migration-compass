@@ -20,11 +20,11 @@ is at the bottom.
 | Cities | 73 |
 | Countries | 15 |
 | Metrics | 30, across 7 themes (money 5, housing 7, climate 5, life 4, visa 4, people 3, jobs 2) |
-| Pages the site can render | 108 route/entity combinations the test suite walks, over 103 distinct URL paths (`/work` and `/compare` appear more than once with different query strings) |
-| Figures on those pages | 646, plus 61 "no data" marks |
+| Pages the site can render | 134 route/entity/state combinations the test suite walks. 108 of them are route/entity pairs over 103 distinct URL paths; the other 26 are material STATES the suite reaches by driving a control, because package 33 found 28 controls that change what the assertions read and the suite navigated only by URL (package 34) |
+| Figures on those pages | 1,048, plus 942 "no data" marks and 1,616 marks in total. The jump from 646/61/764 is the 26 state targets above, not new content: the /openings and /work cards that appear only once a display currency is chosen had never been examined by anything |
 | Pipeline sources | 57 recorded in `data/provenance.json`; 54 render (53 ok, 1 partial); 2 blocked, 1 unavailable |
 | Payload on arrival | `site/public/data/core.json` — 397.8 KB raw, ~89 KB gzipped. It is the only blocking fetch |
-| Payload if you open `/openings` | `postings.json`, **23.1 MiB**. `dist/data` is 28 MB in total, almost all of it history. Nothing else on the site is remotely this heavy, and it is the reason open item #69 exists |
+| Payload if you open `/openings` | An index (452 KB gzipped) carrying the fields the filters read, plus row chunks fetched only for the rows shown (98 files, ~19.6 KB gzipped each). It was one 23.1 MiB file — 2.50 MB gzipped — until package 38 shipped #71's ruling. On Slow 4G the payload's own share of the wait went from 42.0 s to about 9.2 s |
 
 The site is static. There is no server, no account, and nothing is stored about a visitor.
 
@@ -57,15 +57,31 @@ Chrome over the built site:
   review and obvious on screen. That is why these assertions read the DOM and the painted pixels
   rather than the source.
 
-  **Two caveats on this suite, both found while writing this page.** First, the six do not all cover
-  everything: the suite's own header records that C4 idles on five of the eight Explore themes (they
-  carry no figure cards) and C5 idles on all eight (nothing is clipped there), so on Explore the
-  real cover is C3 and C6. Second, and worse: on one unchanged build the suite captures either
-  646 figures / 61 no-data / 764 marks, or 646 / 54 / 668 — and the difference is the whole of
-  `/openings`, which fetches a 23.1 MiB file against a fixed 150 ms wait. **Roughly three runs in
-  four, an entire route and 12.6% of the marks are missing from what C1–C6 assert over, and the run
-  still prints PASS** — because every assertion is shaped "N found, expect 0", and a route that was
-  never seen cannot fail one. Open item #69.
+  **One caveat on this suite, and one defect that has since been fixed.** The caveat: the six do not
+  all cover everything: the suite's own header records that C4 idles on five of the eight Explore
+  themes (they carry no figure cards) and C5 idles on all eight (nothing is clipped there), so on
+  Explore the real cover is C3 and C6.
+
+  **#69, fixed in package 31.** On one unchanged build the suite used to capture either 646 figures
+  / 61 no-data / 764 marks, or 646 / 54 / 668 — the difference being the whole of `/openings`.
+  Roughly three runs in four, an entire route and 12.6% of the marks were missing from what C1–C6
+  assert over, and the run still printed PASS, because every assertion is shaped "N found, expect 0"
+  and a route that was never seen cannot fail one.
+
+  **The cause recorded on this page was wrong, and package 31 corrected it.** This page said
+  "a fixed 150 ms wait". There was no such wait — `capture()` already polled for readiness. The
+  fault was the PREDICATE it polled: `button, .nodata, h1, h2, table, .wrow`, a set the page SHELL
+  satisfies before any route content exists.
+
+      t=208ms    4 elements    0 rows     829 chars   <- page shell
+      t=616ms    4 elements    0 rows     829 chars   <- capture() declared READY
+      t=726ms   16 elements  100 rows  14459 chars   <- the route's own content
+
+  Two things changed. Readiness is now network-idle plus DOM-stable with a throwing timeout
+  (`waitForReady`), so no fixed sleep decides anything; and `coverage.mjs` asserts what a run SAW
+  before any violation check runs, against per-route floors recorded by a deliberately different
+  strategy. Absence now fails. That second half is the durable part — fixing the wait fixed one
+  route, and the shape had let any route hide.
 
 **Per package, by hand:** Lighthouse (desktop preset, at least 90 performance / 95 accessibility
 across 14 routes) and an independent adversarial review of the package's own work. Neither runs in
@@ -133,12 +149,18 @@ at 390px, or only after a scroll, would pass CI.
 
 ## What is still open
 
-The decision log ([NEEDS-DECISION.md](../NEEDS-DECISION.md)) holds 69 items. Package 30 read the 68
-that existed and reconciled every heading against its own body, then added one of its own:
-**60 closed, 9 open.** Before that, 57 headings gave no indication either way, so the honest answer
-to "what is still open" was that nobody knew.
+The decision log ([NEEDS-DECISION.md](../NEEDS-DECISION.md)) holds **73 items: 62 closed, 1
+reopened, 10 open.** Package 30 read the 68 that existed and reconciled every heading against its
+own body — before that, 57 headings gave no indication either way, so the honest answer to "what is
+still open" was that nobody knew. Packages 31–41 then closed #69, #71 and #65, reopened #68, and
+raised #72 and #73.
 
-All 9 remaining are judgement calls for the owner, not unfinished work:
+Counting them is itself a small lesson: a case-insensitive search for "closed" reports 11 open,
+because #73's own heading contains the words "a closed sheet". The markers are shouted (`CLOSED`,
+`RESOLVED`) and the prose is not, which is the distinction the count has to make — the same
+unanchored-substring mistake #33 records in the pipeline.
+
+All 10 remaining are judgement calls for the owner, not unfinished work:
 
 | # | What it is |
 |---|---|
@@ -149,8 +171,14 @@ All 9 remaining are judgement calls for the owner, not unfinished work:
 | 61 | Two lower-severity citation figures found by package 26's own rule, not fixed |
 | 62 | The UAE plots at $49,000 on "the price of the door", but one of its three routes has no salary floor at all |
 | 63 | Doha's salary citation lost a working PayScale link to stop it misattributing a band |
-| 65 | CI's browser suites failed once on a 30-second Chrome start budget, and passed on re-run unchanged |
-| 69 | Roughly three runs in four, the figure-inventory suite drops `/openings` entirely and still reports green |
+| 68 | `core.json` costs 89.5 KB on every theme — closed by package 29 on a Lighthouse mobile run, REOPENED by package 41 because package 38 measured 7.9 s of app-boot-plus-core.json on Slow 4G, which that instrument could not see |
+| 70 | Reader-facing copy names repository files — package 41 linked them (27 links, each checked to resolve) rather than removing the names; whether to name them at all is still the owner's call |
+| 71 | Shipped by package 38. Listed here because the ruling, not the item, is what closed it |
+| 73 | On `/`, the budget in the address changes only what a closed sheet would show |
+
+Closed since this page was written: **#65** (package 41 — the browser launch retries once and
+distinguishes "slow to start" from "cannot start", rather than raising a budget nobody had
+measured), **#69** (package 31, above), **#71** (package 38).
 
 ---
 

@@ -112,6 +112,19 @@ export async function launch({ port = 9333 } = {}) {
     if (version) return { ok: true, child, cleanup, tookMs: Date.now() - began }
 
     cleanup()
+    /* Whether the process is actually GONE, not merely signalled. `kill()`
+     * only sends a signal; a timed-out Chrome may still be opening the very
+     * port the retry is about to poll, and a poll answered by a dying browser
+     * whose profile directory is about to be removed is precisely the "drives
+     * someone else's browser, which just hangs" failure the preflight at the
+     * top of this function exists to prevent. Bounded, because a process that
+     * will not die must not hang the suite in place of the timeout it just
+     * replaced. */
+    const gone = (ms) => new Promise((resolve) => {
+      if (exited || child.exitCode != null) return resolve(true)
+      const t = setTimeout(() => resolve(false), ms)
+      child.once('exit', () => { clearTimeout(t); resolve(true) })
+    })
     // "Cannot start" and "was slow" are different facts. Only the second is
     // worth another 60 seconds; retrying the first just doubles the wait and
     // buries the real reason under a second identical failure.
@@ -119,7 +132,7 @@ export async function launch({ port = 9333 } = {}) {
     const why = spawnErr ? `could not be started (${spawnErr.message})`
       : exited ? `exited early with ${exited}`
       : `did not expose a debugging port within ${Math.round(budgetMs / 1000)}s`
-    return { ok: false, fatal, why, stderr }
+    return { ok: false, fatal, why, stderr, gone }
   }
 
   const fail = ({ why, stderr }) => {
@@ -139,6 +152,9 @@ export async function launch({ port = 9333 } = {}) {
     // hardcoded "30s" here is a sentence that goes quietly wrong the day
     // somebody changes the number above it.
     console.warn(`  cdp: Chrome ${started.why} — retrying once (NEEDS-DECISION #65)`)
+    if (!(await started.gone(5_000))) {
+      console.warn('  cdp: the first Chrome has not exited; the retry may find its port taken')
+    }
     started = await attempt(60_000)
     if (!started.ok) fail(started)
     console.warn(`  cdp: the retry started in ${(started.tookMs / 1000).toFixed(1)}s`

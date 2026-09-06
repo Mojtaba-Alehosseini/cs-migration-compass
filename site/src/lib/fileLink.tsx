@@ -123,10 +123,22 @@ export function FileLink({ name, children }: { name: string; children?: ReactNod
  * a card. Wrapping the page is one change instead of one per sentence, and a
  * paragraph added later is covered without anyone remembering to wrap it.
  *
- * Only STRING children are touched. Elements are returned as they are (their
- * own children get the same treatment on their own render), so this cannot
- * reorder, clone or re-key anything, and a component that inspects its own
- * children still sees what it expects.
+ * It DOES clone: an element with children is re-created around its mapped
+ * children. What it must not do is change an element's IDENTITY, and the first
+ * version did — every array child was wrapped in `<Fragment key={i}>`, which
+ * replaces the child's own key with its index. A keyed element inside a
+ * single-child Fragment goes through React's single-element reconciliation,
+ * where a key mismatch DELETES rather than moves, so filtering the company
+ * table on /data/postings-seed remounted all 377 surviving rows instead of
+ * keeping them. Nothing visible broke, because those rows are stateless — but
+ * the next author to put a <details>, an input, a focus ring or a transition
+ * in a wrapped list would have found out the hard way.
+ *
+ * Elements are therefore mapped in place, keeping their own keys (cloneElement
+ * preserves the key it is given), and only non-element children need an index
+ * key. One caveat that is real and not worth working around: a component that
+ * inspects its own children with React.Children.* sees clones. Nothing in this
+ * repository does.
  */
 export function LinkFiles({ children }: { children: ReactNode }): ReactNode {
   return mapText(children)
@@ -134,7 +146,18 @@ export function LinkFiles({ children }: { children: ReactNode }): ReactNode {
 
 function mapText(node: ReactNode): ReactNode {
   if (typeof node === 'string') return linkifyFiles(node)
-  if (Array.isArray(node)) return node.map((c, i) => <Fragment key={i}>{mapText(c)}</Fragment>)
+  if (Array.isArray(node)) {
+    return node.map((c, i) => {
+      const mapped = mapText(c)
+      // An ELEMENT keeps its own key through cloneElement, and wrapping it
+      // would replace that key with `i` and cost it its DOM node. Everything
+      // else still needs the wrapper: a linkified string comes back as an
+      // ARRAY of runs and anchors, and an array returned bare into a mapped
+      // array is a nested list with no key of its own.
+      if (isValidElement(c)) return mapped
+      return <Fragment key={i}>{mapped}</Fragment>
+    })
+  }
   if (isValidElement(node)) {
     const kids = (node.props as { children?: ReactNode }).children
     if (kids === undefined) return node

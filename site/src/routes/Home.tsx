@@ -53,9 +53,12 @@ export function Home() {
    * tableOpen, sheetOpen and intro stay local: the first two are disclosure,
    * and putting `intro` in a link would make the shared page behave unlike a
    * first visit -- the one thing a shared link must not do. */
-  const [ask, setAsk] = useUrlState<string>('ask', '', (v) => QUESTIONS.some((q) => q.id === v))
+  /* The fallback is the FIRST question's id, not the empty string. With ''
+   * as the fallback, clicking the question that was already selected wrote
+   * `?ask=pay` — a key naming the default, on a page nobody had changed. */
+  const [ask, setAsk] = useUrlState<string>('ask', QUESTIONS[0]!.id, (v) => QUESTIONS.some((q) => q.id === v))
   const qi = Math.max(0, QUESTIONS.findIndex((q) => q.id === ask))
-  const setQi = useCallback((i: number) => setAsk(QUESTIONS[i]?.id ?? ''), [setAsk])
+  const setQi = useCallback((i: number) => setAsk(QUESTIONS[i]?.id ?? QUESTIONS[0]!.id), [setAsk])
   const [secondOn, setSecondOn] = useUrlFlag('ax2')
   const [axisRaw, setAxisRaw] = useUrlState<string>('ax', '')
   const axisId = axisRaw || null

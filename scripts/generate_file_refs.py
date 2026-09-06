@@ -55,6 +55,13 @@ def tracked_files() -> list[str]:
     return [line for line in out.stdout.splitlines() if line]
 
 
+def candidates(token: str, tracked: list[str]) -> list[str]:
+    """Every tracked path this token could mean."""
+    if token in tracked:
+        return [token]
+    return [p for p in tracked if p.endswith("/" + token)]
+
+
 def resolve(token: str, tracked: list[str]) -> str | None:
     """Which tracked path a reader means by `token`.
 
@@ -134,10 +141,25 @@ def main() -> int:
 
     print("\n── file_refs — repository files named in reader-facing copy")
     print(f"    {len(resolved)} token(s) resolved to a tracked path")
-    ambiguous = [
-        (t, p) for t, p in resolved.items() if t != p and "/" not in t
+    # What this counts has to be what it says. It used to report every bare
+    # filename -- 61 of them -- and call that "resolved by the preference
+    # rule", when only the handful matching more than one tracked path ever
+    # reached the rule at all. A number that sounds like evidence the rule is
+    # load-bearing while measuring something else is worse than no number.
+    contested = [t for t in resolved if len(candidates(t, tracked)) > 1]
+    print(f"    {len(contested)} of them matched MORE THAN ONE tracked path and were resolved by the rule")
+    # A tie between two SOURCE copies is not covered by the source-vs-served
+    # rule and falls through to "shortest path", which is arbitrary rather than
+    # principled. None is a reader-facing token today; this says so if it changes.
+    risky = [
+        t for t in contested
+        if len([c for c in candidates(t, tracked) if not c.startswith("site/public/")]) > 1
     ]
-    print(f"    {len(ambiguous)} of them were bare filenames resolved by the preference rule")
+    if risky:
+        print(f"    {len(risky)} of THOSE have several non-served candidates, where the tie is broken")
+        print("      by path length rather than by the documented rule -- check these by hand:")
+        for t in risky[:8]:
+            print(f"      {t} -> {resolved[t]}   (also: {', '.join(candidates(t, tracked))[:88]})")
     if unresolved:
         print(f"    {len(unresolved)} token(s) in source resolve to nothing and are NOT linked:")
         for t in unresolved[:12]:

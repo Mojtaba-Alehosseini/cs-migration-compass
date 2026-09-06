@@ -97,30 +97,32 @@ function axis(values: number[], floor?: number): { min: number; max: number; tic
 
 export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
   const data = useData()
-  /* The theme supplies the question until the visitor asks their own, and
-   * from then on theirs is the one that follows them across themes. Storing
-   * "did they choose?" rather than copying the default into state is what
-   * makes both true at once: an untouched builder tracks the theme, a touched
-   * one survives every switch. */
   /* #9 — the axes go in the address, and the null state has to survive it.
-   * "Not chosen" is not the same as "chose the theme's default": an untouched
-   * builder follows the theme as the visitor switches themes, and a touched one
-   * keeps what they picked. So the address carries the pair only once it has
-   * been touched, and BOTH keys are written in a single patch — writing them in
-   * two calls would leave a moment where the address names one axis and the
-   * chart draws another.
-   * An unknown key falls back to the theme default rather than drawing a blank
-   * chart, which is what a link outliving a renamed metric would otherwise do. */
+   * "Not chosen" is not the same as "chose the theme's default": an absent key
+   * follows the theme as the visitor switches themes, and a present one keeps
+   * what they picked. The theme chips carry sx/sy so the second half of that
+   * still holds now the pair lives in the address rather than in state.
+   *
+   * Each axis is written and read on its OWN. Writing the pair together put
+   * the other axis's DEFAULT into the address the moment a reader touched
+   * either one — `?sx=happiness_rank&sy=savings` from a single change, with
+   * `sy` a value nobody chose — which is the rule in urlState.ts's own header
+   * turned inside out. An unknown key falls back to the theme's default for
+   * that axis alone, so a link outliving one renamed metric still carries the
+   * axis it can still honour. */
   const params = useSearchParams()[0]
   const patch = useUrlPatch()
   const known = (k: string | null): k is string => !!k && METRIC_BY_KEY.has(k)
   const sx = params.get('sx')
   const sy = params.get('sy')
-  const chosen = known(sx) && known(sy) ? { x: sx, y: sy } : null
-  const xKey = chosen?.x ?? SCATTER_DEFAULTS[theme].x
-  const yKey = chosen?.y ?? SCATTER_DEFAULTS[theme].y
-  const setXKey = (k: string) => patch({ sx: k, sy: yKey })
-  const setYKey = (k: string) => patch({ sx: xKey, sy: k })
+  /* Each axis falls back on its OWN merits. Requiring both to be known threw
+   * away a perfectly good axis whenever the other one had been renamed, which
+   * is the opposite of degrading gracefully — the link would lose the half it
+   * could still honour. */
+  const xKey = known(sx) ? sx : SCATTER_DEFAULTS[theme].x
+  const yKey = known(sy) ? sy : SCATTER_DEFAULTS[theme].y
+  const setXKey = (k: string) => patch({ sx: k })
+  const setYKey = (k: string) => patch({ sy: k })
   const [hover, setHover] = useState<Point | null>(null)
 
   const xM = METRIC_BY_KEY.get(xKey)

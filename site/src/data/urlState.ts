@@ -47,7 +47,12 @@ import type { Budget } from './compute'
  * clears are a useUrlFlag and another useUrlState, and each of those calls
  * useUrlPatch itself. A per-hook ref composes a hook with itself and nothing
  * else, which is why the first fix left `?ask=` missing exactly as before.
- * There is one router, so one pending write is the right granularity.
+ *
+ * It composes patch with patch, and only that. `/compare`, `/work` and
+ * `/position` each also own a direct `setParams` writer that neither reads nor
+ * sets `pending`, so a future handler touching both in one tick would lose one
+ * write — the very bug this exists to prevent. No handler does today; the
+ * limit is recorded here rather than left to be rediscovered.
  *
  * It is keyed on the route and query the write was derived FROM — as a string,
  * not as an object. `useSearchParams` builds a fresh URLSearchParams for every
@@ -184,8 +189,13 @@ export function useUrlNumber(
   const [params] = useSearchParams()
   const patch = useUrlPatch()
   const read = useCallback((raw: string | null) => {
-    const parsed = raw == null ? NaN : Number(raw)
-    return Number.isFinite(parsed) ? Math.min(max, Math.max(min, Math.trunc(parsed))) : fallback
+    /* `Number('')` is 0, which is finite — so an empty `?base=` used to clamp
+     * to the minimum and land on 1970 rather than falling back to the default,
+     * which is the one behaviour this file's own header promises. Requiring
+     * actual digits also refuses `0x7e4`, `1e3` and whitespace-padded values,
+     * none of which a key documented as a whole number should quietly accept. */
+    if (raw == null || !/^-?\d+$/.test(raw.trim())) return fallback
+    return Math.min(max, Math.max(min, Math.trunc(Number(raw))))
   }, [fallback, min, max])
   const value = read(params.get(key))
 
@@ -240,9 +250,19 @@ export function parseBudget(raw: string | null): Budget {
   return out
 }
 
+/** A factor of 1 is not a budget — it is the city's own figure, written as a
+ *  multiplication by one. The editor's sliders emit it whenever a reader drags
+ *  one back to 100%, and writing it would leave `?b=rf:1` in the address of a
+ *  page that is computing exactly what an untouched page computes. Absolute
+ *  overrides have no such identity value and are always written. */
+const IDENTITY: Partial<Record<keyof Budget, number>> = { rentFactor: 1, livingFactor: 1 }
+
 export function formatBudget(b: Budget): string {
   return BUDGET_CODEC
-    .map(([code, field]) => { const v = b[field]; return v == null ? null : `${code}:${v}` })
+    .map(([code, field]) => {
+      const v = b[field]
+      return v == null || v === IDENTITY[field] ? null : `${code}:${v}`
+    })
     .filter((s): s is string => s != null)
     .join(',')
 }

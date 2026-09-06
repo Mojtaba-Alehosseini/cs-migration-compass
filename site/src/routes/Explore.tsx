@@ -12,7 +12,7 @@
  */
 
 import { Suspense, lazy } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { THEMES, type ThemeKey } from '../data/registry'
 import { WeightsTool } from '../components/WeightsTool'
 import { ClimateMatcher } from '../components/ClimateMatcher'
@@ -46,6 +46,14 @@ export function Explore() {
   const { theme } = useParams()
   const active = (THEMES.find((t) => t.key === theme)?.key ?? 'money') as ThemeKey
 
+  const [params] = useSearchParams()
+  const axes = (() => {
+    const keep = new URLSearchParams()
+    for (const k of ['sx', 'sy']) { const v = params.get(k); if (v) keep.set(k, v) }
+    const q = keep.toString()
+    return q ? `?${q}` : ''
+  })()
+
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
       <div className="kicker">Explore</div>
@@ -58,8 +66,17 @@ export function Explore() {
 
       <div className="themesbar">
         <div className="wrap rail">
+          {/* The scatter builder's own axes travel with the reader across
+              themes, and nothing else does. That is the builder's documented
+              contract - an untouched one tracks the theme, a touched one
+              survives every switch - and it used to hold for free, because the
+              pair lived in component state on a route these chips never
+              unmount. Putting it in the address broke it: a plain <Link>
+              carries no query. Only sx/sy are carried, because only they are
+              theme-independent by design (29 axis metrics spanning all seven);
+              a `picks` from Money would silently seed Weather's picker. */}
           {THEMES.map((t) => (
-            <Link key={t.key} to={`/explore/${t.key}`} className="tchip"
+            <Link key={t.key} to={{ pathname: `/explore/${t.key}`, search: axes }} className="tchip"
               aria-current={t.key === active ? 'page' : undefined}>
               {t.label}
             </Link>

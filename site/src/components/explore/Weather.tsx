@@ -15,6 +15,13 @@ import { useData } from '../../data/store'
 import { useUrlList } from '../../data/urlState'
 import type { City } from '../../data/types'
 
+/* Hoisted, not inline. `useUrlList` memoises its value on the fallback's
+ * IDENTITY, so a fresh array literal per render meant the memo never hit and
+ * `picks` was a new array every time — which then invalidated every chart
+ * config with `picks` in its deps, work the previous `useState` default never
+ * caused. */
+const WEATHER_PICKS = ['boston', 'abu-dhabi']
+
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const cc = (c: string) => `var(--c-${c})`
 
@@ -46,7 +53,7 @@ export function WeatherTheme() {
     () => data.cities.filter((c) => (c.climate.monthly?.length ?? 0) !== 12),
     [data.cities],
   )
-  const [picks, setPicks] = useUrlList('picks', ['boston', 'abu-dhabi'])
+  const [picks, setPicks] = useUrlList('picks', WEATHER_PICKS)
 
   const cfg = useMemo<ChartCfg>(() => {
     const series: Series[] = []

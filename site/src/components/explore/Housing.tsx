@@ -76,7 +76,10 @@ function BisPanel({ data }: { data: HousingData }) {
    * arrow keys already clamp to 1970..2020 because the data ends there; a link
    * carrying `?base=1776` should land on the same view a reader would reach by
    * dragging the handle as far left as it goes, not on an empty chart. */
-  const [picks, setPicks] = useUrlList('hp', BIS_DEFAULT_PICKS, (c) => c in data.bis)
+  // Memoised for the same reason the default is hoisted: an inline predicate
+  // is a new identity every render, and useUrlList keys its memo on it.
+  const inBis = useCallback((c: string) => c in data.bis, [data])
+  const [picks, setPicks] = useUrlList('hp', BIS_DEFAULT_PICKS, inBis)
   const [base, setBase] = useUrlNumber('base', 1990, { min: 1970, max: 2020 })
   const [ready, setReady] = useState(false)
   const chart = useRef<ChartHandle | null>(null)
@@ -233,7 +236,11 @@ function TeranetPanel({ data }: { data: HousingData }) {
     () => (['toronto', 'vancouver'] as const).filter((c) => available.includes(c)) as string[],
     [available.join(',')],  // eslint-disable-line react-hooks/exhaustive-deps
   )
-  const [rawPicks, setRawPicks] = useUrlList('tp', fallback, (c) => available.includes(c as TeranetCityId))
+  const isAvailable = useCallback(
+    (c: string) => available.includes(c as TeranetCityId),
+    [available.join(',')],  // eslint-disable-line react-hooks/exhaustive-deps
+  )
+  const [rawPicks, setRawPicks] = useUrlList('tp', fallback, isAvailable)
   const picks = rawPicks as TeranetCityId[]
   const setPicks = setRawPicks
 

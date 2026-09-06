@@ -188,6 +188,7 @@ export const FILE_REF: Record<string, string> = {
   'teranet_national_bank_hpi.json': 'data/processed/teranet_national_bank_hpi.json',
   'test_citation_derivation.py': 'scripts/tests/test_citation_derivation.py',
   'types.ts': 'site/src/data/types.ts',
+  'urlState.ts': 'site/src/data/urlState.ts',
   'validate_data.py': 'scripts/validate_data.py',
   'wage_distribution.json': 'data/processed/wage_distribution.json',
   'worker/wrangler.jsonc': 'worker/wrangler.jsonc',

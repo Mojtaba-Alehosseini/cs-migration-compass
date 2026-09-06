@@ -18,6 +18,13 @@ import { useAsync } from './useAsync'
 import { useUrlList, useUrlState } from '../../data/urlState'
 import { loadJobs, METROS, METRO_LABEL, type JobsData } from '../../data/explore'
 
+/* Hoisted, not inline. `useUrlList` memoises its value on the fallback's
+ * IDENTITY, so a fresh array literal per render meant the memo never hit and
+ * `picks` was a new array every time — which then invalidated every chart
+ * config with `picks` in its deps, work the previous `useState` default never
+ * caused. */
+const JOBS_PICKS = ['DE', 'NL', 'SE', 'ES']
+
 const cc = (c: string) => `var(--c-${c})`
 const metroColor = (i: number) => `var(--m-${(i % 8) + 1})`
 const last = <T,>(a: T[]) => a[a.length - 1]!
@@ -64,7 +71,7 @@ export function JobsTheme() {
 
 function IctPanel({ data }: { data: JobsData | null }) {
   const [mode, setMode] = useUrlState<'share' | 'slope'>('mode', 'share', ['share', 'slope'])
-  const [picks, setPicks] = useUrlList('picks', ['DE', 'NL', 'SE', 'ES'])
+  const [picks, setPicks] = useUrlList('picks', JOBS_PICKS)
 
   const cfg = useMemo<ChartCfg | null>(() => {
     if (!data) return null

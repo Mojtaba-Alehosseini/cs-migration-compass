@@ -3625,7 +3625,7 @@ Evidence: `.status/screenshots/p30-gate4-transforms-{collapsed,expanded}.png` - 
 present on the rendered page, a sample summary reading "+4 more steps", and an expanded row listing
 the remainder as an ordered list. No published value changed.
 
-## 68. CLOSED on arrival, package 29 — core.json costs 89.5 KB on every theme, including the two that read nothing else
+## 68. REOPENED, package 41 (closed on arrival, package 29) — core.json costs 89.5 KB on every theme, including the two that read nothing else
 
 Package 28's Tier 1 measured that `core.json` is fetched on all seven Explore themes, and that visa
 and climate pull no other data at all — so on those two the entire data cost is a bundle largely
@@ -3659,7 +3659,48 @@ obligation to change. Packages 24 through 28 fixed things because they were wron
 had been measured. This number is real, it is recorded, and it is not hurting anyone; re-opening it
 should require a concrete cost, not the number's continued existence.
 
-## 69. Roughly three runs in four, the figure-inventory suite drops `/openings` entirely and still reports green
+### Reopened, package 41 — the concrete cost this item asked for
+
+Its own closing sentence set the bar: *"re-opening it should require a concrete cost, not the
+number's continued existence."* Package 38 produced one, in passing, while measuring something
+else:
+
+> Time-to-usable is 17.1 s because it includes what the estimate never did — **app boot and
+> core.json, measured separately at 7.9 s on the same throttling for a route that loads no postings
+> at all.**
+
+**Why this is not the measurement #29 already had.** #68 was closed on a throttled-mobile
+Lighthouse run scoring climate 97, and that was the right instinct — it deliberately looked where
+the desktop gates do not. But Lighthouse's mobile preset is a far gentler network than the Slow 4G
+profile packages 37 and 38 drove through CDP, and package 37 established what that difference does:
+on Slow 4G the fetch dominates parsing by 79x. A score of 97 under the gentle profile and 7.9 s of
+pre-data wait under the harsh one are not in conflict; the first simply cannot see the second.
+"There is no measurable cost to remove" was true of the instrument, not of the site.
+
+**What is NOT established, and must not be assumed.** The 7.9 s is app boot AND core.json together;
+package 38 measured them as one figure because that was all it needed. Arithmetic puts core.json's
+own share at roughly 1.8 s of it — 89.5 KB gzipped at 500 kbps is about 1.4 s, plus a ~400 ms round
+trip — but that is an estimate from the numbers already recorded, not a measurement, and the split
+between bundle and payload is exactly what a ruling here needs.
+
+**Not acted on.** Splitting core.json is a shipping change, and #64's ruling — both generic tools
+stay on every theme, and the scatter builder offers 29 axis metrics spanning all seven — is still
+the reason a split may not be possible without breaking them. That interaction has not been
+re-examined and nothing here should be read as saying it has.
+
+**Options:**
+  - **(a) Measure the split first.** One CDP run on Slow 4G with core.json's own request timed
+    against total time-to-first-figure, on climate and visa — the two themes that read nothing
+    else. Cheap, and it turns the estimate above into the fact this item keeps asking for.
+  - **(b) Rule it closed again on the same reasoning, explicitly.** If ~1.8 s of a 7.9 s
+    pre-data wait on a network almost nobody in this audience is on is an acceptable price for
+    keeping the generic tools whole, say so — that is a defensible answer, and it is different
+    from the current closure, which rests on a measurement that could not see the cost.
+
+Left open, because the difference between (a) and (b) is a shipping decision and package 26's rule
+puts that with the owner. What has changed is only that the closure's stated ground no longer holds.
+
+## 69. CLOSED, package 31 (heading marked in package 41) — Roughly three runs in four, the figure-inventory suite drops `/openings` entirely and still reports green
 
 Package 30 ran `test_figure_inventory.mjs` about fifteen times while working through its gates, on
 one unchanged build and one unchanged `core.json`. It returns one of exactly two results:
@@ -3842,7 +3883,7 @@ or more than a reader should be handed. Not a call to make inside a verification
 `/data`'s four are excluded from the question: a page whose subject is the dataset naming
 `countries.json` and `provenance.json` is documenting itself, not leaking.
 
-## 71. `/openings` costs 38 seconds on a slow phone, and only shipping fewer rows can change that
+## 71. CLOSED, package 38 (heading marked in package 41) — `/openings` costs 38 seconds on a slow phone, and only shipping fewer rows can change that
 
 Measured on a throttled phone through CDP — 390x844, CPU 4x, DevTools' own network profiles —
 separating the two costs that the "24 MiB" headline runs together:
@@ -3970,3 +4011,88 @@ nothing — and "looks broken" is the failure mode the whole of #9 exists to rem
 
 Left as (a) and reported rather than settled quietly, because the two readings differ on what a
 shared link is FOR, which is the question #9 asked in the first place.
+
+
+## 74. `/openings` fails the Lighthouse gate at 76 — CLS 1.036, and every other metric on the route scores 100
+
+Found by package 41's tier-4 gate run, and it is a **gate failure, not a note**: the standing bar is
+>=90 performance, and `/openings` returns 76. Thirteen of fourteen routes pass.
+
+**It is CLS alone.** Everything else on that route is perfect:
+
+```
+largest-contentful-paint   0.6 s    score 100
+speed-index                0.3 s    score 100
+first-contentful-paint     0.3 s    score 100
+total-blocking-time        0-4 ms   score 100
+cumulative-layout-shift    1.036    score 2      <- the whole of it
+```
+
+Three consecutive runs on an otherwise idle machine returned 76 / 76 / 76 with CLS 1.036 each time,
+so this is reproducible rather than a loaded-runner artefact — the trap
+`docs/STATE-OF-THE-SITE.md` already warns about for local Lighthouse numbers.
+
+**Where it shifts.** Lighthouse reports two shifts, both on the page wrapper itself:
+
+```
+score 0.8169   body > div#root > main#main > div.wrap
+score 0.2195   body > div#root > main#main > div.wrap
+```
+
+Two shifts, and the route now loads in two stages: `postings_index.json` arrives and replaces the
+skeletons, then a row chunk arrives and fills the table. Driving the same route as an in-app
+navigation produces **CLS 0.000** — only a cold document load, which is what Lighthouse measures,
+reproduces it.
+
+**What is established, and what is not.** Established: the gate fails, the cause is layout shift,
+and package 30 recorded this same route at **performance 100** before #71 was shipped. Also
+established: package 41 did not touch `Openings.tsx`. NOT established: that the split *caused* it.
+That would need the pre-#71 build measured, and it was not — the correlation is strong and the
+mechanism is plausible, which is not the same as a measurement, and this item should not pretend
+otherwise.
+
+**Why this is escalated rather than fixed.** `Openings.tsx` carries an explicit, reasoned comment
+about exactly this trade:
+
+> The LIST panel is deliberately under-reserved at 460 against a rendered ~3,764. Nothing follows
+> it, so shortfall below the fold shifts nothing — and reserving 3,764px would hold a four-screen
+> blank open while the payload parses, which is a worse page than a shift nobody can see.
+
+That reasoning was written for a ONE-stage load. Whether it still holds for a two-stage one is a
+judgement about which is the worse page, and it overturns a deliberate decision another package
+made and documented. Package 26's rule.
+
+**Options:**
+  - **(a) Reserve honestly for the two-stage load.** Match the header panel's skeleton to its real
+    height so the first shift disappears, and reserve the row area for the number of rows the index
+    already says will be rendered — which the page knows by then, and which is what makes this
+    different from the un-knowable 3,764px the comment rejected. Fixes the gate; costs a taller
+    blank area for the length of one chunk fetch.
+  - **(b) Rule that CLS on this route is acceptable and record the score.** A shift a reader never
+    sees, on the one route that carries 48,758 advertisements, may be worth more than a number —
+    but then the gate should say so explicitly instead of being quietly failed every package.
+
+**And then the mobile run changed the shape of the question.** Throttled mobile — Lighthouse's
+default preset, simulated slow network and mobile CPU, the instrument #68 turns on:
+
+```
+  route             perf  a11y     FCP     LCP      SI    TBT     CLS
+  home              98    95    1283    2111    1283    115   0.000
+  openings          96    96    1286    2416    1286    112   0.042
+  work              95   100    1287    2867    1287     91   0.000
+  explore-climate   97   100    1288    2570    1288     22   0.000
+  data              98   100    1283    2412    1283     18   0.004
+```
+
+**`/openings` scores 96 on throttled mobile, with CLS 0.042** — inside the 0.1 "good" threshold
+and nowhere near the 1.036 the desktop preset reports for the same build. The shift is real, but
+how bad it is depends almost entirely on which instrument is asked, and the desktop preset's
+condition here — a multi-hundred-kilobyte payload arriving instantly over localhost — is the one
+package 30 already warned should not be believed for this exact route.
+
+That does not dismiss the failure: the standing gate is the desktop preset, and it fails. It does
+mean option (b) is a good deal stronger than it looked, and that (a) should not be built on the
+assumption that readers are experiencing a 1.036 shift, because on the profile closest to a real
+phone they are experiencing 0.042.
+
+Not acted on. Reported as a FAILED gate rather than rounded to "13 of 14 pass".
