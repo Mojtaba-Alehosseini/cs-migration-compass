@@ -3757,7 +3757,7 @@ a ruling on how much maintenance a gate may cost.
 passed unchanged on re-run. Both are the browser suites being timed against fixed budgets rather
 than against the thing they are waiting for, and they should probably be decided together.
 
-## 70. Reader-facing cards name pipeline data files and the decision log — 64 instances, and C3 has never covered the class
+## 70. CLOSED, package 42 — Reader-facing cards name pipeline data files and the decision log — 64 instances, and C3 has never covered the class
 
 Found by package 34, and only because `/work`'s currency state became reachable for the first time.
 Reading those cards turned up a method card that says:
@@ -3880,8 +3880,61 @@ and 37 references point a visitor at it. That is seventy items of internal delib
 every judgement call this project has escalated. It may be exactly the transparency this site is for,
 or more than a reader should be handed. Not a call to make inside a verification package.
 
-`/data`'s four are excluded from the question: a page whose subject is the dataset naming
+`/data`'s four are excluded from the question: a page whose subject is the dataset naming
 `countries.json` and `provenance.json` is documenting itself, not leaking.
+
+### CLOSED, package 42 — every name a reader can read is a name they can open, and a check now says so
+
+Package 41 shipped 27 links and could not close this, because it had checked the DEFAULT state of 17
+routes and this item's own count came from the rendered corpus of 134 targets — material states
+included, which is where the /work currency cards and the Explore scatter states live.
+
+**The remainder is now established by the harness that already walks all 134, not by a sweep that
+had to be remembered.** `inventory_figures.mjs` captures a second copy of each page's text with
+every `<a>` removed, and a new assertion reads it:
+
+```
+=== C3c: every file this site names is one a reader can OPEN ===
+    86 eligible file name(s) rendered across 134 targets
+PASS  C3c: every tracked file named to a reader is a link (0 bare, 0 distinct)
+```
+
+The denominator is printed on purpose. "0 bare" is worthless if nothing was ever named, and a check
+satisfied by absence is precisely the shape the coverage floors above this one exist to catch — the
+same mistake #69 was.
+
+**Demonstrated failing before being kept**, per this suite's own standing rule. With link generation
+disabled at its single source, C3c reported **100 bare, 23 distinct**, naming the material states
+directly:
+
+```
+    st-work-currency:  "salary_es.json" is named but not linked
+    st-money-scatter:  "NEEDS-DECISION.md" is named but not linked
+    st-data-details:   "data/cities.json" ... "build_postings.py" ... (23 distinct)
+```
+
+23 distinct is the same number package 35 reached by enumerating the corpus by hand, which is a
+useful cross-check on both.
+
+**What stays unlinked, and why — each a reason, not a convenience:**
+
+* **`jobs.json`** — Teamtailor publishes a per-subdomain feed AT `/jobs.json`. It is the vendor's
+  endpoint, not a file in this repository, so a link would be an invented promise. This is the
+  precedent the other exemptions are measured against, and it is the only one C3b and C3c both name
+  explicitly.
+* **The `compass-*.csv` download filenames** — twelve of them, files this site GENERATES for the
+  reader. They are not in the repository and never appear in rendered prose, so neither check sees
+  them; the generator lists them as unresolved rather than silently dropping them.
+* **Names inside `<noscript>` and SVG `<title>`** — removed at capture. The first renders only with
+  scripting off and the second is a tooltip; neither is prose a reader reads, and neither element
+  can carry a link at all.
+
+**What this item asked and what it got.** The question was whether naming unpublished artefacts in
+reader-facing copy is the voice this project wants. The ruling kept the names — this project shows
+its workings on purpose — and removed the thing that made them unhelpful: they were strings a reader
+had to take on faith. They are now links to a pinned commit, verified against github.com rather than
+against the map that generated them, and the class is covered by a check instead of by whoever
+remembers to look.
 
 ## 71. CLOSED, package 38 (heading marked in package 41) — `/openings` costs 38 seconds on a slow phone, and only shipping fewer rows can change that
 
@@ -3957,7 +4010,7 @@ Its second assertion also fails when a payload grows heavy enough to deserve a b
 have one — it caught `countries.json` and `bis_property_prices.json` on its first run.
 
 
-## 72. The house-price chart's country picker has never drawn the country you pick
+## 72. CLOSED, package 42 — The house-price chart's country picker has never drawn the country you pick
 
 Found by package 41's round-trip check and then **reproduced on unmodified `main`**, so it predates
 this package: on `/explore/housing`, pressing a country in the BIS "Countries" picker marks the
@@ -3988,7 +4041,36 @@ for its frame rate, and that path is the reason `track` exists at all.
 Not implemented either way: the base-year drag is the smoothest interaction on the site and the
 trade-off between those two is a kit-design call, not a verification one. Package 26's rule.
 
-## 73. On `/`, the budget in the address changes only what a closed sheet would show
+### CLOSED, package 42 — neither option, because the precondition was the bug
+
+The diagnosis above was inherited from a package that reached it while working on something else, so
+it was PROVED before being acted on. Reading agreed with it, and driving settled it: after clicking
+AU the insight line under the chart read "… AU ×3.1" while the chart still held three paths and an
+aria-label naming the old three. React had recomputed the config; the engine had never rebuilt.
+Arriving fresh on `?hp=CA,DE,GB,AU` drew four, because a mount runs `build()`.
+
+**Neither (a) nor (b) as written.** "Same nodes" is `updateSeries`' own documented precondition, and
+it was ASSUMED rather than checked — that is the whole defect. It now checks, and falls back to
+`build()` when it does not hold. The comparison is against the DOM, not the last config, because
+`build()` draws no path for a series with no points, so "configured" and "drawn" are different sets
+and only the second answers "is there a node here to rewrite".
+
+**One transition serves both, so no per-case choice was needed.** Moving the base year changes every
+series' values and none of their keys, which is exactly the case the fast path exists for, and it
+still takes it. Proved by node identity rather than by argument — `build()` assigns `host.innerHTML`
+and so replaces the `<svg>`, `updateSeries` mutates it in place:
+
+```
+drag 12 years           svg node SURVIVED    handle "since 2002"   3 paths
+add AU                  svg node REPLACED    4 paths
+drag again afterwards   svg node SURVIVED    4 paths kept
+```
+
+Verified across five selections including down to a single country and back, with the picker, the
+chart's aria-label and the address agreeing every time, and `?hp=NO,SE,FI` drawing NO, SE, FI on
+arrival. `ex-bis` was the only `track` caller in the repository, so the fix reaches every future one.
+
+## 73. CLOSED, package 42 — On `/`, the budget in the address changes only what a closed sheet would show
 
 Package 41 put `b` — the reader's own rent, living cost and salary — in the address, because it
 changes how the numbers are computed and section 0 of that package's ruling puts computation in the
@@ -4011,6 +4093,45 @@ nothing — and "looks broken" is the failure mode the whole of #9 exists to rem
 
 Left as (a) and reported rather than settled quietly, because the two readings differ on what a
 shared link is FOR, which is the question #9 asked in the first place.
+
+### CLOSED, package 42 — (b), and the bug was bigger than the item said
+
+Measuring it first found the larger half. The budget changed nothing outside the modal AT ALL — not
+for a recipient, and not for the person who had just moved the slider:
+
+```
+Oslo, "Where can you actually buy a home?"     ~43 yrs
+move rent to 140%, close the sheet             ~43 yrs
+a shared ?b=rf:1.4 link                        identical to an untouched visit
+```
+
+And that question's own sub-line reads "years to a 90 m² place — mid-level salary, single, **your
+assumptions editable**". They were not: `value` was `yearsToHome(c, 'mid')`, with no budget, so the
+field contradicted the sentence printed under it. Sharing was a symptom.
+
+**(b), on what the sheet turned out to BE:** a `role="dialog"` modal with a scrim, a close button, a
+CSV download and a link to Compare. Auto-opening it would land a recipient inside a dialog they must
+dismiss before seeing anything — a page that behaves unlike a first visit — and it would have
+papered over a bug that needs no sharing to occur. Compare's editor sits ON the page, which is
+exactly why Compare's budget already worked; Home now agrees with it.
+
+`Question.value` and `SecondAxis.value` take an optional `Budget`, and the three that depend on one
+use it: `home`, `left`, and the "total monthly cost" second axis, which goes through
+`effectiveRent`/`effectiveLiving` rather than the raw fields. The CSV inside the sheet carries it
+too — it is downloaded from inside the editor that sets it, and the file outlives the page.
+
+```
+home  ?b=rf:1.4    72 of 73 dots move    Oslo ~43 yrs -> ~82 yrs
+left  ?b=rf:1.4    72 of 73 dots move
+pay   ?b=rf:1.4     0 of 73 dots move    published salary, correctly untouched
+edit -> address -> arrive fresh: 0 of 73 dots differ
+```
+
+The instrument was wrong twice before the product was: a first probe read axis ticks instead of
+dots, and a second compared one hash and reported a false "left does not move". The field packs dots
+by their RENDERED SIZE and the intro animation draws flags at 15px before settling at 17px, so
+sampling mid-intro compares two layouts and calls it a data change. The probe waits for the intro
+and carries a control — the same address twice — that places all 73 identically.
 
 
 ## 74. `/openings` fails the Lighthouse gate at 76 — CLS 1.036, and every other metric on the route scores 100

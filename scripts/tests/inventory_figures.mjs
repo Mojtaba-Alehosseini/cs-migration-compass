@@ -277,9 +277,22 @@ export const EXTRACT = String.raw`
     },
   ]))
 
+  /* The same page text with every ANCHOR removed, so a check can tell a file
+   * name a reader can open from one they can only read (NEEDS-DECISION #70).
+   * <noscript> and <title> come out too: the first renders only with scripting
+   * off and the second is a tooltip, so neither is prose and neither can carry
+   * a link. textContent, not innerText, because a detached clone has no layout
+   * and innerText would come back empty. */
+  const bare = (() => {
+    const clone = document.body.cloneNode(true)
+    for (const el of clone.querySelectorAll('a, noscript, title')) el.remove()
+    return norm(clone.textContent)
+  })()
+
   return JSON.stringify({
     figures, nodata, clipped, marks, rows,
     text: norm(document.body.innerText),
+    unlinkedText: bare,
     headings: [...document.querySelectorAll('h1,h2,h3')].map((h) => norm(h.textContent)).filter(Boolean),
   })
 })()

@@ -407,6 +407,39 @@ try {
     distinct.slice(0, 8).forEach((d) => say(`    ${d.page}: ${JSON.stringify(d.tok)} is named but tracked nowhere (${d.where})`))
     check(deadRefs.length === 0,
       `C3b: every file path shown to a reader resolves to a tracked file (${deadRefs.length} dead, ${distinct.length} distinct)`)
+
+    /* C3c — and a file a reader can reach must be one they can OPEN.
+     *
+     * #70's ruling kept the filenames in reader-facing copy and removed what
+     * made them unhelpful: they were strings you had to take on faith. Package
+     * 41 linked 27 of them, but checked only the default state of 17 routes;
+     * this runs over every target the inventory walks, material states
+     * included, which is where the remaining ones were hiding.
+     *
+     * `unlinkedText` is the page with its anchors removed, so a token that
+     * survives into it is one no link covers. <noscript> and <title> are
+     * removed at capture: neither is prose and neither can hold a link. */
+    say('\n=== C3c: every file this site names is one a reader can OPEN ===')
+    /* Named endpoints that belong to somebody else keep C3b's exemption, and
+     * for the same reason: linking them would be an invented promise about a
+     * file that is not in this repository. */
+    const eligible = (text) => ((text ?? '').match(FILE_TOKEN) ?? [])
+      .filter((tok) => !EXTERNAL_FILE_MENTIONS.has(tok) && resolves(tok))
+    const bare = []
+    let named = 0
+    for (const p of pages) {
+      named += eligible(p.text).length
+      for (const tok of eligible(p.unlinkedText)) bare.push({ page: p.id, tok })
+    }
+    /* The denominator is printed on purpose. "0 bare" means nothing if nothing
+     * was ever named -- a check satisfied by absence is the exact shape the
+     * coverage floors above exist to catch, and this one would have the same
+     * blind spot if `unlinkedText` ever came back empty. */
+    say(`    ${named} eligible file name(s) rendered across ${pages.length} targets`)
+    const bareDistinct = [...new Map(bare.map((d) => [d.tok, d])).values()]
+    bareDistinct.slice(0, 10).forEach((d) => say(`    ${d.page}: ${JSON.stringify(d.tok)} is named but not linked`))
+    check(bare.length === 0,
+      `C3c: every tracked file named to a reader is a link (${bare.length} bare, ${bareDistinct.length} distinct)`)
   }
 
   /* ============================================================= class 4 */
