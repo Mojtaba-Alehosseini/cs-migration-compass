@@ -10,11 +10,12 @@
  * without a legend.
  */
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Chart } from '../chart/Chart'
 import type { ChartCfg, Series } from '../chart/engine'
 import { Seg, Picker, ChartFoot, ChartTable, Gap, ChartPlaceholder, ThemeSkeleton, type HeroStat } from './Controls'
 import { useAsync } from './useAsync'
+import { useUrlList, useUrlState } from '../../data/urlState'
 import { loadJobs, METROS, METRO_LABEL, type JobsData } from '../../data/explore'
 
 const cc = (c: string) => `var(--c-${c})`
@@ -62,8 +63,8 @@ export function JobsTheme() {
 }
 
 function IctPanel({ data }: { data: JobsData | null }) {
-  const [mode, setMode] = useState<'share' | 'slope'>('share')
-  const [picks, setPicks] = useState(['DE', 'NL', 'SE', 'ES'])
+  const [mode, setMode] = useUrlState<'share' | 'slope'>('mode', 'share', ['share', 'slope'])
+  const [picks, setPicks] = useUrlList('picks', ['DE', 'NL', 'SE', 'ES'])
 
   const cfg = useMemo<ChartCfg | null>(() => {
     if (!data) return null
@@ -126,7 +127,7 @@ function IctPanel({ data }: { data: JobsData | null }) {
 }
 
 function PostingsPanel({ data }: { data: JobsData | null }) {
-  const [mode, setMode] = useState<'overlay' | 'grid'>('overlay')
+  const [mode, setMode] = useUrlState<'overlay' | 'grid'>('view', 'overlay', ['overlay', 'grid'])
   const drawn = METROS.filter((m) => data?.indeed[m]?.length)
 
   const cfg = useMemo<ChartCfg | null>(() => {

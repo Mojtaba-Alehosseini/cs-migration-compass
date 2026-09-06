@@ -10,12 +10,13 @@
  * read as the same quantity — so the overlay goes, and the footer says why.
  */
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Chart } from '../chart/Chart'
 import type { ChartCfg, Series } from '../chart/engine'
 import { Seg, Picker, ChartFoot, ChartTable, Gap, ThemeSkeleton, ChartSkeleton, type HeroStat } from './Controls'
 import { WagePanel } from './WagePanel'
 import { useAsync } from './useAsync'
+import { useUrlList, useUrlState } from '../../data/urlState'
 import { loadMoney, loadWages, naiveLine, yoy, type MoneyData, type Pair } from '../../data/explore'
 import { money as fmtMoney, moneyShort } from '../../data/format'
 
@@ -41,8 +42,8 @@ export function moneyHero(d: MoneyData): HeroStat[] {
 export function MoneyTheme() {
   const { data, error } = useAsync(loadMoney, 'money')
   const { data: wages, error: wagesError } = useAsync(loadWages, 'wages')
-  const [lens, setLens] = useState<Lens>('level')
-  const [picks, setPicks] = useState(['DE', 'CA', 'NL'])
+  const [lens, setLens] = useUrlState<Lens>('lens', 'level', ['level', 'index', 'yoy'])
+  const [picks, setPicks] = useUrlList('picks', ['DE', 'CA', 'NL'])
 
   const cfg = useMemo<ChartCfg | null>(() => {
     if (!data) return null

@@ -83,6 +83,40 @@ export function useUrlFlag(key: string, fallback = false): [boolean, (v: boolean
   return [value, set]
 }
 
+/**
+ * A list of short codes, comma-separated — the country and city selections the
+ * Explore charts are built from.
+ *
+ * Unknown members are dropped rather than rejecting the whole list: a link to
+ * four countries, one of which has since left the dataset, is still a link to
+ * three countries and is more useful than the default. If nothing survives, the
+ * default does — an empty chart is not what the sender meant.
+ */
+export function useUrlList(
+  key: string, fallback: readonly string[], valid?: (v: string) => boolean,
+): [string[], (v: string[] | ((cur: string[]) => string[])) => void] {
+  const [params] = useSearchParams()
+  const patch = useUrlPatch()
+  const raw = params.get(key)
+
+  const value = useMemo(() => {
+    if (raw == null) return [...fallback]
+    const kept = raw.split(',').map((s) => s.trim()).filter((s) => s && (!valid || valid(s)))
+    return kept.length ? kept : [...fallback]
+  }, [raw, fallback, valid])
+
+  /* Accepts an updater as well as a value, because Picker — the site's own
+   * multi-select — calls onChange with `(cur) => next`, the way setState does.
+   * A setter that only took a value would have compiled at the definition and
+   * failed at every call site, which is what the type checker said. */
+  const set = useCallback((v: string[] | ((cur: string[]) => string[])) => {
+    const next = typeof v === 'function' ? v(value) : v
+    const same = next.length === fallback.length && next.every((x, i) => x === fallback[i])
+    patch({ [key]: same ? null : next.join(',') })
+  }, [patch, key, fallback, value])
+  return [value, set]
+}
+
 /** A whole number, clamped. A stale `?rows=99999999` becomes the maximum
  *  rather than an attempt to render ninety-nine million rows. */
 export function useUrlNumber(

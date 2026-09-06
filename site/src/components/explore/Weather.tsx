@@ -7,11 +7,12 @@
  * The normals are already in core.json, so this theme costs no extra request.
  */
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Chart } from '../chart/Chart'
 import type { ChartCfg, Series, Pt } from '../chart/engine'
 import { Picker, ChartFoot, ChartTable, Gap, type HeroStat } from './Controls'
 import { useData } from '../../data/store'
+import { useUrlList } from '../../data/urlState'
 import type { City } from '../../data/types'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -45,7 +46,7 @@ export function WeatherTheme() {
     () => data.cities.filter((c) => (c.climate.monthly?.length ?? 0) !== 12),
     [data.cities],
   )
-  const [picks, setPicks] = useState(['boston', 'abu-dhabi'])
+  const [picks, setPicks] = useUrlList('picks', ['boston', 'abu-dhabi'])
 
   const cfg = useMemo<ChartCfg>(() => {
     const series: Series[] = []

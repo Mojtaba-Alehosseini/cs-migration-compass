@@ -6,11 +6,12 @@
  * its score and still slide, because everyone else moved.
  */
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Chart } from '../chart/Chart'
 import type { ChartCfg, Series } from '../chart/engine'
 import { Seg, Picker, ChartFoot, ChartTable, Gap, ThemeSkeleton, ChartPlaceholder, type HeroStat } from './Controls'
 import { useAsync } from './useAsync'
+import { useUrlList, useUrlState } from '../../data/urlState'
 import { loadPeople, loadLife, type PeopleData, type LifeData, type Pair } from '../../data/explore'
 
 const cc = (c: string) => `var(--c-${c})`
@@ -148,8 +149,8 @@ const RSF_PICKS = ['FI', 'NL', 'DK', 'DE', 'US']
 
 export function LifeTheme() {
   const { data, error } = useAsync(loadLife, 'life')
-  const [mode, setMode] = useState<'score' | 'rank'>('score')
-  const [picks, setPicks] = useState(['FI', 'DK', 'NL', 'DE', 'US'])
+  const [mode, setMode] = useUrlState<'score' | 'rank'>('mode', 'score', ['score', 'rank'])
+  const [picks, setPicks] = useUrlList('picks', ['FI', 'DK', 'NL', 'DE', 'US'])
 
   const whrCfg = useMemo<ChartCfg | null>(() => {
     if (!data) return null
