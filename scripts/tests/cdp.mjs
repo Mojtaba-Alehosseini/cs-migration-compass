@@ -39,67 +39,116 @@ export async function launch({ port = 9333 } = {}) {
     // fetch itself failing (connection refused / timeout) means the port is free — proceed.
   }
 
-  const profile = mkdtempSync(join(tmpdir(), 'cdp-'))
-  const child = spawn(CHROME, [
-    '--headless=new',
-    `--remote-debugging-port=${port}`,
-    `--user-data-dir=${profile}`,
-    '--no-first-run',
-    '--no-default-browser-check',
-    '--disable-extensions',
-    '--disable-background-networking',
-    '--hide-scrollbars',
-    '--force-device-scale-factor=1',
-    '--force-color-profile=srgb',
-    // A CI runner's own root/restricted-uid execution can fail to init
-    // Chrome's sandbox with no other symptom than a silent, immediate exit
-    // (no CDP port ever opens). Safe specifically because this drives only
-    // pages this same job just built and served itself on localhost —
-    // never an arbitrary or remote URL — the exact narrow case sandboxless
-    // Chrome is an acceptable, common CI trade-off for.
-    '--no-sandbox',
-    'about:blank',
-  ], { stdio: ['ignore', 'ignore', 'pipe'], detached: false })
+  /* NEEDS-DECISION #65, ruled in package 41: retry the launch, do not raise
+   * the constant again.
+   *
+   * CI went red once at "did not expose a debugging port within 30s" and the
+   * same commit passed on a bare re-run. That budget had ALREADY been raised
+   * once for this same symptom, so raising it again would have been the second
+   * guess at a number nobody has measured, and the next busy runner would have
+   * produced the same red build one budget later. A red build a re-run turns
+   * green is worse than a slow one: it teaches whoever reads it to re-run
+   * instead of to look.
+   *
+   * What a retry buys that a bigger number does not is the DISTINCTION. Chrome
+   * failing to start at all — a missing binary, a broken library, an immediate
+   * exit — is a different fact from Chrome being slow on a loaded runner, and
+   * only one of them is worth waiting longer for. So a spawn error or an early
+   * exit fails immediately and says so, and only a silent port gets a second,
+   * longer attempt on a fresh profile directory. When that second attempt
+   * works, it says how long the start actually took, which is the measurement
+   * the original item said was missing.
+   */
+  const attempt = async (budgetMs) => {
+    const profile = mkdtempSync(join(tmpdir(), 'cdp-'))
+    const child = spawn(CHROME, [
+      '--headless=new',
+      `--remote-debugging-port=${port}`,
+      `--user-data-dir=${profile}`,
+      '--no-first-run',
+      '--no-default-browser-check',
+      '--disable-extensions',
+      '--disable-background-networking',
+      '--hide-scrollbars',
+      '--force-device-scale-factor=1',
+      '--force-color-profile=srgb',
+      // A CI runner's own root/restricted-uid execution can fail to init
+      // Chrome's sandbox with no other symptom than a silent, immediate exit
+      // (no CDP port ever opens). Safe specifically because this drives only
+      // pages this same job just built and served itself on localhost —
+      // never an arbitrary or remote URL — the exact narrow case sandboxless
+      // Chrome is an acceptable, common CI trade-off for.
+      '--no-sandbox',
+      'about:blank',
+    ], { stdio: ['ignore', 'ignore', 'pipe'], detached: false })
 
-  // Keep Chrome's own stderr. With stdio ignored the only symptom of a
-  // missing binary, a broken shared library or a refused profile directory
-  // was "did not expose a debugging port" — true, unactionable, and identical
-  // for every cause. CI hit exactly that and the log said nothing else.
-  let stderr = ''
-  child.stderr?.on('data', (d) => { stderr += d.toString().slice(0, 2000) })
-  let spawnErr = null
-  child.on('error', (e) => { spawnErr = e })
-  let exited = null
-  child.on('exit', (code, signal) => { exited = signal ? `signal ${signal}` : `code ${code}` })
+    // Keep Chrome's own stderr. With stdio ignored the only symptom of a
+    // missing binary, a broken shared library or a refused profile directory
+    // was "did not expose a debugging port" — true, unactionable, and identical
+    // for every cause. CI hit exactly that and the log said nothing else.
+    let stderr = ''
+    child.stderr?.on('data', (d) => { stderr += d.toString().slice(0, 2000) })
+    let spawnErr = null
+    child.on('error', (e) => { spawnErr = e })
+    let exited = null
+    child.on('exit', (code, signal) => { exited = signal ? `signal ${signal}` : `code ${code}` })
 
-  // 30s, not 15. A cold Chrome start on a loaded CI runner is slow, and the
-  // old budget (100 x 150ms) sat close enough to the real start time that a
-  // busy runner failed the whole suite before a single check ran.
-  let version = null
-  for (let i = 0; i < 200; i++) {
-    if (spawnErr || exited) break
-    try {
-      const res = await fetch(`http://127.0.0.1:${port}/json/version`)
-      if (res.ok) { version = await res.json(); break }
-    } catch { /* not up yet */ }
-    await sleep(150)
-  }
-  if (!version) {
+    const began = Date.now()
+    const until = began + budgetMs
+    let version = null
+    while (Date.now() < until) {
+      if (spawnErr || exited) break
+      try {
+        const res = await fetch(`http://127.0.0.1:${port}/json/version`)
+        if (res.ok) { version = await res.json(); break }
+      } catch { /* not up yet */ }
+      await sleep(150)
+    }
+
+    const cleanup = () => {
+      try { child.kill() } catch { /* already gone */ }
+      setTimeout(() => { try { rmSync(profile, { recursive: true, force: true }) } catch { /* locked */ } }, 400)
+    }
+    if (version) return { ok: true, child, cleanup, tookMs: Date.now() - began }
+
+    cleanup()
+    // "Cannot start" and "was slow" are different facts. Only the second is
+    // worth another 60 seconds; retrying the first just doubles the wait and
+    // buries the real reason under a second identical failure.
+    const fatal = !!(spawnErr || exited)
     const why = spawnErr ? `could not be started (${spawnErr.message})`
       : exited ? `exited early with ${exited}`
-      : 'did not expose a debugging port within 30s'
+      : `did not expose a debugging port within ${Math.round(budgetMs / 1000)}s`
+    return { ok: false, fatal, why, stderr }
+  }
+
+  const fail = ({ why, stderr }) => {
+    const NL = String.fromCharCode(10)
     throw new Error(
-      `headless Chrome ${why}\n  binary: ${CHROME}\n`
-      + `  set CHROME_PATH to override\n`
-      + (stderr ? `  chrome stderr:\n${stderr.split('\n').map((l) => `    ${l}`).join('\n')}` : ''))
+      `headless Chrome ${why}${NL}  binary: ${CHROME}${NL}`
+      + `  set CHROME_PATH to override${NL}`
+      + (stderr ? `  chrome stderr:${NL}${stderr.split(NL).map((l) => `    ${l}`).join(NL)}` : ''))
+  }
+
+  let started = await attempt(30_000)
+  if (!started.ok) {
+    if (started.fatal) fail(started)
+    // A fresh profile directory, because a half-written one from the timed-out
+    // attempt is itself a plausible reason the next start would hang.
+    // Quote the attempt's own reason rather than restating the budget: a
+    // hardcoded "30s" here is a sentence that goes quietly wrong the day
+    // somebody changes the number above it.
+    console.warn(`  cdp: Chrome ${started.why} — retrying once (NEEDS-DECISION #65)`)
+    started = await attempt(60_000)
+    if (!started.ok) fail(started)
+    console.warn(`  cdp: the retry started in ${(started.tookMs / 1000).toFixed(1)}s`
+      + ' — the first attempt was slow, not broken. If this line appears often, the budget is the'
+      + ' thing to look at, and now there is a measurement to set it from.')
   }
 
   return {
     port,
-    close() {
-      try { child.kill() } catch { /* already gone */ }
-      setTimeout(() => { try { rmSync(profile, { recursive: true, force: true }) } catch { /* locked */ } }, 400)
-    },
+    close() { started.cleanup() },
   }
 }
 

@@ -3439,7 +3439,7 @@ default. A question the visitor builds themselves overrides the default and surv
 switch — verified, and the reason that needed care is that it already worked, so a naive default
 would have broken it. Both tools verified still present at full height on all seven.
 
-## 65. CI's browser suites failed once on a 30-second Chrome start budget, and passed on re-run with no change
+## 65. CLOSED, package 41 — CI's browser suites failed once on a 30-second Chrome start budget, and passed on re-run with no change
 
 Package 28, Tier 0 pushed seven package-27 commits. CI went red on the first run
 (`33831786400`, 6m1s) at `scripts/tests/test_ui_regressions.mjs:65`:
@@ -3474,6 +3474,37 @@ run did not measure it — it only proved 30s was not enough once.
 
 Not resolved here — and deliberately not fixed on a hunch, because the failure is intermittent and
 neither option can be verified from a single green re-run.
+
+### Resolved, package 41 — (b), the retry
+
+Raising the budget again would have been the second guess at a number nobody has measured, and the
+next loaded runner would have produced the same red build one budget later. What the retry buys that
+a bigger constant does not is the DISTINCTION this item already named: Chrome failing to start at
+all — a missing binary, a broken library, an immediate exit — is a different fact from Chrome being
+slow, and only one of them is worth waiting longer for.
+
+`launch()` now fails immediately on a spawn error or an early exit, and retries once, on a fresh
+profile directory and a 60-second budget, only when the port stayed silent. A successful retry
+prints how long the start actually took — the measurement this item said was missing. If that line
+starts appearing, the budget is the thing to look at, and there is finally a number to set it from.
+
+Both branches were exercised rather than reasoned about, because an untaken branch is not a fix:
+
+```
+cannot start   CHROME_PATH pointed at something that is not a Chrome binary
+               failed in 197 ms naming the spawn error — no 30-second retry wasted
+was slow       the same file with only the first budget cut to 1 ms
+               "Chrome did not expose a debugging port within 0s — retrying once"
+               "the retry started in 0.4s — the first attempt was slow, not broken"
+               and the browser it returned then drove a real page
+```
+
+The warning quotes the attempt's own reason rather than restating "30s", so the sentence cannot go
+quietly wrong the day somebody changes the number above it.
+
+**#69 and #70's option (a) are the same family and are NOT closed by this.** Both are browser suites
+timed against a fixed budget rather than against the thing they are waiting for; this closes the one
+that had a measured failure behind it.
 
 ## 66. CLOSED, package 29 — A second positional `skilled_routes[0]` survives on `/city/*`, invisible to the guard built for it
 
