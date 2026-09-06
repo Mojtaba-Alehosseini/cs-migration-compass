@@ -14,6 +14,7 @@ import { dropApprox, money, num, pct, sourceName, years, NO_DATA, asOfLabel } fr
 import { citySalarySource } from '../data/registry'
 import { typicalArrivalRoute } from '../data/visaRoutes'
 import {
+  BAND_LABEL,
   HOME_M2, instabilityNote, isNeverAffordable, m2PerYear, missingInputs, netFor, netPayChain,
   savingsPerYear, yearsToHome,
   stabilityOf,
@@ -22,17 +23,22 @@ import { NotFound } from './NotFound'
 import type { Band } from '../data/types'
 import { useState } from 'react'
 
-const BAND_LABEL: Record<Band, string> = {
-  new_grad: 'Starting out',
-  mid: '3–5 years in',
-  senior: 'Senior',
-}
+/* BAND_LABEL lives in compute.ts, which also names the band inside the net-pay
+ * chain. Two copies of the same three strings would drift the moment one was
+ * reworded, and the card and the control would then disagree about what the
+ * reader is looking at. */
 
 export function CityProfile() {
   const { id } = useParams()
   const data = useData()
   const city = id ? data.cityById.get(id) : undefined
-  const [band] = useState<Band>('mid')
+  /* Package 39. This was `const [band] = useState<Band>('mid')` with no setter
+   * — never wired rather than removed; `setBand` appears nowhere in this file's
+   * history. The salary panel below has always shown all three bands, so what
+   * was pinned were the six DERIVED figures: net pay, savings, years to a home,
+   * m² per year, affordability and the net-pay chain. A visitor could see what
+   * a senior earns here but not what it leaves at the end of a year. */
+  const [band, setBand] = useState<Band>('mid')
   const [allJobs, setAllJobs] = useState(false)
 
   if (!city) return <NotFound />
@@ -167,10 +173,33 @@ export function CityProfile() {
         {/* ---- a month here ---- */}
         <div className="panel">
           <h2>A month in {city.name}</h2>
+          {/* The band this panel and the one below are computed on. Same
+              control idiom as the Developers/All-jobs tabs above — this is not
+              a design pass, and the page already had a vocabulary for a small
+              exclusive choice.
+              A band this city has no figure for is offered but disabled, and
+              says so: the site's refusal vocabulary is a mark, never a blank,
+              and silently hiding the option would hide the gap with it. */}
+          <div className="crail" role="group" aria-label="Which salary band these figures are computed on"
+            style={{ margin: '2px 0 10px' }}>
+            {(['new_grad', 'mid', 'senior'] as Band[]).map((b) => {
+              const has = city.salary_usd_year[b] != null
+              return (
+                <button key={b} type="button" onClick={() => has && setBand(b)}
+                  aria-pressed={band === b} disabled={!has}
+                  title={has ? undefined : `No ${BAND_LABEL[b].toLowerCase()} salary recorded for ${city.name}`}
+                  style={{ ...tabStyle(band === b), ...(has ? {} : { opacity: 0.45, cursor: 'not-allowed' }) }}>
+                  {BAND_LABEL[b]}{has ? '' : ' — no figure'}
+                </button>
+              )
+            })}
+          </div>
           {net != null && city.rent_1br_outside_usd_month != null && city.col_single_no_rent_usd_month != null ? (
             <>
               <div className="sub">
-                Take the mid-level paycheck. After {country.name}’s taxes,{' '}
+                {/* Was "Take the mid-level paycheck", which stopped being true
+                    the moment the band became selectable. */}
+                Take the <b>{BAND_LABEL[band]}</b> band’s paycheck. After {country.name}’s taxes,{' '}
                 {(() => {
                   const netChain = netPayChain(city, band)
                   return netChain ? (
@@ -203,7 +232,13 @@ export function CityProfile() {
         {/* ---- years to home ---- */}
         <div className="panel">
           <h2>The path to owning a home</h2>
-          <div className="sub">Every step shown, every number editable in Compare.</div>
+          {/* This panel is computed on the same band as the one above, and says
+              so rather than leaving a reader to infer which salary produced a
+              number this large. */}
+          <div className="sub">
+            On the <b>{BAND_LABEL[band]}</b> band. Every step shown, every number editable in
+            Compare.
+          </div>
           {never ? (
             <p style={{ fontSize: 'var(--text-xs)', color: 'var(--warn)', marginTop: 8 }}>
               At this salary nothing is left after rent and living costs, so buying never happens.

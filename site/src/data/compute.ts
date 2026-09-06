@@ -69,7 +69,14 @@ export function netPayChain(city: City, band: Band, b: Budget = {}): { chain: Ch
   if (gross == null || net == null || city.net_pct == null) return null
   return {
     chain: [
+      /* Package 39: the band is named. It used to be safe to say only "this
+       * city's own market-wide developer salary" because every derived figure
+       * on a city page was the mid band and nothing could change it. Now that
+       * the band is selectable, a card showing a gross without saying which of
+       * the three rows above it came from leaves the reader to guess — the
+       * "written assuming mid" defect this ruling was warned about. */
       { op: 'gross', detail: `${money(gross)}/year — this city's own market-wide developer salary `
+        + `for the "${BAND_LABEL[band]}" band `
         + '(a separately-cited figure — see "Developer salary" above).' },
       { op: 'apply_tax_rate', detail: `x ${city.net_pct}% — this country's own flat net-of-tax share.` },
     ],
