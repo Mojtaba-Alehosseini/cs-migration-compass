@@ -16,6 +16,7 @@ import { Flag } from '../components/Flag'
 import { ChartSkeleton } from '../components/explore/Controls'
 import { loadPostingsSeedSummary, fmtCompany, KNOWN_PROVIDERS, PROVIDER_LABEL, PROVIDER_HAS_COMPENSATION_FIELD, PROVIDER_LICENSE } from '../data/postings'
 import { useUrlState } from '../data/urlState'
+import { LinkFiles } from '../lib/fileLink'
 
 const DENSITY_NOTE: Record<string, string> = {
   US: 'HIGH — expected: California, Colorado, Illinois, Maryland, Massachusetts, Minnesota, New '
@@ -53,7 +54,10 @@ export function PostingsSeed() {
     return Object.entries(data.country_counts).sort((a, b) => b[1] - a[1])
   }, [data])
 
+  /* #70 -- this page is an account of how the postings harvest works and
+   * names the scripts that do it; wrapping it links them. */
   return (
+    <LinkFiles>
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Where the postings panel's own data comes from</h1>
       <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: '74ch' }}>
@@ -241,5 +245,6 @@ export function PostingsSeed() {
         </>
       )}
     </div>
+    </LinkFiles>
   )
 }

@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { ThemeSwitcher } from './components/Theme'
 import { ToastHost } from './components/Toast'
 import { SelectionContext, useSelectionState } from './data/selection'
+import { REPO_URL } from './lib/fileLink'
 
 const NAV = [
   { to: '/compare', label: 'Compare' },
@@ -144,7 +145,7 @@ export function App() {
           </span>
           <NavLink to="/data" style={{ color: 'var(--ink-2)' }}>How every number is sourced →</NavLink>
           <a
-            href="https://github.com/"
+            href={REPO_URL}
             style={{ marginLeft: 'auto', color: 'var(--ink-2)' }}
             target="_blank"
             rel="noopener noreferrer"

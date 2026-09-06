@@ -26,6 +26,7 @@ import { useSelection } from '../data/selection'
 import { stabilityOf, yearsToHome, savingsPerYear, type Budget } from '../data/compute'
 import { years as fmtYearsToHome, dropApprox, NO_DATA } from '../data/format'
 import { UnstableMark } from '../components/Unstable'
+import { FileLink, linkifyFiles } from '../lib/fileLink'
 
 // Package 24 — exported (were module-local) so components/work's new
 // CountryStripRow can format the exact same way CountryRow always has,
@@ -164,7 +165,7 @@ export function ProfileForm({ profile, occupations, onChange }: {
           {profile.occupation !== DEFAULT_OCCUPATION && (
             <span style={{ display: 'block', marginTop: 4, color: 'var(--warn)', fontSize: 'var(--text-2xs)' }}>
               Only Software developers (isco08:2512) has resolved wage data as of this package — every
-              other occupation will show as absent below. See NEEDS-DECISION.md.
+              other occupation will show as absent below. See <FileLink name="NEEDS-DECISION.md" />.
             </span>
           )}
         </label>
@@ -249,7 +250,7 @@ export function CountryRow({ row, profile, gradient, highlighted }: {
             </span>
           </Figure>
         ) : (
-          <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>{position.reason}</span>
+          <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>{linkifyFiles(position.reason)}</span>
         )}
         {position.ok && (
           <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
@@ -266,7 +267,7 @@ export function CountryRow({ row, profile, gradient, highlighted }: {
             </span>
           </Derived>
         ) : (
-          <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>{estimate.reason}</span>
+          <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>{linkifyFiles(estimate.reason)}</span>
         )}
         {estimate.ok && !estimate.personalised && (
           <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>unadjusted — same as the median</div>
@@ -324,7 +325,7 @@ export function PayVsCost({ profile, wageByCountry, gradient }: {
                   : `${city.country}'s pay composition is unverified (neither regular_pay nor total_earnings — see pay_composition.json), so no USD figure can be run through cost-of-living`
             return (
               <div key={city.id} style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-3)' }}>
-                <Flag cc={city.country} size={12} /> {city.name}: {reason}.
+                <Flag cc={city.country} size={12} /> {city.name}: {linkifyFiles(reason)}.
               </div>
             )
           }
@@ -421,8 +422,8 @@ export function CoverageMap({ wages, gradient }: {
           <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0' }}>
             {works.map((r) => (
               <li key={r.cc} style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>
-                <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> — {r.crosswalkDetail}, {r.distributionDetail},{' '}
-                {r.experienceDetail}
+                <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> — {linkifyFiles(r.crosswalkDetail)}, {linkifyFiles(r.distributionDetail)},{' '}
+                {linkifyFiles(r.experienceDetail)}
               </li>
             ))}
           </ul>
@@ -435,7 +436,7 @@ export function CoverageMap({ wages, gradient }: {
             {blocked.map((r) => (
               <li key={r.cc} style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>
                 <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> —{' '}
-                {r.crosswalkOk ? r.distributionDetail : r.crosswalkDetail}
+                {linkifyFiles(r.crosswalkOk ? r.distributionDetail : r.crosswalkDetail)}
               </li>
             ))}
           </ul>
@@ -451,7 +452,7 @@ export function CoverageMap({ wages, gradient }: {
             {rows.map((r) => (
               <li key={r.cc} style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 3 }}>
                 <Flag cc={r.cc} size={11} /> <b style={{ color: 'var(--ink-2)' }}>{r.cc}</b> —{' '}
-                {r.experienceDetail === '—' ? 'n/a (no wage data)' : r.experienceDetail}
+                {r.experienceDetail === '—' ? 'n/a (no wage data)' : linkifyFiles(r.experienceDetail)}
               </li>
             ))}
           </ul>
@@ -550,8 +551,8 @@ export function Position() {
             ))}
             {wages.absent.length > 0 && (
               <Gap title={`${wages.absent.length} countries don't appear above`} span="s6"
-                where={<>Full account in <Link to="/data">NEEDS-DECISION.md →</Link></>}>
-                <p>{wages.absent.map((a) => `${a.country} — ${readableAbsentReason(a.reason)}`).join('; ')}. Absence drawn, not implied by a missing row.</p>
+                where={<>Full account in <FileLink name="NEEDS-DECISION.md">NEEDS-DECISION.md →</FileLink></>}>
+                <p>{linkifyFiles(wages.absent.map((a) => `${a.country} — ${readableAbsentReason(a.reason)}`).join('; '))}. Absence drawn, not implied by a missing row.</p>
               </Gap>
             )}
           </div>

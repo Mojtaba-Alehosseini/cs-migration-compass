@@ -9,6 +9,7 @@ import { useData, loadProvenance } from '../data/store'
 import { CONFIDENCE_MARK, asOfLabel, num } from '../data/format'
 import { HOME_M2 } from '../data/compute'
 import type { Provenance } from '../data/types'
+import { LinkFiles } from '../lib/fileLink'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -21,7 +22,11 @@ export function DataMethods() {
   const ok = prov?.entries.filter((e) => e.status === 'ok' || e.status === 'partial') ?? []
   const missing = prov?.entries.filter((e) => !['ok', 'partial'].includes(e.status)) ?? []
 
+  /* #70 -- this page's whole subject is the pipeline, so it names more
+   * repository files in prose than every other route put together. Wrapping
+   * it links them all, and links the next one somebody writes. */
   return (
+    <LinkFiles>
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Where every number comes from</h1>
       <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', margin: '8px 0 12px', maxWidth: '70ch' }}>
@@ -164,6 +169,7 @@ export function DataMethods() {
         </div>
       </div>
     </div>
+    </LinkFiles>
   )
 }
 

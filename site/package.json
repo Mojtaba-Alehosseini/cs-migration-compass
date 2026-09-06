@@ -8,13 +8,14 @@
     "predev": "npm run data",
     "dev": "vite",
     "data": "python ../scripts/build_site_data.py",
-    "prebuild": "npm run data && npm run og",
+    "prebuild": "npm run data && npm run og && npm run filerefs",
     "og": "python ../scripts/generate_og_images.py",
     "build": "tsc --noEmit && vite build && npm run share-pages",
     "share-pages": "python ../scripts/generate_share_pages.py",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/**/*.test.ts",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "filerefs": "python ../scripts/generate_file_refs.py"
   },
   "dependencies": {
     "lucide-react": "^0.460.0",

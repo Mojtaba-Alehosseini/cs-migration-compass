@@ -9,6 +9,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { CONFIDENCE_LABEL, CONFIDENCE_MARK, NO_DATA, asOfLabel, sourceName } from '../data/format'
 import type { Confidence } from '../data/types'
+import { linkifyFiles } from '../lib/fileLink'
 
 export interface SourceInfo {
   /** Human name; derived from the URL when omitted. */
@@ -136,9 +137,9 @@ export function Figure({ children, source, missing, missingReason, className }: 
           }}
         >
           <b style={{ display: 'block', marginBottom: 3 }}>{label}</b>
-          {source.what && <span style={{ display: 'block', opacity: 0.85 }}>{source.what}</span>}
+          {source.what && <span style={{ display: 'block', opacity: 0.85 }}>{linkifyFiles(source.what)}</span>}
           {source.sample && (
-            <span style={{ display: 'block', opacity: 0.85, marginTop: 3 }}>{source.sample}</span>
+            <span style={{ display: 'block', opacity: 0.85, marginTop: 3 }}>{linkifyFiles(source.sample)}</span>
           )}
           {source.steps && source.steps.length > 0 && (
             <>
@@ -167,7 +168,7 @@ export function Figure({ children, source, missing, missingReason, className }: 
                   // (finding F15's remediation), not by the original review.
                   <span key={i} style={{ display: 'flex', gap: 6, opacity: 0.85 }}>
                     <span style={{ opacity: 0.6, flexShrink: 0 }}>{` ${i + 1}.`}</span>
-                    <span>{` ${step}`}</span>
+                    <span>{linkifyFiles(` ${step}`)}</span>
                   </span>
                 ))}
               </span>

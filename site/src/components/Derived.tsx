@@ -18,6 +18,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import type { ChainStep } from '../data/explore'
+import { linkifyFiles } from '../lib/fileLink'
 
 const fmtResult = (v: number, currency: string): string => {
   try {
@@ -136,10 +137,10 @@ export function Derived({ children, chain, native, concept, result, payCycleNote
               <b style={{ display: 'block' }}>{concept.name}</b>
               <span style={{ display: 'block', opacity: 0.7, marginBottom: 6 }}>{concept.office}</span>
               {concept.includes && (
-                <span style={{ display: 'block', opacity: 0.85 }}>Includes: {concept.includes}</span>
+                <span style={{ display: 'block', opacity: 0.85 }}>Includes: {linkifyFiles(concept.includes)}</span>
               )}
               {concept.excludes && (
-                <span style={{ display: 'block', opacity: 0.85, marginBottom: 6 }}>Excludes: {concept.excludes}</span>
+                <span style={{ display: 'block', opacity: 0.85, marginBottom: 6 }}>Excludes: {linkifyFiles(concept.excludes)}</span>
               )}
             </>
           )}
@@ -154,7 +155,7 @@ export function Derived({ children, chain, native, concept, result, payCycleNote
               </li>
             )}
             {chain.map((step, i) => (
-              <li key={i} style={{ opacity: 0.85 }}>{step.detail}</li>
+              <li key={i} style={{ opacity: 0.85 }}>{linkifyFiles(step.detail)}</li>
             ))}
             {result && (
               <li style={{ fontWeight: 600, opacity: 1 }}>= {fmtResult(result.value, result.currency)}</li>

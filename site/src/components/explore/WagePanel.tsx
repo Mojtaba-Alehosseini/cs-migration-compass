@@ -45,6 +45,7 @@ import { loadPayComposition, type PayComposition } from '../../data/store'
 import { comboKey, CA_NOC_DISTINCTION, type Basis, type CurrencyMode, type WageDistribution } from '../../data/explore'
 import { computeYearSpread } from '../../data/yearSpread'
 import { NO_DATA } from '../../data/format'
+import { FileLink } from '../../lib/fileLink'
 
 const cc3 = (c: string) => `var(--c-${c})`
 
@@ -466,7 +467,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
 
       {(wages.absent.length > 0 || uncomparable.length > 0) && (
         <Gap title={`${wages.absent.length + uncomparable.length} countries don't appear in this chart`} span="s6"
-          where={<>Full account in <a href="#/data">NEEDS-DECISION.md →</a></>}>
+          where={<>Full account in <FileLink name="NEEDS-DECISION.md">NEEDS-DECISION.md →</FileLink></>}>
           <p>
             {wages.absent.map((a, i) => (
               <span key={a.country}>
