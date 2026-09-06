@@ -197,6 +197,29 @@ Compare.tsx's own established `update()` idiom this item already describes. A
 convention four packages have now converged on without coordinating is decidable
 from that evidence alone, not a live open question.
 
+### Update, package 41 — the line this item was missing: which state is material
+
+#9 settled that a default writes nothing. It never said WHICH state earns a key, and packages 33
+through 40 kept re-litigating that per control. The owner's ruling in package 41 draws it once:
+
+> **In the address: state that changes which data is shown or how it is computed.
+> Not in the address: state that changes what is expanded, open, or already animated.**
+
+Applied across the remaining controls, this settles them without further judgement:
+
+* **In** — the scatter axes (`sx`/`sy`), Housing's base year (`base`) and both pick sets
+  (`hp`, `tp` — two keys because both pickers live on one page), Home's question (`ask`, by id and
+  not by index, so inserting a question above another does not silently repoint every old link),
+  its search box (`find`), its second axis (`ax2`/`ax`), and the budget (`b`).
+* **Out** — `tableOpen`, `sheetOpen`, `pickerOpen`, `ready`, `intro`, and PlaceBrowser's map
+  toggle. The last one was on package 41's own list of things to wire, and the rule excludes it:
+  it is an `aria-expanded` button over the same 73 cities the list below it already shows, which
+  that panel's own copy calls "the exact geography-free version". It was left alone on the strength
+  of the rule rather than wired because a work order named it.
+* **Escalated rather than settled** — the /data transforms disclosures and the weights tool
+  (package 40's note), and now item 73, where the rule points one way and what a recipient of the
+  link actually SEES points the other.
+
 ## 10. CLOSED, package 21 — Metric rows are the registry's, not the mockup's
 
 Binding note 13 keeps metric selection out of package 4, so the rows are still
@@ -3860,3 +3883,59 @@ payload grows past a recorded gzipped budget, because the desktop-preset Lightho
 this: `/openings` scores 100 while shipping 2.4 MiB, since on localhost the transfer is instant.
 Its second assertion also fails when a payload grows heavy enough to deserve a budget and does not
 have one — it caught `countries.json` and `bis_property_prices.json` on its first run.
+
+
+## 72. The house-price chart's country picker has never drawn the country you pick
+
+Found by package 41's round-trip check and then **reproduced on unmodified `main`**, so it predates
+this package: on `/explore/housing`, pressing a country in the BIS "Countries" picker marks the
+button pressed and changes nothing else. The chart keeps its three default lines and its own
+accessible name still reads `indexed to 100 in 1990, CA, DE, GB` with AU pressed. Six consecutive
+network-idle-plus-DOM-stable samples after the click: `paths=3 picked=AU,CA,DE,GB`. It is not a lag.
+
+The cause is a transition, not the picker. `<Chart id="ex-bis" transition="track">` routes every
+config change to `engine.updateSeries(cfg)`, which the kit documents as "direct manipulation; same
+scales, no teardown". It exists for the base-year drag, where the series set is fixed and only the
+values move — and it is right for that, which is why the drag is smooth. A pick changes the series
+SET, and `updateSeries` has nothing to add a series with.
+
+Arriving fresh on the same selection draws all four lines correctly, because a first build takes
+`engine.build`, not `updateSeries`. So the data, the picker state and the address are all correct;
+only the in-place update is wrong. That is also why every existing check missed it: they all land
+on a page rather than driving a control and watching it.
+
+**(a) Choose the transition from the change.** Keep `track` while the base-year handle is being
+dragged and use `morph`/`fade` when the series set differs from the last build. Smallest change,
+keeps the drag exactly as it is, but it puts a "what kind of change is this" decision in the panel
+rather than in the kit.
+
+**(b) Make `updateSeries` handle a changed set** — add and remove series, then update. One fix for
+every future caller instead of one per panel, but it touches the engine path the drag depends on
+for its frame rate, and that path is the reason `track` exists at all.
+
+Not implemented either way: the base-year drag is the smoothest interaction on the site and the
+trade-off between those two is a kit-design call, not a verification one. Package 26's rule.
+
+## 73. On `/`, the budget in the address changes only what a closed sheet would show
+
+Package 41 put `b` — the reader's own rent, living cost and salary — in the address, because it
+changes how the numbers are computed and section 0 of that package's ruling puts computation in the
+address. On `/compare` this is plainly right and is verified: driving the rent slider writes
+`?b=rf:1.4`, and arriving on that link reproduces the numbers exactly — rent −$18,480 and $31,360
+saved, against −$13,200 and $36,640 without it.
+
+On `/` it is not so clear. `budget` is read in exactly one place, `<BudgetEditor>`, and that editor
+renders inside the `sheetOpen` sheet — a disclosure which the same ruling deliberately keeps OUT of
+the address. So a link carrying `?b=rf:1.4` to the home page changes nothing the recipient can see
+until they open a sheet the link does not open.
+
+**(a) Keep it.** The state is genuinely material; the reader who opens the sheet sees their sender's
+assumptions rather than the defaults, and a future panel that reads `budget` outside the sheet gets
+the behaviour for free.
+
+**(b) Drop it from `/` and keep it on `/compare`.** A link whose entire visible effect is hidden
+behind a control the link does not touch reads, to the person who receives it, as a link that does
+nothing — and "looks broken" is the failure mode the whole of #9 exists to remove.
+
+Left as (a) and reported rather than settled quietly, because the two readings differ on what a
+shared link is FOR, which is the question #9 asked in the first place.

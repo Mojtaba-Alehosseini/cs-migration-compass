@@ -20,6 +20,7 @@ import { PICK_COLORS } from '../../data/questions'
 import { Picker, ChartFoot, ChartTable, Gap, ThemeSkeleton, type HeroStat } from './Controls'
 import { useAsync } from './useAsync'
 import { loadHousing, TERANET_CITY_IDS, type HousingData, type Pair, type TeranetCityId } from '../../data/explore'
+import { useUrlList, useUrlNumber } from '../../data/urlState'
 
 const cc = (c: string) => `var(--c-${c})`
 const last = <T,>(a: T[]) => a[a.length - 1]!
@@ -64,9 +65,19 @@ export function HousingTheme() {
   )
 }
 
+const BIS_DEFAULT_PICKS = ['CA', 'DE', 'GB']
+
 function BisPanel({ data }: { data: HousingData }) {
-  const [picks, setPicks] = useState(['CA', 'DE', 'GB'])
-  const [base, setBase] = useState(1990)
+  /* #9 -- both go in the address: the base year is the whole argument of this
+   * chart (indexing to 1990 and indexing to 2007 tell different stories about
+   * the same series), and the picks decide which countries are drawn.
+   *
+   * The year is CLAMPED on the way in, not rejected. The drag handle and the
+   * arrow keys already clamp to 1970..2020 because the data ends there; a link
+   * carrying `?base=1776` should land on the same view a reader would reach by
+   * dragging the handle as far left as it goes, not on an empty chart. */
+  const [picks, setPicks] = useUrlList('hp', BIS_DEFAULT_PICKS, (c) => c in data.bis)
+  const [base, setBase] = useUrlNumber('base', 1990, { min: 1970, max: 2020 })
   const [ready, setReady] = useState(false)
   const chart = useRef<ChartHandle | null>(null)
   const dragging = useRef(false)
@@ -155,7 +166,7 @@ function BisPanel({ data }: { data: HousingData }) {
               : e.key === 'PageDown' ? -10 : e.key === 'PageUp' ? 10 : 0
             if (!step) return
             e.preventDefault()
-            setBase((b) => Math.max(1970, Math.min(2020, b + step)))
+            setBase((b) => b + step)
           }}
         >
           {/* The space is markup, not styling: the accessible name has to
@@ -214,9 +225,17 @@ function TeranetPanel({ data }: { data: HousingData }) {
   // visibly does nothing when clicked. Its own raw disclosure lives in
   // CityRibbons instead, unconditionally, not picker-gated.
   const available = TERANET_CITY_IDS.filter((c) => data.teranet[c]?.passed)
-  const [picks, setPicks] = useState<TeranetCityId[]>(
-    (['toronto', 'vancouver'] as const).filter((c) => available.includes(c)),
+  /* A separate key from the BIS panel's: both pickers are on /explore/housing
+   * at once, and one `?picks=` would have them overwrite each other's choice.
+   * The default is derived from what passed validation, so it is memoised on
+   * that list rather than rebuilt every render. */
+  const fallback = useMemo(
+    () => (['toronto', 'vancouver'] as const).filter((c) => available.includes(c)) as string[],
+    [available.join(',')],  // eslint-disable-line react-hooks/exhaustive-deps
   )
+  const [rawPicks, setRawPicks] = useUrlList('tp', fallback, (c) => available.includes(c as TeranetCityId))
+  const picks = rawPicks as TeranetCityId[]
+  const setPicks = setRawPicks
 
   const cfg = useMemo<ChartCfg>(() => {
     const series: Series[] = []

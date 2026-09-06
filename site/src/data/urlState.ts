@@ -25,21 +25,66 @@
  *   the alternative is a link that used to work rendering a crash.
  */
 import { useCallback, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
+import type { Budget } from './compute'
 
-/** Write `patch` into the query string; a null value removes its key. */
+/**
+ * Write into the query string; a null value removes its key. Pass an object,
+ * or a function of the current params when the new value depends on the old
+ * one (a base year stepped by an arrow key, a list toggled).
+ *
+ * Two calls in one tick have to COMPOSE, and this is the reason the function
+ * is not a one-liner. Home's question pill changes three things at once —
+ * "this question, and drop the second axis that belonged to the last one" —
+ * and react-router's own updater hands each call the last COMMITTED params,
+ * not the ones the previous call in the same tick queued. Written the obvious
+ * way, the last write silently wins and the question never reaches the
+ * address at all: the check caught exactly that, `?ask=` missing from a URL
+ * whose pill was visibly pressed.
+ *
+ * `pending` lives at module scope, not in a ref, because the calls that have
+ * to compose come from DIFFERENT hooks — `setQi` is a useUrlState, the two it
+ * clears are a useUrlFlag and another useUrlState, and each of those calls
+ * useUrlPatch itself. A per-hook ref composes a hook with itself and nothing
+ * else, which is why the first fix left `?ask=` missing exactly as before.
+ * There is one router, so one pending write is the right granularity.
+ *
+ * It is keyed on the route and query the write was derived FROM — as a string,
+ * not as an object. `useSearchParams` builds a fresh URLSearchParams for every
+ * hook instance, so two components looking at one identical location hold two
+ * unequal objects; an identity check between them is always false and the
+ * composition silently does nothing. That is not a deduction, it is what the
+ * probe printed: click one picker and the address said `?hp=CA,DE,GB,AU`,
+ * click the second in the same tick and it said `?tp=...` alone.
+ *
+ * And it is DROPPED on the next microtask, which is the part the key alone got
+ * wrong. Keyed only on route-plus-query, a pending `?base=2000` written on one
+ * visit to /explore/housing matched the next clean visit to the same route and
+ * was replayed onto it — the probe caught a base year the reader never chose
+ * riding along in the address. A microtask runs after the synchronous batch
+ * that a single click produces and before anything a person can do next, which
+ * is exactly the window this is meant to cover.
+ */
+type Patch = Record<string, string | null>
+
+let pending: { from: string; next: URLSearchParams } | null = null
+
 export function useUrlPatch() {
-  const [, setParams] = useSearchParams()
-  return useCallback((patch: Record<string, string | null>) => {
-    setParams((cur) => {
-      const next = new URLSearchParams(cur)
-      for (const [k, v] of Object.entries(patch)) {
-        if (v == null || v === '') next.delete(k)
-        else next.set(k, v)
-      }
-      return next
-    }, { replace: true })
-  }, [setParams])
+  const [params, setParams] = useSearchParams()
+  const { pathname } = useLocation()
+
+  return useCallback((patch: Patch | ((cur: URLSearchParams) => Patch)) => {
+    const from = pathname + '?' + params.toString()
+    const base = pending?.from === from ? pending.next : params
+    const next = new URLSearchParams(base)
+    for (const [k, v] of Object.entries(typeof patch === 'function' ? patch(base) : patch)) {
+      if (v == null || v === '') next.delete(k)
+      else next.set(k, v)
+    }
+    pending = { from, next }
+    queueMicrotask(() => { pending = null })
+    setParams(next, { replace: true })
+  }, [params, setParams, pathname])
 }
 
 /**
@@ -108,26 +153,105 @@ export function useUrlList(
   /* Accepts an updater as well as a value, because Picker — the site's own
    * multi-select — calls onChange with `(cur) => next`, the way setState does.
    * A setter that only took a value would have compiled at the definition and
-   * failed at every call site, which is what the type checker said. */
-  const set = useCallback((v: string[] | ((cur: string[]) => string[])) => {
-    const next = typeof v === 'function' ? v(value) : v
+   * failed at every call site, which is what the type checker said.
+   *
+   * The updater is resolved against the ADDRESS, not against this render's
+   * `value`. Two picks in quick succession would otherwise both compute from
+   * the same stale list and the first would be lost. */
+  const set = useCallback((v: string[] | ((cur: string[]) => string[])) => patch((cur) => {
+    const next = typeof v === 'function' ? v(readList(cur.get(key), fallback, valid)) : v
     const same = next.length === fallback.length && next.every((x, i) => x === fallback[i])
-    patch({ [key]: same ? null : next.join(',') })
-  }, [patch, key, fallback, value])
+    return { [key]: same ? null : next.join(',') }
+  }), [patch, key, fallback, valid])
   return [value, set]
 }
 
+function readList(
+  raw: string | null, fallback: readonly string[], valid?: (v: string) => boolean,
+): string[] {
+  if (raw == null) return [...fallback]
+  const kept = raw.split(',').map((s) => s.trim()).filter((s) => s && (!valid || valid(s)))
+  return kept.length ? kept : [...fallback]
+}
+
 /** A whole number, clamped. A stale `?rows=99999999` becomes the maximum
- *  rather than an attempt to render ninety-nine million rows. */
+ *  rather than an attempt to render ninety-nine million rows, and a stale
+ *  `?base=1776` becomes the earliest year the data actually covers — the same
+ *  view a reader reaches by dragging the handle as far left as it goes. */
 export function useUrlNumber(
   key: string, fallback: number, { min, max }: { min: number; max: number },
-): [number, (v: number) => void] {
+): [number, (v: number | ((cur: number) => number)) => void] {
+  const [params] = useSearchParams()
+  const patch = useUrlPatch()
+  const read = useCallback((raw: string | null) => {
+    const parsed = raw == null ? NaN : Number(raw)
+    return Number.isFinite(parsed) ? Math.min(max, Math.max(min, Math.trunc(parsed))) : fallback
+  }, [fallback, min, max])
+  const value = read(params.get(key))
+
+  /* Held-down arrow keys are why this takes an updater. Ten keydowns arrive
+   * before React re-renders once; a setter that computed from this render's
+   * `value` moved the base year by one year in total, which is what the check
+   * reported — `?base=1991` after ten presses that should have reached 2000. */
+  const set = useCallback((v: number | ((cur: number) => number)) => patch((cur) => {
+    const next = typeof v === 'function' ? v(read(cur.get(key))) : v
+    const clamped = Math.min(max, Math.max(min, Math.trunc(next)))
+    return { [key]: clamped === fallback ? null : String(clamped) }
+  }), [patch, key, fallback, min, max, read])
+  return [value, set]
+}
+
+/**
+ * A budget — the reader's own rent, living cost, or salary in place of the
+ * city's published figures.
+ *
+ * This is the one piece of state here that changes how numbers are COMPUTED
+ * rather than which ones are shown, which is exactly why it belongs in the
+ * address: "here is that city on my actual rent" is a thing worth sending,
+ * and until now it could not be sent.
+ *
+ * Encoded compactly — `?b=r:1200,l:800,s:95000` — because the alternative is
+ * five keys of boilerplate in a query string a human sometimes reads.
+ *
+ * Every field is validated on its own and a bad one is dropped rather than
+ * failing the whole budget, so `?b=r:1200,l:banana` is a rent override, not a
+ * blank page. A value that is not a finite positive number is not a budget
+ * figure: zero rent and negative rent both mean the parser misread something,
+ * and both would propagate into a division downstream.
+ */
+const BUDGET_CODEC: ReadonlyArray<readonly [string, keyof Budget]> = [
+  ['r', 'rentUsd'], ['l', 'livingUsd'],
+  ['rf', 'rentFactor'], ['lf', 'livingFactor'],
+  ['s', 'salaryUsdYearOverride'],
+]
+
+export function parseBudget(raw: string | null): Budget {
+  if (!raw) return {}
+  const out: Budget = {}
+  for (const part of raw.split(',')) {
+    const at = part.indexOf(':')
+    if (at < 0) continue
+    const entry = BUDGET_CODEC.find(([code]) => code === part.slice(0, at).trim())
+    if (!entry) continue
+    const n = Number(part.slice(at + 1))
+    if (!Number.isFinite(n) || n <= 0) continue
+    out[entry[1]] = n
+  }
+  return out
+}
+
+export function formatBudget(b: Budget): string {
+  return BUDGET_CODEC
+    .map(([code, field]) => { const v = b[field]; return v == null ? null : `${code}:${v}` })
+    .filter((s): s is string => s != null)
+    .join(',')
+}
+
+export function useUrlBudget(key = 'b'): [Budget, (b: Budget) => void] {
   const [params] = useSearchParams()
   const patch = useUrlPatch()
   const raw = params.get(key)
-  const parsed = raw == null ? NaN : Number(raw)
-  const value = Number.isFinite(parsed) ? Math.min(max, Math.max(min, Math.trunc(parsed))) : fallback
-  const set = useCallback((v: number) => patch({ [key]: v === fallback ? null : String(v) }),
-    [patch, key, fallback])
+  const value = useMemo(() => parseBudget(raw), [raw])
+  const set = useCallback((b: Budget) => patch({ [key]: formatBudget(b) || null }), [patch, key])
   return [value, set]
 }

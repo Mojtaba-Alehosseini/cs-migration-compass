@@ -22,6 +22,7 @@ import { Flag, FlagRibbon } from '../components/Flag'
 import { Figure } from '../components/Figure'
 import { Derived } from '../components/Derived'
 import { BudgetEditor } from '../components/BudgetEditor'
+import { useUrlBudget } from '../data/urlState'
 import { MetricPicker } from '../components/MetricPicker'
 import { ClimateOverlay } from '../components/ClimateOverlay'
 import { PlaceBrowser } from '../components/PlaceBrowser'
@@ -31,7 +32,7 @@ import { MAX_PLACES, normalise, useSelection } from '../data/selection'
 import { HEADLINE_KEYS, METRIC_BY_KEY, citySalarySource, type MetricDef } from '../data/registry'
 import {
   LENS_LABEL, UNSTABLE_METRIC_KEYS, instabilityNote, isNeverAffordable, missingInputs,
-  netPayChain, salaryByLens, stabilityOf, type Budget,
+  netPayChain, salaryByLens, stabilityOf,
   yearsToHomeRange,
 } from '../data/compute'
 import { UnstableMark } from '../components/Unstable'
@@ -62,7 +63,9 @@ export function Compare() {
   const lens = (params.get('lens') as Lens) ?? 'gross'
   const view = params.get('view') === 'chart' ? 'chart' : 'table'
 
-  const [budget, setBudget] = useState<Budget>({})
+  /* #9 -- a budget changes how every number on this page is computed, so a
+   * link to "these four cities on my actual rent" is now a link. */
+  const [budget, setBudget] = useUrlBudget('b')
   const [pickerOpen, setPickerOpen] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [ready, setReady] = useState(false)

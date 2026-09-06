@@ -23,9 +23,10 @@ import { MAX_PLACES, useSelection } from '../data/selection'
 import { UnstableMark } from '../components/Unstable'
 import { useToast } from '../components/Toast'
 import { QUESTIONS, pickColor } from '../data/questions'
+import { useUrlState, useUrlFlag, useUrlBudget } from '../data/urlState'
 import type { SecondAxis } from '../data/questions'
 import { dropApprox, money, years } from '../data/format'
-import { savingsPerYear, stabilityOf, yearsToHome, type Budget } from '../data/compute'
+import { savingsPerYear, stabilityOf, yearsToHome } from '../data/compute'
 import { downloadCsv } from '../lib/export'
 import type { City } from '../data/types'
 
@@ -41,13 +42,28 @@ export function Home() {
   const toast = useToast()
   const selected = sel.ids
 
-  const [qi, setQi] = useState(0)
-  const [secondOn, setSecondOn] = useState(false)
-  const [axisId, setAxisId] = useState<string | null>(null)
+  /* #9 — the five that change what the page says go in the address; the three
+   * that only change what is open or already animated stay out of it.
+   *
+   * The question is addressed by its ID, not by its index. An index is a link
+   * that silently means something else the day a question is inserted above it,
+   * and questions.ts exists to be edited. An id that no longer exists falls
+   * back to the first question, which is what an untouched visit shows anyway.
+   *
+   * tableOpen, sheetOpen and intro stay local: the first two are disclosure,
+   * and putting `intro` in a link would make the shared page behave unlike a
+   * first visit -- the one thing a shared link must not do. */
+  const [ask, setAsk] = useUrlState<string>('ask', '', (v) => QUESTIONS.some((q) => q.id === v))
+  const qi = Math.max(0, QUESTIONS.findIndex((q) => q.id === ask))
+  const setQi = useCallback((i: number) => setAsk(QUESTIONS[i]?.id ?? ''), [setAsk])
+  const [secondOn, setSecondOn] = useUrlFlag('ax2')
+  const [axisRaw, setAxisRaw] = useUrlState<string>('ax', '')
+  const axisId = axisRaw || null
+  const setAxisId = useCallback((v: string | null) => setAxisRaw(v ?? ''), [setAxisRaw])
   const [tableOpen, setTableOpen] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [budget, setBudget] = useState<Budget>({})
-  const [query, setQuery] = useState('')
+  const [budget, setBudget] = useUrlBudget('b')
+  const [query, setQuery] = useUrlState<string>('find', '')
   const [intro, setIntro] = useState(() => !prefersReduced())
   const introTimer = useRef<number>(0)
 
@@ -252,7 +268,7 @@ export function Home() {
           {/* No approved partner, no toggle — which is why the PR/citizenship
               bars never show one. */}
           {axisChoices.length > 0 && (
-            <button className="pill" aria-pressed={secondOn} onClick={() => setSecondOn((v) => !v)}>
+            <button className="pill" aria-pressed={secondOn} onClick={() => setSecondOn(!secondOn)}>
               {secondOn ? '↕ second axis on' : '+ second axis'}
             </button>
           )}

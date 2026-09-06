@@ -17,11 +17,13 @@
  */
 
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useData } from '../data/store'
 import { THEMES, METRICS, METRIC_BY_KEY, AXIS_METRICS, tickFormatFor, type ThemeKey } from '../data/registry'
 import { UNSTABLE_METRIC_KEYS, stabilityOf } from '../data/compute'
 import { assertInjectiveTicks } from './chart/engine'
 import { downloadCsv } from '../lib/export'
+import { useUrlPatch } from '../data/urlState'
 
 const SCATTER_PRESETS = [
   { x: 'apt_m2', y: 'years_to_home', label: 'Cheap city or impossible city?' },
@@ -100,11 +102,25 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
    * "did they choose?" rather than copying the default into state is what
    * makes both true at once: an untouched builder tracks the theme, a touched
    * one survives every switch. */
-  const [chosen, setChosen] = useState<{ x: string; y: string } | null>(null)
+  /* #9 — the axes go in the address, and the null state has to survive it.
+   * "Not chosen" is not the same as "chose the theme's default": an untouched
+   * builder follows the theme as the visitor switches themes, and a touched one
+   * keeps what they picked. So the address carries the pair only once it has
+   * been touched, and BOTH keys are written in a single patch — writing them in
+   * two calls would leave a moment where the address names one axis and the
+   * chart draws another.
+   * An unknown key falls back to the theme default rather than drawing a blank
+   * chart, which is what a link outliving a renamed metric would otherwise do. */
+  const params = useSearchParams()[0]
+  const patch = useUrlPatch()
+  const known = (k: string | null): k is string => !!k && METRIC_BY_KEY.has(k)
+  const sx = params.get('sx')
+  const sy = params.get('sy')
+  const chosen = known(sx) && known(sy) ? { x: sx, y: sy } : null
   const xKey = chosen?.x ?? SCATTER_DEFAULTS[theme].x
   const yKey = chosen?.y ?? SCATTER_DEFAULTS[theme].y
-  const setXKey = (k: string) => setChosen({ x: k, y: yKey })
-  const setYKey = (k: string) => setChosen({ x: xKey, y: k })
+  const setXKey = (k: string) => patch({ sx: k, sy: yKey })
+  const setYKey = (k: string) => patch({ sx: xKey, sy: k })
   const [hover, setHover] = useState<Point | null>(null)
 
   const xM = METRIC_BY_KEY.get(xKey)
@@ -215,7 +231,7 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
         {SCATTER_PRESETS.map((p) => (
           <button key={p.label} className="pill"
             aria-pressed={xKey === p.x && yKey === p.y}
-            onClick={() => setChosen({ x: p.x, y: p.y })}>
+            onClick={() => patch({ sx: p.x, sy: p.y })}>
             {p.label}
           </button>
         ))}
