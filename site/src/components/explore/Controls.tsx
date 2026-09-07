@@ -168,9 +168,15 @@ export function Gap({ title, children, where, span = 's2', level = 3 }: {
 
 /** Panels reserve the height they will occupy, so arriving data does not shove
  *  the page — the layout shift that cost Explore its performance score. */
-export function ChartSkeleton({ height }: { height: number }) {
+export function ChartSkeleton({ height, what }: { height: number; what?: string }) {
+  /* `what` names what is arriving. Package 43, J4: a page whose ERROR state
+   * reads "House-price history could not be loaded (Failed to fetch). Nothing
+   * is drawn rather than something approximate." should not answer the same
+   * reader's wait with a bare "Loading…". Where a caller knows the quantity,
+   * it says it; where it does not, the old wording stands rather than an
+   * invented one. */
   return <div style={{ height, display: 'grid', placeItems: 'center' }} aria-busy="true">
-    <span className="kicker">Loading…</span>
+    <span className="kicker">{what ? `Loading ${what}…` : 'Loading…'}</span>
   </div>
 }
 

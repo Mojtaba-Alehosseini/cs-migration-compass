@@ -55,7 +55,7 @@ const SHOTS = [
     'the same on a country with more to say'],
   ['J7-measure-city', '#/city/berlin', 'compass', 'light', 1440, 1700, null,
     'the reading width across a whole city page'],
-  ['J8-seed-density', '#/postings-seed', 'compass', 'light', 1440, 900, null,
+  ['J8-seed-density', '#/data/postings-seed', 'compass', 'light', 1440, 900, null,
     'HIGH / MEDIUM / LOW as prose, on the sibling page of the chip vocabulary'],
   ['J9-header-390', '#/', 'compass', 'light', 390, 844, null,
     'the header: three rows and two labels broken mid-phrase'],
@@ -98,6 +98,12 @@ for (const [id, route, theme, mode, w, h, setup, note] of SHOTS) {
   if (setup !== 'SKELETON') {
     // The skeleton is a state you cannot wait for: waiting is what ends it.
     await page.waitForReady({ quietMs: 350, timeoutMs: 40000, label: `${id} — load` })
+    /* A second settle, the way capture_site.mjs does it. A route that fetches
+     * its own summary after mount can be network-idle and DOM-stable while it
+     * still shows nothing — /postings-seed came out as blank paper on the
+     * first run of this harness, before AND after, which is how it was
+     * caught: an identical pair is a pair that shows nothing. */
+    await page.waitForReady({ quietMs: 350, timeoutMs: 40000, label: `${id} — settle` })
   }
   const got = await page.eval(`document.documentElement.getAttribute('data-theme') + '/' + document.documentElement.getAttribute('data-mode')`)
   if (got !== `${theme}/${mode}`) throw new Error(`${id}: asked for ${theme}/${mode}, page is ${got}`)

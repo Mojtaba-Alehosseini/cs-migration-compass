@@ -18,6 +18,40 @@ import { loadPostingsSeedSummary, fmtCompany, KNOWN_PROVIDERS, PROVIDER_LABEL, P
 import { useUrlState } from '../data/urlState'
 import { LinkFiles } from '../lib/fileLink'
 
+/* Package 43, J8. The density column opened every row with a bare uppercase
+ * HIGH / MEDIUM / LOW — an ordinal signal written as a word, on the sibling
+ * page of /data, which renders exactly this kind of signal as a chip. The
+ * level becomes the site's own chip and the sentence keeps the reasoning.
+ *
+ * NOT the ●/◐/○ marks: those mean official / research / crowd, and borrowing
+ * them here would make one symbol carry two different scales. The chip TONES
+ * already exist and mean strength, which is what this is. */
+const DENSITY_TONE: Record<string, string> = {
+  HIGH: 'chip-ok', MEDIUM: 'chip-note', LOW: 'chip-quiet',
+}
+
+function DensityCell({ note, unresolved }: { note?: string; unresolved: boolean }) {
+  if (!note) {
+    return unresolved
+      ? <>The location text this posting published did not resolve to a country this pipeline
+        recognises — kept, not dropped, and shown here rather than silently excluded.</>
+      : <>{'—'}</>
+  }
+  const m = /^(HIGH|MEDIUM|LOW)([^—]*)—\s*(.*)$/s.exec(note)
+  if (!m) return <>{note}</>
+  const level = m[1] ?? ''
+  const qualifier = (m[2] ?? '').trim()
+  const rest = m[3] ?? ''
+  return (
+    <>
+      <span className={`chip ${DENSITY_TONE[level] ?? 'chip-quiet'}`}>
+        {level}{qualifier ? ` ${qualifier}` : ''}
+      </span>{' '}
+      {rest}
+    </>
+  )
+}
+
 const DENSITY_NOTE: Record<string, string> = {
   US: 'HIGH — expected: California, Colorado, Illinois, Maryland, Massachusetts, Minnesota, New '
     + 'Jersey, New York, Vermont, Washington and DC all require pay ranges in postings; most ATS '
@@ -117,7 +151,7 @@ export function PostingsSeed() {
                     </td>
                     <td style={{ padding: '5px 10px', fontSize: 'var(--text-xs)' }}>{n.toLocaleString()}</td>
                     <td style={{ padding: '5px 10px', fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
-                      {DENSITY_NOTE[cc] ?? (cc === 'unresolved' ? 'The location text this posting published did not resolve to a country this pipeline recognises — kept, not dropped, and shown here rather than silently excluded.' : '—')}
+                      <DensityCell note={DENSITY_NOTE[cc]} unresolved={cc === 'unresolved'} />
                     </td>
                   </tr>
                 ))}

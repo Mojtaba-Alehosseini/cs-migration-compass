@@ -81,7 +81,13 @@ export function CityProfile() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12, padding: '12px 0' }}>
+      {/* alignItems: start. Package 43, J4-in-the-critique: grid's default
+        * stretch made every card in a row as tall as the tallest one, and on
+        * a country page that left "What developers earn here" 419px empty of
+        * 609 — 69% — on AE, 64% on US, 65% on IT, and over half on all
+        * fifteen. A card is now its own height. The row's bottom edge is
+        * ragged; the alternative was a column of white. */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12, padding: '12px 0', alignItems: 'start' }}>
 
         {/* ---- salaries ---- */}
         <div className="panel">

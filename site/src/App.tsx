@@ -105,7 +105,10 @@ export function App() {
             Compass
           </NavLink>
 
-          <nav style={{ display: 'flex', gap: 14 }} aria-label="Main">
+          {/* gap lives in .mainnav, not here: an inline style would beat the
+            * media query that tightens it on a phone, which is the whole
+            * mechanism that keeps these four labels on one line at 390px. */}
+          <nav className="mainnav" aria-label="Main">
             {NAV.map((n) => (
               <NavLink
                 key={n.to}

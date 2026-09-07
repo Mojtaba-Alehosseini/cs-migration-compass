@@ -315,8 +315,10 @@ export function Openings() {
         * this comment would have to keep guessing. CLS 1.036 -> 0.012. */}
       {!data ? (
         <>
-          <div className="panel"><ChartSkeleton height={153} /></div>
-          <div className="panel" style={{ marginTop: 12 }}><ChartSkeleton height={460} /></div>
+          <div className="panel"><ChartSkeleton height={153} what="the filters" /></div>
+          <div className="panel" style={{ marginTop: 12 }}>
+            <ChartSkeleton height={460} what="every advertisement this site has harvested" />
+          </div>
         </>
       ) : (
         <>

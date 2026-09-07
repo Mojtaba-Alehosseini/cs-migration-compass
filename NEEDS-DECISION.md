@@ -4335,3 +4335,131 @@ that forgets will silently print "no data" for a number the site can compute.
 
 Not resolved here — (a) is a type change across the site's most-used computation, which is not a
 call to make inside a package fixing three other things.
+
+## 77. The header takes a sixth of a phone screen, and every way to shrink it costs something
+
+At 390px the site header runs to three rows — wordmark, navigation, theme controls. Package 43 fixed
+the part that was free and measured what it cost. The links no longer break inside a phrase, so
+"Position &" is never stacked over "openings"; `white-space: nowrap` ALONE made the header taller
+(145 -> 170px) by pushing "Data & methods" onto a second nav row, so the nav gap tightens to 10px
+below 480px and all four labels fit one line: 52 + 116 + 42 + 95 = 305px of label in 346px of
+content width, 11px to spare. **The header is 132px now, 16% of an 844px viewport, down from 145px
+and 17%.**
+
+What is left is the three-row structure itself, and every way to make it two costs something.
+
+**Options:**
+  - **(a) Put the theme controls on the wordmark's row and give the nav its own scrolling strip.**
+    Two rows instead of three, full labels kept. The cost is that the DOM order is wordmark → nav →
+    controls, so this needs `order` to move the controls ahead of the nav visually — a mismatch
+    between focus order and visual order, which is exactly what WCAG 2.4.3 is about. The site has
+    never shipped one.
+  - **(b) Shorten the labels below 560px** — "Position & openings" → "Openings", "Data & methods" →
+    "Data". One row of nav, no reordering, no focus-order mismatch. The cost is that a control is
+    named differently depending on the width of the screen, which is a thing this site has also
+    never done, and it is the kind of inconsistency a reader notices when they rotate a phone.
+
+Not resolved in package 43: both cost a consistency the site currently has, and choosing which one
+to spend is the owner's call, not a design pass's.
+
+## 78. /openings opens with twelve lines of prose before its first control
+
+Two paragraphs (289 and 247 characters) and then a 439-character preamble inside the filter panel,
+before a reader reaches the first filter. At 390px that is two full screens of text before the first
+posting. Compare answers the same job in an eyebrow, an h1 and two lines.
+
+Every word of it is true and most of it is load-bearing — it is the paragraph that keeps advertised
+pay and this site's own wage spine from being read as the same quantity, which is the page's central
+honesty. Cutting it is not on the table. Moving it is.
+
+**Options:**
+  - **(a) Keep the first paragraph, put the second and the panel preamble behind the site's own
+    `<details>` disclosure**, summarised in one line each. The page opens on its controls. The cost:
+    a reader who does not open the disclosure never meets the distinction the first paragraph only
+    half makes, and this site's whole position is that the caveat is not optional.
+  - **(b) Leave it.** The cost is the one measured above: on a phone, the page's actual content is
+    two screens down, and the reader who came to filter 48,758 advertisements scrolls past an essay
+    to do it.
+
+Not resolved in package 43: (a) moves a caveat behind a tap, and rule 2 of that package's own brief
+is that a caveat may become a mark but never nothing. Whether a disclosure counts as "behind a tap"
+or as "nothing" is the owner's line to draw.
+
+## 79. Chart text sits below the site's 12px floor, and 12px fits
+
+`docs/DESIGN.md`: *"The type scale floors at 12px (`--text-2xs`). The design review forbade captions
+below that, so the token simply does not exist."* Chart text is not on the scale — axis ticks, end
+labels and in-plot dot labels are drawn at 8.5–11.5px in `engine.ts`, `ExploreCharts.tsx`, the four
+`explore/*` panels and `SwarmField.tsx`, and in five `base.css` rules.
+
+Package 43 intended to record this as DELIBERATE — chart furniture, not captions, and 12px would
+collide. **It measured that claim and the claim was false.** Re-rendering every sub-12px `<text>` at
+12px and re-measuring the closest neighbouring pair:
+
+| chart | at its own size | at 12px |
+| --- | --- | --- |
+| Explore · Money, income | 22.3px | 19.3px |
+| Explore · Money, wages | 13.4px | 13.4px |
+| Explore · Housing, ribbons | 0px (overlapping series ends, size-independent) | 0px |
+| Explore · Housing, scatter | 29.8px | 27.8px |
+
+Twelve fits. So this is a density choice, not a constraint — which is why it is here rather than in
+the fixed list.
+
+**Options:**
+  - **(a) Raise all chart text to the floor.** Consistent with the site's own stated rule and easier
+    to read. The cost is real: every chart on the site gets visibly heavier furniture, and the swarm
+    field's 73 dot labels grow ~26% in a plot that already hides them when crowded.
+  - **(b) Raise only the REFUSAL marks and leave the ticks.** "off this scale ↑" and "off →" at
+    9.5px and "p25–p75" at 8.5px are caveats, and the smallest text on the page should not be the
+    part that says the chart is lying to you. Cheaper, and it is the half with a principle behind
+    it. The cost is that the site then has a documented 12px floor that its charts still do not
+    keep, which is the situation this item exists to name.
+
+Not resolved in package 43: (a) changes the look of every chart on the site.
+
+## 80. One reading measure, declared, and nine hardcoded ones in its place
+
+`tokens.css` line 101: `--measure: 68ch;  /* reading width for prose */`. Grepped across the whole
+codebase, it had **zero usages**. Twenty call sites hardcoded their own instead — 54ch, 60ch, 64ch,
+68ch, 70ch, 72ch, 74ch, 76ch and 78ch — and three prose blocks had no measure at all and ran 140ch
+and 151ch.
+
+Package 43 fixed the three with none: they use the token now. It did not consolidate the other
+nine, because every one of them changes where lines break on a page that currently looks fine.
+
+**Options:**
+  - **(a) Collapse all nine onto `--measure`.** One rule, one number, and DESIGN.md's "no component
+    hardcodes a value" finally true for the measure as well as for colour. The cost is that roughly
+    twenty paragraphs across /work, /city, /country, /openings, /data and Home re-break, and some of
+    them were plainly tuned by hand.
+  - **(b) Keep the nine and delete the token**, so the file stops claiming a rule the code does not
+    follow. Cheaper and honest, and it gives up the rule.
+
+Not resolved in package 43: (a) touches line breaks on most pages of the site and belongs in a pass
+that can look at each one.
+
+## 81. On /work, NL draws a full solid track with nothing on it
+
+The wage strip has four ways of saying it cannot draw a spread, and three of them are unambiguous:
+a dashed centre segment for *no spread published* (AE, AU, DE, IE, QA), an em-dash line reading
+*no series published* for IT, and a solid track with quartile ticks and a marker where a real
+distribution exists (CA, DK, ES, FI, GB, NO, SE, US).
+
+The fourth is NL. `hasTrack` is true and `solidTrack` is true, so a full-width solid track is drawn;
+`iqrLo`/`iqrHi` and `markerLeft` are null, so nothing is placed on it. The estimate cell reads *not
+comparable*. A solid track asserts "here is a range", and the label beside it says the figure cannot
+be compared — the mark and the words disagree.
+
+This may be exactly right: NL publishes a distribution, and what fails is the crosswalk, not the
+data. But a reader cannot see that distinction in the mark.
+
+**Options:**
+  - **(a) Give "published, not comparable" its own treatment** — a solid track with the marker's
+    place left visibly empty, or a fifth stroke. The cost is a fifth mark in a vocabulary whose
+    strength is that it is small.
+  - **(b) Leave it and rely on the words.** The cost is the one above: one row on the page whose
+    mark says something its label contradicts.
+
+Not resolved in package 43: changing what a mark means is outside a presentation pass, and rule 2
+of its brief says a mark may not be made quieter without the owner deciding to.

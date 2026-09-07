@@ -104,6 +104,25 @@ a { color: var(--ink-2); }
 .panel > h3 { font-size: var(--text-sm); font-weight: var(--weight-semibold); }
 .panel > .sub { font-size: var(--text-2xs); color: var(--ink-2); margin: 2px 0 var(--space-3); }
 
+/* Package 43, J9 (part). A nav label is a phrase, and the header let two of
+   them break in the middle of one: at 390px "Position &" sat over "openings"
+   and "Data &" over "methods", while "Compare" and "Explore" stayed on one
+   line each, so the row read ragged with a hole in it. The links wrap between
+   themselves now, never inside themselves. The header's HEIGHT at that width —
+   three rows and 145px of an 844px screen — is escalated rather than changed:
+   every way to shorten it costs something, and NEEDS-DECISION.md #77 names the
+   two candidates. */
+.mainnav { display: flex; gap: 14px; flex-wrap: wrap; }
+.mainnav > a { white-space: nowrap; }
+/* The four labels measure 52 + 116 + 42 + 95 = 305px. At 390px the header has
+   346px of content width, so they fit on ONE line at a 10px gap and not at 14 —
+   nowrap alone pushed "Data & methods" onto a second row and made the header
+   TALLER (145 -> 170px), which is the opposite of what this item was about.
+   Measured, not guessed: 305 + 3 x 10 = 335, with 11px to spare. */
+@media (max-width: 480px) {
+  .mainnav { gap: 10px; }
+}
+
 .kicker {
   font-family: var(--font-ui);
   font-size: var(--text-2xs);
@@ -638,16 +657,15 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   font-size: var(--text-2xs); color: var(--ink-3);
   text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-right: 2px;
 }
-.seg {
-  display: inline-flex; border: 1px solid var(--line);
-  border-radius: var(--radius-md); overflow: hidden; background: var(--surface);
-}
-.seg button {
-  padding: 6px 11px; font-size: var(--text-2xs); color: var(--ink-2);
-  border-right: 1px solid var(--line);
-}
-.seg button:last-child { border-right: none; }
-.seg button[aria-pressed='true'] { background: var(--ink-1); color: var(--paper); }
+/* Package 43, J2 — .seg was declared TWICE in this file, and both declarations
+   applied to every segmented control on the site. This was the older one:
+   dividers between the buttons, and `background: var(--ink-1)` on the pressed
+   one. The newer declaration further down builds the same control around a
+   sliding .thumb, also painted --ink-1 — so the thumb was positioned by JS,
+   painted by CSS, and then covered by the opaque button it was highlighting.
+   Measured on /explore/money: thumb at x=234 w=92, pressed button at x=234
+   w=92, its own background rgb(25,24,19). The slide has never been seen.
+   One declaration now, the one with the thumb. */
 .tactions { margin-left: auto; display: flex; gap: 8px; }
 .tbtn {
   border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
@@ -946,6 +964,12 @@ table.cmp {
   transition: color var(--dur-fast) var(--ease-out);
 }
 .seg > button[aria-pressed='true'] { color: var(--paper); }
+/* An option a reader can see but not choose — a salary band this city has no
+   figure for. It stays in the control, labelled "— no figure", because the
+   site's refusal vocabulary is a mark and never a blank: dropping the option
+   would hide the gap along with it. Same treatment the hand-rolled picker
+   used before this control replaced it. */
+.seg > button:disabled { opacity: 0.45; cursor: not-allowed; }
 .seg .thumb {
   position: absolute; top: 2px; bottom: 2px; border-radius: var(--radius-sm);
   background: var(--ink-1); z-index: 1;
