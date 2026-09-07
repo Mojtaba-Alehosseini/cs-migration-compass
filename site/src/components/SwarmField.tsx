@@ -296,7 +296,7 @@ export function SwarmField({
             }}>
             <b style={{
               position: 'absolute', bottom: -16, left: -20, width: 40, textAlign: 'center',
-              fontWeight: 400, fontSize: 10, color: 'var(--ink-3)',
+              fontWeight: 400, fontSize: 10, color: 'var(--ink-2)',
             }}>{label}</b>
           </div>
         ))}
@@ -313,7 +313,7 @@ export function SwarmField({
                 }}>
                 <b style={{
                   position: 'absolute', right: '100%', top: -7, marginRight: 6,
-                  fontWeight: 400, fontSize: 10, color: 'var(--ink-3)', whiteSpace: 'nowrap',
+                  fontWeight: 400, fontSize: 10, color: 'var(--ink-2)', whiteSpace: 'nowrap',
                 }}>{label}</b>
               </div>
             ))}

@@ -198,5 +198,52 @@ export function sourceName(url: string): string {
   return known[host] ?? host
 }
 
+/** Labels for a LIST of sources, disambiguated only where two of them collide.
+ *
+ *  sourceName() maps a URL to a label by HOST, which is right for a table with
+ *  one row per source and wrong for a citation line that prints several. The
+ *  UAE page ended "Wikipedia · Wikipedia · Wikipedia · worldpopulationreview" —
+ *  three links, three different articles (visa policy, nationality law, the
+ *  Golden Visa), one word. Six of fifteen country pages and 28 of 73 city
+ *  pages printed a repeated label.
+ *
+ *  Only the colliding ones grow a suffix, so a list with no collision reads
+ *  exactly as it did. The suffix is the page's own last path segment, which is
+ *  what Wikipedia, gov.uk, migri.fi and nyidanmark.dk all put the document
+ *  title in — never invented, and never a number the site does not have. */
+export function sourceNames(urls: string[]): string[] {
+  const base = urls.map(sourceName)
+  const count = new Map<string, number>()
+  for (const b of base) count.set(b, (count.get(b) ?? 0) + 1)
+  return urls.map((u, i) => {
+    const b = base[i] ?? u
+    if ((count.get(b) ?? 0) < 2) return b
+    const detail = pathTitle(u)
+    return detail ? `${b} · ${detail}` : b
+  })
+}
+
+/** The last meaningful path segment of a URL, as human text. '' when there is
+ *  none — a bare host, or a path that is only an id. */
+function pathTitle(url: string): string {
+  let path: string
+  try {
+    path = new URL(url).pathname
+  } catch {
+    return ''
+  }
+  const seg = path.split('/').filter(Boolean).pop()
+  if (!seg) return ''
+  let t: string
+  try {
+    t = decodeURIComponent(seg)
+  } catch {
+    t = seg
+  }
+  t = t.replace(/\.(html?|php|aspx?|pdf)$/i, '').replace(/[_-]+/g, ' ').trim()
+  if (!t || /^\d+$/.test(t)) return ''
+  return t.length > 38 ? `${t.slice(0, 37)}…` : t
+}
+
 export function cityPath(id: string) { return `/city/${id}` }
 export function countryPath(id: string) { return `/country/${id}` }

@@ -326,7 +326,17 @@ function TeranetPanel({ data }: { data: HousingData }) {
           const trend = city.trendPctPerYear
           return (
             <p key={c} className="insight" style={{ margin: 0 }}>
-              <b style={{ color: teranetColor(c) }}>{TERANET_LABEL[c]}</b>{': '}
+              {/* The hue moves from the letters to a swatch beside them.
+                * As text it measured 2.67:1 (Vancouver) and 3.34:1 (Toronto)
+                * against the dark panel — the series palette is designed to
+                * identify a SHAPE on the chart, and does not carry as body
+                * text. The swatch keeps the identification and .insight b's
+                * own rule (display face, --ink-1) carries the name. */}
+              <span aria-hidden="true" style={{
+                display: 'inline-block', width: 8, height: 8, borderRadius: 2,
+                background: teranetColor(c), marginRight: 6, verticalAlign: 'baseline',
+              }} />
+              <b>{TERANET_LABEL[c]}</b>{': '}
               <Derived
                 chain={[
                   { op: 'raw', detail: `Teranet's own raw monthly index — noisy: only `

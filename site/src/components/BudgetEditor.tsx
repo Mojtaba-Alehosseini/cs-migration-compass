@@ -118,14 +118,50 @@ function Waterfall({ city, band, budget }: { city: City; band: Band; budget: Bud
   const max = Math.max(net, 1)
   const h = (v: number) => `${Math.max(3, (Math.abs(v) / max) * 84)}px`
 
+  // Declared once and read by BOTH rows below, so the bars and the labels are
+  // the same four columns rather than two lists that have to be kept in step.
+  const bars = [
+    { key: 'net', label: <>a year,<br />after tax</>, value: money(net), height: h(net), color: 'var(--ink-2)' },
+    { key: 'rent', label: 'rent', value: `−${money(rentYr)}`, height: h(rentYr), color: 'var(--warn)' },
+    { key: 'living', label: 'living', value: `−${money(livingYr)}`, height: h(livingYr), color: 'var(--note)' },
+    { key: 'saved', label: 'saved', value: money(saved), height: h(saved ?? 0), color: 'var(--accent)' },
+  ]
+
   return (
     <div style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius-md)', padding: 12 }}>
       <Head city={city} />
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 9, height: 104, margin: '16px 0 4px' }}>
-        <Col label={<>a year,<br />after tax</>} value={money(net)} height={h(net)} color="var(--ink-2)" />
-        <Col label="rent" value={`−${money(rentYr)}`} height={h(rentYr)} color="var(--warn)" />
-        <Col label="living" value={`−${money(livingYr)}`} height={h(livingYr)} color="var(--note)" />
-        <Col label="saved" value={money(saved)} height={h(saved ?? 0)} color="var(--accent)" />
+      {/* Two rows, and no reserved height in either.
+        *
+        * This was one row with `height: 104` and `alignItems: 'flex-end'`. A
+        * column stacks a value (19), the bar (up to 84) and a label that wraps
+        * to two lines (31) with two 4px gaps: 142px of content in a 104px box.
+        * The surplus went UPWARD and printed "$50,900" across the word "Oslo"
+        * on every city, in every theme. It also left the bars off a common
+        * baseline, because each column bottom-aligned to its own label height.
+        *
+        * Splitting the labels into their own row fixes both: the bar row's
+        * height is whatever the tallest bar plus its value needs — measured by
+        * the browser, not guessed here — and every bar sits on the row's own
+        * bottom edge. The two rows share `flex: 1` columns, so they line up. */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 9, margin: '16px 0 0' }}>
+        {bars.map((b) => (
+          <div key={b.key} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+            <span className="tnum" style={{ fontSize: 'var(--text-2xs)', fontWeight: 600 }}>{b.value}</span>
+            <div style={{
+              width: '100%', height: b.height, background: b.color,
+              borderRadius: 'var(--radius-sm) var(--radius-sm) 0 0',
+              transition: 'height var(--dur-slow) var(--ease-out)',
+            }} />
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', gap: 9, margin: '0 0 4px' }}>
+        {bars.map((b) => (
+          <span key={b.key} style={{
+            flex: 1, fontSize: 'var(--text-2xs)', color: 'var(--ink-2)',
+            textAlign: 'center', lineHeight: 1.3,
+          }}>{b.label}</span>
+        ))}
       </div>
 
       {never ? (
@@ -170,18 +206,3 @@ function Head({ city }: { city: City }) {
   )
 }
 
-function Col({ label, value, height, color }:
-  { label: React.ReactNode; value: string; height: string; color: string }) {
-  return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
-      <span className="tnum" style={{ fontSize: 'var(--text-2xs)', fontWeight: 600 }}>{value}</span>
-      <div style={{
-        width: '100%', height, background: color, borderRadius: 'var(--radius-sm) var(--radius-sm) 0 0',
-        transition: 'height var(--dur-slow) var(--ease-out)',
-      }} />
-      <span style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', textAlign: 'center', lineHeight: 1.3 }}>
-        {label}
-      </span>
-    </div>
-  )
-}

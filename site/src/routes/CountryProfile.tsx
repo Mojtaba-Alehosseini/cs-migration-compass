@@ -10,7 +10,7 @@ import { Figure } from '../components/Figure'
 import { Derived } from '../components/Derived'
 import { useAsync } from '../components/explore/useAsync'
 import { useData } from '../data/store'
-import { asOfLabel, money, num, pct, rankOf, sourceName, NO_DATA } from '../data/format'
+import { asOfLabel, money, num, pct, rankOf, sourceNames, NO_DATA } from '../data/format'
 import { loadWages, CA_NOC_DISTINCTION, type WageCountry } from '../data/explore'
 import { NotFound } from './NotFound'
 
@@ -117,6 +117,17 @@ function WageRowFigure({ row }: { row: WageCountry }) {
   )
 }
 
+/** The first two sentences of a summary, with exactly one full stop at the end.
+ *
+ * Splitting on '. ' removes the separator between sentences but NOT the stop on
+ * the last one, so appending '.' unconditionally printed '..' — on ten of the
+ * fifteen countries, every one whose summary happens to be two sentences long
+ * (IE, NL, IT, ES, SE, DK, NO, FI, AE, QA). */
+function firstTwoSentences(s: string | undefined): string {
+  const out = (s ?? '').split('. ').slice(0, 2).join('. ').trim()
+  return !out || /[.!?…]$/.test(out) ? out : `${out}.`
+}
+
 export function CountryProfile() {
   const { id } = useParams()
   const data = useData()
@@ -137,7 +148,7 @@ export function CountryProfile() {
       </div>
 
       <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: '72ch' }}>
-        {country.job_market.summary?.split('. ').slice(0, 2).join('. ')}.
+        {firstTwoSentences(country.job_market.summary)}
       </p>
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
@@ -296,12 +307,16 @@ export function CountryProfile() {
 
         <div className="panel" style={{ gridColumn: '1 / -1' }}>
           <h2>The honest version</h2>
-          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', lineHeight: 'var(--leading-relaxed)', marginTop: 6 }}>
+          {/* --measure, at last used. This paragraph and its twin on the city
+            * page were the two longest on the site (2,431 and 2,103 chars) and
+            * the only ones with no reading width at all: 140 characters a line,
+            * against a token that has said 68 since the design checkpoint. */}
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', lineHeight: 'var(--leading-relaxed)', marginTop: 6, maxWidth: 'var(--measure)' }}>
             {country.reality_paragraph}
           </p>
           <div style={{ borderTop: '1px solid var(--line)', marginTop: 12, paddingTop: 9, fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
             {country.sources.length} sources · as of {asOfLabel(country.as_of)} ·{' '}
-            {country.sources.slice(0, 4).map(sourceName).join(' · ')} ·{' '}
+            {sourceNames(country.sources.slice(0, 4)).join(' · ')} ·{' '}
             <Link to="/data">all sources →</Link>
           </div>
         </div>

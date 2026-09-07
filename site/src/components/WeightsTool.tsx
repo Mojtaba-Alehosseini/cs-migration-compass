@@ -292,7 +292,9 @@ export function WeightsTool({ theme }: { theme: ThemeKey }) {
                 </span>
 
                 {r.missingWeight > 0 && (
-                  <span className="chip chip-note" style={{ fontSize: 10, padding: '1px 7px' }}
+                  // Package 43: was fontSize: 10 — under the site's own floor,
+                  // on the mark that says how much weight was redistributed.
+                  <span className="chip chip-note" style={{ padding: '1px 7px' }}
                     title={`No value for: ${r.missingKeys.join(', ')}. That weight was spread across the metrics this city does have.`}>
                     {Math.round((r.missingWeight / totalWeight) * 100)}% redistributed
                   </span>

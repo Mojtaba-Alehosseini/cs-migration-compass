@@ -381,8 +381,11 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
               depth or "no"; a row that can't meet it is excluded from the chart
               entirely and its reason moves to the Gap disclosure section further
               down, as a real DOM element, not a tooltip. */}
+          {/* gap 6, not 4: each row's <Derived> trigger is 20px tall, so at a
+            * 4px gap two neighbours sit 24px apart centre to centre — 0.2px
+            * inside WCAG 2.5.8's threshold. Two pixels of gap clears it. */}
           <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0', display: 'flex',
-                       flexDirection: 'column', gap: 4, fontSize: 'var(--text-2xs)' }}>
+                       flexDirection: 'column', gap: 6, fontSize: 'var(--text-2xs)' }}>
             {rows.filter((r) => r.combos[key]?.ok).map((r) => {
               const combo = r.combos[key]!
               if (!combo.ok) return null
@@ -403,7 +406,16 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                 : undefined
               return (
                 <li key={r.country} style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
-                  <span style={{ fontWeight: 600, color: cc3(splitRow(r.country).iso), minWidth: 32 }}>
+                  {/* The hue is a swatch, not the letters. As text the series
+                    * palette measured 2.98:1 for FI and 3.58:1 for SE against
+                    * the panel — it identifies a line on the chart, and does
+                    * not carry as 12px body text. */}
+                  <span style={{ fontWeight: 600, color: 'var(--ink-1)', minWidth: 32,
+                                 display: 'inline-flex', alignItems: 'baseline', gap: 5 }}>
+                    <span aria-hidden="true" style={{
+                      display: 'inline-block', width: 8, height: 8, borderRadius: 2,
+                      background: cc3(splitRow(r.country).iso), flex: 'none',
+                    }} />
                     {r.country}
                   </span>
                   <Derived chain={combo.chain}

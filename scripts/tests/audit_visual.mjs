@@ -220,11 +220,27 @@ const AUDIT = String.raw`
     const top = document.elementFromPoint(cx, cy)
     return !!top && (top === el || el.contains(top) || top.contains(el))
   }
+  // 2.5.8's EQUIVALENT exception, asserted by the page and CHECKED here: a
+  // container may name a selector whose controls do the same job at full size.
+  // The exemption applies only if that selector actually resolves to visible
+  // controls that are themselves >= 24x24 — an assertion nobody can rubber
+  // stamp, because a wrong or stale selector simply fails to exempt anything.
+  const equivalentHolds = (el) => {
+    const host = el.closest('[data-target-equivalent]')
+    if (!host) return false
+    const alt = [...document.querySelectorAll(host.getAttribute('data-target-equivalent'))]
+      .filter((a) => visible(a))
+    return alt.length > 0 && alt.every((a) => {
+      const r = a.getBoundingClientRect()
+      return r.width >= 24 && r.height >= 24
+    })
+  }
   for (const t of targets) {
     if (!t.small) continue
     const cx = t.r.left + t.r.width / 2
     const cy = t.r.top + t.r.height / 2
     if (!reachable(t.el)) continue
+    if (equivalentHolds(t.el)) continue
     // The NEAREST neighbour, not the first one the loop happens to meet:
     // this field is the Tier 3 work list, and "crowded by a control on the
     // other side of the panel" sends the fix to the wrong element. Distance

@@ -101,7 +101,16 @@ export function CityMap({ cities, countryName, isSelected, onToggle, query, matc
       <svg viewBox={`0 0 ${MAP.W} ${MAP.H}`} aria-hidden="true">
         <path className="land" d={LAND_PATH} />
       </svg>
-      <div className="mapdots">
+      {/* Cities that are 40km apart cannot be 24px apart on a world map, so
+        * these dots cannot meet WCAG 2.5.8 by growing — enlarging them would
+        * overlap their neighbours and send the tap to the wrong city, which is
+        * the harm the criterion exists to prevent. They meet it through the
+        * criterion's own EQUIVALENT exception instead: every city on this map
+        * has a .ccard in the list below, same toggle, comfortably over 24px,
+        * and the caption already tells the reader so. Declared here so
+        * audit_visual.mjs can resolve the selector and CHECK the claim rather
+        * than take it. */}
+      <div className="mapdots" data-target-equivalent=".ccard">
         {placed.map(({ id, x, y, city }) => {
           const on = isSelected(id)
           return (

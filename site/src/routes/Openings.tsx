@@ -36,6 +36,7 @@ import { PostingPay, DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, type DisplayCur
   from '../components/PostingPay'
 import { LAND_PATH, LAND_VIEWBOX } from '../data/land'
 import { project } from '../components/CityMap'
+import { Seg } from '../components/Seg'
 
 /* ---- the map, lifted from the old /postings unchanged ---- */
 const COUNTRY_LATLON: Record<string, [number, number]> = {
@@ -320,7 +321,10 @@ export function Openings() {
       ) : (
         <>
           <div className="panel">
-            <div className="sub">
+            {/* --measure: this ran 439 characters across 151 of them, the
+              * widest single line of prose on the site, in the panel a reader
+              * has come to in order to use the CONTROLS below it. */}
+            <div className="sub" style={{ maxWidth: 'var(--measure)' }}>
               {data.index.length.toLocaleString()} advertisements
               {data.duplicate_summary
                 ? ` (${data.duplicate_summary.distinct_roles.toLocaleString()} distinct roles — ${data.duplicate_summary.re_listings.toLocaleString()} are re-listings)`
@@ -388,12 +392,8 @@ export function Openings() {
                 Remote only
               </label>
               <div style={{ display: 'flex', gap: 4, marginLeft: 'auto' }}>
-                <button type="button" onClick={() => setView('list')}
-                  className={view === 'list' ? 'chip chip-ok' : 'chip chip-quiet'}
-                  aria-pressed={view === 'list'} style={{ cursor: 'pointer' }}>List</button>
-                <button type="button" onClick={() => setView('map')}
-                  className={view === 'map' ? 'chip chip-ok' : 'chip chip-quiet'}
-                  aria-pressed={view === 'map'} style={{ cursor: 'pointer' }}>Map</button>
+                <Seg label="How to show these postings" value={view} onChange={setView}
+                  options={[['list', 'List'], ['map', 'Map']]} />
               </div>
             </div>
             {/* A disclosed limitation that became an undisclosed one in the

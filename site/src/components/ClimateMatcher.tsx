@@ -155,7 +155,9 @@ export function ClimateMatcher() {
                   )}
                 </span>
                 {r.missing.length > 0 && (
-                  <span className="chip chip-note" style={{ fontSize: 10, padding: '1px 7px' }}>
+                  // Package 43: was fontSize: 10. This chip names what is
+                  // MISSING for a city — the caveat gets the floor, not less.
+                  <span className="chip chip-note" style={{ padding: '1px 7px' }}>
                     no {r.missing.join(', ')}
                   </span>
                 )}

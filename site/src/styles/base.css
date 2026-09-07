@@ -345,7 +345,12 @@ a { color: var(--ink-2); }
   border-radius: 50%;
   box-shadow: 0 0 0 2.5px var(--sc), 0 0 0 7px color-mix(in srgb, var(--sc) 20%, transparent);
 }
-.swarm-dot[data-sel] small { color: var(--sc); font-weight: 600; }
+/* Package 43 — was `color: var(--sc)`, the pick-slot hue, which measured
+   2.68:1 for Copenhagen and 3.58:1 for Berlin against the dark paper at 9.5px.
+   The hue is not lost: the mark right above this label already wears it as a
+   2.5px ring inside a 7px halo, which is the identification. The name only has
+   to be readable, so it takes --ink-1 and keeps the weight bump. */
+.swarm-dot[data-sel] small { color: var(--ink-1); font-weight: 600; }
 
 /* Cities with no value for this question: hollow, dashed, parked in the gutter.
    The gutter stacks them in normal flow, so they carry no placement transform
@@ -453,7 +458,7 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
 }
 .pairbtn:hover { border-color: var(--line-strong); box-shadow: var(--shadow-sm); }
 .pairbtn:active { transform: scale(0.97); }
-.pairbtn .vs { color: var(--ink-3); font-size: 11px; }
+.pairbtn .vs { color: var(--ink-3); font-size: var(--text-2xs); }
 
 /* ---- the country list: the canonical browser ---- */
 .groups { margin-top: var(--space-4); }
@@ -492,7 +497,7 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   font-size: var(--text-2xs); font-weight: var(--weight-semibold); color: var(--ink-1);
 }
 .ccard .nm .ck {
-  margin-left: auto; font-size: 11px; font-style: normal;
+  margin-left: auto; font-size: var(--text-2xs); font-style: normal;
   color: var(--accent); opacity: 0; transition: opacity var(--dur-fast) var(--ease-out);
 }
 .ccard .nums { display: flex; gap: 12px; margin-top: 6px; }
@@ -505,7 +510,7 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   letter-spacing: var(--tracking-tight);
 }
 .ccard .nums b.nvr-inline { color: var(--warn); font-size: var(--text-2xs); }
-.ccard .nums small { font-size: 11px; color: var(--ink-3); }
+.ccard .nums small { font-size: var(--text-2xs); color: var(--ink-2); }
 .ccard .nums .nd {
   font-size: var(--text-2xs); color: var(--ink-3); font-style: italic;
   align-self: flex-end; padding-bottom: 1px;
@@ -570,7 +575,7 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
 }
 .mdot[aria-pressed='true'] small { color: var(--accent); font-weight: var(--weight-semibold); }
 .mdot.dim { opacity: 0.15; pointer-events: none; }
-.mapfoot { font-size: 11px; color: var(--ink-3); margin-top: 6px; }
+.mapfoot { font-size: var(--text-2xs); color: var(--ink-3); margin-top: 6px; }
 
 /* Below 560px the map yields to the list rather than becoming an untappable
    thumbnail. The list holds the same 73 cities, so nothing is lost. */
@@ -609,7 +614,7 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   border-radius: var(--radius-xl); padding: 4px 10px;
   display: flex; gap: 6px; align-items: center;
 }
-.tray .tchip button { color: var(--ink-3); padding: 0 1px; font-size: 11px; }
+.tray .tchip button { color: var(--ink-3); padding: 0 1px; font-size: var(--text-2xs); }
 .tray .go {
   background: var(--accent); color: var(--accent-ink);
   border-radius: var(--radius-md); padding: 8px 14px;
@@ -630,7 +635,7 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
 }
 .tgroup { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .tgroup .tl {
-  font-size: 11px; color: var(--ink-3);
+  font-size: var(--text-2xs); color: var(--ink-3);
   text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-right: 2px;
 }
 .seg {
@@ -657,7 +662,7 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   font-size: var(--text-2xs); color: var(--ink-3); flex-wrap: wrap;
 }
 .urlstrip code {
-  font-family: var(--font-mono); font-size: 11px;
+  font-family: var(--font-mono); font-size: var(--text-2xs);
   background: var(--surface-sunk); border: 1px solid var(--line);
   border-radius: var(--radius-sm); padding: 4px 9px;
   color: var(--ink-2); word-break: break-all;
@@ -673,12 +678,48 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   font-size: var(--text-2xs); font-weight: var(--weight-semibold);
 }
 .kchip a { text-decoration: none; color: var(--ink-1); }
-.kchip button { color: var(--ink-3); font-size: 11px; padding: 0 2px; }
+.kchip button { color: var(--ink-3); font-size: var(--text-2xs); padding: 0 2px; }
 .addbtn {
   border: 1px dashed var(--line-strong); border-radius: var(--radius-xl);
   padding: 6px 13px; font-size: var(--text-2xs); color: var(--ink-2); background: transparent;
 }
 .addbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- the plain list table (.tbl) ----
+   Package 43. Five tables on /openings and /work carried className="tbl" and
+   NOTHING in either stylesheet matched it, so they rendered as the browser's
+   default <table>: headers 15px bold and CENTRED over left-aligned data — in
+   /openings' 559px-wide Title column that put the word "Title" 265px from the
+   titles it labels — with zero padding on every cell and no rule between rows.
+   That one omission is most of why /openings reads as unfinished.
+
+   The register below is not invented: it is what /data's table already sets
+   inline (12px / 500 / --ink-3 / left / 9px 10px cells / 1px --line row rule)
+   and what table.cmp sets in CSS a few lines down. Same idiom, written once. */
+.tbl {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--text-2xs);
+}
+.tbl th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-medium);
+  color: var(--ink-3);
+}
+.tbl td,
+.tbl tbody th {
+  padding: 9px 10px;
+  vertical-align: top;
+  border-top: 1px solid var(--line);
+  font-weight: var(--weight-normal);
+}
+.tbl thead th { border-bottom: 1px solid var(--line); }
+.tbl tbody tr:first-child td,
+.tbl tbody tr:first-child th { border-top: none; }
+.tbl .sub { color: var(--ink-3); margin-top: 2px; }
 
 /* ---- the table ---- */
 .tablewrap {
@@ -719,7 +760,7 @@ table.cmp {
   text-transform: none; letter-spacing: var(--tracking-normal);
 }
 .cmp th .cityh b { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--ink-1); }
-.cmp th .cityh button { color: var(--ink-3); font-size: 11px; }
+.cmp th .cityh button { color: var(--ink-3); font-size: var(--text-2xs); }
 .cmp td { padding: 11px 12px; vertical-align: top; border-top: 1px solid var(--line); }
 .cmp tbody tr:first-child td { border-top: none; }
 .cmp td.mlab, .cmp th.mlab-h { color: var(--ink-2); width: 200px; min-width: 160px; }
@@ -837,7 +878,7 @@ table.cmp {
   letter-spacing: var(--tracking-tight); font-variant-numeric: tabular-nums; line-height: 1.1;
 }
 .hstat .l { font-size: var(--text-2xs); color: var(--ink-2); margin-top: 3px; }
-.hstat .s { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+.hstat .s { font-size: var(--text-2xs); color: var(--ink-3); margin-top: 1px; }
 
 /* sticky theme rail — translucent material, content scrolls beneath */
 .themesbar {
@@ -878,7 +919,7 @@ table.cmp {
 /* control rail: pickers + mode segments. One segment and one picker per chart. */
 .crail { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 2px 0 10px; }
 .crail .lbl {
-  font-size: 11px; color: var(--ink-3);
+  font-size: var(--text-2xs); color: var(--ink-3);
   text-transform: uppercase; letter-spacing: var(--tracking-wide);
 }
 .pick {
@@ -987,7 +1028,7 @@ table.cmp {
   font-size: var(--text-2xs); color: var(--ink-2); flex-wrap: wrap;
 }
 .ribbon .rh b { font-family: var(--font-display); font-size: var(--text-sm); color: var(--ink-1); }
-.ribbon .unit { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+.ribbon .unit { font-size: var(--text-2xs); color: var(--ink-3); margin-top: 2px; }
 .ribbon svg { display: block; width: 100%; height: 56px; margin-top: 6px; }
 
 /* visas — ribbons that grow, and a ruler of salary floors */

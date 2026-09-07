@@ -8,6 +8,7 @@
 export const FILE_REF: Record<string, string> = {
   'Compare.tsx': 'site/src/routes/Compare.tsx',
   'CountryProfile.tsx': 'site/src/routes/CountryProfile.tsx',
+  'Flag.tsx': 'site/src/components/Flag.tsx',
   'Home.tsx': 'site/src/routes/Home.tsx',
   'NEEDS-DECISION.md': 'NEEDS-DECISION.md',
   'Openings.tsx': 'site/src/routes/Openings.tsx',

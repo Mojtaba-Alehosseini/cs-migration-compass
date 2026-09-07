@@ -170,7 +170,14 @@ export function Flag({ cc, size = 20, className, title }: Props) {
         border: `${Math.max(1, size / 12)}px solid var(--surface)`,
         boxShadow: 'var(--shadow-sm)',
         flex: 'none',
-        display: 'block',
+        // inline-block, not block. A flex or grid parent blockifies its
+        // children anyway, so every flex use of this mark is unchanged — but
+        // inside a table cell `display: block` forced a line break and put the
+        // mark ABOVE the name it belongs to, on all 100 rows of /openings and
+        // every row of /postings-seed. The same mark reading two different
+        // ways on two pages is the defect; this is the one-word fix.
+        display: 'inline-block',
+        verticalAlign: 'middle',
       }}
     >
       <defs>

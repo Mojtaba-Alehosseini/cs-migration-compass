@@ -3,56 +3,16 @@
  * started being a dashboard.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Flag } from '../Flag'
 import { useCountUp } from '../CountUp'
 import { useToast } from '../Toast'
 import { downloadCsv } from '../../lib/export'
 
-/* ------------------------------------------------------- segmented control */
-
-interface SegProps<T extends string> {
-  options: [T, string][]
-  value: T
-  onChange: (v: T) => void
-  label: string
-}
-
-/** The thumb slides between options; buttons act on pointer-down, so the
- *  control has already responded by the time a finger lifts. */
-export function Seg<T extends string>({ options, value, onChange, label }: SegProps<T>) {
-  const el = useRef<HTMLDivElement>(null)
-  const [thumb, setThumb] = useState<{ left: number; width: number } | null>(null)
-
-  const place = useCallback(() => {
-    const root = el.current
-    const on = root?.querySelector<HTMLButtonElement>('[aria-pressed="true"]')
-    if (on) setThumb({ left: on.offsetLeft, width: on.offsetWidth })
-  }, [])
-
-  useLayoutEffect(place, [place, value])
-  useEffect(() => {
-    window.addEventListener('resize', place)
-    return () => window.removeEventListener('resize', place)
-  }, [place])
-
-  return (
-    <div className="seg" ref={el} role="group" aria-label={label}>
-      {thumb && <span className="thumb" aria-hidden="true" style={{ left: thumb.left, width: thumb.width }} />}
-      {options.map(([k, l]) => (
-        <button
-          key={k}
-          type="button"
-          aria-pressed={k === value}
-          onPointerDown={() => { if (k !== value) onChange(k) }}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChange(k) } }}
-        >
-          {l}
-        </button>
-      ))}
-    </div>
-  )
-}
+/* The segmented control now lives in components/Seg.tsx — one control for
+ * the whole site (package 43, J1). Re-exported here so Explore's own imports
+ * read the same as they always did. */
+export { Seg } from '../Seg'
 
 /* ---------------------------------------------------------- series picker */
 

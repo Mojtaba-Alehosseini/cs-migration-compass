@@ -11,7 +11,7 @@ import { Derived } from '../components/Derived'
 import { UnstableMark } from '../components/Unstable'
 import { useData } from '../data/store'
 import { useUrlFlag, useUrlState } from '../data/urlState'
-import { dropApprox, money, num, pct, sourceName, years, NO_DATA, asOfLabel } from '../data/format'
+import { dropApprox, money, num, pct, sourceNames, years, NO_DATA, asOfLabel } from '../data/format'
 import { citySalarySource } from '../data/registry'
 import { typicalArrivalRoute } from '../data/visaRoutes'
 import {
@@ -20,6 +20,7 @@ import {
   savingsPerYear, yearsToHome,
   stabilityOf,
 } from '../data/compute'
+import { Seg } from '../components/Seg'
 import { NotFound } from './NotFound'
 import type { Band } from '../data/types'
 
@@ -87,11 +88,10 @@ export function CityProfile() {
           <h2>What developers earn here</h2>
           <div className="sub">Per year, before tax. Tap any number to see where it comes from.</div>
 
-          <div style={{ display: 'inline-flex', border: '1px solid var(--line)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: 12 }}>
-            <button onClick={() => setAllJobs(false)} aria-pressed={!allJobs}
-              style={tabStyle(!allJobs)}>Developers</button>
-            <button onClick={() => setAllJobs(true)} aria-pressed={allJobs}
-              style={tabStyle(allJobs)}>All jobs</button>
+          <div style={{ marginBottom: 12 }}>
+            <Seg label="Which jobs" value={allJobs ? 'all' : 'dev'}
+              onChange={(v) => setAllJobs(v === 'all')}
+              options={[['dev', 'Developers'], ['all', 'All jobs']]} />
           </div>
 
           {!allJobs ? (
@@ -182,19 +182,14 @@ export function CityProfile() {
               A band this city has no figure for is offered but disabled, and
               says so: the site's refusal vocabulary is a mark, never a blank,
               and silently hiding the option would hide the gap with it. */}
-          <div className="crail" role="group" aria-label="Which salary band these figures are computed on"
-            style={{ margin: '2px 0 10px' }}>
-            {(['new_grad', 'mid', 'senior'] as Band[]).map((b) => {
-              const has = city.salary_usd_year[b] != null
-              return (
-                <button key={b} type="button" onClick={() => has && setBand(b)}
-                  aria-pressed={band === b} disabled={!has}
-                  title={has ? undefined : `No ${BAND_LABEL[b].toLowerCase()} salary recorded for ${city.name}`}
-                  style={{ ...tabStyle(band === b), ...(has ? {} : { opacity: 0.45, cursor: 'not-allowed' }) }}>
-                  {BAND_LABEL[b]}{has ? '' : ' — no figure'}
-                </button>
-              )
-            })}
+          <div style={{ margin: '2px 0 10px' }}>
+            <Seg label="Which salary band these figures are computed on"
+              value={band} onChange={setBand}
+              options={(['new_grad', 'mid', 'senior'] as Band[])
+                .map((b) => [b, city.salary_usd_year[b] != null ? BAND_LABEL[b] : `${BAND_LABEL[b]} — no figure`])}
+              disabled={Object.fromEntries((['new_grad', 'mid', 'senior'] as Band[])
+                .filter((b) => city.salary_usd_year[b] == null)
+                .map((b) => [b, `No ${BAND_LABEL[b].toLowerCase()} salary recorded for ${city.name}`]))} />
           </div>
           {net != null && city.rent_1br_outside_usd_month != null && city.col_single_no_rent_usd_month != null ? (
             <>
@@ -337,11 +332,12 @@ export function CityProfile() {
         <div className="panel" style={{ gridColumn: '1 / -1' }}>
           <h2>What people actually say</h2>
           <div className="sub">Our honest summary of expat surveys and community reports — not marketing.</div>
-          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', lineHeight: 'var(--leading-relaxed)' }}>
+          {/* --measure. See CountryProfile: same field, same 140ch line. */}
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', lineHeight: 'var(--leading-relaxed)', maxWidth: 'var(--measure)' }}>
             {country.reality_paragraph}
           </p>
           <div style={{ borderTop: '1px solid var(--line)', marginTop: 12, paddingTop: 9, fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
-            Sources for this page: {city.sources.slice(0, 5).map(sourceName).join(' · ')}
+            Sources for this page: {sourceNames(city.sources.slice(0, 5)).join(' · ')}
             {city.sources.length > 5 && ` and ${city.sources.length - 5} more`} ·{' '}
             data as of {asOfLabel(city.as_of)} · <Link to="/data">see all with links →</Link>
           </div>
@@ -351,13 +347,6 @@ export function CityProfile() {
   )
 }
 
-function tabStyle(on: boolean): React.CSSProperties {
-  return {
-    padding: '6px 12px', fontSize: 'var(--text-2xs)',
-    background: on ? 'var(--accent)' : 'var(--surface)',
-    color: on ? 'var(--accent-ink)' : 'var(--ink-2)',
-  }
-}
 
 function LifeRow({ big, children }: { big: string; children: React.ReactNode }) {
   return (
@@ -374,10 +363,15 @@ function MonthBar({ rent, living, net }: { rent: number; living: number; net: nu
   const w = (v: number) => `${(v / total) * 100}%`
   return (
     <>
-      <div style={{ display: 'flex', height: 30, borderRadius: 'var(--radius-md)', overflow: 'hidden', margin: '7px 0 10px', fontSize: 'var(--text-2xs)', color: '#fff' }}>
-        <span style={{ flexBasis: w(rent), background: 'var(--warn)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{money(rent)}</span>
-        <span style={{ flexBasis: w(living), background: 'var(--note)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{money(living)}</span>
-        <span style={{ flex: 1, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{money(left)} stays with you</span>
+      {/* Each fill carries its own ink. The bar used to set color:'#fff' once
+        * for all three — the only hardcoded colour on this site outside
+        * Flag.tsx — which reads in light mode, where --warn/--note/--accent
+        * are dark, and fails in every dark theme, where they are light:
+        * measured 2.09:1, 2.27:1 and 2.62:1 across 73 city pages. */}
+      <div style={{ display: 'flex', height: 30, borderRadius: 'var(--radius-md)', overflow: 'hidden', margin: '7px 0 10px', fontSize: 'var(--text-2xs)' }}>
+        <span style={{ flexBasis: w(rent), background: 'var(--warn)', color: 'var(--warn-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{money(rent)}</span>
+        <span style={{ flexBasis: w(living), background: 'var(--note)', color: 'var(--note-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{money(living)}</span>
+        <span style={{ flex: 1, background: 'var(--accent)', color: 'var(--accent-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{money(left)} stays with you</span>
       </div>
       <Row color="var(--warn)" label="Rent — a one-bedroom, outside the centre" value={money(rent)} />
       <Row color="var(--note)" label="Everything else — food, transport, phone, fun" value={money(living)} />

@@ -208,7 +208,9 @@ export function Figure({ children, source, missing, missingReason, className }: 
 export function ConfidenceChip({ tier }: { tier: Confidence }) {
   const cls = tier === 'official' ? 'chip-ok' : tier === 'index' ? 'chip-note' : 'chip-quiet'
   return (
-    <span className={`chip ${cls}`} style={{ fontSize: 11, padding: '2px 9px' }}>
+    // Package 43: was fontSize: 11. The mark that says how sure this site is
+    // about a number was set below the site's own documented minimum.
+    <span className={`chip ${cls}`} style={{ padding: '2px 9px' }}>
       {CONFIDENCE_MARK[tier]} {CONFIDENCE_LABEL[tier]}
     </span>
   )

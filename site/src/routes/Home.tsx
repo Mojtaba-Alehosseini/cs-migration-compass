@@ -155,7 +155,7 @@ export function Home() {
                   style={{ display: 'flex', gap: 8, alignItems: 'center', flex: 1, padding: '7px 9px', textAlign: 'left' }}>
                   <Flag cc={c.country} size={15} />
                   <span style={{ fontSize: 'var(--text-2xs)' }}>{c.name}</span>
-                  <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--ink-3)' }}>add to picks</span>
+                  <span style={{ marginLeft: 'auto', fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>add to picks</span>
                 </button>
                 <button onClick={() => navigate(`/city/${c.id}`)} title={`Open ${c.name}`}
                   style={{ padding: '0 8px', color: 'var(--ink-3)', fontSize: 12 }}>→</button>
@@ -230,7 +230,7 @@ export function Home() {
             transition: 'left var(--dur-slow) var(--ease-out), top var(--dur-slow) var(--ease-out)',
           }}>
             <h2 style={{
-              fontSize: 11, color: 'var(--ink-3)', fontWeight: 500, marginBottom: 6,
+              fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', fontWeight: 500, marginBottom: 6,
               textTransform: 'uppercase', letterSpacing: 'var(--tracking-wide)', fontFamily: 'var(--font-ui)',
             }}>Your picks</h2>
             {selectedCities.map((c, ix) => (
@@ -321,7 +321,7 @@ export function Home() {
               <tr>
                 {['City', question.q, 'Salary (mid)', 'Kept / yr'].map((h) => (
                   <th key={h} style={{
-                    textAlign: 'left', padding: '9px 12px', fontSize: 11.5, fontWeight: 500,
+                    textAlign: 'left', padding: '9px 12px', fontSize: 'var(--text-2xs)', fontWeight: 500,
                     color: 'var(--ink-3)', borderBottom: '1px solid var(--line)',
                   }}>{h}</th>
                 ))}

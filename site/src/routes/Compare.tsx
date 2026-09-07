@@ -24,6 +24,7 @@ import { Derived } from '../components/Derived'
 import { BudgetEditor } from '../components/BudgetEditor'
 import { useUrlBudget } from '../data/urlState'
 import { MetricPicker } from '../components/MetricPicker'
+import { Seg } from '../components/Seg'
 import { ClimateOverlay } from '../components/ClimateOverlay'
 import { PlaceBrowser } from '../components/PlaceBrowser'
 import { useToast } from '../components/Toast'
@@ -249,23 +250,13 @@ export function Compare() {
       <div className="toolbar" role="toolbar" aria-label="Comparison controls">
         <div className="tgroup">
           <span className="tl">Experience</span>
-          <div className="seg">
-            {BANDS.map((b) => (
-              <button key={b} aria-pressed={band === b} onClick={() => update({ band: b })}>
-                {BAND_LABEL[b]}
-              </button>
-            ))}
-          </div>
+          <Seg label="Experience" value={band} onChange={(b) => update({ band: b })}
+            options={BANDS.map((b) => [b, BAND_LABEL[b]])} />
         </div>
         <div className="tgroup">
           <span className="tl">Salary shown as</span>
-          <div className="seg">
-            {LENSES.map((l) => (
-              <button key={l} aria-pressed={lens === l} onClick={() => update({ lens: l })}>
-                {LENS_BUTTON[l]}
-              </button>
-            ))}
-          </div>
+          <Seg label="Salary shown as" value={lens} onChange={(l) => update({ lens: l })}
+            options={LENSES.map((l) => [l, LENS_BUTTON[l]])} />
         </div>
         <div className="tactions">
           {/* The label names where the button goes, so it is not also a pressed
