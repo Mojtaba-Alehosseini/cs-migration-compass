@@ -12,9 +12,15 @@
  * fetch that lands in 72ms lands BEFORE the paint — which makes it a parent of
  * the LCP node, which on a simulated 1.5Mbps link costs 2.5 seconds.
  *
+ * LH_METHOD=devtools swaps Lantern for APPLIED throttling, which really does
+ * delay the network instead of modelling it. That is the control: it resolves
+ * the race the way a phone on a slow link resolves it, rather than the way
+ * localhost resolves it and Lantern then extrapolates.
+ *
  *   node scripts/tests/lighthouse_mobile_spread.mjs            # 3 runs
  *   LH_RUNS=5 BASE_URL=http://localhost:4173/ node scripts/tests/lighthouse_mobile_spread.mjs
  *   LH_TAG=p42 node scripts/tests/lighthouse_mobile_spread.mjs # label the reports
+ *   LH_METHOD=devtools LH_TAG=applied node scripts/tests/lighthouse_mobile_spread.mjs
  */
 import { spawn } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs'
@@ -38,6 +44,7 @@ const run = (url, file) => new Promise((resolve, reject) => {
     '--quiet', '--chrome-flags=--headless=new --no-sandbox',
     '--only-categories=performance',
   ]
+  if (process.env.LH_METHOD) args.push(`--throttling-method=${process.env.LH_METHOD}`)
   const p = spawn(NPX, args.map(quote), { stdio: ['ignore', 'ignore', 'pipe'], windowsHide: true, shell: true })
   let err = ''
   p.stderr.on('data', (d) => { err += d })

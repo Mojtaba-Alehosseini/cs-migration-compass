@@ -4513,3 +4513,63 @@ much of the space for a caution colour to be far from both the accent and all of
 
 Not resolved in package 43: (a) adds a mark, and the package's own rule 3 says a new idiom needs
 the owner's justification, not a design pass's.
+
+## 83. Throttled-mobile `/openings` scores 81 in one run of three, and the cause is the measurement
+
+Package 43's gate ran Lighthouse on throttled mobile for `/openings` for the first time. Nine runs
+this session, and the scores sit in two clusters with nothing in between:
+
+| observed LCP | simulated LCP | CLS | perf | runs |
+| --- | --- | --- | --- | --- |
+| ~240ms | ~2415ms | 0.044 | **95–96** | 6 of 9 |
+| ~530ms | ~4859ms | 0 | **81–82** | 3 of 9 |
+
+The floor is 90. Two of nine runs are under it, and one more sits at 89 for a different and
+already-understood reason (TBT 356ms — the machine was busy).
+
+**It is not a package 43 regression.** Package 42's `site/src` checked out at `d3f2355`, rebuilt,
+and served from the same preview server on the same machine gives 82 / 96 / 96 against package 43's
+95 / 81 / 96 — the same two clusters, the same simulated LCP to within 1ms, the same one-in-three
+rate. Package 42 never surfaced it only because package 42 never ran this audit.
+
+**What is happening.** The LCP element is the page's own subtitle paragraph, *"What employers
+advertise while hiring…"*, confirmed with a `PerformanceObserver` over four loads. It is static
+JSX and reads none of the postings data. But Lighthouse's default mobile throttling is *simulated*:
+Lantern takes the dependency graph observed on the real machine and projects it onto a 1.5Mbps
+link. On localhost `postings_index.json` (460KB) arrives in **72ms**, which puts it in a dead heat
+with a paint at ~250ms — and whichever side of that coin flip the paint lands on decides whether
+Lantern records the 460KB fetch as a parent of the LCP node. 4859 − 2417 = **2442ms**; 460,147
+bytes at the preset's 1474.56 Kbps is **2496ms**. The gap between the clusters *is* the index
+transfer added to the critical path.
+
+**Applied throttling is the control, and it disagrees with Lantern.** With the network really
+delayed rather than modelled, `postings_index.json` does not finish until **8101ms** while the
+paragraph paints at **5072ms** — three seconds earlier. It cannot gate that paint. The filmstrip
+agrees: at 3.3s the page still shows `Loading 15 countries and 73 cities…`, and at 5.5s the whole
+header is painted with the list still showing `LOADING THE FILTERS…`. What actually gates the
+paragraph is **`core.json` (91KB)**, the app-wide data gate in `main.tsx`.
+
+So the number that fails is measuring a race no real device runs. The number that is real, and
+separate, is that a phone on a slow link waits about **5 seconds** for `/openings` to show its
+header — and it waits because nothing on the site renders until `core.json` has loaded.
+
+**Options:**
+  - **(a) Accept the 81 as an artifact and record the floor as median-based for this one audit.**
+    Report the distribution, not a single run — the package 43 report does. Costs nothing, changes
+    no code, and leaves a gate that will keep flickering red one run in three for whoever runs it
+    next. It also leaves the real 5-second first paint on a slow link unaddressed, because that is
+    a separate question this option does not ask.
+  - **(b) Take the app-wide `core.json` gate off the critical path.** `main.tsx` renders
+    `Loading 15 countries and 73 cities…` for the entire app until 91KB has loaded; a route whose
+    header needs none of it still waits. Letting the shell, nav and static route header render
+    first would cut the real slow-link first paint and, as a side effect, settle the coin flip by
+    putting the paint well before any data. The cost is real: it changes the loading behaviour of
+    every route on the site, it means routes must handle a null dataset rather than being
+    guaranteed one, and `useData()` currently throws rather than returning null by deliberate
+    design. That is an architecture change, not a design pass.
+
+Not resolved in package 43: (b) rewrites how every route on the site loads, which is far outside a
+presentation-only package; (a) is a decision about what the gate means, and that is the owner's.
+Deliberately not done: moving the `postings_index` fetch a tick later would flip the coin reliably
+and improve nothing for any real user, which is tuning the code to an artifact of its own
+measurement.
