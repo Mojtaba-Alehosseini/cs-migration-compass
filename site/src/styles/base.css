@@ -108,10 +108,10 @@ a { color: var(--ink-2); }
    them break in the middle of one: at 390px "Position &" sat over "openings"
    and "Data &" over "methods", while "Compare" and "Explore" stayed on one
    line each, so the row read ragged with a hole in it. The links wrap between
-   themselves now, never inside themselves. The header's HEIGHT at that width —
-   three rows and 145px of an 844px screen — is escalated rather than changed:
-   every way to shorten it costs something, and NEEDS-DECISION.md #77 names the
-   two candidates. */
+   themselves now, never inside themselves. That plus the gap rule below took
+   the header from 145px to 132px of an 844px screen. Its remaining THREE-ROW
+   structure is escalated rather than changed: every way to make it two costs
+   something, and NEEDS-DECISION.md #77 names the two candidates. */
 .mainnav { display: flex; gap: 14px; flex-wrap: wrap; }
 .mainnav > a { white-space: nowrap; }
 /* The four labels measure 52 + 116 + 42 + 95 = 305px. At 390px the header has
@@ -625,15 +625,34 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   visibility: visible;
   transition: transform var(--dur-base) var(--ease-out), visibility 0s;
 }
-.tray .cnt { font-size: 12px; color: var(--ink-3); }
+/* The tray INVERTS — a dark slab on light paper, a light slab on dark — and
+   its children were using the page's text roles on it. Measured before this
+   was fixed: the city names 1.64:1 in light and 1.28:1 in dark, the ✕ 2.54 and
+   2.16, the count 3.52 and 2.76, against a 4.5 requirement. The names are the
+   entire content of the control.
+
+   Two causes, both here. --ink-3 is text-on-paper and was being asked to sit
+   on an ink slab; and .tchip is declared TWICE in this file — once for this
+   chip and once for the themes-bar chip further down — and this rule never set
+   a colour, so the themes-bar rule's own --ink-2 won for the tray's chips too.
+
+   The site has no token for "quiet text on an inverted surface": --accent-ink
+   is text on accent, and nothing covers text on --ink-1. It does have the
+   idiom, one line below — .tray .tchip already mixes --paper into transparent
+   for its own background. Same construction, applied to the ink. */
+.tray .cnt { font-size: 12px; color: color-mix(in srgb, var(--paper) 72%, var(--ink-1)); }
 .tray .chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .tray .tchip {
   font-size: 12px;
   background: color-mix(in srgb, var(--paper) 12%, transparent);
+  color: var(--paper);
   border-radius: var(--radius-xl); padding: 4px 10px;
   display: flex; gap: 6px; align-items: center;
 }
-.tray .tchip button { color: var(--ink-3); padding: 0 1px; font-size: var(--text-2xs); }
+.tray .tchip button {
+  color: color-mix(in srgb, var(--paper) 72%, var(--ink-1));
+  padding: 0 1px; font-size: var(--text-2xs);
+}
 .tray .go {
   background: var(--accent); color: var(--accent-ink);
   border-radius: var(--radius-md); padding: 8px 14px;
@@ -720,12 +739,19 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   border-spacing: 0;
   font-size: var(--text-2xs);
 }
-.tbl th {
+/* thead th, not th. `--ink-3` is the COLUMN HEADING's colour; a <th scope="row">
+   is content, and /work's example-postings table uses one for the role. The
+   first version of this block said `.tbl th`, which took the row header, the
+   company line under it and the Posted date from --ink-1 to --ink-3 — 17.34:1
+   down to 4.92:1 — and with them Work.tsx's "Why withheld" column, which is a
+   caveat. Adversarial review, finding 10. */
+.tbl thead th {
   text-align: left;
   padding: 8px 10px;
   font-size: var(--text-2xs);
   font-weight: var(--weight-medium);
   color: var(--ink-3);
+  border-bottom: 1px solid var(--line);
 }
 .tbl td,
 .tbl tbody th {
@@ -734,10 +760,11 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   border-top: 1px solid var(--line);
   font-weight: var(--weight-normal);
 }
-.tbl thead th { border-bottom: 1px solid var(--line); }
 .tbl tbody tr:first-child td,
 .tbl tbody tr:first-child th { border-top: none; }
-.tbl .sub { color: var(--ink-3); margin-top: 2px; }
+/* Spacing only. Giving .sub a colour here quietened a cell that carries a
+   reason, and .sub already has one wherever it is a caption. */
+.tbl .sub { margin-top: 2px; }
 
 /* ---- the table ---- */
 .tablewrap {
@@ -969,7 +996,13 @@ table.cmp {
    site's refusal vocabulary is a mark and never a blank: dropping the option
    would hide the gap along with it. Same treatment the hand-rolled picker
    used before this control replaced it. */
-.seg > button:disabled { opacity: 0.45; cursor: not-allowed; }
+/* A colour, not opacity. `opacity: 0.45` over --surface composited --ink-2 to
+   2.14:1 (compass light) - 3.00:1 (editorial dark): the LOWEST contrast in the
+   control, on the one option that carries a reason. WCAG exempts an inactive
+   control from 1.4.3; this package's own rule 2 does not exempt a caveat from
+   being legible. --ink-3 is the quietest text this site allows and is measured
+   against paper and surface in tokens.css. Adversarial review, finding 6. */
+.seg > button:disabled { color: var(--ink-3); cursor: not-allowed; }
 .seg .thumb {
   position: absolute; top: 2px; bottom: 2px; border-radius: var(--radius-sm);
   background: var(--ink-1); z-index: 1;

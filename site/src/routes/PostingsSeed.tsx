@@ -30,26 +30,25 @@ const DENSITY_TONE: Record<string, string> = {
   HIGH: 'chip-ok', MEDIUM: 'chip-note', LOW: 'chip-quiet',
 }
 
-function DensityCell({ note, unresolved }: { note?: string; unresolved: boolean }) {
-  if (!note) {
-    return unresolved
-      ? <>The location text this posting published did not resolve to a country this pipeline
-        recognises — kept, not dropped, and shown here rather than silently excluded.</>
-      : <>{'—'}</>
-  }
+/* Returns the pieces, not a component.
+ *
+ * This WAS a <DensityCell note={...} /> and the figure inventory caught it:
+ * <LinkFiles> walks the React element tree at render time and linkifies any
+ * STRING child it finds. Text handed to a component as a PROP is not a child,
+ * so "NEEDS-DECISION.md" inside the German note stopped being a link — C3c,
+ * two bare occurrences. Splitting here and rendering the parts as children
+ * puts the string back inside the tree LinkFiles can see. */
+function densityParts(note: string | undefined): { level: string; tone: string; rest: string } | null {
+  if (!note) return null
   const m = /^(HIGH|MEDIUM|LOW)([^—]*)—\s*(.*)$/s.exec(note)
-  if (!m) return <>{note}</>
+  if (!m) return null
   const level = m[1] ?? ''
   const qualifier = (m[2] ?? '').trim()
-  const rest = m[3] ?? ''
-  return (
-    <>
-      <span className={`chip ${DENSITY_TONE[level] ?? 'chip-quiet'}`}>
-        {level}{qualifier ? ` ${qualifier}` : ''}
-      </span>{' '}
-      {rest}
-    </>
-  )
+  return {
+    level: qualifier ? `${level} ${qualifier}` : level,
+    tone: DENSITY_TONE[level] ?? 'chip-quiet',
+    rest: m[3] ?? '',
+  }
 }
 
 const DENSITY_NOTE: Record<string, string> = {
@@ -151,7 +150,14 @@ export function PostingsSeed() {
                     </td>
                     <td style={{ padding: '5px 10px', fontSize: 'var(--text-xs)' }}>{n.toLocaleString()}</td>
                     <td style={{ padding: '5px 10px', fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
-                      <DensityCell note={DENSITY_NOTE[cc]} unresolved={cc === 'unresolved'} />
+                      {(() => {
+                        const d = densityParts(DENSITY_NOTE[cc])
+                        if (d) return <><span className={`chip ${d.tone}`}>{d.level}</span>{' '}{d.rest}</>
+                        if (DENSITY_NOTE[cc]) return DENSITY_NOTE[cc]
+                        return cc === 'unresolved'
+                          ? 'The location text this posting published did not resolve to a country this pipeline recognises — kept, not dropped, and shown here rather than silently excluded.'
+                          : '—'
+                      })()}
                     </td>
                   </tr>
                 ))}

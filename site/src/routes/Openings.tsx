@@ -417,10 +417,7 @@ export function Openings() {
                 count, and reflecting the filters above. Never per individual posting — no source in
                 this package publishes coordinates precise enough for that.
                 {mapOmitted.n > 0 && (
-                  <> {' '}The coordinate table covers {mapOmitted.shownCountries} countries;{' '}
-                    <b>{mapOmitted.n.toLocaleString()} postings ({mapOmitted.pct}%) across{' '}
-                    {mapOmitted.countries} others are not drawn</b> — largest{' '}
-                    {mapOmitted.largest.join(', ')}. They are still in the list and the counts above.
+                  <> {' '}The coordinate table covers {mapOmitted.shownCountries} countries.
                   </>
                 )}
                 {/* The state nobody wrote copy for: a filter that selects real
@@ -437,6 +434,24 @@ export function Openings() {
                   </>
                 )}
               </div>
+              {/* The limit becomes a MARK, not a clause in the middle of a
+                * 340-character paragraph. This is the same chip /explore uses
+                * for exactly this — "EU/EFTA only — that limit is real and
+                * shown", "all postings, not software-only — the sector cut
+                * isn't published" — and this page's own limit had been written
+                * as prose instead. Package 43, J10; found because the coverage
+                * floor for st-openings-map broke when J1 stopped the List/Map
+                * toggle from being two .chip elements, and the route turned
+                * out to have no real mark on it at all. */}
+              {mapOmitted.n > 0 && (
+                <div style={{ margin: '2px 0 4px' }}>
+                  <span className="chip chip-quiet">
+                    {mapOmitted.n.toLocaleString()} postings ({mapOmitted.pct}%) across{' '}
+                    {mapOmitted.countries} countries are not drawn — largest{' '}
+                    {mapOmitted.largest.join(', ')}. They are still in the list and in the counts.
+                  </span>
+                </div>
+              )}
               <svg viewBox={`0 0 ${MAP.W} ${MAP.H}`} style={{ width: '100%', height: 'auto', marginTop: 10 }}
                 role="img"
                 /* role="img" prunes the descendants, so the per-dot <title>s are

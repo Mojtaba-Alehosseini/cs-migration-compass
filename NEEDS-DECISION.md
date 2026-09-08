@@ -4411,8 +4411,13 @@ the fixed list.
     to read. The cost is real: every chart on the site gets visibly heavier furniture, and the swarm
     field's 73 dot labels grow ~26% in a plot that already hides them when crowded.
   - **(b) Raise only the REFUSAL marks and leave the ticks.** "off this scale ↑" and "off →" at
-    9.5px and "p25–p75" at 8.5px are caveats, and the smallest text on the page should not be the
-    part that says the chart is lying to you. Cheaper, and it is the half with a principle behind
+    9.5px, "p25–p75" at 8.5px, and — added after the adversarial review pointed out that package
+    43's own critique had put it in the OBJECTIVE bucket and then moved it here — `.swarm-null
+    small` at 9px, the label on a city parked in the no-data gutter. These are caveats, and the
+    smallest text on the page should not be the part that says the chart is lying to you.
+    Note that two of the five base.css rules swept into this item are not chart text at all:
+    `.baser` is a draggable base-year control with a label, and `.axis-chip-wrap > span` is the
+    caret on a `<select>`. Whoever takes this item should split them back out. Cheaper, and it is the half with a principle behind
     it. The cost is that the site then has a documented 12px floor that its charts still do not
     keep, which is the situation this item exists to name.
 
@@ -4463,3 +4468,48 @@ data. But a reader cannot see that distinction in the mark.
 
 Not resolved in package 43: changing what a mark means is outside a presentation pass, and rule 2
 of its brief says a mark may not be made quieter without the owner deciding to.
+
+
+## 82. --warn cannot be far from the accent AND far from the series palette, in any theme
+
+Package 43 moved `--warn` in editorial and warm because it was byte-identical to `--accent` there
+(item O1). The adversarial review then asked the question the package had not: `--warn` is also
+drawn **beside** the series palette, as the "this one is different" mark — `ExploreCharts.tsx:295`
+(`fill={off ? 'var(--warn)' : cc(p.cc)}`, the off-scale dot among country dots) and
+`Compare.tsx:668` (`shaky ? 'var(--warn)' : cc(city.country)`). That pair was never measured.
+
+Measured now, nearest of the 29 series colours (`--c-*`, `--m-*`, `--pick-*`), dE2000:
+
+| theme / mode | before | after |
+| --- | --- | --- |
+| editorial / light | c-ES **12.2** | m-6 **7.3** |
+| editorial / dark | c-NL **15.3** | c-DK **20.0** |
+| warm / light | m-1 **10.2** | m-6 **8.7** |
+| warm / dark | c-NL **9.5** | c-CA **20.3** |
+
+And the four this package did not touch:
+
+| compass / light | m-1 **4.3** | compass / dark | c-NL **12.0** |
+| terminal / light | m-1 **4.6** | terminal / dark | c-NL **14.0** |
+
+**No theme on this site has ever met the 18.7 bar for this pair, including the default one at 4.3.**
+The change improved both dark themes past the bar and moved both light themes further below it.
+
+Is it fixable? Searched the whole hue circle at fixed weight, requiring AA on paper and dE >= 18.7
+from the accent: the best achievable nearest-palette distance is **14.5 for editorial-light — at
+hue 120 degrees, which is green** — and **15.0 for warm-light, at hue 64, olive**. `--m-6` and
+`--pick-6` are `#8a3a5e`, a plum, which is why the crimson lane collides. The palette occupies too
+much of the space for a caution colour to be far from both the accent and all of it.
+
+**Options:**
+  - **(a) Give the off-scale and unstable marks a shape rather than a hue** — a ring, a hollow
+    centre, a cross — so `--warn` stops carrying "different from the series" by colour at all. This
+    is the site's own habit everywhere else (hollow markers, dashed tracks, hatched fills) and it
+    would fix all eight themes at once, including compass's 4.3. The cost is a new mark in a
+    vocabulary whose strength is that it is small, and it touches two charts.
+  - **(b) Leave it.** The mark is never alone: the off-scale dot sits outside the plot's own band
+    with a `--warn` label beside it, and Compare's shaky dot carries `.unstable-mark`. The cost is a
+    documented 18.7 bar that this pair fails in all eight themes, and the report saying so.
+
+Not resolved in package 43: (a) adds a mark, and the package's own rule 3 says a new idiom needs
+the owner's justification, not a design pass's.

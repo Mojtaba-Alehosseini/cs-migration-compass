@@ -374,7 +374,13 @@ export function Home() {
           padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap',
           zIndex: 'var(--z-tray)' as never, boxShadow: 'var(--shadow-lg)', maxWidth: '92vw',
         }}>
-          <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>
+          {/* Home builds its own copy of the selection tray, inline, and it
+            * carried the same defect O2 fixed in .tray: --ink-3 is
+            * text-on-paper and this slab is --ink-1, so the count measured
+            * 3.52:1 in light and 2.76:1 in dark. A class-based fix cannot
+            * reach a hand-rolled duplicate — the fifth instance in this
+            * package of the same thing built twice. */}
+          <span style={{ fontSize: 12, color: 'color-mix(in srgb, var(--paper) 72%, var(--ink-1))' }}>
             {selected.length} {selected.length === 1 ? 'city' : 'cities'}
           </span>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>

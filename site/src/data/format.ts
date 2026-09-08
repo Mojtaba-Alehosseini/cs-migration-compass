@@ -218,29 +218,81 @@ export function sourceNames(urls: string[]): string[] {
   return urls.map((u, i) => {
     const b = base[i] ?? u
     if ((count.get(b) ?? 0) < 2) return b
-    const detail = pathTitle(u)
-    return detail ? `${b} · ${detail}` : b
+    /* Disambiguate on the part of the path that actually DIFFERS from the
+     * others sharing this label — not simply the last segment.
+     *
+     * The last segment is right for Wikipedia (/wiki/H-1B_visa) and wrong for
+     * levels.fyi, where three genuinely different pages — all levels, entry
+     * level, senior — end in the SAME segment (new-york-city-area) and differ
+     * in the middle. Taking the last segment there printed the same label
+     * three times and claimed to have disambiguated it. */
+    const siblings = urls.filter((_, j) => base[j] === b)
+    const detail = distinguishingPart(u, siblings)
+    /* Parentheses, NOT " · ". The citation line joins its items with " · ", so
+     * a label containing one splits in the reader's eye exactly where it must
+     * not: "Wikipedia · Second Trump travel ban · Wikipedia · H 1B visa" reads
+     * as four sources where there are two. */
+    return detail ? `${b} (${detail})` : b
   })
 }
 
-/** The last meaningful path segment of a URL, as human text. '' when there is
- *  none — a bare host, or a path that is only an id. */
-function pathTitle(url: string): string {
-  let path: string
-  try {
-    path = new URL(url).pathname
-  } catch {
-    return ''
+/** The part of `url`'s path that tells it apart from `siblings`, as human text.
+ *
+ *  The LAST segment first, because that is where a document's title lives —
+ *  /wiki/H-1B_visa, /oes/2025/may/oessrcma.htm. Only if the siblings share it
+ *  does this look further up, for the first position where this URL's own
+ *  segment is unique among them: levels.fyi puts three genuinely different
+ *  pages (all levels, entry level, senior) under the same final segment.
+ *
+ *  UNIQUE among the siblings, not merely DIFFERENT from one of them — the
+ *  difference matters: /t/x/levels/entry-level/... and /t/x/levels/senior/...
+ *  both differ from /t/x/locations/... at the same index, and taking that
+ *  index printed "levels" twice and called it disambiguated. */
+function distinguishingPart(url: string, siblings: string[]): string {
+  const segs = pathSegments(url)
+  if (!segs.length) return ''
+  const others = siblings.filter((s) => s !== url).map(pathSegments)
+  const last = segs.length - 1
+  const uniqueAt = (i: number) => others.every((o) => o[i] !== segs[i])
+  if (uniqueAt(last)) {
+    const t = humanise(segs[last] ?? '')
+    if (t) return t
   }
-  const seg = path.split('/').filter(Boolean).pop()
-  if (!seg) return ''
+  for (let i = 0; i < segs.length; i++) {
+    if (!uniqueAt(i)) continue
+    const t = humanise(segs[i] ?? '')
+    if (t) return t
+  }
+  return ''
+}
+
+function pathSegments(url: string): string[] {
+  try {
+    return new URL(url).pathname.split('/').filter(Boolean)
+  } catch {
+    return []
+  }
+}
+
+/** A path segment as something a reader recognises, or '' if it is an opaque
+ *  id rather than a title. */
+function humanise(seg: string): string {
   let t: string
   try {
     t = decodeURIComponent(seg)
   } catch {
     t = seg
   }
-  t = t.replace(/\.(html?|php|aspx?|pdf)$/i, '').replace(/[_-]+/g, ' ').trim()
+  t = t
+    .replace(/\.(html?|php|aspx?|pdf|csv|xlsx?|shtml|json|txt)$/i, '')
+    .replace(/[_-]+/g, ' ')
+    .trim()
+    // A source URL that carries its own parenthesised note — one BLS entry
+    // does — would otherwise print inside a second pair of them. AFTER trim:
+    // that segment decodes with a leading space, so stripping first left the
+    // opening bracket in place and printed "((OEWS series ...".
+    .replace(/^\(+|\)+$/g, '')
+    .trim()
   if (!t || /^\d+$/.test(t)) return ''
   return t.length > 38 ? `${t.slice(0, 37)}…` : t
 }

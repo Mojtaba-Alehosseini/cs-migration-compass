@@ -52,8 +52,21 @@ const AUDIT = String.raw`
   const visible = (el) => {
     if (!(el instanceof Element)) return false
     if (el.closest('.visually-hidden, .sr-only, noscript, title, script, style')) return false
+    /* Content inside a CLOSED <details> is skipped for rendering but keeps its
+     * last layout box and its last used colour. getComputedStyle returns that
+     * stale colour while custom properties resolve to the CURRENT theme — so
+     * after a mode flip those elements read light-mode ink on a dark-mode
+     * surface, in the same synchronous snapshot, which is impossible for
+     * anything actually on the screen. It produced 786 findings on /work
+     * alone, intermittently, depending on which mode had been measured last.
+     * Nobody can see this text; it is not a contrast defect. */
+    if (el.closest('details:not([open])')) return false
     const cs = getComputedStyle(el)
     if (cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity) === 0) return false
+    // Chrome's own answer where it has one — it knows about content-visibility
+    // and skipped subtrees, which the property checks above do not cover.
+    if (typeof el.checkVisibility === 'function'
+      && !el.checkVisibility({ contentVisibilityAuto: true, opacityProperty: true, visibilityProperty: true })) return false
     const r = el.getBoundingClientRect()
     return r.width > 0 && r.height > 0
   }
@@ -80,16 +93,81 @@ const AUDIT = String.raw`
     const a = top[3]
     return [top[0] * a + under[0] * (1 - a), top[1] * a + under[1] * (1 - a), top[2] * a + under[2] * (1 - a), 1]
   }
-  // What is painted behind an element: composite every ancestor's background,
-  // innermost first, over the paper. A translucent panel over textured paper
-  // is a real pair on this site (--surface-raised is rgba .72).
+  // What is painted behind an element.
+  //
+  // The DOM parent is NOT the visual backdrop, and this instrument learned it
+  // the same way inventory_figures.mjs did. The segmented control's chosen
+  // option is --paper text over a .thumb that is an absolutely-positioned
+  // SIBLING; walking ancestors finds the track's --surface instead and scores
+  // a legible 18.7:1 as 1.11:1 — 96 pages of it, the moment package 43 put
+  // that control on every city page.
+  //
+  // elementsFromPoint gives the real paint stack at the element's own centre:
+  // everything actually drawn there, topmost first. Composite from the element
+  // downward. The ancestor walk stays as the fallback for anything off-screen,
+  // where the browser cannot hit-test at all.
   const paperColor = parse(getComputedStyle(document.body).backgroundColor) || [246, 243, 236, 1]
-  const bgBehind = (el) => {
+  // The fallback, for anything the browser cannot hit-test because it is off
+  // screen. Walk ancestors, but at each step also look at that ancestor's own
+  // positioned children: an absolutely-positioned SIBLING that covers this
+  // element's centre is painted behind its text even though it is nowhere on
+  // the ancestor chain. That is the segmented control's thumb, and without
+  // this the off-screen half of every page scores it at 1.1:1.
+  //
+  // It cannot resolve z-order the way elementsFromPoint does, so it takes the
+  // first opaque covering sibling it finds. Above the fold the hit test is
+  // used instead and this never runs.
+  const ancestorLayers = (el) => {
+    const r = el.getBoundingClientRect()
+    const cx = r.left + r.width / 2
+    const cy = r.top + r.height / 2
+    const covers = (e) => {
+      const b = e.getBoundingClientRect()
+      return b.left <= cx && b.right >= cx && b.top <= cy && b.bottom >= cy
+    }
     const layers = []
     for (let e = el; e && e !== document.documentElement; e = e.parentElement) {
+      const own = parse(getComputedStyle(e).backgroundColor)
+      if (own && own[3] > 0) { layers.push(own); if (own[3] >= 1) break }
+      const parent = e.parentElement
+      if (!parent) continue
+      let stop = false
+      for (const sib of parent.children) {
+        if (sib === e || sib.contains(el) || el.contains(sib)) continue
+        const cs = getComputedStyle(sib)
+        if (cs.position === 'static' || cs.display === 'none' || Number(cs.opacity) === 0) continue
+        if (!covers(sib)) continue
+        const c = parse(cs.backgroundColor)
+        if (c && c[3] > 0) { layers.push(c); if (c[3] >= 1) { stop = true; break } }
+      }
+      if (stop) break
+    }
+    return layers
+  }
+  const paintedLayers = (el) => {
+    const r = el.getBoundingClientRect()
+    const cx = r.left + r.width / 2
+    const cy = r.top + r.height / 2
+    if (cx < 0 || cy < 0 || cx > vw || cy > window.innerHeight) return null
+    const stack = document.elementsFromPoint(cx, cy)
+    const at = stack.findIndex((e) => e === el || el.contains(e))
+    if (at < 0) return null
+    const layers = []
+    for (let i = at; i < stack.length; i++) {
+      const e = stack[i]
+      // The element's OWN background counts — text sits on it. Only its
+      // descendants are excluded: they are in front of the text, not behind
+      // it. Skipping the element itself scored the month bar's
+      // white-on-terracotta at 1.03:1, having just measured it at 5.86 on the
+      // page. (No backticks in here: String.raw template.)
+      if (e !== el && el.contains(e)) continue
       const c = parse(getComputedStyle(e).backgroundColor)
       if (c && c[3] > 0) { layers.push(c); if (c[3] >= 1) break }
     }
+    return layers.length ? layers : null
+  }
+  const bgBehind = (el) => {
+    const layers = paintedLayers(el) ?? ancestorLayers(el)
     let out = paperColor[3] >= 1 ? paperColor : over(paperColor, [246, 243, 236, 1])
     for (let i = layers.length - 1; i >= 0; i--) out = over(layers[i], out)
     return out
@@ -220,20 +298,39 @@ const AUDIT = String.raw`
     const top = document.elementFromPoint(cx, cy)
     return !!top && (top === el || el.contains(top) || top.contains(el))
   }
-  // 2.5.8's EQUIVALENT exception, asserted by the page and CHECKED here: a
-  // container may name a selector whose controls do the same job at full size.
-  // The exemption applies only if that selector actually resolves to visible
-  // controls that are themselves >= 24x24 — an assertion nobody can rubber
-  // stamp, because a wrong or stale selector simply fails to exempt anything.
+  // 2.5.8's EQUIVALENT exception, asserted by the page and checked here as far
+  // as a machine can check it.
+  //
+  // The named selector must resolve to visible controls that are themselves
+  // >= 24x24, that live OUTSIDE the exempting container, and that are at least
+  // as numerous as the undersized targets inside it. Without those three, a
+  // data-target-equivalent of "body" exempted everything — the adversarial
+  // review demonstrated exactly that on /compare, at both widths, against a
+  // comment claiming nobody could rubber stamp this.
+  //
+  // (No backticks in this comment: it lives inside a String.raw template, and
+  // one would close it. That trap has cost this project eight sessions.)
+  //
+  // What it still cannot check, and what the comment must therefore not claim:
+  // that the alternatives DO THE SAME THING. A page that names a same-sized,
+  // equally numerous, outside set of controls that happen to do something else
+  // will be believed. That is an author's assertion, and this narrows it
+  // rather than verifying it.
   const equivalentHolds = (el) => {
     const host = el.closest('[data-target-equivalent]')
     if (!host) return false
-    const alt = [...document.querySelectorAll(host.getAttribute('data-target-equivalent'))]
-      .filter((a) => visible(a))
-    return alt.length > 0 && alt.every((a) => {
+    const sel2 = host.getAttribute('data-target-equivalent')
+    if (!sel2 || !sel2.trim()) return false
+    const alt = [...document.querySelectorAll(sel2)]
+      .filter((a) => visible(a) && !host.contains(a) && !a.contains(host))
+    if (!alt.length) return false
+    if (!alt.every((a) => {
       const r = a.getBoundingClientRect()
       return r.width >= 24 && r.height >= 24
-    })
+    })) return false
+    const inside = [...host.querySelectorAll('a[href], button, input, select, textarea, summary, [role="button"], [role="tab"]')]
+      .filter((t) => visible(t))
+    return alt.length >= inside.length
   }
   for (const t of targets) {
     if (!t.small) continue
@@ -278,10 +375,21 @@ const AUDIT = String.raw`
 })()
 `
 
-const COMBOS = [
-  ['light', 1440, 900, false], ['dark', 1440, 900, false],
-  ['light', 390, 844, true], ['dark', 390, 844, true],
-]
+/* Mode OUTSIDE, viewport inside — and the mode is applied by reloading, not by
+ * flipping an attribute.
+ *
+ * Flipping data-mode leaves stale used-values behind in any subtree Chrome is
+ * not rendering: a closed <details> keeps its last layout box AND its last
+ * used colour, while its custom properties resolve to the new theme. The
+ * result reads light-mode ink on a dark-mode surface in one synchronous
+ * snapshot — impossible for anything on the screen — and it came and went
+ * between identical runs, 786 findings on /work one time and 0 the next.
+ * Excluding closed <details> removed most of it and not all.
+ *
+ * A reload has no stale anything. It costs one extra page load per target and
+ * buys a number that does not depend on which mode was measured last. */
+const MODES = ['light', 'dark']
+const SIZES = [[1440, 900, false], [390, 844, true]]
 
 const { targets } = defaultTargets(BASE)
 const list = targets.filter(([id]) => !ONLY.size || ONLY.has(id))
@@ -306,20 +414,50 @@ async function land(id, url, setup) {
   }
 }
 
+/* Motion off for the whole audit.
+ *
+ * `body` transitions background-color and color over --dur-base (260ms), and
+ * flipping data-mode starts that transition. waitForReady() waits for network
+ * idle and a stable DOM — a colour interpolating changes neither, so it can
+ * return mid-transition, and then every colour on the page is a blend of the
+ * two themes. One run of this audit reported 842 contrast findings on a single
+ * target that way: light-mode ink measured against a dark-mode surface, on
+ * st-openings-remote alone, because that target's setup toggles a checkbox and
+ * shifted the timing. Earlier runs of the same code had got lucky.
+ *
+ * prefers-reduced-motion zeroes the duration tokens AND trips tokens.css's
+ * universal 0.01ms override, so no transition can be sampled part-way. It
+ * changes no settled colour, which is the only thing this instrument measures.
+ */
+await page.emulateReducedMotion(true)
+
+/* Get onto the site's origin BEFORE anything writes localStorage. A fresh tab
+ * sits on about:blank, which has no origin, and reading storage there is a
+ * SecurityError — the same trap capture_site.mjs documents at the top of its
+ * own loader. Reintroducing it here made three consecutive runs report
+ * "0 findings" that were 0 because every target had errored. */
+await page.goto(BASE)
+await page.waitForReady({ quietMs: 250, timeoutMs: 30000, label: 'origin' })
+
 let done = 0
 for (const [id, url, setup] of list) {
   done += 1
   process.stdout.write(`  [${String(done).padStart(3)}/${list.length}] ${id}` + String.fromCharCode(10))
   try {
-    await page.viewport(1440, 900)
-    await page.eval(`document.documentElement.setAttribute('data-mode', 'light')`)
-    await land(id, url, setup)
-    for (const [mode, w, h, mobile] of COMBOS) {
+    for (const mode of MODES) {
+      await page.viewport(1440, 900)
+      // Written to storage and then LOADED, so index.html's own inline script
+      // applies it before first paint and nothing on the page is left over.
+      await page.eval(`(() => { localStorage.setItem('compass:mode', ${JSON.stringify(mode)}); return 1 })()`)
+      await page.goto(BASE)
+      await page.waitForReady({ quietMs: 250, timeoutMs: 30000, label: `${id} — ${mode} root` })
+      await land(id, url, setup)
+      for (const [w, h, mobile] of SIZES) {
       await page.viewport(w, h, mobile)
-      await page.eval(`document.documentElement.setAttribute('data-mode', ${JSON.stringify(mode)})`)
       await page.waitForReady({ quietMs: 300, timeoutMs: 30000, label: `${id} — ${mode}/${w}` })
       const f = JSON.parse(await page.eval(AUDIT))
       results.push({ id, mode, viewport: w, ...f })
+      }
     }
   } catch (e) {
     results.push({ id, error: String((e && e.message) || e) })

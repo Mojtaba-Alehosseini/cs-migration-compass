@@ -17,6 +17,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
+
 interface SegProps<T extends string> {
   options: [T, string][]
   value: T
@@ -44,6 +45,30 @@ export function Seg<T extends string>({ options, value, onChange, label, disable
     return () => window.removeEventListener('resize', place)
   }, [place])
 
+  /* onPointerDown AND onClick, with a guard so a real press does not fire both.
+   *
+   * Pointer-down alone is faster — the control has already responded by the
+   * time a finger lifts — but a synthesized click has no pointer events before
+   * it, and that is exactly how a screen reader activates a button, and how
+   * element.click() works. This component inherited pointer-down-only from
+   * Explore, where it had been for nineteen packages; the moment it took over
+   * /compare, /city/* and /openings, it took three controls that had worked on
+   * click and made them unreachable that way. The figure inventory caught it:
+   * st-openings-map contributed 0 marks against a floor of 1, because the
+   * state's own setup clicks the control and nothing happened. */
+  const lastPointer = useRef(0)
+  const choose = (k: T, why: string | undefined, viaPointer: boolean) => {
+    if (why != null) return
+    // A timestamp, not a flag. A flag that is only cleared by the click it is
+    // waiting for stays set forever if that click never arrives — press a
+    // button, drag off it, release — and then swallows the NEXT synthesized
+    // click, which is the screen reader's. A real click follows its own
+    // pointerdown within a few hundred milliseconds; nothing else does.
+    if (viaPointer) lastPointer.current = Date.now()
+    else if (Date.now() - lastPointer.current < 700) return
+    if (k !== value) onChange(k)
+  }
+
   return (
     <div className="seg" ref={el} role="group" aria-label={label}>
       {thumb && <span className="thumb" aria-hidden="true" style={{ left: thumb.left, width: thumb.width }} />}
@@ -56,10 +81,16 @@ export function Seg<T extends string>({ options, value, onChange, label, disable
             aria-pressed={k === value}
             disabled={why != null}
             title={why}
-            onPointerDown={() => { if (k !== value && why == null) onChange(k) }}
+            onPointerDown={() => choose(k, why, true)}
+            onClick={() => choose(k, why, false)}
             onKeyDown={(e) => {
-              if (why != null) return
-              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChange(k) }
+              // Through choose() like the other two, so the keyboard cannot be
+              // the one path that re-selects the option already selected —
+              // onChange writes the URL on /compare, and setting a value to
+              // itself is a history entry for nothing.
+              // preventDefault stops the browser's own click for Enter/Space,
+              // so this path cannot double-fire with onClick above.
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(k, why, false) }
             }}
           >
             {l}
