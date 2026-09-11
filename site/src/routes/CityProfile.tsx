@@ -71,7 +71,7 @@ export function CityProfile() {
         </h1>
       </div>
 
-      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 10px', maxWidth: '72ch' }}>
+      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 10px', maxWidth: 'var(--measure)' }}>
         {city.tech_scene_note}
       </p>
 

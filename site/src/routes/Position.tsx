@@ -508,7 +508,7 @@ export function Position() {
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Your position</h1>
-      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: '72ch' }}>
+      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: 'var(--measure)' }}>
         The site does not estimate a person — it locates you in the wage distributions packages 7–9
         already built. A position is a rank within a country's own published table; an estimate is
         this pipeline's own model, always shown beside its distribution, never mistaken for a

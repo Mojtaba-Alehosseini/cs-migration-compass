@@ -356,6 +356,11 @@ export function Home() {
         </div>
       )}
 
+      {/* 76ch, not var(--measure): `ch` scales with type, so this 12px
+        * footnote at 76ch is 65ch of BODY-size measure -- the token's own
+        * physical width to within 3ch. Writing var(--measure) here would
+        * render 10ch narrower than the prose it sits under, not the same.
+        * Package 44, #80. */}
       <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', padding: '16px 0 0', maxWidth: '76ch', lineHeight: 1.7 }}>
         <b style={{ color: 'var(--ink-2)' }}>Honest by design:</b> a city with no value for a question parks in
         the “no data” gutter instead of vanishing — Oslo has no sunshine figure, Aarhus no purchase price.

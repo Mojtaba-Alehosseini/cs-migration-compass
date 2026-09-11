@@ -260,7 +260,7 @@ export function Openings() {
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Every opening</h1>
-      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: '72ch' }}>
+      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: 'var(--measure)' }}>
         {/* The advertised-vs-paid boundary. This is the structural discipline
           * data/postings.ts's own header names, and the merge left the page
           * carrying 48,267 advertisements without it — no link to the wage
@@ -549,6 +549,8 @@ export function Openings() {
              * controls they never touched. Adversarial review finding 10. */
             <div className="panel" style={{ marginTop: 12 }}>
               <h2>No openings match</h2>
+              {/* 60ch: an empty state, deliberately narrower than the reading
+                * measure so the eye takes the whole refusal in one go. #80. */}
               <p className="sub" style={{ marginTop: 8, maxWidth: '60ch' }}>
                 {[
                   query.trim() && `“${query.trim()}” in the title`,

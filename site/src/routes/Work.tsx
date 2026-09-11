@@ -323,7 +323,7 @@ function PublishedPayHeadline({ summary, spine }: {
       {publishableIn.some((r) => r.composition) && (
         <div style={{ marginTop: 10 }}>
           {publishableIn.filter((r) => r.composition).map((r) => (
-            <p key={r.country} className="sub" style={{ marginTop: 8, maxWidth: '78ch' }}>
+            <p key={r.country} className="sub" style={{ marginTop: 8, maxWidth: 'var(--measure)' }}>
               <b>What the {r.country} figure is made of.</b>{' '}
               {Object.entries(r.composition!.by_year)
                 .map(([y, k]) => `${y}: ${k.toLocaleString()}`).join(' · ')}
@@ -596,7 +596,7 @@ export function Work() {
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Where you'd stand</h1>
-      <p className="lede" style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '4px 0 10px', maxWidth: '64ch' }}>
+      <p className="lede" style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '4px 0 10px', maxWidth: 'var(--measure)' }}>
         Fifteen countries, ranked by their own published pay table. Where one can't answer that, it
         says why.
       </p>
@@ -705,6 +705,9 @@ export function Work() {
                 ))}
               </select>
             </label>
+            {/* 54ch: this note sits BESIDE the currency select in a flex row,
+              * so its width is a layout constraint rather than a reading
+              * measure -- the token would push the control off the row. #80. */}
             <p className="sub" style={{ margin: 0, maxWidth: '54ch' }}>
               "As advertised" is the default and the source of truth. Everything else is a derived
               view: a converted figure opens its own method, and carries a marker where no rate for

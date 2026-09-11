@@ -168,7 +168,7 @@ try {
      * DOM question with a real answer — not 2.2 seconds. Waiting for the
      * panel alone is not enough either: it exists before its circles are
      * drawn, and every check below reads circles. */
-    await page.waitFor(`${SCATTER_PANEL}?.querySelectorAll('svg circle').length > 0`,
+    await page.waitFor(`${SCATTER_PANEL}?.querySelectorAll('svg [data-city]').length > 0`,
       { label: 'the deferred scatter to mount and draw its points' })
   }
 
@@ -188,7 +188,7 @@ try {
   })()`)
 
   const scatterPoint = (city) => page.eval(`(() => {
-    const c = ${SCATTER_PANEL}.querySelector('circle[data-city=' + JSON.stringify(${JSON.stringify(city)}) + ']')
+    const c = ${SCATTER_PANEL}.querySelector('[data-city=' + JSON.stringify(${JSON.stringify(city)}) + ']')
     if (!c) return null
     return {
       cy: Number(c.getAttribute('cy')),
@@ -242,14 +242,14 @@ try {
   const axis1 = await scatterYAxis()
   const milanPt = await scatterPoint('Milan')
   await page.eval(`(() => {
-    const c = ${SCATTER_PANEL}.querySelector('circle[data-city="Milan"]')
+    const c = ${SCATTER_PANEL}.querySelector('[data-city="Milan"]')
     c.dispatchEvent(new PointerEvent('pointerover', { bubbles: true }))
   })()`)
   await page.waitFor(`${SCATTER_PANEL}.querySelector('.readout')?.textContent?.length > 0`,
     { label: 'the hover readout to appear for Milan' })
   const readout = await page.eval(`${SCATTER_PANEL}.querySelector('.readout')?.textContent ?? null`)
   await page.eval(`(() => {
-    const c = ${SCATTER_PANEL}.querySelector('circle[data-city="Milan"]')
+    const c = ${SCATTER_PANEL}.querySelector('[data-city="Milan"]')
     c.dispatchEvent(new PointerEvent('pointerout', { bubbles: true }))
   })()`)
   await page.waitFor(`!(${SCATTER_PANEL}.querySelector('.readout')?.textContent?.length > 0)`,
@@ -393,7 +393,7 @@ try {
   const scatter = await page.eval(`(() => {
     const panel = ${SCATTER_PANEL}
     const svg = panel.querySelector('svg')
-    const circles = [...svg.querySelectorAll('circle')]
+    const circles = [...svg.querySelectorAll('[data-city]')]
     return {
       selects: [...panel.querySelectorAll('select')].map((s) => s.value),
       plotted: circles.length,

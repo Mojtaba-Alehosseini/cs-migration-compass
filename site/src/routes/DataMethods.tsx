@@ -29,7 +29,7 @@ export function DataMethods() {
     <LinkFiles>
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Where every number comes from</h1>
-      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', margin: '8px 0 12px', maxWidth: '70ch' }}>
+      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', margin: '8px 0 12px', maxWidth: 'var(--measure)' }}>
         No number on this site is our opinion. Each one traces to a source you can open — this page is
         the receipts, generated from the pipeline’s own log rather than written by hand.
       </p>

@@ -147,7 +147,7 @@ export function CountryProfile() {
         <h1 style={{ fontSize: 'var(--text-xl)' }}>{country.name}</h1>
       </div>
 
-      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: '72ch' }}>
+      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: 'var(--measure)' }}>
         {firstTwoSentences(country.job_market.summary)}
       </p>
 
@@ -236,6 +236,10 @@ export function CountryProfile() {
                   </div>
                 )}
                 <WageRowFigure row={row} />
+                {/* 60ch below, not var(--measure): a note clarifying the row
+                  * directly above it, kept short on purpose so it reads as an
+                  * annotation on that row rather than as prose of its own.
+                  * Package 44, #80. */}
                 {CA_NOC_DISTINCTION[row.country] && (
                   <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 4, maxWidth: '60ch' }}>
                     {CA_NOC_DISTINCTION[row.country]}

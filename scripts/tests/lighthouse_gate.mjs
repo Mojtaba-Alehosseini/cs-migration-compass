@@ -129,14 +129,55 @@ for (const [name, route] of ROUTES) {
   console.log(`  ${pass ? 'PASS' : 'FAIL'}  ${name.padEnd(16)} perf ${String(m.perf).padStart(3)}  a11y ${m.a11y}  bp ${m.bp}  seo ${m.seo}   TBT ${String(m.tbt).padStart(4)}ms  CLS ${m.cls}  LCP ${m.lcp}ms`)
 }
 
+/* THE THROTTLED-MOBILE RUN IS A DISTRIBUTION, NOT A SAMPLE (#83, ruled in
+ * package 44: fix the gate, not the page).
+ *
+ * Package 43 measured this route nine times and found the scores sit in two
+ * clusters with nothing between them — 95-96 and 81-82 — and that the
+ * discriminator is not load but the OBSERVED LCP: ~240ms lands in one cluster,
+ * ~530ms in the other. The cause is the instrument. Lighthouse's mobile preset
+ * SIMULATES throttling: it takes the dependency graph observed on the real
+ * machine and projects it onto a 1.5Mbps link. On localhost the 460KB postings
+ * index arrives in 72ms, a dead heat with a paint at ~250ms, and whichever side
+ * of that coin flip the paint falls on decides whether Lantern treats the fetch
+ * as a parent of the LCP node. The gap between the clusters is 2442ms; 460,147
+ * bytes at the preset's own 1474.56 Kbps is 2496ms. Applied throttling — the
+ * control — puts the index at 8101ms against a 5072ms paint, three seconds too
+ * late to gate it, and package 42's own site/src reproduces the same two
+ * clusters, so it is not a regression either.
+ *
+ * A single sample of a bimodal distribution is a coin flip reported as a
+ * measurement. So the gate takes the MEDIAN of three and prints all three: a
+ * real regression moves the median, while the coin flip moves one run. What it
+ * must not do is make the coin land the same way every time by moving the fetch
+ * a tick later — that buys a number and helps no reader. */
 if (!ONLY.size || ONLY.has('openings')) {
-  const file = join(OUT, 'openings-mobile.json')
-  rmSync(file, { force: true })
-  await run(`${BASE}#/openings`, file, true)
-  const m = read(file)
+  const RUNS = Number(process.env.LH_MOBILE_RUNS ?? 3)
+  const runs = []
+  for (let i = 1; i <= RUNS; i++) {
+    const file = join(OUT, `openings-mobile-${i}.json`)
+    rmSync(file, { force: true })
+    await run(`${BASE}#/openings`, file, true)
+    runs.push(read(file))
+  }
+  const median = (xs) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]
+  const m = {
+    perf: median(runs.map((r) => r.perf)),
+    a11y: median(runs.map((r) => r.a11y)),
+    bp: median(runs.map((r) => r.bp)),
+    seo: median(runs.map((r) => r.seo)),
+    tbt: median(runs.map((r) => r.tbt)),
+    cls: median(runs.map((r) => r.cls)),
+    lcp: median(runs.map((r) => r.lcp)),
+  }
   const pass = m.perf >= PERF_MIN && m.a11y >= OTHER_MIN && m.bp >= OTHER_MIN && m.seo >= OTHER_MIN
   if (!pass) fails++
-  console.log(`\n  ${pass ? 'PASS' : 'FAIL'}  openings (THROTTLED MOBILE) perf ${m.perf}  a11y ${m.a11y}  bp ${m.bp}  seo ${m.seo}   TBT ${m.tbt}ms  CLS ${m.cls}  LCP ${m.lcp}ms`)
+  console.log('')
+  for (const [i, r] of runs.entries()) {
+    console.log(`        run ${i + 1}: perf ${String(r.perf).padStart(3)}  TBT ${String(r.tbt).padStart(4)}ms  CLS ${r.cls}  LCP ${r.lcp}ms`)
+  }
+  const spread = `${Math.min(...runs.map((r) => r.perf))}-${Math.max(...runs.map((r) => r.perf))}`
+  console.log(`  ${pass ? 'PASS' : 'FAIL'}  openings (THROTTLED MOBILE, median of ${RUNS}, spread ${spread}) perf ${m.perf}  a11y ${m.a11y}  bp ${m.bp}  seo ${m.seo}   TBT ${m.tbt}ms  CLS ${m.cls}  LCP ${m.lcp}ms`)
 }
 
 console.log(`\n${rows.length + (ONLY.size ? 0 : 1)} audits, ${fails} below the floor `

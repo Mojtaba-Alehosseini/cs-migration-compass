@@ -452,7 +452,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
        *  carried this as visible text since tier 0 shipped; this is the one
        *  spot on Explore/Money that still needed it. */}
       {rows.some((r) => CA_NOC_DISTINCTION[r.country]) && (
-        <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 8, maxWidth: '68ch' }}>
+        <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 8, maxWidth: 'var(--measure)' }}>
           {rows.filter((r) => CA_NOC_DISTINCTION[r.country]).map((r) => (
             <span key={r.country} style={{ display: 'block', marginTop: 2 }}>
               <b>{r.country}</b> — {CA_NOC_DISTINCTION[r.country]}

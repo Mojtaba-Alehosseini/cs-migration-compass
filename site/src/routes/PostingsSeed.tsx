@@ -93,7 +93,7 @@ export function PostingsSeed() {
     <LinkFiles>
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Where the postings panel's own data comes from</h1>
-      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: '74ch' }}>
+      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '8px 0 12px', maxWidth: 'var(--measure)' }}>
         No ATS publishes a directory of which companies use it. This panel's own company list was
         built by probing real candidate tokens against each provider's live API and keeping only
         the ones that resolved with at least one real posting — every row below is a company this
@@ -126,7 +126,7 @@ export function PostingsSeed() {
         <>
           <div className="panel">
             <h2>What this list over-represents, stated plainly</h2>
-            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', marginTop: 8, maxWidth: '74ch' }}>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-2)', marginTop: 8, maxWidth: 'var(--measure)' }}>
               An ATS-seeded panel skews hard toward US/UK VC-backed tech — the providers this
               pipeline can reach without a key (Ashby, Greenhouse, Lever) are disproportionately
               used by that exact company shape. This is the wrong shape for a site covering
@@ -208,7 +208,7 @@ export function PostingsSeed() {
 
           <div className="panel" style={{ marginTop: 12 }}>
             <h2>Licence and attribution, per source</h2>
-            <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6, maxWidth: '74ch' }}>
+            <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6, maxWidth: 'var(--measure)' }}>
               No source in this panel required a paid licence, a click-through ToS acceptance, or an
               account. Each provider's basis, restated from what its own harvester records at fetch
               time:
@@ -245,7 +245,7 @@ export function PostingsSeed() {
                 {KNOWN_PROVIDERS.map((p) => <option key={p} value={p}>{PROVIDER_LABEL[p]}</option>)}
               </select>
             </div>
-            <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6, maxWidth: '74ch' }}>
+            <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6, maxWidth: 'var(--measure)' }}>
               Ashby, Greenhouse, Lever and Teamtailor each publish a company/board token this pipeline
               can list one row per company for. USAJOBS and Hacker News don't work that way — a USAJOBS
               posting names a federal agency, not an ATS-hosted board, and an HN commenter's own company
@@ -253,7 +253,7 @@ export function PostingsSeed() {
               employers) are counted in the provider table above and filterable on the panel itself, just
               not listed row-by-row here alongside an ATS token.
             </p>
-            <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6, maxWidth: '74ch' }}>
+            <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6, maxWidth: 'var(--measure)' }}>
               A token is not always a name. Ashby's and Lever's own public APIs never publish a
               company DISPLAY NAME at all (checked live, not assumed — see postings_common.py's own
               record-shape docstring) — every "company" shown for their rows, here and throughout this

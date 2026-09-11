@@ -487,7 +487,7 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   font-size: var(--text-xs);
   color: var(--ink-2);
   margin: 6px 0 0;
-  max-width: 68ch;
+  max-width: var(--measure);
 }
 
 /* ---- search ---- */
@@ -905,6 +905,11 @@ table.cmp {
 
 .foot {
   font-size: var(--text-2xs); color: var(--ink-3);
+  /* 76ch, not var(--measure), and it is not a violation of #80: `ch` scales
+     with type, so 76ch of 12px text is 65ch of BODY-size measure — the token's
+     own physical width to within 3ch. var(--measure) here would render a
+     footnote 10ch narrower than the prose above it, which is not "one reading
+     measure", it is two. Package 44. */
   padding: var(--space-3) 2px 0; max-width: 76ch; line-height: var(--leading-relaxed);
 }
 .foot b { color: var(--ink-2); font-weight: var(--weight-medium); }
@@ -1249,5 +1254,8 @@ table.cmp {
   font-size: var(--text-2xs);
   line-height: var(--leading-normal);
   margin-top: 3px;
+  /* 46ch: a warning caption, not prose. It is deliberately far narrower than
+     the reading measure so it reads as one short statement attached to the
+     thing above it rather than as a paragraph. Package 44, #80. */
   max-width: 46ch;
 }

@@ -295,20 +295,44 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
             </>
           )}
 
+          {/* An off-scale point is a DIAMOND, not a differently-coloured circle
+            * (NEEDS-DECISION #82, package 44). It used to be told apart from the
+            * 29 country colours by hue alone, and the measured distance from the
+            * nearest of them is dE 6.4-8.8 — close enough that "is that dot a
+            * warning or is it Portugal?" is a real question, and unanswerable
+            * for a reader who cannot separate those hues at all. Shape needs no
+            * hue: it survives greyscale, every colour-vision deficiency, and a
+            * bad screen. The --warn fill stays; it is now the second channel
+            * rather than the only one.
+            *
+            * Half-diagonal 7 against radius 5.5 so the two carry the same ink:
+            * a diamond is 2r², a circle is πr², so equal area puts the diamond
+            * at 5.5 x sqrt(pi/2) = 6.9. */}
           {points.map((p) => {
             const { cx, cy } = place(p)
             const off = p.offX || p.offY
+            const title = `${p.name} — ${xM?.label}: ${xM?.format(p.x)} · ${yM?.label}: ${yM?.format(p.y)}`
+              + (off ? ' — off this scale: smaller than the rounding on its own inputs' : '')
+            const shared = {
+              'data-city': p.name,
+              stroke: 'var(--surface)',
+              strokeWidth: 1.5,
+              onPointerOver: () => setHover(p),
+              onPointerOut: () => setHover(null),
+            }
+            if (off) {
+              const r = 7
+              return (
+                <polygon key={p.name} data-offscale=""
+                  points={`${cx},${cy - r} ${cx + r},${cy} ${cx},${cy + r} ${cx - r},${cy}`}
+                  fill="var(--warn)" {...shared}>
+                  <title>{title}</title>
+                </polygon>
+              )
+            }
             return (
-              <circle key={p.name} cx={cx} cy={cy} r={off ? 6 : 5.5}
-                fill={off ? 'var(--warn)' : `var(--c-${p.cc})`}
-                stroke="var(--surface)" strokeWidth={1.5}
-                {...(off ? { 'data-offscale': '' } : {})}
-                data-city={p.name}
-                onPointerOver={() => setHover(p)} onPointerOut={() => setHover(null)}>
-                <title>
-                  {`${p.name} — ${xM?.label}: ${xM?.format(p.x)} · ${yM?.label}: ${yM?.format(p.y)}`
-                    + (off ? ' — off this scale: smaller than the rounding on its own inputs' : '')}
-                </title>
+              <circle key={p.name} cx={cx} cy={cy} r={5.5} fill={`var(--c-${p.cc})`} {...shared}>
+                <title>{title}</title>
               </circle>
             )
           })}
