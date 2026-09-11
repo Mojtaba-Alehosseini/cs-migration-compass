@@ -27,6 +27,7 @@ import { MetricPicker } from '../components/MetricPicker'
 import { Seg } from '../components/Seg'
 import { ClimateOverlay } from '../components/ClimateOverlay'
 import { PlaceBrowser } from '../components/PlaceBrowser'
+import { SelectionTray } from '../components/SelectionTray'
 import { useToast } from '../components/Toast'
 import { useData } from '../data/store'
 import { MAX_PLACES, normalise, useSelection } from '../data/selection'
@@ -232,7 +233,7 @@ export function Compare() {
           variant="page"
           onPair={(ids) => { sel.replace(ids); openComparison(ids) }}
         />
-        <SelectionTray onCompare={() => openComparison(sel.ids)} />
+        <CompareTray onCompare={() => openComparison(sel.ids)} />
       </div>
     )
   }
@@ -689,27 +690,23 @@ function ChartView({ rows, band }: {
 
 /* ---------------------------------------------------------------- bits ---- */
 
-/** The dark tray on screen 1: what you have picked, and the way forward. */
-function SelectionTray({ onCompare }: { onCompare: () => void }) {
+/** The dark tray on screen 1: what you have picked, and the way forward.
+ *  The tray ITSELF is shared with Home (components/SelectionTray.tsx); this
+ *  wires it to Compare's own selection and gives it Compare's own actions. */
+function CompareTray({ onCompare }: { onCompare: () => void }) {
   const data = useData()
   const sel = useSelection()
   const cities = sel.ids.map((id) => data.cityById.get(id)).filter((c): c is City => !!c)
 
   return (
-    <div className={`tray${cities.length ? ' show' : ''}`} aria-live="polite">
-      <span className="cnt">{cities.length} {cities.length === 1 ? 'place' : 'places'}</span>
-      <div className="chips">
-        {cities.map((c) => (
-          <span key={c.id} className="tchip">
-            <Flag cc={c.country} size={13} />
-            {c.name}
-            <button onClick={() => sel.remove(c.id)} aria-label={`Remove ${c.name}`}>✕</button>
-          </span>
-        ))}
-      </div>
+    <SelectionTray
+      cities={cities}
+      mark={(c) => <Flag cc={data.cityById.get(c.id)!.country} size={13} />}
+      onRemove={(id) => sel.remove(id)}
+    >
       <button className="go" onClick={onCompare}>Compare these →</button>
       <button className="clear" onClick={() => sel.clear()}>Clear</button>
-    </div>
+    </SelectionTray>
   )
 }
 

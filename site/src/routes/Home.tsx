@@ -18,6 +18,7 @@ import { Flag } from '../components/Flag'
 import { SwarmField } from '../components/SwarmField'
 import { BudgetEditor } from '../components/BudgetEditor'
 import { ProfileNudge } from '../components/ProfileNudge'
+import { SelectionTray } from '../components/SelectionTray'
 import { useData } from '../data/store'
 import { MAX_PLACES, useSelection } from '../data/selection'
 import { UnstableMark } from '../components/Unstable'
@@ -371,49 +372,35 @@ export function Home() {
 
       <ProfileNudge active={selected.length > 0} />
 
-      {/* bottom tray */}
-      {selected.length > 0 && (
-        <div style={{
-          position: 'fixed', left: '50%', bottom: 14, transform: 'translateX(-50%)',
-          background: 'var(--ink-1)', color: 'var(--paper)', borderRadius: 'var(--radius-lg)',
-          padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap',
-          zIndex: 'var(--z-tray)' as never, boxShadow: 'var(--shadow-lg)', maxWidth: '92vw',
-        }}>
-          {/* Home builds its own copy of the selection tray, inline, and it
-            * carried the same defect O2 fixed in .tray: --ink-3 is
-            * text-on-paper and this slab is --ink-1, so the count measured
-            * 3.52:1 in light and 2.76:1 in dark. A class-based fix cannot
-            * reach a hand-rolled duplicate — the fifth instance in this
-            * package of the same thing built twice. */}
-          <span style={{ fontSize: 12, color: 'color-mix(in srgb, var(--paper) 72%, var(--ink-1))' }}>
-            {selected.length} {selected.length === 1 ? 'city' : 'cities'}
-          </span>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {selectedCities.map((c, ix) => (
-              <span key={c.id} style={{
-                fontSize: 12, background: 'color-mix(in srgb, var(--paper) 12%, transparent)',
-                borderRadius: 'var(--radius-xl)', padding: '4px 10px',
-                display: 'flex', gap: 6, alignItems: 'center',
-              }}>
-                <span aria-hidden="true" style={{ width: 7, height: 7, borderRadius: '50%', background: pickColor(ix) }} />
-                {c.name}
-              </span>
-            ))}
-          </div>
-          <button className="btn-accent" style={{ padding: '8px 14px', fontSize: 13 }}
-            onClick={() => setSheetOpen(true)}>
-            Full breakdown →
-          </button>
-          <Link to={`/compare?places=${selected.slice(0, 6).join(',')}`} className="pill"
-            style={{ background: 'transparent', color: 'var(--paper)', borderColor: 'var(--ink-3)', textDecoration: 'none' }}>
-            Compare
-          </Link>
-          <button className="pill" onClick={() => sel.clear()}
-            style={{ background: 'transparent', color: 'var(--paper)', borderColor: 'var(--ink-3)' }}>
-            Clear
-          </button>
-        </div>
-      )}
+      {/* The bottom tray — the SHARED one (package 44, Tier 6). Home used to
+        * rebuild it inline, and the cost is on the record: package 43's
+        * contrast fix landed on `.tray` and could not reach this copy, which
+        * went on rendering the identical defect. The slab, the count and the
+        * chips come from the component now; only the mark inside each chip and
+        * the actions are Home's own. The chip mark is the SELECTION COLOUR
+        * rather than a flag, because that colour is what keys this page's own
+        * charts to the dots — Compare's chips wear the country's flag. */}
+      <SelectionTray
+        cities={selectedCities}
+        noun={['city', 'cities']}
+        mark={(_c, ix) => (
+          <span aria-hidden="true"
+            style={{ width: 7, height: 7, borderRadius: '50%', background: pickColor(ix) }} />
+        )}
+      >
+        <button className="btn-accent" style={{ padding: '8px 14px', fontSize: 13 }}
+          onClick={() => setSheetOpen(true)}>
+          Full breakdown →
+        </button>
+        <Link to={`/compare?places=${selected.slice(0, 6).join(',')}`} className="pill"
+          style={{ background: 'transparent', color: 'var(--paper)', borderColor: 'var(--ink-3)', textDecoration: 'none' }}>
+          Compare
+        </Link>
+        <button className="pill" onClick={() => sel.clear()}
+          style={{ background: 'transparent', color: 'var(--paper)', borderColor: 'var(--ink-3)' }}>
+          Clear
+        </button>
+      </SelectionTray>
 
       {/* breakdown sheet */}
       {sheetOpen && (

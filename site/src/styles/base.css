@@ -187,9 +187,6 @@ a { color: var(--ink-2); }
 }
 .pill:hover { border-color: var(--line-strong); }
 .pill:active { transform: scale(0.97); }
-.pill[aria-pressed='true'], .pill.on {
-  background: var(--ink-1); color: var(--paper); border-color: var(--ink-1);
-}
 
 .btn-accent {
   background: var(--accent); color: var(--accent-ink);
@@ -615,7 +612,6 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   background: var(--surface-raised);
   overflow: hidden;
 }
-.mappanel svg { display: block; width: 100%; height: auto; }
 .mappanel .land {
   fill: var(--surface-sunk);
   stroke: var(--line);
@@ -741,7 +737,6 @@ h1.pg { font-size: var(--text-xl); margin-top: 4px; }
   border-radius: var(--radius-md); padding: 6px 12px; font-size: var(--text-2xs);
 }
 .tbtn:active { transform: scale(0.97); }
-.tbtn[aria-pressed='true'] { background: var(--ink-1); color: var(--paper); border-color: var(--ink-1); }
 
 /* ---- the address strip: the distribution model, made visible ---- */
 .urlstrip {
@@ -901,7 +896,6 @@ table.cmp {
   height: 100%; border-radius: var(--radius-sm);
   transition: width var(--dur-slow) var(--ease-out);
 }
-.chartnote { font-size: var(--text-2xs); color: var(--ink-3); margin-top: 8px; }
 
 .foot {
   font-size: var(--text-2xs); color: var(--ink-3);
@@ -996,6 +990,15 @@ table.cmp {
   transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
               border-color var(--dur-fast) var(--ease-out);
 }
+/* ONE rule for "this control is the current one": an ink slab with paper
+   text. It was written three times — for .pill, for .tbtn and for this chip
+   — with identical declarations, so a change to the idiom would have had to
+   be made in three places and would have been made in one. Merged at the
+   LAST of the three positions so the cascade result is unchanged: nothing
+   between them sets background, colour or border on any of the three.
+   Package 44, Tier 6. */
+.pill[aria-pressed='true'], .pill.on,
+.tbtn[aria-pressed='true'],
 .tchip[aria-current='page'] { background: var(--ink-1); color: var(--paper); border-color: var(--ink-1); }
 @media (prefers-reduced-transparency: reduce) {
   .themesbar { background: var(--paper); -webkit-backdrop-filter: none; backdrop-filter: none; }
@@ -1069,7 +1072,9 @@ table.cmp {
 
 /* the charts */
 .chart { position: relative; touch-action: pan-y; }
-.chart svg { display: block; width: 100%; height: auto; }
+/* Both chart surfaces scale the same way; the rule was written once for
+   each. Package 44, Tier 6. */
+.mappanel svg, .chart svg { display: block; width: 100%; height: auto; }
 .chart .gridline { stroke: var(--line); opacity: 0.55; }
 .chart .zeroline { stroke: var(--line-strong); }
 .chart .plot path.ser { transition: opacity var(--dur-base) var(--ease-out); }
@@ -1123,7 +1128,8 @@ table.cmp {
   font-size: var(--text-2xs); color: var(--ink-2);
   line-height: var(--leading-relaxed); margin-top: 6px;
 }
-.gap .where { font-size: var(--text-2xs); color: var(--ink-3); margin-top: 8px; }
+/* The same quiet note, under a chart and inside a gap. Package 44, Tier 6. */
+.chartnote, .gap .where { font-size: var(--text-2xs); color: var(--ink-3); margin-top: 8px; }
 .gap .where a { color: var(--accent); }
 
 /* city ribbons */
