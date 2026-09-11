@@ -4336,7 +4336,7 @@ that forgets will silently print "no data" for a number the site can compute.
 Not resolved here — (a) is a type change across the site's most-used computation, which is not a
 call to make inside a package fixing three other things.
 
-## 77. The header takes a sixth of a phone screen, and every way to shrink it costs something
+## 77. CLOSED, package 44 — The header takes a sixth of a phone screen, and every way to shrink it costs something
 
 At 390px the site header runs to three rows — wordmark, navigation, theme controls. Package 43 fixed
 the part that was free and measured what it cost. The links no longer break inside a phrase, so
@@ -4362,7 +4362,15 @@ What is left is the three-row structure itself, and every way to make it two cos
 Not resolved in package 43: both cost a consistency the site currently has, and choosing which one
 to spend is the owner's call, not a design pass's.
 
-## 78. /openings opens with twelve lines of prose before its first control
+**CLOSED, package 44 — ruled: option (b), and shipped.** Below 560px "Position & openings" shows as
+"Openings" and "Data & methods" as "Data". The ACCESSIBLE NAME is the full label at every width, carried
+by aria-label and verified against the browser's own computed name at 360/390/430/560/561/1440 — so the
+control does not answer to one name on a phone and another on a laptop, which is the cost this option was
+chosen to avoid. Header 166 -> 96px at 360, 132 -> 96 at 390, 96 -> 56 at 560. It is two rows rather than
+three below 560 because the shorter labels let the wordmark and nav share one — by flex wrapping, not by
+`order`, so there is still no focus-order mismatch.
+
+## 78. CLOSED, package 44 — /openings opens with twelve lines of prose before its first control
 
 Two paragraphs (289 and 247 characters) and then a 439-character preamble inside the filter panel,
 before a reader reaches the first filter. At 390px that is two full screens of text before the first
@@ -4385,7 +4393,20 @@ Not resolved in package 43: (a) moves a caveat behind a tap, and rule 2 of that 
 is that a caveat may become a mark but never nothing. Whether a disclosure counts as "behind a tap"
 or as "nothing" is the owner's line to draw.
 
-## 79. Chart text sits below the site's 12px floor, and 12px fits
+**CLOSED, package 44 — ruled: option (a), and shipped.** The first paragraph is untouched; the second and
+the panel preamble are behind the site's own <details>, each summarised in one line that carries the point
+rather than announcing that a point exists. At 390px the first control moved 681 -> 504px and the first
+posting 998 -> 822px, from 1.18 screens to 0.97. Every sentence's destination is itemised in REPORT-P44.md
+Gate 2. Nothing was dropped: the pay-range percentage keeps its denominator in the summary and the absolute
+count keeps it one tap away.
+
+The move also invalidated the filters panel's `height={153}` reserve, which was already wrong at every
+width — the loaded panel measures 369 / 301 / 283 / 236 / 218 / 197 / 150px at 360 / 390 / 480 / 540 / 660
+/ 720 / >=900, and one number cannot be seven. The panel reserves ITSELF now, rendering while it waits with
+its controls disabled: shift 37px -> 0 at 1440 and 114px -> 18px at 390; /openings CLS 0.0347 -> 0 desktop
+and 0.044 -> 0.0056 throttled mobile.
+
+## 79. CLOSED, package 44 — Chart text sits below the site's 12px floor, and 12px fits
 
 `docs/DESIGN.md`: *"The type scale floors at 12px (`--text-2xs`). The design review forbade captions
 below that, so the token simply does not exist."* Chart text is not on the scale — axis ticks, end
@@ -4423,7 +4444,24 @@ the fixed list.
 
 Not resolved in package 43: (a) changes the look of every chart on the site.
 
-## 80. One reading measure, declared, and nine hardcoded ones in its place
+**CLOSED, package 44 — ruled: option (b), shipped, and it means less than it looked.** The refusal marks
+are at the 12px token: "off this scale ↑", "off →", "p25–p75", the parked-city labels, and — by the
+ruling's own test, though the item does not list it — the no-data gutter's own heading. `.baser` and
+`.axis-chip-wrap > span` were split out as not chart text and went to the floor with the interface.
+`.swarm-dot small` and `.mdot small` stay below it: they are data labels, the density half the ruling
+declines.
+
+Then the RENDERED size was measured, and chart text is declared in USER UNITS inside a scaled viewBox: the
+same 12px renders 16.3px at 1440, 12.3px at 820 and **5.1px at 390**. The site's smallest text was never
+8.5px — it was 3.7px, on the smallest screen. The floor is met on desktop and tablet and not on a phone,
+and no font-size satisfies both ends. docs/DESIGN.md says exactly that now, with the scale table, instead
+of claiming a floor the charts do not keep. The structural fix is #84.
+
+One thing the raise made worse and then fixed: "off →" sat on the x-axis tick row where the last tick is
+centred, printing through it — 291px² of overlap at 1440 before this package touched the size. It sits at
+the top of its own band now, as its sibling does: 0px² at 1440 and at 390.
+
+## 80. CLOSED, package 44 — One reading measure, declared, and nine hardcoded ones in its place
 
 `tokens.css` line 101: `--measure: 68ch;  /* reading width for prose */`. Grepped across the whole
 codebase, it had **zero usages**. Twenty call sites hardcoded their own instead — 54ch, 60ch, 64ch,
@@ -4444,7 +4482,18 @@ nine, because every one of them changes where lines break on a page that current
 Not resolved in package 43: (a) touches line breaks on most pages of the site and belongs in a pass
 that can look at each one.
 
-## 81. On /work, NL draws a full solid track with nothing on it
+**CLOSED, package 44 — neither option as written; the third one, and shipped.** Fourteen of the twenty call
+sites use var(--measure); six keep their own value and each states what it is tuned for, which is this
+item's own test. The split is by whether a reason can be written down, not by the number — 78ch on 15px
+text had none and was consolidated despite being furthest from 68.
+
+And the thing a grep could not see: `ch` scales with type, so one token is not one width. One ch at
+--text-sm is 7.54px; the twenty declarations land between 39 and 84ch of body-equivalent width, and
+var(--measure) applied to 12px text renders 58.3ch — ten NARROWER than the same token on body text, while
+76ch of 12px footnote renders 65.1ch, within 3ch of it. Consolidating made the CODE consistent, not the
+rendered widths, and the report says so rather than claiming otherwise.
+
+## 81. CLOSED, package 44 — On /work, NL draws a full solid track with nothing on it
 
 The wage strip has four ways of saying it cannot draw a spread, and three of them are unambiguous:
 a dashed centre segment for *no spread published* (AE, AU, DE, IE, QA), an em-dash line reading
@@ -4469,8 +4518,22 @@ data. But a reader cannot see that distinction in the mark.
 Not resolved in package 43: changing what a mark means is outside a presentation pass, and rule 2
 of its brief says a mark may not be made quieter without the owner deciding to.
 
+**CLOSED, package 44 — ruled: give it its own mark, and shipped.** The marker has a third state now —
+filled / hollow / VACANT — so the vocabulary keeps its two-dimensional shape instead of growing a fifth
+mark category. A vacant marker has no position, so it is not drawn on the track at all: an empty slashed
+ring parked past the end of the scale behind Home's own gutter rule, the one idiom this site already had
+for "cannot be placed on this scale". The slash is load-bearing — an unslashed ring at the track's end was
+prototyped and read as a hollow marker sitting ABOVE p75, a claim about the reader's pay that nothing
+supports.
 
-## 82. --warn cannot be far from the accent AND far from the series palette, in any theme
+The reason was checked before the rendering, as the order asked: CBS publishes p25 27.0 / median 34.8 /
+p75 43.4 EUR per hour for BRC 2014 code 0811, n = 316,000, and the crosswalk finds no ISCO-08
+correspondence for it. The track was true; the empty track was the lie. NL's quartile ticks are drawn now
+too — they are a fact about the publication and had been gated on comparability, which is mark 2's
+business. Swept over 85 states and 1,344 rows: NL is the only such row in any of them. R23 asserts the
+general property (a track carries a marker or the vacant mark) and was shown failing.
+
+## 82. CLOSED, package 44 — --warn cannot be far from the accent AND far from the series palette, in any theme
 
 Package 43 moved `--warn` in editorial and warm because it was byte-identical to `--accent` there
 (item O1). The adversarial review then asked the question the package had not: `--warn` is also
@@ -4514,7 +4577,17 @@ much of the space for a caution colour to be far from both the accent and all of
 Not resolved in package 43: (a) adds a mark, and the package's own rule 3 says a new idiom needs
 the owner's justification, not a design pass's.
 
-## 83. Throttled-mobile `/openings` scores 81 in one run of three, and the cause is the measurement
+**CLOSED, package 44 — ruled: the answer need not be a colour, and it is not.** An off-scale point is a
+DIAMOND now rather than a differently-coloured circle, so the distinction survives greyscale, every
+colour-vision deficiency and a bad screen. Captured in colour and greyscale, one above the other.
+
+The ratio is recorded rather than claimed solved. tokens.css is byte-identical to package 43, so the colour
+problem is exactly where that package left it: measured today, the --warn fill sits **7 RGB units** from
+the nearest series colour in compass/dark — rgb(224,138,104) against rgb(226,133,109), the same colour for
+practical purposes, which is why no hue could ever have carried this. The mark clears WCAG 1.4.11 against
+its backdrop at 5.86-8.47:1 across all eight theme/mode combinations.
+
+## 83. CLOSED, package 44 — Throttled-mobile `/openings` scores 81 in one run of three, and the cause is the measurement
 
 Package 43's gate ran Lighthouse on throttled mobile for `/openings` for the first time. Nine runs
 this session, and the scores sit in two clusters with nothing in between:
@@ -4573,6 +4646,17 @@ presentation-only package; (a) is a decision about what the gate means, and that
 Deliberately not done: moving the `postings_index` fetch a tick later would flip the coin reliably
 and improve nothing for any real user, which is tuning the code to an artifact of its own
 measurement.
+
+**CLOSED, package 44 — ruled: fix the gate, not the page, and shipped.** lighthouse_gate.mjs runs the
+throttled-mobile /openings audit three times and judges the MEDIAN, printing every run and the spread,
+because a single sample of a bimodal distribution is a coin flip reported as a measurement. The page was
+not touched: moving the fetch a tick later would flip the coin reliably and help no reader. Final sweep:
+97 / 97 / 97, spread 97-97, CLS 0.0058.
+
+A related finding, recorded rather than escalated: **/work is bimodal on the DESKTOP preset in the same
+way.** Six runs on one build gave perf 100 / 92 / 100 / 92 / 100 / 92 with CLS 0 or 0.1726 and nothing
+between. Both modes clear the >=90 floor, so the gate's verdict is stable and only the number moves — but
+the desktop sweep still samples each route once, and package 43 reported 92 for /work from one such sample.
 
 ## 84. A chart's "12px" is 5px on a phone, and no font-size fixes that
 
