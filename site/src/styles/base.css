@@ -103,6 +103,22 @@ a { color: var(--ink-2); }
 .panel > h2,
 .panel > h3 { font-size: var(--text-sm); font-weight: var(--weight-semibold); }
 .panel > .sub { font-size: var(--text-2xs); color: var(--ink-2); margin: 2px 0 var(--space-3); }
+/* A disclosure standing in for a paragraph (package 44, NEEDS-DECISION #78).
+   Its summary IS the sentence the reader gets without paying a tap, so it
+   carries the type and colour of the prose it replaced rather than looking
+   like a control. `.panel > .sub` is a DIRECT-child rule, so wrapping the
+   panel's preamble in <details> silently dropped its size and colour — the
+   rule below is what puts them back, and is why the move is not a quiet
+   restyling of the caption it moved. */
+.disclosure.topnote { padding: 0 0 12px; max-width: var(--measure); }
+.disclosure.topnote > summary { font-size: var(--text-sm); color: var(--ink-2); cursor: pointer; }
+.disclosure.topnote > p { font-size: var(--text-sm); color: var(--ink-2); margin-top: 8px; }
+.panel > .disclosure.counts { margin: 2px 0 var(--space-3); }
+.panel > .disclosure.counts > summary {
+  font-size: var(--text-2xs); color: var(--ink-2); cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.panel > .disclosure.counts > .sub { margin-top: 6px; }
 
 /* Package 43, J9 (part). A nav label is a phrase, and the header let two of
    them break in the middle of one: at 390px "Position &" sat over "openings"

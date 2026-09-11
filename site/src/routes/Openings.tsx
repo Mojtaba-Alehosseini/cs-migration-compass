@@ -272,11 +272,27 @@ export function Openings() {
         exclude equity and bonus, and skew toward roles that are currently hard to fill.{' '}
         <Link to="/data/postings-seed">Which companies, and why this skews where it does →</Link>
       </p>
-      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '0 0 12px', maxWidth: '72ch' }}>
-        The full harvest, filterable. For where you'd stand against a country's own wage table, and
-        the openings that match a profile, see <Link to="/work">Position &amp; openings</Link>. This
-        page loads the whole array on demand — it is the one page for which that is the right trade.
-      </p>
+      {/* NEEDS-DECISION #78, ruled in package 44: the second paragraph and the
+        * filter panel's preamble move behind the site's own disclosure — the
+        * pattern /work already uses for twenty of its twenty-four paragraphs.
+        * The FIRST paragraph stays exactly where it is: it is the
+        * advertised-versus-paid boundary, this page's central honesty, and the
+        * ruling keeps it in front of the reader.
+        *
+        * The summary is a sentence, not a label. "More about this page" would
+        * announce that a point exists and make the reader pay a tap to find
+        * out what it is; this one is the point, and a reader who never opens
+        * the disclosure has still been told the useful half. */}
+      <details className="disclosure topnote">
+        <summary>
+          The whole harvest, filterable — <b>Position &amp; openings</b> is where you rank inside it
+        </summary>
+        <p>
+          The full harvest, filterable. For where you'd stand against a country's own wage table, and
+          the openings that match a profile, see <Link to="/work">Position &amp; openings</Link>. This
+          page loads the whole array on demand — it is the one page for which that is the right trade.
+        </p>
+      </details>
 
       {error && (
         <div className="panel" style={{ borderColor: 'var(--warn)' }}>
@@ -313,55 +329,88 @@ export function Openings() {
         * starts empty — see `shown` — so the reserve is the rows' own rendered
         * height at whatever width the page is being read, rather than a pixel
         * this comment would have to keep guessing. CLS 1.036 -> 0.012. */}
-      {!data ? (
-        <>
-          <div className="panel"><ChartSkeleton height={153} what="the filters" /></div>
-          <div className="panel" style={{ marginTop: 12 }}>
-            <ChartSkeleton height={460} what="every advertisement this site has harvested" />
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="panel">
+      {/* PACKAGE 44: the filters panel no longer reserves a NUMBER. It renders
+        * itself while it waits, with its controls disabled — so the reserve is
+        * the panel's own geometry at whatever width the page is being read,
+        * which is the same fix package 42 applied to the row list directly
+        * below and package 24 applied to /work's rows before that.
+        *
+        * `height={153}` was a pixel guess and it was wrong in both directions.
+        * Measured across the range, the loaded panel is:
+        *     360px 369   390px 301   480px 283   540px 236
+        *     660px 218   720px 197   >=900px 150
+        * Seven heights. One number reserved 187 (153 + 34 of panel chrome),
+        * which over-reserved by 37px at every desktop width and under-reserved
+        * by 182px at 360 — and the comment above it claimed it had been
+        * measured at 1350, where the true figure was 209 before this package
+        * shortened the panel and 116 after. A number that has to be re-measured
+        * every time the panel changes will be wrong again; this cannot be.
+        *
+        * The controls are `disabled` rather than hidden: they are the real
+        * ones, so they occupy exactly the space they will occupy, and a
+        * disabled control is inert to pointer, keyboard and assistive tech
+        * alike. The panel still SAYS what it is waiting for — package 43's J4
+        * ruled that a page whose error state names the dataset must not answer
+        * the same reader's wait with a bare "Loading…". */}
+      <div className="panel">
             {/* --measure: this ran 439 characters across 151 of them, the
               * widest single line of prose on the site, in the panel a reader
-              * has come to in order to use the CONTROLS below it. */}
-            <div className="sub" style={{ maxWidth: 'var(--measure)' }}>
-              {data.index.length.toLocaleString()} advertisements
-              {data.duplicate_summary
-                ? ` (${data.duplicate_summary.distinct_roles.toLocaleString()} distinct roles — ${data.duplicate_summary.re_listings.toLocaleString()} are re-listings)`
-                : ''}
-              {/* The source count and the pay-range PERCENTAGE both came off in
-                * the move. A count with no denominator — "16,407 state a real
-                * pay range" out of what? — is the shape this project treats as
-                * a defect everywhere else. Adversarial review D4, D5. */}
-              , {Object.keys(data.seed_companies).length.toLocaleString()} companies,{' '}
-              {providersAvailable.length} sources ({providersAvailable.map((k) => PROVIDER_LABEL[k]).join(', ')}).{' '}
-              {withComp.toLocaleString()} ({data.index.length
-                ? Math.round((withComp / data.index.length) * 100) : 0}%) state a real pay
-              range.
-              {outOfScope.length > 0 && (
-                <> The harvest also reaches <b>{outOfScope.length} countries this site does not
-                  cover</b> ({outOfScope.reduce((s, [, k]) => s + k, 0).toLocaleString()}{' '}
-                  advertisements). They are listed separately below: there are postings for them,
-                  but none of this site's cost-of-living, tax or housing data.
-                </>
-              )}
-            </div>
+              * has come to in order to use the CONTROLS below it. #78, ruled:
+              * it goes behind the disclosure, summarised in one line.
+              *
+              * The three numbers in that line are the ones a reader needs to
+              * judge the harvest at all — how much of it there is, how many
+              * employers it came from, and how much of it names pay. The
+              * percentage keeps its denominator by sitting in the same
+              * sentence as the count it is a share of; the absolute figure
+              * keeps it explicitly, one tap away. A count with no denominator
+              * is the shape this project treats as a defect everywhere else
+              * (adversarial review D4, D5), and a disclosure is not an excuse
+              * to reintroduce one. */}
+            {!data ? (
+              // "the filters", not "every advertisement this site has
+              // harvested": the list skeleton directly below says that, and one
+              // sentence printed twice on one screen reads as a stutter rather
+              // than as two things arriving. This is the wording ChartSkeleton
+              // was given here before, kept.
+              <div className="sub" aria-busy="true">Loading the filters…</div>
+            ) : (
+              <details className="disclosure counts">
+                <summary>
+                  {data.index.length.toLocaleString()} advertisements ·{' '}
+                  {Object.keys(data.seed_companies).length.toLocaleString()} companies ·{' '}
+                  {data.index.length ? Math.round((withComp / data.index.length) * 100) : 0}% name a pay range
+                </summary>
+                <div className="sub" style={{ maxWidth: 'var(--measure)' }}>
+                  {data.duplicate_summary
+                    ? `${data.duplicate_summary.distinct_roles.toLocaleString()} distinct roles — ${data.duplicate_summary.re_listings.toLocaleString()} are re-listings. `
+                    : ''}
+                  {withComp.toLocaleString()} of {data.index.length.toLocaleString()} state a real pay
+                  range. {providersAvailable.length} sources ({providersAvailable.map((k) => PROVIDER_LABEL[k]).join(', ')}).
+                  {outOfScope.length > 0 && (
+                    <> The harvest also reaches <b>{outOfScope.length} countries this site does not
+                      cover</b> ({outOfScope.reduce((s, [, k]) => s + k, 0).toLocaleString()}{' '}
+                      advertisements). They are listed separately below: there are postings for them,
+                      but none of this site's cost-of-living, tax or housing data.
+                    </>
+                  )}
+                </div>
+              </details>
+            )}
 
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12, alignItems: 'flex-end' }}>
               <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
                 Search title
-                <input value={query} onChange={(e) => setQuery(e.target.value)}
+                <input value={query} onChange={(e) => setQuery(e.target.value)} disabled={!data}
                   style={{ display: 'block', marginTop: 4, padding: '6px 8px', border: '1px solid var(--line)',
                     background: 'var(--surface)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)' }} />
               </label>
               <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
                 Country
-                <select value={country} onChange={(e) => setCountry(e.target.value)}
+                <select value={country} onChange={(e) => setCountry(e.target.value)} disabled={!data}
                   style={{ display: 'block', marginTop: 4, padding: '6px 8px', border: '1px solid var(--line)',
                     background: 'var(--surface)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)' }}>
-                  <option value="">All ({data.index.length.toLocaleString()})</option>
+                  <option value="">All{data ? ` (${data.index.length.toLocaleString()})` : ''}</option>
                   <optgroup label="Countries this site covers">
                     {inScope.map(([cc, k]) => <option key={cc} value={cc}>{cc} ({k.toLocaleString()})</option>)}
                   </optgroup>
@@ -372,7 +421,7 @@ export function Openings() {
               </label>
               <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
                 Level <span style={{ opacity: 0.6 }}>(guessed from title)</span>
-                <select value={level} onChange={(e) => setLevel(e.target.value)}
+                <select value={level} onChange={(e) => setLevel(e.target.value)} disabled={!data}
                   style={{ display: 'block', marginTop: 4, padding: '6px 8px', border: '1px solid var(--line)',
                     background: 'var(--surface)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)' }}>
                   <option value="">Any</option>
@@ -381,7 +430,7 @@ export function Openings() {
               </label>
               <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
                 Show pay in
-                <select value={display} onChange={(e) => setDisplay(e.target.value as DisplayCurrency)}
+                <select value={display} onChange={(e) => setDisplay(e.target.value as DisplayCurrency)} disabled={!data}
                   style={{ display: 'block', marginTop: 4, padding: '6px 8px', border: '1px solid var(--line)',
                     background: 'var(--surface)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--text-xs)' }}>
                   {DISPLAY_CURRENCIES.map((c) => (
@@ -390,7 +439,7 @@ export function Openings() {
                 </select>
               </label>
               <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', display: 'flex', gap: 6, alignItems: 'center' }}>
-                <input type="checkbox" checked={remoteOnly} onChange={(e) => setRemoteOnly(e.target.checked)} />
+                <input type="checkbox" checked={remoteOnly} onChange={(e) => setRemoteOnly(e.target.checked)} disabled={!data} />
                 Remote only
               </label>
               <div style={{ display: 'flex', gap: 4, marginLeft: 'auto' }}>
@@ -408,6 +457,19 @@ export function Openings() {
               <Link to="/data/postings-seed">the seed-list page</Link>.
             </p>
           </div>
+
+          {/* The LIST half keeps its reserve, and keeps it for the reason
+            * package 42 recorded: nothing follows it, so a shortfall below the
+            * fold shifts nothing, and reserving the rendered ~3,764px would
+            * hold a four-screen blank open while the payload parses. That trade
+            * is about a number BELOW the fold; the filters panel above was
+            * about a number the reader is looking at. */}
+          {!data ? (
+            <div className="panel" style={{ marginTop: 12 }}>
+              <ChartSkeleton height={460} what="every advertisement this site has harvested" />
+            </div>
+          ) : (
+            <>
 
           {view === 'map' ? (
             <div className="panel" style={{ marginTop: 12 }}>
