@@ -138,6 +138,16 @@ a { color: var(--ink-2); }
 @media (max-width: 480px) {
   .mainnav { gap: 10px; }
 }
+/* NEEDS-DECISION #77, ruled: below 560px the two long labels shorten, so the
+   nav keeps one row without reordering anything. Only the TEXT changes — the
+   link's accessible name is the full label at every width (see NAV in
+   App.tsx), because a control that answers to a different name depending on
+   screen width is the inconsistency this was meant to avoid, not create. */
+.mainnav .nav-short { display: none; }
+@media (max-width: 560px) {
+  .mainnav .nav-long { display: none; }
+  .mainnav .nav-short { display: inline; }
+}
 
 .kicker {
   font-family: var(--font-ui);

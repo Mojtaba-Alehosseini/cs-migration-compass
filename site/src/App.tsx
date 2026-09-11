@@ -5,14 +5,25 @@ import { ToastHost } from './components/Toast'
 import { SelectionContext, useSelectionState } from './data/selection'
 import { REPO_URL } from './lib/fileLink'
 
+/* `short` is what the link SHOWS below 560px (NEEDS-DECISION #77, ruled in
+ * package 44). It is never what the link is CALLED: `label` is the accessible
+ * name at every width, so a control does not answer to one name on a phone and
+ * another on a laptop — which would be a worse inconsistency than the one the
+ * ruling is fixing, and the reason option (a) was not chosen was that it
+ * created a mismatch of exactly that kind between focus order and visual order.
+ *
+ * WCAG 2.5.3 (Label in Name) wants the accessible name to contain the visible
+ * text: "Openings" is inside "Position & openings" and "Data" is inside
+ * "Data & methods", so the short form is a substring of the name in both cases
+ * and a speech-input user asking for what they can see still reaches the link. */
 const NAV = [
   { to: '/compare', label: 'Compare' },
   // Package 17 — two entries became one, because they were always one
   // question: where would I stand, and what is actually open.
-  { to: '/work', label: 'Position & openings' },
+  { to: '/work', label: 'Position & openings', short: 'Openings' },
   { to: '/explore', label: 'Explore' },
-  { to: '/data', label: 'Data & methods' },
-]
+  { to: '/data', label: 'Data & methods', short: 'Data' },
+] as { to: string; label: string; short?: string }[]
 
 export function App() {
   const { pathname, hash } = useLocation()
@@ -113,6 +124,8 @@ export function App() {
               <NavLink
                 key={n.to}
                 to={n.to}
+                // Constant across every viewport. Only the SHOWN text changes.
+                aria-label={n.short ? n.label : undefined}
                 style={({ isActive }) => ({
                   fontSize: 'var(--text-xs)',
                   color: isActive ? 'var(--ink-1)' : 'var(--ink-2)',
@@ -121,7 +134,12 @@ export function App() {
                   paddingBottom: 2,
                 })}
               >
-                {n.label}
+                {n.short ? (
+                  <>
+                    <span className="nav-long">{n.label}</span>
+                    <span className="nav-short">{n.short}</span>
+                  </>
+                ) : n.label}
               </NavLink>
             ))}
           </nav>
