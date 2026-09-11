@@ -25,6 +25,7 @@ export const FILE_REF: Record<string, string> = {
   'build_wage_distribution.py': 'scripts/build_wage_distribution.py',
   'cities.json': 'data/cities.json',
   'components/Seg.tsx': 'site/src/components/Seg.tsx',
+  'components/SelectionTray.tsx': 'site/src/components/SelectionTray.tsx',
   'components/explore/Controls.tsx': 'site/src/components/explore/Controls.tsx',
   'compute.ts': 'site/src/data/compute.ts',
   'core.json': 'site/public/data/core.json',
