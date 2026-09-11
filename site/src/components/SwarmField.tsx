@@ -380,10 +380,19 @@ export function SwarmField({
         {/* the "no data" gutter — cities are parked here, never dropped */}
         {missing.length > 0 && (
           <div
+            /* Addressable, so a check can find the mark rather than matching
+               its text — which is "no<br>data", so a search for "no data"
+               finds nothing and reports a mark that IS drawn as unreachable. */
+            className="swarm-gutter"
             style={{
               position: 'absolute', right: 6, top: 6, bottom: 22, width: 64,
               borderLeft: '1px dashed var(--line)', color: 'var(--ink-3)',
-              fontSize: 10, textAlign: 'center', paddingTop: 2,
+              /* Package 44, #79. The ruling raises the marks that say the chart
+                 cannot show you something, and this heading is the one that
+                 says it for every city below it — the same argument as
+                 `.swarm-null small`, which the item names. 10px was the
+                 smallest text on Home and it was the refusal. */
+              fontSize: 'var(--text-2xs)', textAlign: 'center', paddingTop: 2,
               transition: 'opacity var(--dur-base)',
             }}
           >

@@ -413,7 +413,7 @@ a { color: var(--ink-2); }
    and must not inherit the field's centring one. */
 .swarm-null { transform: none; }
 .swarm-null .swarm-mark { opacity: 0.45; filter: grayscale(1); }
-.swarm-null small { font-size: 9px; }
+.swarm-null small { font-size: var(--text-2xs); }
 
 /* The preset chip: which approved partner metric the second axis is showing.
    Same shape as .chip so it reads as a label, with a caret only where there is
@@ -445,7 +445,10 @@ select.axis-chip {
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  font-size: 9px;
+  /* NOT chart text, and #79 says so explicitly: this is the caret on a
+     <select>, so it belongs to the 12px floor rather than to the density
+     argument the ruling declines. Package 44. */
+  font-size: var(--text-2xs);
   color: var(--accent);
 }
 
@@ -1083,7 +1086,9 @@ table.cmp {
   position: absolute; bottom: -4px; transform: translateX(-50%);
   cursor: grab; user-select: none; touch-action: none;
   background: var(--ink-1); color: var(--paper); border-radius: var(--radius-xl);
-  padding: 3px 10px; font-size: 11px; font-weight: var(--weight-semibold);
+  /* NOT chart text either: a draggable base-year control with a label on it,
+     swept into #79 by a grep for small type. It belongs to the floor. */
+  padding: 3px 10px; font-size: var(--text-2xs); font-weight: var(--weight-semibold);
   box-shadow: var(--shadow-md); white-space: nowrap;
 }
 .baser:active { cursor: grabbing; }

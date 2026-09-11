@@ -539,7 +539,7 @@ function WageRow({ x, y, value, color }: {
           <title>{`p25 ${p25} · median ${median} · p75 ${p75} (p10/p90 not published)`}</title>
         </rect>
         {medianTick}
-        <text x={x(p75) + 6} y={y + 3.5} fontSize="8.5" fill="var(--ink-3)">p25–p75</text>
+        <text x={x(p75) + 6} y={y + 3.5} style={{ fontSize: 'var(--text-2xs)' }} fill="var(--ink-3)">p25–p75</text>
       </g>
     )
   }

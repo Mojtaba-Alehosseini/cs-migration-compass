@@ -276,14 +276,22 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
             <>
               <line x1={PL} x2={plotRight} y1={plotTop} y2={plotTop}
                 stroke="var(--warn)" strokeDasharray="3 3" opacity="0.55" />
-              <text x={PL} y={plotTop - BAND + 11} fontSize="9.5" fill="var(--warn)">off this scale ↑</text>
+              <text x={PL} y={plotTop - BAND + 11} style={{ fontSize: 'var(--text-2xs)' }} fill="var(--warn)">off this scale ↑</text>
             </>
           )}
           {anyOffX && (
             <>
               <line x1={plotRight} x2={plotRight} y1={plotTop} y2={H - PB}
                 stroke="var(--warn)" strokeDasharray="3 3" opacity="0.55" />
-              <text x={plotRight + 4} y={H - PB + 15} fontSize="9.5" fill="var(--warn)">off →</text>
+              {/* At the TOP of its own band, the way "off this scale ↑" sits at
+                * the top of the horizontal one. It used to sit on the x-axis
+                * tick row at y = H - PB + 15, starting 4 units right of
+                * plotRight — where the last tick label is CENTRED on plotRight
+                * and therefore printed through it: 291px² of overlap at 1440,
+                * measured, before this package touched the size. Raising it to
+                * the floor made that worse rather than better, which is the
+                * opposite of what #79 is for. */}
+              <text x={plotRight + 4} y={plotTop + 11} style={{ fontSize: 'var(--text-2xs)' }} fill="var(--warn)">off →</text>
             </>
           )}
 

@@ -52,6 +52,41 @@ matters on a site that is mostly numbers. Figures use
 The type scale floors at **12px** (`--text-2xs`). The design review forbade
 captions below that, so the token simply does not exist.
 
+### Chart text, and where the floor stops
+
+Charts are a **named exception**, and the exception has a shape. Axis ticks, end
+labels and in-plot dot labels are drawn below the floor — 8.5–11.5px — because
+the plots are dense and their furniture is meant to recede. That is a **density
+choice, not a constraint**: NEEDS-DECISION #79 measured the alternative, put
+every sub-12px `<text>` at 12px and re-measured the closest neighbouring pair in
+each chart, and twelve fits. It is recorded here as a preference rather than
+presented as a necessity.
+
+What is **not** exempt is a mark that says the chart cannot show you something.
+Package 44 raised those: `off this scale ↑`, `off →`, `p25–p75`, the label on a
+city parked in the no-data gutter, and the gutter's own heading. The smallest
+text on the page should not be the part that says the chart is lying to you.
+Two rules that a grep for small type had swept in with the charts are not chart
+text at all and went to the floor with the interface: `.baser`, the draggable
+base-year control, and `.axis-chip-wrap > span`, the caret on a `<select>`.
+
+**A chart's "12px" is not 12px.** The plots draw into a fixed `viewBox` at
+`width: 100%; height: auto`, so a font-size on SVG text is in **user units** and
+is multiplied by rendered width ÷ viewBox width before it reaches the eye. The
+same declaration renders at:
+
+| specified | 1440px (×1.36) | 820px (×1.03) | 390px (×0.43) |
+| --- | --- | --- | --- |
+| 9.5px — before | 12.9px | 9.7px | **4.1px** |
+| 12px — now | 16.3px | 12.3px | **5.1px** |
+
+So the floor is met on desktop and tablet and is **not** met on a phone, where
+no font-size can satisfy both ends at once: the text scales with the picture.
+The marks that are HTML rather than SVG — the gutter and its city labels — do
+not scale and do meet the floor at every width. The structural fix is
+**NEEDS-DECISION #84**; until it is ruled on, this table is the honest state and
+"the refusal marks meet the floor" is true only at ≥820px.
+
 ### Themes
 
 | Theme | Character |

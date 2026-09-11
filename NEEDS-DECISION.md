@@ -4573,3 +4573,46 @@ presentation-only package; (a) is a decision about what the gate means, and that
 Deliberately not done: moving the `postings_index` fetch a tick later would flip the coin reliably
 and improve nothing for any real user, which is tuning the code to an artifact of its own
 measurement.
+
+## 84. A chart's "12px" is 5px on a phone, and no font-size fixes that
+
+#79 was written from the SOURCE: chart text is declared at 8.5–11.5px against a declared 12px floor.
+Package 44 raised the refusal marks as ruled and then measured what the reader actually gets, which
+is a different number and in both directions.
+
+The plots draw into a fixed `viewBox` with `width: 100%; height: auto`. A font-size on SVG `<text>`
+is therefore in **user units**, multiplied by (rendered width ÷ viewBox width) before it is painted.
+Measured on `/explore/housing` and `/explore/money`:
+
+| specified | 1440px (scale ×1.358) | 820px (×1.025) | 390px (×0.428) |
+| --- | --- | --- | --- |
+| 9.5px — before package 44 | 12.9px | 9.7px | **4.1px** |
+| 12px — after package 44 | 16.3px | 12.3px | **5.1px** |
+| 8.5px `p25–p75` — before | 11.9px | 9.0px | **3.7px** |
+| 12px `p25–p75` — after | 16.8px | 12.7px | **5.3px** |
+
+So the site's smallest text is not 8.5px, it is **3.7px**, and it is smallest exactly where the
+screen is smallest. Raising the declaration helped proportionally at every width and cannot close
+the gap: 12px would have to be declared at ~28 user units to reach 12px on a phone, which is 38px on
+a desktop — bigger than the `<h1>`. The HTML refusal marks (the no-data gutter and its city labels)
+do not scale and do meet the floor at every width, which is why they were the easy half.
+
+This is not a regression and nothing in package 43 or #79 is wrong about it; both were reasoning
+about declared sizes, which is what a grep can see.
+
+**Options:**
+  - **(a) Make chart text non-scaling.** Measure each chart's rendered width (several already do,
+    for the responsive layouts) and set font sizes as `12 / scale` user units, or render the labels
+    as HTML positioned over the SVG rather than as `<text>` inside it. Then a declared 12px is 12px
+    at every width and the floor means what DESIGN.md says it means. The cost is real: on desktop
+    every chart's furniture shrinks to about three-quarters of its current size — which is a visible
+    change to every chart on the site, the cost option (a) of #79 was declined for.
+  - **(b) Redefine the floor for charts, in the open.** State in DESIGN.md that the floor applies to
+    HTML text and that SVG chart text is declared in user units, with the scale table above, so the
+    rule stops claiming something the code does not do. The cost is that a phone reader keeps
+    getting 5px refusal marks, and the rule keeps a carve-out big enough to hide in.
+
+Not resolved in package 44: (a) changes the look of every chart on the site, which is precisely the
+cost the owner declined when he ruled on #79; (b) is a change to the site's own stated rule. Either
+is the owner's call. What package 44 did ship is the proportional raise plus this measurement, and
+DESIGN.md now says the floor holds at >=820px rather than everywhere.
