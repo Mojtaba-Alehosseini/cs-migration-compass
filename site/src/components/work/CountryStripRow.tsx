@@ -7,9 +7,19 @@
  *   1. Track pattern (solid / dashed / none) — how much of a distribution
  *      the office publishes, with two light ticks marking p25/p75 where
  *      the office publishes them. Independent of...
- *   2. Marker fill (filled / hollow) — personalised to the profile, or
- *      sitting at the published median because this country cannot
- *      personalise.
+ *   2. Marker fill (filled / hollow / vacant) — personalised to the
+ *      profile, or sitting at the published median because this country
+ *      cannot personalise, or — package 44, NEEDS-DECISION #81 — VACANT:
+ *      the office publishes a real distribution and this site cannot place
+ *      you on it (the Netherlands: CBS publishes quartiles for its own
+ *      occupation group, and the crosswalk finds no ISCO-08 match for it).
+ *      A vacant marker has no position, so it is not drawn ON the track at
+ *      all: it is an empty, slashed ring parked past the track's end
+ *      behind a dashed hairline — Home's own no-data gutter, the one
+ *      idiom this site already had for "cannot be placed on this scale".
+ *      The slash is load-bearing: an unslashed ring parked at the track's
+ *      end was prototyped and read as a hollow marker sitting ABOVE p75,
+ *      which is a claim about the reader's pay that nothing supports.
  *   3. The estimate's dashed underline — <Derived>'s own established
  *      "tap for the method" convention, unchanged.
  *   4. A small text basis chip, NEEDS-DECISION #21's own ruling — shown
@@ -203,19 +213,35 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
   // "marker sits at the published median". A fabricated mark and a
   // fabricated sentence, on the one country this site refuses to rank.
   // Same for the five central-tendency-only countries. No position, no
-  // marker — the absence IS the mark. Adversarial review, finding 2.
+  // marker. Adversarial review, finding 2.
+  //
+  // Package 24 then let the absence BE the mark, and package 43 found what
+  // that costs: a solid track asserts "here is a real distribution", the
+  // estimate cell beside it says "not comparable", and a bare track is the
+  // one state in which the mark and the words disagree. So the absence is
+  // drawn now — `vacant` below — rather than left for the reader to infer.
+  //
+  // The QUARTILE TICKS are computed outside the estimate gate. They are a
+  // fact about what the office publishes (mark 1), not about whether this
+  // site can rank you, and gating them on the estimate hid the Netherlands'
+  // p25/p75 while Denmark and Norway — publishing the identical triple —
+  // drew theirs. Invisible today, because a quartile-only publication puts
+  // both ticks on the track's own ends; a lie by omission the day a FULL
+  // distribution fails its crosswalk, because then they sit inside it.
   let markerLeft: number | null = null
   let iqrLo: number | null = null, iqrHi: number | null = null
-  if (hasTrack && estimate.ok) {
+  if (hasTrack) {
     const sorted = [...points].sort((a, b) => a.value - b.value)
     const lo = sorted[0]!.value, hi = sorted[sorted.length - 1]!.value
     const pos = (v: number) => (hi === lo ? 50 : ((v - lo) / (hi - lo)) * 100)
-    markerLeft = pos(estimate.value)
+    if (estimate.ok) markerLeft = pos(estimate.value)
     const p25 = points.find((p) => p.pct === 25)
     const p75 = points.find((p) => p.pct === 75)
     if (p25) iqrLo = pos(p25.value)
     if (p75) iqrHi = pos(p75.value)
   }
+  // Published, but not placed: a distribution to draw and no position on it.
+  const vacant = hasTrack && markerLeft == null
 
   const solidTrack = row.native.distribution === 'full' || row.native.distribution === 'quartile-only'
   const distText = row.native.distribution === 'full' ? 'publishes the full distribution (p10-p90)'
@@ -226,12 +252,14 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
     : `publishes only a ${row.native.distribution.replace(/-only$/, '').replace(/-/g, ' ')}`
   const srLabel = !hasTrack
     ? `${name}: ${distText}, no distribution to rank inside`
-    : markerLeft == null
+    : vacant
       // A published distribution the site still cannot rank inside. The
-      // track is a real fact about what the office publishes; the missing
+      // track is a real fact about what the office publishes; the vacant
       // marker is a real fact about this occupation's crosswalk. Both are
-      // said, neither is invented.
-      ? `${name}: ${distText}, but no position is marked — `
+      // said, neither is invented — and this sentence is the vacant mark's
+      // text alternative, so it names the state rather than describing the
+      // glyph: "published, but you are not placed on it".
+      ? `${name}: ${distText}. Published, but you are not placed on it — `
         + `${!position.ok ? position.reason : 'this occupation does not resolve here'}`
       : filled
         // ordinal() already returns "P39"; "the P39 percentile" was reading
@@ -282,7 +310,13 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
       </div>
       <div className="wrow-strip" title={srLabel}>
         <span className="visually-hidden">{srLabel}</span>
-        <div className="wrow-track-wrap" aria-hidden="true">
+        {/* A vacant row's scale stops short so the gutter can sit where every
+          * other row's track ends. Only THIS row's scale shrinks: the
+          * percentile label above a marker is positioned against the strip
+          * while the marker is positioned against this wrap, so squeezing
+          * every row (as Home squeezes its whole field) would pull each label
+          * up to 22px off its own marker. A vacant row has no label. */}
+        <div className={`wrow-track-wrap${vacant ? ' vacant' : ''}`} aria-hidden="true">
           {hasTrack ? (
             <>
               <span className={`wrow-track ${solidTrack ? 'solid' : 'dashed'}`} style={trackEntranceStyle} />
@@ -301,6 +335,16 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
               style={{ ...markerEntranceStyle, left: `${markerLeft}%` }} />
           )}
         </div>
+        {vacant && (
+          // Siblings of the wrap, positioned against the strip, so the mark's
+          // own box sits inside its offsetParent — the figure inventory clamps
+          // a mark's sampling point into its offsetParent, and a ring parked
+          // outside the wrap would have been sampled on the track instead.
+          <>
+            <span className="wrow-gutter-rule" aria-hidden="true" style={trackEntranceStyle} />
+            <span className="wrow-vacant" aria-hidden="true" style={trackEntranceStyle} />
+          </>
+        )}
         {/* The position's own tappable trigger — CountryRow always had one
           * (a <Figure>, separate from the estimate's own <Derived>), and an
           * early version of this row dropped it: the percentile was plain

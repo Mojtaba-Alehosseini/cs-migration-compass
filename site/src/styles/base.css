@@ -253,6 +253,27 @@ a { color: var(--ink-2); }
   background: var(--rowc); box-shadow: 0 0 0 2px var(--surface);
 }
 .wrow-marker.hollow { background: var(--surface); }
+/* VACANT — the marker's third state (package 44, NEEDS-DECISION #81):
+   published, but you are not placed on it. The marker's own 11px ring,
+   empty and slashed, parked past the end of the scale behind Home's gutter
+   rule (1px dashed --line), because a mark with no position must not be
+   drawn anywhere a position could be read off it. --ink-3 rather than the
+   country hue: the hue is what says "this is where you are in NL", and
+   there is no such place. The slash is what stops the ring reading as a
+   hollow marker parked above p75; it was prototyped without one first. */
+.wrow-track-wrap.vacant { width: calc(100% - 22px); }
+.wrow-gutter-rule {
+  position: absolute; right: 17px; top: 50%; height: 18px; transform: translateY(-50%);
+  border-left: 1px dashed var(--line);
+}
+.wrow-vacant {
+  position: absolute; right: 0; top: 50%; width: 11px; height: 11px; box-sizing: border-box;
+  border-radius: 50%; transform: translateY(-50%); border: 1.5px solid var(--ink-3);
+}
+.wrow-vacant::after {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 1.5px; height: 13px;
+  border-radius: 1px; background: var(--ink-3); transform: translate(-50%, -50%) rotate(45deg);
+}
 .wrow-est {
   font-family: var(--font-display); font-size: var(--text-xs); text-align: right;
   font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;

@@ -839,6 +839,76 @@ try {
 
   /* ==================================================================== */
   say('')
+  say('=== R23: no wage row draws a distribution with nobody on it ===')
+
+  /* NEEDS-DECISION #81, ruled in package 44. The Netherlands drew a full
+   * solid track — the mark that asserts "here is a real distribution" — with
+   * iqrLo/iqrHi/markerLeft all null, while the estimate cell beside it read
+   * "not comparable". The mark and the words disagreed, on the page this
+   * site's credibility rests on.
+   *
+   * The property asserted here is the general one, not NL's: a track is a
+   * claim that a distribution exists, and every track must therefore carry
+   * either a marker (here is where you are on it) or the vacant mark (this
+   * is published, and you are not on it). A bare track is the contradiction.
+   *
+   * Asserted over the profile's whole range, because a state reached by a
+   * URL nobody tested is exactly how `skilled_routes[0]` escaped twice. */
+  const CLASSIFY_ROWS = `(() => JSON.stringify([...document.querySelectorAll('.wrow[role="listitem"]')].map((row) => {
+    const strip = row.querySelector('.wrow-strip')
+    const est = (row.querySelector('.wrow-est')?.innerText || '').replace(/\\s+/g, ' ').trim()
+    return {
+      key: row.dataset.key,
+      fullTrack: !!strip.querySelector('.wrow-track.solid, .wrow-track.dashed:not([style*="32%"])'),
+      marker: !!strip.querySelector('.wrow-marker'),
+      vacant: !!strip.querySelector('.wrow-vacant'),
+      ticks: strip.querySelectorAll('.wrow-quartile').length,
+      estHasFigure: /\\d/.test(est),
+      sr: strip.querySelector('.visually-hidden')?.textContent || '',
+    }
+  })))()`
+
+  let bareTracks = 0, disagreements = 0, statesChecked = 0, rowsChecked = 0
+  for (const years of [0, 1, 5, 8, 20, 40]) {
+    for (const pay of ['native', 'AUD']) {
+      await go(`${BASE}#/work?years=${years}${pay === 'native' ? '' : `&pay=${pay}`}`,
+        { also: `document.querySelector('.wrow[data-cc="NL"]')` })
+      const rows = JSON.parse(await page.eval(CLASSIFY_ROWS))
+      statesChecked++
+      rowsChecked += rows.length
+      for (const r of rows) {
+        if (r.fullTrack && !r.marker && !r.vacant) { bareTracks++; say(`    bare track: ${r.key} at years=${years} pay=${pay}`) }
+        // A mark and its words must agree in both directions.
+        if (r.vacant && r.estHasFigure) { disagreements++; say(`    vacant mark beside a figure: ${r.key}`) }
+        if (r.marker && !r.estHasFigure) { disagreements++; say(`    marker beside a refusal: ${r.key}`) }
+      }
+    }
+  }
+  check(statesChecked === 12 && rowsChecked >= 12 * 15,
+    `R23: the sweep really ran (${statesChecked} states, ${rowsChecked} rows)`)
+  check(bareTracks === 0,
+    `R23: no row draws a full track with neither a marker nor the vacant mark (${bareTracks})`)
+  check(disagreements === 0,
+    `R23: no row's strip mark contradicts its own estimate cell (${disagreements})`)
+
+  await go(`${BASE}#/work`, { also: `document.querySelector('.wrow[data-cc="NL"]')` })
+  const p44rows = JSON.parse(await page.eval(CLASSIFY_ROWS))
+  const nlRow = p44rows.find((r) => r.key === 'NL')
+  const dkRow = p44rows.find((r) => r.key === 'DK')
+  check(nlRow?.vacant === true && nlRow?.marker === false,
+    'R23: the Netherlands carries the vacant mark and no marker')
+  check(/Published, but you are not placed on it/.test(nlRow?.sr ?? ''),
+    'R23: and the vacant mark has a text alternative that names the state, not the glyph')
+  /* The ticks are mark 1 — what the office publishes — and were gated on the
+   * ESTIMATE, which is mark 2's business. NL and DK publish the identical
+   * p25/median/p75 triple, so they must draw the identical ticks. */
+  check(nlRow?.ticks === dkRow?.ticks && nlRow?.ticks === 2,
+    `R23: NL draws the same published quartile ticks as DK (NL ${nlRow?.ticks}, DK ${dkRow?.ticks})`)
+  check(p44rows.filter((r) => r.vacant).length === 1,
+    `R23: exactly one row is in the vacant state today (${p44rows.filter((r) => r.vacant).length})`)
+
+  /* ==================================================================== */
+  say('')
   const stray = (await page.eval('window.__errs.slice()')).filter((e) => !e.includes('distinct labels'))
   check(stray.length === 0, `no console errors beyond R2's deliberately provoked one (${stray.length})`)
   stray.forEach((e) => say(`    ${e}`))
@@ -850,5 +920,5 @@ try {
 
 say('')
 say('-'.repeat(70))
-say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13, R21, R22)' : `${fails} check(s) FAILED`)
+say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13, R21, R22, R23)' : `${fails} check(s) FAILED`)
 process.exitCode = fails ? 1 : 0

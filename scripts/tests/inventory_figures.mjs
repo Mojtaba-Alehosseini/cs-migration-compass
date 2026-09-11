@@ -164,7 +164,11 @@ export const EXTRACT = String.raw`
   // Marks whose meaning is carried by colour/shape, with the colour of what
   // sits behind them, so contrast can be checked pair-by-pair rather than
   // every element against the page background.
-  const MARK_SEL = '.wrow-track, .wrow-marker, .wrow-quartile, .chip, [class*="pip"], .swarm-mark, .mdot-mark'
+  // .wrow-vacant is the marker's third state (package 44, #81) — published,
+  // but not placed. A mark the instrument cannot see is a mark nothing checks,
+  // so it joins the selector the day it is drawn rather than the day someone
+  // notices the corpus count never moved.
+  const MARK_SEL = '.wrow-track, .wrow-marker, .wrow-vacant, .wrow-quartile, .chip, [class*="pip"], .swarm-mark, .mdot-mark'
   const HALO_RE = /(rgba?\([^)]*\)|color\(srgb[^)]*\))/
   const opaque = (c) => { const m = (c || '').match(/rgba?\([^)]*?(?:,\s*([\d.]+))?\)$/); return c && c !== 'transparent' && !(m && m[1] !== undefined && +m[1] === 0) }
 
