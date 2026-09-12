@@ -187,7 +187,23 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
   const BAND = 30
   const anyOffY = offscale.some((p) => p.offY)
   const anyOffX = offscale.some((p) => p.offX)
-  const plotTop = PT + (anyOffY ? BAND : 0)
+  /* A strip above the plot that belongs to the band labels and that no mark can
+   * enter (package 44, adversarial review finding 1).
+   *
+   * Both labels used to be drawn INSIDE their own band — which is exactly where
+   * `place()` parks the off-scale marks: cy = plotTop - BAND/2 for an off-Y
+   * point, cx = plotRight + BAND/2 for an off-X one. At 9.5px on a circle of
+   * r=6 they happened to miss each other. Raising the text to 12px (#79) and
+   * growing the mark to a diamond of half-diagonal 7 (#82) pushed them
+   * together: measured 150.8px² of overlap on /explore/money's DEFAULT view at
+   * 1440, and 478px² for "off →" in one metric pair, with "off" rendered
+   * unreadable underneath a diamond. Two changes that were each measured
+   * against text and neither against marks.
+   *
+   * 22 units, because the label's box runs to PT+14 and a mark parked at the
+   * top of the plot reaches plotTop-7: 12+22-7 = 27 clears 26. */
+  const LABEL_ROW = (anyOffY || anyOffX) ? 22 : 0
+  const plotTop = PT + LABEL_ROW + (anyOffY ? BAND : 0)
   const plotRight = W - PR - (anyOffX ? BAND : 0)
 
   const ax = useMemo(() => axis(scaleFrom.map((p) => p.x), xM?.axisFloor), [scaleFrom, xM])
@@ -276,22 +292,23 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
             <>
               <line x1={PL} x2={plotRight} y1={plotTop} y2={plotTop}
                 stroke="var(--warn)" strokeDasharray="3 3" opacity="0.55" />
-              <text x={PL} y={plotTop - BAND + 11} style={{ fontSize: 'var(--text-2xs)' }} fill="var(--warn)">off this scale ↑</text>
+              {/* In the label strip, not in the band. See LABEL_ROW above. */}
+              <text x={PL} y={PT + 11} style={{ fontSize: 'var(--text-2xs)' }} fill="var(--warn)">off this scale ↑</text>
             </>
           )}
           {anyOffX && (
             <>
               <line x1={plotRight} x2={plotRight} y1={plotTop} y2={H - PB}
                 stroke="var(--warn)" strokeDasharray="3 3" opacity="0.55" />
-              {/* At the TOP of its own band, the way "off this scale ↑" sits at
-                * the top of the horizontal one. It used to sit on the x-axis
-                * tick row at y = H - PB + 15, starting 4 units right of
-                * plotRight — where the last tick label is CENTRED on plotRight
-                * and therefore printed through it: 291px² of overlap at 1440,
-                * measured, before this package touched the size. Raising it to
-                * the floor made that worse rather than better, which is the
-                * opposite of what #79 is for. */}
-              <text x={plotRight + 4} y={plotTop + 11} style={{ fontSize: 'var(--text-2xs)' }} fill="var(--warn)">off →</text>
+              {/* Right-anchored in the label strip. Its history is the reason
+                * LABEL_ROW exists: on the x-axis tick row it printed through
+                * the last tick label (291px² at 1440, before this package
+                * touched its size); moved to the top of its own band it printed
+                * through the off-scale MARKS parked there instead (478px²).
+                * Both were measured; the second was found by an adversarial
+                * review, because the probe that cleared the first compared text
+                * against text only. */}
+              <text x={W - PR} y={PT + 11} textAnchor="end" style={{ fontSize: 'var(--text-2xs)' }} fill="var(--warn)">off →</text>
             </>
           )}
 

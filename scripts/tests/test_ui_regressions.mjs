@@ -897,6 +897,40 @@ try {
   const dkRow = p44rows.find((r) => r.key === 'DK')
   check(nlRow?.vacant === true && nlRow?.marker === false,
     'R23: the Netherlands carries the vacant mark and no marker')
+
+  /* The check above, and the sweep before it, are true BY CONSTRUCTION: the
+   * component renders exactly one of .wrow-marker / .wrow-vacant for any row
+   * with a track, so no DATA can make them fire. They guard against a future
+   * CODE change — which is real, and is what the suppression demo showed — but
+   * they are not evidence about the site's data, and package 44's own report
+   * presented the 1,344-row sweep as though they were. Adversarial review
+   * finding 5.
+   *
+   * So this asserts the property against the PAYLOAD instead. The rows that
+   * should be vacant are the ones the published file says are vacant — a real
+   * distribution (>= 2 of p10/p25/median/p75/p90) that the crosswalk refuses —
+   * computed from wage_distribution.json rather than from the boolean the
+   * component already used to draw the mark. If the component's condition ever
+   * drifts from what the data means, these disagree. */
+  const fromPayload = JSON.parse(await page.eval(`(async () => {
+    const res = await fetch('/data/history/wage_distribution.json')
+    const doc = await res.json()
+    const PCT = ['p10', 'p25', 'median', 'p75', 'p90']
+    const expect = []
+    for (const row of doc.data.countries) {
+      const v = (row.native && row.native.value) || {}
+      const points = PCT.filter((k) => v[k] != null).length
+      // a published distribution the crosswalk refuses = "published, not placed"
+      if (points >= 2 && row.crosswalk && row.crosswalk.comparable === false) expect.push(row.country)
+    }
+    return JSON.stringify(expect.sort())
+  })()`, { awaitPromise: true }))
+  const fromDom = p44rows.filter((r) => r.vacant).map((r) => r.key).sort()
+  check(JSON.stringify(fromPayload) === JSON.stringify(fromDom),
+    `R23: the rows the PAYLOAD says are published-but-not-comparable are exactly the rows `
+    + `carrying the vacant mark (payload ${JSON.stringify(fromPayload)}, rendered ${JSON.stringify(fromDom)})`)
+  check(fromPayload.length > 0,
+    `R23: and the payload actually contains such a row, so the check above is not vacuous (${fromPayload.length})`)
   check(/Published, but you are not placed on it/.test(nlRow?.sr ?? ''),
     'R23: and the vacant mark has a text alternative that names the state, not the glyph')
   /* The ticks are mark 1 — what the office publishes — and were gated on the

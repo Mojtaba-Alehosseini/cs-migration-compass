@@ -118,7 +118,16 @@ a { color: var(--ink-2); }
   font-size: var(--text-2xs); color: var(--ink-2); cursor: pointer;
   font-variant-numeric: tabular-nums;
 }
-.panel > .disclosure.counts > .sub { margin-top: 6px; }
+/* The BODY needs the size and colour too, not only the summary. This rule set
+   margin alone, so the fine print behind the tap — re-listings, the source
+   list, the out-of-scope caveat — inherited 15px --ink-1 and rendered as the
+   largest, darkest text in the panel: bigger than its own summary and bigger
+   than the page's lede, where before the move it was 12px --ink-2. The comment
+   above claims this rule puts back what `.panel > .sub` stopped applying; it
+   now does. Adversarial review finding 2. */
+.panel > .disclosure.counts > .sub {
+  font-size: var(--text-2xs); color: var(--ink-2); margin-top: 6px;
+}
 
 /* Package 43, J9 (part). A nav label is a phrase, and the header let two of
    them break in the middle of one: at 390px "Position &" sat over "openings"

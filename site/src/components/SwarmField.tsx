@@ -46,9 +46,13 @@ const NARROW = 560
 const PLOT_TOP = 22
 const PLOT_BOTTOM = 26
 const SWARM_TICK_BOTTOM = 18
-/* The gutter box is 64px wide with a 6px margin; a dot is 25px wide, so the
-   plot has to stop 84px short of the edge for the rightmost mark to clear it. */
-const GUTTER_RESERVE = 84
+/* The gutter box is 76px wide with a 6px margin; a dot is 25px wide, so the
+   plot has to stop 96px short of the edge for the rightmost mark to clear it.
+   76, not 64: package 44 raised the parked cities' labels to the 12px floor
+   (#79) and the widest of them — "Gold Coast", measured across every question
+   this field asks — is 64.3px, so a 63px content box overflowed its own gutter
+   by 5px. Adversarial review finding 7. */
+const GUTTER_RESERVE = 96
 
 export interface Placed {
   city: City
@@ -385,7 +389,7 @@ export function SwarmField({
                finds nothing and reports a mark that IS drawn as unreachable. */
             className="swarm-gutter"
             style={{
-              position: 'absolute', right: 6, top: 6, bottom: 22, width: 64,
+              position: 'absolute', right: 6, top: 6, bottom: 22, width: 76,
               borderLeft: '1px dashed var(--line)', color: 'var(--ink-3)',
               /* Package 44, #79. The ruling raises the marks that say the chart
                  cannot show you something, and this heading is the one that
