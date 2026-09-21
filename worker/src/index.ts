@@ -2,22 +2,28 @@ import { DailyCounter } from './dailyCounter'
 import { verifyTurnstile } from './turnstile'
 import { errorResponse } from './errors'
 import { analyseWithFallback } from './gemini'
+import { ProfileVault } from './profileVault'
+import { RETENTION_DAYS, VAULT_KEY_HEADER, VAULT_KEY_RE, parseStoredProfile, vaultName } from './vaultKey'
 
-export { DailyCounter }
+export { DailyCounter, ProfileVault }
 
 export interface Env {
   ALLOWED_ORIGINS: string
   TURNSTILE_EXPECTED_ACTION: string
   TURNSTILE_EXPECTED_HOSTNAMES: string
   DAILY_CV_LIMIT: string
+  DAILY_VAULT_WRITE_LIMIT: string
   GEMINI_API_KEY: string
   TURNSTILE_SECRET_KEY: string
   DAILY_COUNTER: DurableObjectNamespace<DailyCounter>
+  PROFILE_VAULT: DurableObjectNamespace<ProfileVault>
   BURST_LIMITER: { limit: (opts: { key: string }) => Promise<{ success: boolean }> }
 }
 
-const CORS_METHODS = 'POST, OPTIONS'
-const CORS_HEADERS = 'content-type'
+const CORS_METHODS = 'GET, POST, DELETE, OPTIONS'
+/* Naming the vault's header here is what makes the browser's preflight
+ * allow it; vaultKey.ts says why the token travels in a header at all. */
+const CORS_HEADERS = `content-type, ${VAULT_KEY_HEADER}`
 
 function splitList(v: string): Set<string> {
   return new Set(v.split(',').map((s) => s.trim()).filter(Boolean))
@@ -160,6 +166,88 @@ async function handleAnalyse(request: Request, env: Env): Promise<Response> {
   )
 }
 
+/* ---------------------------------------------------------------- vault ---
+ *
+ * NEEDS-DECISION #56. Three endpoints over one Durable Object per token:
+ * save what the reader confirmed, read it back, delete it. No login, no
+ * session, no account — the token IS the identity, and it is minted in the
+ * reader's browser at the moment they consent, not before (see
+ * site/src/cv/vault.ts).
+ *
+ * What this side can see: that some holder of some token saved an
+ * occupation key and a number. Not who, not from where beyond the IP any
+ * HTTP request carries, and not the CV — the file, its extracted text and
+ * its stripped text all stay in the browser exactly as package 22 left
+ * them. What it cannot do is help a reader who has lost the token: there is
+ * nothing to match them against, by design, so the data expires unread.
+ */
+
+async function handleVault(request: Request, env: Env): Promise<Response> {
+  const allowedOrigins = splitList(env.ALLOWED_ORIGINS)
+  const origin = request.headers.get('Origin')
+  if (!origin || !allowedOrigins.has(origin)) {
+    return errorResponse('origin_forbidden', 'this origin is not permitted to call this endpoint')
+  }
+
+  // Same brake as /analyse, on every method: a token is unguessable, but an
+  // endpoint is still an endpoint.
+  const remoteIp = request.headers.get('CF-Connecting-IP')
+  const burst = await env.BURST_LIMITER.limit({ key: remoteIp ?? 'unknown' })
+  if (!burst.success) {
+    return errorResponse('rate_limited', 'too many requests from this address in a short window -- wait a minute and try again', origin)
+  }
+
+  const token = request.headers.get(VAULT_KEY_HEADER)
+  if (!token || !VAULT_KEY_RE.test(token)) {
+    return errorResponse('malformed_input', `a valid ${VAULT_KEY_HEADER} header is required`, origin)
+  }
+  const vault = env.PROFILE_VAULT.get(env.PROFILE_VAULT.idFromName(await vaultName(token)))
+  const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), {
+    status, headers: { 'content-type': 'application/json', 'access-control-allow-origin': origin },
+  })
+
+  if (request.method === 'GET') {
+    const record = await vault.load()
+    return json({ ok: true, record })
+  }
+
+  if (request.method === 'DELETE') {
+    // Reported from a read, not from the fact that erase() did not throw:
+    // "gone" is a claim about the store's state afterwards.
+    const had = await vault.exists()
+    await vault.erase()
+    const still = await vault.exists()
+    if (still) return errorResponse('upstream_failure', 'the record could not be deleted', origin)
+    return json({ ok: true, had, gone: true })
+  }
+
+  if (request.method !== 'POST') {
+    return errorResponse('malformed_input', 'GET, POST or DELETE required', origin)
+  }
+
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return errorResponse('malformed_input', 'request body must be JSON', origin)
+  }
+  const parsed = parseStoredProfile(body)
+  if (!parsed.ok) return errorResponse('malformed_input', parsed.message, origin)
+
+  // A daily ceiling on WRITES, counted account-wide in its own object —
+  // separate from the Gemini budget, because a save costs no model call and
+  // must not be able to eat one.
+  const writeLimit = Number(env.DAILY_VAULT_WRITE_LIMIT)
+  const counter = env.DAILY_COUNTER.get(env.DAILY_COUNTER.idFromName('vault-writes'))
+  const consumed = await counter.tryConsume(writeLimit)
+  if (!consumed.allowed) {
+    return errorResponse('daily_cap_exceeded', `today's save budget (${consumed.limit}) is used up -- try again tomorrow`, origin)
+  }
+
+  const record = await vault.save(parsed.value)
+  return json({ ok: true, record, retentionDays: RETENTION_DAYS })
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
@@ -167,6 +255,7 @@ export default {
 
     if (request.method === 'OPTIONS') return handleOptions(request, allowedOrigins)
     if (url.pathname === '/analyse') return handleAnalyse(request, env)
+    if (url.pathname === '/profile') return handleVault(request, env)
     return new Response('not found', { status: 404 })
   },
 } satisfies ExportedHandler<Env>

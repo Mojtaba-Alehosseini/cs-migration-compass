@@ -4700,3 +4700,54 @@ Not resolved in package 44: (a) changes the look of every chart on the site, whi
 cost the owner declined when he ruled on #79; (b) is a change to the site's own stated rule. Either
 is the owner's call. What package 44 did ship is the proportional raise plus this measurement, and
 DESIGN.md now says the floor holds at >=820px rather than everywhere.
+
+## 85. What a stored CV profile should actually contain — built at the minimum, the wider options costed
+
+Package 45 built #56's storage mechanism at the **smallest payload that is still worth having**: the
+occupation key and the years figure the reader confirmed into the form, and nothing else. That choice
+is reversible in either direction and is recorded here so widening it is a decision someone makes,
+not a line someone adds.
+
+**What ships today (option A — derived profile only).** Two values: `occupation` (a shared_keys
+registry key, or null) and `yearsProfessional` (a number). Written only on an explicit, separate
+opt-in that defaults off, against a random 32-byte capability token minted in the reader's browser at
+that moment, stored under the SHA-256 of that token, deleted by an alarm after 30 days, and deletable
+by the reader at any time. The model's own `evidence` and `years_evidence` strings are deliberately
+NOT stored: they are quoted fragments of the CV, and keeping them would make this a store of CV text
+under a different name.
+
+**What option A cannot do**, stated plainly rather than discovered later:
+
+- It cannot show the reader what the model read, or why. Confidence and evidence are gone, so a
+  returning reader sees two numbers and has to take them on trust or upload again.
+- It cannot be re-analysed. A better model, a wider occupation registry, or a bug fix in the
+  crosswalk cannot be applied retroactively — there is nothing left to re-read.
+- It cannot support a "your CV said X, the form says Y" reconciliation, because it has no record of
+  what the CV said beyond the two values.
+- It cannot answer a support question. There is no way to look up whose record something is, so
+  "I lost my key" has exactly one honest answer: it expires unread.
+- It cannot tell the owner anything in aggregate beyond a count. Two fields with no vintage of the
+  source document do not make a dataset.
+
+**The wider options, and what each would oblige.**
+
+- **B — the PII-stripped text.** Buys re-analysis and a visible "this is what it read". Obliges: a
+  retention decision on text rather than fields; an explicit statement that stripping is a best
+  effort, not a guarantee (stripPii.ts says so already, and storing makes that caveat load-bearing
+  rather than informational); a size ceiling and a cost model, since this is up to 20,000 characters
+  per reader rather than two fields; and a re-reading of package 22's first property, which is that
+  only the stripped text leaves the browser — it would still be true, but "leaves" would now mean
+  "is kept", which is a different promise than the one that property was written to make.
+- **C — the extracted text, unstripped.** Buys accuracy where stripping removed something load-
+  bearing. Obliges everything in B plus the acceptance that the store now holds names, addresses,
+  phone numbers and employers: a genuine special-category risk, a DPIA-shaped question rather than a
+  disclosure-shaped one, and a deletion path that has to be right the first time rather than merely
+  present.
+- **D — the file.** Buys nothing option C does not, and costs the one property package 22 was built
+  around: the file never leaves the browser. Recorded only so that "we may as well keep the PDF" is
+  a rejected option rather than an unconsidered one.
+
+**The decision.** Whether to move from A to B is the owner's, and nothing in package 45 depends on
+it. Moving A→B is additive and can be done without disturbing what ships; moving to C or D is not,
+and should not be taken as an extension of this item's own opt-in — a consent to keep two fields is
+not a consent to keep a CV.

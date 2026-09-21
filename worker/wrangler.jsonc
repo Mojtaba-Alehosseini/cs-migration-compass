@@ -19,20 +19,31 @@
     // (GEMINI-LIMITS.md: two 500-RPD Lite models + ~100 more from the
     // 20-RPD fallbacks) -- this is the cap that fails closed BEFORE a
     // request burns a call the chain could not have served anyway.
-    "DAILY_CV_LIMIT": "1000"
+    "DAILY_CV_LIMIT": "1000",
+    // NEEDS-DECISION #56. A save costs no model call, so it gets its own
+    // account-wide daily ceiling rather than sharing the Gemini budget --
+    // storing a profile must never be able to consume an analysis.
+    "DAILY_VAULT_WRITE_LIMIT": "2000"
   },
 
   // The real spend cap. Per-IP alone cannot bound aggregate usage across
   // many clients, so this is a SINGLE shared object (one fixed id), counting
   // every request against ONE account-wide daily budget -- see
   // src/dailyCounter.ts's own header for why SQLite storage specifically.
+  // The stored profile (NEEDS-DECISION #56) is the opposite arrangement to
+  // the counter above: ONE object per capability token, named by the
+  // SHA-256 of that token, so there is no shared table to enumerate and no
+  // object that can be reached without the token. Each holds two values and
+  // an alarm that deletes them after the stated retention period.
   "durable_objects": {
     "bindings": [
-      { "name": "DAILY_COUNTER", "class_name": "DailyCounter" }
+      { "name": "DAILY_COUNTER", "class_name": "DailyCounter" },
+      { "name": "PROFILE_VAULT", "class_name": "ProfileVault" }
     ]
   },
   "migrations": [
-    { "tag": "v1", "new_sqlite_classes": ["DailyCounter"] }
+    { "tag": "v1", "new_sqlite_classes": ["DailyCounter"] },
+    { "tag": "v2", "new_sqlite_classes": ["ProfileVault"] }
   ],
 
   // A per-IP burst brake, NOT the real cap (that's the Durable Object
