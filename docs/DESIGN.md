@@ -77,15 +77,44 @@ same declaration renders at:
 
 | specified | 1440px (×1.36) | 820px (×1.03) | 390px (×0.43) |
 | --- | --- | --- | --- |
-| 9.5px — before | 12.9px | 9.7px | **4.1px** |
-| 12px — now | 16.3px | 12.3px | **5.1px** |
+| 9.5px — package 43 | 12.9px | 9.7px | **4.1px** |
+| 12px — package 44 | 16.3px | 12.3px | **5.1px** |
+| `max(12, 12 ÷ scale)` — now | 16.3px | 12.3px | **12.0px** |
 
-So the floor is met on desktop and tablet and is **not** met on a phone, where
-no font-size can satisfy both ends at once: the text scales with the picture.
-The marks that are HTML rather than SVG — the gutter and its city labels — do
-not scale and do meet the floor at every width. The structural fix is
-**NEEDS-DECISION #84**; until it is ruled on, this table is the honest state and
-"the refusal marks meet the floor" is true only at ≥820px.
+The marks that are HTML rather than SVG — the gutter and its city labels — never
+scaled and always met the floor. For the three that are SVG, **NEEDS-DECISION
+#84** is the rule in the third row, implemented in package 45: the mark is
+declared at the token and multiplied by `--text-boost`, which is `1 ÷ scale`
+clamped never to fall below 1. At scale 1 and above it is exactly 1, so **every
+desktop width is untouched** — the three 1440px chart screenshots are
+byte-identical across the change, which is the check, not an eyeball. Below it
+the declaration grows until the painted size is the floor again: 28.1 user units
+at 390px. The scale comes from the width the chart was already drawn at, via
+`useMeasuredWidth` — SwarmField's own ResizeObserver, moved into
+`components/chart/` so the site has one width mechanism rather than three.
+
+**Geometry follows the type.** Growing a mark without moving what is around it
+trades a legibility bug for a collision, which is what package 44 did to itself.
+So the scatter's label strip is `ceil(14 × boost) + 8` user units and its
+baseline is `PT + 11 × boost`, both of which return package 44's constants at
+boost 1. The wage panel's `p25–p75` sits at the end of a bar and can run out of
+room, so it is dropped when it would cross the viewBox edge, the way the swarm
+field drops a crowded label. On today's data it never is: the widest bar leaves
+170 user units at a 320px phone and the label needs 137.
+
+**Where the floor stops, still.** It covers the refusal marks and nothing else.
+Extending it to ticks, axis titles and dot labels was measured rather than
+argued — built, then counted element-wide at 390px, every `<text>` against every
+drawn element:
+
+| /explore at 390px | as shipped | floor on all chart text |
+| --- | --- | --- |
+| housing, x = years to own | 7 overlaps, 81px² | **74 overlaps, 6,915px², 7 texts clipped** |
+| money, US dollars | 11 overlaps, 271px² | **38 overlaps, 3,860px², 5 texts clipped** |
+
+Type alone cannot buy that back. It would need every plot re-laid out — wider
+gutters, fewer ticks, rotated labels — which is a different piece of work from
+the one #84 asked for.
 
 ### Themes
 

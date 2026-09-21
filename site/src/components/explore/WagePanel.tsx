@@ -41,6 +41,7 @@ import { useMemo, useState } from 'react'
 import { Derived, type DerivedConcept } from '../Derived'
 import { Seg, ChartFoot, ChartTable, Gap } from './Controls'
 import { useAsync } from './useAsync'
+import { textBoost, useMeasuredWidth } from '../chart/useMeasuredWidth'
 import { loadPayComposition, type PayComposition } from '../../data/store'
 import { comboKey, CA_NOC_DISTINCTION, type Basis, type CurrencyMode, type WageDistribution } from '../../data/explore'
 import { computeYearSpread } from '../../data/yearSpread'
@@ -210,7 +211,9 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
     [rows, key],
   )
 
+  const [chartRef, chartW] = useMeasuredWidth<HTMLDivElement>(700)
   const W = 700, ROW = 40, PL = 190, PR = 60, TOP = 34
+  const boost = textBoost(chartW, W)
   const H = TOP + rows.length * ROW + 30
 
   // A shared numeric x-axis is only honest when every row is in the SAME
@@ -303,8 +306,8 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
           aren't comparable — switch to US dollars to see them on one scale.
         </p>
       )}
-      <div className="chart">
-        <svg viewBox={`0 0 ${W} ${H}`} role="img"
+      <div className="chart" ref={chartRef}>
+        <svg viewBox={`0 0 ${W} ${H}`} role="img" style={{ ['--text-boost' as string]: boost }}
           aria-label={`Software-developer pay distribution by country, ${currency} ${basis.replace('_', ' ')}`}>
           {canCompare && ticks.map(([v, l]) => (
             <g key={l}>
@@ -337,7 +340,7 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                 </text>
                 {combo?.ok ? (
                   canCompare ? (
-                    <WageRow x={X} y={y0} value={combo.value} color={col} />
+                    <WageRow x={X} y={y0} value={combo.value} color={col} boost={boost} edge={W} />
                   ) : (
                     <text x={PL} y={y0 + 3.5} fontSize="10" fill={col}>
                       {fmtCcy(combo.value.median ?? combo.value.mean, combo.currency)}
@@ -508,10 +511,13 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
  *  and drew a bare dot, discarding two real published numbers — caught by
  *  reading this panel's own rendered output against the source data, not
  *  assumed correct because it compiled). */
-function WageRow({ x, y, value, color }: {
+function WageRow({ x, y, value, color, boost, edge }: {
   x: (v: number) => number; y: number
   value: { mean: number | null; median: number | null; p10: number | null; p25: number | null; p75: number | null; p90: number | null }
   color: string
+  /** #84: how much the phone's viewBox scaling has to be undone, and the
+   *  user-unit x this row may not draw past. 1 and 700 on any desktop. */
+  boost: number; edge: number
 }) {
   const { p10, p25, median, p75, p90, mean } = value
   const medianTick = median != null && (
@@ -539,7 +545,25 @@ function WageRow({ x, y, value, color }: {
           <title>{`p25 ${p25} · median ${median} · p75 ${p75} (p10/p90 not published)`}</title>
         </rect>
         {medianTick}
-        <text x={x(p75) + 6} y={y + 3.5} style={{ fontSize: 'var(--text-2xs)' }} fill="var(--ink-3)">p25–p75</text>
+        {/* This mark sits at the END of a bar, so growing it (#84) can push it
+          * off the viewBox — and an SVG clips rather than overflows, so half a
+          * word would survive and read as something else.
+          *
+          * 48 user units is "p25–p75" measured at the 12px token across all
+          * four themes in both modes — 46.0 in the three that use Segoe UI,
+          * 44.9 in `warm`'s serif, 46.5 at a phone's rounding — plus slack. It
+          * scales with the boost, like the text it is standing in for.
+          *
+          * On today's data this never fires: the widest bar ends at 523.8, so
+          * the label still fits at a 320px phone (136.7 units drawn, 170 free)
+          * and would need a chart under 191px to fail. It is here because the
+          * axis maximum is 640, and a future p75 near it leaves 54 units — one
+          * boost of 1.2, a 600px screen. Where it does not fit, the label is
+          * dropped the way the swarm field drops a crowded one, and the bar,
+          * its <title> and the row's table entry still carry the numbers. */}
+        {x(p75) + 6 + 48 * boost <= edge && (
+          <text x={x(p75) + 6} y={y + 3.5} className="refusal-mark" fill="var(--ink-3)">p25–p75</text>
+        )}
       </g>
     )
   }

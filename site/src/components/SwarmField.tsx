@@ -22,7 +22,8 @@
  * into an instant state change through the duration tokens.
  */
 
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useMemo } from 'react'
+import { useMeasuredWidth } from './chart/useMeasuredWidth'
 import { Flag, FlagRibbon } from './Flag'
 import type { City, Country } from '../data/types'
 import type { Question, SecondAxis } from '../data/questions'
@@ -141,17 +142,7 @@ function collide2D(
 export function SwarmField({
   cities, countryOf, question, secondAxis, budget, selected, onToggle, intro,
 }: Props) {
-  const fieldRef = useRef<HTMLDivElement>(null)
-  const [width, setWidth] = useState(1000)
-
-  useLayoutEffect(() => {
-    const el = fieldRef.current
-    if (!el) return
-    const ro = new ResizeObserver(() => setWidth(el.clientWidth || 1000))
-    ro.observe(el)
-    setWidth(el.clientWidth || 1000)
-    return () => ro.disconnect()
-  }, [])
+  const [fieldRef, width] = useMeasuredWidth<HTMLDivElement>(1000)
 
   // Stable pseudo-random intro offsets — regenerating them each render would
   // make the flags twitch instead of settle.

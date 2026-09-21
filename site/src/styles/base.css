@@ -1084,6 +1084,21 @@ table.cmp {
 /* Both chart surfaces scale the same way; the rule was written once for
    each. Package 44, Tier 6. */
 .mappanel svg, .chart svg { display: block; width: 100%; height: auto; }
+
+/* A mark that says the chart cannot show you something, at a real 12px on any
+   screen. NEEDS-DECISION #84.
+
+   Because of the rule above, SVG text is in user units and the browser
+   multiplies it by (rendered width / viewBox width) before painting: the same
+   `--text-2xs` is 16.3px at 1440 and was 5.1px at 390. `--text-boost` is
+   1 / that scale, set on the <svg> from its measured width, and clamped to
+   never go below 1 — so this multiplies by exactly 1 at every desktop width
+   and the declaration is the token, unchanged.
+
+   `--text-2xs` is both the declared size and the site's floor (tokens.css says
+   so), which is what makes `token * boost` the same rule as
+   `max(declared, 12 / scale)`. */
+.refusal-mark { font-size: calc(var(--text-2xs) * var(--text-boost, 1)); }
 .chart .gridline { stroke: var(--line); opacity: 0.55; }
 .chart .zeroline { stroke: var(--line-strong); }
 .chart .plot path.ser { transition: opacity var(--dur-base) var(--ease-out); }

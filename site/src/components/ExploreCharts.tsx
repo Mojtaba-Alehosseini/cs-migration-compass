@@ -22,6 +22,7 @@ import { useData } from '../data/store'
 import { THEMES, METRICS, METRIC_BY_KEY, AXIS_METRICS, tickFormatFor, type ThemeKey } from '../data/registry'
 import { UNSTABLE_METRIC_KEYS, stabilityOf } from '../data/compute'
 import { assertInjectiveTicks } from './chart/engine'
+import { textBoost, useMeasuredWidth } from './chart/useMeasuredWidth'
 import { downloadCsv } from '../lib/export'
 import { useUrlPatch } from '../data/urlState'
 
@@ -178,6 +179,7 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
   // fall back to all of them rather than drawing an empty axis.
   const scaleFrom = inScale.length >= 2 ? inScale : points
 
+  const [chartRef, chartW] = useMeasuredWidth<HTMLDivElement>(720)
   const W = 720
   const H = 340
   const PL = 64
@@ -202,7 +204,23 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
    *
    * 22 units, because the label's box runs to PT+14 and a mark parked at the
    * top of the plot reaches plotTop-7: 12+22-7 = 27 clears 26. */
-  const LABEL_ROW = (anyOffY || anyOffX) ? 22 : 0
+  /* #84. On a phone the whole picture is scaled to 0.43, and the refusal marks
+   * go with it — 12 declared units reach the eye as 5.1px. `textBoost` returns
+   * the factor that undoes that, and 1 exactly at every width from 720 up.
+   *
+   * The strip has to follow the type, or the fix trades a legibility bug for a
+   * collision. Both numbers below are written as functions of the boost that
+   * return today's constants at boost 1:
+   *
+   *   baseline   PT + 11b      → PT + 11, the current y
+   *   LABEL_ROW  ceil(14b) + 8 → 22, the current strip
+   *
+   * 14b is the label's box below PT (baseline 11 + descender 3, both scaling
+   * with the font); +8 keeps the 1 unit of clearance the old constant had over
+   * a mark parked at plotTop - 7. */
+  const boost = textBoost(chartW, W)
+  const labelBase = PT + 11 * boost
+  const LABEL_ROW = (anyOffY || anyOffX) ? Math.ceil(14 * boost) + 8 : 0
   const plotTop = PT + LABEL_ROW + (anyOffY ? BAND : 0)
   const plotRight = W - PR - (anyOffX ? BAND : 0)
 
@@ -260,8 +278,8 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
         <MetricSelect label="up" value={yKey} onChange={setYKey} />
       </div>
 
-      <div className="chart">
-        <svg viewBox={`0 0 ${W} ${H}`} role="img"
+      <div className="chart" ref={chartRef}>
+        <svg viewBox={`0 0 ${W} ${H}`} role="img" style={{ ['--text-boost' as string]: boost }}
           aria-label={`${points.length} cities placed by ${xM?.label ?? ''} across and ${yM?.label ?? ''} up`
             + (offscale.length ? `. ${offscale.length} in an off-scale band: ${offscale.map((p) => p.name).join(', ')}` : '')}>
           {ay.ticks.map((v) => (
@@ -293,7 +311,7 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
               <line x1={PL} x2={plotRight} y1={plotTop} y2={plotTop}
                 stroke="var(--warn)" strokeDasharray="3 3" opacity="0.55" />
               {/* In the label strip, not in the band. See LABEL_ROW above. */}
-              <text x={PL} y={PT + 11} style={{ fontSize: 'var(--text-2xs)' }} fill="var(--warn)">off this scale ↑</text>
+              <text x={PL} y={labelBase} className="refusal-mark" fill="var(--warn)">off this scale ↑</text>
             </>
           )}
           {anyOffX && (
@@ -308,7 +326,7 @@ export function ScatterBuilder({ theme }: { theme: ThemeKey }) {
                 * Both were measured; the second was found by an adversarial
                 * review, because the probe that cleared the first compared text
                 * against text only. */}
-              <text x={W - PR} y={PT + 11} textAnchor="end" style={{ fontSize: 'var(--text-2xs)' }} fill="var(--warn)">off →</text>
+              <text x={W - PR} y={labelBase} textAnchor="end" className="refusal-mark" fill="var(--warn)">off →</text>
             </>
           )}
 
