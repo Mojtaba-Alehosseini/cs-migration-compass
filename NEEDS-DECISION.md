@@ -4777,3 +4777,59 @@ under a different name.
 it. Moving A→B is additive and can be done without disturbing what ships; moving to C or D is not,
 and should not be taken as an extension of this item's own opt-in — a consent to keep two fields is
 not a consent to keep a CV.
+
+## 86. Throttled-mobile `/openings` now fails the >=90 gate on code that has not changed, and the older code fails it harder
+
+Package 43 opened #83 when throttled-mobile `/openings` scored 81 in one run of three, established
+that the cause was the measurement rather than the page, and package 44 closed it by making the gate
+take a **median of three** instead of believing one run. That median passed.
+
+In package 45 it does not. Five runs on a quiet machine, on package 45's own build:
+
+| run | perf | TBT | LCP |
+| --- | --- | --- | --- |
+| 1 | 73 | 1291ms | 2429ms |
+| 2 | 87 | 414ms | 2425ms |
+| 3 | 85 | 485ms | 2421ms |
+| 4 | 79 | 791ms | 2419ms |
+| 5 | 84 | 522ms | 2425ms |
+
+**Median 84, spread 73-87.** LCP is effectively constant across all five (2419-2429ms, a 10ms band);
+TBT varies by a factor of three. The score is moving on main-thread simulation, not on anything the
+page does differently between runs.
+
+**This is not package 45's doing, and that was measured rather than assumed.** The same five-run audit
+was repeated against `f21a957` — the commit before this package, with `site/` checked out wholesale
+and rebuilt:
+
+| | median | spread | worst TBT |
+| --- | --- | --- | --- |
+| package 45 (`0cfd801`) | **84** | 73-87 | 1291ms |
+| before the package (`f21a957`) | **73** | 61-80 | 10,502ms |
+
+The older code scores **eleven points lower** on the median and produced one run at 61 with a TBT of
+ten and a half seconds. Whatever has changed, it is not in this package's diff — and the direction is
+the opposite of a regression.
+
+So the honest statement is: **this gate is currently failing on this machine for reasons the gate
+cannot distinguish from the page.** Package 43's own conclusion about #83 applies again, one level
+up: the median of three fixed a single bad run, but it cannot fix an instrument whose whole
+distribution has shifted.
+
+**Three options, none of them "tune the page until the number comes back".**
+
+- **A — Raise the run count and keep the median.** Cheapest. Nine runs instead of three narrows the
+  median's own variance. It does not address a shifted distribution, and it triples an already slow
+  gate. If the true median is genuinely 84, this just measures 84 more precisely.
+- **B — Judge throttled mobile on a metric that is not moving.** LCP held within 10ms across ten runs
+  across two builds; TBT is the whole of the variance. A gate on LCP and CLS, with the composite
+  score reported but not enforced, would fail when the page gets slower and stop failing when the
+  simulator's main-thread model does not reproduce. The cost is that a genuine main-thread regression
+  on mobile would stop being caught by this gate at all.
+- **C — Move the throttled-mobile audit off this machine.** Run it in CI, where the hardware is at
+  least consistent, and keep the local gate to desktop. The cost is a slower feedback loop and a
+  number nobody can reproduce locally.
+
+Not decided here: every option trades something real, and B in particular narrows what the gate can
+see. Recorded with both five-run measurements so the choice is made against evidence rather than
+against one bad afternoon. Desktop `/openings` is unaffected and scores 99 (TBT 84ms).
