@@ -20,6 +20,10 @@ import { extractCvText } from '../cv/extractText'
 import { stripPii, type PiiRedaction } from '../cv/stripPii'
 import { renderTurnstile, type TurnstileHandle } from '../cv/turnstile'
 import { analyseCv, type CvProfile } from '../cv/analyseCv'
+import {
+  RETENTION_DAYS, deleteProfile, forgetKey, hasKey, loadProfile, mintKey, saveProfile,
+  type VaultRecord,
+} from '../cv/vault'
 
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
 
@@ -63,9 +67,16 @@ function redactionSummary(redactions: PiiRedaction[]): string {
   return `Removed before anything was sent: ${parts.join(', ')}.`
 }
 
-export function CvUpload({ occupations, onApply }: {
+export function CvUpload({ occupations, onApply, active }: {
   occupations: Occupations | null
   onApply: (patch: { occupation?: string; yearsProfessional: number }) => void
+  /** Whether the panel this lives in is actually open. ProfileLine keeps
+   *  this component MOUNTED while collapsed (max-height, not unmount), so
+   *  without this the stored-profile read would fire on every /work page
+   *  load for a reader who has opted in. Package 22's second property is
+   *  that nothing is sent until the reader asks for it; a read that happens
+   *  because a page rendered is not the reader asking. */
+  active: boolean
 }) {
   const [stage, setStage] = useState<Stage>({ kind: 'idle' })
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -164,6 +175,8 @@ export function CvUpload({ occupations, onApply }: {
         pay figure: its own response format has no field for one.
       </div>
 
+      <SavedProfile onApply={onApply} occupations={occupations} active={active} />
+
       {stage.kind === 'idle' && (
         <div style={{ marginTop: 10 }}>
           <input
@@ -252,6 +265,113 @@ export function CvUpload({ occupations, onApply }: {
   )
 }
 
+const day = (ms: number) => new Date(ms).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+
+/* NEEDS-DECISION #56 — what a returning reader sees, and the only reason
+ * storing anything is worth doing.
+ *
+ * It renders NOTHING unless this browser holds a token, so a reader who has
+ * never opted in never sees a control about storage, and a reader who
+ * deleted sees it disappear. The record is read once on mount; a failure to
+ * reach the store is shown as a failure, never as "nothing saved", because
+ * those two mean opposite things to someone deciding whether to upload
+ * their CV again.
+ */
+function SavedProfile({ onApply, occupations, active }: {
+  onApply: (patch: { occupation?: string; yearsProfessional: number }) => void
+  occupations: Occupations | null
+  active: boolean
+}) {
+  const [state, setState] = useState<
+    | { kind: 'none' } | { kind: 'loading' } | { kind: 'have'; record: VaultRecord }
+    | { kind: 'failed'; message: string } | { kind: 'deleted' }
+  >(() => (hasKey() ? { kind: 'loading' } : { kind: 'none' }))
+  const [busy, setBusy] = useState(false)
+
+  // Once, on the first open — not on every re-render of an open panel, and
+  // not at all while it is closed.
+  const asked = useRef(false)
+  useEffect(() => {
+    if (!active || asked.current || !hasKey()) return
+    asked.current = true
+    let cancelled = false
+    void loadProfile().then((r) => {
+      if (cancelled) return
+      if (!r.ok) setState({ kind: 'failed', message: r.message })
+      else if (r.value.record) setState({ kind: 'have', record: r.value.record })
+      else setState({ kind: 'none' })
+    })
+    return () => { cancelled = true }
+  }, [active])
+
+  const remove = async () => {
+    setBusy(true)
+    const gone = await deleteProfile()
+    if (!gone.ok) {
+      setState({ kind: 'failed', message: gone.message })
+      setBusy(false)
+      return
+    }
+    // Verified, not assumed: read it back with the key still in hand before
+    // dropping the key. A delete path that reports success from the fact
+    // that the request did not throw is not a delete path.
+    const after = await loadProfile()
+    if (after.ok && after.value.record) {
+      setState({ kind: 'failed', message: 'The store still returns a record — it has not been deleted.' })
+      setBusy(false)
+      return
+    }
+    forgetKey()
+    setState({ kind: 'deleted' })
+    setBusy(false)
+  }
+
+  if (state.kind === 'none') return null
+  if (state.kind === 'loading') return <p className="nodata" style={{ marginTop: 10 }}>Checking what you saved…</p>
+  if (state.kind === 'deleted') {
+    return (
+      <p className="nodata" style={{ marginTop: 10 }}>
+        Deleted. The record is gone from the store and this browser no longer holds the key to it.
+      </p>
+    )
+  }
+  if (state.kind === 'failed') {
+    return (
+      <p style={{ marginTop: 10 }}>
+        <span className="chip chip-risk">{state.message}</span>
+      </p>
+    )
+  }
+
+  const { record } = state
+  const title = record.occupation ? occupations?.shared_keys[record.occupation]?.title : null
+  return (
+    <div className="panel" style={{ marginTop: 10, background: 'var(--surface-sunk)' }}>
+      <p style={{ fontSize: 'var(--text-xs)', margin: 0 }}>
+        <strong>Saved from this browser on {day(record.savedAt)}.</strong>{' '}
+        {record.occupation
+          ? <>Occupation <strong>{title ?? record.occupation}</strong> and </>
+          : <>No occupation, and </>}
+        <strong>{record.yearsProfessional}</strong> {record.yearsProfessional === 1 ? 'year' : 'years'} of
+        experience. That is all of it — no CV, no text from one. It deletes itself on {day(record.expiresAt)}.
+      </p>
+      <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <button
+          className="btn-accent"
+          onClick={() => onApply(record.occupation
+            ? { occupation: record.occupation, yearsProfessional: record.yearsProfessional }
+            : { yearsProfessional: record.yearsProfessional })}
+        >
+          Put it back in the form
+        </button>
+        <button className="pill" onClick={() => void remove()} disabled={busy}>
+          {busy ? 'Deleting…' : 'Delete it'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 const SELECT_STYLE = {
   display: 'block', width: '100%', marginTop: 2, padding: '5px 6px',
   border: '1px solid var(--line)', background: 'var(--surface)',
@@ -277,6 +397,14 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
   const [years, setYears] = useState(profile.years_professional)
   const [occupationKey, setOccupationKey] = useState(resolved ? key : '')
   const [applied, setApplied] = useState(false)
+  /* NEEDS-DECISION #56, Tier 4 — a SECOND consent, not the Article 50 chip
+   * widened. That chip says a model read this; this says a copy is kept.
+   * They are different processing purposes and the reader agrees to them
+   * separately, so this starts false and nothing above it can set it. */
+  const [keepIt, setKeepIt] = useState(false)
+  const [saveState, setSaveState] = useState<
+    { kind: 'idle' } | { kind: 'saving' } | { kind: 'saved'; expiresAt: number } | { kind: 'failed'; message: string }
+  >({ kind: 'idle' })
 
   if (profile.status === 'incomplete') {
     return (
@@ -299,6 +427,27 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
     onApply(occupationKey ? { occupation: occupationKey, yearsProfessional: years }
       : { yearsProfessional: years })
     setApplied(true)
+    if (keepIt) void store()
+  }
+
+  /* NEEDS-DECISION #56, Tier 4. Minting the token here and not earlier is
+   * deliberate: until this runs, this browser carries no identifier for
+   * this site at all. */
+  const store = async () => {
+    setSaveState({ kind: 'saving' })
+    if (!mintKey()) {
+      setSaveState({ kind: 'failed', message: 'This browser will not keep the key, so there is nothing to save to.' })
+      return
+    }
+    const r = await saveProfile({ occupation: occupationKey || null, yearsProfessional: years })
+    if (!r.ok) {
+      // A token that was minted for a save that never happened is an
+      // identifier with no purpose. Drop it again.
+      forgetKey()
+      setSaveState({ kind: 'failed', message: r.message })
+      return
+    }
+    setSaveState({ kind: 'saved', expiresAt: r.value.record.expiresAt })
   }
 
   return (
@@ -365,12 +514,49 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
         Read by {modelUsed} — check this against your own CV, correct it above if needed, before
         applying it below.
       </p>
-      <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
+      {/* The record, in the words it is kept in — before the box that agrees
+          to keep it, not in a policy page behind a link. */}
+      <label
+        style={{
+          display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 10, padding: '8px 10px',
+          border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)',
+          background: 'var(--surface-sunk)', fontSize: 'var(--text-2xs)', color: 'var(--ink-2)',
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={keepIt}
+          onChange={(e) => setKeepIt(e.target.checked)}
+          style={{ marginTop: 2 }}
+        />
+        <span>
+          <strong style={{ color: 'var(--ink-1)' }}>Also keep these two values, so this browser can
+          fill them in next time.</strong> Kept: the occupation
+          {occupationKey ? <> (<span className="tnum">{occupationKey}</span>)</> : ' (none — you have not picked one)'}
+          {' '}and the number {years}. Not kept: your CV, its text, or anything the model quoted from
+          it. It is stored against a random key this browser generates now and holds only here — not
+          an account, and not something that can be matched to you. It is deleted automatically after{' '}
+          <strong>{RETENTION_DAYS} days</strong>, and you can delete it yourself at any time from the
+          panel above. Leave this unticked and nothing is kept.
+          {' '}<span style={{ color: 'var(--ink-3)' }}>
+            The other side of that: clear this browser&rsquo;s data and the key goes with it, so
+            nobody can reach the record again — not you, not this site. It then expires unread.
+          </span>
+        </span>
+      </label>
+
+      <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         <button className="btn-accent" onClick={handleApply}>
           Apply {occupationKey ? 'occupation and ' : ''}years of experience to the form below
+          {keepIt ? ', and keep them' : ''}
         </button>
         <button onClick={onDiscard} className="pill">Discard</button>
         {applied && <span className="chip chip-note">Applied ✓ — edit above and apply again anytime</span>}
+        {saveState.kind === 'saving' && <span className="nodata">Saving…</span>}
+        {saveState.kind === 'saved' && (
+          <span className="chip chip-note">Kept ✓ — deletes itself on {day(saveState.expiresAt)}</span>
+        )}
+        {saveState.kind === 'failed' && <span className="chip chip-risk">{saveState.message}</span>}
       </div>
     </div>
   )

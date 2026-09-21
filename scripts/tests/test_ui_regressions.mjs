@@ -947,6 +947,122 @@ try {
   check(stray.length === 0, `no console errors beyond R2's deliberately provoked one (${stray.length})`)
   stray.forEach((e) => say(`    ${e}`))
 
+  /* ==================================================================== */
+  /* R24 — the stored CV profile (NEEDS-DECISION #56) must not erode either
+   * of package 22's two properties, and the capability token must never
+   * reach a URL.
+   *
+   * Last, and with its own page load, because it installs a fetch recorder
+   * before the document runs — which the single load at the top of this
+   * file cannot provide, and which would wipe the console hook the check
+   * above reads. The recorder passes everything through except calls to
+   * /profile, so the site still boots on its own data and no request ever
+   * reaches the real Worker.
+   *
+   * Property (b) is checked the way package 22 checked it, with
+   * performance.getEntriesByType('resource') — the same instrument, so a
+   * regression here reads against the same evidence that established it. */
+  say('')
+  say('=== R24: storing a profile sends nothing until the reader asks ===')
+
+  const RECORDER = `(() => {
+    const real = window.fetch.bind(window)
+    window.__vaultCalls = []
+    window.fetch = function (input, init) {
+      const url = typeof input === 'string' ? input : (input && input.url) || String(input)
+      if (!/\\/profile(\\?|$)/.test(url)) return real(input, init)
+      const headers = {}
+      try {
+        const h = (init && init.headers) || (input && input.headers)
+        if (h) new Headers(h).forEach((v, k) => { headers[k] = v })
+      } catch { /* header shapes vary; the URL is the assertion that matters */ }
+      window.__vaultCalls.push({ url, method: (init && init.method) || 'GET', headers })
+      return Promise.resolve(new Response(JSON.stringify({ ok: true, record: null }), {
+        status: 200, headers: { 'content-type': 'application/json' },
+      }))
+    }
+  })()`
+  const VAULT_RESOURCES = `(() => performance.getEntriesByType('resource')
+    .filter((e) => /cs-compass-cv/.test(e.name) || /\\/profile(\\?|$)/.test(e.name))
+    .map((e) => e.name))()`
+  const openCvPanel = async () => {
+    await page.eval(`(() => {
+      const b = document.querySelector('button.profline-head')
+      if (b && b.getAttribute('aria-expanded') === 'false') b.click()
+      return 1
+    })()`)
+    await page.waitForReady({ label: 'cv panel', quietMs: 600 })
+  }
+
+  await page.send('Page.addScriptToEvaluateOnNewDocument', { source: RECORDER })
+  /* about:blank first. goto() waits for Page.loadEventFired, and moving
+   * between two hash routes of the same document never fires one -- the
+   * first draft of this block hung there rather than failing. */
+  await page.goto('about:blank')
+  await page.goto(BASE)
+  await go(`${BASE}#/work`, { label: 'R24 /work' })
+
+  check(await page.eval(`(() => { try { return localStorage.getItem('compass:vault-key') === null } catch { return true } })()`) === true,
+    'R24: a fresh browser holds no capability token — none is minted before consent')
+  await openCvPanel()
+  check(await page.eval(`(() => document.querySelector('button.profline-head').getAttribute('aria-expanded'))()`) === 'true',
+    'R24: the CV panel really opened, so what follows is not a check of a closed panel')
+  /* The recorder replaces window.fetch. If it failed to install, every
+   * assertion below would read zero calls and pass while measuring
+   * nothing -- which is exactly what happened when a \/ in its own
+   * regex collapsed to // and commented the line out. So: prove it is
+   * there, and prove it still intercepts, before trusting a zero. */
+  check(await page.eval('Array.isArray(window.__vaultCalls)') === true,
+    'R24: the fetch recorder installed, so a zero below means no traffic rather than no instrument')
+  /* Not an async IIFE: page.eval does not await a returned promise, so it
+   * would compare a Promise against 1 and report a broken recorder. The
+   * recorder pushes synchronously before it returns, so this reads 1 the
+   * moment the call is made. */
+  check(await page.eval(`(() => { window.fetch('/profile'); return window.__vaultCalls.length })()`) === 1,
+    'R24: and it really intercepts /profile, proven with a call made on purpose')
+  await page.eval('(() => { window.__vaultCalls.length = 0; return 1 })()')
+  const noKeyCalls = JSON.parse(await page.eval('JSON.stringify(window.__vaultCalls || [])'))
+  const noKeyRes = JSON.parse(await page.eval(`JSON.stringify(${VAULT_RESOURCES})`))
+  check(noKeyCalls.length === 0 && noKeyRes.length === 0,
+    `R24: with nothing stored, opening it sends nothing at all (${noKeyCalls.length} fetches, ${noKeyRes.length} resources)`)
+  check(await page.eval(`(() => document.body.innerText.includes('Delete it') ? 1 : 0)()`) === 0,
+    'R24: and a reader with nothing stored is shown no control about storage')
+
+  /* localStorage can only be written once the origin has been visited — a
+   * write before the first navigation is a SecurityError, not a no-op. */
+  const token = await page.eval(`(() => {
+    const b = new Uint8Array(32); crypto.getRandomValues(b)
+    let s = ''; for (const x of b) s += String.fromCharCode(x)
+    const t = btoa(s).replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, '')
+    localStorage.setItem('compass:vault-key', t)
+    return t
+  })()`)
+  check(/^[A-Za-z0-9_-]{43}$/.test(token), `R24: the token the browser mints is 43 base64url characters (${token.length})`)
+
+  await page.goto('about:blank')
+  await page.goto(BASE)
+  await go(`${BASE}#/work`, { label: 'R24 /work with key' })
+  const onLoad = JSON.parse(await page.eval('JSON.stringify(window.__vaultCalls || [])'))
+  check(onLoad.length === 0,
+    `R24: even WITH something stored, loading /work sends nothing — the read waits for the panel (${onLoad.length})`)
+
+  await openCvPanel()
+  const calls = JSON.parse(await page.eval('JSON.stringify(window.__vaultCalls || [])'))
+  check(calls.length === 1, `R24: opening the panel makes exactly one vault call (${calls.length})`)
+  const call0 = calls[0] ?? { url: '', method: '', headers: {} }
+  check(call0.method === 'GET', `R24: and it is a GET, carrying no body (${call0.method})`)
+  check(!call0.url.includes('?') && !call0.url.includes(token),
+    `R24: and the token is NOT in the URL — no query string at all (/${call0.url.split('/').slice(3).join('/')})`)
+  check(call0.headers['x-compass-vault-key'] === token,
+    'R24: it travels in the x-compass-vault-key header, which history and logs do not keep')
+  const res = JSON.parse(await page.eval(`JSON.stringify(${VAULT_RESOURCES})`))
+  check(res.every((n) => !n.includes(token)),
+    `R24: and no resource entry carries it either (${res.length} entries)`)
+  check(await page.eval(`(() => document.body.innerText.includes('never uploaded') ? 1 : 0)()`) === 1,
+    'R24: property (a) still holds and is still stated: the file never leaves the browser')
+
+  await page.eval(`(() => { try { localStorage.removeItem('compass:vault-key') } catch {} return 1 })()`)
+
   page.close()
 } finally {
   close()
@@ -954,5 +1070,5 @@ try {
 
 say('')
 say('-'.repeat(70))
-say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13, R21, R22, R23)' : `${fails} check(s) FAILED`)
+say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13, R21, R22, R23, R24)' : `${fails} check(s) FAILED`)
 process.exitCode = fails ? 1 : 0

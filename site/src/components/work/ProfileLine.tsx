@@ -81,7 +81,7 @@ export function ProfileLine({ profile, occupations, countryName, onProfileChange
       >
         <div style={{ padding: '0 16px 16px', borderTop: open ? '1px solid var(--line)' : undefined }}>
           <div style={{ marginTop: 12 }}>
-            <CvUpload occupations={occupations} onApply={(patch) => { onProfileChange(patch); setOpen(false) }} />
+            <CvUpload occupations={occupations} active={open} onApply={(patch) => { onProfileChange(patch); setOpen(false) }} />
           </div>
           <ProfileForm profile={profile} occupations={occupations} onChange={onProfileChange} />
         </div>
