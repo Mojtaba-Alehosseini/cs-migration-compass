@@ -355,7 +355,16 @@ export function WagePanel({ wages }: { wages: WageDistribution }) {
                   <>
                     <line x1={PL} x2={PL + 30} y1={y0} y2={y0} stroke="var(--ink-3)" strokeWidth={1.5}
                       strokeDasharray="2 3" opacity={0.6} />
-                    <text x={PL + 36} y={y0 + 3.5} fontSize="9.5" fill="var(--ink-3)" fontStyle="italic">
+                    {/* #84. This says the chart cannot show you this row —
+                      * DESIGN.md's own definition of a mark that is not exempt
+                      * from the floor. It was drawn at 9.5 user units, which is
+                      * 4.18px on a 390 phone: smaller than the 5.1px this
+                      * package was written to fix, in the same <svg> as a mark
+                      * it had just raised to 12. Found by the adversarial
+                      * review, not by the probe that cleared the other three —
+                      * that probe searched for three known strings instead of
+                      * asking what a refusal mark is. */}
+                    <text x={PL + 36} y={y0 + 3.5} className="refusal-mark" fill="var(--ink-3)" fontStyle="italic">
                       {combo && 'reason' in combo ? shortAbsence(basis, combo.reason) : 'not available'}
                       {combo && 'reason' in combo && <title>{combo.reason}</title>}
                     </text>
@@ -559,8 +568,17 @@ function WageRow({ x, y, value, color, boost, edge }: {
           * and would need a chart under 191px to fail. It is here because the
           * axis maximum is 640, and a future p75 near it leaves 54 units — one
           * boost of 1.2, a 600px screen. Where it does not fit, the label is
-          * dropped the way the swarm field drops a crowded one, and the bar,
-          * its <title> and the row's table entry still carry the numbers. */}
+          * dropped the way the swarm field drops a crowded one, and the bar
+          * and its <title> still carry the numbers.
+          *
+          * NOT the table: ChartTable's columns are P10/Median/P90, so for
+          * exactly the rows that carry this label it prints "no data" where
+          * the spread would be. The <title> is therefore the only surviving
+          * statement, and a <title> is a hover affordance on the narrow touch
+          * screens that are the only place the drop can happen. An earlier
+          * version of this comment claimed the table as a fallback; it is not
+          * one (adversarial review, M2). If a future dataset ever makes this
+          * guard fire, the table needs p25/p75 columns before it does. */}
         {x(p75) + 6 + 48 * boost <= edge && (
           <text x={x(p75) + 6} y={y + 3.5} className="refusal-mark" fill="var(--ink-3)">p25–p75</text>
         )}
@@ -575,9 +593,15 @@ function WageRow({ x, y, value, color, boost, edge }: {
       <circle cx={x(point)} cy={y} r={4} fill={color} opacity={0.85}>
         <title>{median != null ? `median ${median}` : `mean ${mean} (central tendency only — no spread published)`}</title>
       </circle>
-      <text x={x(point) + 8} y={y + 3.5} fontSize="9" fill="var(--ink-3)">
-        {median != null ? 'median' : 'mean'} only
-      </text>
+      {/* "median only" / "mean only" — the third tier, and also a refusal:
+        * it says no spread was published. Same floor, same end-of-bar fit
+        * guard as p25–p75 above (58 units is "median only" measured at the
+        * 12px token, the wider of the two strings). */}
+      {x(point) + 8 + 58 * boost <= edge && (
+        <text x={x(point) + 8} y={y + 3.5} className="refusal-mark" fill="var(--ink-3)">
+          {median != null ? 'median' : 'mean'} only
+        </text>
+      )}
     </g>
   )
 }

@@ -14,8 +14,8 @@ import { DurableObject } from 'cloudflare:workers'
  *  years figure that the reader confirmed into the form. NOT the file, NOT
  *  the extracted text, NOT the PII-stripped text, and NOT the model's own
  *  `evidence` strings, which are quoted fragments of the CV and would make
- *  this a store of CV text wearing a different name. #56b records the
- *  payload options and what each one would oblige.
+ *  this a store of CV text wearing a different name. NEEDS-DECISION #85
+ *  records the payload options and what each one would oblige.
  *
  *  Expiry is real, not a policy sentence: `expires_at` is written on every
  *  save and an alarm is set for it. The alarm deletes. A read past the
@@ -40,15 +40,18 @@ export class ProfileVault extends DurableObject {
   constructor(ctx: DurableObjectState, env: unknown) {
     super(ctx, env as never)
     this.sql = ctx.storage.sql
-    this.ensure()
   }
 
-  /** `erase()` calls `deleteAll()`, which drops the table with everything
-   *  else. If the isolate survives the delete — the common case, since the
-   *  same request usually reads back to prove the deletion — the next query
-   *  would hit a table that no longer exists. So every entry point starts
-   *  here rather than trusting the constructor to have been the last thing
-   *  that touched storage. */
+  /** Called from `save()` and NOWHERE else, because CREATE TABLE is a write.
+   *
+   *  It used to run in the constructor and at the top of every method, which
+   *  meant a GET carrying any well-formed random token instantiated and
+   *  PERSISTED an object holding no row — so it never got an alarm and the
+   *  expiry sweep in `load()` never reached it. It also meant the `exists()`
+   *  call that verifies a deletion re-created the table `erase()` had just
+   *  dropped, so "there is nothing left in it" was false by one table.
+   *  Adversarial review, M3. Reads are now read-only: they query, and treat
+   *  a missing table as the empty answer it is. */
   private ensure(): void {
     this.sql.exec(`
       CREATE TABLE IF NOT EXISTS profile (
@@ -79,12 +82,19 @@ export class ProfileVault extends DurableObject {
   }
 
   async load(): Promise<VaultRecord | null> {
-    this.ensure()
-    const row = this.sql
-      .exec<{ occupation: string | null; years: number; saved_at: number; expires_at: number }>(
-        'SELECT occupation, years, saved_at, expires_at FROM profile WHERE id = 1',
-      )
-      .toArray()[0]
+    let row: { occupation: string | null; years: number; saved_at: number; expires_at: number } | undefined
+    try {
+      row = this.sql
+        .exec<{ occupation: string | null; years: number; saved_at: number; expires_at: number }>(
+          'SELECT occupation, years, saved_at, expires_at FROM profile WHERE id = 1',
+        )
+        .toArray()[0]
+    } catch {
+      // No table: either nothing was ever saved against this token, or
+      // erase() dropped it. Both mean "nothing here", and neither is worth
+      // creating a table to discover.
+      return null
+    }
     if (!row) return null
     if (row.expires_at <= Date.now()) {
       // Past the deadline and still here — the alarm has not run or did not
@@ -109,7 +119,8 @@ export class ProfileVault extends DurableObject {
 
   /** Does this object hold anything at all? Used by the delete endpoint to
    *  answer "was there something, and is it gone now" truthfully rather
-   *  than reporting success for a token that never had a record. */
+   *  than reporting success for a token that never had a record. Read-only,
+   *  via load(), so asking does not re-create what erase() just dropped. */
   async exists(): Promise<boolean> {
     return (await this.load()) != null
   }

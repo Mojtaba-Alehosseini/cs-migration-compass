@@ -27,6 +27,13 @@ import {
 
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
 
+/** `keepOpen` asks the panel this lives in NOT to collapse on apply, so the
+ *  storage result stays on screen. See handleApply. */
+export type ApplyFn = (
+  patch: { occupation?: string; yearsProfessional: number },
+  opts?: { keepOpen?: boolean },
+) => void
+
 type Stage =
   | { kind: 'idle' }
   | { kind: 'extracting' }
@@ -69,7 +76,7 @@ function redactionSummary(redactions: PiiRedaction[]): string {
 
 export function CvUpload({ occupations, onApply, active }: {
   occupations: Occupations | null
-  onApply: (patch: { occupation?: string; yearsProfessional: number }) => void
+  onApply: ApplyFn
   /** Whether the panel this lives in is actually open. ProfileLine keeps
    *  this component MOUNTED while collapsed (max-height, not unmount), so
    *  without this the stored-profile read would fire on every /work page
@@ -161,8 +168,8 @@ export function CvUpload({ occupations, onApply, active }: {
   // (and CvResult's own "Applied" confirmation) stays exactly where it
   // was. reset() is still what the explicit Discard button calls — the
   // work order's own "a way to discard deliberately".
-  const applyResult = useCallback((patch: { occupation?: string; yearsProfessional: number }) => {
-    onApply(patch)
+  const applyResult = useCallback<ApplyFn>((patch, opts) => {
+    onApply(patch, opts)
   }, [onApply])
 
   return (
@@ -278,7 +285,7 @@ const day = (ms: number) => new Date(ms).toLocaleDateString(undefined, { year: '
  * their CV again.
  */
 function SavedProfile({ onApply, occupations, active }: {
-  onApply: (patch: { occupation?: string; yearsProfessional: number }) => void
+  onApply: ApplyFn
   occupations: Occupations | null
   active: boolean
 }) {
@@ -316,8 +323,18 @@ function SavedProfile({ onApply, occupations, active }: {
     // dropping the key. A delete path that reports success from the fact
     // that the request did not throw is not a delete path.
     const after = await loadProfile()
-    if (after.ok && after.value.record) {
-      setState({ kind: 'failed', message: 'The store still returns a record — it has not been deleted.' })
+    /* `!after.ok` is NOT proof of deletion — a read that failed to reach the
+     * store says nothing about what is in it, and treating it as success
+     * would drop the key and leave the record stranded. The Worker's own
+     * erase-then-read round trip is what carries the claim; this is the
+     * second opinion, and it has to fail closed. Adversarial review. */
+    if (!after.ok || after.value.record) {
+      setState({
+        kind: 'failed',
+        message: after.ok
+          ? 'The store still returns a record — it has not been deleted.'
+          : `Could not confirm the deletion (${after.message}) — nothing was changed here. Try again.`,
+      })
       setBusy(false)
       return
     }
@@ -382,7 +399,7 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
   profile: CvProfile
   modelUsed: string
   occupations: Occupations | null
-  onApply: (patch: { occupation?: string; yearsProfessional: number }) => void
+  onApply: ApplyFn
   onDiscard: () => void
 }) {
   const key = `isco08:${profile.occupation.isco08}`
@@ -423,9 +440,17 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
       .sort((a, b) => a[1].level - b[1].level || a[1].title.localeCompare(b[1].title))
     : []
 
+  /* `keepOpen` when the reader consented to storage. Applying normally
+   * collapses this panel, and every word the save has to say — the
+   * retention date they were promised at the tick, or the failure — renders
+   * inside it. Collapsing on the same click meant the one reader who agreed
+   * to have something kept was the one reader never told whether it was.
+   * Adversarial review, M1. */
   const handleApply = () => {
-    onApply(occupationKey ? { occupation: occupationKey, yearsProfessional: years }
-      : { yearsProfessional: years })
+    onApply(
+      occupationKey ? { occupation: occupationKey, yearsProfessional: years } : { yearsProfessional: years },
+      { keepOpen: keepIt },
+    )
     setApplied(true)
     if (keepIt) void store()
   }
@@ -435,15 +460,19 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
    * this site at all. */
   const store = async () => {
     setSaveState({ kind: 'saving' })
-    if (!mintKey()) {
+    const { token, fresh } = mintKey()
+    if (!token) {
       setSaveState({ kind: 'failed', message: 'This browser will not keep the key, so there is nothing to save to.' })
       return
     }
     const r = await saveProfile({ occupation: occupationKey || null, yearsProfessional: years })
     if (!r.ok) {
-      // A token that was minted for a save that never happened is an
-      // identifier with no purpose. Drop it again.
-      forgetKey()
+      /* Only a key minted for THIS save is dropped — it is an identifier
+       * with no purpose. A key that was already here is the only route to a
+       * record already in the store, and forgetting it would strand that
+       * record until its own expiry with nobody, reader or owner, able to
+       * read or delete it. Adversarial review, H4. */
+      if (fresh) forgetKey()
       setSaveState({ kind: 'failed', message: r.message })
       return
     }

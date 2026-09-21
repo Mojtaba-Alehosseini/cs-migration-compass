@@ -70,6 +70,16 @@ Two rules that a grep for small type had swept in with the charts are not chart
 text at all and went to the floor with the interface: `.baser`, the draggable
 base-year control, and `.axis-chip-wrap > span`, the caret on a `<select>`.
 
+Package 45 found **two more that the definition covers and both packages had
+missed**, in the wage panel: the short absence reason beside a dashed stub (*no
+bonus-excluded figure published*, *composition not verified*) at 9.5 user units,
+and *median only* / *mean only* at 9. Both say the chart cannot show you a row.
+They were found by an adversarial review reading the definition, not by the
+probe that cleared the other three — which searched for three known strings and
+so could only ever confirm the list it started with. **The class, not the list,
+is the rule**: any `<text>` that reports an absence carries `.refusal-mark`.
+Five SVG marks now do.
+
 **A chart's "12px" is not 12px.** The plots draw into a fixed `viewBox` at
 `width: 100%; height: auto`, so a font-size on SVG text is in **user units** and
 is multiplied by rendered width ÷ viewBox width before it reaches the eye. The
@@ -82,16 +92,25 @@ same declaration renders at:
 | `max(12, 12 ÷ scale)` — now | 16.3px | 12.3px | **12.0px** |
 
 The marks that are HTML rather than SVG — the gutter and its city labels — never
-scaled and always met the floor. For the three that are SVG, **NEEDS-DECISION
-#84** is the rule in the third row, implemented in package 45: the mark is
-declared at the token and multiplied by `--text-boost`, which is `1 ÷ scale`
-clamped never to fall below 1. At scale 1 and above it is exactly 1, so **every
-desktop width is untouched** — the three 1440px chart screenshots are
-byte-identical across the change, which is the check, not an eyeball. Below it
-the declaration grows until the painted size is the floor again: 28.1 user units
-at 390px. The scale comes from the width the chart was already drawn at, via
-`useMeasuredWidth` — SwarmField's own ResizeObserver, moved into
-`components/chart/` so the site has one width mechanism rather than three.
+scaled and always met the floor. For the SVG ones, **NEEDS-DECISION #84** is the
+rule in the third row, implemented in package 45: the mark is declared at the
+token and multiplied by `--text-boost`, which is `1 ÷ scale` clamped never to
+fall below 1. Below scale 1 the declaration grows until the painted size is the
+floor again — 28.1 user units at 390px. The scale comes from the width the chart
+was already drawn at, via `useMeasuredWidth` — SwarmField's own ResizeObserver,
+moved into `components/chart/` so the site has one width mechanism rather than
+three.
+
+**Where the rule is exactly identity, stated precisely.** `textBoost` returns
+exactly 1 for every scale ≥ 1, which is every chart drawn at or above its own
+viewBox width — 720 units for the scatter, 700 for the wage panel, so roughly a
+802px viewport and up. At 1440 and at 820 the chart screenshots are
+byte-identical across the change, which is the check rather than an eyeball.
+Between about 720 and 802px of viewport the boost leaves 1 and the plot does
+move: `ceil(14 × boost) + 8` is a step function, so the first departure costs a
+whole unit of label strip. That is a narrow desktop window or a narrow content
+column, not "desktop", and the earlier wording here claimed more than the
+evidence covered.
 
 **Geometry follows the type.** Growing a mark without moving what is around it
 trades a legibility bug for a collision, which is what package 44 did to itself.

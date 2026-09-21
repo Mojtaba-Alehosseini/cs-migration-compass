@@ -45,8 +45,12 @@ export interface StoredProfile {
 export function parseStoredProfile(body: unknown): { ok: true; value: StoredProfile } | { ok: false; message: string } {
   if (typeof body !== 'object' || body === null) return { ok: false, message: 'request body must be a JSON object' }
   const { occupation, yearsProfessional } = body as Record<string, unknown>
-  if (occupation != null && (typeof occupation !== 'string' || occupation.length > 64)) {
-    return { ok: false, message: 'occupation must be a short string or null' }
+  /* Closed by VALUE as well as by field name. A 64-character free-text
+   * allowance is 64 characters of caller-chosen text per token, and #85
+   * describes this field as a registry key — so require the shape of one.
+   * It is what the site has ever sent. Adversarial review, L3. */
+  if (occupation != null && (typeof occupation !== 'string' || !/^isco08:[0-9]{1,4}$/.test(occupation))) {
+    return { ok: false, message: 'occupation must be an isco08 registry key or null' }
   }
   if (typeof yearsProfessional !== 'number' || !Number.isFinite(yearsProfessional)
       || yearsProfessional < 0 || yearsProfessional > 80) {

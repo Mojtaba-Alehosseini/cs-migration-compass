@@ -1004,14 +1004,17 @@ try {
 
   check(await page.eval(`(() => { try { return localStorage.getItem('compass:vault-key') === null } catch { return true } })()`) === true,
     'R24: a fresh browser holds no capability token — none is minted before consent')
-  await openCvPanel()
-  check(await page.eval(`(() => document.querySelector('button.profline-head').getAttribute('aria-expanded'))()`) === 'true',
-    'R24: the CV panel really opened, so what follows is not a check of a closed panel')
-  /* The recorder replaces window.fetch. If it failed to install, every
-   * assertion below would read zero calls and pass while measuring
-   * nothing -- which is exactly what happened when a \/ in its own
-   * regex collapsed to // and commented the line out. So: prove it is
-   * there, and prove it still intercepts, before trusting a zero. */
+  /* The witness runs BEFORE the panel opens, and the counter is cleared
+   * before the thing being measured happens — not after it.
+   *
+   * The first version of this block proved the recorder worked and cleared
+   * the counter AFTER openCvPanel(), so a /profile call made while the
+   * panel opened was wiped by the reset, and the "sends nothing" check was
+   * 0 by construction. An adversarial review injected exactly that
+   * regression and watched the suite go red under "the recorder installed"
+   * instead of under the check that is about the leak — a real privacy
+   * failure reported as a broken instrument, which is the diagnosis most
+   * likely to be waved through. */
   check(await page.eval('Array.isArray(window.__vaultCalls)') === true,
     'R24: the fetch recorder installed, so a zero below means no traffic rather than no instrument')
   /* Not an async IIFE: page.eval does not await a returned promise, so it
@@ -1021,10 +1024,21 @@ try {
   check(await page.eval(`(() => { window.fetch('/profile'); return window.__vaultCalls.length })()`) === 1,
     'R24: and it really intercepts /profile, proven with a call made on purpose')
   await page.eval('(() => { window.__vaultCalls.length = 0; return 1 })()')
+
+  await openCvPanel()
+  check(await page.eval(`(() => document.querySelector('button.profline-head').getAttribute('aria-expanded'))()`) === 'true',
+    'R24: the CV panel really opened, so what follows is not a check of a closed panel')
   const noKeyCalls = JSON.parse(await page.eval('JSON.stringify(window.__vaultCalls || [])'))
+  check(noKeyCalls.length === 0,
+    `R24: with nothing stored, opening it sends nothing at all (${noKeyCalls.length} fetches)`)
+  /* A SEPARATE question, not a restatement: the recorder patches fetch and
+   * only fetch, so this is what would catch an exfiltration by any other
+   * channel -- XHR, sendBeacon, an <img> src. It is expected to be empty
+   * and cannot be made to fail by a fetch regression; it is here for the
+   * channels the recorder is blind to. */
   const noKeyRes = JSON.parse(await page.eval(`JSON.stringify(${VAULT_RESOURCES})`))
-  check(noKeyCalls.length === 0 && noKeyRes.length === 0,
-    `R24: with nothing stored, opening it sends nothing at all (${noKeyCalls.length} fetches, ${noKeyRes.length} resources)`)
+  check(noKeyRes.length === 0,
+    `R24: and nothing reached the worker by a channel the recorder does not patch (${noKeyRes.length})`)
   check(await page.eval(`(() => document.body.innerText.includes('Delete it') ? 1 : 0)()`) === 0,
     'R24: and a reader with nothing stored is shown no control about storage')
 
@@ -1055,11 +1069,19 @@ try {
     `R24: and the token is NOT in the URL — no query string at all (/${call0.url.split('/').slice(3).join('/')})`)
   check(call0.headers['x-compass-vault-key'] === token,
     'R24: it travels in the x-compass-vault-key header, which history and logs do not keep')
+  /* Not "the token is not in a resource entry" — with the recorder in place
+   * no /profile request reaches the network, so that array is always empty
+   * and `.every()` on it is always true. What this asks is the falsifiable
+   * question: did ANY request reach the worker by a channel the recorder
+   * does not patch? */
   const res = JSON.parse(await page.eval(`JSON.stringify(${VAULT_RESOURCES})`))
-  check(res.every((n) => !n.includes(token)),
-    `R24: and no resource entry carries it either (${res.length} entries)`)
+  check(res.length === 0,
+    `R24: and no request reached the worker by any other channel (${res.length} entries)`)
+  /* This measures the SENTENCE, not the property. The property itself is
+   * established by the closed-payload test in worker/test/vault.test.ts;
+   * what is checked here is that the page still tells the reader so. */
   check(await page.eval(`(() => document.body.innerText.includes('never uploaded') ? 1 : 0)()`) === 1,
-    'R24: property (a) still holds and is still stated: the file never leaves the browser')
+    'R24: and the page still states property (a) to the reader: the file is never uploaded')
 
   await page.eval(`(() => { try { localStorage.removeItem('compass:vault-key') } catch {} return 1 })()`)
 

@@ -13,6 +13,7 @@ export interface Env {
   TURNSTILE_EXPECTED_HOSTNAMES: string
   DAILY_CV_LIMIT: string
   DAILY_VAULT_WRITE_LIMIT: string
+  DAILY_VAULT_READ_LIMIT: string
   GEMINI_API_KEY: string
   TURNSTILE_SECRET_KEY: string
   DAILY_COUNTER: DurableObjectNamespace<DailyCounter>
@@ -24,6 +25,15 @@ const CORS_METHODS = 'GET, POST, DELETE, OPTIONS'
 /* Naming the vault's header here is what makes the browser's preflight
  * allow it; vaultKey.ts says why the token travels in a header at all. */
 const CORS_HEADERS = `content-type, ${VAULT_KEY_HEADER}`
+
+/* Number(undefined) is NaN, and `current >= NaN` is false, so a missing or
+ * malformed variable made a cap fail OPEN — it would have counted forever
+ * and refused nothing. A cap that cannot be read is a cap at its default,
+ * never no cap at all. Adversarial review, L4. */
+function capOf(v: string | undefined, fallback: number): number {
+  const n = Number(v)
+  return Number.isFinite(n) && n > 0 ? n : fallback
+}
 
 function splitList(v: string): Set<string> {
   return new Set(v.split(',').map((s) => s.trim()).filter(Boolean))
@@ -202,11 +212,30 @@ async function handleVault(request: Request, env: Env): Promise<Response> {
     return errorResponse('malformed_input', `a valid ${VAULT_KEY_HEADER} header is required`, origin)
   }
   const vault = env.PROFILE_VAULT.get(env.PROFILE_VAULT.idFromName(await vaultName(token)))
+  /* Every reader hits the same URL and differs only by a header, which is
+   * exactly the shape that leaks through a shared cache. Nothing here is
+   * cacheable by anyone, and the response varies by the key. L5. */
   const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), {
-    status, headers: { 'content-type': 'application/json', 'access-control-allow-origin': origin },
+    status,
+    headers: {
+      'content-type': 'application/json',
+      'access-control-allow-origin': origin,
+      'cache-control': 'no-store',
+      vary: VAULT_KEY_HEADER,
+    },
   })
 
   if (request.method === 'GET') {
+    /* Reads get their own account-wide ceiling, separate again from both the
+     * Gemini budget and the save budget. DELETE is deliberately NOT capped:
+     * refusing a deletion to slow an abuser is a worse outcome than the
+     * abuse, and after the read-only fix in profileVault.ts neither GET nor
+     * DELETE allocates any storage. */
+    const readLimit = capOf(env.DAILY_VAULT_READ_LIMIT, 20000)
+    const reads = await env.DAILY_COUNTER.get(env.DAILY_COUNTER.idFromName('vault-reads')).tryConsume(readLimit)
+    if (!reads.allowed) {
+      return errorResponse('daily_cap_exceeded', `today's read budget (${reads.limit}) is used up -- try again tomorrow`, origin)
+    }
     const record = await vault.load()
     return json({ ok: true, record })
   }
@@ -237,7 +266,7 @@ async function handleVault(request: Request, env: Env): Promise<Response> {
   // A daily ceiling on WRITES, counted account-wide in its own object —
   // separate from the Gemini budget, because a save costs no model call and
   // must not be able to eat one.
-  const writeLimit = Number(env.DAILY_VAULT_WRITE_LIMIT)
+  const writeLimit = capOf(env.DAILY_VAULT_WRITE_LIMIT, 2000)
   const counter = env.DAILY_COUNTER.get(env.DAILY_COUNTER.idFromName('vault-writes'))
   const consumed = await counter.tryConsume(writeLimit)
   if (!consumed.allowed) {

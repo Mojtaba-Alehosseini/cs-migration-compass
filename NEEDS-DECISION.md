@@ -4658,7 +4658,7 @@ way.** Six runs on one build gave perf 100 / 92 / 100 / 92 / 100 / 92 with CLS 0
 between. Both modes clear the >=90 floor, so the gate's verdict is stable and only the number moves — but
 the desktop sweep still samples each route once, and package 43 reported 92 for /work from one such sample.
 
-## 84. A chart's "12px" is 5px on a phone, and no font-size fixes that
+## 84. CLOSED, package 45 — A chart's "12px" is 5px on a phone, and no font-size fixes that
 
 #79 was written from the SOURCE: chart text is declared at 8.5–11.5px against a declared 12px floor.
 Package 44 raised the refusal marks as ruled and then measured what the reader actually gets, which
@@ -4700,6 +4700,32 @@ Not resolved in package 44: (a) changes the look of every chart on the site, whi
 cost the owner declined when he ruled on #79; (b) is a change to the site's own stated rule. Either
 is the owner's call. What package 44 did ship is the proportional raise plus this measurement, and
 DESIGN.md now says the floor holds at >=820px rather than everywhere.
+
+**CLOSED in package 45.** The rule shipped is `userUnits = max(declared, 12 / scale)`, carried as a
+`--text-boost` multiplier set on each `<svg>` from the width it was already measured at, and clamped
+never to fall below 1. The three marks named above now paint at 12.0px on a 390px phone instead of
+5.1px, and at scale 1 and above the multiplier is exactly 1: the 1440px chart screenshots are
+byte-identical across the change.
+
+Two things the item did not anticipate, both recorded because they change what it means:
+
+- **There were five SVG refusal marks, not three.** The wage panel's short absence reason (*no
+  bonus-excluded figure published*, *composition not verified*) at 9.5 user units and its *median
+  only* / *mean only* at 9 are marks that say the chart cannot show you a row — DESIGN.md's own
+  definition — and both this item and package 44 missed them. They painted at **4.18px** on a phone,
+  smaller than the 5.1px this item was opened about, in the same `<svg>` as a mark package 45 had
+  just raised. An adversarial review found them by reading the definition rather than the list. All
+  five now carry `.refusal-mark`, and DESIGN.md says the class is the rule, not the list.
+- **"Every desktop width is untouched" was too strong.** The boost is exactly 1 for scale >= 1, which
+  is a chart drawn at or above its own viewBox width — about a 802px viewport, not every desktop. The
+  wording in DESIGN.md now says so, and names the band between roughly 720 and 802px where the plot
+  does move by one unit of label strip.
+
+**Extending the floor past the refusal marks is not taken up**, and was measured rather than argued:
+applied to every `<text>` in the plots at 390 it takes `/explore/housing` from 7 overlaps totalling
+81px2 to 74 totalling 6,915px2 with 7 texts clipped, and `/explore/money` from 11/271px2 to
+38/3,860px2 with 5 clipped. Type alone cannot buy that back; it would need every plot re-laid out.
+The floor therefore still stops where DESIGN.md says it stops, and that table is now in DESIGN.md.
 
 ## 85. What a stored CV profile should actually contain — built at the minimum, the wider options costed
 

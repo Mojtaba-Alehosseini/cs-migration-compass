@@ -9,6 +9,7 @@ export const FILE_REF: Record<string, string> = {
   'Compare.tsx': 'site/src/routes/Compare.tsx',
   'CountryProfile.tsx': 'site/src/routes/CountryProfile.tsx',
   'CvUpload.tsx': 'site/src/components/CvUpload.tsx',
+  'DESIGN.md': 'docs/DESIGN.md',
   'Flag.tsx': 'site/src/components/Flag.tsx',
   'Home.tsx': 'site/src/routes/Home.tsx',
   'NEEDS-DECISION.md': 'NEEDS-DECISION.md',
@@ -196,6 +197,8 @@ export const FILE_REF: Record<string, string> = {
   'urlState.ts': 'site/src/data/urlState.ts',
   'validate_data.py': 'scripts/validate_data.py',
   'wage_distribution.json': 'data/processed/wage_distribution.json',
+  'worker/src/vaultKey.ts': 'worker/src/vaultKey.ts',
+  'worker/test/vault.test.ts': 'worker/test/vault.test.ts',
   'worker/wrangler.jsonc': 'worker/wrangler.jsonc',
   'yearSpread.test.ts': 'site/tests/yearSpread.test.ts',
 }

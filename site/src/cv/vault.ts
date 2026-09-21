@@ -37,7 +37,8 @@ export type VaultOutcome<T> = { ok: true; value: T } | { ok: false; code: string
 /** Whatever the reader is told at the consent point has to be the number
  *  the Worker actually enforces; this is exported so the copy can read it
  *  from here rather than restating it. It mirrors RETENTION_DAYS in
- *  worker/src/profileVault.ts, and R24 asserts the two agree. */
+ *  worker/src/vaultKey.ts, and worker/test/vault.test.ts asserts the two
+ *  agree. */
 export const RETENTION_DAYS = 30
 
 function b64url(bytes: Uint8Array): string {
@@ -61,20 +62,29 @@ export function hasKey(): boolean {
   return safeGet() != null
 }
 
-/** Called only from the consent handler. Returns null when this browser
- *  will not keep it, in which case there is nothing to save to. */
-export function mintKey(): string | null {
+/** Called only from the consent handler.
+ *
+ *  Reports whether it MINTED or found one already there, because the caller
+ *  needs to know: a save that fails should drop a key it just created (an
+ *  identifier with no purpose) but must not drop one that already existed —
+ *  that key is the only route to a record already in the store, and
+ *  forgetting it strands that record until its own expiry with nobody able
+ *  to read or delete it. An adversarial review found exactly that path.
+ *
+ *  `fresh: false` with a null token means this browser will not keep one,
+ *  so there is nothing to save to. */
+export function mintKey(): { token: string | null; fresh: boolean } {
   const existing = safeGet()
-  if (existing) return existing
+  if (existing) return { token: existing, fresh: false }
   const bytes = new Uint8Array(32)
   crypto.getRandomValues(bytes)
   const token = b64url(bytes)
   try {
     localStorage.setItem(KEY_STORAGE, token)
   } catch {
-    return null
+    return { token: null, fresh: false }
   }
-  return token
+  return { token, fresh: true }
 }
 
 /** Local only. The record on the server is deleted through `deleteProfile`;

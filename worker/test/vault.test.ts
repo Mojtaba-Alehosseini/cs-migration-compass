@@ -52,9 +52,20 @@ test('the storage name is a SHA-256 digest of the token, and nothing of the toke
   const token = mint()
   const name = await vaultName(token)
   assert.match(name, /^[0-9a-f]{64}$/)
-  assert.ok(!name.includes(token.slice(0, 8)), 'the digest must not carry the token')
   assert.equal(await vaultName(token), name, 'the same token must always reach the same object')
   assert.notEqual(await vaultName(mint()), name, 'different tokens must reach different objects')
+
+  /* Not "the digest does not contain the token's first 8 characters" — that
+   * passes with probability ~1 whatever the function does, because an
+   * 8-character base64url prefix is lowercase hex about once in 65,000.
+   * (Adversarial review, L7.) The falsifiable version: a ONE-character
+   * change in the token must change essentially the whole digest, which no
+   * truncation, prefixing or other pass-through of the input can satisfy. */
+  const near = (token[0] === 'A' ? 'B' : 'A') + token.slice(1)
+  const nearName = await vaultName(near)
+  let same = 0
+  for (let i = 0; i < 64; i++) if (nearName[i] === name[i]) same++
+  assert.ok(same < 24, `a one-character change must not leave the digest recognisable (${same}/64 nibbles shared)`)
 })
 
 test('the payload is a closed shape — extra fields are dropped, never stored', () => {
@@ -83,11 +94,22 @@ test('an out-of-range or wrong-typed years figure is refused, not clamped', () =
   }
 })
 
-test('an occupation long enough to be a payload of its own is refused', () => {
-  const r = parseStoredProfile({ occupation: 'x'.repeat(65), yearsProfessional: 5 })
-  assert.equal(r.ok, false)
-  const ok = parseStoredProfile({ occupation: 'x'.repeat(64), yearsProfessional: 5 })
-  assert.equal(ok.ok, true)
+test('the occupation is closed by VALUE, not merely by length', () => {
+  /* A 64-character free-text allowance is 64 characters of caller-chosen
+   * text per token, which is not what #85 describes the field as holding.
+   * Adversarial review, L3. */
+  for (const bad of [
+    'x'.repeat(64), 'x'.repeat(65), '', 'isco08:', 'isco08:12345', 'isco08:abc',
+    'ISCO08:2512', ' isco08:2512', 'isco08:2512 ', 'isco08:2512\nx', 'nurse',
+    '<script>alert(1)</script>', 'Jane Doe, 12 Example Street',
+  ]) {
+    assert.equal(parseStoredProfile({ occupation: bad, yearsProfessional: 5 }).ok, false,
+      `should be refused: ${JSON.stringify(bad)}`)
+  }
+  for (const good of ['isco08:2512', 'isco08:2', 'isco08:9999']) {
+    assert.equal(parseStoredProfile({ occupation: good, yearsProfessional: 5 }).ok, true,
+      `should be accepted: ${good}`)
+  }
 })
 
 test('a non-object body is refused rather than treated as an empty profile', () => {

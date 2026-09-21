@@ -23,7 +23,10 @@
     // NEEDS-DECISION #56. A save costs no model call, so it gets its own
     // account-wide daily ceiling rather than sharing the Gemini budget --
     // storing a profile must never be able to consume an analysis.
-    "DAILY_VAULT_WRITE_LIMIT": "2000"
+    "DAILY_VAULT_WRITE_LIMIT": "2000",
+    // Reads get their own ceiling too. DELETE is deliberately uncapped:
+    // refusing a deletion to slow an abuser is worse than the abuse.
+    "DAILY_VAULT_READ_LIMIT": "20000"
   },
 
   // The real spend cap. Per-IP alone cannot bound aggregate usage across

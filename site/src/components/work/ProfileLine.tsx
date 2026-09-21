@@ -81,7 +81,13 @@ export function ProfileLine({ profile, occupations, countryName, onProfileChange
       >
         <div style={{ padding: '0 16px 16px', borderTop: open ? '1px solid var(--line)' : undefined }}>
           <div style={{ marginTop: 12 }}>
-            <CvUpload occupations={occupations} active={open} onApply={(patch) => { onProfileChange(patch); setOpen(false) }} />
+            <CvUpload
+              occupations={occupations}
+              active={open}
+              /* keepOpen: the reader consented to storage, and everything the
+                 save has to say renders inside this panel. #56, Tier 4. */
+              onApply={(patch, opts) => { onProfileChange(patch); if (!opts?.keepOpen) setOpen(false) }}
+            />
           </div>
           <ProfileForm profile={profile} occupations={occupations} onChange={onProfileChange} />
         </div>
