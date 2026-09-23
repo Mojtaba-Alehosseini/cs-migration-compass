@@ -4778,7 +4778,7 @@ it. Moving A→B is additive and can be done without disturbing what ships; movi
 and should not be taken as an extension of this item's own opt-in — a consent to keep two fields is
 not a consent to keep a CV.
 
-## 86. Throttled-mobile `/openings` now fails the >=90 gate on code that has not changed, and the older code fails it harder
+## 86. CLOSED, package 47 — Throttled-mobile `/openings` now fails the >=90 gate on code that has not changed, and the older code fails it harder
 
 Package 43 opened #83 when throttled-mobile `/openings` scored 81 in one run of three, established
 that the cause was the measurement rather than the page, and package 44 closed it by making the gate
@@ -4833,6 +4833,34 @@ distribution has shifted.
 Not decided here: every option trades something real, and B in particular narrows what the gate can
 see. Recorded with both five-run measurements so the choice is made against evidence rather than
 against one bad afternoon. Desktop `/openings` is unaffected and scores 99 (TBT 84ms).
+
+**CLOSED, package 47 — ruled: option B, with the gap it leaves closed, and shipped.**
+`lighthouse_gate.mjs` now enforces, on throttled mobile, the **median LCP (at most 2,500ms) and
+median CLS (at most 0.1) over five runs**, plus the accessibility, best-practice and SEO floors,
+which are not simulated. It prints the performance score and the TBT spread without enforcing them,
+so a real main-thread regression is still in front of whoever reads the output. Both thresholds are
+Lighthouse's own p10 control points for those metrics, read from the reports' `scoringOptions`
+rather than remembered, and they are also the Core Web Vitals "good" boundaries.
+
+**The premise needed one correction.** "LCP held within 10ms across ten runs across two builds" is
+true of package 45's own five runs and not of the other five: the surviving reports of the
+`f21a957` runs read 2,542, 2,436, 2,424, 3,205 and 2,429ms, the 3,205 in the run with 10.5s of TBT
+(Lantern scales observed task times by the preset's 4x CPU slowdown, on the critical path as well).
+Package 43 had also recorded LCP itself as bimodal — 2,413–2,425 or 4,858–4,859ms, #83's index
+race. Across all 25 runs on record, four builds in five sets, every set's **median** LCP is
+2,414–2,436ms and no CLS is above 0.044. That is why the gate judges the median of five, which
+absorbs two such runs, and never a single run; and why the LCP margin is thin — about 70ms — on
+purpose: it fails where a reader's first paint leaves "good".
+
+**Desktop TBT is now enforced on every route in its own right, at 150ms or less** (Lighthouse's
+desktop p10). Until now it counted only through its 30% share of the performance score: with every
+other metric perfect, a route at about 270ms still rounded to 90 and passed. On a quiet machine
+desktop TBT was 0–87ms on every route across packages 43–45. This is the half of the ruling that
+makes the other half acceptable, and the gate's own comment says so.
+
+Found while building it: a report can exist, parse and have measured nothing. Against a dead
+server Chrome shows an interstitial and every metric reads −1, which passes "LCP at most 2,500".
+The gate now fails any such run by name instead of relying on a category score to catch it.
 
 ## 87. Home's dot field is over capacity on a phone — cities drawn on each other, inside "no data", and over the axis
 

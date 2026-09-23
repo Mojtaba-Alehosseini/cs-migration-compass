@@ -83,9 +83,23 @@ Chrome over the built site:
   strategy. Absence now fails. That second half is the durable part — fixing the wait fixed one
   route, and the shape had let any route hide.
 
-**Per package, by hand:** Lighthouse (desktop preset, at least 90 performance / 95 accessibility
-across 14 routes) and an independent adversarial review of the package's own work. Neither runs in
-CI.
+**Per package, by hand:** Lighthouse, through `scripts/tests/lighthouse_gate.mjs`, and an
+independent adversarial review of the package's own work. Neither runs in CI. The Lighthouse gate
+audits 15 routes on the desktop preset — performance at least 90, **total blocking time at most
+150ms**, accessibility, best practices and SEO at least 95 — and `/openings` five times on throttled
+mobile, where it enforces the **median LCP (at most 2,500ms) and median CLS (at most 0.1)** and
+prints, without enforcing, the performance score and the spread of TBT.
+
+That split is #86's ruling (package 47). The throttled-mobile score was measuring Lighthouse's
+simulated main thread rather than the page: five runs of one unchanged build scored 73–87 while TBT
+ran 414–1,291ms, and the build before it scored lower. LCP and CLS are what a reader sees; across
+the 25 runs on record, every set's median LCP sat at 2,414–2,436ms and no CLS was above 0.044. The
+two thresholds are Lighthouse's own "good" boundaries for those metrics, so the LCP margin is thin
+(about 70ms) on purpose. Dropping the mobile score from the gate is acceptable only because desktop
+TBT is enforced on every route in its own right — 0–87ms on every route across packages 43–45 —
+and that catches the main-thread regression the mobile score used to. Before package 47 desktop TBT
+counted only through its 30% share of the performance score, and a route at about 270ms still
+passed.
 
 **What this does not establish.** All of the above checks that the site renders honestly what the
 data says. Whether the data itself is fit for the claim on the label is a separate question,

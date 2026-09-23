@@ -15,8 +15,16 @@
  * measured on a busy machine is not evidence of anything: TBT is what says
  * whether the machine was quiet while it measured.
  *
+ * What is enforced (#86, ruled in package 47 — the full reasoning is above the
+ * throttled-mobile block below):
+ *   desktop, every route    performance >= 90, TBT <= 150ms, the rest >= 95
+ *   throttled mobile,       median LCP <= 2500ms and median CLS <= 0.1 over
+ *   /openings               five runs, the rest >= 95; its performance score
+ *                           and TBT are printed, NOT enforced
+ *
  *   node scripts/tests/lighthouse_gate.mjs
  *   LH_ONLY=openings node scripts/tests/lighthouse_gate.mjs
+ *   LH_MOBILE_RUNS=9 LH_ONLY=openings node scripts/tests/lighthouse_gate.mjs
  */
 import { spawn } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs'
@@ -27,6 +35,13 @@ const BASE = process.env.BASE_URL ?? 'http://localhost:4173/'
 const ONLY = new Set((process.env.LH_ONLY ?? '').split(',').map((s) => s.trim()).filter(Boolean))
 const PERF_MIN = 90
 const OTHER_MIN = 95
+/* Lighthouse 13's own "good" control points (each metric's p10: where its
+ * score drops below 0.9), read from the reports' scoringOptions rather than
+ * remembered. The measured distributions they are set against are in the
+ * comment above the throttled-mobile block. */
+const DESKTOP_TBT_MAX = 150
+const MOBILE_LCP_MAX = 2500
+const MOBILE_CLS_MAX = 0.1
 
 const ROUTES = [
   ['home', ''],
@@ -100,6 +115,13 @@ const read = (file) => {
   const s = (k) => Math.round((r.categories[k]?.score ?? 0) * 100)
   return {
     finalUrl: r.finalUrl ?? r.requestedUrl,
+    /* A report can exist, parse, and have measured nothing: Chrome showing an
+     * interstitial because the server is down writes a report with a
+     * runtimeError and -1 for every metric. -1 passes "LCP <= 2500", so both
+     * rules below fail any such run by name rather than trusting a category
+     * score to happen to catch it (package 47 found this by running the new
+     * mobile rule against a dead server). */
+    error: r.runtimeError?.code ?? null,
     perf: s('performance'),
     a11y: s('accessibility'),
     bp: s('best-practices'),
@@ -129,10 +151,21 @@ for (const [name, route] of ROUTES) {
   const m = read(file)
   // The trap this script exists for: a 404 scores beautifully.
   const bad404 = /no-such|not-found/.test(m.finalUrl)
-  const pass = m.perf >= PERF_MIN && m.a11y >= OTHER_MIN && m.bp >= OTHER_MIN && m.seo >= OTHER_MIN && !bad404
+  /* TBT has its own ceiling here, not only its 30% share of the composite
+   * (#86): with every other metric perfect, a route at about 270ms still
+   * rounded to 90 and passed. This line is what lets the mobile gate stop
+   * enforcing its composite — see the comment above that block. */
+  const why = [
+    (m.error || m.tbt < 0) && `measured nothing (${m.error ?? 'no TBT'})`,
+    m.perf < PERF_MIN && `performance < ${PERF_MIN}`,
+    m.tbt > DESKTOP_TBT_MAX && `TBT > ${DESKTOP_TBT_MAX}ms`,
+    (m.a11y < OTHER_MIN || m.bp < OTHER_MIN || m.seo < OTHER_MIN) && `a category < ${OTHER_MIN}`,
+    bad404 && `audited a not-found page (${m.finalUrl})`,
+  ].filter(Boolean)
+  const pass = why.length === 0
   if (!pass) fails++
   rows.push({ name, ...m, pass })
-  console.log(`  ${pass ? 'PASS' : 'FAIL'}  ${name.padEnd(16)} perf ${String(m.perf).padStart(3)}  a11y ${m.a11y}  bp ${m.bp}  seo ${m.seo}   TBT ${String(m.tbt).padStart(4)}ms  CLS ${m.cls}  LCP ${m.lcp}ms`)
+  console.log(`  ${pass ? 'PASS' : 'FAIL'}  ${name.padEnd(16)} perf ${String(m.perf).padStart(3)}  a11y ${m.a11y}  bp ${m.bp}  seo ${m.seo}   TBT ${String(m.tbt).padStart(4)}ms  CLS ${m.cls}  LCP ${m.lcp}ms${pass ? '' : `   <- ${why.join('; ')}`}`)
 }
 
 /* THE THROTTLED-MOBILE RUN IS A DISTRIBUTION, NOT A SAMPLE (#83, ruled in
@@ -153,12 +186,43 @@ for (const [name, route] of ROUTES) {
  * clusters, so it is not a regression either.
  *
  * A single sample of a bimodal distribution is a coin flip reported as a
- * measurement. So the gate takes the MEDIAN of three and prints all three: a
- * real regression moves the median, while the coin flip moves one run. What it
+ * measurement. So the gate takes the MEDIAN and prints every run: a real
+ * regression moves the median, while the coin flip moves one run. What it
  * must not do is make the coin land the same way every time by moving the fetch
- * a tick later — that buys a number and helps no reader. */
+ * a tick later — that buys a number and helps no reader.
+ *
+ * AND ON MOBILE IT JUDGES WHAT THE READER SEES, NOT THE COMPOSITE (#86, ruled
+ * in package 47: option B). The median fixed one bad run; it could not fix a
+ * distribution that moved. Package 45 ran five throttled-mobile audits of one
+ * unchanged build: performance 73-87 while TBT ran 414-1291ms, and the commit
+ * before it scored LOWER (61-80, one run at TBT 10.5s). The composite was
+ * measuring Lighthouse's simulated main thread — observed task times multiplied
+ * by the preset's 4x CPU slowdown — which moves with whatever else the machine
+ * is doing, not with the page.
+ *
+ * So on throttled mobile the gate ENFORCES the two metrics a reader sees, on
+ * the median of five runs: LCP <= 2500ms and CLS <= 0.1, each the point where
+ * Lighthouse's own scoring for that metric drops below 0.9 (the Core Web Vitals
+ * "good" boundary). Measured against the 25 runs on record — four builds
+ * (packages 42-45), five sets of runs: every set's median LCP is 2414-2436ms,
+ * and no CLS recorded is above 0.044. Single runs are not that tidy: three sat
+ * at 4858-4859ms (the index race above) and two, on a loaded machine, at 2542
+ * and 3205ms — Lantern scales observed task times by the preset's 4x CPU
+ * slowdown, on the critical path as well. Five runs judged by their median
+ * absorb two such runs. The LCP margin is thin on purpose: about 70ms, some
+ * 13KB more on the critical path as transferred at the preset's link, which is
+ * exactly where a reader's first paint leaves "good".
+ *
+ * It PRINTS, and does not enforce, the performance score and the TBT spread,
+ * so a real main-thread regression is still in front of whoever reads this.
+ * What makes it acceptable to stop enforcing them here is the desktop sweep
+ * above: TBT is enforced on every route there, at <= 150ms. Desktop TBT is
+ * stable — 0-87ms on every route across packages 43-45 on a quiet machine —
+ * and it catches the regression the mobile composite was the only guard
+ * against. The accessibility, best-practice and SEO audits are not simulated,
+ * so they stay enforced on mobile as well. */
 if (!ONLY.size || ONLY.has('openings')) {
-  const RUNS = Number(process.env.LH_MOBILE_RUNS ?? 3)
+  const RUNS = Number(process.env.LH_MOBILE_RUNS ?? 5)
   const runs = []
   for (let i = 1; i <= RUNS; i++) {
     const file = join(OUT, `openings-mobile-${i}.json`)
@@ -176,17 +240,28 @@ if (!ONLY.size || ONLY.has('openings')) {
     cls: median(runs.map((r) => r.cls)),
     lcp: median(runs.map((r) => r.lcp)),
   }
-  const pass = m.perf >= PERF_MIN && m.a11y >= OTHER_MIN && m.bp >= OTHER_MIN && m.seo >= OTHER_MIN
+  const bad404 = runs.some((r) => /no-such|not-found/.test(r.finalUrl))
+  const blind = runs.filter((r) => r.error || r.lcp < 0 || r.cls < 0)
+  const why = [
+    blind.length && `${blind.length} of ${RUNS} runs measured nothing (${[...new Set(blind.map((r) => r.error ?? 'no LCP or CLS'))].join(', ')})`,
+    m.lcp > MOBILE_LCP_MAX && `median LCP > ${MOBILE_LCP_MAX}ms`,
+    m.cls > MOBILE_CLS_MAX && `median CLS > ${MOBILE_CLS_MAX}`,
+    (m.a11y < OTHER_MIN || m.bp < OTHER_MIN || m.seo < OTHER_MIN) && `a category < ${OTHER_MIN}`,
+    bad404 && 'audited a not-found page',
+  ].filter(Boolean)
+  const pass = why.length === 0
   if (!pass) fails++
   console.log('')
   for (const [i, r] of runs.entries()) {
     console.log(`        run ${i + 1}: perf ${String(r.perf).padStart(3)}  TBT ${String(r.tbt).padStart(4)}ms  CLS ${r.cls}  LCP ${r.lcp}ms`)
   }
-  const spread = `${Math.min(...runs.map((r) => r.perf))}-${Math.max(...runs.map((r) => r.perf))}`
-  console.log(`  ${pass ? 'PASS' : 'FAIL'}  openings (THROTTLED MOBILE, median of ${RUNS}, spread ${spread}) perf ${m.perf}  a11y ${m.a11y}  bp ${m.bp}  seo ${m.seo}   TBT ${m.tbt}ms  CLS ${m.cls}  LCP ${m.lcp}ms`)
+  const span = (k) => `${Math.min(...runs.map((r) => r[k]))}-${Math.max(...runs.map((r) => r[k]))}`
+  console.log(`  ${pass ? 'PASS' : 'FAIL'}  openings (THROTTLED MOBILE, median of ${RUNS})  LCP ${m.lcp}ms (<= ${MOBILE_LCP_MAX})  CLS ${m.cls} (<= ${MOBILE_CLS_MAX})  a11y ${m.a11y}  bp ${m.bp}  seo ${m.seo}${pass ? '' : `   <- ${why.join('; ')}`}`)
+  console.log(`        printed, not enforced (#86): performance median ${m.perf}, spread ${span('perf')}; TBT median ${m.tbt}ms, spread ${span('tbt')}ms`)
 }
 
-console.log(`\n${rows.length + (ONLY.size ? 0 : 1)} audits, ${fails} below the floor `
-  + `(performance >= ${PERF_MIN}, everything else >= ${OTHER_MIN})`)
+console.log(`\n${rows.length + (ONLY.size && !ONLY.has('openings') ? 0 : 1)} audits, ${fails} below the floor `
+  + `(desktop: performance >= ${PERF_MIN}, TBT <= ${DESKTOP_TBT_MAX}ms, the rest >= ${OTHER_MIN}; `
+  + `throttled mobile: median LCP <= ${MOBILE_LCP_MAX}ms and CLS <= ${MOBILE_CLS_MAX}, the rest >= ${OTHER_MIN})`)
 console.log(`raw reports in ${OUT}`)
 process.exit(fails ? 1 : 0)
