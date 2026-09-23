@@ -166,7 +166,10 @@ export function ThemeSwitcher() {
               }}
             >
               <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>{t.label}</span>
-              <span style={{ display: 'block', fontSize: 'var(--text-2xs)', color: 'var(--ink-3)' }}>
+              {/* ink-2 on the current theme's wash: ink-3 there measured
+                * 4.21-4.49:1 in every theme, under the 4.5:1 12px text needs.
+                * Package 46's accessibility review. */}
+              <span style={{ display: 'block', fontSize: 'var(--text-2xs)', color: t.id === theme ? 'var(--ink-2)' : 'var(--ink-3)' }}>
                 {t.hint}
               </span>
             </button>

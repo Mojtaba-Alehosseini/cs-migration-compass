@@ -68,6 +68,19 @@ export function Explore() {
     if (r.left < rr.left || r.right > rr.right) rail.scrollLeft += (r.left + r.width / 2) - (rr.left + rr.width / 2)
   }, [active])
 
+  /* Tab through the strip and Chrome leaves a half-hidden chip where it is:
+   * measured, "Homes & rent" focused with 44px of it past the edge, and
+   * Shift+Tab put "Finding work" at x = -73. So a focused chip is brought
+   * fully in, ring and all (6px — the strip's own padding), by the least
+   * scroll that does it. Package 46, Tier 6 accessibility review. */
+  const onRailFocus = (e: React.FocusEvent<HTMLDivElement>) => {
+    const rail = e.currentTarget, chip = e.target as HTMLElement
+    if (chip === rail) return
+    const r = chip.getBoundingClientRect(), rr = rail.getBoundingClientRect(), pad = 6
+    if (r.left < rr.left + pad) rail.scrollLeft -= rr.left + pad - r.left
+    else if (r.right > rr.right - pad) rail.scrollLeft += r.right - (rr.right - pad)
+  }
+
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
       <div className="kicker">Explore</div>
@@ -79,7 +92,7 @@ export function Explore() {
       <ThemeHero key={active} theme={active} />
 
       <div className="themesbar">
-        <div className="wrap rail" ref={railRef}>
+        <div className="wrap rail" ref={railRef} onFocus={onRailFocus}>
           {/* The scatter builder's own axes travel with the reader across
               themes, and nothing else does. That is the builder's documented
               contract - an untouched one tracks the theme, a touched one

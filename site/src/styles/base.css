@@ -1062,8 +1062,12 @@ table.cmp {
    more, and the current theme is scrolled into view (Explore.tsx). Where
    they fit — 768 and up — nothing moves or scrolls. */
 .themesbar .rail {
-  display: flex; gap: 7px; flex-wrap: nowrap; padding: 9px 0;
+  display: flex; gap: 7px; flex-wrap: nowrap;
   overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+  /* 6px of room either side for a focus ring (2px + 2px offset), which a
+     scroller clips: the margin widens the box by what the padding gives
+     back, so at rest every chip sits exactly where it did. */
+  padding: 9px 6px; margin: 0 -6px;
 }
 .themesbar .rail::-webkit-scrollbar { display: none; }
 /* A mouse in a narrow window cannot swipe, so it keeps a thin bar to drag. */
