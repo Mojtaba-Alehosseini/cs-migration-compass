@@ -4833,3 +4833,55 @@ distribution has shifted.
 Not decided here: every option trades something real, and B in particular narrows what the gate can
 see. Recorded with both five-run measurements so the choice is made against evidence rather than
 against one bad afternoon. Desktop `/openings` is unaffected and scores 99 (TBT 84ms).
+
+## 87. Home's dot field is over capacity on a phone — cities drawn on each other, inside "no data", and over the axis
+
+Found in package 46 while fixing Home's first frame. At 768px and wider every check below is clean;
+at 360–414 none is. Measured on package 46's build, which matches the live site on all three:
+
+| at 390 | pay | years to a home | money kept | sunshine |
+| --- | --- | --- | --- | --- |
+| pairs of flags drawn over each other (more than a third of a flag each way) | 6 | **28** | 2 | 0 |
+| cities with a value drawn inside the "no data" gutter | 0 | **4** (London, Rome, Valencia, Milan) | 1 (SF Bay Area) | 2 (Las Vegas, Phoenix) |
+| axis text a flag or label covers | $50k, $100k, $150k, "more →" | "2 yrs", 5 | $25k, $75k, "keep more →" | — |
+
+At 360 the pile on years-to-a-home is 36 pairs and five cities sit in the gutter; at 414 it is 15.
+Every question uses all fifteen lanes the packer has (±7), and when all fifteen are taken near an x
+it gives up and puts the city in the middle lane, on top of whoever is there. The gutter overlap is
+the field's own comment coming true: the swarm gives the gutter 13% of its width, "which is fine
+because it only ever ran at comfortable widths" — at 390 that is 42px for an 82px gutter. The
+"Honest by design" line under the field promises a city with no value parks in the gutter instead of
+vanishing; on a phone, cities WITH a value vanish under each other, and four "≈never" cities sit in
+the gutter that means "no data".
+
+**These are one problem, and fixing one part alone makes another worse — measured.** Reserving the
+gutter in pixels (as the scatter already does) empties the gutter, and doubles the pile: years-to-a-
+home 28 → 57 pairs, money kept 2 → 13. That change was built and reverted, not shipped.
+
+**What it would take**, simulated with the site's own packing on the site's own x positions — lanes
+needed if the packer had as many as it wanted, and the field height that implies at 32px a lane:
+
+| | pay | years to a home | money kept | sunshine |
+| --- | --- | --- | --- | --- |
+| 390, gutter as today | ±9 → 659px | ±11 → 787px | ±8 → 595px | ±6 → 467px |
+| 390, gutter reserved in pixels | ±9 → 659px | ±13 → 915px | ±9 → 659px | ±7 → 531px |
+| 1440 | ±4 → 440px (today's) | ±5 → 440px | ±4 → 440px | ±3 → 440px |
+
+**Options:**
+  - **(a) A taller field on narrow screens**, sized to the lanes each question actually needs, with
+    the gutter reserved in pixels. Every city visible, nothing in the gutter that has a value, the
+    lane pitch and labels unchanged. The cost: on a phone the field grows from 440px to between
+    ~530px and ~915px depending on the question, and changes height as the reader switches questions.
+    Nothing changes at 768 and wider.
+  - **(b) A denser field on narrow screens**: smaller flags (17 → ~13px), a tighter packing gap
+    (19 → ~14px) and lane (32 → ~24px) below ~560px, so the same 440px holds more. The cost: smaller
+    marks on the screen least able to spare them, tap targets (25px today) that overlap their
+    neighbours, city names hidden more often — and it needs its own measurement, because it may still
+    not fit years-to-a-home.
+
+A third, recorded so it is a rejected option rather than an unconsidered one: open Home on the table
+(the "⇄ table" view already exists) below some width. It fits trivially, and it gives up the page's
+premise — Home.tsx's own first line is that the visualisation is the product.
+
+Not resolved in package 46: (a) costs a much taller chart on the page most phones land on, (b) costs
+legibility, and choosing is a design decision about Home, the page the owner rates highest.

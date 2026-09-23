@@ -36,6 +36,10 @@ const MIN_GAP = 19       // px between dots in the same lane
 const CROWD_GAP = 34     // px within which a label is hidden
 const FIELD_H = 440
 const BAR_ROW_H = 29
+/* The box width the one-row country bars need at 29px a year: 834px in the
+   Compass, Editorial and Terminal themes and 830px in Warm, measured in
+   package 46 — plus 26px for a platform whose interface font sets wider. */
+const WIDE_BARS = 860
 const GUTTER_X = 87       // swarm ends here when the no-data gutter is showing
 
 /* Scatter insets. The left column carries the y tick values; the top strip
@@ -142,7 +146,15 @@ function collide2D(
 export function SwarmField({
   cities, countryOf, question, secondAxis, budget, selected, onToggle, intro,
 }: Props) {
-  const [fieldRef, width] = useMeasuredWidth<HTMLDivElement>(1000)
+  /* Package 46: the fallback is 0, and the dots wait for a real width.
+   * It was 1000 — a desktop field's width — so the first render laid every
+   * dot out at that scale. The measurement corrected it before paint, but by
+   * then reading the width had fixed those positions as where each dot's
+   * 750ms transition STARTS: on a phone the flags drifted in from as far as
+   * 827px, off the right edge, and the page was that wide until they landed
+   * (at 390 the browser's layout viewport grew to 827px). A dot that is not
+   * drawn until the field is measured starts where it belongs. */
+  const [fieldRef, width] = useMeasuredWidth<HTMLDivElement>(0)
 
   // Stable pseudo-random intro offsets — regenerating them each render would
   // make the flags twitch instead of settle.
@@ -229,7 +241,15 @@ export function SwarmField({
    * comfortable widths. The scatter reserves the gutter in PIXELS instead —
    * 13% of a 250px phone field is 32px, narrower than the 70px gutter, so a
    * percentage would post dots underneath it. It also gives up a left column
-   * to the y tick values and a strip at the top to the y-axis title. */
+   * to the y tick values and a strip at the top to the y-axis title.
+   *
+   * Package 46 measured the swarm's half of that sentence and it does not
+   * hold: Home is the page a phone lands on, and at 390 the percentage leaves
+   * 42px for an 82px gutter, so the top of three scales is drawn inside "no
+   * data". Reserving the gutter in pixels here, alone, doubles the dots drawn
+   * on top of each other (28 -> 57 pairs on years-to-a-home), because the
+   * phone field is already short of lanes. Both are one capacity problem, and
+   * NEEDS-DECISION #87 has the numbers and the options. */
   const squeeze = gutter ? GUTTER_X : 100
   const yAxisW = scatter ? (width < NARROW ? Y_AXIS_W_NARROW : Y_AXIS_W) : 0
   const plotTop = scatter ? PLOT_TOP : 0
@@ -324,8 +344,8 @@ export function SwarmField({
           </>
         )}
 
-        {/* dots */}
-        {placed.map((p) => {
+        {/* dots — not before the field has a measured width (see above) */}
+        {width > 0 && placed.map((p) => {
           const i = cities.indexOf(p.city)
           const si = selIndex(p.city.id)
           const isSel = si >= 0
@@ -450,11 +470,26 @@ function CountryBars({
     })
   }, [cities, countryOf])
 
-  const scale = 29
+  /* Package 46. The one-row layout draws 29px a year, and its longest row —
+   * Qatar's 20-year bar and "~20 yrs · no citizenship" — needs 830–834px of
+   * this box in every theme (measured). A phone's box is 290–320px, so at 390
+   * the rows ran to 863px: the page was wider than the screen and every value
+   * label from Norway down sat off it. Where the row does not fit, each
+   * country takes two lines instead, name and value over its bar, and the
+   * scale shrinks to fit the width — one scale for every row, as before, so
+   * the bars still compare. Where it fits, nothing changes. */
+  const [boxRef, boxW] = useMeasuredWidth<HTMLDivElement>(0)
+  const wide = boxW >= WIDE_BARS
+  const maxYears = Math.max(1, ...rows.map((k) => Math.max(k.pr_years_typical ?? 0, k.citizenship_years_typical ?? 0)))
+  // Narrow: the row's 6px insets and the 9px gap between ribbon and dashes
+  // come off first, so the longest path ends at the box's edge, not past it.
+  const scale = wide ? 29 : Math.min(29, Math.max(0, boxW - 12 - 9) / maxYears)
 
   return (
-    <div style={{ position: 'relative', height: rows.length * BAR_ROW_H + 26, paddingTop: 8 }}>
-      {rows.map((k, i) => {
+    <div ref={boxRef} style={wide
+      ? { position: 'relative', height: rows.length * BAR_ROW_H + 26, paddingTop: 8 }
+      : { padding: '10px 0 6px' }}>
+      {boxW > 0 && rows.map((k, i) => {
         const pr = k.pr_years_typical
         const cit = k.citizenship_years_typical
         const citiesHere = cities.filter((c) => c.country === k.id)
@@ -465,47 +500,66 @@ function CountryBars({
               : k.id === 'AE' ? 'golden visa only — no citizenship path'
                 : ''
 
-        return (
+        const name = (
+          <button
+            onClick={() => { const first = citiesHere[0]; if (first) onToggle(first.id) }}
+            aria-pressed={anySelected}
+            style={{
+              width: wide ? 104 : undefined, textAlign: wide ? 'right' : 'left',
+              color: anySelected ? 'var(--ink-1)' : 'var(--ink-2)',
+              fontWeight: anySelected ? 600 : 400, flex: 'none', fontSize: 11.5,
+            }}
+            title={`${k.name} — ${pr == null ? 'no permanent path' : `~${pr} yrs to residency`}`}
+          >
+            {k.name}
+          </button>
+        )
+
+        const bars = pr == null ? (
+          <span aria-hidden="true" style={{
+            width: 16, height: 10, border: '1.5px dashed var(--ink-3)', borderRadius: 4, flex: 'none',
+          }} />
+        ) : (
+          <>
+            <FlagRibbon cc={k.id} width={Math.max(10, pr * scale)} height={13} />
+            {cit != null && cit > pr && (
+              <span aria-hidden="true" style={{
+                width: (cit - pr) * scale, height: 5, borderRadius: 3, opacity: 0.45, flex: 'none',
+                background: 'repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 8px)',
+              }} />
+            )}
+          </>
+        )
+
+        const value = (
+          <b style={{ fontWeight: 500, color: 'var(--ink-2)', whiteSpace: wide ? 'nowrap' : undefined }}>
+            {pr == null
+              ? <em style={{ fontStyle: 'normal', color: 'var(--warn)' }}>{note}</em>
+              : <>~{pr}{cit != null ? ` → ~${cit}` : ''} yrs
+                {note && <em style={{ fontStyle: 'normal', color: 'var(--warn)' }}>{note}</em>}</>}
+          </b>
+        )
+
+        return wide ? (
           <div key={k.id}
             style={{
               position: 'absolute', left: 6, right: 6, top: 14 + i * BAR_ROW_H,
               display: 'flex', alignItems: 'center', gap: 9, fontSize: 11.5,
               transition: 'top var(--dur-slow) var(--ease-out)',
             }}>
-            <button
-              onClick={() => { const first = citiesHere[0]; if (first) onToggle(first.id) }}
-              aria-pressed={anySelected}
-              style={{
-                width: 104, textAlign: 'right', color: anySelected ? 'var(--ink-1)' : 'var(--ink-2)',
-                fontWeight: anySelected ? 600 : 400, flex: 'none', fontSize: 11.5,
-              }}
-              title={`${k.name} — ${pr == null ? 'no permanent path' : `~${pr} yrs to residency`}`}
-            >
-              {k.name}
-            </button>
-
-            {pr == null ? (
-              <span aria-hidden="true" style={{
-                width: 16, height: 10, border: '1.5px dashed var(--ink-3)', borderRadius: 4, flex: 'none',
-              }} />
-            ) : (
-              <>
-                <FlagRibbon cc={k.id} width={Math.max(10, pr * scale)} height={13} />
-                {cit != null && cit > pr && (
-                  <span aria-hidden="true" style={{
-                    width: (cit - pr) * scale, height: 5, borderRadius: 3, opacity: 0.45, flex: 'none',
-                    background: 'repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 8px)',
-                  }} />
-                )}
-              </>
-            )}
-
-            <b style={{ fontWeight: 500, color: 'var(--ink-2)', whiteSpace: 'nowrap' }}>
-              {pr == null
-                ? <em style={{ fontStyle: 'normal', color: 'var(--warn)' }}>{note}</em>
-                : <>~{pr}{cit != null ? ` → ~${cit}` : ''} yrs
-                  {note && <em style={{ fontStyle: 'normal', color: 'var(--warn)' }}>{note}</em>}</>}
-            </b>
+            {name}
+            {bars}
+            {value}
+          </div>
+        ) : (
+          <div key={k.id} style={{ padding: '4px 6px 5px', fontSize: 11.5 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', columnGap: 9 }}>
+              {name}
+              {value}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 3, minHeight: 13 }}>
+              {bars}
+            </div>
           </div>
         )
       })}

@@ -188,20 +188,29 @@ export function Home() {
           </button>
         )}
 
-        {/* The x ruler: its two ends, its direction, and — once a second axis
-            makes "which one is this?" a real question — what it measures.
-            Naming it here rather than under the ticks keeps the field's height
-            identical in both states, so the morph moves dots and nothing else. */}
+        {/* The x ruler: its direction, and — once a second axis makes "which
+            one is this?" a real question — what it measures. Naming it here
+            rather than under the ticks keeps the field's height identical in
+            both states, so the morph moves dots and nothing else.
+
+            Package 46: it no longer carries the two ends. "$30k" and "$280k"
+            sat at the box's edges while the ticks underneath read $50k to
+            $250k — two scales on one axis, and neither end where its value
+            is: "$30k" 38px left of $30k at 1440, and wherever a no-data
+            gutter shows, the right-hand end ("≈never", "$150k", "3,900 h")
+            printed over the gutter rather than over the top of the scale. On
+            the residency bars the ends stood over the country names and past
+            the 20-year mark. The ticks are the scale now, and carry the units
+            and the "≈never" pin the ends used to. The direction reads as a
+            label, in the y-axis title's ink, not the accent a link wears. */}
         <div style={{
-          display: 'flex', justifyContent: 'space-between', fontSize: 11.5,
+          display: 'flex', justifyContent: 'center', fontSize: 11.5,
           color: 'var(--ink-2)', padding: '4px 2px',
         }}>
-          <span>{question.axisL}</span>
           <span data-x-axis-label="">
-            <span style={{ color: 'var(--accent)', fontWeight: 550 }}>{question.dir}</span>
+            {question.dir}
             {secondAxis && <> · {question.xLabel}</>}
           </span>
-          <span>{question.axisR}</span>
         </div>
 
         <SwarmField
@@ -362,12 +371,17 @@ export function Home() {
         * physical width to within 3ch. Writing var(--measure) here would
         * render 10ch narrower than the prose it sits under, not the same.
         * Package 44, #80. */}
+      {/* Package 46: one sentence here, the rest one tap away. The paragraph
+        * ran 421 characters under the chart; its other sentences — the Oslo
+        * and Aarhus examples, the UAE's bar, why "≈never", and "a value,
+        * never a ranking" — are in /data's "Honest by design" panel, which
+        * the existing link now lands on, and so says so: it read "Where every
+        * number comes from", which is the sources table, not these rules.
+        * "Never a ranking" is also the site footer, on this page as on every
+        * other, and so is "How every number is sourced". */}
       <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', padding: '16px 0 0', maxWidth: '76ch', lineHeight: 1.7 }}>
         <b style={{ color: 'var(--ink-2)' }}>Honest by design:</b> a city with no value for a question parks in
-        the “no data” gutter instead of vanishing — Oslo has no sunshine figure, Aarhus no purchase price.
-        Dubai's residency bar says “no citizenship path” rather than pretending. Cities past 130 years to a
-        home read “≈never”, because the arithmetic answer invites you to treat it as a real wait.
-        Position on an axis is a value, never a ranking. <Link to="/data">Where every number comes from →</Link>
+        the “no data” gutter instead of vanishing. <Link to="/data#honest-by-design">The rest of it, on Data &amp; methods →</Link>
       </p>
 
       <ProfileNudge active={selected.length > 0} />

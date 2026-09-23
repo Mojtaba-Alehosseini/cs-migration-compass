@@ -543,10 +543,13 @@ select.axis-chip {
 
 /* Height of the sticky site header, which the table's own header row parks
    under. Sticky offsets cannot be measured in CSS, so App.tsx observes the real
-   header and overwrites this; these are the measured defaults for the frame
-   before that lands. */
-:root { --header-h: 56px; }
-@media (max-width: 760px) { :root { --header-h: 48px; } }
+   header and overwrites this; this is the measured default for the frame
+   before that lands. Package 46 moved the theme controls to the footer and
+   the header became one row, 47px, at every width from 360 to 1440 in all
+   four themes. (The old 48px rule for <=760px was wrong where it mattered:
+   the header was 96px at 390.) Below 360 it can still wrap to two rows,
+   which the measurement covers. */
+:root { --header-h: 47px; }
 
 h1.pg { font-size: var(--text-xl); margin-top: 4px; }
 .oneline {

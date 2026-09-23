@@ -139,6 +139,22 @@ export function DataMethods() {
           </p>
         </div>
 
+        {/* Package 46: the rest of Home's "Honest by design" paragraph lives
+          * here, one link away — Home keeps its first sentence. Every
+          * sentence below came from there; the only edit is Dubai's bar,
+          * which is the United Arab Emirates' bar (the field draws countries
+          * on that question, and names them). The scroll margin keeps a deep
+          * link from landing under the sticky header. */}
+        <div className="panel" id="honest-by-design" style={{ scrollMarginTop: 'calc(var(--header-h) + 12px)' }}>
+          <h2>Honest by design</h2>
+          <ul style={{ margin: '8px 0 0 16px', padding: 0, fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', lineHeight: 1.7 }}>
+            <li><b>No value, no vanishing.</b> On Home, a city with no value for a question parks in the “no data” gutter instead of vanishing — Oslo has no sunshine figure, Aarhus no purchase price.</li>
+            <li><b>No path is said, not hidden.</b> The United Arab Emirates’ residency bar says “no citizenship path” rather than pretending.</li>
+            <li><b>≈never means it.</b> Cities past 130 years to a home read “≈never”, because the arithmetic answer invites you to treat it as a real wait.</li>
+            <li><b>A position is a value.</b> Position on an axis is a value, never a ranking.</li>
+          </ul>
+        </div>
+
         <div className="panel">
           <h2>Where we might be wrong</h2>
           <ul style={{ margin: '8px 0 0 16px', padding: 0, fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', lineHeight: 1.7 }}>

@@ -1,8 +1,9 @@
 /* Theme + mode, persisted in localStorage and applied as data attributes on
  * <html>, which is what every token block in tokens.css keys off. */
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import type { Mode, ThemeName } from '../data/types'
+import { placedCardStyle, useCardPlacement } from './useCardPlacement'
 
 const THEMES: { id: ThemeName; label: string; hint: string }[] = [
   { id: 'compass', label: 'Compass', hint: 'Warm paper, deep green — the default' },
@@ -75,33 +76,77 @@ export function useTheme(): Ctx {
   return c
 }
 
+/* Package 46, Tier 4. The theme and mode controls live in the site footer,
+ * not the header. The header was two rows on every phone (96px at 360, 390
+ * and 414) and at 561–630px as well, and the one thing it could give up was
+ * this pair: 131px of the 316–346px a phone header has. The picker alone was
+ * not enough — without it the header still needed 350px at 390, 4px more
+ * than it has (10px more in the Warm theme, whose interface face is a serif).
+ * Both controls sit in one place at every width, so neither moves when a
+ * phone is rotated, and the system's light/dark setting is still followed
+ * until a reader overrides it.
+ *
+ * The picker says what it is. It read "Compass ▾" — the name of the theme,
+ * beside a wordmark that also says "Compass" and means the site.
+ *
+ * The list is a disclosure of toggle buttons, not role="menu": a menu
+ * promises arrow-key navigation this never had, and a screen reader that
+ * enters one expects it. Tab, Enter and Space are what it answers to, and
+ * Escape closes it and puts focus back on the button that opened it. */
 export function ThemeSwitcher() {
   const { theme, mode, setTheme, setMode, themes } = useTheme()
   const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const id = useId()
+  // It opens from the footer, where there is rarely room below: the shared
+  // placement flips it above and keeps it inside the viewport at any width.
+  const pos = useCardPlacement(open, triggerRef, cardRef)
+
+  useEffect(() => {
+    if (!open) return
+    const onDoc = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setOpen(false)
+      triggerRef.current?.focus()
+    }
+    document.addEventListener('click', onDoc)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('click', onDoc)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
 
   return (
-    <div style={{ display: 'flex', gap: 6, alignItems: 'center', position: 'relative' }}>
+    <div ref={ref} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
       <button
+        ref={triggerRef}
+        type="button"
         className="pill"
         aria-expanded={open}
+        aria-controls={id}
         onClick={() => setOpen((o) => !o)}
-        title="Change the look of the site"
       >
-        {themes.find((t) => t.id === theme)?.label ?? 'Theme'} ▾
-      </button>
-      <button
-        className="pill"
-        onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-        aria-label={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-      >
-        {mode === 'dark' ? '◑' : '◐'}
+        Theme: {themes.find((t) => t.id === theme)?.label ?? 'Compass'}<span aria-hidden="true"> ▾</span>
       </button>
 
+      {/* Straight after its trigger in the source, so the next Tab lands in
+        * the list rather than on the mode button beside it. It is
+        * position: fixed, so it takes no place in this row. */}
       {open && (
         <div
-          role="menu"
+          ref={cardRef}
+          id={id}
+          role="group"
+          aria-label="Theme"
           style={{
-            position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 'var(--z-popover)' as never,
+            ...placedCardStyle(pos),
+            zIndex: 'var(--z-popover)' as never,
             background: 'var(--surface)', border: '1px solid var(--line)',
             borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-lg)',
             padding: 6, width: 250,
@@ -110,9 +155,9 @@ export function ThemeSwitcher() {
           {themes.map((t) => (
             <button
               key={t.id}
-              role="menuitemradio"
-              aria-checked={t.id === theme}
-              onClick={() => { setTheme(t.id); setOpen(false) }}
+              type="button"
+              aria-pressed={t.id === theme}
+              onClick={() => { setTheme(t.id); setOpen(false); triggerRef.current?.focus() }}
               style={{
                 display: 'block', width: '100%', textAlign: 'left',
                 padding: '8px 10px', borderRadius: 'var(--radius-sm)',
@@ -128,6 +173,15 @@ export function ThemeSwitcher() {
           ))}
         </div>
       )}
+
+      <button
+        type="button"
+        className="pill"
+        onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+        aria-label={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {mode === 'dark' ? '◑' : '◐'}
+      </button>
     </div>
   )
 }

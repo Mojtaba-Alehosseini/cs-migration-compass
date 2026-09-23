@@ -43,8 +43,9 @@ export interface Question {
   q: string
   sub: string
   kind: QuestionKind
-  axisL: string
-  axisR: string
+  /** The direction, in words, over the field. The two ends that used to
+   *  flank it (axisL/axisR) went in package 46: the ticks are the scale, and
+   *  carry the units and pins those ends did. */
   dir: string
   /** Plain-words name of the x metric, for the scatter axis title. */
   xLabel: string
@@ -85,8 +86,6 @@ export const QUESTIONS: Question[] = [
     q: 'Who pays the most?',
     sub: 'gross mid-level developer salary · USD per year · two-tier where noted',
     kind: 'swarm',
-    axisL: '$30k',
-    axisR: '$280k',
     dir: 'more →',
     xLabel: 'gross salary',
     value: (c) => c.salary_usd_year.mid,
@@ -117,8 +116,6 @@ export const QUESTIONS: Question[] = [
     q: 'Where can you actually buy a home?',
     sub: 'years to a 90 m² place — mid-level salary, single, your assumptions editable',
     kind: 'swarm',
-    axisL: '2 yrs',
-    axisR: '≈never',
     dir: '← faster',
     xLabel: 'years to a home',
     cap: 130,
@@ -134,7 +131,13 @@ export const QUESTIONS: Question[] = [
      * 130-year cap, so the honest answer was reachable all along. */
     value: (c, _k, b) => (isNeverAffordable(c, 'mid', b) ? 130 : yearsToHome(c, 'mid', b)),
     scale: xYears,
-    ticks: [[2, '2'], [5, '5'], [10, '10'], [20, '20'], [30, '30'], [130, '30+']],
+    /* The last tick is the pin every city at 130+ years sits on, and those
+     * cities read "≈never" everywhere else — in their own labels, in the
+     * table, in the footnote. It said "30+", which is where the compressed
+     * stretch BEGINS (xYears puts 30 at 74%), not where these cities are
+     * (95%); a 100-year city sat between "30" and "30+". The unit rides on the
+     * first tick, as it did on the ruler's left end. Package 46. */
+    ticks: [[2, '2 yrs'], [5, '5'], [10, '10'], [20, '20'], [30, '30'], [130, '≈never']],
     // Package 16 — a SECOND copy of the years-to-home formatter, which kept
     // its own `toFixed(1)` after data/format.ts's was corrected. Same defect,
     // different file: docs/DATA-FITNESS.md §2 rules one decimal unsupportable
@@ -159,13 +162,14 @@ export const QUESTIONS: Question[] = [
     q: "What's left at the end of a year?",
     sub: 'take-home pay minus rent minus living costs · computed, formula shown',
     kind: 'swarm',
-    axisL: '$0',
-    axisR: '$150k',
     dir: 'keep more →',
     xLabel: 'money kept per year',
     value: (c, _k, b) => savingsPerYear(c, 'mid', b),
     scale: (v) => clamp(4 + (Math.max(v, 0) / 150000) * 91),
-    ticks: [[25000, '$25k'], [50000, '$50k'], [75000, '$75k'], [100000, '$100k'], [125000, '$125k']],
+    // $0 is a tick because it is a pin: `Math.max(v, 0)` above puts every
+    // city that keeps nothing there. The ruler's left end said so; this does
+    // now, at the position itself. Package 46.
+    ticks: [[0, '$0'], [25000, '$25k'], [50000, '$50k'], [75000, '$75k'], [100000, '$100k'], [125000, '$125k']],
     fmt: (v) => (v == null ? 'no data' : moneyShort(v)),
     secondAxes: [{
       id: 'happiness',
@@ -186,8 +190,6 @@ export const QUESTIONS: Question[] = [
     q: 'Time to PR & citizenship?',
     sub: 'typical years, country level — real cases vary; exact ranges on each country page',
     kind: 'country',
-    axisL: 'arrival',
-    axisR: '20 yrs',
     dir: '← sooner',
     xLabel: 'years to residency',
     value: (_c, k) => k?.pr_years_typical ?? null,
@@ -202,14 +204,12 @@ export const QUESTIONS: Question[] = [
     q: 'Where does the sun shine?',
     sub: 'sunshine hours per year · climate normals',
     kind: 'swarm',
-    axisL: '1,400 h',
-    axisR: '3,900 h',
     dir: 'sunnier →',
     xLabel: 'sunshine hours a year',
     value: (c) => c.climate.sunshine_hours_yr,
     // Widened from the mockup: the full 73-city range is 1,400-3,872.
     scale: (v) => clamp(4 + ((v - 1400) / 2500) * 91),
-    ticks: [[1800, '1,800'], [2400, '2,400'], [3000, '3,000'], [3600, '3,600']],
+    ticks: [[1800, '1,800 h'], [2400, '2,400'], [3000, '3,000'], [3600, '3,600']],
     fmt: (v) => (v == null ? 'no data' : `${num(v)} h`),
     // The only question with two approved partners: the seasonal switch is a
     // choice between them, so it lives in the preset chip rather than in a

@@ -143,10 +143,9 @@ export function App() {
               </NavLink>
             ))}
           </nav>
-
-          <div style={{ marginLeft: 'auto' }}>
-            <ThemeSwitcher />
-          </div>
+          {/* The theme and mode controls are in the footer — see ThemeSwitcher
+            * for the measurement. Without them the header is one row from
+            * 360px up, in every theme. */}
         </div>
       </header>
 
@@ -173,6 +172,9 @@ export function App() {
           >
             Open source ↗
           </a>
+          {/* Last in the source and last on screen, at every width: nothing is
+            * reordered, so the focus order is the reading order. */}
+          <ThemeSwitcher />
         </div>
       </footer>
     </ToastHost>

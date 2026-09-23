@@ -1,4 +1,6 @@
-/* Where a source card (<Figure>) or a method card (<Derived>) sits once open.
+/* Where a source card (<Figure>) or a method card (<Derived>) sits once open
+ * — and the theme list, which opens from the footer (Tier 4 of the same
+ * package) where it usually has to go up rather than down.
  *
  * Package 46, Tier 1. Both cards were `position: absolute` under their
  * trigger, inside the trigger's own wrapper, so ANY ancestor that hides

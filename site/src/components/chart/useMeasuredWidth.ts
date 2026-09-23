@@ -10,20 +10,35 @@
  * SwarmField measured before this file existed, so moving it here moves no
  * dots. It is an integer, which on a 720-unit viewBox is a scale error under
  * 0.2% — four hundredths of a pixel on a 12px floor.
+ *
+ * A CALLBACK ref, not a ref object read in an effect (package 46). The effect
+ * ran once, on mount, and SwarmField does not always render the element on
+ * mount: land on Home at ?ask=stay and it draws country bars instead, so the
+ * effect found no element and never looked again. Switching to a swarm
+ * question then drew the field at the fallback width forever — 1000px on a
+ * 390px phone, which is how that question pushed the page off the screen.
+ * A callback ref is called whenever the element appears or goes, so the
+ * observer follows the element rather than the first render.
  */
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 export function useMeasuredWidth<T extends HTMLElement>(fallback: number) {
-  const ref = useRef<T>(null)
   const [width, setWidth] = useState(fallback)
+  const observer = useRef<ResizeObserver | null>(null)
 
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el || typeof ResizeObserver === 'undefined') return
+  const ref = useCallback((el: T | null) => {
+    observer.current?.disconnect()
+    observer.current = null
+    if (!el) return
+    // Read once whether or not ResizeObserver exists: SwarmField's fallback
+    // is 0 (it draws nothing until measured), so a browser without one must
+    // still get a width rather than an empty field. Called during commit,
+    // like a layout effect, so the corrected render lands before paint.
+    setWidth(el.clientWidth || fallback)
+    if (typeof ResizeObserver === 'undefined') return
     const ro = new ResizeObserver(() => setWidth(el.clientWidth || fallback))
     ro.observe(el)
-    setWidth(el.clientWidth || fallback)
-    return () => ro.disconnect()
+    observer.current = ro
   }, [fallback])
 
   return [ref, width] as const
