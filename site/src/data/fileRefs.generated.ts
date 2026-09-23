@@ -195,6 +195,7 @@ export const FILE_REF: Record<string, string> = {
   'test_citation_derivation.py': 'scripts/tests/test_citation_derivation.py',
   'types.ts': 'site/src/data/types.ts',
   'urlState.ts': 'site/src/data/urlState.ts',
+  'useCardPlacement.ts': 'site/src/components/useCardPlacement.ts',
   'validate_data.py': 'scripts/validate_data.py',
   'wage_distribution.json': 'data/processed/wage_distribution.json',
   'worker/src/vaultKey.ts': 'worker/src/vaultKey.ts',
