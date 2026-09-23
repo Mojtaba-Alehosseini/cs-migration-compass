@@ -4906,20 +4906,25 @@ yearly, and Germany's monthly table is annualised ×12 at extraction, disclosed 
 So a reader meets `CA$56/hour`, `DKK 394/hour`, `€36,000/year`, `€5,100/month`, `NOK 70,994/month` and
 `$135,980/year` — the work order's list, every value still there — and cannot compare two by eye. The display-currency control already converts
 currency, as a marked estimate. Converting the period is a different kind of step: a monthly figure
-×12 is arithmetic (and Germany's row already takes it, disclosed), but an hourly figure needs an
-hours-per-year assumption that the source did not publish — which makes the result a figure this site
-computed.
+×12 is arithmetic (and Germany's row already takes it, disclosed), but an hourly figure needs hours the
+wage table did not publish — which makes the result a figure this site computed. The pipeline already
+has both halves: `scripts/src_hours_worked.py` sources usual weekly hours (Eurostat lfsa_ewhun2, ICT
+sector, for Denmark, the Netherlands and Ireland; Statistics Canada's LFS for Canada), and
+`normalise.annualise()` converts with them — ×52 weeks — and refuses rather than assume the US 2,080
+hours. It feeds the cross-country comparison, not this column.
 
 **Options:**
-  - **(a) Show every estimate per year, derived where it has to be.** Monthly ×12 (the Germany
-    precedent, disclosed the same way); hourly × a stated, sourced annual-hours figure per country,
-    rendered as `<Derived>` with the assumption in its card and the published figure beside it. The
-    cost is real: the assumption moves the number — CA$56.49/hour is CA$110,156 at 1,950 hours and
-    CA$117,499 at 2,080, a 6.7% swing that comes from us, not from Statistics Canada — and every hourly
-    row's headline becomes our arithmetic rather than the source's number. It also needs a per-country
-    hours source (Denmark's own STAND concept implies 160.3 hours a month, which is a start), and a
-    rule for 13th/14th-month pay where a monthly figure may or may not include it. The position (the
-    percentile) is unaffected either way; only the displayed estimate changes.
+  - **(a) Show every estimate per year, with the pipeline's own conversion.** Monthly ×12 (the
+    Germany precedent, disclosed the same way); hourly through `annualise()`, rendered as `<Derived>`
+    with the hours, their source and the published hourly figure in its card. CA$56.49/hour would read
+    about CA$116,912 a year (39.8 usual weekly hours in 2024 × 52). The costs: on six of today's nine
+    rows the column's headline becomes this site's arithmetic rather than the statistics office's
+    number; the hours are a national full-time average for the sector, not this occupation's own (only
+    Ireland's source publishes matched hours for the same cell); a monthly figure may or may not
+    include a 13th or 14th month, which ×12 cannot know; and a common period is not a common concept —
+    the rows already say "incl. pension" (Denmark) and "excl. bonus" (Finland), and two annual figures
+    side by side invite exactly the comparison those words warn against. The position (the percentile)
+    is unaffected either way; only the displayed estimate changes.
   - **(b) Keep each published period, and make the period impossible to miss.** Group the rows by
     period, or give the period its own label weight rather than a suffix, and offer "≈ per year" only
     inside the row's card, marked as ours, with its assumption. The cost: rows are still not
