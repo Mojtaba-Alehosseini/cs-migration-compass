@@ -10,6 +10,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { CONFIDENCE_LABEL, CONFIDENCE_MARK, NO_DATA, asOfLabel, sourceName } from '../data/format'
 import type { Confidence } from '../data/types'
 import { linkifyFiles } from '../lib/fileLink'
+import { placedCardStyle, useCardPlacement } from './useCardPlacement'
 
 export interface SourceInfo {
   /** Human name; derived from the URL when omitted. */
@@ -46,6 +47,8 @@ interface Props {
 export function Figure({ children, source, missing, missingReason, className }: Props) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLSpanElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const cardRef = useRef<HTMLSpanElement>(null)
   const id = useId()
 
   // Finding F16, adversarial review: a fixed-width, left-anchored-to-trigger
@@ -64,6 +67,11 @@ export function Figure({ children, source, missing, missingReason, className }: 
     mq.addEventListener('change', update)
     return () => mq.removeEventListener('change', update)
   }, [])
+
+  // Package 46: anchored cards are placed with `position: fixed` so no
+  // clipping ancestor can cut them — see useCardPlacement.ts. The narrow
+  // path above is already fixed (centred on the viewport) and keeps it.
+  const pos = useCardPlacement(open, triggerRef, cardRef, !narrow)
 
   useEffect(() => {
     if (!open) return
@@ -99,6 +107,7 @@ export function Figure({ children, source, missing, missingReason, className }: 
   return (
     <span ref={ref} className={className} style={{ position: 'relative', display: 'inline-block' }}>
       <button
+        ref={triggerRef}
         type="button"
         aria-expanded={open}
         aria-controls={id}
@@ -117,6 +126,7 @@ export function Figure({ children, source, missing, missingReason, className }: 
 
       {open && (
         <span
+          ref={cardRef}
           id={id}
           role="dialog"
           aria-label={`Source: ${label}`}
@@ -128,12 +138,20 @@ export function Figure({ children, source, missing, missingReason, className }: 
             display: 'block', boxShadow: 'var(--shadow-lg)',
             fontFamily: 'var(--font-ui)', fontSize: 'var(--text-2xs)', fontWeight: 400,
             lineHeight: 'var(--leading-normal)', letterSpacing: 0, whiteSpace: 'normal',
+            // The card inherits from whatever cell its trigger sits in; /work's
+            // estimate cell is right-aligned, which no one saw while the card
+            // was clipped to 0px there. Reset it with the rest (package 46).
+            textAlign: 'left', fontStyle: 'normal',
           } : {
-            position: 'absolute', left: 0, top: 'calc(100% + 7px)', zIndex: 'var(--z-popover)' as never,
+            ...placedCardStyle(pos), zIndex: 'var(--z-popover)' as never,
             background: 'var(--ink-1)', color: 'var(--paper)', borderRadius: 'var(--radius-md)',
             padding: '10px 13px', width: source.steps ? 300 : 250, display: 'block', boxShadow: 'var(--shadow-lg)',
             fontFamily: 'var(--font-ui)', fontSize: 'var(--text-2xs)', fontWeight: 400,
             lineHeight: 'var(--leading-normal)', letterSpacing: 0, whiteSpace: 'normal',
+            // The card inherits from whatever cell its trigger sits in; /work's
+            // estimate cell is right-aligned, which no one saw while the card
+            // was clipped to 0px there. Reset it with the rest (package 46).
+            textAlign: 'left', fontStyle: 'normal',
           }}
         >
           <b style={{ display: 'block', marginBottom: 3 }}>{label}</b>

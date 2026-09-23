@@ -60,36 +60,36 @@ export function ProfileLine({ profile, occupations, countryName, onProfileChange
       </button>
       <div
         id="profline-body"
-        // Accessibility review, Tier 5: max-height:0 hides this panel
-        // visually (via the outer wrapper's own overflow:clip) but does
-        // NOT remove its inputs from the tab order — confirmed live, a
-        // keyboard user tabbing past the collapsed header landed straight
-        // inside the occupation/years/country fields with no visible
-        // focus anywhere on screen. `inert` removes the whole collapsed
-        // subtree from focus and interaction without touching the CSS
-        // transition (unlike display:none, which would break it).
+        className="profline-body"
+        data-open={open}
+        // Accessibility review, Tier 5: a collapsed panel hides its content
+        // visually but does NOT remove its inputs from the tab order —
+        // confirmed live, a keyboard user tabbing past the collapsed header
+        // landed straight inside the occupation/years/country fields with
+        // no visible focus anywhere on screen. `inert` removes the whole
+        // collapsed subtree from focus and interaction without touching the
+        // CSS transition (unlike display:none, which would break it).
+        //
+        // The open state is a grid track, 0fr -> 1fr, not a max-height:
+        // package 46 found `max-height: 600px` cutting the bottom 120px off
+        // this panel at 390, and the storage consent lives in here. The
+        // rules, and why 1fr cannot clip, are in base.css (.profline-body).
+        // The transition stays on --dur-fast, Tier 4's <250ms ceiling.
         {...(open ? {} : { inert: '' })}
-        style={{
-          maxHeight: open ? 600 : 0, opacity: open ? 1 : 0,
-          // Tier 4's own ceiling for this transition is <250ms; --dur-base
-          // (260ms) narrowly misses it, --dur-fast (160ms) does not — both
-          // properties on the same token rather than inventing a one-off
-          // value between them (Tier 4: reduced motion stays structural,
-          // via duration tokens, not a second motion contract).
-          transition: 'max-height var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out)',
-        }}
       >
-        <div style={{ padding: '0 16px 16px', borderTop: open ? '1px solid var(--line)' : undefined }}>
-          <div style={{ marginTop: 12 }}>
-            <CvUpload
-              occupations={occupations}
-              active={open}
-              /* keepOpen: the reader consented to storage, and everything the
-                 save has to say renders inside this panel. #56, Tier 4. */
-              onApply={(patch, opts) => { onProfileChange(patch); if (!opts?.keepOpen) setOpen(false) }}
-            />
+        <div className="profline-body-inner">
+          <div style={{ padding: '0 16px 16px', borderTop: open ? '1px solid var(--line)' : undefined }}>
+            <div style={{ marginTop: 12 }}>
+              <CvUpload
+                occupations={occupations}
+                active={open}
+                /* keepOpen: the reader consented to storage, and everything the
+                   save has to say renders inside this panel. #56, Tier 4. */
+                onApply={(patch, opts) => { onProfileChange(patch); if (!opts?.keepOpen) setOpen(false) }}
+              />
+            </div>
+            <ProfileForm profile={profile} occupations={occupations} onChange={onProfileChange} />
           </div>
-          <ProfileForm profile={profile} occupations={occupations} onChange={onProfileChange} />
         </div>
       </div>
     </div>

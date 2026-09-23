@@ -217,6 +217,26 @@ a { color: var(--ink-2); }
 .chip-note { background: var(--note-wash); color: var(--note); }
 .chip-quiet { background: var(--surface-sunk); color: var(--ink-2); }
 
+/* The CV panel's open state (package 46, Tier 1).
+
+   It was `max-height: 600px` — a pixel guess at how tall the panel would get.
+   At 390 the form alone wraps to 720px, so the last 120px (the note that the
+   form has no submit button) was cut off with no scroll and no sign anything
+   was missing; after a CV is read, the review step, the result and package
+   45's storage consent all render in the same box. A grid track animating
+   from 0fr to 1fr has no number in it to be wrong: 1fr IS the content.
+
+   The inner wrapper needs min-height:0 to be allowed to collapse to nothing,
+   and overflow:hidden so the collapsing content does not spill while it does.
+   At 1fr the wrapper is exactly as tall as its content, so it clips nothing.
+   Reduced motion needs no rule of its own: --dur-fast is 0ms under it. */
+.profline-body {
+  display: grid; grid-template-rows: 0fr; opacity: 0;
+  transition: grid-template-rows var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+.profline-body[data-open="true"] { grid-template-rows: 1fr; opacity: 1; }
+.profline-body-inner { min-height: 0; overflow: hidden; }
+
 /* ---------- /work's own country rows (package 24) ----------
    Row anatomy: flag-dot . distribution strip with marker . estimate .
    openings count. Mirrors design-mockup-work.html's own layout exactly —
@@ -1013,8 +1033,22 @@ table.cmp {
   .themesbar { background: var(--paper); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
-/* panels arrive in sequence when a theme opens */
-.tsec > .egrid > * { animation: rise var(--dur-base) var(--ease-out) both; }
+/* panels arrive in sequence when a theme opens.
+
+   `backwards`, not `both` (package 46, Tier 1). `both` includes `forwards`,
+   which HOLDS the last keyframe after the animation ends — and Chrome holds
+   `transform: none` as an identity matrix, not as none. Every Explore panel
+   kept a transform for ever, and a transform makes an element the containing
+   block for `position: fixed` descendants and a stacking context. So a
+   <Derived> method card opened inside a panel was placed against the panel
+   instead of the viewport and painted UNDER the panels after it: on
+   /explore/money at 1440 not one point of the card was on screen. The
+   disclosure check found it by hit-testing, not by reading this rule.
+
+   `backwards` still applies the first keyframe during the stagger delay, so
+   no panel flashes in before its turn; it just lets go afterwards, because
+   the last keyframe was only ever the panel's own style. */
+.tsec > .egrid > * { animation: rise var(--dur-base) var(--ease-out) backwards; }
 .tsec > .egrid > *:nth-child(2) { animation-delay: 50ms; }
 .tsec > .egrid > *:nth-child(3) { animation-delay: 100ms; }
 @keyframes rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
@@ -1189,7 +1223,12 @@ table.cmp {
   display: inline-block; height: 5px; border-radius: var(--radius-xs);
   flex: none; opacity: 0.5; background: var(--hatch);
 }
-.vrow .ribbon-grow { transform-origin: left center; animation: grow var(--dur-slow) var(--ease-out) both; }
+/* `backwards` for the same reason as `.tsec > .egrid > *` above: the last
+   keyframe (scaleX(1)) is the ribbon's own style, so holding it does nothing
+   but leave a transform behind. Nothing positioned lives in a ribbon today,
+   which is why this one never trapped a card — package 46 removed the trap
+   rather than wait for someone to put a <Figure> in it. */
+.vrow .ribbon-grow { transform-origin: left center; animation: grow var(--dur-slow) var(--ease-out) backwards; }
 .vrow:nth-child(2) .ribbon-grow { animation-delay: 40ms; }
 .vrow:nth-child(3) .ribbon-grow { animation-delay: 80ms; }
 .vrow:nth-child(4) .ribbon-grow { animation-delay: 120ms; }

@@ -136,6 +136,25 @@ jobs:
             CHROME_PATH=google-chrome-stable node ../scripts/tests/test_figure_inventory.mjs
             TEST_EXIT=$?
           fi
+          # Package 46, Tier 1 — D1: no open disclosure hides part of its own
+          # content. Opens every <details> and in-place disclosure on every
+          # route family at 390/1024/1440 and hit-tests what it opened. The
+          # CV panel's `max-height: 600px` cut 120px off at 390, and every
+          # source card in /work's estimate column opened to 0px on desktop;
+          # neither was visible to any check that reasoned about CSS.
+          if [ $TEST_EXIT -eq 0 ]; then
+            CHROME_PATH=google-chrome-stable node ../scripts/tests/test_disclosures.mjs
+            TEST_EXIT=$?
+          fi
+          # F1: the CV flow, review -> apply -> consent -> save, walked with
+          # real mouse clicks at three widths. The model and vault calls are
+          # stubbed (see the file's header); the PDF, extraction, stripping
+          # and every layout are real. On the code before package 46 the
+          # consent was unreachable at 390.
+          if [ $TEST_EXIT -eq 0 ]; then
+            CHROME_PATH=google-chrome-stable node ../scripts/tests/test_cv_flow.mjs
+            TEST_EXIT=$?
+          fi
           kill $PREVIEW_PID 2>/dev/null || true
           exit $TEST_EXIT
 

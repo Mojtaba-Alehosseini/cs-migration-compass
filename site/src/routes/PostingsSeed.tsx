@@ -261,7 +261,12 @@ export function PostingsSeed() {
               a name the source itself published. Greenhouse, Teamtailor and USAJOBS all publish a real
               display name directly; those rows are the company's own name, unmodified.
             </p>
-            <div style={{ maxHeight: 480, overflowY: 'auto', marginTop: 10 }}>
+            {/* Package 46, Tier 1: the one max-height scroller on the site a
+              * keyboard could not reach. A box that scrolls has to take focus
+              * or arrow keys cannot move it; /work's two already do, and this
+              * now uses their exact idiom. */}
+            <div style={{ maxHeight: 480, overflowY: 'auto', marginTop: 10 }} tabIndex={0} role="region"
+              aria-label="Every ATS company in this run, scrollable">
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ textAlign: 'left', fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', position: 'sticky', top: 0, background: 'var(--surface)' }}>

@@ -19,6 +19,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import type { ChainStep } from '../data/explore'
 import { linkifyFiles } from '../lib/fileLink'
+import { placedCardStyle, useCardPlacement } from './useCardPlacement'
 
 const fmtResult = (v: number, currency: string): string => {
   try {
@@ -72,6 +73,10 @@ export function Derived({ children, chain, native, concept, result, payCycleNote
   const cardRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const id = useId()
+  // Package 46: placed with `position: fixed` so no clipping ancestor can cut
+  // the card, and kept inside the viewport — at 390 a 300px card anchored to
+  // a trigger past x=82 used to run off the right edge. useCardPlacement.ts.
+  const pos = useCardPlacement(open, triggerRef, cardRef)
 
   useEffect(() => {
     if (!open) return
@@ -125,11 +130,15 @@ export function Derived({ children, chain, native, concept, result, payCycleNote
           role="dialog"
           aria-label={concept ? `Method: ${concept.name}` : 'Method'}
           style={{
-            position: 'absolute', left: 0, top: 'calc(100% + 7px)', zIndex: 'var(--z-popover)' as never,
+            ...placedCardStyle(pos), zIndex: 'var(--z-popover)' as never,
             background: 'var(--ink-1)', color: 'var(--paper)', borderRadius: 'var(--radius-md)',
             padding: '11px 14px', width: 300, display: 'block', boxShadow: 'var(--shadow-lg)',
             fontFamily: 'var(--font-ui)', fontSize: 'var(--text-2xs)', fontWeight: 400,
             lineHeight: 'var(--leading-normal)', letterSpacing: 0, whiteSpace: 'normal',
+            // The card inherits from whatever cell its trigger sits in; /work's
+            // estimate cell is right-aligned, which no one saw while the card
+            // was clipped to 0px there. Reset it with the rest (package 46).
+            textAlign: 'left', fontStyle: 'normal',
           }}
         >
           {concept && (
