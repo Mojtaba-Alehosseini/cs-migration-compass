@@ -1054,7 +1054,21 @@ table.cmp {
   backdrop-filter: blur(14px) saturate(160%);
   border-bottom: 1px solid var(--line);
 }
-.themesbar .rail { display: flex; gap: 7px; flex-wrap: wrap; padding: 9px 0; }
+/* One row at every width (package 46, Tier 5). On a phone the seven chips
+   wrapped to three rows, and this bar is sticky: 131px pinned under the
+   header at 360-414, a sixth of the screen. They scroll sideways inside the
+   bar instead, the way a table scrolls inside its own box, so the page
+   itself never does; the chip cut off at the edge is what says there is
+   more, and the current theme is scrolled into view (Explore.tsx). Where
+   they fit — 768 and up — nothing moves or scrolls. */
+.themesbar .rail {
+  display: flex; gap: 7px; flex-wrap: nowrap; padding: 9px 0;
+  overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+}
+.themesbar .rail::-webkit-scrollbar { display: none; }
+/* A mouse in a narrow window cannot swipe, so it keeps a thin bar to drag. */
+@media (pointer: fine) { .themesbar .rail { scrollbar-width: thin; } }
+.themesbar .rail > .tchip { flex: none; }
 .tchip {
   border: 1px solid var(--line); background: var(--surface);
   border-radius: var(--radius-xl); padding: 6px 13px;

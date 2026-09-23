@@ -447,8 +447,10 @@ check(opened > 0 && pointsTested > 0,
  * and hit-tested at every width. "Something on /work opened" is the witness
  * that passed on broken code. */
 const workKeys = [...perRoute.keys()].filter((k) => k.startsWith('work@'))
-check(ONLY.size > 0 && !ONLY.has('work') ? true
-  : workKeys.length === WIDTHS.length && workKeys.every((k) => perRoute.get(k).inline > 0 && perRoute.get(k).points > 0),
+/* Said as SKIP, not PASS, when D1_ONLY leaves /work out: it used to print
+ * "PASS … ()" — a witness reported as seen that nobody looked for. */
+if (ONLY.size > 0 && !ONLY.has('work')) say('SKIP  D1: the /work witness — /work is not in D1_ONLY')
+else check(workKeys.length === WIDTHS.length && workKeys.every((k) => perRoute.get(k).inline > 0 && perRoute.get(k).points > 0),
   `D1: on /work, at every width, an in-place disclosure was opened and hit-tested `
   + `(${workKeys.map((k) => `${k} ${perRoute.get(k).inline}`).join(', ')})`)
 for (const f of findings) {

@@ -4885,3 +4885,79 @@ premise — Home.tsx's own first line is that the visualisation is the product.
 
 Not resolved in package 46: (a) costs a much taller chart on the page most phones land on, (b) costs
 legibility, and choosing is a design decision about Home, the page the owner rates highest.
+
+## 88. `/work`'s estimate column mixes pay periods row to row — annualising is a derived figure, not a format
+
+Package 46, Tier 5.1 — escalated as the work order required, not built. Each country's row shows its
+estimate in the period its statistics office publishes:
+
+Re-measured at the default profile, at 1440: nine rows show an estimate, in three periods, three of
+each.
+
+| period | rows showing an estimate today |
+| --- | --- |
+| per hour | Canada `CA$56` (NOC 21231) and `CA$48` (21232), Denmark `DKK 394` |
+| per month | Finland `€5,100`, Norway `NOK 70,994`, Sweden `SEK 45,399` |
+| per year | Spain `€36,000`, UK `£55,587`, US `$135,980` |
+
+The other seven show a refusal or a no-spread mark instead of an estimate, and their published periods
+are just as mixed: Ireland and the Netherlands publish hourly, Qatar and the UAE monthly, Australia
+yearly, and Germany's monthly table is annualised ×12 at extraction, disclosed in `annualised_note`.
+So a reader meets `CA$56/hour`, `DKK 394/hour`, `€36,000/year`, `€5,100/month`, `NOK 70,994/month` and
+`$135,980/year` — the work order's list, every value still there — and cannot compare two by eye. The display-currency control already converts
+currency, as a marked estimate. Converting the period is a different kind of step: a monthly figure
+×12 is arithmetic (and Germany's row already takes it, disclosed), but an hourly figure needs an
+hours-per-year assumption that the source did not publish — which makes the result a figure this site
+computed.
+
+**Options:**
+  - **(a) Show every estimate per year, derived where it has to be.** Monthly ×12 (the Germany
+    precedent, disclosed the same way); hourly × a stated, sourced annual-hours figure per country,
+    rendered as `<Derived>` with the assumption in its card and the published figure beside it. The
+    cost is real: the assumption moves the number — CA$56.49/hour is CA$110,156 at 1,950 hours and
+    CA$117,499 at 2,080, a 6.7% swing that comes from us, not from Statistics Canada — and every hourly
+    row's headline becomes our arithmetic rather than the source's number. It also needs a per-country
+    hours source (Denmark's own STAND concept implies 160.3 hours a month, which is a start), and a
+    rule for 13th/14th-month pay where a monthly figure may or may not include it. The position (the
+    percentile) is unaffected either way; only the displayed estimate changes.
+  - **(b) Keep each published period, and make the period impossible to miss.** Group the rows by
+    period, or give the period its own label weight rather than a suffix, and offer "≈ per year" only
+    inside the row's card, marked as ours, with its assumption. The cost: rows are still not
+    comparable by eye across groups — the reader is told clearly that they cannot be, rather than
+    helped to — and grouping changes the row order a returning reader knows.
+
+Not resolved in package 46: (a) puts a number the source never published in the column's headline
+position; (b) keeps the column honest and leaves it hard to read.
+
+## 89. Explore's hero numbers — three facts per theme that do not add up to an answer
+
+Package 46, Tier 5.2 — proposed, not built. Each theme opens with three numbers computed from its own
+data (the Explore rebuild, `ac20af3`: "the same figures a reader can recompute from data/processed"). Money's
+are income per person in the Netherlands, German income growth since 1990, and the US developer
+median: three countries, three measures, and they read as trivia. Measured across all seven themes:
+
+| theme | the three today | one question? |
+| --- | --- | --- |
+| Money | NL income per person 2025 $73,684 · DE ×2.7 since 1990 (nominal US$) · US mid-level dev median $110,000 | no |
+| Visas & staying | fastest road to PR · arrival to a German passport · countries with no citizenship path | **yes** — how long to settle |
+| Finding work | DE IT share of jobs · EU-27 average · SF Bay postings index | two of three |
+| Homes & rent | Canada real prices ×since 1990 · an average London sale £ today · Detroit ×since 1990 | no — three measures |
+| People like you | Canada's integration-policy score · DE population 2100 · AU population 2100 | two of three |
+| Daily life | Finland's years at #1 · the US slide since 2011 · US press-freedom score | two of three |
+| Weather | hottest month · coldest month · cities with monthly normals | **yes** |
+
+**Options** (worked for Money with the site's own data; the other themes follow the same rule):
+  - **(a) One measure, the lead chart's places.** The three numbers are the first chart's default
+    lines, today: income per person 2025 — **NL $73,684 · DE $60,496 · CA $55,698** (World Bank). The
+    hero becomes the chart's answer in numbers, and the chart below shows how they got there. The
+    cost: it drops "what you'd earn" from Money's headline entirely, and it drops the deliberately
+    surprising facts elsewhere (Detroit the affordable outlier, a London sale from £4.7k in 1968).
+  - **(b) One place, the theme's own question.** Money's one-liner is "what you'd earn, what
+    economies are doing, and where one institution honestly thinks they're going" — so, for the lead
+    chart's first place: **a German mid-level developer, $60,147** (Stack Overflow 2024, n=462) ·
+    **German income per person ×2.7 since 1990** (nominal US$) · **the OECD's +0.7% for 2026** (real
+    GDP growth). Reads as one answer. The cost: which place leads is a choice the page then makes for
+    every reader, and a theme whose one-liner is not three clauses needs its own rule.
+
+Not resolved in package 46: both change what the first thing on each theme says, and the current
+sets were a deliberate design choice in the Explore rebuild; Visas and Weather already pass either rule.

@@ -1,4 +1,5 @@
-/* P1–P2 — the site header is one row, and Home is never wider than a phone.
+/* P1–P3 — the site header is one row, Home is never wider than a phone, and
+ * Explore's theme chips are one row with the current one in view.
  *
  * Package 46, Tier 4. Both were invisible at the widths anyone was looking
  * at, and both are properties a later change can quietly break again, so
@@ -24,6 +25,11 @@
  *     Widths are read from the browser (innerWidth, scrollWidth) in MOBILE
  *     emulation, where an overflowing page widens the layout viewport the
  *     way a phone's does — the desktop preset clips instead and hides it.
+ *
+ * P3  Explore's seven theme chips are ONE row at every width (package 46,
+ *     Tier 5): on a phone they wrapped to three rows of a sticky bar. They
+ *     scroll sideways inside the bar now, and the current one — Weather is
+ *     the seventh — must be on screen when its theme is open.
  *
  *   node scripts/tests/test_phone_fit.mjs        (preview on :4173; BASE= to override)
  */
@@ -59,12 +65,22 @@ const ORDER = `((root) => {
     return sameRow ? ra.left - rb.left : ra.top - rb.top })
   return { n: f.length, match: f.every((e, i) => e === byVisual[i]), dom: f.map(name).join(' > '), visual: byVisual.map(name).join(' > ') }
 })`
-const settled = `(() => { requestAnimationFrame(() => {}); return document.getAnimations().length === 0 })()`
+/* Nothing RUNNING. Not "no animations": an animation filled `forwards` or
+ * `both` stays in getAnimations() after it ends — the code before package 46
+ * held Explore's panel entrance that way for good — and a condition that
+ * counted it would time out there instead of measuring anything. The rAF
+ * nudges headless Chrome to produce the frame that finishes a 0.01ms
+ * reduced-motion transition, which it can otherwise sit on for a second. */
+const settled = `(() => { requestAnimationFrame(() => {}); return document.getAnimations().every((a) => a.playState !== 'running' && !a.pending) })()`
+/* PF_ONLY=P3 runs one part. */
+const ONLY = new Set((process.env.PF_ONLY ?? '').split(',').map((s) => s.trim()).filter(Boolean))
+const runs = (p) => ONLY.size === 0 || ONLY.has(p)
 
 const { port, close } = await launch({ port: 9471 })
 try {
   const page = await openPage(port)
 
+  if (runs('P1')) {
   say('=== P1: the header is one row, and focus follows what the eye reads ===')
   for (const theme of ['compass', 'editorial', 'terminal', 'warm']) {
     await page.viewport(1024, 800, false)
@@ -91,7 +107,9 @@ try {
     }
   }
   await page.eval(`localStorage.setItem('compass:theme', 'compass'); 1`)
+  }
 
+  if (runs('P2')) {
   say('')
   say('=== P2: Home is never wider than the screen ===')
   /* Every 20ms from the first script on, the widest the page has been. */
@@ -140,6 +158,34 @@ try {
     check(s.dots > 0 && s.beyond === 0 && s.sw <= w,
       `P2 @${w}: landing on "Time to PR" then switching draws ${s.dots} dots, ${s.beyond} past the field's edge, page ${s.sw}px`)
   }
+  }
+
+  if (runs('P3')) {
+  say('')
+  say("=== P3: Explore's theme chips are one row, and the current one is in view ===")
+  /* Tier 5. The seven chips wrapped to three rows of a STICKY bar on a phone
+   * — 131px pinned under the header. They scroll sideways in one row now; the
+   * seventh chip, Weather, has to be brought into view when it is current. */
+  await page.emulateReducedMotion(true)
+  for (const w of [360, 390, 414, 768, 1440]) {
+    for (const theme of ['money', 'climate']) {
+      await page.viewport(w, 800, w < 600)
+      await page.goto('about:blank')
+      await page.goto(`${BASE}#/explore/${theme}`)
+      await page.waitForReady({ quietMs: 300, timeoutMs: 60000, label: `explore/${theme}@${w}` })
+      await page.waitFor(settled, { timeoutMs: 10000, label: 'settled' })
+      const m = JSON.parse(await page.eval(`(() => {
+        const rail = document.querySelector('.themesbar .rail'), chips = [...rail.querySelectorAll('.tchip')]
+        const act = rail.querySelector('[aria-current="page"]'), a = act.getBoundingClientRect(), rr = rail.getBoundingClientRect()
+        const hit = document.elementFromPoint(a.left + a.width / 2, a.top + a.height / 2)
+        return JSON.stringify({ rows: ${ROWS}(chips), inView: a.left >= rr.left - 1 && a.right <= rr.right + 1 && !!hit && act.contains(hit),
+          sw: Math.max(innerWidth, document.documentElement.scrollWidth) })
+      })()`))
+      check(m.rows === 1 && m.inView && m.sw <= w,
+        `P3 ${theme}@${w}: chips in ${m.rows} row(s), the current one in view: ${m.inView}, page ${m.sw}px`)
+    }
+  }
+  }
 
   page.close()
 } finally {
@@ -148,5 +194,7 @@ try {
 
 say('')
 say('-'.repeat(70))
-say(fails === 0 ? 'ALL PHONE-FIT CHECKS PASS (P1, P2)' : `${fails} check(s) FAILED`)
+say(fails === 0
+  ? `ALL PHONE-FIT CHECKS PASS (${ONLY.size ? [...ONLY].join(', ') + ' only' : 'P1, P2, P3'})`
+  : `${fails} check(s) FAILED`)
 process.exitCode = fails ? 1 : 0

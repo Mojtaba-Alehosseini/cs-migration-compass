@@ -155,11 +155,12 @@ jobs:
             CHROME_PATH=google-chrome-stable node ../scripts/tests/test_cv_flow.mjs
             TEST_EXIT=$?
           fi
-          # Package 46, Tier 4 — P1/P2: the header is one row from 360px up in
-          # every theme, with focus order = visual order; and Home is never
-          # wider than a phone, while loading or on any question. On the code
-          # before package 46 the header was two rows on every phone and Home
-          # ran to 823-999px in a 360-414px screen, depending on the question.
+          # Package 46, Tiers 4-5 — P1-P3: the header is one row from 360px up
+          # in every theme, with focus order = visual order; Home is never
+          # wider than a phone, while loading or on any question; Explore's
+          # theme chips are one row with the current one in view. On the code
+          # before package 46 the header was two rows on every phone, Home ran
+          # to 823-999px in a 360-414px screen, and the chips took three rows.
           if [ $TEST_EXIT -eq 0 ]; then
             CHROME_PATH=google-chrome-stable node ../scripts/tests/test_phone_fit.mjs
             TEST_EXIT=$?

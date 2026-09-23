@@ -11,7 +11,7 @@
  * broken pipeline.
  */
 
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useLayoutEffect, useRef } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { THEMES, type ThemeKey } from '../data/registry'
 import { WeightsTool } from '../components/WeightsTool'
@@ -54,6 +54,20 @@ export function Explore() {
     return q ? `?${q}` : ''
   })()
 
+  /* The chips are one sideways-scrolling row on a phone (base.css,
+   * .themesbar .rail), so the current theme can be off the edge — Weather is
+   * the seventh chip. Bring it to the middle of the strip when it is not
+   * fully in view. The STRIP scrolls, never the page: scrollIntoView would
+   * move both. Package 46, Tier 5. */
+  const railRef = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    const rail = railRef.current
+    const chip = rail?.querySelector<HTMLElement>('[aria-current="page"]')
+    if (!rail || !chip) return
+    const r = chip.getBoundingClientRect(), rr = rail.getBoundingClientRect()
+    if (r.left < rr.left || r.right > rr.right) rail.scrollLeft += (r.left + r.width / 2) - (rr.left + rr.width / 2)
+  }, [active])
+
   return (
     <div className="wrap" style={{ paddingTop: 22 }}>
       <div className="kicker">Explore</div>
@@ -65,7 +79,7 @@ export function Explore() {
       <ThemeHero key={active} theme={active} />
 
       <div className="themesbar">
-        <div className="wrap rail">
+        <div className="wrap rail" ref={railRef}>
           {/* The scatter builder's own axes travel with the reader across
               themes, and nothing else does. That is the builder's documented
               contract - an untouched one tracks the theme, a touched one
