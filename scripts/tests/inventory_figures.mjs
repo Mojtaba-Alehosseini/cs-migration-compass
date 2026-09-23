@@ -311,7 +311,32 @@ export const EXTRACT = String.raw`
     text: norm(a.textContent), href: a.getAttribute('href') || '',
   }))
 
+  /* Package 46, Tier 3 — a city's top-employer figure is drawn as a tick at
+   * its own value. It used to be a hatch that was missing in 10 cities,
+   * under 3px in 4 and capped short in 12, while the caption described it in
+   * all of them. Recorded here so C7 can require the mark wherever the page
+   * states the figure, and require it on screen: scrolled to, a point on its
+   * protruding end has to hit it. Last, because it moves the scroll. */
+  const cityTick = (() => {
+    const panel = [...document.querySelectorAll('.panel')]
+      .find((p) => /What developers earn here/.test(p.textContent || ''))
+    if (!panel) return null
+    const states = /median total package here/.test(panel.textContent || '')
+    const t = panel.querySelector('.city-tick')
+    if (!t) return { states, tick: false }
+    t.scrollIntoView({ block: 'center' })
+    const r = t.getBoundingClientRect()
+    const track = t.previousElementSibling ? t.previousElementSibling.getBoundingClientRect() : null
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + 1)
+    return {
+      states, tick: true, w: Math.round(r.width * 10) / 10, h: Math.round(r.height),
+      onTrack: !!track && r.left >= track.left - 1 && r.right <= track.right + 1,
+      visible: hit === t,
+    }
+  })()
+
   return JSON.stringify({
+    cityTick,
     figures, nodata, clipped, marks, rows,
     text: norm(document.body.innerText),
     unlinkedText: bare,

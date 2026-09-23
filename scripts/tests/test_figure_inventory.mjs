@@ -556,6 +556,34 @@ try {
     `C6: every mark clears its floor on the pair that carries its meaning `
     + `(${lowContrast.length} instances, ${worst.length} distinct)`)
 
+  /* ============================================================= class 7 */
+  say('\n=== C7: a city\'s top-employer figure is a tick a reader can see ===')
+  /* Package 46, Tier 3. The figure used to be a hatch from the end of the
+   * mid bar to its value, and the caption described it on every city page
+   * that states the figure — but the hatch was absent in 10 cities (figure
+   * below the band), under 3px in 4 (Berlin's $269 gap was 0.6px) and
+   * capped short of its value in 12. It is now a tick at its own value.
+   *
+   * WHICH pages must carry it is derived from the data file, not pinned to
+   * today's count: every city whose record holds a levels.fyi median. A
+   * check that encodes "57" fails the day the pipeline adds a city. */
+  const cityRecords = readJson(REPO + 'site/public/data/cities.json').records
+  const expectTick = new Set(cityRecords
+    .filter((c) => c.salary_levels_fyi?.median_total_comp_usd != null).map((c) => `city-${c.id}`))
+  const cityPages = pages.filter((p) => /^city-/.test(p.id))
+  const reached = cityPages.filter((p) => expectTick.has(p.id))
+  check(expectTick.size > 0 && reached.length === expectTick.size,
+    `C7: every city page whose record holds a top-employer figure was captured `
+    + `(${reached.length} of ${expectTick.size} expected, from cities.json)`)
+  const noTick = reached.filter((p) => !p.cityTick?.tick)
+  const stateless = reached.filter((p) => !p.cityTick?.states)
+  const unseen = reached.filter((p) => p.cityTick?.tick && (!p.cityTick.visible || !p.cityTick.onTrack))
+  noTick.slice(0, 6).forEach((p) => say(`    no tick: ${p.id}`))
+  unseen.slice(0, 6).forEach((p) => say(`    not on screen: ${p.id} ${JSON.stringify(p.cityTick)}`))
+  check(stateless.length === 0, `C7: each of them states the figure in words (${stateless.length} do not)`)
+  check(noTick.length === 0, `C7: each of them draws it as a tick (${noTick.length} do not)`)
+  check(unseen.length === 0, `C7: and every tick is on its track and on screen, at every gap size (${unseen.length} are not)`)
+
   /* ---- R8, re-derived from the inventory rather than from a proxy ------- */
   say('\n=== R8 (inherited): the Netherlands, asserted from the record ===')
   /* Package 24 changed this from "NL renders zero method-card triggers" to
@@ -577,5 +605,5 @@ try {
 
 say('')
 say('-'.repeat(70))
-say(fails === 0 ? 'ALL FIGURE-INVENTORY ASSERTIONS PASS (C1-C6, R8)' : `${fails} check(s) FAILED`)
+say(fails === 0 ? 'ALL FIGURE-INVENTORY ASSERTIONS PASS (C1-C7, R8)' : `${fails} check(s) FAILED`)
 process.exitCode = fails ? 1 : 0

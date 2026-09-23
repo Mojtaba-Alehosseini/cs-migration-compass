@@ -247,6 +247,18 @@ export const BAND_LABEL: Record<Band, string> = {
   senior: 'Senior',
 }
 
+/** The same band, as a phrase that can sit inside a sentence.
+ *
+ *  BAND_LABEL is a control label — right on a tab, a bar, a table heading.
+ *  Dropped into prose it produced "Take the 3–5 years in band's paycheck"
+ *  and "No starting out salary recorded" (package 46, Tier 3). Each entry
+ *  here reads naturally after "the paycheck of", "for" and "recorded for". */
+export const BAND_WHO: Record<Band, string> = {
+  new_grad: 'a developer starting out',
+  mid: 'a developer 3–5 years in',
+  senior: 'a senior developer',
+}
+
 /** How a mid-level developer compares with the national average wage.
  *  Returns null unless we genuinely have the OECD figure — this powers the
  *  "1.8× the national average" line, which must never be asserted without it. */

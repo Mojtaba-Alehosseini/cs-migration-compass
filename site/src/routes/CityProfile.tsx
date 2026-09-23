@@ -15,7 +15,7 @@ import { dropApprox, money, num, pct, sourceNames, years, NO_DATA, asOfLabel } f
 import { citySalarySource } from '../data/registry'
 import { typicalArrivalRoute } from '../data/visaRoutes'
 import {
-  BAND_LABEL,
+  BAND_LABEL, BAND_WHO,
   HOME_M2, instabilityNote, isNeverAffordable, m2PerYear, missingInputs, netFor, netPayChain,
   savingsPerYear, yearsToHome,
   stabilityOf,
@@ -104,8 +104,17 @@ export function CityProfile() {
             <>
               {(['new_grad', 'mid', 'senior'] as Band[]).map((b) => {
                 const v = city.salary_usd_year[b]
-                const max = city.salary_usd_year.senior ?? v ?? 1
                 const top = lf?.median_total_comp_usd ?? null
+                /* One scale that holds every mark drawn on it (package 46,
+                 * Tier 3). The bars used to top out at the senior band, which
+                 * was fine while the top-employer figure was a hatch hanging
+                 * off the mid bar and capped at 30% of the track. As a tick at
+                 * its own value it has to be ON the scale — and in 14 of the 73
+                 * cities it is larger than even the senior band (Valencia
+                 * 1.35x), so there the scale widens and all three bars are
+                 * drawn shorter. Nothing about the values changes. */
+                const max = Math.max(city.salary_usd_year.senior ?? v ?? 1, top ?? 0) || 1
+                const at = (x: number) => (x / max) * 88
                 return (
                   <div key={b} style={{ margin: '9px 0' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
@@ -117,21 +126,32 @@ export function CityProfile() {
                         <b className="tnum">{money(v)}</b>
                       </Figure>
                     </div>
-                    <div style={{ position: 'relative', height: 11, background: 'var(--surface-sunk)', borderRadius: 'var(--radius-sm)', marginTop: 5, overflow: 'hidden' }}>
-                      {v != null && (
-                        <div style={{
-                          position: 'absolute', inset: '0 auto 0 0', width: `${(v / (max || 1)) * 88}%`,
-                          background: 'var(--accent)', opacity: 0.85, borderRadius: 'var(--radius-sm)',
-                        }} />
-                      )}
-                      {b === 'mid' && v != null && top != null && top > v && (
-                        <div title="what top employers pay on top" style={{
-                          position: 'absolute', top: 0, bottom: 0,
-                          left: `${(v / (max || 1)) * 88}%`,
-                          width: `${Math.min(30, ((top - v) / (max || 1)) * 88)}%`,
-                          background: 'repeating-linear-gradient(90deg, var(--accent) 0 3px, transparent 3px 6px)',
-                          opacity: 0.55,
-                        }} />
+                    <div style={{ position: 'relative', marginTop: 5 }}>
+                      <div style={{ position: 'relative', height: 11, background: 'var(--surface-sunk)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
+                        {v != null && (
+                          <div style={{
+                            position: 'absolute', inset: '0 auto 0 0', width: `${at(v)}%`,
+                            background: 'var(--accent)', opacity: 0.85, borderRadius: 'var(--radius-sm)',
+                          }} />
+                        )}
+                      </div>
+                      {/* The top-employer figure, as a TICK AT ITS OWN VALUE (package
+                        * 46, Tier 3). It was a hatch from the end of the mid bar to
+                        * the figure, which meant: in 10 of the 57 cities holding
+                        * both figures it was not drawn at all (the figure is BELOW
+                        * the band); in 4 it was under 3px wide — Berlin's $269 gap
+                        * rendered 0.6px, too narrow for one 3px stripe; and in 12 it
+                        * was capped at 30% of the track and ended short of the value
+                        * it stood for. The caption described it in every one. A
+                        * hatch also read as "extra, on top" — the old title said
+                        * "what top employers pay on top" — when the figure is a
+                        * different quantity (total package against base pay), not
+                        * an increment. A tick is visible at any gap, on either side
+                        * of the bar's end, and is /work's own mark for "a published
+                        * value on this scale". It stands outside the track's
+                        * overflow:hidden so its ends can clear the bar. */}
+                      {b === 'mid' && top != null && (
+                        <span className="city-tick" aria-hidden="true" style={{ left: `${at(top)}%` }} />
                       )}
                     </div>
                   </div>
@@ -139,25 +159,33 @@ export function CityProfile() {
               })}
               <div style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', marginTop: 8 }}>
                 {lf?.median_total_comp_usd != null ? (
-                  <>Hatched = big-name employers, measured differently. Their median total package here is{' '}
+                  /* Package 46, Tier 3. This was a 520-character statistics
+                   * paragraph between a reader and the three bars they came
+                   * for. Every word was true and stays on the site: the line
+                   * below says what the tick is, and the method moved,
+                   * verbatim, into the card on the figure it is about —
+                   * `what` carries the "different quantity, never added"
+                   * rule, `sample` carries the Bland-Altman comparison. */
+                  <>The tick is big-name employers&rsquo; median total package here,{' '}
                     <Figure source={{
                       name: 'levels.fyi', url: lf.source, asOf: lf.as_of, confidence: 'crowd',
-                      what: 'Total compensation — base plus stock plus bonus — against a market BASE-pay band. A different quantity, not a bigger measurement of the same one.',
-                    }}><b>{money(lf.median_total_comp_usd)}</b></Figure>.{' '}
-                    {/* Package 16 — docs/DATA-FITNESS.md: these two are supported as a
-                      * CORRELATION, never as agreement. Pearson r = 0.898 reads as
-                      * excellent agreement and is the wrong statistic for it;
-                      * Bland-Altman in log space puts levels.fyi 1.22x high on average
-                      * with 95% limits from 0.79x to 1.89x, so one city can differ
-                      * more than two-fold. The gap is not simply "what employers pay
-                      * extra" -- it is partly total-comp versus base -- and saying so
-                      * is the difference between a comparison and a blend. */}
-                    Across the 57 cities holding both, this figure runs <b>1.22×</b> the market band
-                    on average, and Bland–Altman puts the 95% limits of agreement at <b>0.79×</b> to
-                    <b>1.89×</b> — a statistical interval, not the observed range, which is wider:
-                    four cities sit above it (Doha 2.20×, Dublin 2.04×, Valencia 2.02×, London
-                    1.95×). Read them side by side; they are never added, averaged or substituted
-                    for each other.
+                      what: 'Total compensation — base plus stock plus bonus — against a market BASE-pay band. '
+                        + 'A different quantity, not a bigger measurement of the same one. Read the two side by '
+                        + 'side; they are never added, averaged or substituted for each other.',
+                      /* Package 16 — docs/DATA-FITNESS.md: these two are supported as a
+                       * CORRELATION, never as agreement. Pearson r = 0.898 reads as
+                       * excellent agreement and is the wrong statistic for it;
+                       * Bland-Altman in log space puts levels.fyi 1.22x high on average
+                       * with 95% limits from 0.79x to 1.89x, so one city can differ
+                       * more than two-fold. The gap is not simply "what employers pay
+                       * extra" -- it is partly total-comp versus base -- and saying so
+                       * is the difference between a comparison and a blend. */
+                      sample: 'Across the 57 cities holding both, this figure runs 1.22× the market band on '
+                        + 'average, and Bland–Altman puts the 95% limits of agreement at 0.79× to 1.89× — a '
+                        + 'statistical interval, not the observed range, which is wider: four cities sit '
+                        + 'above it (Doha 2.20×, Dublin 2.04×, Valencia 2.02×, London 1.95×).',
+                    }}><b>{money(lf.median_total_comp_usd)}</b></Figure>
+                    {' '}— base plus stock and bonus, so a different measure from the bars.
                   </>
                 ) : lf?.unavailable_reason ? (
                   <span className="nodata">No levels.fyi figure for {city.name} — {lf.unavailable_reason.slice(0, 120)}…</span>
@@ -195,14 +223,17 @@ export function CityProfile() {
                 .map((b) => [b, city.salary_usd_year[b] != null ? BAND_LABEL[b] : `${BAND_LABEL[b]} — no figure`])}
               disabled={Object.fromEntries((['new_grad', 'mid', 'senior'] as Band[])
                 .filter((b) => city.salary_usd_year[b] == null)
-                .map((b) => [b, `No ${BAND_LABEL[b].toLowerCase()} salary recorded for ${city.name}`]))} />
+                .map((b) => [b, `${city.name} has no salary recorded for ${BAND_WHO[b]}`]))} />
           </div>
           {net != null && city.rent_1br_outside_usd_month != null && city.col_single_no_rent_usd_month != null ? (
             <>
               <div className="sub">
                 {/* Was "Take the mid-level paycheck", which stopped being true
-                    the moment the band became selectable. */}
-                Take the <b>{BAND_LABEL[band]}</b> band’s paycheck. After {country.name}’s taxes,{' '}
+                    the moment the band became selectable; then "Take the
+                    <label> band's paycheck", which read "Take the 3–5 years in
+                    band's paycheck" (package 46, Tier 3). BAND_WHO is the band
+                    as a phrase built to sit inside a sentence. */}
+                Take the paycheck of <b>{BAND_WHO[band]}</b>. After {country.name}’s taxes,{' '}
                 {(() => {
                   const netChain = netPayChain(city, band)
                   return netChain ? (
@@ -239,8 +270,7 @@ export function CityProfile() {
               so rather than leaving a reader to infer which salary produced a
               number this large. */}
           <div className="sub">
-            On the <b>{BAND_LABEL[band]}</b> band. Every step shown, every number editable in
-            Compare.
+            For <b>{BAND_WHO[band]}</b>. Every step shown, every number editable in Compare.
           </div>
           {never ? (
             <p style={{ fontSize: 'var(--text-xs)', color: 'var(--warn)', marginTop: 8 }}>

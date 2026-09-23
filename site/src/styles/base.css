@@ -255,6 +255,17 @@ a { color: var(--ink-2); }
 .profline-body[data-open="true"] { grid-template-rows: 1fr; opacity: 1; }
 .profline-body-inner { min-height: 0; overflow: hidden; }
 
+/* A city's top-employer figure as a tick at its own value (package 46, Tier 3).
+   /work's quartile tick is the shape — 2px, standing proud of its track — in
+   ink rather than paper, because this tick lands on the accent fill in some
+   cities and on the empty track in others; the paper halo separates it from
+   whichever is beneath. The track clips, so this sits outside it. */
+.city-tick {
+  position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px;
+  background: var(--ink-1); border-radius: 1px;
+  box-shadow: 0 0 0 1px var(--surface-raised);
+}
+
 /* ---------- /work's own country rows (package 24) ----------
    Row anatomy: flag-dot . distribution strip with marker . estimate .
    openings count. Mirrors design-mockup-work.html's own layout exactly —
