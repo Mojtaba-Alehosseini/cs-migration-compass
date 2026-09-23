@@ -38,11 +38,17 @@ const ROUTES = [
   ['city', '#/city/berlin'],
   ['country', '#/country/AE'],
   ['explore-money', '#/explore/money'],
-  ['explore-visa', '#/explore/visas'],
+  /* 'visa', not 'visas' (package 46). The theme key is `visa`, and Explore
+   * answers an unknown key with Money — so this row audited Money a second
+   * time for as long as it has existed, with a clean score and a real-looking
+   * URL that the not-found check below cannot catch. Weather ('climate') was
+   * not in the list at all. */
+  ['explore-visa', '#/explore/visa'],
   ['explore-jobs', '#/explore/jobs'],
   ['explore-housing', '#/explore/housing'],
   ['explore-people', '#/explore/people'],
   ['explore-life', '#/explore/life'],
+  ['explore-climate', '#/explore/climate'],
 ]
 
 const NPX = process.platform === 'win32' ? 'npx.cmd' : 'npx'

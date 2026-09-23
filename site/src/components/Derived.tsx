@@ -93,14 +93,26 @@ export function Derived({ children, chain, native, concept, result, payCycleNote
     // on screen. Not a full modal focus trap — this is a disclosure
     // popover, not a modal (the rest of the page stays interactive on
     // purpose, matching <Figure>'s own established pattern) — so Tab can
-    // still leave the card, same as <Figure>.
-    cardRef.current?.focus()
+    // still leave the card, same as <Figure>. The move into the card is the
+    // effect below: it has to wait for the card to be placed.
     return () => {
       document.removeEventListener('click', onDoc)
       document.removeEventListener('keydown', onKey)
       triggerRef.current?.focus()
     }
   }, [open])
+
+  /* Focus lands in the card once it has been PLACED. Package 46 made the card
+   * `visibility: hidden` for the one render before useCardPlacement positions
+   * it, and focus() on a hidden element does nothing — the effect above ran in
+   * that window, so opening the card left focus on the trigger (an adversarial
+   * review found it: live moves focus in, this build did not). Once per
+   * opening; a re-placement on scroll must not pull focus back. */
+  const focused = useRef(false)
+  useEffect(() => {
+    if (!open) { focused.current = false; return }
+    if (pos && !focused.current) { cardRef.current?.focus(); focused.current = true }
+  }, [open, pos])
 
   return (
     <div ref={ref} className={className} style={{ position: 'relative', display: 'inline-block' }}>

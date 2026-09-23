@@ -14,6 +14,7 @@ type TurnstileGlobal = {
   render: (container: HTMLElement, opts: {
     sitekey: string
     action: string
+    size?: 'normal' | 'flexible' | 'compact'
     callback: (token: string) => void
     'error-callback'?: () => void
     'expired-callback'?: () => void
@@ -66,6 +67,11 @@ export async function renderTurnstile(container: HTMLElement, sitekey: string): 
   const widgetId = turnstile.render(container, {
     sitekey,
     action: ACTION,
+    // The default widget is 300px wide, and the CV panel's box is 286px at a
+    // 360px screen and ~250px at 320: its `overflow: hidden` cut the widget's
+    // right edge off (package 46, adversarial review). 'compact' is 150x140.
+    // 'flexible' would not help — it keeps a 300px minimum.
+    size: container.clientWidth < 300 ? 'compact' : 'normal',
     callback: (token) => tokenCb?.(token),
     'error-callback': () => errorCb?.(),
     'expired-callback': () => errorCb?.(),

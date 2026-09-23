@@ -95,14 +95,15 @@ export function App() {
           background: 'var(--paper)', borderBottom: '1px solid var(--line)',
         }}
       >
-        <div
-          className="wrap"
-          style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '11px 22px', flexWrap: 'wrap' }}
-        >
+        {/* Layout in base.css (.site-head, .site-mark), not inline: the
+          * spacing tightens on the smallest screens, and an inline style
+          * would beat the media query that does it. */}
+        <div className="wrap site-head">
           <NavLink
             to="/"
+            className="site-mark"
             style={{
-              display: 'flex', gap: 8, alignItems: 'center', textDecoration: 'none',
+              textDecoration: 'none',
               color: 'var(--ink-1)', fontWeight: 600, fontSize: 'var(--text-xs)',
             }}
           >

@@ -104,5 +104,13 @@ export function placedCardStyle(pos: CardPlacement | null) {
     maxHeight: pos ? pos.maxHeight : undefined,
     overflowY: 'auto' as const,
     visibility: pos ? ('visible' as const) : ('hidden' as const),
+    /* No transitions, visibility least of all. Under prefers-reduced-motion
+     * tokens.css gives EVERY property a 0.01ms transition, and visibility is
+     * animatable: for that sliver the card still computed as hidden, so the
+     * focus() that moves a keyboard reader into a <Derived> card silently
+     * did nothing — with motion on it worked, with it off it did not
+     * (package 46, adversarial review; traced by timing the mutations). A
+     * card is placed before it is painted, so it has nothing to animate. */
+    transitionProperty: 'none' as const,
   }
 }

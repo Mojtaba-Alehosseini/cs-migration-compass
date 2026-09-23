@@ -369,8 +369,18 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
           // sets its own inline `position: relative`, which would win over
           // a CSS class's `position: absolute` (inline styles always beat
           // an external stylesheet rule) and silently break the placement.
+          //
+          // Centred by a zero-width flex box, NOT `transform: translateX(-50%)`
+          // (package 46, adversarial review). A transform makes this span the
+          // containing block and stacking context of the <Figure> card inside
+          // it: at 1024 the card was painted under the next rows (0 of 48
+          // points on it), and at 390 the phone card — `position: fixed`,
+          // centred on the viewport — centred on this span instead, 140px
+          // off the left edge. A zero-width box with `justify-content:
+          // center` lets the label overflow both sides equally, which is the
+          // same centring with no transform anywhere above the card.
           <span style={{ position: 'absolute', left: `${markerLeft}%`, top: -14,
-            transform: 'translateX(-50%)', ...markerEntranceStyle }}>
+            width: 0, display: 'flex', justifyContent: 'center', ...markerEntranceStyle }}>
             <Figure
               source={position.personalised ? {
                 name: position.sourceLabel, asOf: String(position.year), confidence: 'official',

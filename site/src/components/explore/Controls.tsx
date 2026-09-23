@@ -126,14 +126,19 @@ export function ChartTable({ caption, head, rows }: {
   return (
     <details className="chart-table">
       <summary>{caption}</summary>
-      <table>
-        <thead><tr>{head.map((h) => <th key={h} scope="col">{h}</th>)}</tr></thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i}>{r.map((c, j) => <td key={j}>{c ?? 'no data'}</td>)}</tr>
-          ))}
-        </tbody>
-      </table>
+      {/* Its own scroll box (docs/DESIGN.md's rule for tables): the wage
+        * table opened at 320 and 390 made /explore/money 445px wide. Package
+        * 46, adversarial review. */}
+      <div style={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label={`${caption}, scrollable`}>
+        <table>
+          <thead><tr>{head.map((h) => <th key={h} scope="col">{h}</th>)}</tr></thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i}>{r.map((c, j) => <td key={j}>{c ?? 'no data'}</td>)}</tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </details>
   )
 }

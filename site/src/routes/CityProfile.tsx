@@ -55,6 +55,15 @@ export function CityProfile() {
   const never = isNeverAffordable(city, band)
   const missing = missingInputs(city, band)
   const lf = city.salary_levels_fyi
+  /* Where the bars come from decides what the tick can be called: in 17 of
+   * the 57 cities that hold a levels.fyi figure, the bars ARE levels.fyi
+   * (see the caption below). And whether the tick is past the bars' own
+   * scale — the senior band at 88% of the track — decides whether the caption
+   * has to say it is held at the end. */
+  const sameSource = city.salary_usd_year.primary_source === 'levelsfyi_linked'
+  const lfTop = lf?.median_total_comp_usd ?? null
+  const pastScale = lfTop != null
+    && (lfTop / (city.salary_usd_year.senior ?? city.salary_usd_year.mid ?? lfTop)) * 88 > 100
 
   const chips = buildChips(country)
 
@@ -105,15 +114,16 @@ export function CityProfile() {
               {(['new_grad', 'mid', 'senior'] as Band[]).map((b) => {
                 const v = city.salary_usd_year[b]
                 const top = lf?.median_total_comp_usd ?? null
-                /* One scale that holds every mark drawn on it (package 46,
-                 * Tier 3). The bars used to top out at the senior band, which
-                 * was fine while the top-employer figure was a hatch hanging
-                 * off the mid bar and capped at 30% of the track. As a tick at
-                 * its own value it has to be ON the scale — and in 14 of the 73
-                 * cities it is larger than even the senior band (Valencia
-                 * 1.35x), so there the scale widens and all three bars are
-                 * drawn shorter. Nothing about the values changes. */
-                const max = Math.max(city.salary_usd_year.senior ?? v ?? 1, top ?? 0) || 1
+                /* The bars' own scale: the senior band at 88% of the track, as
+                 * before package 46. Tier 3 first widened it to hold the tick
+                 * (14 cities), and an adversarial review showed what that let
+                 * in: a figure some of these pages themselves set aside —
+                 * Valencia's band note calls levels.fyi's all-levels number
+                 * "internally inconsistent and thin-sample" — shrinking all
+                 * three bars by up to a quarter. The bars keep their scale; a
+                 * tick past its end (8 cities) is held at the end, and the
+                 * caption says so in words. */
+                const max = city.salary_usd_year.senior ?? v ?? 1
                 const at = (x: number) => (x / max) * 88
                 return (
                   <div key={b} style={{ margin: '9px 0' }}>
@@ -151,7 +161,7 @@ export function CityProfile() {
                         * value on this scale". It stands outside the track's
                         * overflow:hidden so its ends can clear the bar. */}
                       {b === 'mid' && top != null && (
-                        <span className="city-tick" aria-hidden="true" style={{ left: `${at(top)}%` }} />
+                        <span className="city-tick" aria-hidden="true" style={{ left: `${Math.min(at(top), 99.5)}%` }} />
                       )}
                     </div>
                   </div>
@@ -166,12 +176,28 @@ export function CityProfile() {
                    * verbatim, into the card on the figure it is about —
                    * `what` carries the "different quantity, never added"
                    * rule, `sample` carries the Bland-Altman comparison. */
-                  <>The tick is big-name employers&rsquo; median total package here,{' '}
+                  /* Two cases, and the words must be true in both (adversarial
+                   * review, package 46). In 17 of the 57 cities the bars THEMSELVES
+                   * come from levels.fyi (`primary_source: levelsfyi_linked` —
+                   * Chicago's middle bar and this figure are both $150,000), so
+                   * "a different measure from the bars" was false there, and so
+                   * was the card's "against a market BASE-pay band". Either way
+                   * the figure is levels.fyi's "Software Engineer, all levels",
+                   * which the page never said while the tick sits on the
+                   * 3–5-years bar. */
+                  <>The tick is {sameSource ? 'levels.fyi’s' : 'big-name employers’'} median total package here,
+                    across all levels,{' '}
                     <Figure source={{
                       name: 'levels.fyi', url: lf.source, asOf: lf.as_of, confidence: 'crowd',
-                      what: 'Total compensation — base plus stock plus bonus — against a market BASE-pay band. '
-                        + 'A different quantity, not a bigger measurement of the same one. Read the two side by '
-                        + 'side; they are never added, averaged or substituted for each other.',
+                      what: sameSource
+                        ? 'Total compensation — base plus stock plus bonus — for software engineers at all levels. '
+                          + 'The bars on this page come from levels.fyi as well (their own cards say which figures), '
+                          + 'so here this is the same source, not a comparison with a market band. The two are never '
+                          + 'added, averaged or substituted for each other.'
+                        : 'Total compensation — base plus stock plus bonus — for software engineers at all levels, '
+                          + 'against a market BASE-pay band. A different quantity, not a bigger measurement of the '
+                          + 'same one. Read the two side by side; they are never added, averaged or substituted for '
+                          + 'each other.',
                       /* Package 16 — docs/DATA-FITNESS.md: these two are supported as a
                        * CORRELATION, never as agreement. Pearson r = 0.898 reads as
                        * excellent agreement and is the wrong statistic for it;
@@ -183,12 +209,23 @@ export function CityProfile() {
                       sample: 'Across the 57 cities holding both, this figure runs 1.22× the market band on '
                         + 'average, and Bland–Altman puts the 95% limits of agreement at 0.79× to 1.89× — a '
                         + 'statistical interval, not the observed range, which is wider: four cities sit '
-                        + 'above it (Doha 2.20×, Dublin 2.04×, Valencia 2.02×, London 1.95×).',
+                        + 'above it (Doha 2.20×, Dublin 2.04×, Valencia 2.02×, London 1.95×). '
+                        // The statistic is package 16's and is not changed here;
+                        // what it is made of is now said. Whether it should be
+                        // recomputed without them is NEEDS-DECISION #90.
+                        + `17 of those 57 cities take their bars from levels.fyi as well${sameSource ? ', this one among them' : ''}.`,
                     }}><b>{money(lf.median_total_comp_usd)}</b></Figure>
-                    {' '}— base plus stock and bonus, so a different measure from the bars.
+                    {pastScale && ', past the end of this scale'}
+                    {sameSource
+                      ? ' — the bars come from levels.fyi as well, so it is not a second source for them.'
+                      : ' — base plus stock and bonus, so a different measure from the bars.'}
                   </>
                 ) : lf?.unavailable_reason ? (
-                  <span className="nodata">No levels.fyi figure for {city.name} — {lf.unavailable_reason.slice(0, 120)}…</span>
+                  /* In full. It was cut at 120 of its 230-285 characters with an
+                   * ellipsis, and what fell off the end, in ten cities, was
+                   * "Recorded as missing rather than substituted." (adversarial
+                   * review, package 46). */
+                  <span className="nodata">No levels.fyi figure for {city.name} — {lf.unavailable_reason}</span>
                 ) : null}
               </div>
             </>

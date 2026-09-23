@@ -148,8 +148,23 @@ export function ProfileForm({ profile, occupations, onChange }: {
         * Measured, not assumed: editing all three fields makes no request
         * (17 resource entries before and after; the values reach only the
         * address's #fragment, which a browser never sends), and
-        * scripts/tests/test_cv_flow.mjs now asserts it on every run. */}
-      <div className="sub">Three fields, and nothing you enter here is sent anywhere.</div>
+        * scripts/tests/test_cv_flow.mjs now asserts it on every run.
+        *
+        * The footnote's engineering sentence was cut in Tier 2 and is back
+        * here behind a tap, verbatim (package 46, Tier 6: a sentence may move
+        * behind a tap, never become nothing) — in the CV panel's own "How we
+        * know" idiom, which is /data's inline disclosure. */}
+      <div className="sub">
+        Three fields, and nothing you enter here is sent anywhere.
+        <details style={{ display: 'inline' }}>
+          <summary style={{ display: 'inline', cursor: 'pointer', color: 'var(--accent)' }}> How we know</summary>
+          <span style={{ display: 'block', marginTop: 4 }}>
+            This form works with the network disabled after the page has loaded once. What you enter
+            changes only the address&rsquo;s #fragment, which a browser never sends, and the estimate is
+            worked out from tables the page has already loaded.
+          </span>
+        </details>
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginTop: 12 }}>
         <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
           Occupation

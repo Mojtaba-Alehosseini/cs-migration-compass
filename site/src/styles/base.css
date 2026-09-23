@@ -158,6 +158,21 @@ a { color: var(--ink-2); }
   .mainnav .nav-short { display: inline; }
 }
 
+/* The header row (package 46). 20px sides, the page's own gutter (it was
+   22). On the smallest screens the spacing tightens, because the one-row
+   header was measured with this machine's Segoe UI — 22px to spare at 360 —
+   and an adversarial review measured it with Verdana, whose metrics DejaVu
+   Sans shares and a Linux CI runner may fall back to: 12.6px SHORT at 360,
+   two rows up to 372. These four give back 26px below 400 without touching
+   a label. */
+.wrap.site-head { display: flex; align-items: center; gap: 16px; padding: 11px 20px; flex-wrap: wrap; }
+.site-mark { display: flex; gap: 8px; align-items: center; }
+@media (max-width: 400px) {
+  .wrap.site-head { gap: 10px; padding: 11px 16px; }
+  .mainnav { gap: 8px; }
+  .site-mark { gap: 6px; }
+}
+
 .kicker {
   font-family: var(--font-ui);
   font-size: var(--text-2xs);
@@ -1101,10 +1116,12 @@ table.cmp {
    `transform: none` as an identity matrix, not as none. Every Explore panel
    kept a transform for ever, and a transform makes an element the containing
    block for `position: fixed` descendants and a stacking context. So a
-   <Derived> method card opened inside a panel was placed against the panel
-   instead of the viewport and painted UNDER the panels after it: on
-   /explore/money at 1440 not one point of the card was on screen. The
-   disclosure check found it by hit-testing, not by reading this rule.
+   source or method card opened inside a panel was painted UNDER the panels
+   after it — before this package, 12 of 24 points of the "DKK 648,446"
+   source card on /explore/money at 1440 were on screen — and once cards
+   became `position: fixed` (useCardPlacement.ts) it was also placed against
+   the panel instead of the viewport, and none of it was: 0 of 14-16 points.
+   The disclosure check found it by hit-testing, not by reading this rule.
 
    `backwards` still applies the first keyframe during the stagger delay, so
    no panel flashes in before its turn; it just lets go afterwards, because

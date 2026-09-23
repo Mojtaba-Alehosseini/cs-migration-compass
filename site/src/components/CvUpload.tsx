@@ -158,6 +158,12 @@ export function CvUpload({ occupations, onApply, active }: {
     pendingTextRef.current = null
     if (fileInputRef.current) fileInputRef.current.value = ''
     setStage({ kind: 'idle' })
+    /* Every caller is a button ("Try again", "Try another file", "Cancel",
+     * "Discard") that the idle view unmounts, so focus fell to <body> and a
+     * keyboard reader needed two Tabs to get back (package 46, adversarial
+     * review). Put it on the picker once the idle view is on screen; its
+     * ring shows on the visible label. */
+    requestAnimationFrame(() => fileInputRef.current?.focus())
   }, [])
 
   // Package 23, Tier 3 — no longer calls reset(). The result used to

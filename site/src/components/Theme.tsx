@@ -122,8 +122,19 @@ export function ThemeSwitcher() {
     }
   }, [open])
 
+  /* A floating list should not stay open over the page once focus has left
+   * it and its button — Tab past the last theme used to leave it hanging
+   * (package 46, adversarial review). Focus moving between the button and
+   * the list keeps it open; anywhere else closes it. */
+  const onBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    if (!open) return
+    const next = e.relatedTarget as Node | null
+    if (next && (triggerRef.current?.contains(next) || cardRef.current?.contains(next))) return
+    setOpen(false)
+  }
+
   return (
-    <div ref={ref} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+    <div ref={ref} style={{ display: 'flex', gap: 6, alignItems: 'center' }} onBlur={onBlur}>
       <button
         ref={triggerRef}
         type="button"

@@ -98,6 +98,20 @@ try {
         return JSON.stringify({ rows: ${ROWS}([...inner.children]), head: ${ORDER}(header), foot: ${ORDER}(document.querySelector('footer')),
           themeName: (() => { const b = [...document.querySelectorAll('footer button[aria-expanded]')][0]; return b ? b.textContent.replace(/\\s+/g, ' ').trim() : null })() })
       })()`))
+      if (w === 360) {
+        /* Which face Chrome ACTUALLY drew the nav in. The header's one-row fit
+         * was first measured with this machine's Segoe UI and then found to
+         * depend on it (Verdana: two rows to 372px); a Linux runner falls back
+         * to whatever fontconfig gives. Printed so a CI log says what it
+         * measured, rather than leaving it to be guessed. */
+        try {
+          await page.send('DOM.enable', {}); await page.send('CSS.enable', {})
+          const doc = await page.send('DOM.getDocument', { depth: -1 })
+          const { nodeId } = await page.send('DOM.querySelector', { nodeId: doc.root.nodeId, selector: '.mainnav a' })
+          const { fonts } = await page.send('CSS.getPlatformFontsForNode', { nodeId })
+          say(`      ${theme}: the nav is drawn in ${fonts.map((f) => f.familyName).join(' + ') || '(unknown)'}`)
+        } catch (e) { say(`      ${theme}: platform font not readable (${String(e.message).slice(0, 60)})`) }
+      }
       check(m.rows === 1, `P1 ${theme}@${w}: the header is ${m.rows} row(s)`)
       if (theme === 'compass') {
         check(m.head.match, `P1 @${w}: header focus order is its visual order (${m.head.dom})`)

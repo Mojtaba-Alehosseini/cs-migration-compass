@@ -115,14 +115,40 @@ const DISCOVER = (which) => `(() => {
     }
     return 'none'
   }
+  /* The nearest ancestor a \`position: fixed\` card would be placed and
+   * stacked against instead of the viewport: anything with a transform,
+   * filter, perspective, backdrop-filter, paint/layout containment, a
+   * will-change that promises one, or a size container. Package 46: /work's
+   * percentile cards sat in a span centred with translateX(-50%) — painted
+   * under the next rows at 1024, centred on the span, 140px off screen, at
+   * 390 — and sampling by clip context alone never opened one. */
+  const cbContext = (el) => {
+    for (let a = el.parentElement; a && a !== document.documentElement; a = a.parentElement) {
+      const cs = getComputedStyle(a)
+      if (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none'
+          || (cs.backdropFilter && cs.backdropFilter !== 'none') || /paint|layout|strict|content/.test(cs.contain)
+          || /transform|filter|perspective/.test(cs.willChange) || (cs.containerType && cs.containerType !== 'normal')) {
+        return a.tagName.toLowerCase() + '.' + String(a.getAttribute('class') || '').trim().split(/\\s+/).join('.')
+          + ' [' + (cs.transform !== 'none' ? 'transform' : cs.filter !== 'none' ? 'filter' : 'containing block') + ']'
+      }
+    }
+    return 'viewport'
+  }
   const seenCtx = new Set()
   for (const c of document.querySelectorAll('[aria-expanded][aria-controls]')) {
     if (!reachable(c)) continue
     const inline = !!document.getElementById(c.getAttribute('aria-controls'))
+    if (${JSON.stringify(which)} === 'trapped') {
+      /* Every card trigger, not a sample: which ones live inside such a box. */
+      const cb = inline ? 'viewport' : cbContext(c)
+      if (cb !== 'viewport') out.push({ id: tag(c), cb,
+        label: (c.getAttribute('aria-label') || c.textContent || '').replace(/\\s+/g, ' ').trim().slice(0, 48) })
+      continue
+    }
     if ((${JSON.stringify(which)} === 'containers') !== inline) continue
     let ctx = ''
     if (!inline) {
-      ctx = clipContext(c)
+      ctx = clipContext(c) + ' / ' + cbContext(c)
       if (seenCtx.has(ctx)) continue
       seenCtx.add(ctx)
     }
@@ -183,8 +209,12 @@ const REGION_TOP = (rid) => `(() => {
   return 1
 })()`
 
-/* The measurement of whatever part of the region is in the viewport now. */
-const MEASURE = (rid) => `(() => {
+/* The measurement of whatever part of the region is in the viewport now.
+ * `popover`: a card is `position: fixed` — no scroll brings an off-screen
+ * part of it back — so its points past the viewport's side edges count as
+ * missed, not skipped (package 46: /work's percentile card at 390 ran from
+ * x = -140 to 218, and every point left of 0 was being skipped). */
+const MEASURE = (rid, popover = false) => `(() => {
   const r = document.querySelector('[data-d1="${rid}"]')
   if (!r) return JSON.stringify({ gone: true })
   const cs = getComputedStyle(r)
@@ -295,7 +325,10 @@ const MEASURE = (rid) => `(() => {
   let tested = 0, missed = 0, chrome = 0, firstMiss = null
   for (let y = yTop + 6; y < yBottom - 4; y += 24) {
     for (const x of xs) {
-      if (x < 1 || x >= vw - 1) continue
+      if (x < 1 || x >= vw - 1) {
+        if (${popover}) { tested++; missed++; if (!firstMiss) firstMiss = { y: Math.round(y - box.top), hit: 'off screen at x=' + Math.round(x) } }
+        continue
+      }
       if (!inScrollView(x, y)) continue
       const hit = document.elementFromPoint(x, y)
       if (!hit) continue
@@ -330,6 +363,7 @@ const CLOSE = (id, type) => `(() => {
 const { port, close } = await launch({ port: 9831 })
 let page
 const findings = []
+const trapped = []
 let opened = 0, measured = 0, scrollers = 0, pointsTested = 0
 const perRoute = new Map()
 try {
@@ -385,7 +419,7 @@ try {
          * view, so the bottom of a tall panel is tested rather than assumed. */
         let agg = null
         for (let step = 0; step < 10; step++) {
-          const m = JSON.parse(await page.eval(MEASURE(rid)))
+          const m = JSON.parse(await page.eval(MEASURE(rid, d.kind === 'popover')))
           if (m.gone) { agg = m; break }
           if (!agg) agg = { ...m }
           else {
@@ -401,8 +435,17 @@ try {
           measured++; pointsTested += agg.tested; tally.points += agg.tested
           if (agg.scrolls) scrollers++
           const ownOver = agg.scrolls ? 0 : agg.own
-          if (ownOver > 1 || agg.innerClip > 1 || agg.missed > 0) {
-            findings.push({ key, label: d.label, kind: d.kind, ctx: d.ctx, ...agg, ownOver })
+          /* Did opening it make the PAGE wider than the screen? A table that
+           * opened at 320 made /work 486px wide, and every point of it that
+           * lay past the edge was skipped as "reachable by scrolling" — by
+           * scrolling the whole page sideways, which is the defect (package
+           * 46, adversarial review). In the 390 run's mobile emulation an
+           * overflowing page widens the layout viewport, so innerWidth shows
+           * it; on the desktop runs scrollWidth does. */
+          const pageW = await page.eval(`Math.max(innerWidth, document.documentElement.scrollWidth)`)
+          const widens = pageW > w + 1 ? pageW : 0
+          if (ownOver > 1 || agg.innerClip > 1 || agg.missed > 0 || widens) {
+            findings.push({ key, label: d.label, kind: d.kind, ctx: d.ctx, ...agg, ownOver, widens })
           }
         }
         if (closeAfter) {
@@ -421,12 +464,16 @@ try {
         tally.found += fresh.length
         for (const d of fresh) { done.add(d.id); await exercise(d, false) }
       }
-      /* Phase 2 — cards, sampled one per clipping context, now that every
-       * container they could live in is open. Each is closed again after:
-       * one open card at a time is how a reader meets them. */
+      /* Phase 2 — cards, sampled one per clipping context AND containing
+       * block, now that every container they could live in is open. Each is
+       * closed again after: one open card at a time is how a reader meets
+       * them. Then, structurally and for EVERY card trigger rather than a
+       * sample: none may sit inside a box that a fixed card would be placed
+       * and stacked against instead of the viewport. */
       const cards = JSON.parse(await page.eval(DISCOVER('popovers')))
       tally.found += cards.length
       for (const d of cards) await exercise(d, true)
+      for (const t of JSON.parse(await page.eval(DISCOVER('trapped')))) trapped.push({ key, ...t })
     }
   }
 } finally {
@@ -459,12 +506,18 @@ for (const f of findings) {
   if (f.ownOver > 1) why.push(`${f.ownOver}px over its own box (max-height ${f.maxHeight})`)
   if (f.innerClip > 1) why.push(`${f.innerClip}px cut inside by ${f.innerBy}`)
   if (f.missed > 0) why.push(`${f.missed}/${f.tested} points not on screen, first at +${f.firstMiss?.y}px (hit ${f.firstMiss?.hit})`)
+  if (f.widens) why.push(`makes the page ${f.widens}px wide`)
   say(`  CLIPPED  ${f.key.padEnd(22)} ${f.kind.padEnd(8)} "${f.label}"${f.ctx ? ` in ${f.ctx}` : ''} — ${why.join('; ')}`)
 }
 check(findings.filter((f) => f.wouldNotOpen).length === 0,
   `D1: every disclosure found could be opened by a click (${findings.filter((f) => f.wouldNotOpen).length} would not)`)
 check(findings.filter((f) => !f.wouldNotOpen).length === 0,
-  `D1: no open disclosure hides its content at 390, 1024 or 1440 (${findings.filter((f) => !f.wouldNotOpen).length} found)`)
+  `D1: no open disclosure hides its content or widens the page at 390, 1024 or 1440 (${findings.filter((f) => !f.wouldNotOpen).length} found)`)
+const trappedKinds = [...new Set(trapped.map((t) => t.cb))]
+for (const t of trapped.slice(0, 12)) say(`  TRAPPED  ${t.key.padEnd(22)} "${t.label}" inside ${t.cb}`)
+if (trapped.length > 12) say(`  … and ${trapped.length - 12} more`)
+check(trapped.length === 0,
+  `D1: no card trigger sits inside a box a fixed card would be placed against instead of the viewport (${trapped.length} do${trappedKinds.length ? `: ${trappedKinds.join(', ')}` : ''})`)
 
 say('')
 say('-'.repeat(70))

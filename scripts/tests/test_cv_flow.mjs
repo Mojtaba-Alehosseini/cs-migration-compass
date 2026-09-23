@@ -90,7 +90,12 @@ const STUBS = `(() => {
     render(container, opts) {
       const box = document.createElement('div')
       box.setAttribute('data-f1', 'turnstile')
-      box.style.cssText = 'width:300px;height:65px;border:1px solid #999;display:flex;align-items:center;justify-content:center;font:12px sans-serif;background:#f4f4f4'
+      /* Cloudflare's own sizes (package 46): 'normal' is 300x65 and
+       * 'compact' 150x140. A stub that drew 300x65 whatever it was asked for
+       * could never show the real widget being cut off on a small phone. */
+      window.__f1.tsSize = opts.size || 'normal'
+      const [tw, th] = opts.size === 'compact' ? [150, 140] : [300, 65]
+      box.style.cssText = 'box-sizing:border-box;width:' + tw + 'px;height:' + th + 'px;border:1px solid #999;display:flex;align-items:center;justify-content:center;font:12px sans-serif;background:#f4f4f4'
       const b = document.createElement('button')
       b.type = 'button'; b.textContent = 'Verify (stub)'; b.setAttribute('data-f1', 'verify')
       b.addEventListener('click', () => opts.callback('stub-token'))
@@ -185,7 +190,9 @@ try {
     check(m.open === 'true' && m.sh <= m.ch + 1, `@${w} ${step}: the panel is open and its content fits it (${m.sh}px in ${m.ch}px)`)
   }
 
-  for (const [w, h, mobile] of [[390, 844, true], [1024, 768, false], [1440, 900, false]]) {
+  /* 320 added in package 46's Tier 6: the narrowest phone this site answers
+   * to, and the width where the human check was cut off. */
+  for (const [w, h, mobile] of [[320, 700, true], [390, 844, true], [1024, 768, false], [1440, 900, false]]) {
     say('')
     say(`=== F1 @ ${w}px ===`)
     /* Each width is its own walk. A flow that is blocked at one width — a
@@ -264,6 +271,16 @@ try {
     await mouseClick(sendSel, `@${w} review: the send button`)
     await page.waitFor(`!!document.querySelector('[data-f1="verify"]')`, { timeoutMs: 10000, label: 'human check' })
     await panelFits(w, 'human check')
+    /* The whole widget inside the panel's visible box, sideways too: the
+     * panel clips (`overflow: hidden`), and the default 300px widget was cut
+     * 19px short at 360 and 59px at 320 (package 46, adversarial review). */
+    const ts = JSON.parse(await page.eval(`(() => {
+      const box = document.querySelector('[data-f1="turnstile"]').getBoundingClientRect()
+      const clip = document.querySelector('#profline-body .profline-body-inner').getBoundingClientRect()
+      return JSON.stringify({ size: window.__f1.tsSize, w: Math.round(box.width), inside: box.left >= clip.left - 0.5 && box.right <= clip.right + 0.5,
+        over: Math.round(Math.max(0, box.right - clip.right)) })
+    })()`))
+    check(ts.inside, `@${w} human check: the whole widget is inside the panel (${ts.size}, ${ts.w}px wide${ts.inside ? '' : `, ${ts.over}px cut off`})`)
     await shot(w, '3-check')
     await mouseClick('[data-f1="verify"]', `@${w} the human check`)
     await page.waitFor(`!!document.querySelector('#profline-body input[type=checkbox]')`, { timeoutMs: 15000, label: 'result' })

@@ -150,7 +150,13 @@ function Openings({ name, block, display, crossRates, fxMaxGap, unavailable, cla
         )}
         {classDecision && <ClassifierCaption d={classDecision} />}
       </div>
-      <table className="tbl" style={{ marginTop: 8 }}>
+      {/* Scrolls inside its own box (docs/DESIGN.md: "tables scroll inside
+        * their own container so the page body never scrolls horizontally").
+        * Opened at 320 it made the page 379px wide — found by package 46's
+        * adversarial review; a focusable region so a keyboard can scroll it. */}
+      <div style={{ overflowX: 'auto', marginTop: 8 }} tabIndex={0} role="region"
+        aria-label={`Software openings in ${name}, scrollable`}>
+      <table className="tbl">
         <caption className="sr-only">
           Software openings in {name} whose advertisement states a pay range
         </caption>
@@ -179,6 +185,7 @@ function Openings({ name, block, display, crossRates, fxMaxGap, unavailable, cla
           ))}
         </tbody>
       </table>
+      </div>
       {named.length > examples.length && (
         <p className="sub" style={{ marginTop: 6 }}>
           Showing {examples.length} of {named.length}. Not ranked — these are the most recent.{' '}
@@ -748,7 +755,11 @@ export function Work() {
 
       <details className="disclosure panel">
         <summary style={{ cursor: 'pointer', fontSize: 'var(--text-sm)' }}>Coverage, on its three axes</summary>
-        <table className="tbl" style={{ marginTop: 10 }}>
+        {/* Its own scroll box: opened at 320, 390 and 480 this table made the
+          * page 486px wide (package 46's adversarial review). */}
+        <div style={{ overflowX: 'auto', marginTop: 10 }} tabIndex={0} role="region"
+          aria-label="Coverage by country, scrollable">
+        <table className="tbl">
           <caption className="sr-only">Coverage by country: occupation, pay basis, experience</caption>
           <thead>
             <tr>
@@ -801,6 +812,7 @@ export function Work() {
             })}
           </tbody>
         </table>
+        </div>
       </details>
 
       <details className="disclosure panel">

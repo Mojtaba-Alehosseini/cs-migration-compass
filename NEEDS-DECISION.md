@@ -4886,6 +4886,16 @@ premise — Home.tsx's own first line is that the visualisation is the product.
 Not resolved in package 46: (a) costs a much taller chart on the page most phones land on, (b) costs
 legibility, and choosing is a design decision about Home, the page the owner rates highest.
 
+**Also part of it — found by package 46's adversarial review, not fixed here.** On a phone the x-axis's
+last tick label sits in the gutter's column too: "≈never" on years-to-a-home (at 390 it spans x 284–315;
+the gutter starts at 273), "3,600" on sunshine, and "$125k" on money kept at 320–360 — so the pin's own
+label is printed where "no data" is. Package 46 made that label say "≈never" (it read "30+"); where it
+sits is this item's. Separately, rotating a phone on Home (emulated 844×390 → 390×844, motion on) left
+the page 744–837px wide for seconds while the dots slid to their new places — the kind of first-frame
+problem package 46 fixed on load, on a path its check does not take; with reduced motion it stays 390.
+That one is independent of (a) and (b) — the dots should not animate when only the field's width has
+changed — and small, and is recorded rather than rushed in at the end of a package.
+
 ## 88. `/work`'s estimate column mixes pay periods row to row — annualising is a derived figure, not a format
 
 Package 46, Tier 5.1 — escalated as the work order required, not built. Each country's row shows its
@@ -4966,3 +4976,37 @@ median: three countries, three measures, and they read as trivia. Measured acros
 
 Not resolved in package 46: both change what the first thing on each theme says, and the current
 sets were a deliberate design choice in the Explore rebuild; Visas and Weather already pass either rule.
+
+## 90. The levels.fyi comparison on city pages compares levels.fyi with itself in 17 of its 57 cities
+
+Found by package 46's adversarial review. Every city page that holds a levels.fyi figure draws it as a
+tick on the "What developers earn here" bars, and its card quotes package 16's analysis: "Across the 57
+cities holding both, this figure runs 1.22× the market band on average, and Bland–Altman puts the 95%
+limits of agreement at 0.79× to 1.89×".
+
+In **17** of those 57 cities the bars are levels.fyi figures themselves (`primary_source:
+levelsfyi_linked`): Berlin, Munich, Hamburg, Frankfurt, Stuttgart, Amsterdam, Dubai, Abu Dhabi, New York,
+Boston, Chicago, Atlanta, Raleigh, San Antonio, Miami, Washington DC and the SF Bay Area. In Chicago and
+Miami the middle bar and the tick are the same number ($150,000; $140,000), because levels.fyi's
+middle band is approximated from the same all-levels median. Split, the ratio's geometric mean is **1.104**
+for those 17 and **1.273** for the other 40 — the published 1.22× is a mix of a comparison and a
+self-comparison.
+
+**What package 46 did, and did not.** The caption had said everywhere that the tick is "a different
+measure from the bars", and the card "against a market BASE-pay band" — false in those 17. Both now
+depend on the source: levels.fyi-sourced cities say "the bars come from levels.fyi as well, so it is not a
+second source for them". The card gained one sentence: "17 of those 57 cities take their bars from
+levels.fyi as well". The statistic itself was **not** recomputed: that would change a published number.
+
+**Options:**
+  - **(a) Recompute on the 40 independent cities, and show the comparison only there.** The ratio
+    becomes about 1.27× with new limits of agreement (package 16's Bland–Altman redone on 40), and the 17
+    levels.fyi-sourced pages keep the figure as a fact with no comparison drawn. Cost: a published
+    figure changes, the analysis is redone, and 17 pages lose the mark.
+  - **(b) Keep the 57-city statistic as published, its composition disclosed** — what ships now.
+    Cost: the headline ratio understates the gap between levels.fyi and an independent market band —
+    1.22× against about 1.27× — and is honest only because the card now says what it is made of.
+
+Also worth a data check, whichever is chosen: Washington DC's band note says its middle bar is
+levels.fyi's all-levels median ($158,000), while levels.fyi's all-levels median on the same page reads
+$250,000 — two numbers under one name.
