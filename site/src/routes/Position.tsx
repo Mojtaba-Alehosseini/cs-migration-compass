@@ -142,7 +142,14 @@ export function ProfileForm({ profile, occupations, onChange }: {
   return (
     <div className="panel">
       <h2>Where do you sit?</h2>
-      <div className="sub">Three fields, no network beyond this site's own data, updates as you type.</div>
+      {/* Package 46, Tier 2: said "no network beyond this site's own data" —
+        * true, and addressed to an engineer. What it means for a reader is
+        * that what they type stays with them, and that is now what it says.
+        * Measured, not assumed: editing all three fields makes no request
+        * (17 resource entries before and after; the values reach only the
+        * address's #fragment, which a browser never sends), and
+        * scripts/tests/test_cv_flow.mjs now asserts it on every run. */}
+      <div className="sub">Three fields, and nothing you enter here is sent anywhere.</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginTop: 12 }}>
         <label style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
           Occupation
@@ -209,8 +216,7 @@ export function ProfileForm({ profile, occupations, onChange }: {
         </label>
       </div>
       <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 10 }}>
-        No submit button — the position and estimate below update live. This form works with the
-        network disabled after the page has loaded once.
+        No submit button — the position and estimate below update as you type.
       </p>
     </div>
   )

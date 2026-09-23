@@ -208,7 +208,41 @@ try {
     await page.waitFor(`document.querySelector('button.profline-head').getAttribute('aria-expanded') === 'true'
       && document.getElementById('profline-body').clientHeight > 40`, { timeoutMs: 5000, label: 'panel visibly open' })
     await page.waitForReady({ quietMs: 250, timeoutMs: 20000, label: 'panel open' })
-    await visible('#profline-body input[type=file]', `@${w} the file picker`)
+    /* The file picker is a native input visually replaced by its <label>
+     * (package 46, Tier 2). What a reader sees and taps is the label; what a
+     * keyboard reaches is the input, whose focus ring is drawn on the label.
+     * Both have to work, so both are checked — the keyboard half with real
+     * Tab and Enter key events, and Enter has to actually open the chooser. */
+    await visible('#profline-body label.file-trigger', `@${w} the file picker (its label, the visible control)`)
+    const labelFor = await page.eval(`(() => { const l = document.querySelector('#profline-body label.file-trigger');
+      const i = document.getElementById(l.htmlFor); return !!i && i.type === 'file' })()`)
+    check(labelFor, `@${w} the file picker's label is associated with the file input (label[for] -> input[type=file])`)
+    await page.eval(`(() => { document.querySelector('button.profline-head').focus(); return 1 })()`)
+    let onInput = false
+    for (let t = 0; t < 6 && !onInput; t++) {
+      await page.send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 })
+      await page.send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 })
+      onInput = await page.eval(`document.activeElement && document.activeElement.type === 'file'`)
+    }
+    check(onInput, `@${w} keyboard: Tab reaches the file input`)
+    const ring = await page.eval(`(() => { const l = document.querySelector('#profline-body label.file-trigger');
+      const s = getComputedStyle(l); return s.outlineStyle + ' ' + s.outlineWidth })()`)
+    check(onInput && /solid/.test(ring), `@${w} keyboard: the focus ring shows on the visible label (${ring})`)
+    if (onInput) {
+      /* A keyDown needs the `text` a real keystroke carries: activation rides
+       * on the keypress Chrome generates from it, and a bare keyDown made the
+       * first draft of this check report a working picker as broken. */
+      await page.send('Page.setInterceptFileChooserDialog', { enabled: true })
+      for (const [name, key, code, vk, text] of [['Enter', 'Enter', 'Enter', 13, '\r'], ['Space', ' ', 'Space', 32, ' ']]) {
+        const before = page.events.filter((e) => e.method === 'Page.fileChooserOpened').length
+        await page.send('Input.dispatchKeyEvent', { type: 'keyDown', key, code, windowsVirtualKeyCode: vk, text })
+        await page.send('Input.dispatchKeyEvent', { type: 'keyUp', key, code, windowsVirtualKeyCode: vk })
+        await page.waitForReady({ quietMs: 300, timeoutMs: 10000, label: 'chooser' })
+        const opened = page.events.filter((e) => e.method === 'Page.fileChooserOpened').length > before
+        check(opened, `@${w} keyboard: ${name} on the focused input opens the file chooser`)
+      }
+      await page.send('Page.setInterceptFileChooserDialog', { enabled: false })
+    }
     await panelFits(w, 'idle')
     await shot(w, '1-idle')
 
@@ -264,6 +298,43 @@ try {
       await shot(w, 'blocked')
     }
   }
+
+  /* The form's own promise, which package 46 put into its copy: "nothing you
+   * enter here is sent anywhere". Package 10 checked the years field once,
+   * live, and never again, and never the two selects. A claim a reader is
+   * asked to trust gets a check that runs every time: every field changed,
+   * and not one new resource entry — the instrument package 10 and 22 used. */
+  say('')
+  say('=== F1 · the form sends nothing ===')
+  await page.viewport(1440, 900, false)
+  await page.goto('about:blank')
+  await page.goto(BASE)
+  await page.hashGo(`${BASE}#/work`)
+  await page.waitForReady({ quietMs: 500, timeoutMs: 60000, label: 'work (form)' })
+  await page.eval(`(() => { document.querySelector('button.profline-head').click(); return 1 })()`)
+  await page.waitFor(`document.getElementById('profline-body').clientHeight > 40`, { timeoutMs: 5000, label: 'panel open' })
+  await page.waitForReady({ quietMs: 400, timeoutMs: 20000, label: 'panel open' })
+  const count = `performance.getEntriesByType('resource').length`
+  const n0 = await page.eval(count)
+  const changed = JSON.parse(await page.eval(`(() => {
+    const out = []
+    const num = document.querySelector('#profline-body input[type=number]')
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(num, '12')
+    num.dispatchEvent(new Event('input', { bubbles: true })); out.push('years')
+    for (const s of document.querySelectorAll('#profline-body select')) {
+      const o = [...s.options].find((x) => x.value && x.value !== s.value)
+      if (!o) continue
+      Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(s, o.value)
+      s.dispatchEvent(new Event('change', { bubbles: true })); out.push('select ' + o.value)
+    }
+    return JSON.stringify(out)
+  })()`))
+  await page.waitForReady({ quietMs: 800, timeoutMs: 20000, label: 'form edited' })
+  const n1 = await page.eval(count)
+  const url = await page.eval('location.hash')
+  check(changed.length === 3, `the form's three fields were all changed (${changed.join(', ')})`)
+  check(/years=12/.test(url), `and the page took the change — it is in the address (${url})`)
+  check(n1 === n0, `and not one request was made (${n0} resource entries before, ${n1} after)`)
 } finally {
   try { page?.close() } catch { /* already closed */ }
   close()

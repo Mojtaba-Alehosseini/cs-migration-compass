@@ -597,7 +597,12 @@ export function Work() {
     <div className="wrap" style={{ paddingTop: 22 }}>
       <h1 style={{ fontSize: 'var(--text-xl)' }}>Where you'd stand</h1>
       <p className="lede" style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-2)', padding: '4px 0 10px', maxWidth: 'var(--measure)' }}>
-        Fifteen countries, ranked by their own published pay table. Where one can't answer that, it
+        {/* Package 46, Tier 2. This said "ranked by their own published pay
+          * table" — the site's own footer says it never ranks places, Home
+          * says position on an axis is never a ranking, and the rows below
+          * are alphabetical. What the rows actually do is place YOU on each
+          * country's own table, so that is what this says. */}
+        Fifteen countries, each placing you on its own published pay table. Where one can&rsquo;t, it
         says why.
       </p>
 
@@ -637,6 +642,16 @@ export function Work() {
         <h2 id="rows-heading" className="visually-hidden">
           Position and openings, country by country
         </h2>
+        {/* Package 46, Tier 2: the right-hand column — 24, 100, 352 … 7,125 —
+          * had no label, and a count of job advertisements is easy to take for
+          * a salary. One word, in the site's own label style, pinned to the
+          * right edge, which is where the counts sit at every width (the last
+          * column on desktop, the right of the third line on a phone). Shown
+          * for the skeleton too, so the rows do not move when the data lands.
+          * aria-hidden: each count now says "software openings" itself. */}
+        {(!wages || !gradient || supported) && (
+          <div className="wrow-head" aria-hidden="true"><span className="kicker">Openings</span></div>
+        )}
         {!wages || !gradient ? (
           <RowListSkeleton count={spine.length} />
         ) : !supported ? (

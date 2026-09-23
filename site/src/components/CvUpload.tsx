@@ -14,7 +14,7 @@
  * header for why the two are already kept in different visual registers).
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import type { Occupations } from '../data/store'
 import { extractCvText } from '../cv/extractText'
 import { stripPii, type PiiRedaction } from '../cv/stripPii'
@@ -78,7 +78,7 @@ export function CvUpload({ occupations, onApply, active }: {
   occupations: Occupations | null
   onApply: ApplyFn
   /** Whether the panel this lives in is actually open. ProfileLine keeps
-   *  this component MOUNTED while collapsed (max-height, not unmount), so
+   *  this component MOUNTED while collapsed (a 0fr grid track, not unmount), so
    *  without this the stored-profile read would fire on every /work page
    *  load for a reader who has opted in. Package 22's second property is
    *  that nothing is sent until the reader asks for it; a read that happens
@@ -87,6 +87,7 @@ export function CvUpload({ occupations, onApply, active }: {
 }) {
   const [stage, setStage] = useState<Stage>({ kind: 'idle' })
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputId = useId()
   const turnstileContainerRef = useRef<HTMLDivElement>(null)
   const turnstileHandleRef = useRef<TurnstileHandle | null>(null)
   // The reviewed text, stable across the awaiting-turnstile -> analysing
@@ -179,21 +180,38 @@ export function CvUpload({ occupations, onApply, active }: {
         <span className="chip chip-note" style={{ marginRight: 6 }}>AI-assisted</span>
         A model reads your CV into occupation and years of experience — the same two fields below,
         filled in for you to check, not an authority you have to accept. It never sees or produces a
-        pay figure: its own response format has no field for one.
+        pay figure.
+        {/* Package 46, Tier 2. "Its own response format has no field for one"
+          * is true, and addressed to an engineer; it is the reason the claim
+          * above holds, so it moves behind a tap rather than going. The idiom
+          * is /data's own inline "+N more steps" disclosure, not a new one. */}
+        <details style={{ display: 'inline' }}>
+          <summary style={{ display: 'inline', cursor: 'pointer', color: 'var(--accent)' }}> How we know</summary>
+          <span style={{ display: 'block', marginTop: 4 }}>
+            Its answer comes back in a fixed format with fields for occupation, years of experience and
+            education, and none for pay — so there is no field a pay figure could arrive in.
+          </span>
+        </details>
       </div>
 
       <SavedProfile onApply={onApply} occupations={occupations} active={active} />
 
       {stage.kind === 'idle' && (
         <div style={{ marginTop: 10 }}>
+          {/* The native input, visually replaced by its label — see
+            * .file-input in base.css for why it is hidden that way and not
+            * with display:none. The label's text is the input's accessible
+            * name. Package 46, Tier 2. */}
           <input
             ref={fileInputRef}
+            id={fileInputId}
+            className="file-input"
             type="file"
             accept="application/pdf"
             onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f) }}
-            style={{ fontSize: 'var(--text-xs)' }}
           />
-          <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 6 }}>
+          <label htmlFor={fileInputId} className="btn-accent file-trigger">Choose your CV</label>
+          <p style={{ fontSize: 'var(--text-2xs)', color: 'var(--ink-3)', marginTop: 8 }}>
             PDF only. The file is read in your browser and never uploaded — only the text below, once
             you have checked it, is ever sent anywhere.
           </p>

@@ -98,9 +98,19 @@ const BASIS_LABEL: Record<string, string> = {
  *  rendering real country rows against data that has not arrived would be
  *  claiming a distribution this site does not yet have. */
 export function RowListSkeleton({ count }: { count: number }) {
+  /* Package 46, Tier 2. The reserved rows below are right for layout — they
+   * are why the list does not jump when the data lands — but on their own
+   * fifteen faint empty tracks read as "loaded, and nothing is here". The
+   * sentence that says otherwise was already written; it was visually
+   * hidden. Now it is the site's own loading idiom, a centred kicker, as in
+   * ChartSkeleton and DeferUntilVisible — with the count, per ChartSkeleton's
+   * rule that a caller who knows the quantity says it. It sits over the
+   * reserved rows, so it adds no height of its own. */
   return (
-    <div aria-busy="true">
-      <span className="visually-hidden">Loading each country&rsquo;s published pay distribution…</span>
+    <div aria-busy="true" style={{ position: 'relative' }}>
+      <div className="skel-note">
+        <span className="kicker">Loading {count} countries&rsquo; pay tables…</span>
+      </div>
       {Array.from({ length: count }, (_, i) => (
         // aria-hidden: these carry no country and no figure — the one line
         // above is the whole accessible content of a loading list.
@@ -180,7 +190,7 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
       <div className="wrow" role="listitem" data-cc={cc} data-key={cc} style={{ ['--rowc' as string]: 'var(--ink-3)' }}>
         <div className="wrow-id">
           <span className="wrow-flag"><Flag cc={cc} size={14} /></span>
-          <b>{cc}</b><span className="wrow-name">{name}</span>
+          <b>{cc}</b><span className="wrow-name" title={name}>{name}</span>
         </div>
         <div className="wrow-strip">
           <span className="visually-hidden">{reason}</span>
@@ -306,7 +316,7 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
       }}>
       <div className="wrow-id">
         <span className="wrow-flag"><Flag cc={cc} size={14} /></span>
-        <b>{cc}{secondCode ? ` · ${secondCode}` : ''}</b><span className="wrow-name">{name}</span>
+        <b>{cc}{secondCode ? ` · ${secondCode}` : ''}</b><span className="wrow-name" title={name}>{name}</span>
       </div>
       <div className="wrow-strip" title={srLabel}>
         <span className="visually-hidden">{srLabel}</span>
@@ -454,6 +464,11 @@ function OpeningsCell({ name, openings, unavailable, sharedWithCode }: {
           + 'employer\'s own range, never this site\'s estimate. Not ranked; the full list is under Every opening.',
       }}>
         {openings.software.toLocaleString()}
+        {/* Package 46, Tier 2: the column has a visible "Openings" label above
+          * the rows now, but a screen reader reaches this number row by row and
+          * heard "24 — show where this number comes from", which does not say
+          * what 24 counts. */}
+        <span className="visually-hidden"> software openings</span>
       </Figure>
     </div>
   )
