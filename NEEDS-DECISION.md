@@ -5021,7 +5021,7 @@ median: three countries, three measures, and they read as trivia. Measured acros
 Not resolved in package 46: both change what the first thing on each theme says, and the current
 sets were a deliberate design choice in the Explore rebuild; Visas and Weather already pass either rule.
 
-## 90. The levels.fyi comparison on city pages compares levels.fyi with itself in 17 of its 57 cities
+## 90. CLOSED, package 47 — The levels.fyi comparison on city pages compares levels.fyi with itself in 17 of its 57 cities
 
 Found by package 46's adversarial review. Every city page that holds a levels.fyi figure draws it as a
 tick on the "What developers earn here" bars, and its card quotes package 16's analysis: "Across the 57
@@ -5054,3 +5054,27 @@ levels.fyi as well". The statistic itself was **not** recomputed: that would cha
 Also worth a data check, whichever is chosen: Washington DC's band note says its middle bar is
 levels.fyi's all-levels median ($158,000), while levels.fyi's all-levels median on the same page reads
 $250,000 — two numbers under one name.
+
+**CLOSED, package 47 — ruled: recompute on the 40 independent cities; shipped.** Reproduced first,
+with package 16's own function, pairing and data (`scripts/audit_statistical.py`,
+`tier4_triangulation`): n = 57, 1.2197×, 95% limits of agreement 0.7887× to 1.8864×, r = 0.898 — the
+published 1.22×, 0.79× to 1.89×, exactly. The same analysis on the 40 cities whose band is not
+levels.fyi's own: **n = 40, 1.2728×, limits 0.8003× to 2.0242×, r = 0.864**, quoted as 1.27× and
+0.80× to 2.02×; Doha (2.20×) and Dublin (2.04×) sit above those limits and Valencia (2.02×) on the
+edge. Every quote updated: the city card on the 40 pages, the levels.fyi metric's note in
+`registry.ts` (Compare and Explore), `docs/DATA-FITNESS.md` and `docs/STATE-OF-THE-SITE.md`; the /data
+page itself never quoted it (checked). The 17 levels.fyi-sourced pages keep the figure and the tick,
+with a caption saying it is the same source, and carry no ratio, no limits and nothing that treats it
+as a second source — swept on all 57 pages from the rendered DOM: 0 findings (57 on the previous build).
+`statistical_audit.json`'s 4-A now carries all three runs and names the 40-city one as published.
+
+**Washington DC, corrected.** Its tick came from levels.fyi's `washington-usa` page, which is Washington
+*state*: its heading reads "Washington, US", it names no DC place, and its figures are the Greater
+Seattle Area's ($250,000 from 7,543 submissions against Seattle's $250,000 from 7,490). DC's own metro
+page is `northern-virginia-washington-dc` — the page DC's band already cites — and reads $159,500
+(p25 $125,000, p75 $205,000, 1,718 submissions) on 2026-09-24. Applied through
+`data/raw/levels_fyi/corrections_2026-09-24.json`, which `src_levels_fyi.py` now lays over the capture
+by city id; the 2026-08-04 capture itself stays verbatim, and the corrected record carries its
+correction. The other 16 tick pages were read the same day and are the right places. DC is one of the
+17, so the published 40-city figure does not move; the unpublished 17-city self-comparison goes from
+1.1035× to 1.0748×.

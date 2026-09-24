@@ -1,6 +1,6 @@
 {
  "source_id": "levels_fyi",
- "generated_at": "2026-08-21T04:02:35+00:00",
+ "generated_at": "2026-09-24T01:18:31+00:00",
  "meta": {
   "role": "Software Engineer, all levels",
   "basis": "TOTAL COMPENSATION (base + stock + bonus) — not base salary. This is the 'top employers' band, deliberately kept separate from the market-wide figures already in cities.json.",
@@ -805,19 +805,25 @@
    "source": "https://www.levels.fyi/t/software-engineer/locations/orlando-usa"
   },
   "washington_dc": {
-   "median_total_comp_usd": 250000,
-   "p25_total_comp_usd": 185500,
-   "p75_total_comp_usd": 329000,
+   "median_total_comp_usd": 159500,
+   "p25_total_comp_usd": 125000,
+   "p75_total_comp_usd": 205000,
    "currency_original": "USD",
-   "median_original": 250000,
-   "p25_original": 185500,
-   "p75_original": 329000,
+   "median_original": 159500,
+   "p25_original": 125000,
+   "p75_original": 205000,
    "period": "year",
-   "as_of": "2026-08-04",
+   "as_of": "2026-09-24",
    "role": "Software Engineer, all levels",
    "basis": "total compensation (base + stock + bonus)",
    "confidence": "crowd",
-   "source": "https://www.levels.fyi/t/software-engineer/locations/washington-usa"
+   "source": "https://www.levels.fyi/t/software-engineer/locations/northern-virginia-washington-dc",
+   "correction": {
+    "on": "2026-09-24",
+    "file": "data/raw/levels_fyi/corrections_2026-09-24.json",
+    "replaces_source": "https://www.levels.fyi/t/software-engineer/locations/washington-usa",
+    "why": "The 2026-08-04 capture read levels.fyi's 'washington-usa' page, which is Washington STATE, not Washington DC: its heading reads 'Software Engineer Salary in Washington, US', it names no DC place, and on 2026-09-24 its figures (median $250,000 from 7,543 submissions, p25 $187,156, p75 $330,000) are the Greater Seattle Area's (median $250,000 from 7,490 submissions, p25 $189K, p75 $330K). Washington DC's page on levels.fyi is 'northern-virginia-washington-dc' (heading 'Software Engineer Salary in Northern Virginia Washington DC, US') - the page this city's own market band already cites. The other 16 levels.fyi-sourced cities' pages were checked the same day and are the right places."
+   }
   },
   "sf_bay_area": {
    "median_total_comp_usd": 285000,

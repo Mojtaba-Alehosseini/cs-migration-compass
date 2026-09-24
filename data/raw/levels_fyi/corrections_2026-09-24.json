@@ -1,0 +1,25 @@
+{
+  "corrected_at": "2026-09-24",
+  "by": "package 47, NEEDS-DECISION #90",
+  "applies_to": "capture_2026-08-04.json",
+  "method": "Each page read in a browser session on 2026-09-24; figures are that page's own structured data (its count, p25, p50 and p75, in USD), not its displayed text.",
+  "records": {
+    "washington_dc": {
+      "slug": "northern-virginia-washington-dc",
+      "currency": "USD",
+      "median": 159500,
+      "p25": 125000,
+      "p75": 205000,
+      "updated": "2026-09-24",
+      "n": 1718,
+      "replaces": {
+        "slug": "washington-usa",
+        "median": 250000,
+        "p25": 185500,
+        "p75": 329000,
+        "updated": "2026-08-04"
+      },
+      "why": "The 2026-08-04 capture read levels.fyi's 'washington-usa' page, which is Washington STATE, not Washington DC: its heading reads 'Software Engineer Salary in Washington, US', it names no DC place, and on 2026-09-24 its figures (median $250,000 from 7,543 submissions, p25 $187,156, p75 $330,000) are the Greater Seattle Area's (median $250,000 from 7,490 submissions, p25 $189K, p75 $330K). Washington DC's page on levels.fyi is 'northern-virginia-washington-dc' (heading 'Software Engineer Salary in Northern Virginia Washington DC, US') - the page this city's own market band already cites. The other 16 levels.fyi-sourced cities' pages were checked the same day and are the right places."
+    }
+  }
+}

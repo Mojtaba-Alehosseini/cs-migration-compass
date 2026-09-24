@@ -31,6 +31,12 @@ from _common import (  # noqa: E402
 SOURCE_ID = "levels_fyi"
 NAME = "levels.fyi — Software Engineer total compensation by metro"
 CAPTURE = RAW / "levels_fyi" / "capture_2026-08-04.json"
+# Package 47 (NEEDS-DECISION #90): corrections read later, applied over the
+# capture by city id. The capture stays verbatim — it is a record of what was
+# read on its date, including what was read wrongly — and each correction
+# carries its own date, page, figures and reason, and is written onto the
+# city's record so the correction travels with the figure it changed.
+CORRECTIONS = sorted((RAW / "levels_fyi").glob("corrections_*.json"))
 CITIES = DATA / "cities.json"
 BASE_URL = "https://www.levels.fyi/t/software-engineer/locations/"
 
@@ -40,6 +46,16 @@ def run() -> None:
     if not CAPTURE.exists():
         raise FileNotFoundError(f"missing capture file {CAPTURE}")
     cap = json.loads(CAPTURE.read_text(encoding="utf-8"))
+    corrected: dict[str, dict] = {}
+    for path in CORRECTIONS:
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        for city_id, rec in doc["records"].items():
+            if city_id not in cap["records"]:
+                raise KeyError(f"{path.name} corrects {city_id}, which the capture does not hold")
+            cap["records"][city_id] = rec
+            corrected[city_id] = {"on": doc["corrected_at"], "file": f"data/raw/levels_fyi/{path.name}",
+                                  "replaces_source": BASE_URL + rec["replaces"]["slug"], "why": rec["why"]}
+            log(f"    corrected {city_id}: {rec['replaces']['slug']} -> {rec['slug']} ({path.name})")
     fx = json.loads((DATA / "metrics.json").read_text(encoding="utf-8"))["meta"]["fx_rates_usd_base"]
     fx = {k: v for k, v in fx.items() if isinstance(v, (int, float))}
 
@@ -89,6 +105,8 @@ def run() -> None:
             "confidence": "crowd",
             "source": BASE_URL + rec["slug"],
         }
+        if city_id in corrected:
+            entry["correction"] = corrected[city_id]
         # Written onto the city record as a SEPARATE field. The market bands in
         # salary_usd_year are untouched — this is a second band, not a correction.
         city["salary_levels_fyi"] = entry
@@ -171,6 +189,10 @@ def run() -> None:
             "Wrote a NEW salary_levels_fyi field on each city; salary_usd_year was left untouched.",
             "7 metros had no resolvable route and 3 returned an implausible value from a different "
             "page layout; all 10 are written with an explicit unavailable_reason instead of a number.",
+            "Package 47 (NEEDS-DECISION #90): data/raw/levels_fyi/corrections_*.json are applied over "
+            "the capture by city id. Washington DC's capture had read 'washington-usa' - Washington "
+            "STATE (the Greater Seattle Area's figures) - and is replaced by 'northern-virginia-"
+            "washington-dc', read 2026-09-24. Each corrected record carries its correction.",
         ],
         output=f"data/processed/{SOURCE_ID}.json",
         rows=written,

@@ -302,10 +302,20 @@ export const METRICS: MetricDef[] = [
     tickFormat: moneyTick,
     direction: 'higher_better',
     confidence: 'crowd',
+    /* NEEDS-DECISION #90, ruled in package 47: the comparison is drawn only
+     * where the city's market band is NOT levels.fyi's own (40 cities), with
+     * the statistic recomputed on those 40; for the 17 whose band IS
+     * levels.fyi, the figure is stated with no comparison. See CityProfile. */
     source: (c) => ({
       name: 'levels.fyi',
       url: c.salary_levels_fyi?.source,
-      what: 'Total compensation (base + stock + bonus) against a market BASE-pay band — partly a definition difference, not purely an employer premium. Correlated with the market band (r = 0.90) but NOT interchangeable: 1.22x high on average, 95% limits 0.79x-1.89x. Never blended with it.',
+      what: c.salary_usd_year.primary_source === 'levelsfyi_linked'
+        ? 'Total compensation (base + stock + bonus), all levels. This city’s market band comes from levels.fyi too, '
+          + 'so it is the same source, not a second one, and no comparison is drawn. Never blended with it.'
+        : 'Total compensation (base + stock + bonus) against a market BASE-pay band — partly a definition difference, '
+          + 'not purely an employer premium. Across the 40 cities whose band comes from a source other than levels.fyi: '
+          + 'correlated (r = 0.86) but NOT interchangeable — 1.27x high on average, 95% limits 0.80x-2.02x. Never '
+          + 'blended with it.',
     }),
   },
   {

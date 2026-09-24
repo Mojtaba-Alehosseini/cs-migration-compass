@@ -183,12 +183,23 @@ single sourced figures, not sample means, so the log-normality finding does not 
 are already effectively rounded (granularity $1,000).
 
 One caveat worth keeping visible: **`salary_usd_year` and `salary_levels_fyi` are not
-interchangeable.** They correlate at Pearson r = 0.898, which reads as excellent agreement — but
-Bland–Altman shows levels.fyi runs **1.22× high on average, with 95% limits of agreement from 0.79×
-to 1.89×**. An individual city can differ by more than two-fold. Four cities are robust-z outliers:
-Doha 2.20×, Dublin 2.04×, Valencia 2.02×, London 1.95×. They measure different constructs — market
-base-pay bands versus self-reported big-tech total compensation — and the site is right never to
-blend them.
+interchangeable.** Package 16 compared them on all 57 cities holding both: Pearson r = 0.898, which
+reads as excellent agreement — but Bland–Altman put levels.fyi 1.22× high on average, with 95% limits
+of agreement from 0.79× to 1.89×. In 17 of those 57 cities, though, the band itself comes from
+levels.fyi (`primary_source: levelsfyi_linked`), so that figure mixed a comparison with a
+self-comparison (NEEDS-DECISION #90).
+
+**Package 47 reran the same analysis — same function, same pairing — on the 40 cities whose band
+comes from another source: r = 0.864, and levels.fyi runs 1.27× high on average, with 95% limits of
+agreement from 0.80× to 2.02×.** That is the figure the site now quotes. Doha (2.20×) and Dublin
+(2.04×) sit above those limits and Valencia (2.02×) on the edge, so an individual city can still
+differ by more than two-fold. They measure different constructs — market base-pay bands versus
+self-reported big-tech total compensation — and the site is right never to blend them; on the 17
+levels.fyi-sourced city pages it states the figure with no comparison at all.
+
+Washington DC's levels.fyi figure was, until package 47, levels.fyi's page for Washington *state*
+(the Greater Seattle Area's figures); it now comes from DC's own metro page. DC is one of the 17, so
+the 40-city figure is unaffected.
 
 ---
 

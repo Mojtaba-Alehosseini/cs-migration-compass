@@ -862,14 +862,33 @@ def tier4_triangulation():
     a = np.array([p[1] for p in pr], float)
     b = np.array([p[2] for p in pr], float)
     ba, dm = bland_altman(a, b), deming(a, b)
+    # Package 47, NEEDS-DECISION #90: in 17 of these cities the market band IS
+    # levels.fyi (salary_usd_year.primary_source == "levelsfyi_linked"), so the
+    # all-cities run mixes a comparison with a self-comparison. Ruled: publish
+    # the run on the cities whose band comes from somewhere else — the same
+    # function and pairing, only the input narrowed — and keep the all-cities
+    # run beside it as history.
+    src = {ct["id"]: (ct.get("salary_usd_year") or {}).get("primary_source") for ct in cities}
+    ind = [p for p in pr if src.get(p[0]) != "levelsfyi_linked"]
+    same = [p for p in pr if src.get(p[0]) == "levelsfyi_linked"]
+    ba_ind = bland_altman([p[1] for p in ind], [p[2] for p in ind])
+    ba_same = bland_altman([p[1] for p in same], [p[2] for p in same])
     finding("4-A", "core salary vs levels.fyi: correlated, but not interchangeable", "QUANTIFIED",
             bland_altman=ba, deming=dm,
+            bland_altman_independent_band=ba_ind,
+            deming_independent_band=deming([p[1] for p in ind], [p[2] for p in ind]),
+            bland_altman_levelsfyi_band=ba_same,
+            published="bland_altman_independent_band (package 47, NEEDS-DECISION #90)",
             note="Pearson r=" + str(ba["pearson_r"]) + " would read as excellent agreement. "
                  "Bland-Altman says levels.fyi runs " + str(ba["bias_ratio"]) + "x high on "
                  "average with 95% limits of agreement from " + str(ba["loa_lo_ratio"]) + "x to "
                  + str(ba["loa_hi_ratio"]) + "x, so an individual city can differ by more than "
                  "two-fold. They measure different constructs (market base-pay bands versus "
-                 "self-reported big-tech total compensation) and must not be blended.")
+                 "self-reported big-tech total compensation) and must not be blended. "
+                 "That run includes " + str(len(same)) + " cities whose band is levels.fyi's own; "
+                 "on the " + str(len(ind)) + " whose band is independent — the figure the site "
+                 "publishes — levels.fyi runs " + str(ba_ind["bias_ratio"]) + "x high, limits "
+                 + str(ba_ind["loa_lo_ratio"]) + "x to " + str(ba_ind["loa_hi_ratio"]) + "x.")
 
 
 def tier6_temporal():

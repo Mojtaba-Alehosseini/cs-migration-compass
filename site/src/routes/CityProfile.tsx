@@ -199,21 +199,26 @@ export function CityProfile() {
                           + 'same one. Read the two side by side; they are never added, averaged or substituted for '
                           + 'each other.',
                       /* Package 16 — docs/DATA-FITNESS.md: these two are supported as a
-                       * CORRELATION, never as agreement. Pearson r = 0.898 reads as
-                       * excellent agreement and is the wrong statistic for it;
-                       * Bland-Altman in log space puts levels.fyi 1.22x high on average
-                       * with 95% limits from 0.79x to 1.89x, so one city can differ
-                       * more than two-fold. The gap is not simply "what employers pay
-                       * extra" -- it is partly total-comp versus base -- and saying so
-                       * is the difference between a comparison and a blend. */
-                      sample: 'Across the 57 cities holding both, this figure runs 1.22× the market band on '
-                        + 'average, and Bland–Altman puts the 95% limits of agreement at 0.79× to 1.89× — a '
-                        + 'statistical interval, not the observed range, which is wider: four cities sit '
-                        + 'above it (Doha 2.20×, Dublin 2.04×, Valencia 2.02×, London 1.95×). '
-                        // The statistic is package 16's and is not changed here;
-                        // what it is made of is now said. Whether it should be
-                        // recomputed without them is NEEDS-DECISION #90.
-                        + `17 of those 57 cities take their bars from levels.fyi as well${sameSource ? ', this one among them' : ''}.`,
+                       * CORRELATION, never as agreement; Pearson r reads as excellent
+                       * agreement and is the wrong statistic for it. Package 16 ran
+                       * Bland-Altman in log space on all 57 cities holding both —
+                       * 1.22x, limits 0.79x to 1.89x — but in 17 of them the bars ARE
+                       * levels.fyi, so it was a comparison mixed with a
+                       * self-comparison (NEEDS-DECISION #90). Ruled in package 47:
+                       * recompute on the 40 whose bars come from somewhere else —
+                       * same function, same pairing (scripts/audit_statistical.py,
+                       * tier4_triangulation) — and draw no comparison at all on the
+                       * other 17. Those pages keep the figure as a fact, and the tick,
+                       * with a caption that says it is the same source. */
+                      sample: sameSource
+                        ? 'Not compared with the bars on this page: they come from levels.fyi too. The comparison '
+                          + 'with an independent market band is drawn only in the cities that have one.'
+                        : 'Across the 40 cities whose market band comes from a source other than levels.fyi, this '
+                          + 'figure runs 1.27× that band on average, and Bland–Altman puts the 95% limits of '
+                          + 'agreement at 0.80× to 2.02× — a statistical interval, not the observed range: Doha '
+                          + '(2.20×) and Dublin (2.04×) sit above it, and Valencia (2.02×) on its edge. The 17 cities '
+                          + 'whose bars are levels.fyi’s own are left out, where the comparison would be levels.fyi '
+                          + 'with itself.',
                     }}><b>{money(lf.median_total_comp_usd)}</b></Figure>
                     {pastScale && ', past the end of this scale'}
                     {sameSource

@@ -132,9 +132,12 @@ recorded per source as `native_basis` and pinned by a test so a rebuild cannot s
 **3. 16 of 73 cities have no second salary band.**
 The "top-employer pay" card (levels.fyi median total compensation) resolves for 57 cities. On the
 other 16 there is one band, not two, and the card says so rather than estimating. Where both bands
-do exist they are never blended: they are different quantities (total comp vs base), correlated at
-r = 0.90 but 1.22× apart on average. Separately — see open item #60 — for 21 of the 73 the two
-bands are not independent, because both trace to the same levels.fyi metro page.
+do exist they are never blended: they are different quantities (total comp vs base). In 17 of the 57
+the market band itself comes from levels.fyi, so there is no second source, and since package 47
+(#90) those pages state the figure without a comparison. On the other 40 the two correlate at
+r = 0.86 but run 1.27× apart on average, 95% limits of agreement 0.80× to 2.02× — package 16's 1.22×
+had been computed on all 57, self-comparisons included. Separately — see open item #60 — for 21 of
+the 73 the two bands are not independent, because both trace to the same levels.fyi metro page.
 
 **4. Six countries have no official immigration source on record, and most figures have no page.**
 Canada, Germany, Italy, Spain, the UAE and Qatar carry no recorded official immigration authority,
