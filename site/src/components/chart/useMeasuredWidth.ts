@@ -21,6 +21,7 @@
  * observer follows the element rather than the first render.
  */
 import { useCallback, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 
 export function useMeasuredWidth<T extends HTMLElement>(fallback: number) {
   const [width, setWidth] = useState(fallback)
@@ -36,7 +37,12 @@ export function useMeasuredWidth<T extends HTMLElement>(fallback: number) {
     // like a layout effect, so the corrected render lands before paint.
     setWidth(el.clientWidth || fallback)
     if (typeof ResizeObserver === 'undefined') return
-    const ro = new ResizeObserver(() => setWidth(el.clientWidth || fallback))
+    /* flushSync (package 47, #87): the observer fires after layout and before
+     * paint, but a plain setState from it is batched into a later task, so one
+     * frame painted the OLD layout at the NEW width — on a phone turned upright
+     * that was Home's dots still at a landscape x, and a page 703px wide for a
+     * frame. Rendering inside the callback lays them out before that paint. */
+    const ro = new ResizeObserver(() => flushSync(() => setWidth(el.clientWidth || fallback)))
     ro.observe(el)
     observer.current = ro
   }, [fallback])

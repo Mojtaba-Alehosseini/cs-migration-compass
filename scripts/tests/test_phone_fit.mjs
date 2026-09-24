@@ -1,5 +1,7 @@
-/* P1–P3 — the site header is one row, Home is never wider than a phone, and
- * Explore's theme chips are one row with the current one in view.
+/* P1–P4 — the site header is one row, Home is never wider than a phone,
+ * Explore's theme chips are one row with the current one in view, and every
+ * city on Home's dot field can be seen on a phone (P4, package 47 — see its
+ * block below).
  *
  * Package 46, Tier 4. Both were invisible at the widths anyone was looking
  * at, and both are properties a later change can quietly break again, so
@@ -201,6 +203,57 @@ try {
   }
   }
 
+  if (runs('P4')) {
+  say('')
+  say("=== P4: every city on Home's dot field can be seen, on a phone ===")
+  /* Package 47, NEEDS-DECISION #87. The field packed every city into ±7 lanes
+   * of 440px. On a phone that was not enough: at 390, 28 pairs of flags drawn
+   * over each other on years-to-a-home, four cities WITH a value drawn inside
+   * "no data", tick labels under flags — and the last tick label itself
+   * printed in the gutter's column. The field is as tall as the question
+   * needs there now. Measured on the rendered page, per question:
+   *  · pairs of flags overlapping by more than a third of a flag both ways;
+   *  · cities with a value whose flag touches the "no data" gutter;
+   *  · x-axis labels a flag or a visible name covers, or that sit in the
+   *    gutter's column. */
+  await page.emulateReducedMotion(true)
+  for (const w of [360, 390, 414]) {
+    for (const ask of ['pay', 'home', 'left', 'sun']) {
+      await page.viewport(w, 844, true)
+      await page.goto('about:blank')
+      await page.goto(`${BASE}#/?ask=${ask}`)
+      await page.waitForReady({ quietMs: 400, timeoutMs: 60000, label: `home ${ask}@${w}` })
+      await page.waitFor(settled, { timeoutMs: 15000, label: 'settled' })
+      const m = JSON.parse(await page.eval(`JSON.stringify((() => {
+        const field = document.querySelector('.swarm-stage .swarm-dot')?.parentElement
+        const marks = [...document.querySelectorAll('.swarm-stage .swarm-dot')].filter((d) => !d.classList.contains('swarm-null'))
+          .map((d) => ({ id: d.dataset.city, r: d.querySelector('.swarm-mark').getBoundingClientRect(), n: d.querySelector('small') }))
+        const pairs = []
+        for (let i = 0; i < marks.length; i++) for (let j = i + 1; j < marks.length; j++) {
+          const a = marks[i].r, b = marks[j].r
+          const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left), oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)
+          if (ox > a.width / 3 && oy > a.height / 3) pairs.push(marks[i].id + '+' + marks[j].id)
+        }
+        const g = document.querySelector('.swarm-gutter')?.getBoundingClientRect()
+        const touches = (r) => g && r.right > g.left + 0.5 && r.left < g.right && r.bottom > g.top && r.top < g.bottom
+        const inGutter = marks.filter((m) => touches(m.r)).map((m) => m.id)
+        const shown = (el) => { if (!el) return false; const s = getComputedStyle(el); return s.visibility !== 'hidden' && s.display !== 'none' && s.opacity !== '0' }
+        const over = (p, q) => p.right > q.left && p.left < q.right && p.bottom > q.top && p.top < q.bottom
+        const covered = [...(field?.querySelectorAll(':scope > div[aria-hidden="true"] > b') ?? [])].filter((t) => {
+          const tr = t.getBoundingClientRect()
+          return touches(tr) || marks.some((m) => over(m.r, tr) || (shown(m.n) && m.n.getBoundingClientRect().width > 0 && over(m.n.getBoundingClientRect(), tr)))
+        }).map((t) => t.textContent)
+        return { n: marks.length, pairs, inGutter, covered, h: field ? Math.round(field.getBoundingClientRect().height) : null }
+      })())`))
+      check(m.n > 0 && m.pairs.length === 0 && m.inGutter.length === 0 && m.covered.length === 0,
+        `P4 ${ask}@${w}: ${m.n} cities in a ${m.h}px field — ${m.pairs.length} pairs drawn over each other`
+        + `${m.pairs.length ? ` (${m.pairs.slice(0, 3).join(', ')}${m.pairs.length > 3 ? ', …' : ''})` : ''}, `
+        + `${m.inGutter.length} with a value in the gutter${m.inGutter.length ? ` (${m.inGutter.join(', ')})` : ''}, `
+        + `${m.covered.length} axis labels covered${m.covered.length ? ` (${m.covered.join(', ')})` : ''}`)
+    }
+  }
+  }
+
   page.close()
 } finally {
   close()
@@ -209,6 +262,6 @@ try {
 say('')
 say('-'.repeat(70))
 say(fails === 0
-  ? `ALL PHONE-FIT CHECKS PASS (${ONLY.size ? [...ONLY].join(', ') + ' only' : 'P1, P2, P3'})`
+  ? `ALL PHONE-FIT CHECKS PASS (${ONLY.size ? [...ONLY].join(', ') + ' only' : 'P1, P2, P3, P4'})`
   : `${fails} check(s) FAILED`)
 process.exitCode = fails ? 1 : 0

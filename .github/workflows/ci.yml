@@ -197,6 +197,9 @@ jobs:
           # theme chips are one row with the current one in view. On the code
           # before package 46 the header was two rows on every phone, Home ran
           # to 823-999px in a 360-414px screen, and the chips took three rows.
+          # Package 47 — P4: on Home's dot field at 360/390/414, on every
+          # question, no flags drawn over each other, no city with a value in
+          # "no data", no axis label covered. It failed 12 of 12 before #87.
           if [ $TEST_EXIT -eq 0 ]; then
             CHROME_PATH=google-chrome-stable node ../scripts/tests/test_phone_fit.mjs
             TEST_EXIT=$?

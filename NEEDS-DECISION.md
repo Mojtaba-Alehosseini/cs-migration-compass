@@ -4878,7 +4878,7 @@ Found while building it: a report can exist, parse and have measured nothing. Ag
 server Chrome shows an interstitial and every metric reads −1, which passes "LCP at most 2,500".
 The gate now fails any such run by name instead of relying on a category score to catch it.
 
-## 87. Home's dot field is over capacity on a phone — cities drawn on each other, inside "no data", and over the axis
+## 87. CLOSED, package 47 — Home's dot field is over capacity on a phone — cities drawn on each other, inside "no data", and over the axis
 
 Found in package 46 while fixing Home's first frame. At 768px and wider every check below is clean;
 at 360–414 none is. Measured on package 46's build, which matches the live site on all three:
@@ -4940,7 +4940,34 @@ problem package 46 fixed on load, on a path its check does not take; with reduce
 That one is independent of (a) and (b) — the dots should not animate when only the field's width has
 changed — and small, and is recorded rather than rushed in at the end of a package.
 
-## 88. `/work`'s estimate column mixes pay periods row to row — annualising is a derived figure, not a format
+**CLOSED, package 47 — ruled: a taller field on phones, sized to what each question needs;
+desktop unchanged; shipped.** The field lays out the classic way first and, only where that fails —
+a city with no free lane, a lane the 440px field cannot hold with its label clear of the ticks (±6
+and beyond), or a valued city reaching the gutter — lays out again fitted: the gutter reserved in
+pixels as the scatter already does, as many lanes as the question needs, and the field as tall as
+those lanes, (2L + 1) × 32 + 51px. Flag size, lane pitch and labels unchanged. Measured on the page at
+fourteen widths from 320 to 1440, every one-axis question: **0 pairs drawn over each other, 0 cities
+with a value in the gutter, 0 axis labels covered** (before: up to 57 pairs, 17 cities in the gutter
+and 4 covered labels at 320, and findings at every width up to 600). At 390 the fields are 659 / 915 /
+659 / 531px — this item's simulation exactly. Desktop: **18 of 18 screenshots byte-identical** at 1024
+and 1440 (five questions, and four with the second axis on). At 660–820, pay and years-to-a-home take
+the fitted layout too (+27px), because lane ±6 reaches the tick labels' strip — at 600 it covered
+"2 yrs" and "5"; the switch follows that geometry, not where a tick happens to fall today.
+
+The first frame is already the fitted height (915px from the first frame on years-to-a-home at 390,
+no layout shift). Switching questions animates the height on the site's own tokens (0.48s ease-out,
+zeroed under reduced motion); the question buttons, above the field, never move, and "+ second
+axis", under it, stays under the finger that taps it, because the height belongs to the question
+whether or not a second axis is on. The x-axis's last label now ends at its rule instead of printing
+in the gutter's column. Rotation: the dots no longer animate on a width-only change, and the width
+observer re-renders before paint — on a window resize, 0 painted frames wider than the screen (19
+before); in mobile emulation, 1 (129 before), the frame in which the emulator widens its layout
+viewport during the first layout at the new size, before any script runs. P4 in
+`test_phone_fit.mjs` asserts it at 360/390/414 on every question: 12 of 12 failed on the code before,
+12 of 12 pass. Not changed: anchor-city name labels can meet (15 such pairs across the widths and
+questions measured, before and after — the same collisions exist on desktop).
+
+## 88. CLOSED, package 47 — `/work`'s estimate column mixes pay periods row to row — annualising is a derived figure, not a format
 
 Package 46, Tier 5.1 — escalated as the work order required, not built. Each country's row shows its
 estimate in the period its statistics office publishes:
@@ -4987,6 +5014,23 @@ hours. It feeds the cross-country comparison, not this column.
 
 Not resolved in package 46: (a) puts a number the source never published in the column's headline
 position; (b) keeps the column honest and leaves it hard to read.
+
+**CLOSED, package 47 — ruled: every row per year, with the pipeline's own conversion, marked as
+ours; shipped (`556b903`).** `build_wage_distribution.py` stores, per row, what one unit of the
+published period is worth over a year (`native.per_year`), from the same `normalise.annualise()` call,
+year and hours the combos already use: Canada's LFS hours (39.8 h, 2024), Denmark's 37-hour standard
+week — the unit STAND is defined in; the work order's list named Eurostat's 38.4 h, which would put
+the year 3.8% above DST's own monthly figure × 12 — and twelve for monthly rows. `/work` now shows
+every estimate per year (at 5 years: CA$117,000 and CA$99,500, DKK 757,690, €61,200, NOK 851,930, SEK
+544,788), each card appending the published figure, the hours with their source, year and scope, the
+arithmetic, and the rounding: three significant figures where the hours are measured, to the unit
+where the multiplier is a definition. Monthly cards say what twelve months of the figure count and
+leave out, read at the source on 2026-09-24 (SCB's 2025 quality declaration, pp. 4 and 11; SSB's
+earnings statistics; Statistics Finland's documentation) and recorded in `pay_composition.json`. The
+concept labels stay visible — and were being cut off on phones before (7 of 18 cases), now none.
+Percentile markers: 256 row-profiles compared before and after, none differ. The display-currency
+control never applied to this column — it converts advertised pay in Openings detail — so it works as
+before and no figure takes both steps.
 
 ## 89. Explore's hero numbers — three facts per theme that do not add up to an answer
 
