@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-09-24T00:48:24+00:00",
+ "generated_at": "2026-09-24T11:11:37+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -74,7 +74,7 @@
       "factor": 12.0,
       "office": "Statistics Sweden (SCB)",
       "counts": "twelve months of SCB's monthly salary: base pay plus variable supplements and benefits",
-      "leaves_out": "overtime pay; and a 13th or 14th month's salary or profit-sharing, which SCB says are in many cases hard to measure and are not in the wage statistics",
+      "leaves_out": "overtime pay; a 13th or 14th month's salary, profit-sharing, shares or options; and benefits such as childcare, a garage space, cleaning help, private health insurance and loans at a favourable rate - which SCB says are in many cases hard to measure and are not in the wage statistics",
       "citation_url": "https://www.scb.se/contentassets/866428f1e4c346ccabe0c37ec2f33170/am0110_kd_2025.pdf",
       "checked_at_source": "2026-09-24, package 47: SCB's Kvalitetsdeklaration, Lönestrukturstatistik, hela ekonomin 2025, text extracted from the PDF itself (13 pages)"
      }
@@ -396,7 +396,7 @@
       "hours_per_week": 37.0,
       "hours_year": 2024,
       "hours_flag": null,
-      "hours_scope": "Danmarks Statistik's own standard full-time week, the unit its standardised hourly figure is defined in (37 hours a week over 52 weeks is DST's 160.33-hour month, twelve times). A definition, not the hours software developers in Denmark actually work.",
+      "hours_scope": "Danmarks Statistik's own full-time convention: DST puts this standardised hourly figure on a month at 160.33 hours (37 hours a week over 52 weeks, over twelve months), and the year here is that month twelve times. A convention, not the hours software developers in Denmark actually work.",
       "hours_kind": "definition"
      }
     },
@@ -603,9 +603,9 @@
       "factor": 12.0,
       "office": "Statistics Norway (SSB)",
       "counts": "twelve months of SSB's monthly earnings: agreed pay, irregular payments and bonuses, the last two averaged per month from 1 January to the November reference month",
-      "leaves_out": "overtime pay, which SSB presents separately",
+      "leaves_out": "overtime pay, which SSB presents separately; and benefits in kind, insurance, tax-free expense allowances and holiday pay (feriepenger), which SSB's earnings statistics do not cover",
       "citation_url": "https://www.ssb.no/en/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/statistikk/lonn",
-      "checked_at_source": "2026-09-24, package 47: SSB's earnings statistics page, About the statistics, read in the raw HTML"
+      "checked_at_source": "2026-09-24, package 47: SSB's earnings statistics page, About the statistics, read in the raw HTML; and its Norwegian page, read the same day in the raw HTML, for what the statistic leaves out"
      }
     },
     "crosswalk": {
@@ -1621,7 +1621,7 @@
       "hours_per_week": 39.8,
       "hours_year": 2024,
       "hours_flag": null,
-      "hours_scope": "Statistics Canada's Labour Force Survey (table 14-10-0043-01): average usual weekly hours of full-time employees in their main job, across all industries — not the hours of this occupation.",
+      "hours_scope": "Statistics Canada's Labour Force Survey (table 14-10-0043-01): average usual weekly hours in the main job of everyone employed full time, employees and self-employed together, across all industries — not the hours of this occupation.",
       "hours_kind": "measured"
      }
     },
@@ -1685,7 +1685,7 @@
       "hours_per_week": 39.8,
       "hours_year": 2024,
       "hours_flag": null,
-      "hours_scope": "Statistics Canada's Labour Force Survey (table 14-10-0043-01): average usual weekly hours of full-time employees in their main job, across all industries — not the hours of this occupation.",
+      "hours_scope": "Statistics Canada's Labour Force Survey (table 14-10-0043-01): average usual weekly hours in the main job of everyone employed full time, employees and self-employed together, across all industries — not the hours of this occupation.",
       "hours_kind": "measured"
      }
     },

@@ -31,8 +31,8 @@
       "verified_live_this_session": false,
       "annual_from_monthly": {
         "counts": "twelve months of SCB's monthly salary: base pay plus variable supplements and benefits",
-        "leaves_out": "overtime pay; and a 13th or 14th month's salary or profit-sharing, which SCB says are in many cases hard to measure and are not in the wage statistics",
-        "quote": "Månadslönen avser anställningens sammanlagda grundlön plus rörliga lönetillägg samt förmåner. Övertidsersättning ingår inte. (p. 4) … Vissa är kontanta ersättningar i form av en 13:e eller 14:e månadslön samt vinstdelning. … De är i många fall svåra att mäta och ingår inte i lönestatistiken. (p. 11)",
+        "leaves_out": "overtime pay; a 13th or 14th month's salary, profit-sharing, shares or options; and benefits such as childcare, a garage space, cleaning help, private health insurance and loans at a favourable rate - which SCB says are in many cases hard to measure and are not in the wage statistics",
+        "quote": "Månadslönen avser anställningens sammanlagda grundlön plus rörliga lönetillägg samt förmåner. Övertidsersättning ingår inte. (p. 4) … Vissa är kontanta ersättningar i form av en 13:e eller 14:e månadslön samt vinstdelning. Möjligheten att teckna aktier/optioner i det egna företaget erbjuds många arbetstagare inom finans-, bank- och försäkringsbranschen. Exempel på andra förmåner kan vara barnpassning, garageplats, städhjälp, privat sjukvårdsförsäkring och lån med förmånlig ränta. … De är i många fall svåra att mäta och ingår inte i lönestatistiken. (p. 11)",
         "citation_url": "https://www.scb.se/contentassets/866428f1e4c346ccabe0c37ec2f33170/am0110_kd_2025.pdf",
         "verified_live": "2026-09-24, package 47: SCB's Kvalitetsdeklaration, Lönestrukturstatistik, hela ekonomin 2025, text extracted from the PDF itself (13 pages)"
       }
@@ -103,10 +103,10 @@
       "verified_live_this_session": false,
       "annual_from_monthly": {
         "counts": "twelve months of SSB's monthly earnings: agreed pay, irregular payments and bonuses, the last two averaged per month from 1 January to the November reference month",
-        "leaves_out": "overtime pay, which SSB presents separately",
-        "quote": "Monthly earnings include agreed monthly earnings, irregular payments, and bonuses. Overtime pay is not included in monthly earnings but is presented separately. … Bonuses are calculated as an average monthly amount for the period from 1 January up to and including the reference period.",
+        "leaves_out": "overtime pay, which SSB presents separately; and benefits in kind, insurance, tax-free expense allowances and holiday pay (feriepenger), which SSB's earnings statistics do not cover",
+        "quote": "Monthly earnings include agreed monthly earnings, irregular payments, and bonuses. Overtime pay is not included in monthly earnings but is presented separately. … Bonuses are calculated as an average monthly amount for the period from 1 January up to and including the reference period. [SSB's Norwegian page for the same statistic, https://www.ssb.no/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/statistikk/lonn:] Lønnsbegrepet i lønnsstatistikken er begrenset til å omfatte kontante godtgjørelser fra arbeidsgiver til arbeidstaker for avtalt arbeidstid. Statistikken omfatter følgelig ikke naturalytelser, forsikringer og heller ikke trekkfrie utgiftsgodtgjørelser, feriepenger og lignende.",
         "citation_url": "https://www.ssb.no/en/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/statistikk/lonn",
-        "verified_live": "2026-09-24, package 47: SSB's earnings statistics page, About the statistics, read in the raw HTML"
+        "verified_live": "2026-09-24, package 47: SSB's earnings statistics page, About the statistics, read in the raw HTML; and its Norwegian page, read the same day in the raw HTML, for what the statistic leaves out"
       }
     },
     {

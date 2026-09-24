@@ -48,6 +48,10 @@ export interface SalaryBands {
   confidence?: Confidence
   note?: string
   primary_source?: SalaryPrimarySource
+  /** Package 47: a band whose figure NO page shows — an interpolation, a
+   *  proxy, a blend — with why, in words. Its card links nothing rather than
+   *  a page that does not hold the number, and says so. */
+  no_page_for?: Partial<Record<Band, string>>
 }
 
 export interface LevelsFyi {

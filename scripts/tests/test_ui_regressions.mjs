@@ -499,10 +499,10 @@ try {
       `R9: ${code} @ ${y}y — and the year: ${y12 ? `${y12[1]} x 12 = ${(perMonth * 12).toFixed(2)}, card shows ${y12[2]}` : 'no "a month × 12" line'}`)
   }
   /* The hourly rows' year: published hourly figure x the card's own hours x 52
-   * weeks, for each converted hourly row — Canada's measured hours and
-   * Denmark's defined week. */
+   * weeks, for each converted hourly row — both of Canada's (measured hours)
+   * and Denmark's (a defined week). */
   await go(`${BASE}#/position?years=8`)
-  for (const code of ['CA-21231', 'DK']) {
+  for (const code of ['CA-21231', 'CA-21232', 'DK']) {
     const card = await openCard(code, 1) // 0 is the percentile's card, 1 the estimate's
     const h = card?.match(/([\d,]+(?:\.\d+)?) [A-Z]{3} an hour × ([\d.]+) hours a week × 52 weeks = ([\d,]+(?:\.\d+)?) [A-Z]{3} a year/)
     const [rate, hrs, yr] = h ? [h[1], h[2], h[3]].map((s) => Number(s.replace(/,/g, ''))) : [NaN, NaN, NaN]
@@ -1133,22 +1133,28 @@ try {
 
   await page.eval(`(() => { try { localStorage.removeItem('compass:vault-key') } catch {} return 1 })()`)
 
-  /* R25 — a salary bar's source card links the page the bar was read from
-   * (package 47). On the cities whose market band is levels.fyi's own
+  /* R25 — a salary bar's source card links the page its record lists for
+   * it (package 47). On the cities whose market band is levels.fyi's own
    * (`primary_source: levelsfyi_linked`), every bar's card linked the
    * TOP-EMPLOYER figure's page — a different record: in 8 US metros a city
    * page in place of the metro page the bar's own note names (Boston's
    * $169,000 middle bar linked a page showing $179,000), in 4 no link at all,
-   * and every entry-level or senior bar with a page of its own linked the
-   * all-levels one — 48 of 63 bars. Stated as properties of the link a reader
-   * gets, against the city's own record, not by re-running the site's rule:
-   *   - every bar has one levels.fyi link, and it is one of the pages the
-   *     city's record lists;
+   * and entry-level and senior bars the all-levels page. Stated as properties
+   * of the link a reader gets, against the city's own record, not by
+   * re-running the site's rule:
+   *   - a band the record marks `no_page_for` links nothing, and its card
+   *     says so;
+   *   - every other bar has one levels.fyi link, and it is one of the pages
+   *     the city's record lists;
    *   - an entry-level or senior bar links a page of its own level wherever
    *     the record lists one, and the middle bar never links a per-level page;
    *   - where the note quotes the location page it read ("x" location page),
-   *     the link is on that location. */
-  say('=== R25: a salary bar links the page it was read from ===')
+   *     the link is on that location.
+   * What this cannot see is whether a listed page shows the figure: its
+   * ground truth is the record. That was established by reading the pages
+   * (2026-09-24, REPORT-P47.md), which is how the record gained six
+   * per-level pages and four `no_page_for` bands. */
+  say('=== R25: a salary bar links the page its record lists for it, or says why none ===')
   const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, '') } catch { return '' } }
   const coreJson = await (await fetch(`${BASE}data/core.json`)).json()
   const lfCities = (coreJson.data ?? coreJson).cities
@@ -1177,11 +1183,12 @@ try {
           if (!card) await new Promise((r) => setTimeout(r, 10))
         }
         const hrefs = card ? [...card.querySelectorAll('a')].map((a) => a.getAttribute('href') || '') : null
+        const says = card ? (card.textContent || '').includes('No page is linked for this bar') : false
         b.click()
         for (let i = 0; i < 100 && document.querySelector('[role="dialog"]'); i++) {
           await new Promise((r) => setTimeout(r, 10))
         }
-        out.push({ band, hrefs })
+        out.push({ band, hrefs, says })
       }
       return JSON.stringify(out)
     })()`, { awaitPromise: true }))
@@ -1193,9 +1200,13 @@ try {
       const bar = got.find((g) => g.band === band)
       const lf = (bar?.hrefs ?? []).filter((u) => hostOf(u) === 'levels.fyi')
       const why = []
+      const noPage = c.salary_usd_year.no_page_for?.[band]
       if (!bar) why.push('no bar found on the page')
       else if (bar.hrefs == null) why.push('its card did not open')
-      else if (lf.length !== 1) why.push(`${lf.length} levels.fyi links`)
+      else if (noPage) {
+        if (lf.length) why.push('the record says no page shows this figure, but it links one')
+        if (!bar.says) why.push('and its card does not say why nothing is linked')
+      } else if (lf.length !== 1) why.push(`${lf.length} levels.fyi links`)
       else {
         const path = new URL(lf[0]).pathname
         if (!recorded.includes(lf[0])) why.push('not a page the city\'s record lists')
@@ -1208,8 +1219,10 @@ try {
     }
   }
   check(bars >= 3 * 17, `R25: every bar on those pages was found and read (${bars} bars)`)
+  const noPageBars = lfCities.reduce((n, c) => n + Object.keys(c.salary_usd_year.no_page_for ?? {}).length, 0)
+  check(noPageBars >= 1, `R25: the record marks some bars as shown on no page, so that branch is exercised (${noPageBars})`)
   check(wrong.length === 0,
-    `R25: every bar links a page it was read from (${bars - wrong.length} of ${bars})`)
+    `R25: every bar links the page its record lists for it, or — where no page shows its figure — nothing, and says so (${bars - wrong.length} of ${bars})`)
   for (const w of wrong.slice(0, 15)) say(`      ${w}`)
   if (wrong.length > 15) say(`      … and ${wrong.length - 15} more`)
 

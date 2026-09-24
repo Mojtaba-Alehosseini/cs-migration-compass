@@ -23,7 +23,7 @@ is at the bottom.
 | Pages the site can render | 134 route/entity/state combinations the test suite walks. 108 of them are route/entity pairs over 103 distinct URL paths; the other 26 are material STATES the suite reaches by driving a control, because package 33 found 28 controls that change what the assertions read and the suite navigated only by URL (package 34) |
 | Figures on those pages | 1,048, plus 942 "no data" marks and 1,642 marks in total (package 47's count, the same as package 46's). The jump from 646/61/764 is the 26 state targets above, not new content: the /openings and /work cards that appear only once a display currency is chosen had never been examined by anything |
 | Pipeline sources | 57 recorded in `data/provenance.json`; 54 render (53 ok, 1 partial); 2 blocked, 1 unavailable |
-| Payload on arrival | `site/public/data/core.json` — 398.7 KB raw, ~89.5 KB gzipped. It is the only blocking fetch |
+| Payload on arrival | `site/public/data/core.json` — 399.6 KB raw, ~89.7 KB gzipped. It is the only blocking fetch |
 | Payload if you open `/openings` | An index (452 KB gzipped) carrying the fields the filters read, plus row chunks fetched only for the rows shown (98 files, ~19.6 KB gzipped each). It was one 23.1 MiB file — 2.50 MB gzipped — until package 38 shipped #71's ruling. On Slow 4G the payload's own share of the wait went from 42.0 s to about 9.2 s |
 
 The site is static: no account, and nothing is stored about a visitor. Two things reach a server,
@@ -34,8 +34,9 @@ from the CV, against a random key held in the reader's browser, for 30 days) is 
 Worker behind it is deployed. **It is not deployed yet.** Since package 47 the Deploy workflow asks the
 Worker on every build — a `GET /profile` with no Origin header, which cannot create or read anything —
 and while the answer is the old Worker's 404, the site is built with no consent to keep anything, no
-saved-profile panel, and no call to the store. Deploying the Worker and re-running Deploy turns it on,
-with no code change.
+saved-profile panel, and no call to the store. The probe asks exactly the URL the site will call, asks
+again (twice) after a network error or a 5xx, and on any answer but the store's own refusal builds the
+site without it. Deploying the Worker and re-running Deploy turns it on, with no code change.
 
 ---
 
@@ -142,16 +143,20 @@ recorded per source as `native_basis` and pinned by a test so a rebuild cannot s
 **3. 16 of 73 cities have no second salary band.**
 The "top-employer pay" card (levels.fyi median total compensation) resolves for 57 cities. On the
 other 16 there is one band, not two, and the card says so rather than estimating. Where both bands
-do exist they are never blended: they are different quantities (total comp vs base). In 17 of the 57
-the market band itself comes from levels.fyi, so there is no second source, and since package 47
-(#90) those pages state the figure without a comparison. On the other 40 the two correlate at
-r = 0.86 but run 1.27× apart on average, 95% limits of agreement 0.80× to 2.02× — package 16's 1.22×
-had been computed on all 57, self-comparisons included. Separately — see open item #60 — for 21 of
-the 73 the two bands are not independent, because both trace to the same levels.fyi metro page. On
-those 21, each bar now links a levels.fyi page its own record lists — its own level's page wherever
-one is recorded. Until package 47 each linked the top-employer figure's page instead: a page it was
-not read from for 36 of the 63 bars, and nothing at all for 12, in the four cities where that record
-is a stub.
+do exist they are never blended: levels.fyi's figure is a self-reported total package (base, stock
+and bonus), and each bar's own card says what that bar counts. In 17 of the 57 the market band itself
+comes from levels.fyi, so there is no second source, and since package 47 (#90) those pages state the
+figure without a comparison. The other 40 are compared at the 3–5-years figure — the bar the tick sits
+on, the only one that comes from another source in all 40 (Melbourne's, Brisbane's, Perth's and
+Eindhoven's entry and senior bars are levels.fyi's) — and there the two correlate at r = 0.86 but run
+1.27× apart on average, 95% limits of agreement 0.80× to 2.02×. Package 16's 1.22× had been computed
+on all 57, self-comparisons included. Separately — see open item #60 — for 21 of the 73 the two bands
+are not independent, because both trace to the same levels.fyi metro page. On those 21, each bar now
+links the page its record lists for it — its own level's page wherever one is recorded — or, where no
+page shows its figure (four middle bars: an interpolation, a proxy, a blend), nothing, and its card
+says why. Until package 47 each linked the top-employer figure's page instead: 4 bars the right page,
+47 a page that does not show their figure, and 12 nothing at all, in the four cities where that
+record is a stub.
 
 **4. Six countries have no official immigration source on record, and most figures have no page.**
 Canada, Germany, Italy, Spain, the UAE and Qatar carry no recorded official immigration authority,
@@ -175,20 +180,22 @@ deliberate — it forces deferred content to mount so the assertions can see it 
 they assert is checked while actually scrolling, or at a phone width. Since packages 46–47 three
 narrower suites do run at phone widths in CI, each for named properties only: D1 (every disclosure
 opens to its full content without widening the page, at 390/1024/1440), F1 (the CV flow by real
-clicks at 320/390/1024/1440), and P1–P4 (the header is one row and Home, Explore's chips and Home's
-dot field fit, at 360–414 and up). A layout defect of any other kind that only appears at 390px, or
-only after a scroll, would still pass CI.
+clicks at 320/390/1024/1440), and P1–P5 (the header is one row and Home, Explore's chips and Home's
+dot field fit, at 360–414 and up; and on desktop, from 821px, the dot field is the classic 440px). A
+layout defect of any other kind that only appears at 390px, or only after a scroll, would still pass
+CI.
 
 **6. `/work`'s estimate column is per year, and for six of its nine figures the year is this site's arithmetic.**
 Since package 47 (#88) every estimate reads per year. Spain, the UK and the US publish per year.
 Sweden, Norway and Finland publish per month, and the year is twelve times the monthly estimate,
 which counts what each office's monthly figure counts and no more — SCB's leaves out a 13th or 14th
-month and profit-sharing, Finland's regular-hours earnings leave out the holiday bonus and
-performance bonuses, Norway's include bonuses averaged over January to November; each card says
-which, as read at the source. Canada and Denmark publish per hour. Canada's year uses Statistics
-Canada's average usual hours for full-time employees across all industries (39.8 h in 2024) — not
-developers' own hours — and is shown to three significant figures; Denmark's uses DST's 37-hour
-standard week, the unit its hourly figure is defined in. The conversion is the pipeline's
+month, profit-sharing and benefits such as childcare or health insurance, Finland's regular-hours
+earnings leave out the holiday bonus and performance bonuses, Norway's include bonuses averaged over
+January to November and leave out holiday pay; each card says which, as read at the source. Canada
+and Denmark publish per hour. Canada's year uses Statistics Canada's average usual hours of everyone
+employed full time, self-employed included, across all industries (39.8 h in 2024) — not developers'
+own hours — and is shown to three significant figures; Denmark's uses the 37-hour week DST itself
+uses to put its hourly figure on a month (160.33 hours). The conversion is the pipeline's
 (`normalise.annualise()`), the published figure is one tap away, and the concept labels ("incl.
 pension", "incl. bonus", "excl. bonus") stay beside the figures: a common period is not a common
 concept.
@@ -197,20 +204,20 @@ concept.
 
 ## What is still open
 
-The decision log ([NEEDS-DECISION.md](../NEEDS-DECISION.md)) holds **90 items: 79 closed, 1
-reopened, 10 open** (as of package 47). Package 30 read the 68 that existed then and reconciled every
+The decision log ([NEEDS-DECISION.md](../NEEDS-DECISION.md)) holds **91 items: 79 closed, 1
+reopened, 11 open** (as of package 47). Package 30 read the 68 that existed then and reconciled every
 heading against its own body — before that, 57 headings gave no indication either way, so the honest
 answer to "what is still open" was that nobody knew. Package 47 closed #85, #86, #87, #88 and #90 on
-the owner's rulings.
+the owner's rulings, and raised #91.
 
 Counting them is itself a small lesson, and the trap moves. When this section was first written, a
 case-insensitive search for "closed" miscounted because #73's heading contained the words "a closed
 sheet". #73 is closed now; today the same search misses #68, whose heading reads "REOPENED, package
-41 (closed on arrival, package 29)", and reports 10 where 11 need the owner. The markers are shouted
+41 (closed on arrival, package 29)", and reports 11 where 12 need the owner. The markers are shouted
 (`CLOSED`, `RESOLVED`, `REOPENED`) and the prose is not, which is the distinction the count has to
 make — the same unanchored-substring mistake #33 records in the pipeline.
 
-All 10 open, and the one reopened, are judgement calls for the owner, not unfinished work:
+All 11 open, and the one reopened, are judgement calls for the owner, not unfinished work:
 
 | # | What it is |
 |---|---|
@@ -225,6 +232,7 @@ All 10 open, and the one reopened, are judgement calls for the owner, not unfini
 | 75 | `/openings` still shifts 0.0085–0.0593 depending on width — all inside "good" — because the table has no column widths |
 | 76 | `yearsToHome` returns null for both "no inputs" and "saves nothing", and every caller has to remember to ask separately |
 | 89 | Explore's hero numbers — three facts per theme that do not add up to an answer |
+| 91 | Explore's scatter can put levels.fyi against the salary band, which in 17 of its 57 points is levels.fyi too — #90's ruling covers the city pages, not a chart a reader builds |
 
 ---
 

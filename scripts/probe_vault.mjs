@@ -79,12 +79,20 @@ export function decide(profile, control) {
   return { on: true, why: 'GET /profile answered the vault\'s own origin_forbidden, and an unknown path still 404s — the vault is deployed' }
 }
 
-async function askTwice(url) {
-  const first = await ask(url)
-  if (!first.error) return first
-  // One retry for a network error or timeout only; a definite answer is final.
-  await new Promise((r) => setTimeout(r, 3000))
-  return ask(url)
+/* Up to three asks, for a network error, a timeout or a 5xx; any other answer
+ * is final. A 5xx retried too (adversarial review, package 47): once the vault
+ * is on, a deploy whose probe hit one transient error would ship it OFF, and a
+ * reader who keeps a profile would lose the panel to delete it from until the
+ * next deploy. Failing closed stays the rule — only a transient answer is asked
+ * again. */
+async function askWithRetry(url) {
+  let answer = await ask(url)
+  for (const wait of [3000, 10000]) {
+    if (!answer.error && !(answer.status >= 500)) return answer
+    await new Promise((r) => setTimeout(r, wait))
+    answer = await ask(url)
+  }
+  return answer
 }
 
 function selfTest() {
@@ -116,13 +124,17 @@ function selfTest() {
 if (process.argv[2] === '--self-test') {
   selfTest()
 } else {
-  const base = (process.argv[2] ?? '').replace(/\/+$/, '')
+  /* The URL exactly as the site will build it — `${WORKER_URL}/profile`, no
+   * trimming (vault.ts, analyseCv.ts). It used to strip a trailing slash the
+   * site does not, so a base URL ending in "/" would have probed /profile
+   * while the site called //profile (adversarial review, package 47). */
+  const base = process.argv[2] ?? ''
   if (!base) {
     console.error('usage: node scripts/probe_vault.mjs <worker-base-url> | --self-test')
     console.log('off')
   } else {
-    const profile = await askTwice(`${base}/profile`)
-    const control = await askTwice(`${base}/no-such-route-${randomBytes(6).toString('hex')}`)
+    const profile = await askWithRetry(`${base}/profile`)
+    const control = await askWithRetry(`${base}/no-such-route-${randomBytes(6).toString('hex')}`)
     const { on, why } = decide(profile, control)
     console.error(`vault probe: ${why}`)
     console.log(on ? 'on' : 'off')

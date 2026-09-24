@@ -191,11 +191,15 @@ self-comparison (NEEDS-DECISION #90).
 
 **Package 47 reran the same analysis — same function, same pairing — on the 40 cities whose band
 comes from another source: r = 0.864, and levels.fyi runs 1.27× high on average, with 95% limits of
-agreement from 0.80× to 2.02×.** That is the figure the site now quotes. Doha (2.20×) and Dublin
-(2.04×) sit above those limits and Valencia (2.02×) on the edge, so an individual city can still
-differ by more than two-fold. They measure different constructs — market base-pay bands versus
-self-reported big-tech total compensation — and the site is right never to blend them; on the 17
-levels.fyi-sourced city pages it states the figure with no comparison at all.
+agreement from 0.80× to 2.02×.** That is the figure the site now quotes. The pairing is levels.fyi
+against each city's 3–5-years figure, which in all 40 comes from somewhere other than levels.fyi; the
+other two bars need not — in Melbourne, Brisbane, Perth and Eindhoven the entry and senior bars are
+levels.fyi's — so the site words the comparison as one with the 3–5-years bar. Doha (2.20×) and
+Dublin (2.04×) sit above those limits and Valencia (2.02×) on the edge, so an individual city can
+still differ by more than two-fold. They measure different constructs — a market salary figure (each
+bar's note says what it counts) versus self-reported big-tech total compensation — and the site is
+right never to blend them; on the 17 levels.fyi-sourced city pages it states the figure with no
+comparison at all.
 
 Washington DC's levels.fyi figure was, until package 47, levels.fyi's page for Washington *state*
 (the Greater Seattle Area's figures); it now comes from DC's own metro page. DC is one of the 17, so

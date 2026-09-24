@@ -200,6 +200,8 @@ jobs:
           # Package 47 — P4: on Home's dot field at 360/390/414, on every
           # question, no flags drawn over each other, no city with a value in
           # "no data", no axis label covered. It failed 12 of 12 before #87.
+          # P5: on desktop (821px up) that field is the classic 440px — #87's
+          # "desktop unchanged"; it failed 4 of 24 on the first version.
           if [ $TEST_EXIT -eq 0 ]; then
             CHROME_PATH=google-chrome-stable node ../scripts/tests/test_phone_fit.mjs
             TEST_EXIT=$?

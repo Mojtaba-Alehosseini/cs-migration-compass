@@ -4950,9 +4950,13 @@ fourteen widths from 320 to 1440, every one-axis question: **0 pairs drawn over 
 with a value in the gutter, 0 axis labels covered** (before: up to 57 pairs, 17 cities in the gutter
 and 4 covered labels at 320, and findings at every width up to 600). At 390 the fields are 659 / 915 /
 659 / 531px — this item's simulation exactly. Desktop: **18 of 18 screenshots byte-identical** at 1024
-and 1440 (five questions, and four with the second axis on). At 660–820, pay and years-to-a-home take
-the fitted layout too (+27px), because lane ±6 reaches the tick labels' strip — at 600 it covered
-"2 yrs" and "5"; the switch follows that geometry, not where a tick happens to fall today.
+and 1440 (five questions, and four with the second axis on). Up to 820px — the site's own narrow-layout
+breakpoint — pay (to 814px) and years-to-a-home take the fitted layout too (+27px), because lane ±6
+reaches the tick labels' strip — at 600 it covered "2 yrs" and "5". Above 820 the field is the classic
+440px on every question, as ruled. (A first version also fitted years-to-a-home up to 940px, inside the
+site's desktop, while this closure said 820; the adversarial review measured it. P5 in
+`test_phone_fit.mjs` now pins 440px at 821–1440px, and from 821 to 1100px, every 3px, the classic field
+draws nothing over anything.)
 
 The first frame is already the fitted height (915px from the first frame on years-to-a-home at 390,
 no layout shift). Switching questions animates the height on the site's own tokens (0.48s ease-out,
@@ -5019,7 +5023,7 @@ position; (b) keeps the column honest and leaves it hard to read.
 ours; shipped (`556b903`).** `build_wage_distribution.py` stores, per row, what one unit of the
 published period is worth over a year (`native.per_year`), from the same `normalise.annualise()` call,
 year and hours the combos already use: Canada's LFS hours (39.8 h, 2024), Denmark's 37-hour standard
-week — the unit STAND is defined in; the work order's list named Eurostat's 38.4 h, which would put
+week — the full-time convention DST itself uses to put STAND on a month; the work order's list named Eurostat's 38.4 h, which would put
 the year 3.8% above DST's own monthly figure × 12 — and twelve for monthly rows. `/work` now shows
 every estimate per year (at 5 years: CA$117,000 and CA$99,500, DKK 757,690, €61,200, NOK 851,930, SEK
 544,788), each card appending the published figure, the hours with their source, year and scope, the
@@ -5122,3 +5126,25 @@ by city id; the 2026-08-04 capture itself stays verbatim, and the corrected reco
 correction. The other 16 tick pages were read the same day and are the right places. DC is one of the
 17, so the published 40-city figure does not move; the unpublished 17-city self-comparison goes from
 1.1035× to 1.0748×.
+
+## 91. Explore's scatter can set levels.fyi against itself
+
+Found by package 47's adversarial review. On Explore's Money theme, "Ask your own question" lets a
+reader put **Top-employer pay** (levels.fyi) on one axis and **Developer salary** on the other
+(`#/explore/money?sx=salary_levels_fyi&sy=salary_gross`). It plots 57 cities. In 17 of them the salary
+bars are levels.fyi's own (`primary_source: levelsfyi_linked`, #90), so those 17 points compare
+levels.fyi with itself — Chicago sits at $150,000 against $150,000. Nothing on that view says which
+points those are: the metric notes that say so render on Compare's cards, not on Explore's scatter.
+
+#90's ruling covers the city pages and the published statistic ("recompute on the 40 independent
+cities; the 17 levels.fyi-sourced pages show the figure as a fact, not a comparison"). It does not
+cover a chart a reader assembles, so package 47 did not change it. Two options:
+
+- **A — leave the 17 out of that one pairing, and say so** under the chart ("17 cities left out: their
+  salary band is levels.fyi's own"). The direct extension of #90: no comparison where there is no
+  second source. Costs 17 points in one of the many pairings Explore allows.
+- **B — keep them, drawn as a different mark** (for example hollow) with one line saying what it
+  means. Keeps every city on screen; asks the reader to discount a third of the points by eye.
+
+Recommendation: A, for the same reason #90 was ruled as it was. Either is a small change to one
+component; neither touches a published value.

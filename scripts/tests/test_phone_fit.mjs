@@ -1,7 +1,8 @@
-/* P1–P4 — the site header is one row, Home is never wider than a phone,
- * Explore's theme chips are one row with the current one in view, and every
- * city on Home's dot field can be seen on a phone (P4, package 47 — see its
- * block below).
+/* P1–P5 — the site header is one row, Home is never wider than a phone,
+ * Explore's theme chips are one row with the current one in view, every
+ * city on Home's dot field can be seen on a phone (P4, package 47), and on
+ * desktop that field is the classic one (P5, package 47) — see their blocks
+ * below.
  *
  * Package 46, Tier 4. Both were invisible at the widths anyone was looking
  * at, and both are properties a later change can quietly break again, so
@@ -254,6 +255,32 @@ try {
   }
   }
 
+  if (runs('P5')) {
+  say('')
+  say("=== P5: on desktop, Home's dot field is the classic one ===")
+  /* Package 47, #87's other half: "desktop unchanged". Desktop is the site's
+   * own — wider than 820px, where its grids go multi-column — and there the
+   * field is package 46's 440px on every one-axis question. The adversarial
+   * review found years-to-a-home 467px up to 940px and pay up to 814px: a
+   * lane rule meant for phones, applied where the classic layout covers
+   * nothing. 821 is the first desktop width; 940 was the last one changed. */
+  await page.emulateReducedMotion(true)
+  for (const w of [821, 860, 900, 940, 1024, 1440]) {
+    for (const ask of ['pay', 'home', 'left', 'sun']) {
+      await page.viewport(w, 900, false)
+      await page.goto('about:blank')
+      await page.goto(`${BASE}#/?ask=${ask}`)
+      await page.waitForReady({ quietMs: 400, timeoutMs: 60000, label: `home ${ask}@${w}` })
+      await page.waitFor(settled, { timeoutMs: 15000, label: 'settled' })
+      const h = await page.eval(`(() => {
+        const f = document.querySelector('.swarm-stage .swarm-dot')?.parentElement
+        return f ? Math.round(f.getBoundingClientRect().height) : -1
+      })()`)
+      check(h === 440, `P5 ${ask}@${w}: the field is ${h}px (the classic field is 440px)`)
+    }
+  }
+  }
+
   page.close()
 } finally {
   close()
@@ -262,6 +289,6 @@ try {
 say('')
 say('-'.repeat(70))
 say(fails === 0
-  ? `ALL PHONE-FIT CHECKS PASS (${ONLY.size ? [...ONLY].join(', ') + ' only' : 'P1, P2, P3, P4'})`
+  ? `ALL PHONE-FIT CHECKS PASS (${ONLY.size ? [...ONLY].join(', ') + ' only' : 'P1, P2, P3, P4, P5'})`
   : `${fails} check(s) FAILED`)
 process.exitCode = fails ? 1 : 0

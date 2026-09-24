@@ -155,11 +155,17 @@ export function DataMethods() {
           </ul>
         </div>
 
+        {/* Package 47 (adversarial review): the first two lines were true only
+          * of some cities. In 13 of the 30 US cities the bars are levels.fyi's
+          * own (`primary_source: levelsfyi_linked`), so they neither lean low
+          * nor have levels.fyi "on the other side"; and Dubai's and Abu
+          * Dhabi's bars ARE the multinational side, with the local market's
+          * level only in their notes — only Doha shows both. */}
         <div className="panel">
           <h2>Where we might be wrong</h2>
           <ul style={{ margin: '8px 0 0 16px', padding: 0, fontSize: 'var(--text-2xs)', color: 'var(--ink-2)', lineHeight: 1.7 }}>
-            <li><b>US salaries lean low.</b> Official medians, not big-tech packages. The levels.fyi band shows the other side.</li>
-            <li><b>Gulf salaries split in two.</b> Multinationals pay 2–4× the local market. Both bands are shown, never averaged.</li>
+            <li><b>US salaries depend on the source.</b> In 17 of the 30 US cities the bars are official or job-board medians (BLS, Indeed), not big-tech packages, so they lean low; in the other 13 they are levels.fyi’s own self-reported packages. Each bar’s card says which.</li>
+            <li><b>Gulf salaries split in two.</b> Multinationals pay 2–4× the local market. Doha shows both sides, never averaged; Dubai’s and Abu Dhabi’s bars are the multinational side, and their cards give the local market’s level.</li>
             <li><b>Crowd rents wobble in small cities.</b> Big cities are solid; Aarhus, Halifax and Tampere are thin, and marked so.</li>
             <li><b>Visa rules age fast.</b> Every visa figure carries its date and warns once it passes the freshness rule.</li>
             <li><b>Missing means missing.</b> Where we have no number you see “no data” and which figure is absent — never a guess.</li>

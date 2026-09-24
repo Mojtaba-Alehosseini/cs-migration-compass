@@ -84,17 +84,23 @@ const numbeo = (city: City, what: string) => ({
 /* The levels.fyi page a city's record lists for a band — its own level's page
  * where one is listed, else the all-levels page — out of the city's own
  * `sources[]`, which is what `_linked` promises for every source (see
- * SalaryPrimarySource in types.ts). Until package 47 this one case linked `salary_levels_fyi.source`
- * instead: the TICK's page, a different record. On the 21 cities whose bars
- * are levels.fyi's, 48 of the 63 bars linked a page they were not read from, or
- * none: in 8 US metros a city page in place of the metro page the bar's own
- * note names (Boston's middle bar, $169,000 from greater-boston-area, linked
- * boston-usa, which shows $179,000); in the 4 whose tick record is an
- * unresolved stub, nothing at all, though their own pages resolve; and every
- * entry-level or senior bar with a page of its own linked the all-levels one.
- * All 46 new targets were read on 2026-09-24: each answers without a redirect
- * and its heading names the city and the level. Matched on the parsed path,
- * never a substring (see hostOf() in format.ts). */
+ * SalaryPrimarySource in types.ts). A band the record marks `no_page_for` (a
+ * figure no page shows) links nothing; citySalarySource says why.
+ *
+ * Until package 47 this one case linked `salary_levels_fyi.source` instead:
+ * the TICK's page, a different record. Of the 63 bars on the 21 cities whose
+ * bars are levels.fyi's, 12 linked nothing (the 4 cities whose tick record is
+ * an unresolved stub, though their own pages resolve), 4 linked the page
+ * their figure came from (the Berlin, Munich, Hamburg and Frankfurt middle
+ * bars), and 47 a page that does not show their figure: 24 in 8 US metros, a
+ * city page in place of the metro page the bar's own note names (Boston's
+ * middle bar, $169,000 from greater-boston-area, linked boston-usa, which
+ * shows $179,000); Washington DC's 3, the state of Washington's page; 16
+ * entry-level and senior bars elsewhere, the all-levels page; and 4 middle
+ * bars that no page shows, a page anyway. Every page a bar now links was read
+ * on 2026-09-24: each answers without a redirect and its heading names the
+ * city and the level. Matched on the parsed path, never a substring (see
+ * hostOf() in format.ts). */
 const LF_ALL_LEVELS = /^\/t\/software-engineer\/locations\/[^/]+\/?$/
 const LF_BAND_PAGE: Partial<Record<Band, RegExp>> = {
   new_grad: /^\/t\/software-engineer\/levels\/entry-level\/locations\/[^/]+\/?$/,
@@ -136,8 +142,12 @@ export function citySalarySource(city: City, band?: Band): { name: string; url?:
       return { name: 'PayScale', url: sourceUrlByHost(city.sources, ['payscale.com']), what }
     case 'talentcom_nolink':
       return { name: 'talent.com', what }
-    case 'levelsfyi_linked':
-      return { name: 'levels.fyi', url: levelsFyiBandPage(city.sources, band), what }
+    case 'levelsfyi_linked': {
+      const noPage = band ? city.salary_usd_year.no_page_for?.[band] : undefined
+      return noPage
+        ? { name: 'levels.fyi', what: `${what} No page is linked for this bar: it is ${noPage}.` }
+        : { name: 'levels.fyi', url: levelsFyiBandPage(city.sources, band), what }
+    }
     case 'bls_linked':
       return { name: sourceName('https://bls.gov'), url: sourceUrlByHost(city.sources, ['bls.gov', 'api.bls.gov']), what }
     case 'indeed_linked':
@@ -324,17 +334,20 @@ export const METRICS: MetricDef[] = [
     /* NEEDS-DECISION #90, ruled in package 47: the comparison is drawn only
      * where the city's market band is NOT levels.fyi's own (40 cities), with
      * the statistic recomputed on those 40; for the 17 whose band IS
-     * levels.fyi, the figure is stated with no comparison. See CityProfile. */
+     * levels.fyi, the figure is stated with no comparison. The words name the
+     * 3–5-years figure, the one the statistic pairs and the only bar that is
+     * independent in all 40 — four of them have levels.fyi entry and senior
+     * bars. See CityProfile. */
     source: (c) => ({
       name: 'levels.fyi',
       url: c.salary_levels_fyi?.source,
       what: c.salary_usd_year.primary_source === 'levelsfyi_linked'
         ? 'Total compensation (base + stock + bonus), all levels. This city’s market band comes from levels.fyi too, '
           + 'so it is the same source, not a second one, and no comparison is drawn. Never blended with it.'
-        : 'Total compensation (base + stock + bonus) against a market BASE-pay band — partly a definition difference, '
-          + 'not purely an employer premium. Across the 40 cities whose band comes from a source other than levels.fyi: '
-          + 'correlated (r = 0.86) but NOT interchangeable — 1.27x high on average, 95% limits 0.80x-2.02x. Never '
-          + 'blended with it.',
+        : 'Total compensation (base + stock + bonus), all levels, set against the city’s 3–5-years market figure — '
+          + 'partly a definition difference, not purely an employer premium. Across the 40 cities whose 3–5-years '
+          + 'figure comes from a source other than levels.fyi: correlated (r = 0.86) but NOT interchangeable — 1.27x '
+          + 'high on average, 95% limits 0.80x-2.02x. Never blended with it.',
     }),
   },
   {

@@ -1041,7 +1041,10 @@
     "senior": 100000,
     "confidence": "crowd",
     "note": "HARMONIZED 2026-08: entry $33k / senior $100k from levels.fyi Dubai (AED120k/AED367k total comp, big-multinational skew). Mid $57k = geometric mean interpolation within that same source family (no direct mid source exists). CAUTION: market-wide sources (talent.com AE AED90k, PayScale AED87.5k ~= $24k) sit far lower - the Dubai dev market is deeply two-tier. Tax-free.",
-    "primary_source": "levelsfyi_linked"
+    "primary_source": "levelsfyi_linked",
+    "no_page_for": {
+     "mid": "a geometric mean of levels.fyi's entry and senior figures for Dubai; no page shows it"
+    }
    },
    "rent_1br_center_usd_month": 2440,
    "rent_1br_outside_usd_month": 1500,
@@ -1063,6 +1066,8 @@
    "sources": [
     "https://www.numbeo.com/cost-of-living/in/Dubai",
     "https://www.levels.fyi/t/software-engineer/locations/dubai-are",
+    "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/dubai-are",
+    "https://www.levels.fyi/t/software-engineer/levels/senior/locations/dubai-are",
     "https://www.gulftalent.com/uae/salaries/dubai/software-engineer",
     "https://www.gulftalent.com/uae/salaries/dubai/senior-software-engineer",
     "https://en.wikipedia.org/wiki/Dubai",
@@ -1097,7 +1102,10 @@
     "senior": 105000,
     "confidence": "crowd",
     "note": "HARMONIZED 2026-08: entry $58k / senior $105k from levels.fyi Abu Dhabi (elite-employer skew: ADIA, FAB). Mid $78k = geometric mean interpolation within same family. CAUTION: market-wide talent.com AE median ~= $25k - strong two-tier market. Tax-free.",
-    "primary_source": "levelsfyi_linked"
+    "primary_source": "levelsfyi_linked",
+    "no_page_for": {
+     "mid": "a geometric mean of levels.fyi's entry and senior figures for Abu Dhabi; no page shows it"
+    }
    },
    "rent_1br_center_usd_month": 1960,
    "rent_1br_outside_usd_month": 1310,
@@ -1218,6 +1226,8 @@
    "sources": [
     "https://www.numbeo.com/cost-of-living/in/Abu-Dhabi",
     "https://www.levels.fyi/t/software-engineer/locations/abu-dhabi-are",
+    "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/abu-dhabi-are",
+    "https://www.levels.fyi/t/software-engineer/levels/senior/locations/abu-dhabi-are",
     "https://www.gulftalent.com/uae/salaries/software-engineer",
     "https://en.wikipedia.org/wiki/Abu_Dhabi",
     "https://www.flightconnections.com/flights-from-ika-to-auh"
@@ -5310,6 +5320,8 @@
    "sources": [
     "https://www.numbeo.com/cost-of-living/in/Berlin",
     "https://www.levels.fyi/t/software-engineer/locations/berlin-deu",
+    "https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/berlin-deu",
+    "https://www.levels.fyi/t/software-engineer/levels/senior/locations/berlin-deu",
     "https://www.levels.fyi/t/software-engineer/locations/berlin-metropolitan-region",
     "https://en.climate-data.org/europe/germany/berlin/berlin-2138/",
     "https://weather-and-climate.com/average-monthly-hours-Sunshine,Berlin,Germany",
@@ -5521,7 +5533,10 @@
     "senior": 112000,
     "confidence": "crowd",
     "note": "Gross annual total compensation (base+bonus+equity where applicable) from levels.fyi Stuttgart, self-reported and skewed toward large employers with Stuttgart offices (Bosch, Mercedes-Benz, Porsche, Microsoft, Nvidia, Capgemini) vs. city-wide market average. EUR figures: entry-level range €31,272-74,861 (midpoint ~€53,000 used); mid-level uses a Germany-wide levels.fyi/TechPays 'medior' proxy figure of €73,807 (~€74,000) since no Stuttgart-specific mid-level figure exists; senior range €81,962-111,599 (midpoint ~€97,000 used). Stuttgart median total comp across all levels is €82,930.",
-    "primary_source": "levelsfyi_linked"
+    "primary_source": "levelsfyi_linked",
+    "no_page_for": {
+     "mid": "a Germany-wide levels.fyi/TechPays 'medior' figure (EUR 73,807); no Stuttgart page shows it"
+    }
    },
    "rent_1br_center_usd_month": 1170,
    "rent_1br_outside_usd_month": 860,
@@ -5579,7 +5594,10 @@
     "senior": 139000,
     "confidence": "crowd",
     "note": "Gross annual total compensation (base+bonus+equity) from levels.fyi Amsterdam, self-reported and skewed toward larger/known tech employers (Google, Amazon, Uber, ING, Booking.com) vs. city-wide market average. EUR figures: entry-level range €52,414-99,060 (midpoint ~€76,000 used); mid-level €70,000-90,000 range with median ~€80,000-82,447 per TechPays/levels.fyi (~€82,000 used); senior range €93,539-148,378 (midpoint ~€121,000 used). Overall blended average across all levels is €80,269-135,962 (avg €102,536).",
-    "primary_source": "levelsfyi_linked"
+    "primary_source": "levelsfyi_linked",
+    "no_page_for": {
+     "mid": "a TechPays/levels.fyi 'medior' figure (about EUR 82,000); the levels.fyi Amsterdam page does not show it"
+    }
    },
    "rent_1br_center_usd_month": 2580,
    "rent_1br_outside_usd_month": 1950,

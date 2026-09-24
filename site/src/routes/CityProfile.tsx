@@ -184,7 +184,19 @@ export function CityProfile() {
                    * was the card's "against a market BASE-pay band". Either way
                    * the figure is levels.fyi's "Software Engineer, all levels",
                    * which the page never said while the tick sits on the
-                   * 3–5-years bar. */
+                   * 3–5-years bar.
+                   *
+                   * And the words for the other 40 are about the 3–5-years bar
+                   * only (adversarial review, package 47). That bar is what the
+                   * tick sits on and what the statistic pairs it with, and in
+                   * all 40 it comes from somewhere other than levels.fyi — but
+                   * the other two bars need not: Melbourne's, Brisbane's,
+                   * Perth's and Eindhoven's entry and senior bars ARE
+                   * levels.fyi's (their own notes say so), Sydney's are scaled
+                   * from Melbourne's, and Milan, Rome and Turin blend levels.fyi
+                   * ranges in. "A different measure from the bars" and "a market
+                   * BASE-pay band" were false on those pages — Eindhoven's note
+                   * calls its whole band total compensation. */
                   <>The tick is {sameSource ? 'levels.fyi’s' : 'big-name employers’'} median total package here,
                     across all levels,{' '}
                     <Figure source={{
@@ -195,8 +207,10 @@ export function CityProfile() {
                           + 'so here this is the same source, not a comparison with a market band. The two are never '
                           + 'added, averaged or substituted for each other.'
                         : 'Total compensation — base plus stock plus bonus — for software engineers at all levels, '
-                          + 'against a market BASE-pay band. A different quantity, not a bigger measurement of the '
-                          + 'same one. Read the two side by side; they are never added, averaged or substituted for '
+                          + 'self-reported. Set against this city’s 3–5-years market figure, the bar the tick sits '
+                          + 'on, which comes from a source other than levels.fyi; that bar’s own card says what it '
+                          + 'counts. Part of any gap is that difference in definition, not only an employer '
+                          + 'premium. Read the two side by side; they are never added, averaged or substituted for '
                           + 'each other.',
                       /* Package 16 — docs/DATA-FITNESS.md: these two are supported as a
                        * CORRELATION, never as agreement; Pearson r reads as excellent
@@ -213,8 +227,8 @@ export function CityProfile() {
                       sample: sameSource
                         ? 'Not compared with the bars on this page: they come from levels.fyi too. The comparison '
                           + 'with an independent market band is drawn only in the cities that have one.'
-                        : 'Across the 40 cities whose market band comes from a source other than levels.fyi, this '
-                          + 'figure runs 1.27× that band on average, and Bland–Altman puts the 95% limits of '
+                        : 'Across the 40 cities whose 3–5-years figure comes from a source other than levels.fyi, '
+                          + 'this figure runs 1.27× that figure on average, and Bland–Altman puts the 95% limits of '
                           + 'agreement at 0.80× to 2.02× — a statistical interval, not the observed range: Doha '
                           + '(2.20×) and Dublin (2.04×) sit above it, and Valencia (2.02×) on its edge. The 17 cities '
                           + 'whose bars are levels.fyi’s own are left out, where the comparison would be levels.fyi '
@@ -223,7 +237,7 @@ export function CityProfile() {
                     {pastScale && ', past the end of this scale'}
                     {sameSource
                       ? ' — the bars come from levels.fyi as well, so it is not a second source for them.'
-                      : ' — base plus stock and bonus, so a different measure from the bars.'}
+                      : ' — base plus stock and bonus; the 3–5-years bar it sits on comes from another source.'}
                   </>
                 ) : lf?.unavailable_reason ? (
                   /* In full. It was cut at 120 of its 230-285 characters with an

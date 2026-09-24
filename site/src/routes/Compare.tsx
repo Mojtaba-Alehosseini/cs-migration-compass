@@ -489,10 +489,11 @@ function fallbackSource(m: MetricDef, city: City, country: Country | undefined) 
  *  read from a page of its own. */
 function salarySource(city: City, country: Country | undefined, lens: Lens, band: Band) {
   if (lens === 'gross') {
-    return {
-      ...citySalarySource(city, band),
-      what: city.salary_usd_year.note ?? 'Market-wide band for this city, gross per year.',
-    }
+    // citySalarySource's `what` IS the note, plus — where no page shows this
+    // band's figure — the sentence saying so; only a city with no note at
+    // all needs this card's own wording.
+    const s = citySalarySource(city, band)
+    return city.salary_usd_year.note ? s : { ...s, what: 'Market-wide band for this city, gross per year.' }
   }
   if (lens === 'net') {
     return {

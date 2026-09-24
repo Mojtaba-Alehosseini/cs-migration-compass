@@ -238,15 +238,22 @@ if (MOBILE) {
     await run(`${BASE}#/openings`, file, true)
     runs.push(read(file))
   }
-  const median = (xs) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]
+  /* The middle run — and, for an EVEN number of runs, the less favourable of
+   * the two middle ones: the upper for a ceiling (LCP, CLS, TBT), the lower
+   * for a floor (the categories). Taking the upper for both was lenient for
+   * the >= 95 floors (adversarial review, package 47). Five runs, the default,
+   * have one middle and are unaffected. */
+  const sorted = (xs) => [...xs].sort((a, b) => a - b)
+  const ceilingMedian = (xs) => sorted(xs)[Math.floor(xs.length / 2)]
+  const floorMedian = (xs) => sorted(xs)[Math.ceil(xs.length / 2) - 1]
   const m = {
-    perf: median(runs.map((r) => r.perf)),
-    a11y: median(runs.map((r) => r.a11y)),
-    bp: median(runs.map((r) => r.bp)),
-    seo: median(runs.map((r) => r.seo)),
-    tbt: median(runs.map((r) => r.tbt)),
-    cls: median(runs.map((r) => r.cls)),
-    lcp: median(runs.map((r) => r.lcp)),
+    perf: floorMedian(runs.map((r) => r.perf)),
+    a11y: floorMedian(runs.map((r) => r.a11y)),
+    bp: floorMedian(runs.map((r) => r.bp)),
+    seo: floorMedian(runs.map((r) => r.seo)),
+    tbt: ceilingMedian(runs.map((r) => r.tbt)),
+    cls: ceilingMedian(runs.map((r) => r.cls)),
+    lcp: ceilingMedian(runs.map((r) => r.lcp)),
   }
   const bad404 = runs.some((r) => /no-such|not-found/.test(r.finalUrl))
   const blind = runs.filter((r) => r.error || r.lcp < 0 || r.cls < 0)

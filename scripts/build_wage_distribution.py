@@ -175,9 +175,14 @@ def _extract_dk(occ: dict) -> dict:
                    "the generic cross-country hours_worked.json Eurostat figure",
         # What these hours ARE, for a reader (package 47, #88): shown in the
         # card wherever /work puts this hourly figure on a year.
-        "scope": "Danmarks Statistik's own standard full-time week, the unit its standardised hourly "
-                 "figure is defined in (37 hours a week over 52 weeks is DST's 160.33-hour month, twelve "
-                 "times). A definition, not the hours software developers in Denmark actually work.",
+        # Package 47 (adversarial review): not "the unit the hourly figure is
+        # defined in" — DST's standard hour is the hours the employee agreed
+        # to work. 37 hours is the convention DST itself uses to put that
+        # hourly figure on a month, which is what the scope now says.
+        "scope": "Danmarks Statistik's own full-time convention: DST puts this standardised hourly figure "
+                 "on a month at 160.33 hours (37 hours a week over 52 weeks, over twelve months), and the "
+                 "year here is that month twelve times. A convention, not the hours software developers "
+                 "in Denmark actually work.",
         # A definition, not a measurement — so a year computed with it is
         # exact, and the site does not round it as it rounds measured hours.
         "kind": "definition",
@@ -644,9 +649,13 @@ def _hours_scope(iso: str) -> str | None:
     if not rec:
         return None
     if rec.get("source") == "statcan_wds_14100043":
-        return ("Statistics Canada's Labour Force Survey (table 14-10-0043-01): average usual weekly hours of "
-                "full-time employees in their main job, across all industries — not the hours of this "
-                "occupation.")
+        # Vector 2529313 is "full-time EMPLOYMENT": everyone employed full
+        # time, self-employed included — the table has no class-of-worker
+        # dimension. Not "employees" (adversarial review, package 47); the
+        # Eurostat branch below does select employees (wstatus=SAL).
+        return ("Statistics Canada's Labour Force Survey (table 14-10-0043-01): average usual weekly hours "
+                "in the main job of everyone employed full time, employees and self-employed together, "
+                "across all industries — not the hours of this occupation.")
     if rec.get("source") == "eurostat_lfsa_ewhun2":
         sector = ("the information and communication sector (NACE J)" if rec.get("nace_r2_used") == "J"
                   else "all activities")

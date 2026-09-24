@@ -48,13 +48,23 @@ const LANE_ORDER = [0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7]
  * again FITTED: the gutter reserved in pixels as the scatter already does, as
  * many lanes as the question needs, and the field as tall as those lanes. The
  * switch is where the classic layout stops working for that question at that
- * width, not a width chosen in advance; at desktop widths the classic layout
- * never fails, so desktop is untouched by construction. Flag size, lane pitch
- * and labels are the same in both. */
+ * width, not a width chosen in advance. Flag size, lane pitch and labels are
+ * the same in both.
+ *
+ * Desktop keeps the classic field, as #87 ruled. "Desktop" is the site's own:
+ * wider than 820px, where its grids go multi-column (base.css). There only a
+ * HARD failure fits the field — a city with no lane, a lane off the field
+ * (±7), a valued flag in the gutter — none of which happens today. The soft
+ * one, a ±6 lane whose label MAY reach the tick labels, fits it only at 820
+ * and below: it had also changed years-to-a-home up to 940px and pay up to
+ * 814px, where the classic layout covers nothing (adversarial review,
+ * package 47). */
 const FIT_LANES = [0, ...Array.from({ length: 40 }, (_, i) => [i + 1, -(i + 1)]).flat()]
 /* The most lanes each side a 440px field holds with the bottom lane's label
  * clear of the tick labels: 220 + 32L + 22 <= 440 - 18. */
 const CLASSIC_MAX_LANE = 5
+/* The site's desktop: its grids' own breakpoint (base.css, max-width 820px). */
+const DESKTOP_MQ = '(min-width: 821px)'
 /* Top and bottom room around the lanes in a fitted field — the lane's label
  * above or below its flag, and the tick labels' strip. (2L + 1) lanes of 32px
  * plus this is 531px for ±7, 659 for ±9, 915 for ±13 — package 46's figures. */
@@ -275,7 +285,9 @@ export function SwarmField({
      * (its left edge is 82px from the field's right: 76 wide, 6 in). */
     const gutterLeft = width - 82
     const reachesGutter = swarmGutter && classic.placed.some((p) => (p.x / 100) * (squeeze / 100) * width + 12.5 > gutterLeft)
-    const fit = width > 0 && (classic.fellBack > 0 || classic.maxLane > CLASSIC_MAX_LANE || reachesGutter)
+    const desktop = typeof window !== 'undefined' && window.matchMedia(DESKTOP_MQ).matches
+    const laneLimit = desktop ? CLASSIC_MAX_LANE + 1 : CLASSIC_MAX_LANE
+    const fit = width > 0 && (classic.fellBack > 0 || classic.maxLane > laneLimit || reachesGutter)
     const lanes = fit ? pack(width - (swarmGutter ? GUTTER_RESERVE : 0), FIT_LANES) : classic
     /* The height is the QUESTION's, decided by its swarm even while a second
      * axis is on: a scatter scales to any height, and keeping the swarm's means
