@@ -381,11 +381,18 @@ a { color: var(--ink-2); }
   content: ''; position: absolute; left: 50%; top: 50%; width: 1.5px; height: 13px;
   border-radius: 1px; background: var(--ink-3); transform: translate(-50%, -50%) rotate(45deg);
 }
+/* The figure and its concept label each stay whole (package 47). This cell
+   used to be one nowrap line cut with an ellipsis, and measured before any
+   figure grew, the label was the part cut: "incl. pension", "incl. bonus" and
+   "excl. bonus" were not visible in 7 of 18 phone-width cases. A common
+   period is not a common concept, so the label now wraps under the figure
+   when the two do not fit on one line, and neither is ever cut. */
 .wrow-est {
   font-family: var(--font-display); font-size: var(--text-xs); text-align: right;
-  font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
 }
-.wrow-basis { font-family: var(--font-ui); font-size: var(--text-2xs); color: var(--ink-3); font-weight: var(--weight-normal); margin-left: 5px; }
+.wrow-est > * { white-space: nowrap; }
+.wrow-basis { display: inline-block; font-family: var(--font-ui); font-size: var(--text-2xs); color: var(--ink-3); font-weight: var(--weight-normal); margin-left: 5px; }
 .wrow-opn {
   font-family: var(--font-display); font-size: var(--text-xs); text-align: right;
   font-variant-numeric: tabular-nums; color: var(--ink-2);

@@ -173,6 +173,14 @@ def _extract_dk(occ: dict) -> dict:
                    "via the STAND x 160.33h/month = MDRSNIT identity, <0.002% residual across all "
                    "years/occupations in table LONS20 (this pipeline's own mdrsnit reconciliation), not "
                    "the generic cross-country hours_worked.json Eurostat figure",
+        # What these hours ARE, for a reader (package 47, #88): shown in the
+        # card wherever /work puts this hourly figure on a year.
+        "scope": "Danmarks Statistik's own standard full-time week, the unit its standardised hourly "
+                 "figure is defined in (37 hours a week over 52 weeks is DST's 160.33-hour month, twelve "
+                 "times). A definition, not the hours software developers in Denmark actually work.",
+        # A definition, not a measurement — so a year computed with it is
+        # exact, and the site does not round it as it rounds measured hours.
+        "kind": "definition",
     }
     obs["explicit_hours_by_field"] = {f: hours_note for f in ("mean", "median", "p25", "p75")}
     row_check = occ.get("mdrsnit_reconciliation_by_year", {}).get(year)
@@ -376,10 +384,14 @@ def _extract_ie(occ: dict) -> dict:
         "explicit_hours_by_field": {
             "mean": {"hours_per_week": row.get("mean_paid_weekly_hours"), "year": int(year),
                      "source": "CSO SES06 (mean_paid_weekly_hours — matched to this same cell, not "
-                               "the generic cross-country hours_worked.json)"},
+                               "the generic cross-country hours_worked.json)",
+                     "scope": "the CSO's own mean paid weekly hours for this same occupation group and "
+                              "year — the one source here that publishes hours for the matching cell."},
             "median": {"hours_per_week": row.get("median_paid_weekly_hours"), "year": int(year),
                        "source": "CSO SES06 (median_paid_weekly_hours — matched to this same cell, not "
-                                 "the generic cross-country hours_worked.json)"},
+                                 "the generic cross-country hours_worked.json)",
+                       "scope": "the CSO's own median paid weekly hours for this same occupation group "
+                                "and year — the one source here that publishes hours for the matching cell."},
         },
     }
 
@@ -623,6 +635,74 @@ def _annualise_all(value: dict, period: str, country: str, hours_year: int | Non
     return {"ok": True, "value": out, "chain": meta_chain["chain"]}
 
 
+def _hours_scope(iso: str) -> str | None:
+    """What a generic hours_worked.json figure describes, in words, built from
+    that file's own record for the country — so the card can say whose hours
+    these are, never implying they are this occupation's own."""
+    rec = (__import__("json").loads((PROCESSED / "hours_worked.json").read_text(encoding="utf-8"))
+           .get("data", {}).get("countries", {}).get(iso))
+    if not rec:
+        return None
+    if rec.get("source") == "statcan_wds_14100043":
+        return ("Statistics Canada's Labour Force Survey (table 14-10-0043-01): average usual weekly hours of "
+                "full-time employees in their main job, across all industries — not the hours of this "
+                "occupation.")
+    if rec.get("source") == "eurostat_lfsa_ewhun2":
+        sector = ("the information and communication sector (NACE J)" if rec.get("nace_r2_used") == "J"
+                  else "all activities")
+        return (f"Eurostat (lfsa_ewhun2): usual weekly hours of full-time employees in {sector} — a national "
+                "sector average, not the hours of this occupation.")
+    return None
+
+
+def _per_year(cc: str, obs: dict, source_id: str) -> dict:
+    """Package 47, NEEDS-DECISION #88 — ruled: every row per year, through
+    the pipeline's own conversion, marked as the site's.
+
+    What ONE unit of this row's published period is worth over a year,
+    through normalise.annualise() — the same function, the same year and the
+    same per-field explicit hours every combo above already uses (Denmark's
+    37-hour standard week, not Eurostat's measured 38.4, because DST's hourly
+    figure is per standardised hour; Ireland's own matched CSO hours). The
+    site multiplies its estimate by `factor`, so the conversion is this
+    pipeline's and the estimate's shift stays the site's, each disclosed.
+
+    Refuses (ok False) exactly where annualise() refuses: an hourly row with
+    no sourced hours keeps its published period, and says why. For a monthly
+    row it carries what twelve months of that figure count and leave out,
+    checked at the source (pay_composition.json, annual_from_monthly)."""
+    period = obs["period"]
+    if period == "year":
+        return {"ok": True, "from": "year", "factor": 1}
+    iso = cc.split("-")[0]
+    field = _repr_field(obs)
+    explicit = (obs.get("explicit_hours_by_field") or {}).get(field)
+    r = nm.annualise(1.0, period, iso, obs["year"], explicit_hours=explicit)
+    if not r.get("ok"):
+        return {"ok": False, "from": period, "reason": r.get("reason")}
+    out: dict = {"ok": True, "from": period, "factor": r["value_annual"]}
+    if period == "hour":
+        out.update({
+            "hours_per_week": r["hours_per_week"], "hours_year": r["hours_year"],
+            "hours_flag": r.get("hours_reliability_flag"),
+            "hours_scope": (explicit or {}).get("scope") or _hours_scope(iso),
+            # 'measured' hours carry a measurement's precision (39.8: three
+            # figures); a 'definition' (Denmark's 37-hour standard week) is exact.
+            "hours_kind": (explicit or {}).get("kind", "measured"),
+        })
+    elif period == "month":
+        comp = next((s for s in __import__("json").loads((DATA / "pay_composition.json").read_text(encoding="utf-8"))
+                     .get("sources", []) if s.get("source_id") == source_id), {})
+        amm = comp.get("annual_from_monthly")
+        out.update({
+            "office": comp.get("office"),
+            "counts": (amm or {}).get("counts"), "leaves_out": (amm or {}).get("leaves_out"),
+            "citation_url": (amm or {}).get("citation_url"),
+            "checked_at_source": (amm or {}).get("verified_live"),
+        })
+    return out
+
+
 def _native_basis(source_id: str) -> str | None:
     """Package 27, Tier 3 (NEEDS-DECISION #59, defect B): which pay basis the
     `native` block's own bare mean/median/etc. fields actually represent, so
@@ -742,7 +822,10 @@ def resolve_country(cc: str, source_id: str, national_code: str, obs: dict, mapp
                    # native figure (DST's STAND concept) reconciles with DST's own
                    # separately-published monthly headline (MDRSNIT). None for
                    # every other country — see _extract_dk() and NEEDS-DECISION #17.
-                   "mdrsnit_check": obs.get("mdrsnit_check")},
+                   "mdrsnit_check": obs.get("mdrsnit_check"),
+                   # Package 47 (#88): what one unit of this period is worth per
+                   # year, by annualise() — see _per_year().
+                   "per_year": _per_year(cc, obs, source_id)},
         "crosswalk": cw,
         "combos": combos,
     }
@@ -863,6 +946,12 @@ def run() -> None:
             "Countries whose pay-composition booleans are 'unknown' (Canada, Qatar, UAE) are refused "
             "on both basis combinations by normalise.comparison_basis() itself, not by a rule "
             "re-implemented here — an honest consequence of unverified composition, not a bug.",
+            "Package 47 (NEEDS-DECISION #88): for every row, normalise.annualise() of ONE unit of the "
+            "row's published period — same year, same per-field explicit hours as the combos — is "
+            "stored as native.per_year.factor, which /work multiplies its estimate by to show every "
+            "row per year. Hourly rows carry whose hours those are; monthly rows carry what twelve "
+            "months of the figure count and leave out, checked at the source "
+            "(pay_composition.json, annual_from_monthly). A row annualise() refuses keeps its period.",
         ],
         output="data/processed/wage_distribution.json",
         rows=len(payload["countries"]),

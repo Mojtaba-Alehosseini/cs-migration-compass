@@ -13,7 +13,8 @@
     "employer_social_contributions": "Employer-paid pension, ATP, superannuation or equivalent — matches LCS D.12. This is the component this pipeline's normalise.py may SUBTRACT (never add) when a source publishes it separately.",
     "gross_or_net": "Whether the headline figure is gross or net of income tax/employee social contributions.",
     "concept_name": "The office's own term for its headline figure, in its own language, verbatim.",
-    "separately_published_components": "Which of the above the source ALSO publishes as its own distinct figure — i.e. what can honestly be subtracted, sourced, rather than estimated."
+    "separately_published_components": "Which of the above the source ALSO publishes as its own distinct figure — i.e. what can honestly be subtracted, sourced, rather than estimated.",
+    "annual_from_monthly": "Package 47: for a source that publishes a MONTHLY figure, what twelve times it counts and leaves out, checked at the source (verbatim quote, URL and date) — shown wherever this site puts that figure on a year."
   },
   "sources": [
     {
@@ -27,7 +28,14 @@
       "separately_published_components": [],
       "note": "SCB's own wage-structure-statistics documentation: \"en 13:e eller 14:e manadslon samt vinstdelning ... ingar inte i lonestatistiken\" (a 13th or 14th month salary and profit-sharing are not included in the wage statistics) — carried from this package's work order, not independently re-fetched from SCB's PDF methodology this session (the API's own JSON-stat response carries no prose methodology text to check against). x12 is therefore a floor, not the true annual figure — Eurostat's own caveat applies directly.",
       "citation_url": "https://www.scb.se/en/finding-statistics/statistics-by-subject-area/labour-market/wages-salaries-and-labour-costs/salary-structures-whole-economy/",
-      "verified_live_this_session": false
+      "verified_live_this_session": false,
+      "annual_from_monthly": {
+        "counts": "twelve months of SCB's monthly salary: base pay plus variable supplements and benefits",
+        "leaves_out": "overtime pay; and a 13th or 14th month's salary or profit-sharing, which SCB says are in many cases hard to measure and are not in the wage statistics",
+        "quote": "Månadslönen avser anställningens sammanlagda grundlön plus rörliga lönetillägg samt förmåner. Övertidsersättning ingår inte. (p. 4) … Vissa är kontanta ersättningar i form av en 13:e eller 14:e månadslön samt vinstdelning. … De är i många fall svåra att mäta och ingår inte i lönestatistiken. (p. 11)",
+        "citation_url": "https://www.scb.se/contentassets/866428f1e4c346ccabe0c37ec2f33170/am0110_kd_2025.pdf",
+        "verified_live": "2026-09-24, package 47: SCB's Kvalitetsdeklaration, Lönestrukturstatistik, hela ekonomin 2025, text extracted from the PDF itself (13 pages)"
+      }
     },
     {
       "source_id": "salary_uk",
@@ -92,7 +100,14 @@
       "separately_published_components": ["irregular_bonus (the Månedslønn vs Avtalt månedslønn split itself, same shape as Finland's total_*/regular_* split)"],
       "note": "Månedslønn = avtalt lønn (agreed pay) + uregelmessige tillegg (irregular allowances) + bonus, per SSB's own definition — bonus is IN by construction, unlike Sweden. feriepenger (holiday pay, statutory 10.2%) is explicitly excluded, since it is a separate annual payment that effectively REPLACES the June salary rather than adding to it (net annual effect ~+1.1-1.4%, not the full 10.2%, per Ferieloven §10's mechanics) — carried from the work order, not independently re-verified against SSB's own methodology PDF this session. RESOLVED, package 10 tier 0.3 (NEEDS-DECISION #18): package 9's adversarial review (finding F16) found the work order's §5.1.2 named 'Norway's Bonus' as a separately-published component but scripts/src_salary_no.py had never fetched it. Checked table 11418's own metadata live: it carries seven ContentsCode values, not one — Manedslonn, AvtaltManedslonn (basic salary), Uregtil, Bonus, Overtid, plus age/hours fields. AvtaltManedslonn is published at the SAME measuring-method granularity as Manedslonn (median, mean, P25, P75 — verified live, 2023-2025), so this pipeline now uses it directly as the regular_pay basis (build_wage_distribution.py's _extract_no, the same native-dual-field pattern as Finland) rather than subtracting a flat scalar the way Denmark's PENS/UREGEL required — Norway never needed Denmark's problem, its own gap was under-fetching, not under-publishing. Bonus/Uregtil/Overtid themselves are checked but not fetched: published as a mean only (median and P25 are 0 in every year checked, since most employees receive none of these in a given period), not needed since this pipeline isn't deriving regular_pay by subtraction here.",
       "citation_url": "https://www.ssb.no/en/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/statistikk/lonn",
-      "verified_live_this_session": false
+      "verified_live_this_session": false,
+      "annual_from_monthly": {
+        "counts": "twelve months of SSB's monthly earnings: agreed pay, irregular payments and bonuses, the last two averaged per month from 1 January to the November reference month",
+        "leaves_out": "overtime pay, which SSB presents separately",
+        "quote": "Monthly earnings include agreed monthly earnings, irregular payments, and bonuses. Overtime pay is not included in monthly earnings but is presented separately. … Bonuses are calculated as an average monthly amount for the period from 1 January up to and including the reference period.",
+        "citation_url": "https://www.ssb.no/en/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/statistikk/lonn",
+        "verified_live": "2026-09-24, package 47: SSB's earnings statistics page, About the statistics, read in the raw HTML"
+      }
     },
     {
       "source_id": "salary_fi",
@@ -105,7 +120,14 @@
       "separately_published_components": ["overtime (the total_* vs regular_* split itself)"],
       "note": "INDEPENDENTLY VERIFIED LIVE this package (Tier 1): table StatFin/pra/15au publishes koko_psaaja_kans_* (total_*, includes overtime) and koko_psaaja_sans_* (regular_*, excludes it) as two parallel, separately-queryable content-code families — Finland needs no subtraction to get a 'regular pay' figure, unlike Denmark. 2512/2024 private sector: total_mean=5316, regular_mean=5253 EUR/month (regular < total, consistent with overtime being excluded from regular_*). No 13th/14th month or profit share in either basis, per Tilastokeskus's own wage-concept documentation carried from the work order.",
       "citation_url": "https://stat.fi/en/statistics/pra",
-      "verified_live_this_session": true
+      "verified_live_this_session": true,
+      "annual_from_monthly": {
+        "counts": "twelve months of Statistics Finland's earnings for regular hours worked: basic pay, supplements, premium pay, performance-based pay components and the taxable value of fringe benefits",
+        "leaves_out": "overtime pay, and one-off items such as the holiday bonus and performance-based bonuses",
+        "quote": "Earnings for regular hours worked do not include earnings for extra or overtime work or one-off pay items, such as holiday bonus and performance-based bonuses.",
+        "citation_url": "https://stat.fi/en/statistics/documentation/pra",
+        "verified_live": "2026-09-24, package 47: Statistics Finland's structure-of-earnings documentation, Concepts and definitions, read in the raw HTML"
+      }
     },
     {
       "source_id": "salary_es",

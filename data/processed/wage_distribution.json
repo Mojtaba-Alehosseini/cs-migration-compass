@@ -1,6 +1,6 @@
 {
  "source_id": "wage_distribution",
- "generated_at": "2026-09-02T13:39:10+00:00",
+ "generated_at": "2026-09-24T00:48:24+00:00",
  "meta": {
   "purpose": "Pre-resolved at build time — see module docstring. The browser never re-runs crosswalk.compare() or any normalise.py function; it only displays this file.",
   "basis_default": "regular_pay",
@@ -67,7 +67,17 @@
      "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "month",
+      "factor": 12.0,
+      "office": "Statistics Sweden (SCB)",
+      "counts": "twelve months of SCB's monthly salary: base pay plus variable supplements and benefits",
+      "leaves_out": "overtime pay; and a 13th or 14th month's salary or profit-sharing, which SCB says are in many cases hard to measure and are not in the wage statistics",
+      "citation_url": "https://www.scb.se/contentassets/866428f1e4c346ccabe0c37ec2f33170/am0110_kd_2025.pdf",
+      "checked_at_source": "2026-09-24, package 47: SCB's Kvalitetsdeklaration, Lönestrukturstatistik, hela ekonomin 2025, text extracted from the PDF itself (13 pages)"
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -165,7 +175,12 @@
      "native_basis": "total_earnings",
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "year",
+      "factor": 1
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -263,7 +278,12 @@
      "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "year",
+      "factor": 1
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -368,6 +388,16 @@
       "computed_monthly": 65505.79,
       "published_mdrsnit": 65504.17,
       "residual_pct": 0.0025
+     },
+     "per_year": {
+      "ok": true,
+      "from": "hour",
+      "factor": 1924.0,
+      "hours_per_week": 37.0,
+      "hours_year": 2024,
+      "hours_flag": null,
+      "hours_scope": "Danmarks Statistik's own standard full-time week, the unit its standardised hourly figure is defined in (37 hours a week over 52 weeks is DST's 160.33-hour month, twelve times). A definition, not the hours software developers in Denmark actually work.",
+      "hours_kind": "definition"
      }
     },
     "crosswalk": {
@@ -566,7 +596,17 @@
      "native_basis": "total_earnings",
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "month",
+      "factor": 12.0,
+      "office": "Statistics Norway (SSB)",
+      "counts": "twelve months of SSB's monthly earnings: agreed pay, irregular payments and bonuses, the last two averaged per month from 1 January to the November reference month",
+      "leaves_out": "overtime pay, which SSB presents separately",
+      "citation_url": "https://www.ssb.no/en/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/statistikk/lonn",
+      "checked_at_source": "2026-09-24, package 47: SSB's earnings statistics page, About the statistics, read in the raw HTML"
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -708,7 +748,17 @@
      "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "month",
+      "factor": 12.0,
+      "office": "Statistics Finland (Tilastokeskus)",
+      "counts": "twelve months of Statistics Finland's earnings for regular hours worked: basic pay, supplements, premium pay, performance-based pay components and the taxable value of fringe benefits",
+      "leaves_out": "overtime pay, and one-off items such as the holiday bonus and performance-based bonuses",
+      "citation_url": "https://stat.fi/en/statistics/documentation/pra",
+      "checked_at_source": "2026-09-24, package 47: Statistics Finland's structure-of-earnings documentation, Concepts and definitions, read in the raw HTML"
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -850,7 +900,12 @@
      "native_basis": "total_earnings",
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "year",
+      "factor": 1
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -948,7 +1003,12 @@
      "native_basis": "total_earnings",
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "year",
+      "factor": 1
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -1045,7 +1105,17 @@
      "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "hour",
+      "factor": 1950.0,
+      "hours_per_week": 37.5,
+      "hours_year": 2022,
+      "hours_flag": null,
+      "hours_scope": "the CSO's own median paid weekly hours for this same occupation group and year — the one source here that publishes hours for the matching cell.",
+      "hours_kind": "measured"
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -1150,7 +1220,17 @@
      "native_basis": null,
      "weighting_note": "mean weighted by Qatar PSA's own published Male (n=209114, 28941 QAR/mo) and Female (n=122701, 23536 QAR/mo) counts — not a native combined figure",
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "month",
+      "factor": 12.0,
+      "office": "Qatar Planning and Statistics Authority (PSA)",
+      "counts": null,
+      "leaves_out": null,
+      "citation_url": null,
+      "checked_at_source": null
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -1203,7 +1283,17 @@
      "native_basis": null,
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "month",
+      "factor": 12.0,
+      "office": "ILOSTAT (UAE national data, 2009)",
+      "counts": null,
+      "leaves_out": null,
+      "citation_url": null,
+      "checked_at_source": null
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -1256,7 +1346,17 @@
      "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "hour",
+      "factor": 2033.2,
+      "hours_per_week": 39.1,
+      "hours_year": 2024,
+      "hours_flag": null,
+      "hours_scope": "Eurostat (lfsa_ewhun2): usual weekly hours of full-time employees in the information and communication sector (NACE J) — a national sector average, not the hours of this occupation.",
+      "hours_kind": "measured"
+     }
     },
     "crosswalk": {
      "comparable": false,
@@ -1359,7 +1459,12 @@
      "native_basis": "regular_pay",
      "weighting_note": null,
      "annualised_note": "Destatis publishes regular_pay (table 62361-0030) monthly, not annually — the source this pipeline's own dual-basis split uses for total_earnings (table 62361-0034) is already annual, so regular_pay is annualised here (x12, this pipeline's own fixed multiplier, same one normalise.py's annualise() applies everywhere else) to put both bases on the same period: 5,851.00 EUR/month x 12 = 70,212.00 EUR/year.",
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "year",
+      "factor": 1
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -1508,7 +1613,17 @@
      "native_basis": null,
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "hour",
+      "factor": 2069.6,
+      "hours_per_week": 39.8,
+      "hours_year": 2024,
+      "hours_flag": null,
+      "hours_scope": "Statistics Canada's Labour Force Survey (table 14-10-0043-01): average usual weekly hours of full-time employees in their main job, across all industries — not the hours of this occupation.",
+      "hours_kind": "measured"
+     }
     },
     "crosswalk": {
      "comparable": true,
@@ -1562,7 +1677,17 @@
      "native_basis": null,
      "weighting_note": null,
      "annualised_note": null,
-     "mdrsnit_check": null
+     "mdrsnit_check": null,
+     "per_year": {
+      "ok": true,
+      "from": "hour",
+      "factor": 2069.6,
+      "hours_per_week": 39.8,
+      "hours_year": 2024,
+      "hours_flag": null,
+      "hours_scope": "Statistics Canada's Labour Force Survey (table 14-10-0043-01): average usual weekly hours of full-time employees in their main job, across all industries — not the hours of this occupation.",
+      "hours_kind": "measured"
+     }
     },
     "crosswalk": {
      "comparable": true,

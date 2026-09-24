@@ -165,6 +165,25 @@ export type CurrencyMode = 'native' | 'usd'
 export type Basis = 'regular_pay' | 'total_earnings'
 export const comboKey = (currency: CurrencyMode, basis: Basis) => `${currency}_${basis}` as const
 
+/** See WageCountry.native.per_year. `from` is the published period. */
+export type PerYear =
+  | { ok: true; from: 'year'; factor: 1 }
+  | { ok: true; from: 'hour'; factor: number; hours_per_week: number; hours_year: number
+      hours_flag: string | null
+      /** 'measured' hours carry a measurement's precision; a 'definition'
+       *  (Denmark's 37-hour standard week) is exact. Decides the rounding. */
+      hours_kind?: 'measured' | 'definition'
+      /** Whose hours these are, in words — never this occupation's own
+       *  unless the source says so (Ireland's matched cell). */
+      hours_scope: string | null }
+  | { ok: true; from: 'month'; factor: number; office: string | null
+      /** What twelve months of the figure count and leave out, checked at
+       *  the source (pay_composition.json, annual_from_monthly). null where
+       *  that could not be established. */
+      counts: string | null; leaves_out: string | null
+      citation_url: string | null; checked_at_source: string | null }
+  | { ok: false; from: 'hour' | 'month'; reason: string | null }
+
 export interface WageCountry {
   country: string          // ISO2, or "CA-21231"/"CA-21232" for Canada's two NOC codes — see NEEDS-DECISION #12
   source_id: string
@@ -202,6 +221,12 @@ export interface WageCountry {
      *  them regardless). WagePanel.tsx shows this native block only when it
      *  equals the panel's own currently-selected basis. */
     native_basis: Basis | null
+    /** Package 47 (NEEDS-DECISION #88): what ONE unit of this row's published
+     *  period is worth over a year, by normalise.annualise() — the pipeline's
+     *  own conversion, same hours as everywhere else (build_wage_distribution.py,
+     *  _per_year). Optional so an older served file degrades to the published
+     *  period rather than to a guess. */
+    per_year?: PerYear
   }
   crosswalk: CrosswalkVerdict
   chart_comparable: ChartComparability

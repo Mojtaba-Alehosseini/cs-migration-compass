@@ -44,6 +44,7 @@ import { Figure } from '../Figure'
 import { Derived } from '../Derived'
 import { computePosition, computeEstimate, knownPercentilePoints, readableAbsentReason,
   type Profile, type ExperienceGradient } from '../../data/profile'
+import { estimatePerYear } from '../../data/perYear'
 import { fmtNative, ordinal, PERIOD_LABEL } from '../../routes/Position'
 import type { WageCountry } from '../../data/explore'
 
@@ -210,6 +211,12 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
 
   const position = computePosition(profile, row, gradient)
   const estimate = computeEstimate(profile, row, gradient)
+  /* Package 47, NEEDS-DECISION #88: the cell shows every row per year, through
+   * the pipeline's own conversion (estimatePerYear, data/perYear.ts). Only what the
+   * cell SHOWS changes — the marker below is still placed with estimate.value,
+   * in the published period, on the published table, so no position moves. */
+  const perYear = estimate.ok ? estimatePerYear(estimate.value, estimate.currency, row) : null
+  const refusal = estimate.ok ? null : estimate.reason
   const points = knownPercentilePoints(row.native.value)
   const hasTrack = points.length >= 2
   const filled = position.ok && position.personalised
@@ -408,10 +415,16 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
         )}
       </div>
       <div className="wrow-est">
-        {estimate.ok ? (
+        {estimate.ok && perYear != null ? (
           <>
-            <Derived chain={estimate.chain} result={{ value: estimate.value, currency: estimate.currency }}>
-              {fmtNative(estimate.value, estimate.currency)}{PERIOD_LABEL[row.native.period]}
+            {/* The conversion is appended to the estimate's own chain, so the
+              * card reads published figure -> shift (if any) -> per year; a
+              * monthly row's card also says what twelve months of it count
+              * and leave out, checked at the source. The concept label stays
+              * beside it: a common period is not a common concept. */}
+            <Derived chain={[...estimate.chain, ...perYear.steps]} concept={perYear.concept}
+              result={{ value: perYear.value, currency: estimate.currency }}>
+              {fmtNative(perYear.value, estimate.currency)}{PERIOD_LABEL[perYear.period]}
             </Derived>
             {basisLabel && <span className="wrow-basis">{basisLabel}</span>}
           </>
@@ -425,7 +438,7 @@ export function CountryStripRow({ row, cc, name, secondCode, profile, gradient, 
           // mark or a tap; a quarter-sentence behind hover was neither.
           // Adversarial review, finding 3.
           <Figure source={{
-            name: `${name} — no estimate`, confidence: 'official', what: estimate.reason,
+            name: `${name} — no estimate`, confidence: 'official', what: refusal ?? '',
           }}>
             <span className="nodata" style={{ fontSize: 'var(--text-2xs)' }}>
               {hasTrack ? 'not comparable' : 'no spread published'}

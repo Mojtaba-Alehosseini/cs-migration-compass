@@ -33,6 +33,12 @@ import { readFileSync } from 'node:fs'
 import { launch, openPage, sleep } from './cdp.mjs'
 
 const BASE = process.env.BASE ?? 'http://localhost:4173/'
+/* Which build this is (package 47): a build offers to keep a profile only when
+ * VITE_CV_VAULT was "on" (site/src/cv/vault.ts). R24 asserts the saved profile
+ * is read once, on opening, in a vault-on build — CI's — and that nothing is
+ * read at all in a vault-off one. Told, never detected: a detector would read
+ * a broken vault-on build as "off" and pass it. */
+const UI_VAULT = process.env.UI_VAULT === 'off' ? 'off' : 'on'
 
 let fails = 0
 const say = (s = '') => console.log(s)
@@ -148,11 +154,20 @@ try {
      * false there — waiting for a dialog that is right not to exist would
      * turn a passing assertion into a timeout. */
     if (!opened) return null
-    await page.waitFor('document.querySelector(\'[role="dialog"]\')',
+    // Visible, not merely present: a card renders hidden until it is placed
+    // (useCardPlacement.ts), and innerText below reads nothing from it then.
+    await page.waitFor(`(() => { const d = [...document.querySelectorAll('[role="dialog"]')].pop()
+      return !!d && getComputedStyle(d).visibility === 'visible' })()`,
       { label: `method card for ${code} to open` })
+    /* innerText, not textContent (package 47): a card's steps are list items,
+     * and textContent runs them together — "= 49,672.5" followed by a step
+     * beginning "49,672.5 SEK a month" read as one number, "49,672.549,672.5".
+     * The checks below only ever passed because a step without leading digits
+     * happened to follow the shift. innerText is the card as displayed, one
+     * line per step. */
     const text = await page.eval(`(() => {
       const d = [...document.querySelectorAll('[role="dialog"]')].pop()
-      return d ? d.textContent : null
+      return d ? d.innerText : null
     })()`)
     await page.eval(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`)
     await page.waitFor('!document.querySelector(\'[role="dialog"]\')',
@@ -474,6 +489,25 @@ try {
     const c = Number(m[3].replace(/,/g, ''))
     check(Math.abs(a * b - c) <= 0.005,
       `R9: ${code} @ ${y}y — ${m[1]} x ${m[2]} = ${(a * b).toFixed(2)}, card shows ${m[3]}`)
+    /* Package 47 (#88): the card then puts that monthly figure on a year, and
+     * that step is arithmetic a reader can redo too — the shifted figure,
+     * times twelve, is what the card says and what the row shows. */
+    const y12 = card?.match(/([\d,]+(?:\.\d+)?) [A-Z]{3} a month × 12 = ([\d,]+(?:\.\d+)?) [A-Z]{3} a year/)
+    const perMonth = y12 ? Number(y12[1].replace(/,/g, '')) : NaN
+    const perYear = y12 ? Number(y12[2].replace(/,/g, '')) : NaN
+    check(!!y12 && Math.abs(perMonth - c) <= 0.005 && Math.abs(perMonth * 12 - perYear) <= 0.01,
+      `R9: ${code} @ ${y}y — and the year: ${y12 ? `${y12[1]} x 12 = ${(perMonth * 12).toFixed(2)}, card shows ${y12[2]}` : 'no "a month × 12" line'}`)
+  }
+  /* The hourly rows' year: published hourly figure x the card's own hours x 52
+   * weeks, for each converted hourly row — Canada's measured hours and
+   * Denmark's defined week. */
+  await go(`${BASE}#/position?years=8`)
+  for (const code of ['CA-21231', 'DK']) {
+    const card = await openCard(code, 1) // 0 is the percentile's card, 1 the estimate's
+    const h = card?.match(/([\d,]+(?:\.\d+)?) [A-Z]{3} an hour × ([\d.]+) hours a week × 52 weeks = ([\d,]+(?:\.\d+)?) [A-Z]{3} a year/)
+    const [rate, hrs, yr] = h ? [h[1], h[2], h[3]].map((s) => Number(s.replace(/,/g, ''))) : [NaN, NaN, NaN]
+    check(!!h && Math.abs(rate * hrs * 52 - yr) <= Math.max(0.01, yr * 1e-6) + 0.5,
+      `R9: ${code} — the year from hours: ${h ? `${h[1]} x ${h[2]} x 52 = ${(rate * hrs * 52).toFixed(2)}, card shows ${h[3]}` : 'no "an hour × … hours a week × 52 weeks" line'}`)
   }
 
   /* ==================================================================== */
@@ -519,9 +553,18 @@ try {
   say(`  SE @ 8y: ${se8}`)
   check(pct(se8) === 37, `R12: Sweden at 8 years ranks P37 (got P${pct(se8)})`)
   check(pct(se8) !== 31, 'R12: not P31 — the pre-fix answer from shifting the median by a mean-relative premium')
-  check(!!se8?.includes('49,673'), 'R12: the estimate reads 49,673 SEK/month (55,500 mean x 0.895)')
-  check(se8 != null && !se8.includes('47,883'), 'R12: and not 47,883 (53,500 median x 0.895)')
   const seCard = await openCard('SE', 0)
+  /* Package 47 (#88): the row shows the estimate per year; the monthly figure
+   * the shift produced is in the estimate's card (trigger 1; 0 is the
+   * percentile's), and the row's number is it times twelve — derived here
+   * from the card, not pinned. */
+  const seEst = await openCard('SE', 1)
+  const seMonth = seEst?.match(/([\d,]+(?:\.\d+)?) SEK a month × 12/)?.[1]
+  const seYear = seMonth ? Math.round(Number(seMonth.replace(/,/g, '')) * 12).toLocaleString('en-US') : null
+  check(seMonth === '49,672.5', `R12: the estimate is 49,672.5 SEK a month (55,500 mean x 0.895) — card says ${seMonth}`)
+  check(!!seYear && !!se8?.includes(seYear), `R12: and the row shows it per year, twelve times that (${seYear})`)
+  check(se8 != null && !se8.includes('574,596') && !seEst?.includes('47,883'),
+    'R12: and not 47,883 a month / 574,596 a year (53,500 median x 0.895)')
   check(!!seCard?.includes("publishes each band's own MEAN"),
     'R12: the card states which basis is being shifted, so the two can\'t silently disagree')
   check(!!seCard?.includes('55,500'), 'R12: and the figure it shifts is the mean (55,500), named in the chain')
@@ -1062,13 +1105,18 @@ try {
 
   await openCvPanel()
   const calls = JSON.parse(await page.eval('JSON.stringify(window.__vaultCalls || [])'))
-  check(calls.length === 1, `R24: opening the panel makes exactly one vault call (${calls.length})`)
-  const call0 = calls[0] ?? { url: '', method: '', headers: {} }
-  check(call0.method === 'GET', `R24: and it is a GET, carrying no body (${call0.method})`)
-  check(!call0.url.includes('?') && !call0.url.includes(token),
-    `R24: and the token is NOT in the URL — no query string at all (/${call0.url.split('/').slice(3).join('/')})`)
-  check(call0.headers['x-compass-vault-key'] === token,
-    'R24: it travels in the x-compass-vault-key header, which history and logs do not keep')
+  if (UI_VAULT === 'off') {
+    check(calls.length === 0,
+      `R24 (vault-off build): even holding a key, opening the panel makes no vault call — this build offers none (${calls.length})`)
+  } else {
+    check(calls.length === 1, `R24: opening the panel makes exactly one vault call (${calls.length})`)
+    const call0 = calls[0] ?? { url: '', method: '', headers: {} }
+    check(call0.method === 'GET', `R24: and it is a GET, carrying no body (${call0.method})`)
+    check(!call0.url.includes('?') && !call0.url.includes(token),
+      `R24: and the token is NOT in the URL — no query string at all (/${call0.url.split('/').slice(3).join('/')})`)
+    check(call0.headers['x-compass-vault-key'] === token,
+      'R24: it travels in the x-compass-vault-key header, which history and logs do not keep')
+  }
   /* Not "the token is not in a resource entry" — with the recorder in place
    * no /profile request reaches the network, so that array is always empty
    * and `.every()` on it is always true. What this asks is the falsifiable
