@@ -38,6 +38,10 @@ jobs:
     if: >-
       github.event_name != 'workflow_run' ||
       github.event.workflow_run.conclusion == 'success'
+    # The Worker the built site calls, named once so the vault probe below
+    # asks the same Worker the bundle will talk to.
+    env:
+      CV_WORKER_URL: https://cs-compass-cv.bigbookarchive.workers.dev
     steps:
       # workflow_run checks out the default branch's HEAD, which is what the
       # refresh just pushed — exactly the commit that needs publishing.
@@ -77,12 +81,38 @@ jobs:
           owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "url=https://${owner}.github.io/${{ github.event.repository.name }}/" >> "$GITHUB_OUTPUT"
 
+      # Package 47 — the site must never offer to keep a profile the Worker
+      # cannot keep. A plain GET /profile with no Origin header, which cannot
+      # create or read anything: the vault refuses it (origin_forbidden)
+      # before its rate limiter or storage, and a Worker without the vault
+      # answers 404. See scripts/probe_vault.mjs. Any other answer, an error
+      # or a timeout leaves the flag OFF — the step never fails the deploy.
+      #
+      # The Worker is deployed by hand (from worker/: npx wrangler deploy).
+      # This workflow has workflow_dispatch, so once that is done, re-running
+      # it (Actions -> Deploy to GitHub Pages -> Run workflow) turns the vault
+      # on with no code change. The step says so in the run's own log.
+      - name: Probe the CV Worker for the vault
+        id: vault
+        run: |
+          state=$(node scripts/probe_vault.mjs "$CV_WORKER_URL") || state=off
+          [ "$state" = "on" ] || state=off
+          echo "state=$state" >> "$GITHUB_OUTPUT"
+          if [ "$state" = "on" ]; then
+            echo "::notice title=CV vault ON::$CV_WORKER_URL has the vault route; this build offers to keep a profile."
+            echo "CV vault: **on** — the Worker at $CV_WORKER_URL has /profile." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning title=CV vault OFF::No vault at $CV_WORKER_URL/profile, so this build offers no consent and no saved profile. Once the Worker is deployed, re-run this workflow by hand (Actions -> Deploy to GitHub Pages -> Run workflow); no code change is needed."
+            echo "CV vault: **off** — no /profile route at $CV_WORKER_URL (or the probe could not tell). After deploying the Worker, re-run this workflow by hand." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       # VITE_TURNSTILE_SITE_KEY is a Turnstile SITE key, not a secret by
       # design — Turnstile's own model is that this value is embedded in
       # every page that renders the widget, unlike TURNSTILE_SECRET_KEY
       # (server-side only, held by the Worker alone, never here).
       # VITE_CV_WORKER_URL is likewise just the Worker's own public
       # endpoint, already named in index.html's own CSP connect-src.
+      # VITE_CV_VAULT is the probe's answer: only "on" turns storage on.
       - name: Build
         run: npm run build
         working-directory: site
@@ -90,7 +120,8 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           SITE_URL: ${{ steps.origin.outputs.url }}
           VITE_TURNSTILE_SITE_KEY: 0x4AAAAAAEf1kzX0YZ-SBayy
-          VITE_CV_WORKER_URL: https://cs-compass-cv.bigbookarchive.workers.dev
+          VITE_CV_WORKER_URL: ${{ env.CV_WORKER_URL }}
+          VITE_CV_VAULT: ${{ steps.vault.outputs.state }}
 
       # GitHub Pages serves a 404 for unknown paths; copying index.html to
       # 404.html makes client-side routes deep-linkable and shareable, which the

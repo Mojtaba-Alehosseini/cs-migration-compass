@@ -33,6 +33,7 @@ export const FILE_REF: Record<string, string> = {
   'core.json': 'site/public/data/core.json',
   'countries.json': 'data/countries.json',
   'crosswalk.py': 'scripts/crosswalk.py',
+  'cv/vault.ts': 'site/src/cv/vault.ts',
   'data/cities.json': 'data/cities.json',
   'data/countries.json': 'data/countries.json',
   'data/explore.ts': 'site/src/data/explore.ts',

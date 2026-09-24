@@ -25,7 +25,21 @@
  * not el.click(). el.click() works on an element that is clipped, covered or
  * off screen; a reader's click does not. That difference is the whole point.
  *
+ * TWO BUILDS, TWO WALKS (package 47). Whether a build offers to keep anything
+ * is decided when it is built (VITE_CV_VAULT, see site/src/cv/vault.ts), so
+ * this walks whichever build it is pointed at and is told which to expect:
+ *   F1_VAULT=on   (default) the consent is there, starts unticked, and a
+ *                 click on it plus apply sends exactly one save — and nothing
+ *                 at all reaches /profile before that click;
+ *   F1_VAULT=off  no consent, the apply button promises nothing about
+ *                 keeping, applying collapses the panel as it did before
+ *                 package 45, no key is minted, and /profile is never called.
+ * Both then return as a reader who already holds a key: `on` shows the saved
+ * profile (read once, and only once the panel is opened), `off` shows nothing
+ * and reads nothing — and in both, no request of any kind reaches the Worker.
+ *
  *   node scripts/tests/test_cv_flow.mjs [--shots <dir>]   (preview on :4173)
+ *   F1_VAULT=off BASE=http://localhost:4174/ node scripts/tests/test_cv_flow.mjs
  */
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -35,6 +49,7 @@ import { launch, openPage } from './cdp.mjs'
 const BASE = process.env.BASE ?? 'http://localhost:4173/'
 const SHOTS = (() => { const i = process.argv.indexOf('--shots'); return i > 0 ? process.argv[i + 1] : null })()
 const TAG = process.env.F1_TAG ?? 'after'
+const VAULT = process.env.F1_VAULT === 'off' ? 'off' : 'on'
 if (SHOTS) mkdirSync(SHOTS, { recursive: true })
 
 let fails = 0
@@ -85,7 +100,9 @@ writeFileSync(PDF_PATH, syntheticCvPdf())
 
 /* Installed before the app's own code runs. */
 const STUBS = `(() => {
-  window.__f1 = { analyse: 0, saves: 0 }
+  /* profile counts EVERY call to /profile, by method — a read is still a
+   * request, and "nothing is sent until the reader confirms" covers reads. */
+  window.__f1 = { analyse: 0, saves: 0, profile: { GET: 0, POST: 0, DELETE: 0 } }
   window.turnstile = {
     render(container, opts) {
       const box = document.createElement('div')
@@ -118,14 +135,18 @@ const STUBS = `(() => {
           education_level: 'master' } })
     }
     if (url.endsWith('/profile')) {
+      window.__f1.profile[method] = (window.__f1.profile[method] || 0) + 1
+      const now = Date.now()
+      const record = { occupation: 'isco08:2512', yearsProfessional: 9, savedAt: now, expiresAt: now + 30 * 86400000 }
       if (method === 'POST') {
         window.__f1.saves++
-        const now = Date.now()
-        return json({ ok: true, retentionDays: 30,
-          record: { occupation: 'isco08:2512', yearsProfessional: 9, savedAt: now, expiresAt: now + 30 * 86400000 } })
+        return json({ ok: true, retentionDays: 30, record })
       }
       if (method === 'DELETE') return json({ ok: true, had: true, gone: true })
-      return json({ ok: true, record: null })
+      // A read carries a key only from a browser that saved one, and this
+      // stub keeps nothing across a reload, so it answers as the store would
+      // for the record step 6 saved.
+      return json({ ok: true, record })
     }
     return real(input, init)
   }
@@ -203,9 +224,13 @@ try {
     await page.viewport(w, h, mobile)
     await page.goto('about:blank')
     await page.goto(BASE)
+    /* Before /work mounts, not after: the previous width's save left a key,
+     * and a panel mounted while it was there started out "Checking what you
+     * saved…" (package 47 — which is also how the page's own edge case was
+     * found). The origin is loaded by now, so localStorage is reachable. */
+    await page.eval(`(() => { try { localStorage.removeItem('compass:vault-key') } catch {} return 1 })()`)
     await page.hashGo(`${BASE}#/work`)
     await page.waitForReady({ quietMs: 400, timeoutMs: 60000, label: 'work' })
-    await page.eval(`(() => { try { localStorage.removeItem('compass:vault-key') } catch {} return 1 })()`)
 
     // 1 · open the panel
     await mouseClick('button.profline-head', `@${w} open the CV panel`)
@@ -283,37 +308,118 @@ try {
     check(ts.inside, `@${w} human check: the whole widget is inside the panel (${ts.size}, ${ts.w}px wide${ts.inside ? '' : `, ${ts.over}px cut off`})`)
     await shot(w, '3-check')
     await mouseClick('[data-f1="verify"]', `@${w} the human check`)
-    await page.waitFor(`!!document.querySelector('#profline-body input[type=checkbox]')`, { timeoutMs: 15000, label: 'result' })
+    const APPLY_BTN = `[...document.querySelectorAll('#profline-body button')].find((b) => /^Apply /.test((b.textContent || '').trim()))`
+    await page.waitFor(`!!${APPLY_BTN}`, { timeoutMs: 15000, label: 'result' })
     await page.waitForReady({ quietMs: 300, timeoutMs: 30000, label: 'result' })
+    const profileCalls = async () => JSON.parse(await page.eval('JSON.stringify(window.__f1.profile)'))
+    const total = (c) => (c.GET || 0) + (c.POST || 0) + (c.DELETE || 0)
 
-    // 4 · the result, and the consent that must be seen before anything is kept
-    const consentUnticked = await page.eval(`document.querySelector('#profline-body input[type=checkbox]').checked === false`)
-    check(consentUnticked, `@${w} result: the storage consent starts unticked`)
-    await visible('#profline-body label:has(input[type=checkbox])', `@${w} result: the storage consent, whole`)
-    await panelFits(w, 'result')
-    await shot(w, '4-result')
+    if (VAULT === 'on') {
+      // 4 · the result, and the consent that must be seen before anything is kept
+      const consentUnticked = await page.eval(`(() => { const c = document.querySelector('#profline-body input[type=checkbox]'); return !!c && c.checked === false })()`)
+      check(consentUnticked, `@${w} result: the storage consent is there and starts unticked`)
+      await visible('#profline-body label:has(input[type=checkbox])', `@${w} result: the storage consent, whole`)
+      await panelFits(w, 'result')
+      await shot(w, '4-result')
 
-    // 5 · tick it — with a real click on the box
-    await mouseClick('#profline-body input[type=checkbox]', `@${w} result: the consent checkbox`)
-    const ticked = await page.eval(`document.querySelector('#profline-body input[type=checkbox]').checked === true`)
-    check(ticked, `@${w} consent: a click on the box ticked it`)
-    await shot(w, '5-consent')
+      // 5 · tick it — with a real click on the box
+      await mouseClick('#profline-body input[type=checkbox]', `@${w} result: the consent checkbox`)
+      const ticked = await page.eval(`document.querySelector('#profline-body input[type=checkbox]').checked === true`)
+      check(ticked, `@${w} consent: a click on the box ticked it`)
+      await shot(w, '5-consent')
+      /* Package 22's second property, asserted at the last moment it can be:
+       * the reader has ticked but not yet confirmed, and nothing has gone. */
+      const before = await profileCalls()
+      check(total(before) === 0, `@${w} consent: nothing has reached /profile before the reader confirms (${JSON.stringify(before)})`)
 
-    // 6 · apply and keep
-    const applySel = '#profline-body button.btn-accent'
-    await mouseClick(applySel, `@${w} consent: the apply-and-keep button`)
-    await page.waitFor(`[...document.querySelectorAll('#profline-body .chip')].some((c) => (c.textContent || '').includes('deletes itself on'))`, { timeoutMs: 10000, label: 'saved chip' })
-    const saves = await page.eval('window.__f1.saves')
-    check(saves === 1, `@${w} apply: exactly one save was sent (${saves})`)
-    await visible(`=[...document.querySelectorAll('#profline-body .chip')].find((c) => (c.textContent || '').includes('deletes itself on'))`,
-      `@${w} saved: the confirmation that says when it deletes itself`)
-    await panelFits(w, 'saved')
-    await shot(w, '6-saved')
-    results.push({ w, saves })
+      // 6 · apply and keep
+      const applySel = '#profline-body button.btn-accent'
+      await mouseClick(applySel, `@${w} consent: the apply-and-keep button`)
+      await page.waitFor(`[...document.querySelectorAll('#profline-body .chip')].some((c) => (c.textContent || '').includes('deletes itself on'))`, { timeoutMs: 10000, label: 'saved chip' })
+      const saves = await page.eval('window.__f1.saves')
+      check(saves === 1, `@${w} apply: exactly one save was sent (${saves})`)
+      await visible(`=[...document.querySelectorAll('#profline-body .chip')].find((c) => (c.textContent || '').includes('deletes itself on'))`,
+        `@${w} saved: the confirmation that says when it deletes itself`)
+      await panelFits(w, 'saved')
+      await shot(w, '6-saved')
+      results.push({ w, saves })
+    } else {
+      // 4 · the result, with nothing on it that offers to keep anything
+      const offer = JSON.parse(await page.eval(`JSON.stringify((() => {
+        const body = document.getElementById('profline-body')
+        const b = ${APPLY_BTN}
+        return { boxes: body.querySelectorAll('input[type=checkbox]').length,
+          words: /keep these two values|and keep them|deletes itself|Saved from this browser/i.test(body.textContent || ''),
+          button: (b.textContent || '').replace(/\\s+/g, ' ').trim() }
+      })())`))
+      check(offer.boxes === 0 && !offer.words, `@${w} result (vault off): no consent and no word of keeping (${offer.boxes} checkboxes)`)
+      check(!/keep/i.test(offer.button), `@${w} result (vault off): the apply button promises nothing about keeping ("${offer.button}")`)
+      await panelFits(w, 'result')
+      await shot(w, '4-result')
+
+      // 6 · apply: the values reach the form and the panel closes, as before package 45
+      await mouseClick(`=${APPLY_BTN}`, `@${w} result (vault off): the apply button`)
+      await page.waitFor(`document.querySelector('button.profline-head').getAttribute('aria-expanded') === 'false'`, { timeoutMs: 5000, label: 'panel closes on apply' })
+      const after = JSON.parse(await page.eval(`JSON.stringify({ hash: location.hash,
+        key: (() => { try { return localStorage.getItem('compass:vault-key') } catch { return 'unreadable' } })() })`))
+      check(/years=9/.test(after.hash), `@${w} apply (vault off): the form took the values (${after.hash})`)
+      check(after.key === null, `@${w} apply (vault off): no key was minted in this browser`)
+      const calls = await profileCalls()
+      check(total(calls) === 0, `@${w} apply (vault off): /profile was never called (${JSON.stringify(calls)})`)
+      results.push({ w, saves: 0 })
+    }
+
+    // 7 · a reader who already holds a key comes back. With the vault on the
+    //     key is the one step 6 minted; with it off, one is planted, as a
+    //     browser that saved on an earlier build would hold.
+    if (VAULT === 'off') await page.eval(`(() => { localStorage.setItem('compass:vault-key', 'f1-planted-key-from-an-earlier-build'); return 1 })()`)
+    await page.goto('about:blank')
+    await page.goto(BASE)
+    await page.hashGo(`${BASE}#/work`)
+    await page.waitForReady({ quietMs: 400, timeoutMs: 60000, label: 'work (returning)' })
+    const closedCalls = await profileCalls()
+    check(total(closedCalls) === 0, `@${w} returning: nothing is read while the panel is closed (${JSON.stringify(closedCalls)})`)
+    await mouseClick('button.profline-head', `@${w} returning: open the CV panel`)
+    await page.waitFor(`document.getElementById('profline-body').clientHeight > 40`, { timeoutMs: 5000, label: 'panel open (returning)' })
+    await page.waitForReady({ quietMs: 500, timeoutMs: 20000, label: 'returning' })
+    const saved = await page.eval(`/Saved from this browser|Checking what you saved/.test(document.getElementById('profline-body').textContent || '')`)
+    const openCalls = await profileCalls()
+    if (VAULT === 'on') {
+      check(saved, `@${w} returning (vault on): the saved profile is shown`)
+      check(openCalls.GET === 1 && total(openCalls) === 1, `@${w} returning (vault on): read exactly once, on opening (${JSON.stringify(openCalls)})`)
+    } else {
+      check(!saved, `@${w} returning (vault off): no saved-profile panel, even with a key in the browser`)
+      check(total(openCalls) === 0, `@${w} returning (vault off): /profile was never called (${JSON.stringify(openCalls)})`)
+    }
+    const workerHits = await page.eval(`performance.getEntriesByType('resource').filter((e) => /workers\\.dev/.test(e.name)).length`)
+    check(workerHits === 0, `@${w} returning: no request of any kind reached the Worker (${workerHits} resource entries)`)
+    await shot(w, '7-returning')
     } catch (e) {
       check(false, `@${w} the flow could not be completed: ${String(e.message).split('\n')[0]}`)
       await shot(w, 'blocked')
     }
+  }
+
+  /* A key that goes between the panel mounting and opening (deleted from
+   * another tab, or site data cleared). Package 47 found the panel then said
+   * "Checking what you saved…" for ever: the read was skipped, and nothing
+   * ever replaced the loading line. Only a vault-on build has the panel. */
+  if (VAULT === 'on') {
+    say('')
+    say('=== F1 · a key that goes before the panel opens ===')
+    await page.viewport(1440, 900, false)
+    await page.goto('about:blank')
+    await page.goto(BASE)
+    await page.eval(`(() => { localStorage.setItem('compass:vault-key', 'f1-key-that-will-vanish'); return 1 })()`)
+    await page.hashGo(`${BASE}#/work`)
+    await page.waitForReady({ quietMs: 400, timeoutMs: 60000, label: 'work (vanishing key)' })
+    await page.eval(`(() => { localStorage.removeItem('compass:vault-key'); document.querySelector('button.profline-head').click(); return 1 })()`)
+    await page.waitFor(`document.getElementById('profline-body').clientHeight > 40`, { timeoutMs: 5000, label: 'panel open (vanishing key)' })
+    await page.waitForReady({ quietMs: 600, timeoutMs: 20000, label: 'vanishing key' })
+    const stuck = await page.eval(`/Checking what you saved/.test(document.getElementById('profline-body').textContent || '')`)
+    const reads = JSON.parse(await page.eval('JSON.stringify(window.__f1.profile)'))
+    check(!stuck, `no "Checking what you saved…" left on screen when the key is gone before the panel opens`)
+    check((reads.GET || 0) === 0, `and nothing was read without a key (${JSON.stringify(reads)})`)
   }
 
   /* The form's own promise, which package 46 put into its copy: "nothing you

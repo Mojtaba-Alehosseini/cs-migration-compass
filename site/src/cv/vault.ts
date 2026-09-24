@@ -24,6 +24,24 @@
 const KEY_STORAGE = 'compass:vault-key'
 const WORKER_URL = import.meta.env.VITE_CV_WORKER_URL as string | undefined
 
+/* PACKAGE 47 — the site never offers to keep what it cannot keep.
+ *
+ * Whether this build offers storage at all is decided when it is BUILT: the
+ * Deploy workflow runs scripts/probe_vault.mjs, a GET /profile with no Origin
+ * header, which the vault refuses before its rate limiter or storage is
+ * touched and which a Worker without the vault answers with its 404. Nothing
+ * is sent from a reader's browser to find out — package 22's second property,
+ * that nothing is sent until the reader confirms, would not survive a probe
+ * on page load.
+ *
+ * Only the exact string 'on' turns it on. Unset, empty, 'off', or a probe
+ * that errored or timed out: off. Off means no consent line, no saved-profile
+ * panel, and every call below refusing before it reaches the network; reading,
+ * reviewing and applying a CV work exactly as they did before package 45.
+ * Once the Worker is deployed, re-running the Deploy workflow turns it on with
+ * no change here. */
+export const VAULT_OFFERED = import.meta.env.VITE_CV_VAULT === 'on' && !!WORKER_URL
+
 export interface StoredProfile {
   occupation: string | null
   yearsProfessional: number
@@ -99,7 +117,9 @@ export function forgetKey(): void {
 }
 
 async function call<T>(method: string, body?: unknown): Promise<VaultOutcome<T>> {
-  if (!WORKER_URL) return { ok: false, code: 'worker_not_configured', message: 'Saving is not configured on this deployment.' }
+  /* Nothing renders a way here when it is off; this is the floor under that.
+   * (VAULT_OFFERED already requires WORKER_URL, so it answers for both.) */
+  if (!VAULT_OFFERED) return { ok: false, code: 'vault_not_offered', message: 'Keeping a profile is not offered on this deployment.' }
   const token = safeGet()
   if (!token) return { ok: false, code: 'no_key', message: 'Nothing is saved from this browser.' }
   let res: Response

@@ -11,6 +11,7 @@ __pycache__/
 
 # build output
 site/dist/
+site/dist-vault-off/
 site/.vite/
 *.tsbuildinfo
 

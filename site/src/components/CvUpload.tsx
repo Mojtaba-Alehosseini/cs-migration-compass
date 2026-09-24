@@ -21,7 +21,7 @@ import { stripPii, type PiiRedaction } from '../cv/stripPii'
 import { renderTurnstile, type TurnstileHandle } from '../cv/turnstile'
 import { analyseCv, type CvProfile } from '../cv/analyseCv'
 import {
-  RETENTION_DAYS, deleteProfile, forgetKey, hasKey, loadProfile, mintKey, saveProfile,
+  RETENTION_DAYS, VAULT_OFFERED, deleteProfile, forgetKey, hasKey, loadProfile, mintKey, saveProfile,
   type VaultRecord,
 } from '../cv/vault'
 
@@ -200,7 +200,10 @@ export function CvUpload({ occupations, onApply, active }: {
         </details>
       </div>
 
-      <SavedProfile onApply={onApply} occupations={occupations} active={active} />
+      {/* Package 47: only on a build whose Worker has a vault (cv/vault.ts,
+        * VAULT_OFFERED). Off, even a browser holding a key sees nothing here
+        * and nothing is read. */}
+      {VAULT_OFFERED && <SavedProfile onApply={onApply} occupations={occupations} active={active} />}
 
       {stage.kind === 'idle' && (
         <div style={{ marginTop: 10 }}>
@@ -323,7 +326,15 @@ function SavedProfile({ onApply, occupations, active }: {
   // not at all while it is closed.
   const asked = useRef(false)
   useEffect(() => {
-    if (!active || asked.current || !hasKey()) return
+    if (!active || asked.current) return
+    /* The key can go between this mounting and the panel opening — deleted
+     * from another tab, or site data cleared. There is then nothing to
+     * check, and "Checking what you saved…" would stay on screen for ever
+     * (package 47, seen in F1's own screenshots). */
+    if (!hasKey()) {
+      setState((s) => (s.kind === 'loading' ? { kind: 'none' } : s))
+      return
+    }
     asked.current = true
     let cancelled = false
     void loadProfile().then((r) => {
@@ -471,12 +482,15 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
    * to have something kept was the one reader never told whether it was.
    * Adversarial review, M1. */
   const handleApply = () => {
+    // No consent is rendered when the vault is off, so keepIt cannot be set;
+    // this says so where the save would start. Package 47.
+    const keep = keepIt && VAULT_OFFERED
     onApply(
       occupationKey ? { occupation: occupationKey, yearsProfessional: years } : { yearsProfessional: years },
-      { keepOpen: keepIt },
+      { keepOpen: keep },
     )
     setApplied(true)
-    if (keepIt) void store()
+    if (keep) void store()
   }
 
   /* NEEDS-DECISION #56, Tier 4. Minting the token here and not earlier is
@@ -568,8 +582,10 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
         applying it below.
       </p>
       {/* The record, in the words it is kept in — before the box that agrees
-          to keep it, not in a policy page behind a link. */}
-      <label
+          to keep it, not in a policy page behind a link. And only where it
+          can be kept: a build whose Worker has no vault offers no consent at
+          all (package 47, cv/vault.ts). */}
+      {VAULT_OFFERED && <label
         style={{
           display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 10, padding: '8px 10px',
           border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)',
@@ -596,12 +612,12 @@ function CvResult({ profile, modelUsed, occupations, onApply, onDiscard }: {
             nobody can reach the record again — not you, not this site. It then expires unread.
           </span>
         </span>
-      </label>
+      </label>}
 
       <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         <button className="btn-accent" onClick={handleApply}>
           Apply {occupationKey ? 'occupation and ' : ''}years of experience to the form below
-          {keepIt ? ', and keep them' : ''}
+          {keepIt && VAULT_OFFERED ? ', and keep them' : ''}
         </button>
         <button onClick={onDiscard} className="pill">Discard</button>
         {applied && <span className="chip chip-note">Applied ✓ — edit above and apply again anytime</span>}

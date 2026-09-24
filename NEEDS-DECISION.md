@@ -4727,7 +4727,7 @@ applied to every `<text>` in the plots at 390 it takes `/explore/housing` from 7
 38/3,860px2 with 5 clipped. Type alone cannot buy that back; it would need every plot re-laid out.
 The floor therefore still stops where DESIGN.md says it stops, and that table is now in DESIGN.md.
 
-## 85. What a stored CV profile should actually contain — built at the minimum, the wider options costed
+## 85. CLOSED, package 47 — What a stored CV profile should actually contain — built at the minimum, the wider options costed
 
 Package 45 built #56's storage mechanism at the **smallest payload that is still worth having**: the
 occupation key and the years figure the reader confirmed into the form, and nothing else. That choice
@@ -4777,6 +4777,22 @@ under a different name.
 it. Moving A→B is additive and can be done without disturbing what ships; moving to C or D is not,
 and should not be taken as an extension of this item's own opt-in — a consent to keep two fields is
 not a consent to keep a CV.
+
+**CLOSED, package 47 — ruled: keep the two numbers.** Option A stays as built: `occupation` and
+`yearsProfessional`, and nothing from the CV — not the file, not its text, not the model's quoted
+evidence. **B** (the PII-stripped text), **C** (the extracted text, unstripped) and **D** (the file)
+were considered, with what each would oblige set out above, and are declined. A consent to keep two
+fields is not a consent to keep a CV: widening the store would need a consent of its own, never this
+one extended.
+
+What package 47 put around it: the site offers that consent only on a build whose Worker has the
+vault. The Deploy workflow asks the Worker — `GET /profile` with no Origin header, which the vault
+refuses before its rate limiter or storage and an older Worker answers with its 404
+(`scripts/probe_vault.mjs`) — and builds with `VITE_CV_VAULT=on` only when the vault answers and a
+random path still 404s. Anything else, an error or a timeout builds it off: no consent line, no
+saved-profile panel, no call, and reading and applying a CV exactly as before package 45. On
+2026-09-24 the Worker answered `404 not found`, so the live site offers no consent until the owner
+deploys the Worker (from `worker/`: `npx wrangler deploy`) and re-runs the Deploy workflow by hand.
 
 ## 86. CLOSED, package 47 — Throttled-mobile `/openings` now fails the >=90 gate on code that has not changed, and the older code fails it harder
 

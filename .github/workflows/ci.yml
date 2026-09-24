@@ -85,11 +85,33 @@ jobs:
       # Turnstile SITE key and the Worker's own public URL, neither
       # confidential (see deploy.yml's own comment) — so the UI regression
       # suite below exercises the CV panel in its real, configured state.
+      # VITE_CV_VAULT is set, not probed: Deploy asks the Worker whether it
+      # has a vault (package 47), but a test build must not depend on the
+      # network, so CI builds BOTH answers — this one "on", for F1 to walk
+      # package 45's consent and save, and the "off" variant below.
       - run: npm run build
         working-directory: site
         env:
           VITE_TURNSTILE_SITE_KEY: 0x4AAAAAAEf1kzX0YZ-SBayy
           VITE_CV_WORKER_URL: https://cs-compass-cv.bigbookarchive.workers.dev
+          VITE_CV_VAULT: "on"
+
+      # Package 47 — the same site as Deploy builds it while the Worker has
+      # no /profile route: no consent, no saved profile, no call. Only vite
+      # runs again; the data bundle is already built above.
+      - name: Build the vault-off variant
+        working-directory: site
+        run: npx vite build --outDir dist-vault-off --emptyOutDir
+        env:
+          VITE_TURNSTILE_SITE_KEY: 0x4AAAAAAEf1kzX0YZ-SBayy
+          VITE_CV_WORKER_URL: https://cs-compass-cv.bigbookarchive.workers.dev
+          VITE_CV_VAULT: "off"
+
+      # The deploy-time probe's decision, checked against the answers a
+      # Worker can give (only the vault's own refusal plus a 404 control
+      # turns it on). No network.
+      - name: Vault probe self-test
+        run: node scripts/probe_vault.mjs --self-test
 
       # Package 44, Tier 6 — the thing built twice. Package 43 found five
       # instances of one component's markup hand-rolled somewhere else, and
@@ -147,13 +169,27 @@ jobs:
             TEST_EXIT=$?
           fi
           # F1: the CV flow, review -> apply -> consent -> save, walked with
-          # real mouse clicks at three widths. The model and vault calls are
+          # real mouse clicks at four widths. The model and vault calls are
           # stubbed (see the file's header); the PDF, extraction, stripping
           # and every layout are real. On the code before package 46 the
           # consent was unreachable at 390.
           if [ $TEST_EXIT -eq 0 ]; then
             CHROME_PATH=google-chrome-stable node ../scripts/tests/test_cv_flow.mjs
             TEST_EXIT=$?
+          fi
+          # Package 47 — and F1 again on the vault-off build, served on its
+          # own port: no consent, no saved profile even for a browser holding
+          # a key, and /profile never called.
+          if [ $TEST_EXIT -eq 0 ]; then
+            npx vite preview --outDir dist-vault-off --port 4174 --strictPort &
+            OFF_PID=$!
+            for i in $(seq 1 30); do
+              curl -sf http://localhost:4174/ > /dev/null && break
+              sleep 1
+            done
+            F1_VAULT=off BASE=http://localhost:4174/ CHROME_PATH=google-chrome-stable node ../scripts/tests/test_cv_flow.mjs
+            TEST_EXIT=$?
+            kill $OFF_PID 2>/dev/null || true
           fi
           # Package 46, Tiers 4-5 — P1-P3: the header is one row from 360px up
           # in every theme, with focus order = visual order; Home is never
