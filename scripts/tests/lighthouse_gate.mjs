@@ -221,8 +221,16 @@ for (const [name, route] of ROUTES) {
  * and it catches the regression the mobile composite was the only guard
  * against. The accessibility, best-practice and SEO audits are not simulated,
  * so they stay enforced on mobile as well. */
-if (!ONLY.size || ONLY.has('openings')) {
-  const RUNS = Number(process.env.LH_MOBILE_RUNS ?? 5)
+const RUNS = Number(process.env.LH_MOBILE_RUNS ?? 5)
+/* LH_MOBILE_RUNS=0 skips the throttled-mobile block — said as SKIPPED and not
+ * counted as an audit. It must never PASS: with no runs every enforced
+ * comparison below is against undefined, which is false, so an empty block
+ * would read as a clean pass (found in package 47 before it was ever run). */
+const MOBILE = (!ONLY.size || ONLY.has('openings')) && RUNS >= 1
+if ((!ONLY.size || ONLY.has('openings')) && !MOBILE) {
+  console.log(`\n  SKIPPED  openings (THROTTLED MOBILE) — LH_MOBILE_RUNS=${process.env.LH_MOBILE_RUNS}; not an audit, not a pass`)
+}
+if (MOBILE) {
   const runs = []
   for (let i = 1; i <= RUNS; i++) {
     const file = join(OUT, `openings-mobile-${i}.json`)
@@ -260,7 +268,7 @@ if (!ONLY.size || ONLY.has('openings')) {
   console.log(`        printed, not enforced (#86): performance median ${m.perf}, spread ${span('perf')}; TBT median ${m.tbt}ms, spread ${span('tbt')}ms`)
 }
 
-console.log(`\n${rows.length + (ONLY.size && !ONLY.has('openings') ? 0 : 1)} audits, ${fails} below the floor `
+console.log(`\n${rows.length + (MOBILE ? 1 : 0)} audits, ${fails} below the floor `
   + `(desktop: performance >= ${PERF_MIN}, TBT <= ${DESKTOP_TBT_MAX}ms, the rest >= ${OTHER_MIN}; `
   + `throttled mobile: median LCP <= ${MOBILE_LCP_MAX}ms and CLS <= ${MOBILE_CLS_MAX}, the rest >= ${OTHER_MIN})`)
 console.log(`raw reports in ${OUT}`)
