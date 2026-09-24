@@ -1133,6 +1133,86 @@ try {
 
   await page.eval(`(() => { try { localStorage.removeItem('compass:vault-key') } catch {} return 1 })()`)
 
+  /* R25 — a salary bar's source card links the page the bar was read from
+   * (package 47). On the cities whose market band is levels.fyi's own
+   * (`primary_source: levelsfyi_linked`), every bar's card linked the
+   * TOP-EMPLOYER figure's page — a different record: in 8 US metros a city
+   * page in place of the metro page the bar's own note names (Boston's
+   * $169,000 middle bar linked a page showing $179,000), in 4 no link at all,
+   * and every entry-level or senior bar with a page of its own linked the
+   * all-levels one — 48 of 63 bars. Stated as properties of the link a reader
+   * gets, against the city's own record, not by re-running the site's rule:
+   *   - every bar has one levels.fyi link, and it is one of the pages the
+   *     city's record lists;
+   *   - an entry-level or senior bar links a page of its own level wherever
+   *     the record lists one, and the middle bar never links a per-level page;
+   *   - where the note quotes the location page it read ("x" location page),
+   *     the link is on that location. */
+  say('=== R25: a salary bar links the page it was read from ===')
+  const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, '') } catch { return '' } }
+  const coreJson = await (await fetch(`${BASE}data/core.json`)).json()
+  const lfCities = (coreJson.data ?? coreJson).cities
+    .filter((c) => c.salary_usd_year?.primary_source === 'levelsfyi_linked')
+  check(lfCities.length >= 17, `R25: the levels.fyi-sourced cities are found in the served data (${lfCities.length})`)
+  const OWN_LEVEL = { new_grad: '/levels/entry-level/', senior: '/levels/senior/' }
+  let bars = 0
+  const wrong = []
+  for (const c of lfCities) {
+    await go(`${BASE}#/city/${c.id}`, { label: `R25 /city/${c.id}` })
+    const got = JSON.parse(await page.eval(`(async () => {
+      const h = [...document.querySelectorAll('h2')].find((x) => x.textContent.includes('What developers earn here'))
+      const panel = h && h.closest('.panel')
+      if (!panel) return '[]'
+      const LABELS = { 'Starting out': 'new_grad', '3–5 years in': 'mid', 'Senior': 'senior' }
+      const out = []
+      for (const b of panel.querySelectorAll('button')) {
+        if (!(b.textContent || '').toLowerCase().includes('show where this number comes from')) continue
+        const row = b.closest('div[style*="space-between"]')
+        const band = row && row.firstElementChild ? LABELS[(row.firstElementChild.textContent || '').trim()] : undefined
+        if (!band) continue   // the tick's own figure, in the caption: not a bar
+        b.click()
+        let card = null
+        for (let i = 0; i < 100 && !card; i++) {
+          card = document.querySelector('[role="dialog"]')
+          if (!card) await new Promise((r) => setTimeout(r, 10))
+        }
+        const hrefs = card ? [...card.querySelectorAll('a')].map((a) => a.getAttribute('href') || '') : null
+        b.click()
+        for (let i = 0; i < 100 && document.querySelector('[role="dialog"]'); i++) {
+          await new Promise((r) => setTimeout(r, 10))
+        }
+        out.push({ band, hrefs })
+      }
+      return JSON.stringify(out)
+    })()`, { awaitPromise: true }))
+    const recorded = (c.sources ?? []).filter((u) => hostOf(u) === 'levels.fyi')
+    const quoted = (c.salary_usd_year.note ?? '').match(/"([a-z0-9-]+)" location page/)?.[1]
+    for (const band of ['new_grad', 'mid', 'senior']) {
+      if (c.salary_usd_year[band] == null) continue
+      bars++
+      const bar = got.find((g) => g.band === band)
+      const lf = (bar?.hrefs ?? []).filter((u) => hostOf(u) === 'levels.fyi')
+      const why = []
+      if (!bar) why.push('no bar found on the page')
+      else if (bar.hrefs == null) why.push('its card did not open')
+      else if (lf.length !== 1) why.push(`${lf.length} levels.fyi links`)
+      else {
+        const path = new URL(lf[0]).pathname
+        if (!recorded.includes(lf[0])) why.push('not a page the city\'s record lists')
+        const own = OWN_LEVEL[band] && recorded.find((u) => new URL(u).pathname.includes(OWN_LEVEL[band]))
+        if (own && !path.includes(OWN_LEVEL[band])) why.push(`the record lists its own level's page (${own})`)
+        if (band === 'mid' && path.includes('/levels/')) why.push('the middle bar links a per-level page')
+        if (quoted && !path.replace(/\/$/, '').endsWith(`/${quoted}`)) why.push(`the note names "${quoted}"`)
+      }
+      if (why.length) wrong.push(`${c.id} ${band}: ${lf.join(' ') || 'no link'} — ${why.join('; ')}`)
+    }
+  }
+  check(bars >= 3 * 17, `R25: every bar on those pages was found and read (${bars} bars)`)
+  check(wrong.length === 0,
+    `R25: every bar links a page it was read from (${bars - wrong.length} of ${bars})`)
+  for (const w of wrong.slice(0, 15)) say(`      ${w}`)
+  if (wrong.length > 15) say(`      … and ${wrong.length - 15} more`)
+
   page.close()
 } finally {
   close()
@@ -1140,5 +1220,5 @@ try {
 
 say('')
 say('-'.repeat(70))
-say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13, R21, R22, R23, R24)' : `${fails} check(s) FAILED`)
+say(fails === 0 ? 'ALL UI REGRESSION CHECKS PASS (R1, R2, R3, R8, R9, R10, R11, R12, R13, R21, R22, R23, R24, R25)' : `${fails} check(s) FAILED`)
 process.exitCode = fails ? 1 : 0

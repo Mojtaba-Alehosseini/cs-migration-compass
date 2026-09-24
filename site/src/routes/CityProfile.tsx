@@ -130,7 +130,7 @@ export function CityProfile() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-2xs)', color: 'var(--ink-2)' }}>
                       <span>{BAND_LABEL[b]}</span>
                       <Figure source={{
-                        ...citySalarySource(city),
+                        ...citySalarySource(city, b),
                         asOf: city.as_of, confidence: 'crowd',
                       }}>
                         <b className="tnum">{money(v)}</b>

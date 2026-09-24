@@ -21,12 +21,21 @@ is at the bottom.
 | Countries | 15 |
 | Metrics | 30, across 7 themes (money 5, housing 7, climate 5, life 4, visa 4, people 3, jobs 2) |
 | Pages the site can render | 134 route/entity/state combinations the test suite walks. 108 of them are route/entity pairs over 103 distinct URL paths; the other 26 are material STATES the suite reaches by driving a control, because package 33 found 28 controls that change what the assertions read and the suite navigated only by URL (package 34) |
-| Figures on those pages | 1,048, plus 942 "no data" marks and 1,616 marks in total. The jump from 646/61/764 is the 26 state targets above, not new content: the /openings and /work cards that appear only once a display currency is chosen had never been examined by anything |
+| Figures on those pages | 1,048, plus 942 "no data" marks and 1,642 marks in total (package 47's count, the same as package 46's). The jump from 646/61/764 is the 26 state targets above, not new content: the /openings and /work cards that appear only once a display currency is chosen had never been examined by anything |
 | Pipeline sources | 57 recorded in `data/provenance.json`; 54 render (53 ok, 1 partial); 2 blocked, 1 unavailable |
-| Payload on arrival | `site/public/data/core.json` — 397.8 KB raw, ~89 KB gzipped. It is the only blocking fetch |
+| Payload on arrival | `site/public/data/core.json` — 398.7 KB raw, ~89.5 KB gzipped. It is the only blocking fetch |
 | Payload if you open `/openings` | An index (452 KB gzipped) carrying the fields the filters read, plus row chunks fetched only for the rows shown (98 files, ~19.6 KB gzipped each). It was one 23.1 MiB file — 2.50 MB gzipped — until package 38 shipped #71's ruling. On Slow 4G the payload's own share of the wait went from 42.0 s to about 9.2 s |
 
-The site is static. There is no server, no account, and nothing is stored about a visitor.
+The site is static: no account, and nothing is stored about a visitor. Two things reach a server,
+and only when the reader asks. The CV reader (package 22) sends the text the reader has reviewed —
+never the file — to a Cloudflare Worker that asks a model for two fields. And a store for those two
+fields (#56, built in package 45; #85 ruled that it keeps the occupation and the number and nothing
+from the CV, against a random key held in the reader's browser, for 30 days) is offered only when the
+Worker behind it is deployed. **It is not deployed yet.** Since package 47 the Deploy workflow asks the
+Worker on every build — a `GET /profile` with no Origin header, which cannot create or read anything —
+and while the answer is the old Worker's 404, the site is built with no consent to keep anything, no
+saved-profile panel, and no call to the store. Deploying the Worker and re-running Deploy turns it on,
+with no code change.
 
 ---
 
@@ -42,7 +51,7 @@ Chrome over the built site:
 
 - **`test_ui_regressions.mjs`** — pinned regressions from earlier packages, at 1280 wide.
 - **`test_figure_inventory.mjs`** — renders all 108 route/entity combinations and asserts over what
-  the DOM actually contains, at 1440 wide. Six standing assertions:
+  the DOM actually contains, at 1440 wide. Seven standing assertions:
 
   | | |
   |---|---|
@@ -52,6 +61,7 @@ Chrome over the built site:
   | C4 | every figure opens a source card, and no card is titled with a bare source id |
   | C5 | nothing is clipped below legibility without a way to read it |
   | C6 | every mark clears 3:1 contrast against what is really painted behind it |
+  | C7 | every city holding a top-employer figure states it in words and draws it as a tick on screen (package 46) |
 
   Package 24 shipped two defects of exactly this kind to production; both were invisible in code
   review and obvious on screen. That is why these assertions read the DOM and the painted pixels
@@ -137,7 +147,11 @@ the market band itself comes from levels.fyi, so there is no second source, and 
 (#90) those pages state the figure without a comparison. On the other 40 the two correlate at
 r = 0.86 but run 1.27× apart on average, 95% limits of agreement 0.80× to 2.02× — package 16's 1.22×
 had been computed on all 57, self-comparisons included. Separately — see open item #60 — for 21 of
-the 73 the two bands are not independent, because both trace to the same levels.fyi metro page.
+the 73 the two bands are not independent, because both trace to the same levels.fyi metro page. On
+those 21, each bar now links a levels.fyi page its own record lists — its own level's page wherever
+one is recorded. Until package 47 each linked the top-employer figure's page instead: a page it was
+not read from for 36 of the 63 bars, and nothing at all for 12, in the four cities where that record
+is a stub.
 
 **4. Six countries have no official immigration source on record, and most figures have no page.**
 Canada, Germany, Italy, Spain, the UAE and Qatar carry no recorded official immigration authority,
@@ -155,47 +169,62 @@ The eight that remain are matched at topic level, not sentence level, and one is
 terms: Denmark's tuition figure links a higher-education study-permit page, and the figure itself is
 a recorded estimate ("typically DKK 75k–120k/yr").
 
-**5. Layout is verified at one width per suite, in a window taller than any screen.**
-The browser suites run at 1280×2000 and 1440×4200. The tall viewport is deliberate — it forces
-deferred content to mount so the assertions can see it — but it means nothing is checked while
-actually scrolling, and neither suite runs at a phone width. Mobile (390×844) has been measured by
-hand for `/explore` (package 28) and is not pinned by any test. A layout defect that only appears
-at 390px, or only after a scroll, would pass CI.
+**5. The two broad suites check layout at one width each, in a window taller than any screen.**
+The regression suite and the figure inventory run at 1280×2000 and 1440×4200. The tall viewport is
+deliberate — it forces deferred content to mount so the assertions can see it — but it means nothing
+they assert is checked while actually scrolling, or at a phone width. Since packages 46–47 three
+narrower suites do run at phone widths in CI, each for named properties only: D1 (every disclosure
+opens to its full content without widening the page, at 390/1024/1440), F1 (the CV flow by real
+clicks at 320/390/1024/1440), and P1–P4 (the header is one row and Home, Explore's chips and Home's
+dot field fit, at 360–414 and up). A layout defect of any other kind that only appears at 390px, or
+only after a scroll, would still pass CI.
+
+**6. `/work`'s estimate column is per year, and for six of its nine figures the year is this site's arithmetic.**
+Since package 47 (#88) every estimate reads per year. Spain, the UK and the US publish per year.
+Sweden, Norway and Finland publish per month, and the year is twelve times the monthly estimate,
+which counts what each office's monthly figure counts and no more — SCB's leaves out a 13th or 14th
+month and profit-sharing, Finland's regular-hours earnings leave out the holiday bonus and
+performance bonuses, Norway's include bonuses averaged over January to November; each card says
+which, as read at the source. Canada and Denmark publish per hour. Canada's year uses Statistics
+Canada's average usual hours for full-time employees across all industries (39.8 h in 2024) — not
+developers' own hours — and is shown to three significant figures; Denmark's uses DST's 37-hour
+standard week, the unit its hourly figure is defined in. The conversion is the pipeline's
+(`normalise.annualise()`), the published figure is one tap away, and the concept labels ("incl.
+pension", "incl. bonus", "excl. bonus") stay beside the figures: a common period is not a common
+concept.
 
 ---
 
 ## What is still open
 
-The decision log ([NEEDS-DECISION.md](../NEEDS-DECISION.md)) holds **73 items: 62 closed, 1
-reopened, 10 open.** Package 30 read the 68 that existed and reconciled every heading against its
-own body — before that, 57 headings gave no indication either way, so the honest answer to "what is
-still open" was that nobody knew. Packages 31–41 then closed #69, #71 and #65, reopened #68, and
-raised #72 and #73.
+The decision log ([NEEDS-DECISION.md](../NEEDS-DECISION.md)) holds **90 items: 79 closed, 1
+reopened, 10 open** (as of package 47). Package 30 read the 68 that existed then and reconciled every
+heading against its own body — before that, 57 headings gave no indication either way, so the honest
+answer to "what is still open" was that nobody knew. Package 47 closed #85, #86, #87, #88 and #90 on
+the owner's rulings.
 
-Counting them is itself a small lesson: a case-insensitive search for "closed" reports 11 open,
-because #73's own heading contains the words "a closed sheet". The markers are shouted (`CLOSED`,
-`RESOLVED`) and the prose is not, which is the distinction the count has to make — the same
-unanchored-substring mistake #33 records in the pipeline.
+Counting them is itself a small lesson, and the trap moves. When this section was first written, a
+case-insensitive search for "closed" miscounted because #73's heading contained the words "a closed
+sheet". #73 is closed now; today the same search misses #68, whose heading reads "REOPENED, package
+41 (closed on arrival, package 29)", and reports 10 where 11 need the owner. The markers are shouted
+(`CLOSED`, `RESOLVED`, `REOPENED`) and the prose is not, which is the distinction the count has to
+make — the same unanchored-substring mistake #33 records in the pipeline.
 
-All 10 remaining are judgement calls for the owner, not unfinished work:
+All 10 open, and the one reopened, are judgement calls for the owner, not unfinished work:
 
 | # | What it is |
 |---|---|
 | 17 | Denmark's two DST concepts don't reconcile; one subtraction step has to assume a shape the source doesn't publish |
 | 42 | `/postings` "Median advertised pay by country" supports one country, not seven — how should it be shown? |
-| 56 | CV storage — scoped out of package 22 and deliberately deferred since |
-| 60 | For 21 of 73 cities, the two salary bands trace to the same levels.fyi page |
+| 56 | CV storage — the store is built at two values (package 45; #85 closed on "keep the two numbers"); its Worker is not deployed, so the site offers no consent (package 47) |
+| 60 | For 21 of 73 cities, the two salary bands trace to the same levels.fyi page (on the 17 of them holding both, city pages now state the figure without a comparison — #90) |
 | 61 | Two lower-severity citation figures found by package 26's own rule, not fixed |
 | 62 | The UAE plots at $49,000 on "the price of the door", but one of its three routes has no salary floor at all |
 | 63 | Doha's salary citation lost a working PayScale link to stop it misattributing a band |
-| 68 | `core.json` costs 89.5 KB on every theme — closed by package 29 on a Lighthouse mobile run, REOPENED by package 41 because package 38 measured 7.9 s of app-boot-plus-core.json on Slow 4G, which that instrument could not see |
-| 70 | Reader-facing copy names repository files — package 41 linked them (27 links, each checked to resolve) rather than removing the names; whether to name them at all is still the owner's call |
-| 71 | Shipped by package 38. Listed here because the ruling, not the item, is what closed it |
-| 73 | On `/`, the budget in the address changes only what a closed sheet would show |
-
-Closed since this page was written: **#65** (package 41 — the browser launch retries once and
-distinguishes "slow to start" from "cannot start", rather than raising a budget nobody had
-measured), **#69** (package 31, above), **#71** (package 38).
+| 68 | *Reopened.* `core.json` costs 89.5 KB on every theme — closed by package 29 on a Lighthouse mobile run, reopened by package 41 because package 38 measured 7.9 s of app-boot-plus-core.json on Slow 4G, which that instrument could not see |
+| 75 | `/openings` still shifts 0.0085–0.0593 depending on width — all inside "good" — because the table has no column widths |
+| 76 | `yearsToHome` returns null for both "no inputs" and "saves nothing", and every caller has to remember to ask separately |
+| 89 | Explore's hero numbers — three facts per theme that do not add up to an answer |
 
 ---
 
@@ -215,7 +244,7 @@ Run from the repository root.
     # metrics
     grep -c "^    key: '" site/src/data/registry.ts
 
-    # 108 combinations, 646 figures, and the C1-C6 assertions
+    # 134 combinations, 1,048 figures, and the C1-C7 assertions
     node scripts/tests/test_figure_inventory.mjs
 
     # everything CI runs on the pipeline side

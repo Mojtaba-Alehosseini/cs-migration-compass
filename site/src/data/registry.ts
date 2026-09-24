@@ -9,7 +9,7 @@
 
 import type { Band, City, Confidence, Country } from './types'
 import { m2PerYear, savingsPerYear, yearsToHome, netFor } from './compute'
-import { money, moneyShort, num, pct, rankOf, years, NO_DATA, sourceName, sourceUrlByHost } from './format'
+import { money, moneyShort, num, pct, rankOf, years, NO_DATA, hostOf, sourceName, sourceUrlByHost } from './format'
 
 export type ThemeKey = 'money' | 'visa' | 'jobs' | 'housing' | 'people' | 'life' | 'climate'
 
@@ -81,6 +81,33 @@ const numbeo = (city: City, what: string) => ({
   what,
 })
 
+/* The levels.fyi page a city's record lists for a band — its own level's page
+ * where one is listed, else the all-levels page — out of the city's own
+ * `sources[]`, which is what `_linked` promises for every source (see
+ * SalaryPrimarySource in types.ts). Until package 47 this one case linked `salary_levels_fyi.source`
+ * instead: the TICK's page, a different record. On the 21 cities whose bars
+ * are levels.fyi's, 48 of the 63 bars linked a page they were not read from, or
+ * none: in 8 US metros a city page in place of the metro page the bar's own
+ * note names (Boston's middle bar, $169,000 from greater-boston-area, linked
+ * boston-usa, which shows $179,000); in the 4 whose tick record is an
+ * unresolved stub, nothing at all, though their own pages resolve; and every
+ * entry-level or senior bar with a page of its own linked the all-levels one.
+ * All 46 new targets were read on 2026-09-24: each answers without a redirect
+ * and its heading names the city and the level. Matched on the parsed path,
+ * never a substring (see hostOf() in format.ts). */
+const LF_ALL_LEVELS = /^\/t\/software-engineer\/locations\/[^/]+\/?$/
+const LF_BAND_PAGE: Partial<Record<Band, RegExp>> = {
+  new_grad: /^\/t\/software-engineer\/levels\/entry-level\/locations\/[^/]+\/?$/,
+  senior: /^\/t\/software-engineer\/levels\/senior\/locations\/[^/]+\/?$/,
+  // levels.fyi has no mid-level page: the all-levels page backs the middle bar
+}
+function levelsFyiBandPage(sources: string[], band?: Band): string | undefined {
+  const path = (u: string) => { try { return new URL(u).pathname } catch { return '' } }
+  const pages = sources.filter((u) => hostOf(u) === 'levels.fyi')
+  const own = band ? LF_BAND_PAGE[band] : undefined
+  return (own && pages.find((u) => own.test(path(u)))) || pages.find((u) => LF_ALL_LEVELS.test(path(u)))
+}
+
 /** Which real source this city's own "Developer salary" band traces to —
  *  read from `salary_usd_year.primary_source`, itself hand-set once per city
  *  from that city's own `note` (see SalaryPrimarySource in types.ts), never
@@ -94,8 +121,12 @@ const numbeo = (city: City, what: string) => ({
  *  (Glassdoor, KeepCoding, TechPays, and others) everywhere none of those is
  *  clearly dominant — see NEEDS-DECISION #59. A city whose record does not
  *  support a single named source says so ("Compiled estimate") rather than
- *  naming one anyway. */
-export function citySalarySource(city: City): { name: string; url?: string; what: string } {
+ *  naming one anyway.
+ *
+ *  `band`, where the caller shows one band, lets a levels.fyi card link the
+ *  page that band was read from; without it the card links the all-levels
+ *  page. */
+export function citySalarySource(city: City, band?: Band): { name: string; url?: string; what: string } {
   const what = city.salary_usd_year.note ?? 'Market-wide band for this city.'
   const src = city.salary_usd_year.primary_source
   switch (src) {
@@ -106,19 +137,7 @@ export function citySalarySource(city: City): { name: string; url?: string; what
     case 'talentcom_nolink':
       return { name: 'talent.com', what }
     case 'levelsfyi_linked':
-      // Package 27's own adversarial review: 4 of these 21 cities' own
-      // salary_levels_fyi.source is a bare, unresolved stub
-      // ("…/locations/", no city slug) — src_levels_fyi.py tried every
-      // route pattern it knows and recorded WHY in unavailable_reason
-      // rather than substitute a guess, but citySalarySource() was reading
-      // .source unconditionally, so the citation still offered a link that
-      // does not resolve to this city's own page. Only offer the link when
-      // a route genuinely resolved.
-      return {
-        name: 'levels.fyi',
-        url: city.salary_levels_fyi?.unavailable_reason ? undefined : city.salary_levels_fyi?.source,
-        what,
-      }
+      return { name: 'levels.fyi', url: levelsFyiBandPage(city.sources, band), what }
     case 'bls_linked':
       return { name: sourceName('https://bls.gov'), url: sourceUrlByHost(city.sources, ['bls.gov', 'api.bls.gov']), what }
     case 'indeed_linked':

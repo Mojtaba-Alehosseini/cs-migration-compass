@@ -387,16 +387,14 @@ a { color: var(--ink-2); }
    "excl. bonus" were not visible in 7 of 18 phone-width cases. A common
    period is not a common concept, so the label now wraps under the figure
    when the two do not fit on one line, and neither is ever cut. */
-.wrow-est {
+/* The estimate and the openings count are one kind of figure, set once. */
+.wrow-est, .wrow-opn {
   font-family: var(--font-display); font-size: var(--text-xs); text-align: right;
   font-variant-numeric: tabular-nums;
 }
 .wrow-est > * { white-space: nowrap; }
 .wrow-basis { display: inline-block; font-family: var(--font-ui); font-size: var(--text-2xs); color: var(--ink-3); font-weight: var(--weight-normal); margin-left: 5px; }
-.wrow-opn {
-  font-family: var(--font-display); font-size: var(--text-xs); text-align: right;
-  font-variant-numeric: tabular-nums; color: var(--ink-2);
-}
+.wrow-opn { color: var(--ink-2); }
 
 @media (max-width: 820px) {
   .wrow { grid-template-columns: 108px 1fr 172px 44px; gap: 8px; }

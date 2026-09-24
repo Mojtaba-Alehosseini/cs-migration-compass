@@ -4,10 +4,11 @@
  *
  * Package 46, Tier 1. Both cards were `position: absolute` under their
  * trigger, inside the trigger's own wrapper, so ANY ancestor that hides
- * overflow cut them. /work's estimate column is one: `.wrow-est` clips for
- * its ellipsis, and at desktop widths every source card in that column
- * opened to nothing — 0 of its 141px on screen. A reader clicked "no spread
- * published" and was shown no explanation. Found by the disclosure check
+ * overflow cut them. /work's estimate column was one: `.wrow-est` clipped
+ * for its ellipsis (until package 47 let it wrap), and at desktop widths
+ * every source card in that column opened to nothing — 0 of its 141px on
+ * screen. A reader clicked "no spread published" and was shown no
+ * explanation. Found by the disclosure check
  * (scripts/tests/test_disclosures.mjs), which asks the browser what is
  * painted rather than reasoning about CSS.
  *

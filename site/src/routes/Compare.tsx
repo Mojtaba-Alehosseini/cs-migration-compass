@@ -485,11 +485,12 @@ function fallbackSource(m: MetricDef, city: City, country: Country | undefined) 
 }
 
 /** The salary row's own source card changes with the lens, because the number
- *  it explains changes with the lens. */
-function salarySource(city: City, country: Country | undefined, lens: Lens) {
+ *  it explains changes with the lens — and with the band, where each band was
+ *  read from a page of its own. */
+function salarySource(city: City, country: Country | undefined, lens: Lens, band: Band) {
   if (lens === 'gross') {
     return {
-      ...citySalarySource(city),
+      ...citySalarySource(city, band),
       what: city.salary_usd_year.note ?? 'Market-wide band for this city, gross per year.',
     }
   }
@@ -528,7 +529,7 @@ function Cell({ metric, city, value, band, lens }:
   }
 
   const src = metric.key === 'salary_gross'
-    ? salarySource(city, country, lens)
+    ? salarySource(city, country, lens, band)
     : metric.source?.(city, country) ?? fallbackSource(metric, city, country)
   const negative = value < 0
   // A figure smaller than the rounding on its own inputs keeps its place and
